@@ -232,7 +232,7 @@ namespace System.Management.Automation
                 DataStructureHandler.Prepare();
             }
 
-            PSInvocationSettings settings = new PSInvocationSettings();
+            var settings = new PSInvocationSettings();
             settings.ApartmentState = apartmentState;
             settings.Host = _remoteHost;
 
@@ -825,7 +825,7 @@ namespace System.Management.Automation
             Runspace rs = DataStructureHandler.RunspaceUsedToInvokePowerShell;
             if (rs != null)
             {
-                PSLocalEventManager events = (object)rs.Events as PSLocalEventManager;
+                var events = (object)rs.Events as PSLocalEventManager;
 
                 if (events != null)
                 {

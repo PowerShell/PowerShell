@@ -70,7 +70,7 @@ namespace System.Management.Automation
             string validEncodingValues = string.Join(", ", TabCompletionResults);
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_WriteToFileEncodingUnknown, encoding, validEncodingValues);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewArgumentException("Encoding"),
                 "WriteToFileEncodingUnknown",
                 ErrorCategory.InvalidArgument,

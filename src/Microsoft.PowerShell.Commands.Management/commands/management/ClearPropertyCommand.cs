@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            Collection<string> propertyCollection = new Collection<string>();
+            var propertyCollection = new Collection<string>();
             propertyCollection.Add(_property);
 
             if (Path != null && Path.Length > 0)
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
             CmdletProviderContext currentContext = CmdletProviderContext;
             currentContext.PassThru = PassThru;
 
-            Collection<string> propertyCollection = new Collection<string>();
+            var propertyCollection = new Collection<string>();
             propertyCollection.Add(_property);
 
             foreach (string path in Path)

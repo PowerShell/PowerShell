@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isRssOrFeed)
                 {
-                    XmlDocument workingDocument = new XmlDocument();
+                    var workingDocument = new XmlDocument();
                     // performing a Read() here to avoid rrechecking
                     // "rss" or "feed" items
                     reader.Read();
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         // Mostly cribbed from Serialization.cs#GetXmlReaderSettingsForCliXml()
         private XmlReaderSettings GetSecureXmlReaderSettings()
         {
-            XmlReaderSettings xrs = new XmlReaderSettings();
+            var xrs = new XmlReaderSettings();
 
             xrs.CheckCharacters = false;
             xrs.CloseInput = false;
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
-            RestReturnType rt = RestReturnType.Detect;
+            var rt = RestReturnType.Detect;
             string contentType = ContentHelper.GetContentType(response);
             if (string.IsNullOrEmpty(contentType))
             {

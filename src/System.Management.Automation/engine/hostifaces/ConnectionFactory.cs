@@ -586,7 +586,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable)
         {
-            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null);
+            var connectionInfo = new NewProcessConnectionInfo(null);
 
             return CreateRunspace(connectionInfo, null, typeTable);
         }
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable, PowerShellProcessInstance processInstance)
         {
-            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null) { Process = processInstance };
+            var connectionInfo = new NewProcessConnectionInfo(null) { Process = processInstance };
 
             return CreateRunspace(connectionInfo, null, typeTable);
         }

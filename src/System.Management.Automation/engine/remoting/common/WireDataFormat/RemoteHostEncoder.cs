@@ -122,7 +122,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static PSObject EncodeCollection(IList collection)
         {
-            ArrayList arrayList = new ArrayList();
+            var arrayList = new ArrayList();
             foreach (object obj in collection)
             {
                 arrayList.Add(EncodeObject(obj));
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Remoting
 
             // Rehydrate the collection from the array list.
             ArrayList arrayList = SafelyGetBaseObject<ArrayList>(psObject);
-            IList collection = (IList)Activator.CreateInstance(collectionType);
+            var collection = (IList)Activator.CreateInstance(collectionType);
             foreach (object element in arrayList)
             {
                 collection.Add(DecodeObject(element, elementType));
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Remoting
                 return EncodeObjectDictionary(dictionary);
             }
 
-            Hashtable hashtable = new Hashtable();
+            var hashtable = new Hashtable();
             foreach (object key in dictionary.Keys)
             {
                 hashtable.Add(EncodeObject(key), EncodeObject(dictionary[key]));
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Remoting
 
             // Rehydrate the dictionary from the hashtable.
             Hashtable hashtable = SafelyGetBaseObject<Hashtable>(psObject);
-            IDictionary dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
+            var dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
             foreach (object key in hashtable.Keys)
             {
                 dictionary.Add(
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Remoting
             // we are able to preserve the exception as well as the stack trace.
 
             ErrorRecord errorRecord = null;
-            IContainsErrorRecord containsErrorRecord = exception as IContainsErrorRecord;
+            var containsErrorRecord = exception as IContainsErrorRecord;
             if (containsErrorRecord == null)
             {
                 // If this is a .NET exception then wrap in an ErrorRecord.
@@ -297,7 +297,7 @@ namespace System.Management.Automation.Remoting
             // Upcasts derived types back to FieldDescription type and throws away attributes.
 
             // Create a new field description object.
-            FieldDescription fieldDescription2 = new FieldDescription(fieldDescription1.Name);
+            var fieldDescription2 = new FieldDescription(fieldDescription1.Name);
 
             // Copy the fields not initialized during construction.
             fieldDescription2.Label = fieldDescription1.Label;
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Remoting
                 // BUGBUG: The following piece of code is a workaround
                 // because custom serialization is busted. If rehydration
                 // works correctly then PSCredential should be available
-                PSObject objAsPSObject = (PSObject)obj;
+                var objAsPSObject = (PSObject)obj;
                 PSCredential cred = null;
                 try
                 {
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static PSObject EncodeObjectArray(object[] objects)
         {
-            ArrayList arrayList = new ArrayList();
+            var arrayList = new ArrayList();
             foreach (object obj in objects)
             {
                 arrayList.Add(EncodeObjectWithType(obj));
@@ -559,7 +559,7 @@ namespace System.Management.Automation.Remoting
         {
             // Rehydrate the array from the array list.
             ArrayList arrayList = SafelyGetBaseObject<ArrayList>(psObject);
-            object[] objects = new object[arrayList.Count];
+            var objects = new object[arrayList.Count];
             for (int i = 0; i < arrayList.Count; ++i)
             {
                 objects[i] = DecodeObjectWithType(arrayList[i]);
@@ -629,14 +629,14 @@ namespace System.Management.Automation.Remoting
             Type arrayType = array.GetType();
             Type elementType = arrayType.GetElementType();
             int rank = array.Rank;
-            int[] lengths = new int[rank];
+            var lengths = new int[rank];
             for (int i = 0; i < rank; ++i)
             {
                 lengths[i] = array.GetUpperBound(i) + 1;
             }
 
-            Indexer indexer = new Indexer(lengths);
-            ArrayList elements = new ArrayList();
+            var indexer = new Indexer(lengths);
+            var elements = new ArrayList();
             foreach (int[] index in indexer)
             {
                 object elementValue = array.GetValue(index);
@@ -665,10 +665,10 @@ namespace System.Management.Automation.Remoting
             // Extract lengths from psObject.
             PSObject psObjectContainingLengths = SafelyGetPropertyValue<PSObject>(psObject, RemoteDataNameStrings.MethodArrayLengths);
             ArrayList lengthsArrayList = SafelyGetBaseObject<ArrayList>(psObjectContainingLengths);
-            int[] lengths = (int[])lengthsArrayList.ToArray(typeof(int));
+            var lengths = (int[])lengthsArrayList.ToArray(typeof(int));
 
             // Reconstitute the array.
-            Indexer indexer = new Indexer(lengths);
+            var indexer = new Indexer(lengths);
             Array array = Array.CreateInstance(elementType, lengths);
             int elementIndex = 0;
             foreach (int[] index in indexer)
@@ -703,7 +703,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(IsObjectDictionaryType(dictionary.GetType()), "Expected IsObjectDictionaryType(dictionary.GetType())");
 
             // Encode the dictionary as a hashtable.
-            Hashtable hashtable = new Hashtable();
+            var hashtable = new Hashtable();
             foreach (object key in dictionary.Keys)
             {
                 hashtable.Add(EncodeObject(key), EncodeObjectWithType(dictionary[key]));
@@ -728,7 +728,7 @@ namespace System.Management.Automation.Remoting
 
             // Rehydrate the dictionary from the hashtable.
             Hashtable hashtable = SafelyGetBaseObject<Hashtable>(psObject);
-            IDictionary dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
+            var dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
             foreach (object key in hashtable.Keys)
             {
                 dictionary.Add(

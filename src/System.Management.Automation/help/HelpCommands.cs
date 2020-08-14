@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                 // Validate input parameters
                 ValidateAndThrowIfError(helpCategory);
 
-                HelpRequest helpRequest = new HelpRequest(this.Name, helpCategory);
+                var helpRequest = new HelpRequest(this.Name, helpCategory);
 
                 helpRequest.Provider = _provider;
                 helpRequest.Component = Component;
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
             if (category == null || category.Length == 0)
                 return HelpCategory.None;
 
-            HelpCategory helpCategory = HelpCategory.None;
+            var helpCategory = HelpCategory.None;
 
             failed = false;
 
@@ -413,14 +413,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    HelpCategory temp = (HelpCategory)Enum.Parse(typeof(HelpCategory), category[i], true);
+                    var temp = (HelpCategory)Enum.Parse(typeof(HelpCategory), category[i], true);
 
                     helpCategory |= temp;
                 }
                 catch (ArgumentException argumentException)
                 {
                     Exception e = new HelpCategoryInvalidException(category[i], argumentException);
-                    ErrorRecord errorRecord = new ErrorRecord(e, "InvalidHelpCategory", ErrorCategory.InvalidArgument, null);
+                    var errorRecord = new ErrorRecord(e, "InvalidHelpCategory", ErrorCategory.InvalidArgument, null);
                     this.WriteError(errorRecord);
 
                     failed = true;
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Array of parameter infos.</returns>
         private PSObject[] GetParameterInfo(HelpInfo helpInfo)
         {
-            List<PSObject> parameterInfosList = new List<PSObject>(Parameter.Length);
+            var parameterInfosList = new List<PSObject>(Parameter.Length);
 
             foreach (var parameter in Parameter)
             {
@@ -766,7 +766,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
-                System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
+                var browserProcess = new System.Diagnostics.Process();
 
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell.Commands
                     cmdlet.MyInvocation.InvocationName,
                     parameterName);
                 Exception e = new InvalidOperationException(message);
-                ErrorRecord errorRecord = new ErrorRecord(e, "ParameterNotValidInRemoteRunspace", ErrorCategory.InvalidArgument, null);
+                var errorRecord = new ErrorRecord(e, "ParameterNotValidInRemoteRunspace", ErrorCategory.InvalidArgument, null);
                 cmdlet.ThrowTerminatingError(errorRecord);
             }
         }
@@ -871,7 +871,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
                 {
-                    SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
+                    var getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
                     if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
                     {
                         return true;
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
+            var cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
             if ((cmdInfo == null) || (string.IsNullOrEmpty(cmdInfo.Name)))
@@ -921,7 +921,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            AliasInfo aliasInfo = cmdInfo as AliasInfo;
+            var aliasInfo = cmdInfo as AliasInfo;
             if ((aliasInfo != null) &&
                 (aliasInfo.ExternalCommandMetadata != null) &&
                 (!string.IsNullOrEmpty(aliasInfo.ExternalCommandMetadata.HelpUri)))
@@ -944,7 +944,7 @@ namespace Microsoft.PowerShell.Commands
                 var currentContext = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
                 if ((currentContext != null) && (currentContext.HelpSystem != null))
                 {
-                    HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
+                    var helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
                     helpRequest.ProviderContext = new ProviderContext(
                         string.Empty,
                         currentContext,

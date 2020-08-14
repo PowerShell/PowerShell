@@ -322,10 +322,10 @@ namespace System.Management.Automation
             ArrayList list = ConvertArgsValueToArrayList(value);
 
             // Serialize the list
-            StringWriter stringWriter = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
+            var stringWriter = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
             // When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
             XmlWriter xmlWriter = XmlWriter.Create(stringWriter);
-            Serializer serializer = new Serializer(xmlWriter);
+            var serializer = new Serializer(xmlWriter);
             serializer.Serialize(list);
             serializer.Done();
             xmlWriter.Flush();
@@ -341,7 +341,7 @@ namespace System.Management.Automation
         /// </summary>
         private static ArrayList ConvertArgsValueToArrayList(object value)
         {
-            ArrayList results = new ArrayList();
+            var results = new ArrayList();
             IEnumerator list = LanguagePrimitives.GetEnumerator(value);
             if (list == null)
             {

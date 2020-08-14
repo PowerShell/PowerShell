@@ -84,7 +84,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
-            Collection<MergedCompiledCommandParameter> result =
+            var result =
                 new Collection<MergedCompiledCommandParameter>();
 
             // Merge in the bindable parameters
@@ -93,7 +93,7 @@ namespace System.Management.Automation
             {
                 if (_bindableParameters.ContainsKey(bindableParameter.Key))
                 {
-                    MetadataException exception =
+                    var exception =
                         new MetadataException(
                             "ParameterNameAlreadyExistsForCommand",
                             null,
@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 // NTRAID#Windows Out Of Band Releases-926371-2005/12/27-JonN
                 if (_aliasedParameters.ContainsKey(bindableParameter.Key))
                 {
-                    MetadataException exception =
+                    var exception =
                         new MetadataException(
                             "ParameterNameConflictsWithAlias",
                             null,
@@ -115,7 +115,7 @@ namespace System.Management.Automation
                     throw exception;
                 }
 
-                MergedCompiledCommandParameter mergedParameter =
+                var mergedParameter =
                     new MergedCompiledCommandParameter(bindableParameter.Value, binderAssociation);
 
                 _bindableParameters.Add(bindableParameter.Key, mergedParameter);
@@ -127,7 +127,7 @@ namespace System.Management.Automation
                 {
                     if (_aliasedParameters.ContainsKey(aliasName))
                     {
-                        MetadataException exception =
+                        var exception =
                             new MetadataException(
                                 "AliasParameterNameAlreadyExistsForCommand",
                                 null,
@@ -139,7 +139,7 @@ namespace System.Management.Automation
                     // NTRAID#Windows Out Of Band Releases-926371-2005/12/27-JonN
                     if (_bindableParameters.ContainsKey(aliasName))
                     {
-                        MetadataException exception =
+                        var exception =
                             new MetadataException(
                                 "ParameterNameConflictsWithAlias",
                                 null,
@@ -231,7 +231,7 @@ namespace System.Management.Automation
                     if (_nextAvailableParameterSetIndex == uint.MaxValue)
                     {
                         // Don't let the parameter set index overflow
-                        ParsingMetadataException parsingException =
+                        var parsingException =
                             new ParsingMetadataException(
                                 "ParsingTooManyParameterSets",
                                 null,
@@ -446,7 +446,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            Collection<MergedCompiledCommandParameter> matchingParameters =
+            var matchingParameters =
                 new Collection<MergedCompiledCommandParameter>();
 
             // Skip the leading '-' if present
@@ -501,7 +501,7 @@ namespace System.Management.Automation
             if (matchingParameters.Count > 1)
             {
                 // Prefer parameters in the cmdlet over common parameters
-                Collection<MergedCompiledCommandParameter> filteredParameters =
+                var filteredParameters =
                     new Collection<MergedCompiledCommandParameter>();
 
                 foreach (MergedCompiledCommandParameter matchingParameter in matchingParameters)
@@ -519,7 +519,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    StringBuilder possibleMatches = new StringBuilder();
+                    var possibleMatches = new StringBuilder();
 
                     foreach (MergedCompiledCommandParameter matchingParameter in matchingParameters)
                     {
@@ -527,7 +527,7 @@ namespace System.Management.Automation
                         possibleMatches.Append(matchingParameter.Parameter.Name);
                     }
 
-                    ParameterBindingException exception =
+                    var exception =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             invocationInfo,
@@ -546,7 +546,7 @@ namespace System.Management.Automation
             {
                 if (throwOnParameterNotFound)
                 {
-                    ParameterBindingException exception =
+                    var exception =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             invocationInfo,
@@ -581,7 +581,7 @@ namespace System.Management.Automation
         /// </returns>
         internal Collection<MergedCompiledCommandParameter> GetParametersInParameterSet(uint parameterSetFlag)
         {
-            Collection<MergedCompiledCommandParameter> result =
+            var result =
                 new Collection<MergedCompiledCommandParameter>();
 
             foreach (MergedCompiledCommandParameter parameter in BindableParameters.Values)

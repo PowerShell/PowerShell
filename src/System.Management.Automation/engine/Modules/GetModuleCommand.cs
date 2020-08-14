@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
                 PSModuleInfo moduleInfo = null;
                 if (!containedErrors)
                 {
-                    ImportModuleOptions throwAwayOptions = new ImportModuleOptions();
+                    var throwAwayOptions = new ImportModuleOptions();
                     moduleInfo = LoadModuleManifest(
                         temporaryModuleManifestPath,
                         null, // scriptInfo
@@ -332,8 +332,8 @@ namespace Microsoft.PowerShell.Commands
             if (!this.ListAvailable.IsPresent)
             {
                 string errorMessage = Modules.RemoteDiscoveryWorksOnlyInListAvailableMode;
-                ArgumentException argumentException = new ArgumentException(errorMessage);
-                ErrorRecord errorRecord = new ErrorRecord(
+                var argumentException = new ArgumentException(errorMessage);
+                var errorRecord = new ErrorRecord(
                     argumentException,
                     "RemoteDiscoveryWorksOnlyInListAvailableMode",
                     ErrorCategory.InvalidArgument,
@@ -352,14 +352,14 @@ namespace Microsoft.PowerShell.Commands
             if ((Name != null) && (FullyQualifiedName != null))
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Name", "FullyQualifiedName");
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "NameAndFullyQualifiedNameCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                var error = new ErrorRecord(new InvalidOperationException(errMsg), "NameAndFullyQualifiedNameCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
 
             // -SkipEditionCheck only makes sense for -ListAvailable (otherwise the module is already loaded)
             if (SkipEditionCheck && !ListAvailable)
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     new InvalidOperationException(Modules.SkipEditionCheckNotSupportedWithoutListAvailable),
                     nameof(Modules.SkipEditionCheckNotSupportedWithoutListAvailable),
                     ErrorCategory.InvalidOperation,

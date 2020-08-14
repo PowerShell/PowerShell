@@ -139,12 +139,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<string> ResolvePaths(string[] path, bool literalPath)
         {
-            List<string> pathsToProcess = new List<string>();
+            var pathsToProcess = new List<string>();
             ProviderInfo provider = null;
 
             foreach (string currentPath in path)
             {
-                List<string> newPaths = new List<string>();
+                var newPaths = new List<string>();
 
                 if (literalPath)
                 {
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!WildcardPattern.ContainsWildcardCharacters(currentPath))
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(e, "FileNotFound", ErrorCategory.ObjectNotFound, path);
+                            var errorRecord = new ErrorRecord(e, "FileNotFound", ErrorCategory.ObjectNotFound, path);
                             WriteError(errorRecord);
                             continue;
                         }
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Write a non-terminating error message indicating that path specified is not supported.
                     string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexOnlySupportsFileSystemPaths, currentPath);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         new ArgumentException(errorMessage),
                         "FormatHexOnlySupportsFileSystemPaths",
                         ErrorCategory.InvalidArgument,
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new ArgumentException(errorMessage),
                     "FormatHexTypeNotSupported",
                     ErrorCategory.InvalidArgument,

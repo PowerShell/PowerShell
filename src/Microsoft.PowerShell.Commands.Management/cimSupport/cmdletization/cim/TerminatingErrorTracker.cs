@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             object cimSessionArgument;
             if (invocationInfo.BoundParameters.TryGetValue("CimSession", out cimSessionArgument))
             {
-                IList cimSessionArgumentAsList = (IList)cimSessionArgument;
+                var cimSessionArgumentAsList = (IList)cimSessionArgument;
                 return cimSessionArgumentAsList.Count;
             }
             // else - either CimSession=localhost OR CimSession is based on CimInstance->CimSession affinity
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             int maxNumberOfSessionsIndicatedByCimInstanceArguments = 1;
             foreach (object cmdletArgument in invocationInfo.BoundParameters.Values)
             {
-                CimInstance[] array = cmdletArgument as CimInstance[];
+                var array = cmdletArgument as CimInstance[];
                 if (array != null)
                 {
                     int numberOfSessionsAssociatedWithArgument = array
@@ -196,8 +196,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal CmdletMethodInvoker<bool> GetErrorReportingDelegate(ErrorRecord errorRecord)
         {
-            ManualResetEventSlim manualResetEventSlim = new ManualResetEventSlim();
-            object lockObject = new object();
+            var manualResetEventSlim = new ManualResetEventSlim();
+            var lockObject = new object();
             Func<Cmdlet, bool> action = delegate (Cmdlet cmdlet)
                                                 {
                                                     _numberOfReportedSessionTerminatingErrors++;

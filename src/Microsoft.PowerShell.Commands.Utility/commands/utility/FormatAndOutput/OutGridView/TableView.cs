@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
             _typeInfoDatabase = db;
 
             // Initialize Format Error Manager.
-            FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
+            var formatErrorPolicy = new FormatErrorPolicy();
 
             formatErrorPolicy.ShowErrorsAsMessages = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
             formatErrorPolicy.ShowErrorsInFormattedOutput = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput;
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal HeaderInfo GenerateHeaderInfo(PSObject input, TableControlBody tableBody, OutGridViewCommand parentCmdlet)
         {
-            HeaderInfo headerInfo = new HeaderInfo();
+            var headerInfo = new HeaderInfo();
 
             // This verification is needed because the database returns "LastWriteTime" value for file system objects
             // as strings and it is used to detect this situation and use the actual field value.
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
+                        var fpt = token as FieldPropertyToken;
                         if (fpt != null)
                         {
                             if (displayName == null)
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            TextToken tt = token as TextToken;
+                            var tt = token as TextToken;
                             if (tt != null)
                             {
                                 displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(tt);
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal HeaderInfo GenerateHeaderInfo(PSObject input, OutGridViewCommand parentCmdlet)
         {
-            HeaderInfo headerInfo = new HeaderInfo();
+            var headerInfo = new HeaderInfo();
             List<MshResolvedExpressionParameterAssociation> activeAssociationList;
 
             // Get properties from the default property set of the object
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (activeAssociationList.Count > nMax)
             {
-                List<MshResolvedExpressionParameterAssociation> tmp = new List<MshResolvedExpressionParameterAssociation>(activeAssociationList);
+                var tmp = new List<MshResolvedExpressionParameterAssociation>(activeAssociationList);
                 activeAssociationList.Clear();
                 for (int k = 0; k < nMax; k++)
                     activeAssociationList.Add(tmp[k]);
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
             TableRowDefinition matchingRowDefinition = null;
 
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typeNames);
+            var match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typeNames);
 
             foreach (TableRowDefinition x in tableBody.optionalDefinitionList)
             {
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // we have an override, we need to compute the merge of the active cells
-            List<TableRowItemDefinition> activeRowItemDefinitionList = new List<TableRowItemDefinition>();
+            var activeRowItemDefinitionList = new List<TableRowItemDefinition>();
             int col = 0;
             foreach (TableRowItemDefinition rowItem in matchingRowDefinition.rowItemDefinitionList)
             {

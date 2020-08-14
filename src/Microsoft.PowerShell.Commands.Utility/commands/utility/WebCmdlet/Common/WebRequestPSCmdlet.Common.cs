@@ -604,19 +604,19 @@ namespace Microsoft.PowerShell.Commands
 
             if (CertificateThumbprint != null)
             {
-                X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+                var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
-                X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
-                X509Certificate2Collection tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
+                var collection = (X509Certificate2Collection)store.Certificates;
+                var tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
                 if (tbCollection.Count == 0)
                 {
-                    CryptographicException ex = new CryptographicException(WebCmdletStrings.ThumbprintNotFound);
+                    var ex = new CryptographicException(WebCmdletStrings.ThumbprintNotFound);
                     throw ex;
                 }
 
                 foreach (X509Certificate2 tbCert in tbCollection)
                 {
-                    X509Certificate certificate = (X509Certificate)tbCert;
+                    var certificate = (X509Certificate)tbCert;
                     WebSession.AddCertificate(certificate);
                 }
             }
@@ -637,7 +637,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Proxy != null)
             {
-                WebProxy webProxy = new WebProxy(Proxy);
+                var webProxy = new WebProxy(Proxy);
                 webProxy.BypassProxyOnLocal = false;
                 if (ProxyCredential != null)
                 {
@@ -731,7 +731,7 @@ namespace Microsoft.PowerShell.Commands
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
                      || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
-                UriBuilder uriBuilder = new UriBuilder(uri);
+                var uriBuilder = new UriBuilder(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
                 {
                     uriBuilder.Query = uriBuilder.Query.Substring(1) + "&" + FormatDictionary(bodyAsDictionary);
@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
             if (content == null)
                 throw new ArgumentNullException(nameof(content));
 
-            StringBuilder bodyBuilder = new StringBuilder();
+            var bodyBuilder = new StringBuilder();
             foreach (string key in content.Keys)
             {
                 if (0 < bodyBuilder.Length)
@@ -982,7 +982,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             // By default the HttpClientHandler will automatically decompress GZip and Deflate content
-            HttpClientHandler handler = new HttpClientHandler();
+            var handler = new HttpClientHandler();
             handler.CookieContainer = WebSession.Cookies;
 
             // set the credentials used by this request
@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell.Commands
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
 
-            HttpClient httpClient = new HttpClient(handler);
+            var httpClient = new HttpClient(handler);
 
             // check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
             if (TimeoutSec == 0)
@@ -1205,7 +1205,7 @@ namespace Microsoft.PowerShell.Commands
                 object content = Body;
 
                 // make sure we're using the base object of the body, not the PSObject wrapper
-                PSObject psBody = Body as PSObject;
+                var psBody = Body as PSObject;
                 if (psBody != null)
                 {
                     content = psBody.BaseObject;
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
                         catch (FormatException ex)
                         {
                             var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            var er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                             ThrowTerminatingError(er);
                         }
                     }
@@ -1293,7 +1293,7 @@ namespace Microsoft.PowerShell.Commands
         // Returns true if the status code is one of the supported redirection codes.
         private static bool IsRedirectCode(HttpStatusCode code)
         {
-            int intCode = (int)code;
+            var intCode = (int)code;
             return
             (
                 (intCode >= 300 && intCode < 304)
@@ -1326,7 +1326,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ShouldRetry(HttpStatusCode code)
         {
-            int intCode = (int)code;
+            var intCode = (int)code;
 
             if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
             {
@@ -1538,8 +1538,8 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
-                                    HttpResponseException httpEx = new HttpResponseException(message, response);
-                                    ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                    var httpEx = new HttpResponseException(message, response);
+                                    var er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                     string detailMsg = string.Empty;
                                     StreamReader reader = null;
                                     try
@@ -1586,7 +1586,7 @@ namespace Microsoft.PowerShell.Commands
                                         response.StatusCode == HttpStatusCode.Moved ||
                                         response.StatusCode == HttpStatusCode.MovedPermanently)
                                     {
-                                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                        var er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                         er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
                                         WriteError(er);
                                     }
@@ -1594,7 +1594,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (HttpRequestException ex)
                             {
-                                ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                var er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                 if (ex.InnerException != null)
                                 {
                                     er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
@@ -1620,12 +1620,12 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (CryptographicException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "WebCmdletCertificateException", ErrorCategory.SecurityError, null);
+                var er = new ErrorRecord(ex, "WebCmdletCertificateException", ErrorCategory.SecurityError, null);
                 ThrowTerminatingError(er);
             }
             catch (NotSupportedException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "WebCmdletIEDomNotSupportedException", ErrorCategory.NotImplemented, null);
+                var er = new ErrorRecord(ex, "WebCmdletIEDomNotSupportedException", ErrorCategory.NotImplemented, null);
                 ThrowTerminatingError(er);
             }
         }
@@ -1705,7 +1705,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!SkipHeaderValidation)
                     {
                         var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        var er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1714,7 +1714,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!SkipHeaderValidation)
                     {
                         var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        var er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1736,10 +1736,10 @@ namespace Microsoft.PowerShell.Commands
                 return 0;
 
             byte[] bytes = null;
-            XmlDocument doc = xmlNode as XmlDocument;
+            var doc = xmlNode as XmlDocument;
             if (doc?.FirstChild is XmlDeclaration)
             {
-                XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                var decl = doc.FirstChild as XmlDeclaration;
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);
                 bytes = StreamHelper.EncodeToBytes(doc.OuterXml, encoding);
             }
@@ -1844,7 +1844,7 @@ namespace Microsoft.PowerShell.Commands
                             string rel = match.Groups["rel"].Value;
                             if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
-                                Uri absoluteUri = new Uri(requestUri, url);
+                                var absoluteUri = new Uri(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri);
                             }
                         }

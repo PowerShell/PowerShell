@@ -35,7 +35,7 @@ namespace System.Management.Automation.Language
 
         internal static void CheckAst(Parser parser, ScriptBlockAst ast)
         {
-            SemanticChecks semanticChecker = new SemanticChecks(parser);
+            var semanticChecker = new SemanticChecks(parser);
             semanticChecker._scopeStack.Push(ast);
             ast.InternalVisit(semanticChecker);
             semanticChecker._scopeStack.Pop();
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Language
         {
             if (parameters.Count > 0)
             {
-                HashSet<string> parametersSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var parametersSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (var parameter in parameters)
                 {
                     string parameterName = parameter.Name.VariablePath.UserPath;
@@ -128,13 +128,13 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
         {
-            HashSet<string> names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             bool checkingAttributeOnClass = false;
-            AttributeTargets attributeTargets = default(AttributeTargets);
+            var attributeTargets = default(AttributeTargets);
 
             var parent = attributeAst.Parent;
-            TypeDefinitionAst typeDefinitionAst = parent as TypeDefinitionAst;
+            var typeDefinitionAst = parent as TypeDefinitionAst;
             if (typeDefinitionAst != null)
             {
                 checkingAttributeOnClass = true;
@@ -485,7 +485,7 @@ namespace System.Management.Automation.Language
         {
             IEnumerable<string> allowedCommands =
                 dataStatementAst.HasNonConstantAllowedCommand ? null : GetConstantDataStatementAllowedCommands(dataStatementAst);
-            RestrictedLanguageChecker checker = new RestrictedLanguageChecker(_parser, allowedCommands, null, false);
+            var checker = new RestrictedLanguageChecker(_parser, allowedCommands, null, false);
             dataStatementAst.Body.InternalVisit(checker);
 
             return AstVisitAction.Continue;
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Language
         /// <param name="reportError">The action called to report any errors.</param>
         private void CheckAssignmentTarget(ExpressionAst ast, bool simpleAssignment, Action<Ast> reportError)
         {
-            ArrayLiteralAst arrayLiteralAst = ast as ArrayLiteralAst;
+            var arrayLiteralAst = ast as ArrayLiteralAst;
             Ast errorAst = null;
             if (arrayLiteralAst != null)
             {
@@ -748,7 +748,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                ParenExpressionAst parenExpressionAst = ast as ParenExpressionAst;
+                var parenExpressionAst = ast as ParenExpressionAst;
                 if (parenExpressionAst != null)
                 {
                     ExpressionAst expr = parenExpressionAst.Pipeline.GetPureExpression();
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitHashtable(HashtableAst hashtableAst)
         {
-            HashSet<string> keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var entry in hashtableAst.KeyValuePairs)
             {
                 var keyStrAst = entry.Item1 as ConstantExpressionAst;
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation.Language
                 MarkAstParentsAsSuspicious(ast);
             }
 
-            TypeExpressionAst typeExpression = ast.Expression as TypeExpressionAst;
+            var typeExpression = ast.Expression as TypeExpressionAst;
 
             // If this is static access on a variable, it may be suspicious
             if (ast.Static && (typeExpression == null))
@@ -1360,7 +1360,7 @@ namespace System.Management.Automation.Language
             }
 
             DynamicKeyword keyword = dynamicKeywordStatementAst.Keyword;
-            HashtableAst hashtable = dynamicKeywordStatementAst.BodyExpression as HashtableAst;
+            var hashtable = dynamicKeywordStatementAst.BodyExpression as HashtableAst;
             if (hashtable != null)
             {
                 //
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation.Language
             ConfigurationDefinitionAst configAst = Ast.GetAncestorAst<ConfigurationDefinitionAst>(dynamicKeywordStatementAst);
             if (configAst != null)
             {
-                StringConstantExpressionAst nameAst = dynamicKeywordStatementAst.CommandElements[0] as StringConstantExpressionAst;
+                var nameAst = dynamicKeywordStatementAst.CommandElements[0] as StringConstantExpressionAst;
                 Diagnostics.Assert(nameAst != null, "nameAst should never be null");
                 if (!DscClassCache.SystemResourceNames.Contains(nameAst.Extent.Text.Trim()))
                 {
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation.Language
                                 var propertyType = propertyMemberAst.PropertyType;
                                 if (propertyType != null)
                                 {
-                                    TypeName typeName = propertyType.TypeName as TypeName;
+                                    var typeName = propertyType.TypeName as TypeName;
                                     if (typeName != null)
                                     {
                                         var type = typeName.GetReflectionType();
@@ -2261,7 +2261,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                StringBuilder argBuilder = new StringBuilder();
+                var argBuilder = new StringBuilder();
                 bool first = true;
 
                 foreach (string varName in _allowedVariables)

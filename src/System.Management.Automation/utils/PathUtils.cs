@@ -89,7 +89,7 @@ namespace System.Management.Automation
             {
                 // variable to track file open mode
                 // this is controlled by append/force parameters
-                FileMode mode = FileMode.Create;
+                var mode = FileMode.Create;
                 if (Append)
                 {
                     mode = FileMode.Append;
@@ -104,7 +104,7 @@ namespace System.Management.Automation
                 {
                     if (File.Exists(resolvedPath))
                     {
-                        FileInfo fInfo = new FileInfo(resolvedPath);
+                        var fInfo = new FileInfo(resolvedPath);
                         if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                         {
                             // remember to reset the read-only attribute later
@@ -142,7 +142,7 @@ namespace System.Management.Automation
                 if (NoClobber && File.Exists(resolvedPath))
                 {
                     // This probably happened because the file already exists
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         e, "NoClobber", ErrorCategory.ResourceExists, resolvedPath);
                     errorRecord.ErrorDetails = new ErrorDetails(
                         cmdlet,
@@ -176,7 +176,7 @@ namespace System.Management.Automation
 
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 e,
                 "FileOpenFailure",
                 ErrorCategory.OpenError,
@@ -255,7 +255,7 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 PSDriveInfo drive = null;
-                List<string> filePaths = new List<string>();
+                var filePaths = new List<string>();
 
                 if (isLiteralPath)
                 {
@@ -290,7 +290,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(path))
             {
-                CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(command);
+                var cmdletProviderContext = new CmdletProviderContext(command);
                 ProviderInfo provider = null;
                 PSDriveInfo drive = null;
                 path =
@@ -310,7 +310,7 @@ namespace System.Management.Automation
         {
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_ReadWriteFileNotFileSystemProvider, providerId);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewInvalidOperationException(),
                 "ReadWriteFileNotFileSystemProvider",
                 ErrorCategory.InvalidArgument,
@@ -324,7 +324,7 @@ namespace System.Management.Automation
         {
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_MultipleFilesNotSupported);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewInvalidOperationException(),
                 "ReadWriteMultipleFilesNotSupported",
                 ErrorCategory.InvalidArgument,
@@ -338,7 +338,7 @@ namespace System.Management.Automation
         {
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_DidNotResolveFile, filePath);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new FileNotFoundException(),
                 "FileOpenFailure",
                 ErrorCategory.OpenError,
@@ -378,8 +378,8 @@ namespace System.Management.Automation
                             CultureInfo.InvariantCulture, // directory name should be treated as culture-invariant
                             PathUtilsStrings.ExportPSSession_ErrorDirectoryExists,
                             directoryInfo.FullName);
-                        ErrorDetails details = new ErrorDetails(errorMessage);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        var details = new ErrorDetails(errorMessage);
+                        var errorRecord = new ErrorRecord(
                             new ArgumentException(details.Message),
                             "ExportProxyCommand_OutputDirectoryExists",
                             ErrorCategory.ResourceExists,
@@ -399,8 +399,8 @@ namespace System.Management.Automation
                     PathUtilsStrings.ExportPSSession_CannotCreateOutputDirectory,
                     moduleNameOrPath,
                     e.Message);
-                ErrorDetails details = new ErrorDetails(errorMessage);
-                ErrorRecord errorRecord = new ErrorRecord(
+                var details = new ErrorDetails(errorMessage);
+                var errorRecord = new ErrorRecord(
                     new ArgumentException(details.Message, e),
                     "ExportProxyCommand_CannotCreateOutputDirectory",
                     ErrorCategory.ResourceExists,
@@ -413,7 +413,7 @@ namespace System.Management.Automation
 
         internal static DirectoryInfo CreateTemporaryDirectory()
         {
-            DirectoryInfo temporaryDirectory = new DirectoryInfo(Path.GetTempPath());
+            var temporaryDirectory = new DirectoryInfo(Path.GetTempPath());
             DirectoryInfo moduleDirectory;
             do
             {

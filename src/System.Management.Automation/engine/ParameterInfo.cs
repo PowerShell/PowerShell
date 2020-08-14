@@ -121,7 +121,7 @@ namespace System.Management.Automation
                 attributeMetadata != null,
                 "The compiled attribute collection should never be null");
 
-            Collection<Attribute> processedAttributes = new Collection<Attribute>();
+            var processedAttributes = new Collection<Attribute>();
 
             foreach (var attribute in attributeMetadata)
             {

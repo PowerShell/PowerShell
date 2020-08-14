@@ -62,7 +62,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            var proxys = new List<CimSessionProxy>();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:
@@ -134,7 +134,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            CimRemoveCimInstanceContext removeContext = context as CimRemoveCimInstanceContext;
+            var removeContext = context as CimRemoveCimInstanceContext;
             Debug.Assert(removeContext != null, "CimRemoveCimInstance::RemoveCimInstance should has CimRemoveCimInstanceContext != NULL.");
 
             CimSessionProxy proxy = CreateCimSessionProxy(removeContext.Proxy);

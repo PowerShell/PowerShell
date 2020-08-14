@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
             // This dictionary has the list of modules to be removed.
             // Key - Module specified as a parameter to Remove-Module
             // Values - List of all modules that need to be removed for this key (includes all nested modules of this module)
-            Dictionary<PSModuleInfo, List<PSModuleInfo>> modulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
+            var modulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
             foreach (var m in Context.Modules.GetModules(_name, false))
             {
@@ -107,13 +107,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add any of the child modules of a manifests to the list of modules to remove...
-            Dictionary<PSModuleInfo, List<PSModuleInfo>> nestedModules = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
+            var nestedModules = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
             foreach (var entry in modulesToRemove)
             {
                 var module = entry.Key;
                 if (module.NestedModules != null && module.NestedModules.Count > 0)
                 {
-                    List<PSModuleInfo> nestedModulesWithNoCircularReference = new List<PSModuleInfo>();
+                    var nestedModulesWithNoCircularReference = new List<PSModuleInfo>();
                     GetAllNestedModules(module, ref nestedModulesWithNoCircularReference);
                     nestedModules.Add(module, nestedModulesWithNoCircularReference);
                 }
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
             // dont add duplicates to our original modulesToRemove list..so that the
             // evaluation loop below will not duplicate in case of WriteError and WriteWarning.
             // A global list of modules to be removed is maintained for this purpose
-            HashSet<PSModuleInfo> globalListOfModules = new HashSet<PSModuleInfo>(new PSModuleInfoComparer());
+            var globalListOfModules = new HashSet<PSModuleInfo>(new PSModuleInfoComparer());
 
             if (nestedModules.Count > 0)
             {
@@ -144,13 +144,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check the list of modules to remove and exclude those that cannot or should not be removed
-            Dictionary<PSModuleInfo, List<PSModuleInfo>> actualModulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
+            var actualModulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
             // We want to remove the modules starting from the nested modules
             // If we start from the parent module, the nested modules do not get removed and are left orphaned in the parent modules's sessionstate.
             foreach (var entry in modulesToRemove)
             {
-                List<PSModuleInfo> moduleList = new List<PSModuleInfo>();
+                var moduleList = new List<PSModuleInfo>();
                 for (int i = entry.Value.Count - 1; i >= 0; i--)
                 {
                     PSModuleInfo module = entry.Value[i];
@@ -158,8 +158,8 @@ namespace Microsoft.PowerShell.Commands
                     if (module.AccessMode == ModuleAccessMode.Constant)
                     {
                         string message = StringUtil.Format(Modules.ModuleIsConstant, module.Name);
-                        InvalidOperationException moduleNotRemoved = new InvalidOperationException(message);
-                        ErrorRecord er = new ErrorRecord(moduleNotRemoved, "Modules_ModuleIsConstant",
+                        var moduleNotRemoved = new InvalidOperationException(message);
+                        var er = new ErrorRecord(moduleNotRemoved, "Modules_ModuleIsConstant",
                                                          ErrorCategory.PermissionDenied, module);
                         WriteError(er);
                         continue;
@@ -176,8 +176,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            InvalidOperationException moduleNotRemoved = new InvalidOperationException(message);
-                            ErrorRecord er = new ErrorRecord(moduleNotRemoved, "Modules_ModuleIsReadOnly",
+                            var moduleNotRemoved = new InvalidOperationException(message);
+                            var er = new ErrorRecord(moduleNotRemoved, "Modules_ModuleIsReadOnly",
                                                              ErrorCategory.PermissionDenied, module);
                             WriteError(er);
                         }
@@ -247,8 +247,8 @@ namespace Microsoft.PowerShell.Commands
                             if (requiredBy.Count > 0)
                             {
                                 string message = StringUtil.Format(Modules.ModuleIsRequired, module.Name, requiredBy[0].Name);
-                                InvalidOperationException moduleNotRemoved = new InvalidOperationException(message);
-                                ErrorRecord er = new ErrorRecord(moduleNotRemoved, "Modules_ModuleIsRequired",
+                                var moduleNotRemoved = new InvalidOperationException(message);
+                                var er = new ErrorRecord(moduleNotRemoved, "Modules_ModuleIsRequired",
                                                                  ErrorCategory.PermissionDenied, module);
                                 WriteError(er);
                                 continue;
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void GetAllNestedModules(PSModuleInfo module, ref List<PSModuleInfo> nestedModulesWithNoCircularReference)
         {
-            List<PSModuleInfo> nestedModules = new List<PSModuleInfo>();
+            var nestedModules = new List<PSModuleInfo>();
             if (module.NestedModules != null && module.NestedModules.Count > 0)
             {
                 foreach (var nestedModule in module.NestedModules)
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private Dictionary<PSModuleInfo, List<PSModuleInfo>> GetRequiredDependencies()
         {
-            Dictionary<PSModuleInfo, List<PSModuleInfo>> requiredDependencies = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
+            var requiredDependencies = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
             foreach (PSModuleInfo module in Context.Modules.GetModules(new string[] { "*" }, false))
             {
@@ -370,8 +370,8 @@ namespace Microsoft.PowerShell.Commands
                 if (!isEngineModule && (!hasWildcards || _moduleInfo.Length != 0 || (FullyQualifiedName != null && FullyQualifiedName.Length != 0)))
                 {
                     string message = StringUtil.Format(Modules.NoModulesRemoved);
-                    InvalidOperationException invalidOp = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(invalidOp, "Modules_NoModulesRemoved",
+                    var invalidOp = new InvalidOperationException(message);
+                    var er = new ErrorRecord(invalidOp, "Modules_NoModulesRemoved",
                         ErrorCategory.ResourceUnavailable, null);
                     WriteError(er);
                 }

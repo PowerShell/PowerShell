@@ -1412,7 +1412,7 @@ namespace System.Management.Automation
                                         var namedBlockAst = Ast.GetAncestorAst<NamedBlockAst>(keywordAst);
                                         if (namedBlockAst != null)
                                         {
-                                            List<string> allResources = new List<string>();
+                                            var allResources = new List<string>();
                                             foreach (var statementAst in namedBlockAst.Statements)
                                             {
                                                 var dynamicKeywordAst = statementAst as DynamicKeywordStatementAst;
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation
                                                 {
                                                     if (!string.IsNullOrEmpty(dynamicKeywordAst.ElementName))
                                                     {
-                                                        StringBuilder sb = new StringBuilder("[", 50);
+                                                        var sb = new StringBuilder("[", 50);
                                                         sb.Append(dynamicKeywordAst.Keyword.Keyword);
                                                         sb.Append("]");
                                                         sb.Append(dynamicKeywordAst.ElementName);
@@ -1700,7 +1700,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    UsingStatementAst usingState = strConst.Parent as UsingStatementAst;
+                    var usingState = strConst.Parent as UsingStatementAst;
                     if (usingState != null)
                     {
                         completionContext.ReplacementIndex = strConst.Extent.StartOffset;
@@ -1896,7 +1896,7 @@ namespace System.Management.Automation
                 return CompletionCompleters.CompleteCommandArgument(completionContext);
             }
 
-            TokenKind memberOperator = TokenKind.Unknown;
+            var memberOperator = TokenKind.Unknown;
             bool isMemberCompletion = (lastAst.Parent is MemberExpressionAst);
             bool isStatic = isMemberCompletion && ((MemberExpressionAst)lastAst.Parent).Static;
             bool isWildcard = false;
@@ -2042,7 +2042,7 @@ namespace System.Management.Automation
             Type attributeType = null;
             string argName = string.Empty;
             Ast argAst = completionContext.RelatedAsts.Find(ast => ast is NamedAttributeArgumentAst);
-            NamedAttributeArgumentAst namedArgAst = argAst as NamedAttributeArgumentAst;
+            var namedArgAst = argAst as NamedAttributeArgumentAst;
             if (argAst != null && namedArgAst != null)
             {
                 attributeType = ((AttributeAst)namedArgAst.Parent).TypeName.GetReflectionAttributeType();
@@ -2053,7 +2053,7 @@ namespace System.Management.Automation
             else
             {
                 Ast astAtt = completionContext.RelatedAsts.Find(ast => ast is AttributeAst);
-                AttributeAst attAst = astAtt as AttributeAst;
+                var attAst = astAtt as AttributeAst;
                 if (astAtt != null && attAst != null)
                 {
                     attributeType = attAst.TypeName.GetReflectionAttributeType();
@@ -2063,7 +2063,7 @@ namespace System.Management.Automation
             if (attributeType != null)
             {
                 PropertyInfo[] propertyInfos = attributeType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                List<CompletionResult> result = new List<CompletionResult>();
+                var result = new List<CompletionResult>();
                 foreach (PropertyInfo property in propertyInfos)
                 {
                     // Ignore getter-only properties, including 'TypeId' (all attributes inherit it).

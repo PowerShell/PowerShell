@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Object to dispose when exiting the frame.</returns>
         protected IDisposable StackFrame(XmlNode n, int index)
         {
-            XmlLoaderStackFrame sf = new XmlLoaderStackFrame(this, n, index);
+            var sf = new XmlLoaderStackFrame(this, n, index);
 
             _executionStack.Push(sf);
             if (_logStackActivity)
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (match && !allowAttributes)
             {
-                XmlElement e = n as XmlElement;
+                var e = n as XmlElement;
                 if (e != null && e.Attributes.Count > 0)
                 {
                     // Error at XPath {0} in file {1}: The XML Element {2} does not allow attributes.
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ReportLogEntryHelper(string message, XmlLoaderLoggerEntry.EntryType entryType, bool failToLoadFile = false)
         {
             string currentPath = ComputeCurrentXPath();
-            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry();
+            var entry = new XmlLoaderLoggerEntry();
 
             entry.entryType = entryType;
             entry.filePath = this.FilePath;
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we have to log a last error and then bail
                     if (_maxNumberOfErrors > 1)
                     {
-                        XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry();
+                        var lastEntry = new XmlLoaderLoggerEntry();
 
                         lastEntry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
                         lastEntry.filePath = this.FilePath;
@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // NOTE: this exception is an internal one, and it is caught
                     // internally by the calling code.
-                    TooManyErrorsException e = new TooManyErrorsException();
+                    var e = new TooManyErrorsException();
 
                     e.errorCount = _currentErrorCount;
                     throw e;
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeName"></param>
         protected void ReportErrorForLoadingFromObjectModel(string message, string typeName)
         {
-            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry();
+            var entry = new XmlLoaderLoggerEntry();
 
             entry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
             entry.message = message;
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we have to log a last error and then bail
                 if (_maxNumberOfErrors > 1)
                 {
-                    XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry();
+                    var lastEntry = new XmlLoaderLoggerEntry();
 
                     lastEntry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
                     lastEntry.message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrorsInFormattingData, typeName);
@@ -580,7 +580,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // NOTE: this exception is an internal one, and it is caught
                 // internally by the calling code.
-                TooManyErrorsException e = new TooManyErrorsException();
+                var e = new TooManyErrorsException();
 
                 e.errorCount = _currentErrorCount;
                 throw e;
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected string ComputeCurrentXPath()
         {
-            StringBuilder path = new StringBuilder();
+            var path = new StringBuilder();
             foreach (XmlLoaderStackFrame sf in _executionStack)
             {
                 path.Insert(0, "/");
@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected XmlDocument LoadXmlDocumentFromFileLoadingInfo(AuthorizationManager authorizationManager, PSHost host, out bool isFullyTrusted)
         {
             // get file contents
-            ExternalScriptInfo ps1xmlInfo = new ExternalScriptInfo(FilePath, FilePath);
+            var ps1xmlInfo = new ExternalScriptInfo(FilePath, FilePath);
             string fileContents = ps1xmlInfo.ScriptContents;
 
             isFullyTrusted = false;
@@ -696,7 +696,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                DatabaseLoadingInfo info = new DatabaseLoadingInfo();
+                var info = new DatabaseLoadingInfo();
                 info.filePath = _loadingInfo.filePath;
                 info.fileDirectory = _loadingInfo.fileDirectory;
                 info.isFullyTrusted = _loadingInfo.isFullyTrusted;

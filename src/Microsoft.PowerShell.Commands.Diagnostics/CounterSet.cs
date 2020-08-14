@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         {
             get
             {
-                StringCollection retColl = new StringCollection();
+                var retColl = new StringCollection();
                 foreach (string counterName in this.CounterInstanceMapping.Keys)
                 {
                     string path;
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         {
             get
             {
-                StringCollection retColl = new StringCollection();
+                var retColl = new StringCollection();
                 foreach (string counterName in CounterInstanceMapping.Keys)
                 {
                     foreach (string instanceName in CounterInstanceMapping[counterName])

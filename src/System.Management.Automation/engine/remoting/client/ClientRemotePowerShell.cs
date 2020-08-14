@@ -297,7 +297,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
 
             // use the method from the RemotePowerShell to indeed execute this call
-            ClientRemotePowerShell remotePowerShell = (ClientRemotePowerShell)sender;
+            var remotePowerShell = (ClientRemotePowerShell)sender;
 
             remotePowerShell.ExecuteHostCall(hostcall);
         }
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     bool terminateSession = false;
                     if (stateInfo.State == PSInvocationState.Failed)
                     {
-                        PSRemotingTransportException remotingTransportException = stateInfo.Reason as PSRemotingTransportException;
+                        var remotingTransportException = stateInfo.Reason as PSRemotingTransportException;
                         terminateSession = (remotingTransportException != null) &&
                                            (remotingTransportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST);
                     }
@@ -467,7 +467,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="ex">Exception.</param>
         private void CheckAndCloseRunspaceAfterStop(Exception ex)
         {
-            PSRemotingTransportException transportException = ex as PSRemotingTransportException;
+            var transportException = ex as PSRemotingTransportException;
             if (transportException != null &&
                 (transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_CONNECT ||
                  transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_COMPLETE ||
@@ -476,7 +476,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 object rsObject = shell.GetRunspaceConnection();
                 if (rsObject is Runspace)
                 {
-                    Runspace runspace = (Runspace)rsObject;
+                    var runspace = (Runspace)rsObject;
                     if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                     {
                         try
@@ -489,7 +489,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
                 else if (rsObject is RunspacePool)
                 {
-                    RunspacePool runspacePool = (RunspacePool)rsObject;
+                    var runspacePool = (RunspacePool)rsObject;
                     if (runspacePool.RunspacePoolStateInfo.State == RunspacePoolState.Opened)
                     {
                         try
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                     case RemotingDataType.PowerShellProgress:
                         {
-                            ProgressRecord progress = (ProgressRecord)LanguagePrimitives.ConvertTo(infoMessage.Message,
+                            var progress = (ProgressRecord)LanguagePrimitives.ConvertTo(infoMessage.Message,
                                 typeof(ProgressRecord), System.Globalization.CultureInfo.InvariantCulture);
                             informationalBuffers.AddProgress(progress);
                         }
@@ -576,7 +576,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     {
                         foreach (RemoteHostCall hostcall in prerequisiteCalls)
                         {
-                            RemoteDataEventArgs<RemoteHostCall> args =
+                            var args =
                                 new RemoteDataEventArgs<RemoteHostCall>(hostcall);
 
                             HostCallReceived.SafeInvoke(this, args);
@@ -644,7 +644,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
-                    RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
+                    var sessionEventArgs = args as RemoteSessionStateEventArgs;
                     Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
@@ -838,7 +838,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 case ConnectionStatus.InternalErrorAbort:
                     {
                         string msg = StringUtil.Format(RemotingErrorIdStrings.RCInternalError, this.computerName);
-                        RuntimeException reason = new RuntimeException(msg);
+                        var reason = new RuntimeException(msg);
                         errorRecord = new ErrorRecord(reason,
                             PSConnectionRetryStatusEventArgs.FQIDNetworkOrDisconnectFailed,
                             ErrorCategory.InvalidOperation, this);
@@ -861,7 +861,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (warningRecord != null)
             {
-                RemotingWarningRecord remotingWarningRecord = new RemotingWarningRecord(
+                var remotingWarningRecord = new RemotingWarningRecord(
                     warningRecord,
                     new OriginInfo(this.computerName, this.InstanceId));
 
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         new InformationalMessage(remotingWarningRecord, RemotingDataType.PowerShellWarning)));
 
                 // Write warning to host.
-                RemoteHostCall writeWarning = new RemoteHostCall(
+                var writeWarning = new RemoteHostCall(
                     -100,
                     RemoteHostMethodId.WriteWarningLine,
                     new object[] { warningRecord.Message });
@@ -887,7 +887,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (errorRecord != null)
             {
-                RemotingErrorRecord remotingErrorRecord = new RemotingErrorRecord(
+                var remotingErrorRecord = new RemotingErrorRecord(
                     errorRecord,
                     new OriginInfo(this.computerName, this.InstanceId));
 

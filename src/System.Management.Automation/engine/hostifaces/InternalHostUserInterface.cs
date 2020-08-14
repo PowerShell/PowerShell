@@ -54,7 +54,7 @@ namespace System.Management.Automation.Internal.Host
         ThrowPromptNotInteractive(string promptMessage)
         {
             string message = StringUtil.Format(HostInterfaceExceptionsStrings.HostFunctionPromptNotImplemented, promptMessage);
-            HostException e = new HostException(
+            var e = new HostException(
                 message,
                 null,
                 "HostFunctionNotImplemented",
@@ -108,7 +108,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -393,7 +393,7 @@ namespace System.Management.Automation.Internal.Host
                         errorMsg = InternalHostUserInterfaceStrings.WriteDebugLineStoppedError;
                         errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(errorMsg),
                             "UserStopRequest", ErrorCategory.OperationStopped, null);
-                        ActionPreferenceStopException e = new ActionPreferenceStopException(errorRecord);
+                        var e = new ActionPreferenceStopException(errorRecord);
                         // We cannot call ThrowTerminatingError since this is not a cmdlet or provider
                         throw e;
                     }
@@ -409,7 +409,7 @@ namespace System.Management.Automation.Internal.Host
                     errorMsg = InternalHostUserInterfaceStrings.WriteDebugLineStoppedError;
                     errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(errorMsg),
                         "ActionPreferenceStop", ErrorCategory.OperationStopped, null);
-                    ActionPreferenceStopException ense = new ActionPreferenceStopException(errorRecord);
+                    var ense = new ActionPreferenceStopException(errorRecord);
                     // We cannot call ThrowTerminatingError since this is not a cmdlet or provider
                     throw ense;
                 default:
@@ -478,7 +478,7 @@ namespace System.Management.Automation.Internal.Host
 
             bool shouldContinue = false;
 
-            Collection<ChoiceDescription> choices = new Collection<ChoiceDescription>();
+            var choices = new Collection<ChoiceDescription>();
 
             choices.Add(new ChoiceDescription(InternalHostUserInterfaceStrings.ShouldContinueYesLabel, InternalHostUserInterfaceStrings.ShouldContinueYesHelp));
             choices.Add(new ChoiceDescription(InternalHostUserInterfaceStrings.ShouldContinueYesToAllLabel, InternalHostUserInterfaceStrings.ShouldContinueYesToAllHelp));
@@ -755,7 +755,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -798,7 +798,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -840,7 +840,7 @@ namespace System.Management.Automation.Internal.Host
                 ThrowPromptNotInteractive(message);
             }
 
-            IHostUISupportsMultipleChoiceSelection hostForMultipleChoices =
+            var hostForMultipleChoices =
                 _externalUI as IHostUISupportsMultipleChoiceSelection;
 
             Collection<int> result = null;
@@ -863,7 +863,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -907,7 +907,7 @@ namespace System.Management.Automation.Internal.Host
                     InternalHostUserInterfaceStrings.EmptyChoicesError, "choices");
             }
 
-            Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
+            var defaultChoiceKeys = new Dictionary<int, bool>();
             if (defaultChoices != null)
             {
                 foreach (int defaultChoice in defaultChoices)
@@ -926,7 +926,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // Construct the caption + message + list of choices + default choices
-            Text.StringBuilder choicesMessage = new Text.StringBuilder();
+            var choicesMessage = new Text.StringBuilder();
             char newLine = '\n';
             if (!string.IsNullOrEmpty(caption))
             {
@@ -961,7 +961,7 @@ namespace System.Management.Automation.Internal.Host
             if (defaultChoiceKeys.Count > 0)
             {
                 string prepend = string.Empty;
-                Text.StringBuilder defaultChoicesBuilder = new Text.StringBuilder();
+                var defaultChoicesBuilder = new Text.StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {
                     string defaultStr = hotkeysAndPlainLabels[0, defaultChoice];
@@ -991,7 +991,7 @@ namespace System.Management.Automation.Internal.Host
 
             string messageToBeDisplayed = choicesMessage.ToString() + defaultPrompt + newLine;
             // read choices from the user
-            Collection<int> result = new Collection<int>();
+            var result = new Collection<int>();
             int choicesSelected = 0;
             while (true)
             {

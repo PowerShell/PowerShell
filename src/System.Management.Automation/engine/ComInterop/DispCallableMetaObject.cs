@@ -39,8 +39,8 @@ namespace System.Management.Automation.ComInterop
             if (target.TryGetMemberMethod(name, out ComMethodDesc method) ||
                 target.TryGetMemberMethodExplicit(name, out method))
             {
-                List<ParameterExpression> temps = new List<ParameterExpression>();
-                List<Expression> initTemps = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var initTemps = new List<Expression>();
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
                 return BindComInvoke(method, args, callInfo, isByRef, temps, initTemps);
@@ -57,13 +57,13 @@ namespace System.Management.Automation.ComInterop
             if (target.TryGetPropertySetter(name, out ComMethodDesc method, value.LimitType, holdsNull) ||
                 target.TryGetPropertySetterExplicit(name, out method, value.LimitType, holdsNull))
             {
-                List<ParameterExpression> temps = new List<ParameterExpression>();
-                List<Expression> initTemps = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var initTemps = new List<Expression>();
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref indexes, temps, initTemps);
                 isByRef = isByRef.AddLast(false);
                 // Convert the value to the target type
-                DynamicMetaObject updatedValue = new DynamicMetaObject(
+                var updatedValue = new DynamicMetaObject(
                     value.CastOrConvertMethodArgument(
                         value.LimitType,
                         name,

@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
-                List<PSTypeName> filteredParameterTypes = new List<PSTypeName>(value.Length);
+                var filteredParameterTypes = new List<PSTypeName>(value.Length);
                 for (int i = 0; i < value.Length; i++)
                 {
                     PSTypeName ptn = value[i];
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
             if (_isModuleSpecified && _isFullyQualifiedModuleSpecified)
             {
                 string errMsg = string.Format(CultureInfo.InvariantCulture, SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                var error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
 
@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _commandType = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Alias | CommandTypes.Configuration;
 
-            Collection<string> commandNames = new Collection<string>();
+            var commandNames = new Collection<string>();
             commandNames.Add("*");
             AccumulateMatchingCommands(commandNames);
         }
@@ -726,7 +726,7 @@ namespace Microsoft.PowerShell.Commands
                 // Get the noun and verb to check...
                 string verb;
                 string noun;
-                CmdletInfo cmdlet = command as CmdletInfo;
+                var cmdlet = command as CmdletInfo;
                 if (cmdlet != null)
                 {
                     verb = cmdlet.Verb;
@@ -774,7 +774,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // First set the search options
 
-            SearchResolutionOptions options = SearchResolutionOptions.None;
+            var options = SearchResolutionOptions.None;
             if (All)
             {
                 options = SearchResolutionOptions.SearchAllScopes;
@@ -913,7 +913,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!resultFound && !isPattern)
                         {
-                            CommandNotFoundException e =
+                            var e =
                                 new CommandNotFoundException(
                                     commandName,
                                     null,
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool FindCommandForName(SearchResolutionOptions options, string commandName, bool isPattern, bool emitErrors, ref int currentCount, out bool isDuplicate)
         {
-            CommandSearcher searcher =
+            var searcher =
                     new CommandSearcher(
                         commandName,
                         options,
@@ -1105,28 +1105,28 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                ApplicationInfo appInfo = info as ApplicationInfo;
+                var appInfo = info as ApplicationInfo;
                 if (appInfo != null)
                 {
                     key = appInfo.Path;
                     break;
                 }
 
-                CmdletInfo cmdletInfo = info as CmdletInfo;
+                var cmdletInfo = info as CmdletInfo;
                 if (cmdletInfo != null)
                 {
                     key = cmdletInfo.FullName;
                     break;
                 }
 
-                ScriptInfo scriptInfo = info as ScriptInfo;
+                var scriptInfo = info as ScriptInfo;
                 if (scriptInfo != null)
                 {
                     key = scriptInfo.Definition;
                     break;
                 }
 
-                ExternalScriptInfo externalScriptInfo = info as ExternalScriptInfo;
+                var externalScriptInfo = info as ExternalScriptInfo;
                 if (externalScriptInfo != null)
                 {
                     key = externalScriptInfo.Path;
@@ -1533,7 +1533,7 @@ namespace Microsoft.PowerShell.Commands
         // Converts to PSObject containing ShowCommand information.
         private static PSObject ConvertToShowCommandInfo(CommandInfo cmdInfo)
         {
-            PSObject showCommandInfo = new PSObject();
+            var showCommandInfo = new PSObject();
             showCommandInfo.Properties.Add(new PSNoteProperty("Name", cmdInfo.Name));
             showCommandInfo.Properties.Add(new PSNoteProperty("ModuleName", cmdInfo.ModuleName));
             showCommandInfo.Properties.Add(new PSNoteProperty("Module", GetModuleInfo(cmdInfo)));
@@ -1546,7 +1546,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static PSObject GetModuleInfo(CommandInfo cmdInfo)
         {
-            PSObject moduleInfo = new PSObject();
+            var moduleInfo = new PSObject();
             string moduleName = (cmdInfo.Module != null) ? cmdInfo.Module.Name : string.Empty;
             moduleInfo.Properties.Add(new PSNoteProperty("Name", moduleName));
 
@@ -1572,11 +1572,11 @@ namespace Microsoft.PowerShell.Commands
                 return Array.Empty<PSObject>();
             }
 
-            List<PSObject> returnParameterSets = new List<PSObject>(cmdInfo.ParameterSets.Count);
+            var returnParameterSets = new List<PSObject>(cmdInfo.ParameterSets.Count);
 
             foreach (CommandParameterSetInfo parameterSetInfo in parameterSets)
             {
-                PSObject parameterSetObj = new PSObject();
+                var parameterSetObj = new PSObject();
                 parameterSetObj.Properties.Add(new PSNoteProperty("Name", parameterSetInfo.Name));
                 parameterSetObj.Properties.Add(new PSNoteProperty("IsDefault", parameterSetInfo.IsDefault));
                 parameterSetObj.Properties.Add(new PSNoteProperty("Parameters", GetParameterInfo(parameterSetInfo.Parameters)));
@@ -1589,10 +1589,10 @@ namespace Microsoft.PowerShell.Commands
 
         private static PSObject[] GetParameterInfo(ReadOnlyCollection<CommandParameterInfo> parameters)
         {
-            List<PSObject> parameterObjs = new List<PSObject>(parameters.Count);
+            var parameterObjs = new List<PSObject>(parameters.Count);
             foreach (CommandParameterInfo parameter in parameters)
             {
-                PSObject parameterObj = new PSObject();
+                var parameterObj = new PSObject();
                 parameterObj.Properties.Add(new PSNoteProperty("Name", parameter.Name));
                 parameterObj.Properties.Add(new PSNoteProperty("IsMandatory", parameter.IsMandatory));
                 parameterObj.Properties.Add(new PSNoteProperty("ValueFromPipeline", parameter.ValueFromPipeline));
@@ -1619,7 +1619,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static PSObject GetParameterType(Type parameterType)
         {
-            PSObject returnParameterType = new PSObject();
+            var returnParameterType = new PSObject();
             bool isEnum = parameterType.IsEnum;
             bool isArray = parameterType.IsArray;
             returnParameterType.Properties.Add(new PSNoteProperty("FullName", parameterType.FullName));
@@ -1671,7 +1671,7 @@ namespace Microsoft.PowerShell.Commands
                 ps.AddParameter("Module", fakeBoundParameters["Module"]);
             }
 
-            HashSet<string> nouns = new HashSet<string>();
+            var nouns = new HashSet<string>();
             var results = ps.Invoke<CommandInfo>();
             foreach (var result in results)
             {

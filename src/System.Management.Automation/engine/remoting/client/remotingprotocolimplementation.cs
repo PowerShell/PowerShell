@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
 
             _transportManager.RobustConnectionNotification += HandleRobustConnectionNotification;
 
-            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 // only WSMan transport supports redirection
@@ -154,7 +154,7 @@ namespace System.Management.Automation.Remoting
         private void HandleDisconnectComplete(object sender, EventArgs args)
         {
             // Set statemachine event
-            RemoteSessionStateMachineEventArgs disconnectCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectCompleted);
+            var disconnectCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectCompleted);
             StateMachine.RaiseEvent(disconnectCompletedArg);
         }
         #endregion disconnect
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Remoting
         private void HandleReconnectComplete(object sender, EventArgs args)
         {
             // Set statemachine event
-            RemoteSessionStateMachineEventArgs reconnectCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ReconnectCompleted);
+            var reconnectCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ReconnectCompleted);
             StateMachine.RaiseEvent(reconnectCompletedArg);
         }
         #endregion reconnect
@@ -227,7 +227,7 @@ namespace System.Management.Automation.Remoting
         {
             // This event gets raised only when the connection is closed successfully.
 
-            RemoteSessionStateMachineEventArgs closeCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CloseCompleted);
+            var closeCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CloseCompleted);
             _stateMachine.RaiseEvent(closeCompletedArg);
         }
 
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Remoting
             // occur when the transport NegotiationReceived arrives too soon, breaking the session.
             // This race condition was observed for OutOfProc transport when reusing the OutOfProc process.
             // this will change StateMachine to NegotiationSent.
-            RemoteSessionStateMachineEventArgs negotiationSendCompletedArg =
+            var negotiationSendCompletedArg =
                 new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendCompleted);
             _stateMachine.RaiseEvent(negotiationSendCompletedArg);
 
@@ -300,7 +300,7 @@ namespace System.Management.Automation.Remoting
             // once session is established.. start receiving data (if not already done and only apples to wsmanclientsessionTM)
             if (arg.SessionStateInfo.State == RemoteSessionState.Established)
             {
-                WSManClientSessionTransportManager tm = _transportManager as WSManClientSessionTransportManager;
+                var tm = _transportManager as WSManClientSessionTransportManager;
                 if (tm != null)
                 {
                     tm.AdjustForProtocolVariations(_session.ServerProtocolVersion);
@@ -467,7 +467,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(e != null, "HandleTransportError expects non-null eventargs");
             // handle uri redirections
-            PSRemotingTransportRedirectException redirectException = e.Exception as PSRemotingTransportRedirectException;
+            var redirectException = e.Exception as PSRemotingTransportRedirectException;
             if ((redirectException != null) && (_maxUriRedirectionCount > 0))
             {
                 Exception exception = null;
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Remoting
                 // if we are here, there must be an exception constructing a uri
                 if (exception != null)
                 {
-                    PSRemotingTransportException newException =
+                    var newException =
                         new PSRemotingTransportException(PSRemotingErrorId.RedirectedURINotWellFormatted, RemotingErrorIdStrings.RedirectedURINotWellFormatted,
                             _session.Context.RemoteAddress.OriginalString,
                             redirectException.RedirectLocation);
@@ -499,7 +499,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            RemoteSessionEvent sessionEvent = RemoteSessionEvent.ConnectFailed;
+            var sessionEvent = RemoteSessionEvent.ConnectFailed;
 
             switch (e.ReportingTransportMethod)
             {
@@ -525,7 +525,7 @@ namespace System.Management.Automation.Remoting
                     break;
             }
 
-            RemoteSessionStateMachineEventArgs errorArgs =
+            var errorArgs =
                 new RemoteSessionStateMachineEventArgs(sessionEvent, e.Exception);
             _stateMachine.RaiseEvent(errorArgs);
         }
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Remoting
                     // event is raised in state machine which verified that state is
                     // suitable for accepting these messages. if state is suitable statemachine
                     // will call DoMessageForwading which will forward the messages appropriately
-                    RemoteSessionStateMachineEventArgs msgRcvArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.MessageReceived, null);
+                    var msgRcvArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.MessageReceived, null);
                     if (StateMachine.CanByPassRaiseEvent(msgRcvArg))
                     {
                         ProcessNonSessionMessages(dataArg.ReceivedData);
@@ -624,8 +624,8 @@ namespace System.Management.Automation.Remoting
             switch (dataType)
             {
                 case RemotingDataType.CloseSession:
-                    PSRemotingDataStructureException reasonOfClose = new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerRequestedToCloseSession);
-                    RemoteSessionStateMachineEventArgs closeSessionArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, reasonOfClose);
+                    var reasonOfClose = new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerRequestedToCloseSession);
+                    var closeSessionArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, reasonOfClose);
                     _stateMachine.RaiseEvent(closeSessionArg);
                     break;
 
@@ -643,11 +643,11 @@ namespace System.Management.Automation.Remoting
                             dse.Message, PSVersionInfo.GitCommitId, RemotingConstants.ProtocolVersion);
                     }
 
-                    RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
+                    var capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
                     capabilityArg.RemoteSessionCapability = capability;
                     _stateMachine.RaiseEvent(capabilityArg);
 
-                    RemoteSessionNegotiationEventArgs negotiationArg = new RemoteSessionNegotiationEventArgs(capability);
+                    var negotiationArg = new RemoteSessionNegotiationEventArgs(capability);
                     NegotiationReceived.SafeInvoke(this, negotiationArg);
                     break;
 

@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
             if (names == null)
                 return "@()";
 
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
 
             int offset = 15;
             bool first = true;
@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted list.</returns>
         private string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             result.Append("@(");
 
             if (moduleSpecs != null)
@@ -662,7 +662,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    ModuleSpecification moduleSpecification = (ModuleSpecification)
+                    var moduleSpecification = (ModuleSpecification)
                         LanguagePrimitives.ConvertTo(
                             spec,
                             typeof(ModuleSpecification),
@@ -735,7 +735,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The quoted list.</returns>
         private string QuoteFiles(IEnumerable names, StreamWriter streamWriter)
         {
-            List<string> resolvedPaths = new List<string>();
+            var resolvedPaths = new List<string>();
 
             if (names != null)
             {
@@ -837,7 +837,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<string> TryResolveFilePath(string filePath)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
             ProviderInfo provider = null;
             SessionState sessionState = Context.SessionState;
             try
@@ -920,8 +920,8 @@ namespace Microsoft.PowerShell.Commands
             if (ProcessorArchitecture == ProcessorArchitecture.IA64)
             {
                 string message = StringUtil.Format(Modules.InvalidProcessorArchitectureInManifest, ProcessorArchitecture);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidProcessorArchitectureInManifest",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "Modules_InvalidProcessorArchitectureInManifest",
                     ErrorCategory.InvalidArgument, ProcessorArchitecture);
                 ThrowTerminatingError(er);
             }
@@ -933,8 +933,8 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 string message = StringUtil.Format(Modules.InvalidModuleManifestPath, _path);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath",
                     ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    StringBuilder result = new StringBuilder();
+                    var result = new StringBuilder();
 
                     // Insert the formatted manifest header...
                     result.Append(ManifestComment(string.Empty, streamWriter));

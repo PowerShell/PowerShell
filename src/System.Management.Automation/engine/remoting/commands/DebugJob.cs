@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandleJobStateChangedEvent(object sender, JobStateEventArgs stateChangedArgs)
         {
-            Job job = sender as Job;
+            var job = sender as Job;
             if (job.IsFinishedState(stateChangedArgs.JobStateInfo.State))
             {
                 _debugCollection.Complete();
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_debugCollection.IsOpen)
             {
-                PSStreamObject streamObject = dataAddingArgs.ItemAdded as PSStreamObject;
+                var streamObject = dataAddingArgs.ItemAdded as PSStreamObject;
                 if (streamObject != null)
                 {
                     try
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
         private Job GetJobByName(string name)
         {
             // Search jobs in job repository.
-            List<Job> jobs1 = new List<Job>();
+            var jobs1 = new List<Job>();
             WildcardPattern pattern =
                 WildcardPattern.Get(name, WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
 
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         private Job GetJobById(int id)
         {
             // Search jobs in job repository.
-            List<Job> jobs1 = new List<Job>();
+            var jobs1 = new List<Job>();
             foreach (Job job in JobRepository.Jobs)
             {
                 if (job.Id == id)

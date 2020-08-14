@@ -367,7 +367,7 @@ namespace System.Management.Automation
         {
             get
             {
-                ArrayList keyList = new ArrayList(base.Keys);
+                var keyList = new ArrayList(base.Keys);
                 keyList.Sort(s_keysComparer);
                 return keyList;
             }
@@ -377,8 +377,8 @@ namespace System.Management.Automation
         {
             public int Compare(object x, object y)
             {
-                string xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), CultureInfo.CurrentCulture);
-                string yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), CultureInfo.CurrentCulture);
+                var xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), CultureInfo.CurrentCulture);
+                var yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), CultureInfo.CurrentCulture);
                 if (PSVersionInfo.PSVersionName.Equals(xString, StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
@@ -796,7 +796,7 @@ namespace System.Management.Automation
         {
             if (versionString == null)
             {
-                StringBuilder result = new StringBuilder();
+                var result = new StringBuilder();
 
                 result.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
 

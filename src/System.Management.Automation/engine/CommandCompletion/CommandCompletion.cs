@@ -343,7 +343,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
-            Command cmd = new Command("TabExpansion2");
+            var cmd = new Command("TabExpansion2");
             cmd.Parameters.Add("InputScript", input);
             cmd.Parameters.Add("CursorColumn", cursorIndex);
             cmd.Parameters.Add("Options", options);
@@ -391,7 +391,7 @@ namespace System.Management.Automation
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
             }
 
-            Command cmd = new Command("TabExpansion2");
+            var cmd = new Command("TabExpansion2");
             cmd.Parameters.Add("Ast", ast);
             cmd.Parameters.Add("Tokens", tokens);
             cmd.Parameters.Add("PositionOfCursor", cursorPosition);
@@ -404,8 +404,8 @@ namespace System.Management.Automation
             Command cmd,
             Debugger debugger)
         {
-            PSCommand command = new PSCommand(cmd);
-            PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+            var command = new PSCommand(cmd);
+            var output = new PSDataCollection<PSObject>();
 
             debugger.ProcessCommand(command, output);
 
@@ -780,7 +780,7 @@ namespace System.Management.Automation
                 if (commands != null && commands.Count > 0)
                 {
                     // convert the PSObjects into strings
-                    CommandAndName[] cmdlets = new CommandAndName[commands.Count];
+                    var cmdlets = new CommandAndName[commands.Count];
                     // if the command causes cmdlets from multiple mshsnapin is returned,
                     // append the mshsnapin name to disambiguate the cmdlets.
                     for (int i = 0; i < commands.Count; ++i)
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
                     if (pathsArray != null && pathsArray.Count == 3)
                     {
                         object objectPath = pathsArray[0];
-                        PSObject item = pathsArray[1] as PSObject;
+                        var item = pathsArray[1] as PSObject;
                         object convertedPath = pathsArray[1];
 
                         if (objectPath == null || item == null || convertedPath == null)
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                string result = new string(_wordBuffer, 0, _wordBufferIndex);
+                var result = new string(_wordBuffer, 0, _wordBufferIndex);
 
                 closingQuote = inSingleQuote ? '\'' : inDoubleQuote ? '"' : '\0';
                 replacementIndexOut = ReplacementIndex;

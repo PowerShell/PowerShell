@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell
             // e is just an empty instance of EventArgs, so we ignore it. sender is the PipelineReader that raised it's
             // DataReady event that calls this handler, which is the PipelineReader for the Output object stream.
 
-            PipelineReader<PSObject> reader = (PipelineReader<PSObject>)sender;
+            var reader = (PipelineReader<PSObject>)sender;
 
             // we use NonBlockingRead instead of Read, as Read would block if the reader has no objects.  While it would be
             // inconsistent for this method to be called when there are no objects, since it will be called synchronously on
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell
             // e is just an empty instance of EventArgs, so we ignore it. sender is the PipelineReader that raised it's
             // DataReady event that calls this handler, which is the PipelineReader for the Error object stream.
 
-            PipelineReader<object> reader = (PipelineReader<object>)sender;
+            var reader = (PipelineReader<object>)sender;
 
             // we use NonBlockingRead instead of Read, as Read would block if the reader has no objects.  While it would be
             // inconsistent for this method to be called when there are no objects, since it will be called synchronously on
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell
         private void AsyncPipelineFailureHandler(Exception ex)
         {
             ErrorRecord er = null;
-            IContainsErrorRecord cer = ex as IContainsErrorRecord;
+            var cer = ex as IContainsErrorRecord;
             if (cer != null)
             {
                 er = cer.ErrorRecord;
@@ -201,13 +201,13 @@ namespace Microsoft.PowerShell
                     }
 
                     // then add out-default to the pipeline to render everything...
-                    Command outDefault = new Command("Out-Default", /* isScript */false, /* useLocalScope */ true);
+                    var outDefault = new Command("Out-Default", /* isScript */false, /* useLocalScope */ true);
                     tempPipeline.Commands.Add(outDefault);
                 }
 
                 tempPipeline.Output.DataReady += OutputObjectStreamHandler;
                 tempPipeline.Error.DataReady += ErrorObjectStreamHandler;
-                PipelineFinishedWaitHandle pipelineWaiter = new PipelineFinishedWaitHandle(tempPipeline);
+                var pipelineWaiter = new PipelineFinishedWaitHandle(tempPipeline);
 
                 // close the input pipeline so the command will do something
                 // if we are not reading input
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell
                 if ((options & ExecutionOptions.ReadInputObjects) > 0 && Console.IsInputRedirected)
                 {
                     // read input objects from stdin
-                    WrappedDeserializer des = new WrappedDeserializer(_parent.InputFormat, "Input", _parent.ConsoleIn.Value);
+                    var des = new WrappedDeserializer(_parent.InputFormat, "Input", _parent.ConsoleIn.Value);
                     while (!des.AtEnd)
                     {
                         object o = des.Deserialize();
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell
                 else
                 {
                     // For multiple commands/scripts we need to insert Out-Default at the end of each statement.
-                    CommandCollection executeCommands = new CommandCollection();
+                    var executeCommands = new CommandCollection();
                     foreach (var cmd in tempPipeline.Commands)
                     {
                         executeCommands.Add(cmd);
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell
                 // And convert the base object into a string. We can't use the proxied
                 // ToString() on the PSObject because there is no default runspace
                 // available.
-                PSObject msho = streamResults[0] as PSObject;
+                var msho = streamResults[0] as PSObject;
                 if (msho != null)
                     result = msho.BaseObject.ToString();
                 else
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell
 
         internal void BlockCommandOutput()
         {
-            RemotePipeline remotePipeline = _pipeline as RemotePipeline;
+            var remotePipeline = _pipeline as RemotePipeline;
             if (remotePipeline != null)
             {
                 // Waits until queued data is handled.
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell
 
         internal void ResumeCommandOutput()
         {
-            RemotePipeline remotePipeline = _pipeline as RemotePipeline;
+            var remotePipeline = _pipeline as RemotePipeline;
             if (remotePipeline != null)
             {
                 // Resumes data flow.

@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(GetCurrentContext());
+            var context = new CmdletProviderContext(GetCurrentContext());
 
             foreach (string path in paths)
             {

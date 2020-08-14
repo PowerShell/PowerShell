@@ -39,7 +39,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal HelpRequest Clone()
         {
-            HelpRequest helpRequest = new HelpRequest(this.Target, this.HelpCategory);
+            var helpRequest = new HelpRequest(this.Target, this.HelpCategory);
 
             helpRequest.Provider = this.Provider;
             helpRequest.MaxResults = this.MaxResults;

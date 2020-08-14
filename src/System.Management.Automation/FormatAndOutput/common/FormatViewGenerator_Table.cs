@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // with the copy
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl.Copy();
 
-                TableRowItemDefinition cnRowDefinition = new TableRowItemDefinition();
+                var cnRowDefinition = new TableRowItemDefinition();
                 PropertyTokenBase propToken = new FieldPropertyToken();
                 propToken.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
                 cnRowDefinition.formatTokenList.Add(propToken);
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // add header only if there are other header definitions
                 if (_tableBody.header.columnHeaderDefinitionList.Count > 0)
                 {
-                    TableColumnHeaderDefinition cnHeaderDefinition = new TableColumnHeaderDefinition();
+                    var cnHeaderDefinition = new TableColumnHeaderDefinition();
                     cnHeaderDefinition.label = new TextToken();
                     cnHeaderDefinition.label.text = RemotingConstants.ComputerNameNoteProperty;
                     _tableBody.header.columnHeaderDefinitionList.Add(cnHeaderDefinition);
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private TableHeaderInfo GenerateTableHeaderInfoFromDataBaseInfo(PSObject so)
         {
-            TableHeaderInfo thi = new TableHeaderInfo();
+            var thi = new TableHeaderInfo();
 
             bool dummy;
             List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out dummy);
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int col = 0;
             foreach (TableRowItemDefinition rowItem in activeRowItemDefinitionList)
             {
-                TableColumnInfo ci = new TableColumnInfo();
+                var ci = new TableColumnInfo();
                 TableColumnHeaderDefinition colHeader = null;
                 if (_tableBody.header.columnHeaderDefinitionList.Count > 0)
                     colHeader = _tableBody.header.columnHeaderDefinitionList[col];
@@ -187,14 +187,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         token = rowItem.formatTokenList[0];
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
+                        var fpt = token as FieldPropertyToken;
                         if (fpt != null)
                         {
                             ci.label = fpt.expression.expressionValue;
                         }
                         else
                         {
-                            TextToken tt = token as TextToken;
+                            var tt = token as TextToken;
                             if (tt != null)
                             {
                                 ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
@@ -216,14 +216,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private TableHeaderInfo GenerateTableHeaderInfoFromProperties(PSObject so)
         {
-            TableHeaderInfo thi = new TableHeaderInfo();
+            var thi = new TableHeaderInfo();
 
             thi.hideHeader = this.HideHeaders;
 
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {
                 MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
-                TableColumnInfo ci = new TableColumnInfo();
+                var ci = new TableColumnInfo();
 
                 // set the label of the column
                 if (a.OriginatingParameter != null)
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // first check command line, it takes the precedence
                 if (this.parameters != null && this.parameters.shapeParameters != null)
                 {
-                    TableSpecificParameters tableSpecific = (TableSpecificParameters)this.parameters.shapeParameters;
+                    var tableSpecific = (TableSpecificParameters)this.parameters.shapeParameters;
                     if (tableSpecific != null && tableSpecific.hideHeaders.HasValue)
                     {
                         return tableSpecific.hideHeaders.Value;
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override FormatEntryData GeneratePayload(PSObject so, int enumerationLimit)
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
 
             TableRowEntry tre;
             if (this.dataBaseInfo.view != null)
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // override from command line, if there
             if (this.parameters != null && this.parameters.shapeParameters != null)
             {
-                TableSpecificParameters tableSpecific = (TableSpecificParameters)this.parameters.shapeParameters;
+                var tableSpecific = (TableSpecificParameters)this.parameters.shapeParameters;
                 if (tableSpecific != null && tableSpecific.multiLine.HasValue)
                 {
                     tre.multiLine = tableSpecific.multiLine.Value;
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TableRowDefinition matchingRowDefinition = null;
 
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
+            var match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
 
             foreach (TableRowDefinition x in tableBody.optionalDefinitionList)
             {
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 multiLine = matchingRowDefinition.multiLine;
 
             // we have an override, we need to compute the merge of the active cells
-            List<TableRowItemDefinition> activeRowItemDefinitionList = new List<TableRowItemDefinition>();
+            var activeRowItemDefinitionList = new List<TableRowItemDefinition>();
             int col = 0;
             foreach (TableRowItemDefinition rowItem in matchingRowDefinition.rowItemDefinitionList)
             {
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private TableRowEntry GenerateTableRowEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
         {
-            TableRowEntry tre = new TableRowEntry();
+            var tre = new TableRowEntry();
 
             List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out tre.multiLine);
             foreach (TableRowItemDefinition rowItem in activeRowItemDefinitionList)
@@ -473,10 +473,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private TableRowEntry GenerateTableRowEntryFromFromProperties(PSObject so, int enumerationLimit)
         {
-            TableRowEntry tre = new TableRowEntry();
+            var tre = new TableRowEntry();
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {
-                FormatPropertyField fpf = new FormatPropertyField();
+                var fpf = new FormatPropertyField();
                 FieldFormattingDirective directive = null;
                 if (activeAssociationList[k].OriginatingParameter != null)
                 {

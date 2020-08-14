@@ -169,7 +169,7 @@ namespace System.Management.Automation
         {
             sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordMessage, except.Message));
 
-            IContainsErrorRecord ier = except as IContainsErrorRecord;
+            var ier = except as IContainsErrorRecord;
 
             if (ier != null)
             {
@@ -237,7 +237,7 @@ namespace System.Management.Automation
         /// <returns>String representation.</returns>
         protected static string LogContextToString(LogContext context)
         {
-            StringBuilder sb = new StringBuilder(LogContextInitialSize);
+            var sb = new StringBuilder(LogContextInitialSize);
 
             sb.Append(Strings.LogContextSeverity);
             sb.AppendLine(context.Severity);

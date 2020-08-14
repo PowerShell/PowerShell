@@ -351,7 +351,7 @@ namespace System.Management.Automation
         {
             get
             {
-                List<PSEventSubscriber> subscribers = new List<PSEventSubscriber>();
+                var subscribers = new List<PSEventSubscriber>();
 
                 lock (_eventSubscribers)
                 {
@@ -427,7 +427,7 @@ namespace System.Management.Automation
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
             // Record this subscriber. This may just be a registration for engine events.
-            PSEventSubscriber subscriber = new PSEventSubscriber(_context, _nextSubscriptionId++, source, eventName, sourceIdentifier, action, supportEvent, forwardEvent, maxTriggerCount);
+            var subscriber = new PSEventSubscriber(_context, _nextSubscriptionId++, source, eventName, sourceIdentifier, action, supportEvent, forwardEvent, maxTriggerCount);
             ProcessNewSubscriber(subscriber, source, eventName, sourceIdentifier, data, supportEvent, forwardEvent);
             subscriber.RegisterJob();
 
@@ -544,7 +544,7 @@ namespace System.Management.Automation
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
             // Record this subscriber. This may just be a registration for engine events.
-            PSEventSubscriber subscriber = new PSEventSubscriber(_context, _nextSubscriptionId++, source, eventName, sourceIdentifier, handlerDelegate, supportEvent, forwardEvent, maxTriggerCount);
+            var subscriber = new PSEventSubscriber(_context, _nextSubscriptionId++, source, eventName, sourceIdentifier, handlerDelegate, supportEvent, forwardEvent, maxTriggerCount);
             ProcessNewSubscriber(subscriber, source, eventName, sourceIdentifier, data, supportEvent, forwardEvent);
             subscriber.RegisterJob();
 
@@ -968,8 +968,8 @@ namespace System.Management.Automation
         {
             // Get the subscriber(s) for this event
             bool capturedEvent = false;
-            List<PSEventSubscriber> actionsHandledInCurrentThread = new List<PSEventSubscriber>();
-            List<PSEventSubscriber> subscribersWithoutActionOrHandler = new List<PSEventSubscriber>();
+            var actionsHandledInCurrentThread = new List<PSEventSubscriber>();
+            var subscribersWithoutActionOrHandler = new List<PSEventSubscriber>();
             foreach (PSEventSubscriber subscriber in GetEventSubscribers(newEvent.SourceIdentifier, true))
             {
                 newEvent.ForwardEvent = subscriber.ForwardEvent;
@@ -1312,8 +1312,8 @@ namespace System.Management.Automation
         /// </summary>
         private IEnumerable<PSEventSubscriber> GetEventSubscribers(string sourceIdentifier, bool forNewEventProcessing)
         {
-            List<PSEventSubscriber> returnedSubscribers = new List<PSEventSubscriber>();
-            List<PSEventSubscriber> subscribersToBeRemoved = new List<PSEventSubscriber>();
+            var returnedSubscribers = new List<PSEventSubscriber>();
+            var subscribersToBeRemoved = new List<PSEventSubscriber>();
 
             lock (_eventSubscribers)
             {
@@ -1409,7 +1409,7 @@ namespace System.Management.Automation
             extendedConstructor.Emit(OpCodes.Ret);
 
             // Go through each of the parameters in the event signature, and store their types
-            Type[] parameterTypes = new Type[parameterCount];
+            var parameterTypes = new Type[parameterCount];
             int parameterCounter = 0;
             foreach (ParameterInfo parameter in invokeSignature.GetParameters())
             {
@@ -1955,7 +1955,7 @@ namespace System.Management.Automation
             ScriptBlock newAction = _context.Modules.CreateBoundScriptBlock(_context, scriptAction, true);
 
             // Create a new Error variable so that it doesn't pollute the global errors.
-            PSVariable errorVariable = new PSVariable("script:Error", new ArrayList(), ScopedItemOptions.Constant);
+            var errorVariable = new PSVariable("script:Error", new ArrayList(), ScopedItemOptions.Constant);
             SessionStateInternal sessionState = newAction.SessionStateInternal;
             SessionStateScope scriptScope = sessionState.GetScopeByID("script");
             scriptScope.SetVariable(errorVariable.Name, errorVariable, false, true, sessionState, CommandOrigin.Internal);
@@ -2218,7 +2218,7 @@ namespace System.Management.Automation
             {
                 foreach (object argument in originalArgs)
                 {
-                    EventArgs sourceEventArgs = argument as EventArgs;
+                    var sourceEventArgs = argument as EventArgs;
                     if (sourceEventArgs != null)
                     {
                         SourceEventArgs = sourceEventArgs;
@@ -2578,12 +2578,12 @@ namespace System.Management.Automation
             // $eventArgs = $psEvent.SourceEventArgs
             actionState.PSVariable.Set("eventArgs", eventArgs.SourceEventArgs);
 
-            List<object> results = new List<object>();
+            var results = new List<object>();
 
             // $args = $psEventArgs.SourceArgs (for PARAM statement)
             try
             {
-                Pipe outputPipe = new Pipe(results);
+                var outputPipe = new Pipe(results);
                 ScriptBlock.InvokeWithPipe(
                     useLocalScope: false,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,

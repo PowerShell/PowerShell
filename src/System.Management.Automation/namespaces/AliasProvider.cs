@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string description = SessionStateStrings.AliasDriveDescription;
 
-            PSDriveInfo aliasDrive =
+            var aliasDrive =
                 new PSDriveInfo(
                     DriveNames.AliasDrive,
                     ProviderInfo,
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
                     description,
                     null);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
             drives.Add(aliasDrive);
             return drives;
         }
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
 
             object value = item;
 
-            AliasInfo aliasInfo = item as AliasInfo;
+            var aliasInfo = item as AliasInfo;
             if (aliasInfo != null)
             {
                 value = aliasInfo.Definition;
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
-            AliasProviderDynamicParameters dynamicParameters =
+            var dynamicParameters =
                 DynamicParameters as AliasProviderDynamicParameters;
 
             AliasInfo item = null;
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 do // false loop
                 {
-                    string stringValue = value as string;
+                    var stringValue = value as string;
                     if (stringValue != null)
                     {
                         if (dynamicParametersSpecified)
@@ -225,10 +225,10 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    AliasInfo alias = value as AliasInfo;
+                    var alias = value as AliasInfo;
                     if (alias != null)
                     {
-                        AliasInfo newAliasInfo =
+                        var newAliasInfo =
                             new AliasInfo(
                                 name,
                                 alias.Definition,
@@ -296,13 +296,13 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            AliasInfo aliasInfo = item as AliasInfo;
+            var aliasInfo = item as AliasInfo;
             if (aliasInfo != null)
             {
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                             aliasInfo.Name,
                             SessionStateCategory.Alias,

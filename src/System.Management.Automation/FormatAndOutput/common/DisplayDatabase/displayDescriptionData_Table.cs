@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override ControlBase Copy()
         {
-            TableControlBody result = new TableControlBody
+            var result = new TableControlBody
             {
                 autosize = this.autosize,
                 header = this.header.Copy()
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal TableHeaderDefinition Copy()
         {
-            TableHeaderDefinition result = new TableHeaderDefinition { hideHeader = this.hideHeader };
+            var result = new TableHeaderDefinition { hideHeader = this.hideHeader };
             foreach (TableColumnHeaderDefinition tchd in this.columnHeaderDefinitionList)
             {
                 result.columnHeaderDefinitionList.Add(tchd);
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal TableRowDefinition Copy()
         {
-            TableRowDefinition result = new TableRowDefinition
+            var result = new TableRowDefinition
             {
                 appliesTo = this.appliesTo,
                 multiLine = this.multiLine
@@ -266,7 +266,7 @@ namespace System.Management.Automation
             this.AutoSize = tcb.autosize.HasValue && tcb.autosize.Value;
             this.HideTableHeaders = tcb.header.hideHeader;
 
-            TableControlRow row = new TableControlRow(tcb.defaultDefinition);
+            var row = new TableControlRow(tcb.defaultDefinition);
 
             Rows.Add(row);
 
@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
             foreach (TableColumnHeaderDefinition hd in tcb.header.columnHeaderDefinitionList)
             {
-                TableControlColumnHeader header = new TableControlColumnHeader(hd);
+                var header = new TableControlColumnHeader(hd);
                 Headers.Add(header);
             }
         }
@@ -446,7 +446,7 @@ namespace System.Management.Automation
 
             foreach (TableRowItemDefinition itemdef in rowdefinition.rowItemDefinitionList)
             {
-                FieldPropertyToken fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
+                var fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
                 TableControlColumn column;
 
                 if (fpt != null)

@@ -839,7 +839,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         protected override void ValidateElement(object element)
         {
-            string objectString = element as string;
+            var objectString = element as string;
             if (objectString == null)
             {
                 throw new ValidationMetadataException(

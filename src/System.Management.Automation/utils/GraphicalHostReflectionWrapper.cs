@@ -73,11 +73,11 @@ namespace System.Management.Automation.Internal
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Assembly.Load has been found to throw unadvertised exceptions")]
         internal static GraphicalHostReflectionWrapper GetGraphicalHostReflectionWrapper(PSCmdlet parentCmdlet, string graphicalHostHelperTypeName, string featureName)
         {
-            GraphicalHostReflectionWrapper returnValue = new GraphicalHostReflectionWrapper();
+            var returnValue = new GraphicalHostReflectionWrapper();
 
             if (GraphicalHostReflectionWrapper.IsInputFromRemoting(parentCmdlet))
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     new NotSupportedException(StringUtil.Format(HelpErrors.RemotingNotSupportedForFeature, featureName)),
                     "RemotingNotSupported",
                     ErrorCategory.InvalidOperation,
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Prepare the full assembly name.
-            AssemblyName graphicalHostAssemblyName = new AssemblyName();
+            var graphicalHostAssemblyName = new AssemblyName();
             graphicalHostAssemblyName.Name = "Microsoft.PowerShell.GraphicalHost";
             graphicalHostAssemblyName.Version = new Version(3, 0, 0, 0);
             graphicalHostAssemblyName.CultureInfo = new CultureInfo(string.Empty); // Neutral culture

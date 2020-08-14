@@ -46,7 +46,7 @@ namespace System.Management.Automation
         protected override T GetMember<T>(object obj, string memberName)
         {
             PSProperty property;
-            DirectoryEntry entry = (DirectoryEntry)obj;
+            var entry = (DirectoryEntry)obj;
 
             // This line must precede InvokeGet. See the comment below.
             PropertyValueCollection collection = entry.Properties[memberName];
@@ -137,9 +137,9 @@ namespace System.Management.Automation
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
-            DirectoryEntry entry = (DirectoryEntry)obj;
+            var entry = (DirectoryEntry)obj;
 
-            PSMemberInfoInternalCollection<T> members = new PSMemberInfoInternalCollection<T>();
+            var members = new PSMemberInfoInternalCollection<T>();
 
             if (entry.Properties == null || entry.Properties.PropertyNames == null)
             {
@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            PropertyValueCollection values = property.adapterData as PropertyValueCollection;
+            var values = property.adapterData as PropertyValueCollection;
 
             if (values != null)
             {
@@ -227,10 +227,10 @@ namespace System.Management.Automation
             else
             {
                 // This means GetMember returned the value from InvokeGet..So set the value using InvokeSet.
-                DirectoryEntry entry = (DirectoryEntry)property.baseObject;
+                var entry = (DirectoryEntry)property.baseObject;
                 Diagnostics.Assert(entry != null, "Object should be of type DirectoryEntry in DirectoryEntry adapter.");
 
-                List<object> setValues = new List<object>();
+                var setValues = new List<object>();
                 IEnumerable enumValues = LanguagePrimitives.GetEnumerable(setValue);
 
                 if (enumValues == null)
@@ -310,20 +310,20 @@ namespace System.Management.Automation
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
-            ParameterInformation[] parameters = new ParameterInformation[arguments.Length];
+            var parameters = new ParameterInformation[arguments.Length];
 
             for (int i = 0; i < arguments.Length; i++)
             {
                 parameters[i] = new ParameterInformation(typeof(object), false, null, false);
             }
 
-            MethodInformation[] methodInformation = new MethodInformation[1];
+            var methodInformation = new MethodInformation[1];
             methodInformation[0] = new MethodInformation(false, false, parameters);
 
             object[] newArguments;
             GetBestMethodAndArguments(method.Name, methodInformation, arguments, out newArguments);
 
-            DirectoryEntry entry = (DirectoryEntry)method.baseObject;
+            var entry = (DirectoryEntry)method.baseObject;
 
             // First try to invoke method on the native adsi object. If the method
             // call fails, try to invoke dotnet method with same name, if one available.
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         /// <returns>The string representation of the method in the object.</returns>
         protected override string MethodToString(PSMethod method)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             foreach (string overload in MethodDefinitions(method))
             {
                 returnValue.Append(overload);

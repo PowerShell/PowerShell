@@ -26,7 +26,7 @@ namespace System.Management.Automation
         /// </param>
         internal void AddSessionStateEntry(SessionStateAliasEntry entry, string scopeID)
         {
-            AliasInfo alias = new AliasInfo(entry.Name, entry.Definition, this.ExecutionContext, entry.Options)
+            var alias = new AliasInfo(entry.Name, entry.Definition, this.ExecutionContext, entry.Options)
             {
                 Visibility = entry.Visibility,
                 Module = entry.Module,
@@ -44,10 +44,10 @@ namespace System.Management.Automation
         {
             // On 7.0 version we have 132 aliases so we set a larger number to reduce re-allocations.
             const int InitialAliasCount = 150;
-            Dictionary<string, AliasInfo> result =
+            var result =
                 new Dictionary<string, AliasInfo>(InitialAliasCount, StringComparer.OrdinalIgnoreCase);
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IDictionary<string, AliasInfo> GetAliasTableAtScope(string scopeID)
         {
-            Dictionary<string, AliasInfo> result =
+            var result =
                 new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
 
             SessionStateScope scope = GetScopeByID(scopeID);
@@ -137,7 +137,7 @@ namespace System.Management.Automation
             // Use the scope enumerator to find the alias using the
             // appropriate scoping rules
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -531,7 +531,7 @@ namespace System.Management.Automation
 
             // Use the scope enumerator to find an existing function
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -566,7 +566,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal IEnumerable<string> GetAliasesByCommandName(string command)
         {
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)

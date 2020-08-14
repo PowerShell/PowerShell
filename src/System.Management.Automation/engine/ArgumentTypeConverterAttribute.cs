@@ -61,13 +61,13 @@ namespace System.Management.Automation
                         if (_convertTypes[i].Equals(typeof(System.Management.Automation.PSReference)))
                         {
                             object temp;
-                            PSObject mshObject = result as PSObject;
+                            var mshObject = result as PSObject;
                             if (mshObject != null)
                                 temp = mshObject.BaseObject;
                             else
                                 temp = result;
 
-                            PSReference reference = temp as PSReference;
+                            var reference = temp as PSReference;
 
                             if (reference == null)
                             {
@@ -78,14 +78,14 @@ namespace System.Management.Automation
                         else
                         {
                             object temp;
-                            PSObject mshObject = result as PSObject;
+                            var mshObject = result as PSObject;
                             if (mshObject != null)
                                 temp = mshObject.BaseObject;
                             else
                                 temp = result;
 
                             // If a non-ref type is expected but currently passed in is a ref, do an implicit dereference.
-                            PSReference reference = temp as PSReference;
+                            var reference = temp as PSReference;
 
                             if (reference != null)
                             {
@@ -120,7 +120,7 @@ namespace System.Management.Automation
                     {
                         // Check for conversion to something like bool[] or ICollection<bool>, but only for cmdlet binding
                         // to stay compatible with V1.
-                        ParameterCollectionTypeInformation collectionTypeInfo = new ParameterCollectionTypeInformation(_convertTypes[i]);
+                        var collectionTypeInfo = new ParameterCollectionTypeInformation(_convertTypes[i]);
                         if (collectionTypeInfo.ParameterCollectionType != ParameterCollectionType.NotCollection
                             && LanguagePrimitives.IsBoolOrSwitchParameterType(collectionTypeInfo.ElementType))
                         {
@@ -150,7 +150,7 @@ namespace System.Management.Automation
                         // ActionPreference.Suspend is reserved for future use and is not supported as a preference variable.
                         if (_convertTypes[i] == typeof(ActionPreference))
                         {
-                            ActionPreference resultPreference = (ActionPreference)result;
+                            var resultPreference = (ActionPreference)result;
 
                             if (resultPreference == ActionPreference.Suspend)
                             {

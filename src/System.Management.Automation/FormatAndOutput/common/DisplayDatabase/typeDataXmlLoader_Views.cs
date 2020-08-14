@@ -48,8 +48,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             using (this.StackFrame(viewNode, index))
             {
                 // load the common data
-                ViewDefinition view = new ViewDefinition();
-                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                var view = new ViewDefinition();
+                var unprocessedNodes = new List<XmlNode>();
                 bool success = LoadCommonViewData(viewNode, view, unprocessedNodes);
 
                 if (!success)
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // only one control can exist, and it can be
                 // of the various types: Table, List, etc.
 
-                string[] controlNodeTags = new string[]
+                var controlNodeTags = new string[]
                 {
                     XmlTags.TableControlNode,
                     XmlTags.ListControlNode,
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     XmlTags.ComplexControlNode
                 };
 
-                List<XmlNode> secondPassUnprocessedNodes = new List<XmlNode>();
+                var secondPassUnprocessedNodes = new List<XmlNode>();
 
                 bool mainControlFound = false; // cardinality 1
                 foreach (XmlNode n in unprocessedNodes)
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool nameNodeFound = false;         // cardinality 1
                 bool controlNodeFound = false;         // cardinality 1
 
-                ControlDefinition def = new ControlDefinition();
+                var def = new ControlDefinition();
 
                 foreach (XmlNode n in controlDefinitionNode.ChildNodes)
                 {

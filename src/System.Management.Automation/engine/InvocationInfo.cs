@@ -76,7 +76,7 @@ namespace System.Management.Automation
             // Populate the history ID of this command
             if (contextToUse != null)
             {
-                Runspaces.LocalRunspace localRunspace = contextToUse.CurrentRunspace as Runspaces.LocalRunspace;
+                var localRunspace = contextToUse.CurrentRunspace as Runspaces.LocalRunspace;
                 if (localRunspace != null && localRunspace.History != null)
                 {
                     HistoryId = localRunspace.History.GetNextHistoryId();
@@ -96,10 +96,10 @@ namespace System.Management.Automation
             PipelineLength = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_PipelineLength");
             PipelinePosition = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_PipelinePosition");
 
-            string scriptName = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ScriptName");
-            int scriptLineNumber = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ScriptLineNumber");
-            int offsetInLine = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_OffsetInLine");
-            string line = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_Line");
+            var scriptName = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ScriptName");
+            var scriptLineNumber = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ScriptLineNumber");
+            var offsetInLine = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_OffsetInLine");
+            var line = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_Line");
             var scriptPosition = new ScriptPosition(scriptName, scriptLineNumber, offsetInLine, line);
 
             ScriptPosition scriptEndPosition;
@@ -135,9 +135,9 @@ namespace System.Management.Automation
             // Dictionaries are de-serialized as Hashtables so we need to convert the deserialized object into a dictionary
             // before assigning to CommandLineParameters.
             //
-            Hashtable hashtable = (Hashtable)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_BoundParameters");
+            var hashtable = (Hashtable)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_BoundParameters");
 
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
+            var dictionary = new Dictionary<string, object>();
 
             if (hashtable != null)
             {
@@ -431,7 +431,7 @@ namespace System.Management.Automation
             RemotingEncoder.AddNoteProperty<string>(psObject, "InvocationInfo_ScriptName", () => this.ScriptName);
             RemotingEncoder.AddNoteProperty<object>(psObject, "InvocationInfo_UnboundArguments", () => this.UnboundArguments);
 
-            ScriptExtent extent = DisplayScriptPosition as ScriptExtent;
+            var extent = DisplayScriptPosition as ScriptExtent;
             if (extent != null)
             {
                 extent.ToPSObjectForRemoting(psObject);

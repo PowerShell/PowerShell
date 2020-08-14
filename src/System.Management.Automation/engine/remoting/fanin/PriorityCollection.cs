@@ -163,8 +163,8 @@ namespace System.Management.Automation.Remoting
             */
             if (_dataSyncObjects != null && _dataToBeSent != null)
             {
-                int promptResponseIndex = (int)DataPriorityType.PromptResponse;
-                int defaultIndex = (int)DataPriorityType.Default;
+                var promptResponseIndex = (int)DataPriorityType.PromptResponse;
+                var defaultIndex = (int)DataPriorityType.Default;
 
                 lock (_dataSyncObjects[promptResponseIndex])
                 {
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Remoting
                     {
                         s_baseTracer.WriteLine("Fragment too big.");
                         ResetReceiveData();
-                        PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
+                        var e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;
                     }
 
@@ -542,7 +542,7 @@ namespace System.Management.Automation.Remoting
                     _pendingDataStream.Seek(0, SeekOrigin.Begin);
 
                     // we have enough data to process..so read the data from the stream and process.
-                    byte[] oneFragment = new byte[totalLengthOfFragment];
+                    var oneFragment = new byte[totalLengthOfFragment];
                     // this will change position back to totalLengthOfFragment
                     int dataCount = _pendingDataStream.Read(oneFragment, 0, totalLengthOfFragment);
                     Dbg.Assert(dataCount == totalLengthOfFragment, "Unable to read enough data from the stream. Read failed");
@@ -594,7 +594,7 @@ namespace System.Management.Automation.Remoting
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
-                                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIdsNotMatching);
+                                var e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIdsNotMatching);
                                 throw e;
                             }
                             else
@@ -611,7 +611,7 @@ namespace System.Management.Automation.Remoting
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
-                                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmentIdsNotInSequence);
+                                var e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmentIdsNotInSequence);
                                 throw e;
                             }
                             else

@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_showCommandProxy.ScreenHeight < this.Height)
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                                     new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_showCommandProxy.ScreenWidth < this.Width)
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                                     new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder errorString = new StringBuilder();
+            var errorString = new StringBuilder();
 
             for (int i = 0; i < _errors.Count; i++)
             {
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
         private void RunScriptSilentlyAndWithErrorHookup(string script)
         {
             // errors are not created here, because there is a field for it used in the final pop up
-            PSDataCollection<object> output = new PSDataCollection<object>();
+            var output = new PSDataCollection<object>();
 
             output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
             _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void IssueErrorForNoCommand()
         {
-            InvalidOperationException errorException = new InvalidOperationException(
+            var errorException = new InvalidOperationException(
                 string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void IssueErrorForMoreThanOneCommand()
         {
-            InvalidOperationException errorException = new InvalidOperationException(
+            var errorException = new InvalidOperationException(
                 string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
@@ -329,8 +329,8 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<PSObject> commandResults = this.InvokeCommand.InvokeScript(commandText);
 
-            object[] commandObjects = (object[])commandResults[0].BaseObject;
-            object[] moduleObjects = (object[])commandResults[1].BaseObject;
+            var commandObjects = (object[])commandResults[0].BaseObject;
+            var moduleObjects = (object[])commandResults[1].BaseObject;
             if (commandResults == null || moduleObjects == null || commandObjects.Length == 0)
             {
                 this.IssueErrorForNoCommand();
@@ -515,9 +515,9 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                uint strLen = (uint)str.Length;
+                var strLen = (uint)str.Length;
 
-                ConsoleInputWithNativeMethods.INPUT_RECORD[] records = new ConsoleInputWithNativeMethods.INPUT_RECORD[strLen + (newLine ? 1 : 0)];
+                var records = new ConsoleInputWithNativeMethods.INPUT_RECORD[strLen + (newLine ? 1 : 0)];
 
                 for (int i = 0; i < strLen; i++)
                 {
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
                 // (written != strLen) it is desireable to fail (return false) before typing enter and running the command
                 if (newLine)
                 {
-                    ConsoleInputWithNativeMethods.INPUT_RECORD[] enterArray = new ConsoleInputWithNativeMethods.INPUT_RECORD[1];
+                    var enterArray = new ConsoleInputWithNativeMethods.INPUT_RECORD[1];
                     ConsoleInputWithNativeMethods.INPUT_RECORD.SetInputRecord(ref enterArray[0], (char)13);
 
                     written = 0;

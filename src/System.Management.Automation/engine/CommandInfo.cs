@@ -368,7 +368,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    CmdletInfo cmdlet = this as CmdletInfo;
+                    var cmdlet = this as CmdletInfo;
                     if (cmdlet != null && cmdlet.PSSnapIn != null)
                     {
                         moduleName = cmdlet.PSSnapInName;
@@ -522,7 +522,7 @@ namespace System.Management.Automation
             }
             else
             {
-                IScriptCommandInfo scriptCommand = this as IScriptCommandInfo;
+                var scriptCommand = this as IScriptCommandInfo;
                 processor = scriptCommand != null
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
@@ -562,7 +562,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
+                var result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 
                 if (ImplementsDynamicParameters && Context != null)
                 {
@@ -710,7 +710,7 @@ namespace System.Management.Automation
 
         internal static Collection<CommandParameterSetInfo> GetParameterMetadata(CommandMetadata metadata, MergedCommandParameterMetadata parameterMetadata)
         {
-            Collection<CommandParameterSetInfo> result = new Collection<CommandParameterSetInfo>();
+            var result = new Collection<CommandParameterSetInfo>();
 
             if (parameterMetadata != null)
             {

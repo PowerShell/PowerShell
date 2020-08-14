@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (typeof(SecureString).IsAssignableFrom(dotNetType))
             {
-                SecureString secureString = (SecureString)psObject.BaseObject;
+                var secureString = (SecureString)psObject.BaseObject;
                 var sensitiveString = new SensitiveString(secureString.Length);
                 lock (_trackedDisposables) { _trackedDisposables.Add(sensitiveString); }
 
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (typeof(PSReference).IsAssignableFrom(dotNetType))
             {
-                PSReference psReference = (PSReference)psObject.BaseObject;
+                var psReference = (PSReference)psObject.BaseObject;
                 if (psReference.Value == null)
                 {
                     return null;

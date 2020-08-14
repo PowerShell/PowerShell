@@ -243,7 +243,7 @@ namespace System.Management.Automation
             if (!psTypeNamesOfArgumentValue.Contains(psTypeNameRequestedByParameter, StringComparer.OrdinalIgnoreCase))
             {
                 // win8: 228176..The callers know when to ignore and when not to ignore invalid cast exceptions.
-                PSInvalidCastException e = new PSInvalidCastException(nameof(ErrorCategory.InvalidArgument),
+                var e = new PSInvalidCastException(nameof(ErrorCategory.InvalidArgument),
                         null,
                         ParameterBinderStrings.MismatchedPSTypeName,
                         (_invocationInfo != null) && (_invocationInfo.MyCommand != null) ? _invocationInfo.MyCommand.Name : string.Empty,
@@ -359,7 +359,7 @@ namespace System.Management.Automation
                 do // false loop
                 {
                     // Now call any argument transformation attributes that might be present on the parameter
-                    ScriptParameterBinder spb = this as ScriptParameterBinder;
+                    var spb = this as ScriptParameterBinder;
                     bool usesCmdletBinding = false;
                     if (spb != null)
                     {
@@ -390,7 +390,7 @@ namespace System.Management.Automation
                         {
                             try
                             {
-                                ArgumentTypeConverterAttribute argumentTypeConverter = dma as ArgumentTypeConverterAttribute;
+                                var argumentTypeConverter = dma as ArgumentTypeConverterAttribute;
 
                                 if (argumentTypeConverter != null)
                                 {
@@ -514,7 +514,7 @@ namespace System.Management.Automation
                                         "ERROR: VALIDATION FAILED: {0}",
                                         e.Message);
 
-                                    ParameterBindingValidationException bindingException =
+                                    var bindingException =
                                         new ParameterBindingValidationException(
                                             e,
                                             ErrorCategory.InvalidData,
@@ -587,7 +587,7 @@ namespace System.Management.Automation
                     if (bindError != null)
                     {
                         Type specifiedType = (parameterValue == null) ? null : parameterValue.GetType();
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                 bindError,
                                 ErrorCategory.WriteError,
@@ -619,7 +619,7 @@ namespace System.Management.Automation
                         this.CommandLineParameters.Add(parameter.ParameterName, parameterValue);
                     }
 
-                    MshCommandRuntime cmdRuntime = this.Command.commandRuntime as MshCommandRuntime;
+                    var cmdRuntime = this.Command.commandRuntime as MshCommandRuntime;
                     if ((cmdRuntime != null) &&
                         (cmdRuntime.LogPipelineExecutionDetail || _isTranscribing) &&
                         (cmdRuntime.PipelineProcessor != null))
@@ -700,7 +700,7 @@ namespace System.Management.Automation
                 {
                     bindingTracer.WriteLine("ERROR: Argument cannot be null");
 
-                    ParameterBindingValidationException bindingException =
+                    var bindingException =
                         new ParameterBindingValidationException(
                             ErrorCategory.InvalidData,
                             this.InvocationInfo,
@@ -720,7 +720,7 @@ namespace System.Management.Automation
             {
                 // Since the parameter is of type string, verify that either the argument
                 // is not null and not empty or that the parameter can accept null or empty.
-                string stringParamValue = parameterValue as string;
+                var stringParamValue = parameterValue as string;
                 Diagnostics.Assert(
                     stringParamValue != null,
                     "Type coercion should have already converted the argument value to a string");
@@ -729,7 +729,7 @@ namespace System.Management.Automation
                 {
                     bindingTracer.WriteLine("ERROR: Argument cannot be an empty string");
 
-                    ParameterBindingValidationException bindingException =
+                    var bindingException =
                         new ParameterBindingValidationException(
                             ErrorCategory.InvalidData,
                             this.InvocationInfo,
@@ -806,7 +806,7 @@ namespace System.Management.Automation
                     resourceString = ParameterBinderStrings.ParameterArgumentValidationErrorEmptyCollectionNotAllowed;
                 }
 
-                ParameterBindingValidationException bindingException =
+                var bindingException =
                     new ParameterBindingValidationException(
                         ErrorCategory.InvalidData,
                         this.InvocationInfo,
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation
                         if (toType == typeof(string) &&
                             argumentType == typeof(PSObject))
                         {
-                            PSObject currentValueAsPSObject = (PSObject)currentValue;
+                            var currentValueAsPSObject = (PSObject)currentValue;
 
                             if (currentValueAsPSObject == AutomationNull.Value)
                             {
@@ -1091,7 +1091,7 @@ namespace System.Management.Automation
                             if (argumentType == typeof(PSObject))
                             {
                                 // Unwrap the PSObject at this point...
-                                PSObject currentValueAsPSObject = (PSObject)currentValue;
+                                var currentValueAsPSObject = (PSObject)currentValue;
                                 currentValue = currentValueAsPSObject.BaseObject;
 
                                 if (currentValue is SwitchParameter)
@@ -1133,7 +1133,7 @@ namespace System.Management.Automation
                             }
                             else if (LanguagePrimitives.IsNumeric(boType.GetTypeCode()))
                             {
-                                double currentValueAsDouble = (double)LanguagePrimitives.ConvertTo(
+                                var currentValueAsDouble = (double)LanguagePrimitives.ConvertTo(
                                                                         currentValue, typeof(double), CultureInfo.InvariantCulture);
 
                                 if (currentValueAsDouble != 0)
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
                                 // Since there is a catch block which appropriately
                                 // handles this situation we just throw an exception here
                                 // throw new PSInvalidCastException();
-                                ParameterBindingException pbe =
+                                var pbe =
                                     new ParameterBindingException(
                                         ErrorCategory.InvalidArgument,
                                         this.InvocationInfo,
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation
                         result ?? "null",
                         toType);
 
-                    ParameterBindingException pbe =
+                    var pbe =
                         new ParameterBindingException(
                             notSupported,
                             ErrorCategory.InvalidArgument,
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
                       result ?? "null",
                       toType);
 
-                    ParameterBindingException pbe =
+                    var pbe =
                         new ParameterBindingException(
                             invalidCast,
                             ErrorCategory.InvalidArgument,
@@ -1361,7 +1361,7 @@ namespace System.Management.Automation
                 bindingTracer.WriteLine(
                         "ERROR: No argument is specified for parameter and parameter type is BOOL");
 
-                ParameterBindingException exception =
+                var exception =
                     new ParameterBindingException(
                         ErrorCategory.InvalidArgument,
                         this.InvocationInfo,
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation
                 bindingTracer.TraceError(
                     "ERROR: No argument was specified for the parameter and the parameter is not of type bool");
 
-                ParameterBindingException exception =
+                var exception =
                     new ParameterBindingException(
                         ErrorCategory.InvalidArgument,
                         this.InvocationInfo,
@@ -1592,7 +1592,7 @@ namespace System.Management.Automation
 
                             if (addMethod == null)
                             {
-                                ParameterBindingException bindingException =
+                                var bindingException =
                                     new ParameterBindingException(
                                         getMethodError,
                                         ErrorCategory.InvalidArgument,
@@ -1653,7 +1653,7 @@ namespace System.Management.Automation
                     {
                         // Throw a ParameterBindingException
 
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                 error,
                                 ErrorCategory.InvalidArgument,
@@ -1773,7 +1773,7 @@ namespace System.Management.Automation
                                 error = error.InnerException;
                             }
 
-                            ParameterBindingException bindingException =
+                            var bindingException =
                                 new ParameterBindingException(
                                     error,
                                     ErrorCategory.InvalidArgument,
@@ -1870,7 +1870,7 @@ namespace System.Management.Automation
                             error = error.InnerException;
                         }
 
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                 error,
                                 ErrorCategory.InvalidArgument,
@@ -2025,7 +2025,7 @@ namespace System.Management.Automation
             if (_dictionary.ImplicitUsingParameters == null)
             {
                 // Handle downlevel V4 case where using parameters are passed as an array list.
-                IList implicitArrayUsingParameters = PSObject.Base(obj) as IList;
+                var implicitArrayUsingParameters = PSObject.Base(obj) as IList;
                 if ((implicitArrayUsingParameters != null) && (implicitArrayUsingParameters.Count > 0))
                 {
                     // Convert array to hash table.
@@ -2056,7 +2056,7 @@ namespace System.Management.Automation
 
         internal HashSet<string> CopyBoundPositionalParameters()
         {
-            HashSet<string> result = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            var result = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             foreach (string item in _dictionary.BoundPositionally)
             {
                 result.Add(item);

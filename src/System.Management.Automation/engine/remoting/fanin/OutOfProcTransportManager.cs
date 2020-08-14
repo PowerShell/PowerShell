@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
 
                         string stream = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE);
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
 
                         // Now move the reader to the data portion
                         if (!xmlReader.Read())
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.DataAckPacketReceived(psGuid);
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationPacketReceived(psGuid);
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationAckReceived(psGuid);
                     }
@@ -324,7 +324,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE received, psGuid : " + psGuid.ToString());
                         callbacks.ClosePacketReceived(psGuid);
@@ -342,7 +342,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_CLOSE_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.CloseAckPacketReceived(psGuid);
                     }
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
 
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL received, psGuid : " + psGuid.ToString());
                         callbacks.SignalPacketReceived(psGuid);
@@ -377,7 +377,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
-                        Guid psGuid = new Guid(psGuidString);
+                        var psGuid = new Guid(psGuidString);
                         tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_SIGNAL_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.SignalAckPacketReceived(psGuid);
                     }
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(cmd != null, "Cmd cannot be null");
 
-            OutOfProcessClientCommandTransportManager result = new
+            var result = new
                 OutOfProcessClientCommandTransportManager(cmd, noInput, this, stdInWriter);
             AddCommandTransportManager(cmd.InstanceId, result);
 
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
                     catch (Exception exception)
                     {
-                        PSRemotingTransportException psrte =
+                        var psrte =
                             new PSRemotingTransportException(
                                 PSRemotingErrorId.IPCErrorProcessingServerData,
                                 RemotingErrorIdStrings.IPCErrorProcessingServerData,
@@ -788,7 +788,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
             }
 
-            PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessReportedError,
+            var psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessReportedError,
                 RemotingErrorIdStrings.IPCServerProcessReportedError,
                 data);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.Unknown));
@@ -796,7 +796,7 @@ namespace System.Management.Automation.Remoting.Client
 
         protected void OnExited(object sender, EventArgs e)
         {
-            TransportMethodEnum transportMethod = TransportMethodEnum.Unknown;
+            var transportMethod = TransportMethodEnum.Unknown;
             lock (syncObject)
             {
                 // There is no need to return when IsClosed==true here as in a legitimate case process exits
@@ -1043,7 +1043,7 @@ namespace System.Management.Automation.Remoting.Client
 
         internal void OnCloseTimeOutTimerElapsed(object source)
         {
-            PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCCloseTimedOut, RemotingErrorIdStrings.IPCCloseTimedOut);
+            var psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCCloseTimedOut, RemotingErrorIdStrings.IPCCloseTimedOut);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
         }
 
@@ -1132,19 +1132,19 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (System.ComponentModel.Win32Exception w32e)
             {
-                PSRemotingTransportException psrte = new PSRemotingTransportException(w32e, RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
+                var psrte = new PSRemotingTransportException(w32e, RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
                     w32e.Message);
                 psrte.ErrorCode = w32e.HResult;
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
+                var eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
                 RaiseErrorHandler(eventargs);
                 return;
             }
             catch (Exception e)
             {
-                PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCExceptionLaunchingProcess,
+                var psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCExceptionLaunchingProcess,
                 RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
                     e.Message);
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
+                var eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
                 RaiseErrorHandler(eventargs);
                 return;
             }
@@ -1155,11 +1155,11 @@ namespace System.Management.Automation.Remoting.Client
 
         private void StartRedirectionReaderThreads(Process serverProcess)
         {
-            Thread outputThread = new Thread(ProcessOutputData);
+            var outputThread = new Thread(ProcessOutputData);
             outputThread.IsBackground = true;
             outputThread.Name = "Out-of-Proc Job Output Thread";
 
-            Thread errorThread = new Thread(ProcessErrorData);
+            var errorThread = new Thread(ProcessErrorData);
             errorThread.IsBackground = true;
             errorThread.Name = "Out-of-Proc Job Error Thread";
 
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation.Remoting.Client
         protected void StartReaderThread(
             StreamReader reader)
         {
-            Thread readerThread = new Thread(ProcessReaderThread);
+            var readerThread = new Thread(ProcessReaderThread);
             readerThread.Name = _threadName;
             readerThread.IsBackground = true;
             readerThread.Start(reader);
@@ -1361,7 +1361,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
-                StreamReader reader = state as StreamReader;
+                var reader = state as StreamReader;
                 Dbg.Assert(reader != null, "Reader cannot be null.");
 
                 // Send one fragment.
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         // End of stream indicates the target process was lost.
                         // Raise transport exception to invalidate the client remote runspace.
-                        PSRemotingTransportException psrte = new PSRemotingTransportException(
+                        var psrte = new PSRemotingTransportException(
                             PSRemotingErrorId.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.HyperVSocketTransportProcessEnded);
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Remoting.Client
                 _tracer.WriteMessage("HyperVSocketClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
 
-                PSRemotingTransportException psrte = new PSRemotingTransportException(
+                var psrte = new PSRemotingTransportException(
                     PSRemotingErrorId.IPCServerProcessReportedError,
                     RemotingErrorIdStrings.IPCServerProcessReportedError,
                     RemotingErrorIdStrings.HyperVSocketTransportProcessEnded);
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation.Remoting.Client
         private void StartErrorThread(
             StreamReader stdErrReader)
         {
-            Thread errorThread = new Thread(ProcessErrorThread);
+            var errorThread = new Thread(ProcessErrorThread);
             errorThread.Name = "SSH Transport Error Thread";
             errorThread.IsBackground = true;
             errorThread.Start(stdErrReader);
@@ -1696,7 +1696,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
-                StreamReader reader = state as StreamReader;
+                var reader = state as StreamReader;
                 Dbg.Assert(reader != null, "Reader cannot be null.");
 
                 while (true)
@@ -1710,7 +1710,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     // Any SSH client error results in a broken session.
-                    PSRemotingTransportException psrte = new PSRemotingTransportException(
+                    var psrte = new PSRemotingTransportException(
                         PSRemotingErrorId.IPCServerProcessReportedError,
                         RemotingErrorIdStrings.IPCServerProcessReportedError,
                         StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation.Remoting.Client
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
 
-                PSRemotingTransportException psrte = new PSRemotingTransportException(
+                var psrte = new PSRemotingTransportException(
                     StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, errorMsg),
                     e);
                 HandleSSHError(psrte);
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation.Remoting.Client
             // The StdError pipe stream is open ended causing StreamReader read operations to block
             // if there is no incoming data.  Since we don't know how many error message lines there
             // will be we use an asynchronous read with timeout to prevent blocking indefinitely.
-            System.Text.StringBuilder sb = new Text.StringBuilder(error);
+            var sb = new Text.StringBuilder(error);
             var running = true;
             while (running)
             {
@@ -1792,7 +1792,7 @@ namespace System.Management.Automation.Remoting.Client
         private void StartReaderThread(
             StreamReader reader)
         {
-            Thread readerThread = new Thread(ProcessReaderThread);
+            var readerThread = new Thread(ProcessReaderThread);
             readerThread.Name = _threadName;
             readerThread.IsBackground = true;
             readerThread.Start(reader);
@@ -1802,7 +1802,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
-                StreamReader reader = state as StreamReader;
+                var reader = state as StreamReader;
                 Dbg.Assert(reader != null, "Reader cannot be null.");
 
                 // Send one fragment.
@@ -1914,7 +1914,7 @@ namespace System.Management.Automation.Remoting.Client
         protected void StartReaderThread(
             StreamReader reader)
         {
-            Thread readerThread = new Thread(ProcessReaderThread);
+            var readerThread = new Thread(ProcessReaderThread);
             readerThread.Name = _threadName;
             readerThread.IsBackground = true;
             readerThread.Start(reader);
@@ -1928,7 +1928,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
-                StreamReader reader = state as StreamReader;
+                var reader = state as StreamReader;
                 Dbg.Assert(reader != null, "Reader cannot be null.");
 
                 // Send one fragment.
@@ -1942,7 +1942,7 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         // End of stream indicates the target process was lost.
                         // Raise transport exception to invalidate the client remote runspace.
-                        PSRemotingTransportException psrte = new PSRemotingTransportException(
+                        var psrte = new PSRemotingTransportException(
                             PSRemotingErrorId.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.NamedPipeTransportProcessEnded);
@@ -2319,7 +2319,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            PSRemotingTransportException psrte = new PSRemotingTransportException(RemotingErrorIdStrings.IPCSignalTimedOut);
+            var psrte = new PSRemotingTransportException(RemotingErrorIdStrings.IPCSignalTimedOut);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
         }
 
@@ -2344,7 +2344,7 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(privateData != null, "privateData cannot be null.");
 
             // For this version...only a boolean can be used for privateData.
-            bool shouldRaiseSignalCompleted = (bool)privateData;
+            var shouldRaiseSignalCompleted = (bool)privateData;
             if (shouldRaiseSignalCompleted)
             {
                 base.RaiseSignalCompleted();
@@ -2366,7 +2366,7 @@ namespace System.Management.Automation.Remoting.Client
         private void SendOneItem()
         {
             byte[] data = null;
-            DataPriorityType priorityType = DataPriorityType.Default;
+            var priorityType = DataPriorityType.Default;
             // serializedPipeline is static ie., data is added to this collection at construction time only
             // and data is accessed by only one thread at any given time..so we can depend on this count
             if (serializedPipeline.Length > 0)
@@ -2474,7 +2474,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal void CreateCommandTransportManager(Guid powerShellCmdId)
         {
-            OutOfProcessServerTransportManager cmdTM = new OutOfProcessServerTransportManager(_stdOutWriter, _stdErrWriter,
+            var cmdTM = new OutOfProcessServerTransportManager(_stdOutWriter, _stdErrWriter,
                 powerShellCmdId, this.TypeTable, this.Fragmentor.FragmentSize, this.CryptoHelper);
             // this will make the Session's DataReady event handler handle
             // the commands data as well. This is because the state machine

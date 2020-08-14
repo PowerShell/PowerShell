@@ -573,7 +573,7 @@ namespace PSTests.Parallel
             string errorMessage = null;
             try
             {
-                ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
+                var style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
                     commandLine[1], typeof(ProcessWindowStyle), System.Globalization.CultureInfo.InvariantCulture);
             }
             catch (PSInvalidCastException e)

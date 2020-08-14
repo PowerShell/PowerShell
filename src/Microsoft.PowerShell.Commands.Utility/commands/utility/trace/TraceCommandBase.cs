@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         {
             notMatched = new Collection<string>();
 
-            Collection<PSTraceSource> results = new Collection<PSTraceSource>();
+            var results = new Collection<PSTraceSource>();
             foreach (string patternToMatch in patternsToMatch)
             {
                 bool matchFound = false;
@@ -104,13 +104,13 @@ namespace Microsoft.PowerShell.Commands
                     if (writeErrorIfMatchNotFound &&
                         !WildcardPattern.ContainsWildcardCharacters(patternToMatch))
                     {
-                        ItemNotFoundException itemNotFound =
+                        var itemNotFound =
                             new ItemNotFoundException(
                                 patternToMatch,
                                 "TraceSourceNotFound",
                                 SessionStateStrings.TraceSourceNotFound);
 
-                        ErrorRecord errorRecord = new ErrorRecord(itemNotFound.ErrorRecord, itemNotFound);
+                        var errorRecord = new ErrorRecord(itemNotFound.ErrorRecord, itemNotFound);
                         WriteError(errorRecord);
                     }
                 }

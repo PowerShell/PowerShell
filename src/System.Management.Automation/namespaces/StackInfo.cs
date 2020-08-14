@@ -44,7 +44,7 @@ namespace System.Management.Automation
             // wrong order.  I have to push them on manually in the
             // appropriate order.
 
-            PathInfo[] stackContents = new PathInfo[locationStack.Count];
+            var stackContents = new PathInfo[locationStack.Count];
             locationStack.CopyTo(stackContents, 0);
 
             for (int index = stackContents.Length - 1; index >= 0; --index)

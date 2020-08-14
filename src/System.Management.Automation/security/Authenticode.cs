@@ -309,7 +309,7 @@ namespace System.Management.Automation
             {
                 using (FileStream stream = File.OpenRead(filename))
                 {
-                    NativeMethods.SIGNATURE_INFO sigInfo = new NativeMethods.SIGNATURE_INFO();
+                    var sigInfo = new NativeMethods.SIGNATURE_INFO();
                     sigInfo.cbSize = (uint)Marshal.SizeOf(sigInfo);
 
                     IntPtr ppCertContext = IntPtr.Zero;
@@ -479,7 +479,7 @@ namespace System.Management.Automation
             IntPtr WINTRUST_ACTION_GENERIC_VERIFY_V2 = IntPtr.Zero;
             IntPtr wtdBuffer = IntPtr.Zero;
 
-            Guid actionVerify =
+            var actionVerify =
                 new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
 
             try
@@ -542,7 +542,7 @@ namespace System.Management.Automation
 
             if (pCert != IntPtr.Zero)
             {
-                NativeMethods.CRYPT_PROVIDER_CERT provCert =
+                var provCert =
                     (NativeMethods.CRYPT_PROVIDER_CERT)
                     Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
                 signerCert = new X509Certificate2(provCert.pCert);
@@ -617,7 +617,7 @@ namespace System.Management.Automation
 
                 if (pProvSigner != IntPtr.Zero)
                 {
-                    NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
+                    var provSigner =
                         (NativeMethods.CRYPT_PROVIDER_SGNR)
                         Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
                     if (provSigner.csCounterSigners == 1)

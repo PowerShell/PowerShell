@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!HasBeenSpecified(_value1))
             {
-                Collection<FieldDescription> fdc = new Collection<FieldDescription>();
+                var fdc = new Collection<FieldDescription>();
                 fdc.Add(new FieldDescription("Value"));
                 string prompt = StringUtil.Format(AddMember.Value1Prompt, _memberType);
                 Dictionary<string, PSObject> result = this.Host.UI.Prompt(prompt, null, fdc);
@@ -245,11 +245,11 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1HasBeenSpecified();
             EnsureValue1IsNotNull();
 
-            string value1Str = (string)GetParameterType(_value1, typeof(string));
+            var value1Str = (string)GetParameterType(_value1, typeof(string));
             if (HasBeenSpecified(_value2))
             {
                 EnsureValue2IsNotNull();
-                Type value2Type = (Type)GetParameterType(_value2, typeof(Type));
+                var value2Type = (Type)GetParameterType(_value2, typeof(Type));
                 return new PSAliasProperty(_memberName, value1Str, value2Type);
             }
 
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1HasBeenSpecified();
             EnsureValue1IsNotNull();
             EnsureValue2HasNotBeenSpecified();
-            MethodInfo value1MethodInfo = (MethodInfo)GetParameterType(_value1, typeof(MethodInfo));
+            var value1MethodInfo = (MethodInfo)GetParameterType(_value1, typeof(MethodInfo));
             return new PSCodeMethod(_memberName, value1MethodInfo);
         }
 
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
                 return new PSMemberSet(_memberName);
             }
 
-            Collection<PSMemberInfo> value1Collection =
+            var value1Collection =
                 (Collection<PSMemberInfo>)GetParameterType(_value1, typeof(Collection<PSMemberInfo>));
             return new PSMemberSet(_memberName, value1Collection);
         }
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue2HasNotBeenSpecified();
             EnsureValue1HasBeenSpecified();
             EnsureValue1IsNotNull();
-            Collection<string> value1Collection =
+            var value1Collection =
                 (Collection<string>)GetParameterType(_value1, typeof(Collection<string>));
             return new PSPropertySet(_memberName, value1Collection);
         }
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue2HasNotBeenSpecified();
             EnsureValue1HasBeenSpecified();
             EnsureValue1IsNotNull();
-            ScriptBlock value1ScriptBlock = (ScriptBlock)GetParameterType(_value1, typeof(ScriptBlock));
+            var value1ScriptBlock = (ScriptBlock)GetParameterType(_value1, typeof(ScriptBlock));
             return new PSScriptMethod(_memberName, value1ScriptBlock);
         }
 
@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                int memberCountHelper = (int)_memberType;
+                var memberCountHelper = (int)_memberType;
                 int memberCount = 0;
                 while (memberCountHelper != 0)
                 {
@@ -531,9 +531,9 @@ namespace Microsoft.PowerShell.Commands
 
         private ErrorRecord NewError(string errorId, string resourceId, object targetObject, params object[] args)
         {
-            ErrorDetails details = new ErrorDetails(this.GetType().GetTypeInfo().Assembly,
+            var details = new ErrorDetails(this.GetType().GetTypeInfo().Assembly,
                 "Microsoft.PowerShell.Commands.Utility.resources.AddMember", resourceId, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
-                string notePropertyName = arguments as string;
+                var notePropertyName = arguments as string;
                 PSMemberTypes memberType;
                 if (notePropertyName != null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out memberType))
                 {

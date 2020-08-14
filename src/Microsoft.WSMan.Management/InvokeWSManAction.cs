@@ -279,7 +279,7 @@ namespace Microsoft.WSMan.Management
                 string input = helper.ProcessInput(m_wsmanObject, filepath, helper.WSManOp, rootNode, valueset, m_resource, m_session);
                 string resultXml = m_session.Invoke(action, m_resource, input, 0);
 
-                XmlDocument xmldoc = new XmlDocument();
+                var xmldoc = new XmlDocument();
                 xmldoc.LoadXml(resultXml);
                 WriteObject(xmldoc.DocumentElement);
             }

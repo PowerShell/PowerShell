@@ -847,7 +847,7 @@ namespace System.Management.Automation.Tracing
         private bool Trace(PowerShellTraceEvent traceEvent, PowerShellTraceLevel level, PowerShellTraceOperationCode operationCode,
             PowerShellTraceTask task, params object[] args)
         {
-            EventDescriptor ed = new EventDescriptor((int)traceEvent, 1, (byte)_traceChannel, (byte)level,
+            var ed = new EventDescriptor((int)traceEvent, 1, (byte)_traceChannel, (byte)level,
                                                      (byte)operationCode, (int)task, (long)_keywords);
 
             /*
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, Job job, string message, params string[] parameters)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (job != null)
             {

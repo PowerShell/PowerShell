@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (string s in errors)
                             {
-                                RuntimeException rte = new RuntimeException(s);
+                                var rte = new RuntimeException(s);
                                 this.WriteError(new ErrorRecord(rte, "TypesDynamicUpdateException", ErrorCategory.InvalidOperation, null));
                             }
                         }
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, _typeName));
             }
 
-            TypeData type = new TypeData(_typeName) { IsOverride = _force };
+            var type = new TypeData(_typeName) { IsOverride = _force };
 
             GetMembers(type.Members);
 
@@ -457,19 +457,19 @@ namespace Microsoft.PowerShell.Commands
 
             if (_defaultDisplayPropertySet != null)
             {
-                PropertySetData defaultDisplayPropertySet = new PropertySetData(_defaultDisplayPropertySet);
+                var defaultDisplayPropertySet = new PropertySetData(_defaultDisplayPropertySet);
                 type.DefaultDisplayPropertySet = defaultDisplayPropertySet;
             }
 
             if (_defaultKeyPropertySet != null)
             {
-                PropertySetData defaultKeyPropertySet = new PropertySetData(_defaultKeyPropertySet);
+                var defaultKeyPropertySet = new PropertySetData(_defaultKeyPropertySet);
                 type.DefaultKeyPropertySet = defaultKeyPropertySet;
             }
 
             if (_propertySerializationSet != null)
             {
-                PropertySetData propertySerializationSet = new PropertySetData(_propertySerializationSet);
+                var propertySerializationSet = new PropertySetData(_propertySerializationSet);
                 type.PropertySerializationSet = propertySerializationSet;
             }
 
@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (string s in errors)
                         {
-                            RuntimeException rte = new RuntimeException(s);
+                            var rte = new RuntimeException(s);
                             this.WriteError(new ErrorRecord(rte, "TypesDynamicUpdateException", ErrorCategory.InvalidOperation, null));
                         }
                     }
@@ -690,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
                 value2ScriptBlock = GetParameterType<ScriptBlock>(_value2);
             }
 
-            ScriptPropertyData scriptProperty = new ScriptPropertyData(_memberName, value1ScriptBlock, value2ScriptBlock);
+            var scriptProperty = new ScriptPropertyData(_memberName, value1ScriptBlock, value2ScriptBlock);
             return scriptProperty;
         }
 
@@ -712,7 +712,7 @@ namespace Microsoft.PowerShell.Commands
                 value2CodeReference = GetParameterType<MethodInfo>(_value2);
             }
 
-            CodePropertyData codeProperty = new CodePropertyData(_memberName, value1CodeReference, value2CodeReference);
+            var codeProperty = new CodePropertyData(_memberName, value1CodeReference, value2CodeReference);
             return codeProperty;
         }
 
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue2HasNotBeenSpecified();
 
             ScriptBlock method = GetParameterType<ScriptBlock>(_value1);
-            ScriptMethodData scriptMethod = new ScriptMethodData(_memberName, method);
+            var scriptMethod = new ScriptMethodData(_memberName, method);
             return scriptMethod;
         }
 
@@ -734,7 +734,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue2HasNotBeenSpecified();
 
             MethodInfo codeReference = GetParameterType<MethodInfo>(_value1);
-            CodeMethodData codeMethod = new CodeMethodData(_memberName, codeReference);
+            var codeMethod = new CodeMethodData(_memberName, codeReference);
             return codeMethod;
         }
 
@@ -749,7 +749,7 @@ namespace Microsoft.PowerShell.Commands
         private ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(message),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -866,7 +866,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (string s in errors)
                         {
-                            RuntimeException rte = new RuntimeException(s);
+                            var rte = new RuntimeException(s);
                             this.WriteError(new ErrorRecord(rte, "TypesXmlUpdateException", ErrorCategory.InvalidOperation, null));
                         }
 
@@ -1119,8 +1119,8 @@ namespace Microsoft.PowerShell.Commands
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
-                Dictionary<string, List<int>> fileToIndexMap = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
-                List<int> indicesToRemove = new List<int>();
+                var fileToIndexMap = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
+                var indicesToRemove = new List<int>();
 
                 if (Context.InitialSessionState != null)
                 {
@@ -1209,7 +1209,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Dbg.Assert(!string.IsNullOrEmpty(typeNameToRemove), "TypeNameToRemove should be not null and not empty at this point");
-            TypeData type = new TypeData(typeNameToRemove);
+            var type = new TypeData(typeNameToRemove);
             string removeTypeFormattedTarget = string.Format(CultureInfo.InvariantCulture, removeTypeTarget, typeNameToRemove);
 
             if (ShouldProcess(removeTypeFormattedTarget, removeTypeAction))
@@ -1223,7 +1223,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (string s in errors)
                         {
-                            RuntimeException rte = new RuntimeException(s);
+                            var rte = new RuntimeException(s);
                             this.WriteError(new ErrorRecord(rte, "TypesDynamicRemoveException", ErrorCategory.InvalidOperation, null));
                         }
                     }
@@ -1258,7 +1258,7 @@ namespace Microsoft.PowerShell.Commands
         private ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(message),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -1334,7 +1334,7 @@ namespace Microsoft.PowerShell.Commands
             ValidateTypeName();
 
             Dictionary<string, TypeData> alltypes = Context.TypeTable.GetAllTypeData();
-            Collection<TypeData> typedefs = new Collection<TypeData>();
+            var typedefs = new Collection<TypeData>();
 
             foreach (string type in alltypes.Keys)
             {

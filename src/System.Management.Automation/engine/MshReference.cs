@@ -47,7 +47,7 @@ namespace System.Management.Automation
         {
             get
             {
-                PSVariable variable = _value as PSVariable;
+                var variable = _value as PSVariable;
 
                 if (variable != null)
                 {
@@ -59,7 +59,7 @@ namespace System.Management.Automation
 
             set
             {
-                PSVariable variable = _value as PSVariable;
+                var variable = _value as PSVariable;
 
                 if (variable != null)
                 {

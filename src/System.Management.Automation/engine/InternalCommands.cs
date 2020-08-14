@@ -700,7 +700,7 @@ namespace Microsoft.PowerShell.Commands
                     if (members.Count > 1)
                     {
                         // write error record: property method ambiguous
-                        StringBuilder possibleMatches = new StringBuilder();
+                        var possibleMatches = new StringBuilder();
                         foreach (PSMemberInfo item in members)
                         {
                             possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
@@ -726,7 +726,7 @@ namespace Microsoft.PowerShell.Commands
                 if (member is PSMethodInfo)
                 {
                     // first we check if the member is a ParameterizedProperty
-                    PSParameterizedProperty targetParameterizedProperty = member as PSParameterizedProperty;
+                    var targetParameterizedProperty = member as PSParameterizedProperty;
                     if (targetParameterizedProperty != null)
                     {
                         // should process
@@ -742,7 +742,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    PSMethodInfo targetMethod = member as PSMethodInfo;
+                    var targetMethod = member as PSMethodInfo;
                     Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
                     try
                     {
@@ -766,7 +766,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception ex)
                     {
-                        MethodException mex = ex as MethodException;
+                        var mex = ex as MethodException;
                         if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
                         {
                             WriteObject(targetMethod.Value);
@@ -965,7 +965,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string message = InternalCommandStrings.NoShouldProcessForScriptBlockSet;
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         new InvalidOperationException(message),
                         "NoShouldProcessForScriptBlockSet",
                         ErrorCategory.InvalidOperation,
@@ -1021,7 +1021,7 @@ namespace Microsoft.PowerShell.Commands
             if (methods.Count > 1)
             {
                 // write error record: method ambiguous
-                StringBuilder possibleMatches = new StringBuilder();
+                var possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
                     possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
@@ -1047,11 +1047,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                PSMethodInfo targetMethod = methods[0] as PSMethodInfo;
+                var targetMethod = methods[0] as PSMethodInfo;
                 Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
 
                 // should process
-                StringBuilder arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
+                var arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
                 for (int i = 1; i < _arguments.Length; i++)
                 {
                     arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
@@ -1119,7 +1119,7 @@ namespace Microsoft.PowerShell.Commands
         private bool GetValueFromIDictionaryInput()
         {
             object target = PSObject.Base(_inputObject);
-            IDictionary hash = target as IDictionary;
+            var hash = target as IDictionary;
 
             try
             {
@@ -1196,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
             // Cannot invoke a method in RestrictedLanguage mode
             if (Context.LanguageMode == PSLanguageMode.RestrictedLanguage)
             {
-                PSInvalidOperationException exception =
+                var exception =
                     new PSInvalidOperationException(InternalCommandStrings.NoMethodInvocationInRestrictedLanguageMode);
 
                 WriteError(new ErrorRecord(exception, "NoMethodInvocationInRestrictedLanguageMode", ErrorCategory.InvalidOperation, null));
@@ -1210,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!CoreTypes.Contains(baseObject.GetType()))
                 {
-                    PSInvalidOperationException exception =
+                    var exception =
                         new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
 
                     WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
@@ -1250,7 +1250,7 @@ namespace Microsoft.PowerShell.Commands
                 Dbg.Assert(false, "Could not load text for error record '" + errorId + "'");
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new PSArgumentException(message, paraName),
                 errorId,
                 ErrorCategory.InvalidArgument,
@@ -2000,7 +2000,7 @@ namespace Microsoft.PowerShell.Commands
                     CultureInfo.InvariantCulture,
                     InternalCommandStrings.OperationNotAllowedInRestrictedLanguageMode,
                     _binaryOperator);
-                PSInvalidOperationException exception =
+                var exception =
                     new PSInvalidOperationException(message);
                 ThrowTerminatingError(new ErrorRecord(exception, "OperationNotAllowedInRestrictedLanguageMode", ErrorCategory.InvalidOperation, null));
             }
@@ -2292,7 +2292,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ArgumentException ae)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         PSTraceSource.NewArgumentException("BinaryOperator", ParserStrings.BadOperatorArgument, _binaryOperator, ae.Message),
                         "BadOperatorArgument",
                         ErrorCategory.InvalidArgument,
@@ -2301,7 +2301,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         PSTraceSource.NewInvalidOperationException(ParserStrings.OperatorFailed, _binaryOperator, ex.Message),
                         "OperatorFailed",
                         ErrorCategory.InvalidOperation,
@@ -2338,7 +2338,7 @@ namespace Microsoft.PowerShell.Commands
             // return that, otherwise fall through and see if there is an
             // underlying member corresponding to the key...
             object target = PSObject.Base(_inputObject);
-            IDictionary hash = target as IDictionary;
+            var hash = target as IDictionary;
             try
             {
                 if (hash != null && hash.Contains(_property))
@@ -2358,7 +2358,7 @@ namespace Microsoft.PowerShell.Commands
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members = GetMatchMembers();
             if (members.Count > 1)
             {
-                StringBuilder possibleMatches = new StringBuilder();
+                var possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in members)
                 {
                     possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
@@ -2472,7 +2472,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!WildcardPattern.ContainsWildcardCharacters(_property))
             {
-                PSMemberInfoInternalCollection<PSMemberInfo> results = new PSMemberInfoInternalCollection<PSMemberInfo>();
+                var results = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 PSMemberInfo member = _inputObject.Members[_property];
                 if (member != null)
                 {
@@ -2651,7 +2651,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 object version = PSObject.Base(inputData);
 
-                string versionStr = version as string;
+                var versionStr = version as string;
                 if (versionStr != null)
                 {
                     if (versionStr.Equals("latest", StringComparison.OrdinalIgnoreCase))
@@ -2687,7 +2687,7 @@ namespace Microsoft.PowerShell.Commands
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
-                Version version = arguments as Version;
+                var version = arguments as Version;
                 if (version == null || !PSVersionInfo.IsValidPSVersion(version))
                 {
                     // No conversion succeeded so throw and exception...

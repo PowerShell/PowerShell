@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The source string limited in the number of lines.</returns>
         internal static object LimitString(object src)
         {
-            string srcString = src as string;
+            var srcString = src as string;
             if (srcString == null)
             {
                 return src;

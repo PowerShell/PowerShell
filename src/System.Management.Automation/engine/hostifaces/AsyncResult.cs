@@ -196,7 +196,7 @@ namespace System.Management.Automation.Runspaces
             _invokeOnThreadEvent = new AutoResetEvent(false);
 
             // Start the thread wait loop.
-            WaitHandle[] waitHandles = new WaitHandle[2] { AsyncWaitHandle, _invokeOnThreadEvent };
+            var waitHandles = new WaitHandle[2] { AsyncWaitHandle, _invokeOnThreadEvent };
             bool waiting = true;
             while (waiting)
             {

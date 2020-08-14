@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
                 ProcessNullLineOutput();
             }
 
-            LineOutput lo = _lineOutput as LineOutput;
+            var lo = _lineOutput as LineOutput;
             if (lo == null)
             {
                 ProcessWrongTypeLineOutput(_lineOutput);
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string msg = StringUtil.Format(FormatAndOut_out_xxx.OutLineOutput_NullLineOutputParameter);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewArgumentNullException("LineOutput"),
                 "OutLineOutputNullLineOutputParameter",
                 ErrorCategory.InvalidArgument,
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
                 obj.GetType().FullName,
                 typeof(LineOutput).FullName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidCastException(),
                 "OutLineOutputInvalidLineOutputParameterType",
                 ErrorCategory.InvalidArgument,

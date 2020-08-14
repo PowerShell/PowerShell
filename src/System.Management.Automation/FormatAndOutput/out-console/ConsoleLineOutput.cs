@@ -282,8 +282,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // instantiate the helper to do the line processing when ILineOutput.WriteXXX() is called
-            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
-            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback(this.OnWrite);
+            var wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
+            var w = new WriteLineHelper.WriteCallback(this.OnWrite);
 
             if (_forceNewLine)
             {

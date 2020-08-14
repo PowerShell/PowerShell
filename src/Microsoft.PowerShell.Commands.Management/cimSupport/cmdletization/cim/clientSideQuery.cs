@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
                 else
                 {
-                    string expectedPropertyValueAsString = cimTypedExpectedPropertyValue as string;
+                    var expectedPropertyValueAsString = cimTypedExpectedPropertyValue as string;
                     if (expectedPropertyValueAsString != null && WildcardPattern.ContainsWildcardCharacters(expectedPropertyValueAsString))
                     {
                         return BehaviorOnNoMatch.SilentlyContinue;

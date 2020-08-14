@@ -267,7 +267,7 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote)
         {
-            List<CompletionResult> results = new List<CompletionResult>();
+            var results = new List<CompletionResult>();
             if (commandInfoPsObjs == null || !commandInfoPsObjs.Any())
             {
                 return results;
@@ -487,7 +487,7 @@ namespace System.Management.Automation
             string partialName = null;
             bool withColon = false;
             CommandAst commandAst = null;
-            List<CompletionResult> result = new List<CompletionResult>();
+            var result = new List<CompletionResult>();
 
             // Find the parameter ast, it will be near or at the end
             CommandParameterAst parameterAst = null;
@@ -595,7 +595,7 @@ namespace System.Management.Automation
         private static List<CompletionResult> GetParameterCompletionResults(string parameterName, PseudoBindingInfo bindingInfo, CommandParameterAst parameterAst, bool withColon)
         {
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "The pseudo binding should succeed");
-            List<CompletionResult> result = new List<CompletionResult>();
+            var result = new List<CompletionResult>();
 
             if (parameterName == string.Empty)
             {
@@ -654,7 +654,7 @@ namespace System.Management.Automation
                 {
                     case AstParameterArgumentType.AstPair:
                         {
-                            AstPair pair = (AstPair)entry.Value;
+                            var pair = (AstPair)entry.Value;
                             if (pair.ParameterSpecified && pair.Parameter.GetHashCode() == parameterAst.GetHashCode())
                             {
                                 matchedParameterName = entry.Key;
@@ -669,7 +669,7 @@ namespace System.Management.Automation
                         break;
                     case AstParameterArgumentType.Fake:
                         {
-                            FakePair pair = (FakePair)entry.Value;
+                            var pair = (FakePair)entry.Value;
                             if (pair.ParameterSpecified && pair.Parameter.GetHashCode() == parameterAst.GetHashCode())
                             {
                                 matchedParameterName = entry.Key;
@@ -679,7 +679,7 @@ namespace System.Management.Automation
                         break;
                     case AstParameterArgumentType.Switch:
                         {
-                            SwitchPair pair = (SwitchPair)entry.Value;
+                            var pair = (SwitchPair)entry.Value;
                             if (pair.ParameterSpecified && pair.Parameter.GetHashCode() == parameterAst.GetHashCode())
                             {
                                 matchedParameterName = entry.Key;
@@ -833,7 +833,7 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteCommandArgument(CompletionContext context)
         {
             CommandAst commandAst = null;
-            List<CompletionResult> result = new List<CompletionResult>();
+            var result = new List<CompletionResult>();
 
             // Find the expression ast. It should be at the end if there is one
             ExpressionAst expressionAst = null;
@@ -1385,7 +1385,7 @@ namespace System.Management.Automation
             ArgumentLocation argLocation,
             CommandAst commandAst)
         {
-            List<CompletionResult> result = new List<CompletionResult>();
+            var result = new List<CompletionResult>();
 
             PseudoBindingInfo bindingInfo = context.PseudoBindingInfo;
             if (argLocation.IsPositional)
@@ -1441,7 +1441,7 @@ namespace System.Management.Automation
         {
             PseudoBindingInfo bindingInfo = context.PseudoBindingInfo;
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "Caller needs to make sure the pseudo binding was successful");
-            List<CompletionResult> result = new List<CompletionResult>();
+            var result = new List<CompletionResult>();
 
             if (argLocation.IsPositional && argLocation.Argument == null)
             {
@@ -1459,7 +1459,7 @@ namespace System.Management.Automation
                     if (lastPositionalArg != null)
                     {
                         bool lastPositionalGetBound = false;
-                        Collection<string> parameterNames = new Collection<string>();
+                        var parameterNames = new Collection<string>();
 
                         foreach (KeyValuePair<string, AstParameterArgumentPair> entry in bindingInfo.BoundArguments)
                         {
@@ -1520,7 +1520,7 @@ namespace System.Management.Automation
 
             if (argLocation.Argument != null)
             {
-                Collection<string> parameterNames = new Collection<string>();
+                var parameterNames = new Collection<string>();
                 foreach (KeyValuePair<string, AstParameterArgumentPair> entry in bindingInfo.BoundArguments)
                 {
                     if (entry.Value.ParameterArgumentType.Equals(AstParameterArgumentType.PipeObject))
@@ -1829,7 +1829,7 @@ namespace System.Management.Automation
             {
                 case AstParameterArgumentType.AstPair:
                     {
-                        AstPair astPair = (AstPair)astParameterArgumentPair;
+                        var astPair = (AstPair)astParameterArgumentPair;
                         argumentAst = astPair.Argument;
                     }
 
@@ -1865,10 +1865,10 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            ExpressionAst argumentExpressionAst = argumentAst as ExpressionAst;
+            var argumentExpressionAst = argumentAst as ExpressionAst;
             if (argumentExpressionAst == null)
             {
-                CommandExpressionAst argumentCommandExpressionAst = argumentAst as CommandExpressionAst;
+                var argumentCommandExpressionAst = argumentAst as CommandExpressionAst;
                 if (argumentCommandExpressionAst != null)
                 {
                     argumentExpressionAst = argumentCommandExpressionAst.Expression;
@@ -1915,7 +1915,7 @@ namespace System.Management.Automation
             Dictionary<string, AstParameterArgumentPair> boundArguments,
             string parameterName)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             if (boundArguments == null)
             {
@@ -2577,7 +2577,7 @@ namespace System.Management.Automation
             string cimNamespaceOfSource,
             string cimClassNameOfSource)
         {
-            StringBuilder safeClassName = new StringBuilder();
+            var safeClassName = new StringBuilder();
             foreach (char c in cimClassNameOfSource)
             {
                 if (char.IsLetterOrDigit(c) || c == '_')
@@ -2586,7 +2586,7 @@ namespace System.Management.Automation
                 }
             }
 
-            List<string> resultClassNames = new List<string>();
+            var resultClassNames = new List<string>();
             using (var cimSession = CimSession.Create(null))
             {
                 CimClass cimClass = cimSession.GetClass(cimNamespaceOfSource ?? "root/cimv2", cimClassNameOfSource);
@@ -2650,7 +2650,7 @@ namespace System.Management.Automation
             }
 
             WildcardPattern methodNamePattern = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
-            List<CompletionResult> localResults = new List<CompletionResult>();
+            var localResults = new List<CompletionResult>();
             foreach (CimMethodDeclaration methodDeclaration in cimClass.CimClassMethods)
             {
                 string methodName = methodDeclaration.Name;
@@ -2665,7 +2665,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                StringBuilder tooltipText = new StringBuilder();
+                var tooltipText = new StringBuilder();
                 tooltipText.Append(methodName);
                 tooltipText.Append("(");
                 bool gotFirstParameter = false;
@@ -2710,7 +2710,7 @@ namespace System.Management.Automation
 
         private static IEnumerable<string> NativeCompletionCimClassName_GetClassNames(string targetNamespace)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
             using (CimSession cimSession = CimSession.Create(null))
             {
                 using (var operationOptions = new CimOperationOptions { ClassNamesOnly = true })
@@ -2732,8 +2732,8 @@ namespace System.Management.Automation
         {
             string targetNamespace = pseudoBoundNamespace ?? "root/cimv2";
 
-            List<string> regularClasses = new List<string>();
-            List<string> systemClasses = new List<string>();
+            var regularClasses = new List<string>();
+            var systemClasses = new List<string>();
 
             IEnumerable<string> allClasses = s_cimNamespaceToClassNames.GetOrAdd(
                 targetNamespace,
@@ -2785,7 +2785,7 @@ namespace System.Management.Automation
                 }
             }
 
-            List<CompletionResult> namespaceResults = new List<CompletionResult>();
+            var namespaceResults = new List<CompletionResult>();
             WildcardPattern childNamespacePattern = WildcardPattern.Get(prefixOfChildNamespace + "*", WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             using (CimSession cimSession = CimSession.Create(null))
             {
@@ -2803,7 +2803,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        string childNamespace = namespaceNameProperty.Value as string;
+                        var childNamespace = namespaceNameProperty.Value as string;
                         if (childNamespace == null)
                         {
                             continue;
@@ -4048,7 +4048,7 @@ namespace System.Management.Automation
                 {
                     case AstParameterArgumentType.AstPair:
                         {
-                            AstPair arg = (AstPair)pair;
+                            var arg = (AstPair)pair;
                             if (arg.ArgumentIsCommandParameterAst)
                                 continue;
 
@@ -4535,7 +4535,7 @@ namespace System.Management.Automation
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
-                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
+                    var curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
                     SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
                     if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
@@ -4589,8 +4589,8 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteVariable(CompletionContext context)
         {
-            HashSet<string> hashedResults = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            List<CompletionResult> results = new List<CompletionResult>();
+            var hashedResults = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var results = new List<CompletionResult>();
 
             var wordToComplete = context.WordToComplete;
             var colon = wordToComplete.IndexOf(':');
@@ -4622,7 +4622,7 @@ namespace System.Management.Automation
                     Ast astTarget = null;
                     string userPath = null;
 
-                    VariableExpressionAst variableDefinitionAst = varAst.Item2 as VariableExpressionAst;
+                    var variableDefinitionAst = varAst.Item2 as VariableExpressionAst;
                     if (variableDefinitionAst != null)
                     {
                         userPath = varAst.Item1;
@@ -4630,7 +4630,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        CommandAst commandParameterAst = varAst.Item2 as CommandAst;
+                        var commandParameterAst = varAst.Item2 as CommandAst;
                         if (commandParameterAst != null)
                         {
                             userPath = varAst.Item1;
@@ -4868,7 +4868,7 @@ namespace System.Management.Automation
                 // if the variable being completed is in the command extent.
                 if ((commandAst != CompletionVariableAst) && (!CompletionVariableAst.Extent.IsWithin(commandAst.Extent)))
                 {
-                    string[] desiredParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
+                    var desiredParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
 
                     StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, desiredParameters);
                     if (bindingResult != null)
@@ -4927,7 +4927,7 @@ namespace System.Management.Automation
         // Complete the history entries
         internal static List<CompletionResult> CompleteComment(CompletionContext context)
         {
-            List<CompletionResult> results = new List<CompletionResult>();
+            var results = new List<CompletionResult>();
 
             Match matchResult = Regex.Match(context.WordToComplete, @"^#([\w\-]*)$");
             if (!matchResult.Success) { return results; }
@@ -5248,7 +5248,7 @@ namespace System.Management.Automation
         internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
         {
             bool extensionMethodsAdded = false;
-            HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             WildcardPattern memberNamePattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
             foreach (var psTypeName in inferredTypes)
             {
@@ -6088,7 +6088,7 @@ namespace System.Management.Automation
 
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
-            List<string> files = new List<string>();
+            var files = new List<string>();
 
             try
             {

@@ -522,7 +522,7 @@ namespace System.Management.Automation
 
             // run the startup script on the runspace's host
             HostInfo hostInfo = _remoteHost.HostInfo;
-            ServerPowerShellDriver driver = new ServerPowerShellDriver(
+            var driver = new ServerPowerShellDriver(
                 powershell,
                 null,
                 true,
@@ -543,18 +543,18 @@ namespace System.Management.Automation
 
             // find out if there are any error records reported. If there is one, report the error..
             // this will result in the runspace getting closed/broken.
-            ArrayList errorList = (ArrayList)powershell.Runspace.GetExecutionContext.DollarErrorVariable;
+            var errorList = (ArrayList)powershell.Runspace.GetExecutionContext.DollarErrorVariable;
             if (errorList.Count > 0)
             {
                 string exceptionThrown;
-                ErrorRecord lastErrorRecord = errorList[0] as ErrorRecord;
+                var lastErrorRecord = errorList[0] as ErrorRecord;
                 if (lastErrorRecord != null)
                 {
                     exceptionThrown = lastErrorRecord.ToString();
                 }
                 else
                 {
-                    Exception lastException = errorList[0] as Exception;
+                    var lastException = errorList[0] as Exception;
                     if (lastException != null)
                     {
                         exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
@@ -734,7 +734,7 @@ namespace System.Management.Automation
             {
                 DebuggerCommandArgument commandArgument;
                 bool terminateImmediate = false;
-                Collection<object> preProcessOutput = new Collection<object>();
+                var preProcessOutput = new Collection<object>();
 
                 try
                 {
@@ -786,7 +786,7 @@ namespace System.Management.Automation
                 // terminate the command here by making it a No Op.
                 if (terminateImmediate)
                 {
-                    ServerPowerShellDriver noOpDriver = new ServerPowerShellDriver(
+                    var noOpDriver = new ServerPowerShellDriver(
                         powershell,
                         null,
                         noInput,
@@ -843,7 +843,7 @@ namespace System.Management.Automation
 
                         // Always invoke PowerShell commands on pipeline worker thread
                         // for single runspace case, to support nested invocation requests (debugging scenario).
-                        ServerPowerShellDriver srdriver = new ServerPowerShellDriver(
+                        var srdriver = new ServerPowerShellDriver(
                             powershell,
                             null,
                             noInput,
@@ -894,7 +894,7 @@ namespace System.Management.Automation
                         // Have steppable invocation request.
                         powershell.SetIsNested(false);
                         // Execute command concurrently
-                        ServerSteppablePipelineDriver spDriver = new ServerSteppablePipelineDriver(
+                        var spDriver = new ServerSteppablePipelineDriver(
                             powershell,
                             noInput,
                             data.PowerShellId,
@@ -925,7 +925,7 @@ namespace System.Management.Automation
             }
 
             // Invoke PowerShell on driver runspace pool.
-            ServerPowerShellDriver driver = new ServerPowerShellDriver(
+            var driver = new ServerPowerShellDriver(
                 powershell,
                 null,
                 noInput,
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
                 .AddParameter("Property", new string[] {
                     "Name", "Namespace", "HelpUri", "CommandType", "ResolvedCommandName", "OutputType", "Parameters" });
 
-            HostInfo useRunspaceHost = new HostInfo(null);
+            var useRunspaceHost = new HostInfo(null);
             useRunspaceHost.UseRunspaceHost = true;
 
             if (_remoteHost.IsRunspacePushed)
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
             else
             {
                 // Run on usual driver.
-                ServerPowerShellDriver driver = new ServerPowerShellDriver(
+                var driver = new ServerPowerShellDriver(
                     countingPipeline,
                     mainPipeline,
                     true /* no input */,
@@ -1075,8 +1075,8 @@ namespace System.Management.Automation
         private void HandleSetMaxRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
-            int maxRunspaces = (int)((PSNoteProperty)data.Properties[RemoteDataNameStrings.MaxRunspaces]).Value;
-            long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
+            var maxRunspaces = (int)((PSNoteProperty)data.Properties[RemoteDataNameStrings.MaxRunspaces]).Value;
+            var callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
 
             bool response = RunspacePool.SetMaxRunspaces(maxRunspaces);
             DataStructureHandler.SendResponseToClient(callId, response);
@@ -1091,8 +1091,8 @@ namespace System.Management.Automation
         private void HandleSetMinRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
-            int minRunspaces = (int)((PSNoteProperty)data.Properties[RemoteDataNameStrings.MinRunspaces]).Value;
-            long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
+            var minRunspaces = (int)((PSNoteProperty)data.Properties[RemoteDataNameStrings.MinRunspaces]).Value;
+            var callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
 
             bool response = RunspacePool.SetMinRunspaces(minRunspaces);
             DataStructureHandler.SendResponseToClient(callId, response);
@@ -1107,7 +1107,7 @@ namespace System.Management.Automation
         private void HandleGetAvailableRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
-            long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
+            var callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
 
             int availableRunspaces = RunspacePool.GetAvailableRunspaces();
 
@@ -1121,7 +1121,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs"></param>
         private void HandleResetRunspaceState(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
-            long callId = (long)((PSNoteProperty)(eventArgs.Data).Properties[RemoteDataNameStrings.CallId]).Value;
+            var callId = (long)((PSNoteProperty)(eventArgs.Data).Properties[RemoteDataNameStrings.CallId]).Value;
             bool response = ResetRunspaceState();
 
             DataStructureHandler.SendResponseToClient(callId, response);
@@ -1133,7 +1133,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private bool ResetRunspaceState()
         {
-            LocalRunspace runspaceToReset = _rsToUseForSteppablePipeline as LocalRunspace;
+            var runspaceToReset = _rsToUseForSteppablePipeline as LocalRunspace;
             if ((runspaceToReset == null) || (RunspacePool.GetMaxRunspaces() > 1))
             {
                 return false;
@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
         {
             Runspace runspace = _remoteHost.PushedRunspace;
 
-            ServerPowerShellDriver driver = new ServerPowerShellDriver(
+            var driver = new ServerPowerShellDriver(
                 powershell,
                 extraPowerShell,
                 noInput,
@@ -1275,7 +1275,7 @@ namespace System.Management.Automation
             out DebuggerCommandArgument commandArgument)
         {
             commandArgument = new DebuggerCommandArgument();
-            PreProcessCommandResult result = PreProcessCommandResult.None;
+            var result = PreProcessCommandResult.None;
 
             if (commands.Commands.Count == 0 || commands.Commands[0].IsScript)
             {
@@ -1317,7 +1317,7 @@ namespace System.Management.Automation
                 }
 
                 DebuggerResumeAction? resumeAction = null;
-                PSObject resumeObject = command.Parameters[0].Value as PSObject;
+                var resumeObject = command.Parameters[0].Value as PSObject;
                 if (resumeObject != null)
                 {
                     try
@@ -1345,7 +1345,7 @@ namespace System.Management.Automation
                 }
 
                 DebugModes? mode = null;
-                PSObject modeObject = command.Parameters[0].Value as PSObject;
+                var modeObject = command.Parameters[0].Value as PSObject;
                 if (modeObject != null)
                 {
                     try
@@ -1372,7 +1372,7 @@ namespace System.Management.Automation
                     throw new PSArgumentException("Enabled");
                 }
 
-                bool enabled = (bool)command.Parameters[0].Value;
+                var enabled = (bool)command.Parameters[0].Value;
                 commandArgument.DebuggerStepEnabled = enabled;
                 result = PreProcessCommandResult.SetDebuggerStepMode;
             }
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation
                 }
 
                 UnhandledBreakpointProcessingMode? mode = null;
-                PSObject modeObject = command.Parameters[0].Value as PSObject;
+                var modeObject = command.Parameters[0].Value as PSObject;
                 if (modeObject != null)
                 {
                     try
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation
             /// </summary>
             public void PushInvoker()
             {
-                InvokePump newPump = new InvokePump();
+                var newPump = new InvokePump();
                 _invokePumpStack.Push(newPump);
 
                 // Blocking call while new driver invocations are handled on
@@ -2630,7 +2630,7 @@ namespace System.Management.Automation
         private bool IsDebuggingSupported()
         {
             // Restriction only occurs on a (non-pushed) local runspace.
-            LocalRunspace localRunspace = _runspace as LocalRunspace;
+            var localRunspace = _runspace as LocalRunspace;
             if (localRunspace != null)
             {
                 CmdletInfo cmdletInfo = localRunspace.ExecutionContext.EngineSessionState.GetCmdlet(SetPSBreakCommandText);
@@ -2717,11 +2717,11 @@ namespace System.Management.Automation
                     $Debugger.ProcessCommand($Commands, $output)
                     ";
 
-                PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
-                PSCommand Commands = new PSCommand(powershell.Commands);
+                var output = new PSDataCollection<PSObject>();
+                var Commands = new PSCommand(powershell.Commands);
                 powershell.Commands.Clear();
                 powershell.AddScript(script).AddParameter("Debugger", this).AddParameter("Commands", Commands).AddParameter("output", output);
-                ServerPowerShellDriver driver = new ServerPowerShellDriver(
+                var driver = new ServerPowerShellDriver(
                     powershell,
                     null,
                     true,
@@ -2750,10 +2750,10 @@ namespace System.Management.Automation
                 e.InvocationStateInfo.State == PSInvocationState.Stopped ||
                 e.InvocationStateInfo.State == PSInvocationState.Failed)
             {
-                PowerShell powershell = sender as PowerShell;
+                var powershell = sender as PowerShell;
                 powershell.InvocationStateChanged -= HandlePowerShellInvocationStateChanged;
 
-                Runspace runspace = powershell.GetRunspaceConnection() as Runspace;
+                var runspace = powershell.GetRunspaceConnection() as Runspace;
                 runspace.Close();
                 runspace.Dispose();
             }
@@ -2761,7 +2761,7 @@ namespace System.Management.Automation
 
         internal int GetBreakpointCount()
         {
-            ScriptDebugger scriptDebugger = _wrappedDebugger.Value as ScriptDebugger;
+            var scriptDebugger = _wrappedDebugger.Value as ScriptDebugger;
             if (scriptDebugger != null)
             {
                 return scriptDebugger.GetBreakpoints().Count;

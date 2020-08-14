@@ -136,7 +136,7 @@ namespace System.Management.Automation
                             message = AuthorizationManagerBase.AuthorizationManagerDefaultFailureReason;
                         }
 
-                        PSSecurityException securityException = new PSSecurityException(message, authorizationManagerException);
+                        var securityException = new PSSecurityException(message, authorizationManagerException);
                         throw securityException;
                     }
                 }

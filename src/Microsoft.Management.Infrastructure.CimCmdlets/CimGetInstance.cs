@@ -83,7 +83,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
             string nameSpace;
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            var proxys = new List<CimSessionProxy>();
             bool isGetCimInstanceCommand = (cmdlet is GetCimInstanceCommand);
             CimInstance targetCimInstance = null;
             switch (cmdlet.ParameterSetName)
@@ -285,7 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static bool IsClassNameQuerySet(CimBaseCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
-            GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
+            var cmd = cmdlet as GetCimInstanceCommand;
             if (cmd != null)
             {
                 if (cmd.QueryDialect != null || cmd.SelectProperties != null || cmd.Filter != null)
@@ -300,10 +300,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected static string CreateQuery(CimBaseCommand cmdlet)
         {
             DebugHelper.WriteLogEx();
-            GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
+            var cmd = cmdlet as GetCimInstanceCommand;
             if (cmd != null)
             {
-                StringBuilder propertyList = new StringBuilder();
+                var propertyList = new StringBuilder();
                 if (cmd.SelectProperties == null)
                 {
                     propertyList.Append("*");
@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             if (cmdlet is GetCimInstanceCommand)
             {
-                GetCimInstanceCommand getCimInstance = cmdlet as GetCimInstanceCommand;
+                var getCimInstance = cmdlet as GetCimInstanceCommand;
                 proxy.KeyOnly = getCimInstance.KeyOnly;
                 proxy.Shallow = getCimInstance.Shallow;
                 proxy.OperationTimeout = getCimInstance.OperationTimeoutSec;
@@ -392,28 +392,28 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else if (cmdlet is RemoveCimInstanceCommand)
             {
-                RemoveCimInstanceCommand removeCimInstance = cmdlet as RemoveCimInstanceCommand;
+                var removeCimInstance = cmdlet as RemoveCimInstanceCommand;
                 proxy.OperationTimeout = removeCimInstance.OperationTimeoutSec;
                 if (removeCimInstance.ResourceUri != null)
                 {
                     proxy.ResourceUri = removeCimInstance.ResourceUri;
                 }
 
-                CimRemoveCimInstanceContext context = new CimRemoveCimInstanceContext(
+                var context = new CimRemoveCimInstanceContext(
                     ConstValue.GetNamespace(removeCimInstance.Namespace),
                     proxy);
                 proxy.ContextObject = context;
             }
             else if (cmdlet is SetCimInstanceCommand)
             {
-                SetCimInstanceCommand setCimInstance = cmdlet as SetCimInstanceCommand;
+                var setCimInstance = cmdlet as SetCimInstanceCommand;
                 proxy.OperationTimeout = setCimInstance.OperationTimeoutSec;
                 if (setCimInstance.ResourceUri != null)
                 {
                     proxy.ResourceUri = setCimInstance.ResourceUri;
                 }
 
-                CimSetCimInstanceContext context = new CimSetCimInstanceContext(
+                var context = new CimSetCimInstanceContext(
                     ConstValue.GetNamespace(setCimInstance.Namespace),
                     setCimInstance.Property,
                     proxy,

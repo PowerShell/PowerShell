@@ -262,7 +262,7 @@ namespace System.Management.Automation
         {
             string text = null;
 
-            PSObject psobj = obj as PSObject;
+            var psobj = obj as PSObject;
             if (psobj != null)
             {
                 text = GetProperty<string>(psobj, "Text");
@@ -373,7 +373,7 @@ namespace System.Management.Automation
                 throw new InvalidOperationException(error);
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             AppendContent(sb, ".SYNOPSIS", GetProperty<string>(help, "Synopsis"));
             AppendContent(sb, ".DESCRIPTION", GetProperty<PSObject[]>(help, "Description"));
@@ -407,7 +407,7 @@ namespace System.Management.Automation
             {
                 foreach (PSObject ex in example)
                 {
-                    StringBuilder exsb = new StringBuilder();
+                    var exsb = new StringBuilder();
 
                     PSObject[] introduction = GetProperty<PSObject[]>(ex, "introduction");
                     if (introduction != null)

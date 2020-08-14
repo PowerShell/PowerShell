@@ -169,7 +169,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            PSAdaptedProperty adaptedProperty = property as PSAdaptedProperty;
+            var adaptedProperty = property as PSAdaptedProperty;
 
             Diagnostics.Assert(adaptedProperty != null, "ThirdPartyAdapter should only receive PSAdaptedProperties");
 
@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override bool PropertyIsGettable(PSProperty property)
         {
-            PSAdaptedProperty adaptedProperty = property as PSAdaptedProperty;
+            var adaptedProperty = property as PSAdaptedProperty;
 
             Diagnostics.Assert(adaptedProperty != null, "ThirdPartyAdapter should only receive PSAdaptedProperties");
 
@@ -213,7 +213,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override object PropertyGet(PSProperty property)
         {
-            PSAdaptedProperty adaptedProperty = property as PSAdaptedProperty;
+            var adaptedProperty = property as PSAdaptedProperty;
 
             Diagnostics.Assert(adaptedProperty != null, "ThirdPartyAdapter should only receive PSAdaptedProperties");
 
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            PSAdaptedProperty adaptedProperty = property as PSAdaptedProperty;
+            var adaptedProperty = property as PSAdaptedProperty;
 
             Diagnostics.Assert(adaptedProperty != null, "ThirdPartyAdapter should only receive PSAdaptedProperties");
 
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
-            PSAdaptedProperty adaptedProperty = property as PSAdaptedProperty;
+            var adaptedProperty = property as PSAdaptedProperty;
 
             Diagnostics.Assert(adaptedProperty != null, "ThirdPartyAdapter should only receive PSAdaptedProperties");
 
@@ -301,7 +301,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException(nameof(baseObject));
             }
 
-            Collection<string> types = new Collection<string>();
+            var types = new Collection<string>();
 
             for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
             {

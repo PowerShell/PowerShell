@@ -25,7 +25,7 @@ namespace System.Management.Automation
             {
                 if (Utils.PathIsUnc(path) && (context.CurrentCommandProcessor.CommandRuntime != null))
                 {
-                    ProgressRecord analysisProgress = new ProgressRecord(0,
+                    var analysisProgress = new ProgressRecord(0,
                         Modules.ScriptAnalysisPreparing,
                         string.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path));
                     analysisProgress.RecordType = ProgressRecordType.Processing;
@@ -51,7 +51,7 @@ namespace System.Management.Automation
             if (errors.Length > 0)
                 return null;
 
-            ExportVisitor exportVisitor = new ExportVisitor(forCompletion: false);
+            var exportVisitor = new ExportVisitor(forCompletion: false);
             moduleAst.Visit(exportVisitor);
 
             var result = new ScriptAnalysis
@@ -71,7 +71,7 @@ namespace System.Management.Automation
             else
             {
                 // Post-process aliases, as they are not exported by default
-                List<WildcardPattern> patterns = new List<WildcardPattern>();
+                var patterns = new List<WildcardPattern>();
                 foreach (string discoveredCommandFilter in result.DiscoveredCommandFilters)
                 {
                     patterns.Add(WildcardPattern.Get(discoveredCommandFilter, WildcardOptions.IgnoreCase));
@@ -92,12 +92,12 @@ namespace System.Management.Automation
 
         internal static string ReadScript(string path)
         {
-            using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
                 Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
                 Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
-                using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                using (var scriptReader = new StreamReader(readerStream, defaultEncoding))
                 {
                     return scriptReader.ReadToEnd();
                 }
@@ -333,7 +333,7 @@ namespace System.Management.Automation
 
                 var boundParameters = DoPsuedoParameterBinding(commandAst, commandName);
 
-                List<string> commandsToPostFilter = new List<string>();
+                var commandsToPostFilter = new List<string>();
 
                 Action<string> onEachCommand = importedCommandName =>
                 {

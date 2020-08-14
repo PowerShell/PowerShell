@@ -337,8 +337,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessExpressionParameter()
         {
-            TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
-            ParameterProcessor processor =
+            var invocationContext = new TerminatingErrorContext(this);
+            var processor =
                 new ParameterProcessor(new SelectObjectExpressionParameterDefinition());
             if ((Property != null) && (Property.Length != 0))
             {
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If property parameter is mentioned
-            List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
+            var matchedProperties = new List<PSNoteProperty>();
             foreach (MshParameter p in _propertyMshParameterList)
             {
                 ProcessParameter(p, inputObject, matchedProperties);
@@ -386,10 +386,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(ExpandProperty))
             {
-                PSObject result = new PSObject();
+                var result = new PSObject();
                 if (matchedProperties.Count != 0)
                 {
-                    HashSet<string> propertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var propertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                     foreach (PSNoteProperty noteProperty in matchedProperties)
                     {
@@ -424,10 +424,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessParameter(MshParameter p, PSObject inputObject, List<PSNoteProperty> result)
         {
-            string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
+            var name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
 
-            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
-            List<PSPropertyExpressionResult> expressionResults = new List<PSPropertyExpressionResult>();
+            var ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            var expressionResults = new List<PSPropertyExpressionResult>();
             foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
             {
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
             else if (!string.IsNullOrEmpty(name) && expressionResults.Count > 1)
             {
                 string errorMsg = SelectObjectStrings.RenamingMultipleResults;
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new InvalidOperationException(errorMsg),
                     "RenamingMultipleResults",
                     ErrorCategory.InvalidOperation,
@@ -497,12 +497,12 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
-            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            var ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
             List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
 
             if (expressionResults.Count == 0)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.PropertyNotFound, ExpandProperty),
                     "ExpandPropertyNotFound",
                      ErrorCategory.InvalidArgument,
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (expressionResults.Count > 1)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.MutlipleExpandProperties, ExpandProperty),
                     "MutlipleExpandProperties",
                     ErrorCategory.InvalidArgument,
@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     r.Exception,
                     "PropertyEvaluationExpand",
                     ErrorCategory.InvalidResult,
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteAlreadyExistingPropertyError(string name, object inputObject, string errorId)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewArgumentException("Property", SelectObjectStrings.AlreadyExistingProperty, name),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {
-                    ObjectCommandComparer comparer = new ObjectCommandComparer(true, CultureInfo.CurrentCulture, true);
+                    var comparer = new ObjectCommandComparer(true, CultureInfo.CurrentCulture, true);
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
                     {

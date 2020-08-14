@@ -119,7 +119,7 @@ namespace System.Management.Automation
             object variableValue = _variable.Value;
 
             // Perform transformation before validating
-            ArgumentTransformationAttribute argumentTransformation = item as ArgumentTransformationAttribute;
+            var argumentTransformation = item as ArgumentTransformationAttribute;
             if (argumentTransformation != null)
             {
                 // Get an EngineIntrinsics instance using the context of the thread.
@@ -137,7 +137,7 @@ namespace System.Management.Automation
 
             if (!PSVariable.IsValidValue(variableValue, item))
             {
-                ValidationMetadataException e = new ValidationMetadataException(
+                var e = new ValidationMetadataException(
                     "ValidateSetFailure",
                     null,
                     Metadata.InvalidMetadataForCurrentValue,

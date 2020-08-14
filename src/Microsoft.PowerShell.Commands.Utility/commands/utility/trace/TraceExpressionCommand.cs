@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         private static ErrorRecord ConvertToErrorRecord(object obj)
         {
             ErrorRecord result = null;
-            PSObject mshobj = obj as PSObject;
+            var mshobj = obj as PSObject;
             if (mshobj != null)
             {
                 object baseObject = mshobj.BaseObject;
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            ErrorRecord errorRecordResult = obj as ErrorRecord;
+            var errorRecordResult = obj as ErrorRecord;
             if (errorRecordResult != null)
             {
                 result = errorRecordResult;

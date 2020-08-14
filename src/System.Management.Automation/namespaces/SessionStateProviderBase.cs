@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // bug Windows7 #300974 says that we should sort
-                List<DictionaryEntry> sortedEntries = new List<DictionaryEntry>(dictionary.Count + 1);
+                var sortedEntries = new List<DictionaryEntry>(dictionary.Count + 1);
                 foreach (DictionaryEntry entry in dictionary)
                 {
                     sortedEntries.Add(entry);
@@ -328,8 +328,8 @@ namespace Microsoft.PowerShell.Commands
                 sortedEntries.Sort(
                     delegate (DictionaryEntry left, DictionaryEntry right)
                     {
-                        string leftKey = (string)left.Key;
-                        string rightKey = (string)right.Key;
+                        var leftKey = (string)left.Key;
+                        var rightKey = (string)right.Key;
                         IComparer<string> stringComparer = StringComparer.CurrentCultureIgnoreCase;
                         return stringComparer.Compare(leftKey, rightKey);
                     });
@@ -707,7 +707,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ItemExists(path) && !Force)
             {
-                PSArgumentException e =
+                var e =
                     (PSArgumentException)
                     PSTraceSource.NewArgumentException(
                         nameof(path),
@@ -837,7 +837,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                PSArgumentException e =
+                var e =
                     (PSArgumentException)
                     PSTraceSource.NewArgumentException(
                         nameof(path),
@@ -896,7 +896,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ItemExists(newName) && !Force)
                 {
-                    PSArgumentException e =
+                    var e =
                         (PSArgumentException)
                         PSTraceSource.NewArgumentException(
                             nameof(newName),
@@ -983,7 +983,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                PSArgumentException e =
+                var e =
                     (PSArgumentException)
                     PSTraceSource.NewArgumentException(
                         nameof(name),

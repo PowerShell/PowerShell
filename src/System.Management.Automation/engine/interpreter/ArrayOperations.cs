@@ -30,7 +30,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            TElement[] array = new TElement[_elementCount];
+            var array = new TElement[_elementCount];
             for (int i = _elementCount - 1; i >= 0; i--)
             {
                 array[i] = (TElement)frame.Pop();
@@ -51,7 +51,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            int length = (int)frame.Pop();
+            var length = (int)frame.Pop();
             frame.Push(new TElement[length]);
             return +1;
         }
@@ -96,8 +96,8 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            int index = (int)frame.Pop();
-            TElement[] array = (TElement[])frame.Pop();
+            var index = (int)frame.Pop();
+            var array = (TElement[])frame.Pop();
             frame.Push(array[index]);
             return +1;
         }
@@ -118,9 +118,9 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            TElement value = (TElement)frame.Pop();
-            int index = (int)frame.Pop();
-            TElement[] array = (TElement[])frame.Pop();
+            var value = (TElement)frame.Pop();
+            var index = (int)frame.Pop();
+            var array = (TElement[])frame.Pop();
             array[index] = value;
             return +1;
         }

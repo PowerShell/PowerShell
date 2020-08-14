@@ -40,7 +40,7 @@ namespace System.Management.Automation
             string[] enumNames = Enum.GetNames(enumType);
 
             // Get all names that matches the given prefix.
-            List<string> namesWithMatchingPrefix = new List<string>();
+            var namesWithMatchingPrefix = new List<string>();
             foreach (string name in enumNames)
             {
                 if (name.StartsWith(text, StringComparison.OrdinalIgnoreCase))
@@ -84,7 +84,7 @@ namespace System.Management.Automation
                     }
                 }
                 // No special cases match, throw error for multiple matches.
-                StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
+                var matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
                 string separator = ", ";
                 for (int i = 1; i < namesWithMatchingPrefix.Count; i++)
                 {
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         {
             string[] names = Enum.GetNames(enumType);
             string separator = ", ";
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             if (names.Length != 0)
             {
                 for (int i = 0; i < names.Length; i++)

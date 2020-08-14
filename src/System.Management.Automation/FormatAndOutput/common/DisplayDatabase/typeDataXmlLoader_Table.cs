@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(controlNode))
             {
-                TableControlBody tableBody = new TableControlBody();
+                var tableBody = new TableControlBody();
                 bool headersNodeFound = false;      // cardinality 0..1
                 bool rowEntriesNodeFound = false;   // cardinality 1
                 bool hideHeadersNodeFound = false;   // cardinality 0..1
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(columnHeaderNode, index))
             {
-                TableColumnHeaderDefinition chd = new TableColumnHeaderDefinition();
+                var chd = new TableColumnHeaderDefinition();
 
                 bool labelNodeFound = false; // cardinality 0..1
                 bool widthNodeFound = false; // cardinality 0..1
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool columnEntriesNodeFound = false;         // cardinality 1
                 bool multiLineFound = false;    // cardinality 0..1
 
-                TableRowDefinition trd = new TableRowDefinition();
+                var trd = new TableRowDefinition();
                 foreach (XmlNode n in rowEntryNode.ChildNodes)
                 {
                     if (MatchNodeName(n, XmlTags.EntrySelectedByNode))
@@ -445,14 +445,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             using (this.StackFrame(columnEntryNode, index))
             {
                 // process Mshexpression, format string and text token
-                ViewEntryNodeMatch match = new ViewEntryNodeMatch(this);
-                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                var match = new ViewEntryNodeMatch(this);
+                var unprocessedNodes = new List<XmlNode>();
                 if (!match.ProcessExpressionDirectives(columnEntryNode, unprocessedNodes))
                 {
                     return null; // fatal error
                 }
 
-                TableRowItemDefinition rid = new TableRowItemDefinition();
+                var rid = new TableRowItemDefinition();
 
                 // process the remaining nodes
                 bool alignmentNodeFound = false; // cardinality 0..1
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else if (match.Expression != null)
                 {
-                    FieldPropertyToken fpt = new FieldPropertyToken();
+                    var fpt = new FieldPropertyToken();
                     fpt.expression = match.Expression;
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     rid.formatTokenList.Add(fpt);

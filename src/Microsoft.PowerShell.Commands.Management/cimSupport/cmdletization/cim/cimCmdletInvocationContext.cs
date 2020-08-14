@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (actionPreferenceComesFromCommandLineParameter)
             {
                 Exception exception = new ArgumentException(message);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "ActionPreferenceNotSupportedByCimCmdletAdapter", ErrorCategory.NotImplemented, null);
+                var errorRecord = new ErrorRecord(exception, "ActionPreferenceNotSupportedByCimCmdletAdapter", ErrorCategory.NotImplemented, null);
                 cmdlet.ThrowTerminatingError(errorRecord);
             }
         }

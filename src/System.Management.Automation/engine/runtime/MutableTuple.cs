@@ -46,7 +46,7 @@ namespace System.Management.Automation
             }
 
             // slow path
-            MutableTuple nestedTuple = this;
+            var nestedTuple = this;
             var accessPath = GetAccessPath(_size, index).ToArray();
             int length = accessPath.Length;
             for (int i = 0; i < length - 1; ++i)
@@ -165,7 +165,7 @@ namespace System.Management.Automation
             else
             {
                 // slow path
-                MutableTuple res = this;
+                var res = this;
                 int lastAccess = -1;
                 foreach (int i in GetAccessPath(size, index))
                 {
@@ -281,7 +281,7 @@ namespace System.Management.Automation
 
             int count = 0;
             lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
-            Stack<Type> types = new Stack<Type>(tupleType.GetGenericArguments());
+            var types = new Stack<Type>(tupleType.GetGenericArguments());
 
             while (types.Count != 0)
             {
@@ -342,7 +342,7 @@ namespace System.Management.Automation
         {
             // ContractUtils.RequiresNotNull(tuple, "tuple");
 
-            List<object> res = new List<object>();
+            var res = new List<object>();
 
             GetTupleValues(tuple, res);
 
@@ -454,7 +454,7 @@ namespace System.Management.Automation
             Type type = GetTupleType(size);
             if (type != null)
             {
-                Type[] typeArr = new Type[type.GetGenericArguments().Length];
+                var typeArr = new Type[type.GetGenericArguments().Length];
                 int index = 0;
                 for (int i = start; i < end; i++)
                 {
@@ -477,7 +477,7 @@ namespace System.Management.Automation
 
             type = MutableTuple.GetTupleType(size);
             Diagnostics.Assert(type != null, "type cannot be null");
-            Type[] nestedTypes = new Type[type.GetGenericArguments().Length];
+            var nestedTypes = new Type[type.GetGenericArguments().Length];
             for (int i = 0; i < size; i++)
             {
                 int newStart = start + (i * multiplier);

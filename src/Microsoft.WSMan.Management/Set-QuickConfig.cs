@@ -105,7 +105,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string transport;
-                IWSManEx wsmanObject = (IWSManEx)new WSManClass();
+                var wsmanObject = (IWSManEx)new WSManClass();
                 m_SessionObj = (IWSManSession)wsmanObject.CreateSession(null, 0, null);
                 string xpathEnabled = string.Empty;
                 string xpathText = string.Empty;
@@ -137,7 +137,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string analysisOutputXml = m_SessionObj.Invoke(action, "winrm/config/service", analysisInputXml, 0);
-                XmlDocument resultopxml = new XmlDocument();
+                var resultopxml = new XmlDocument();
                 resultopxml.LoadXml(analysisOutputXml);
 
                 if (serviceonly)
@@ -153,7 +153,7 @@ namespace Microsoft.WSMan.Management
                     xpathUpdate = "/cfg:Analyze_OUTPUT/cfg:EnableRemoting_INPUT";
                 }
 
-                XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
+                var nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", "http://schemas.microsoft.com/wbem/wsman/1/config/service");
                 string enabled = resultopxml.SelectSingleNode(xpathEnabled, nsmgr).InnerText;
                 XmlNode sourceAttribute = resultopxml.SelectSingleNode(xpathEnabled, nsmgr).Attributes.GetNamedItem("Source");
@@ -184,8 +184,8 @@ namespace Microsoft.WSMan.Management
 
                 if (!enabled.Equals("false"))
                 {
-                    ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_QuickConfig_InvalidBool_0_ErrorMessage"));
-                    ErrorRecord er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
+                    var e = new ArgumentException(WSManResourceLoader.GetResourceString("L_QuickConfig_InvalidBool_0_ErrorMessage"));
+                    var er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -195,7 +195,7 @@ namespace Microsoft.WSMan.Management
                 {
                     string Info_Msg = WSManResourceLoader.GetResourceString("L_QuickConfig_RemotingDisabledbyGP_00_ErrorMessage");
                     Info_Msg += " " + resultAction;
-                    ArgumentException e = new ArgumentException(Info_Msg);
+                    var e = new ArgumentException(Info_Msg);
                     WriteError(new ErrorRecord(e, "NotSpecified", ErrorCategory.NotSpecified, null));
                     return;
                 }
@@ -203,8 +203,8 @@ namespace Microsoft.WSMan.Management
                 string inputXml = resultopxml.SelectSingleNode(xpathUpdate, nsmgr).OuterXml;
                 if (resultAction.Equals(string.Empty) || inputXml.Equals(string.Empty))
                 {
-                    ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_ERR_Message") + WSManResourceLoader.GetResourceString("L_QuickConfig_MissingUpdateXml_0_ErrorMessage"));
-                    ErrorRecord er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
+                    var e = new ArgumentException(WSManResourceLoader.GetResourceString("L_ERR_Message") + WSManResourceLoader.GetResourceString("L_QuickConfig_MissingUpdateXml_0_ErrorMessage"));
+                    var er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -219,7 +219,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 rxml = m_SessionObj.Invoke(action, "winrm/config/service", inputXml, 0);
-                XmlDocument finalxml = new XmlDocument();
+                var finalxml = new XmlDocument();
                 finalxml.LoadXml(rxml);
 
                 if (serviceonly)

@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateMemberSetValueError(SetValueException e)
         {
-            Exception ex = new Exception(StringUtil.Format(NewObjectStrings.InvalidValue, e));
+            var ex = new Exception(StringUtil.Format(NewObjectStrings.InvalidValue, e));
             ThrowTerminatingError(
                 new ErrorRecord(ex, "SetValueException", ErrorCategory.InvalidData, null));
         }
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void STAComCreateThreadProc(object createstruct)
         {
-            ComCreateInfo info = (ComCreateInfo)createstruct;
+            var info = (ComCreateInfo)createstruct;
             try
             {
                 Type type = null;
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     createInfo = new ComCreateInfo();
 
-                    Thread thread = new Thread(new ParameterizedThreadStart(STAComCreateThreadProc));
+                    var thread = new Thread(new ParameterizedThreadStart(STAComCreateThreadProc));
                     thread.SetApartmentState(ApartmentState.STA);
                     thread.Start(createInfo);
 

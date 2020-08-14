@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
             //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] here,
             //            presumably because only the latter type deserializes type-faithfully.
             var clientVersion = PowerShellVersion;
-            PSSenderInfo remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
+            var remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
             if (clientVersion == null && remotingClientInfo != null)
             {
                 clientVersion = PSObject.Base((PSObject.Base(remotingClientInfo.ApplicationArguments["PSVersionTable"]) as PSPrimitiveDictionary)?["PSVersion"]) as Version;

@@ -51,7 +51,7 @@ namespace System.Management.Automation
             // Use the scope enumerator to find the alias using the
             // appropriate scoping rules
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -132,10 +132,10 @@ namespace System.Management.Automation
         /// </summary>
         internal IDictionary<string, List<CmdletInfo>> GetCmdletTable()
         {
-            Dictionary<string, List<CmdletInfo>> result =
+            var result =
                 new Dictionary<string, List<CmdletInfo>>(StringComparer.OrdinalIgnoreCase);
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -147,7 +147,7 @@ namespace System.Management.Automation
                         // Make sure the cmdlet isn't private or if it is that the current
                         // scope is the same scope the alias was retrieved from.
 
-                        List<CmdletInfo> toBeAdded = new List<CmdletInfo>();
+                        var toBeAdded = new List<CmdletInfo>();
                         foreach (CmdletInfo cmdletInfo in entry.Value)
                         {
                             if ((cmdletInfo.Options & ScopedItemOptions.Private) == 0 ||
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IDictionary<string, List<CmdletInfo>> GetCmdletTableAtScope(string scopeID)
         {
-            Dictionary<string, List<CmdletInfo>> result =
+            var result =
                 new Dictionary<string, List<CmdletInfo>>(StringComparer.OrdinalIgnoreCase);
 
             SessionStateScope scope = GetScopeByID(scopeID);
@@ -192,7 +192,7 @@ namespace System.Management.Automation
             {
                 // Make sure the alias isn't private or if it is that the current
                 // scope is the same scope the alias was retrieved from.
-                List<CmdletInfo> toBeAdded = new List<CmdletInfo>();
+                var toBeAdded = new List<CmdletInfo>();
                 foreach (CmdletInfo cmdletInfo in entry.Value)
                 {
                     if ((cmdletInfo.Options & ScopedItemOptions.Private) == 0 ||
@@ -243,7 +243,7 @@ namespace System.Management.Automation
 
             // Use the scope enumerator to find an existing function
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -294,7 +294,7 @@ namespace System.Management.Automation
 
             // Use the scope enumerator to find an existing function
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)

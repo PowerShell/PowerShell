@@ -179,7 +179,7 @@ namespace System.Management.Automation.Remoting
             int? result = null;
             try
             {
-                double variableValue = (double)LanguagePrimitives.ConvertTo(optionValueInMB,
+                var variableValue = (double)LanguagePrimitives.ConvertTo(optionValueInMB,
                     typeof(double), System.Globalization.CultureInfo.InvariantCulture);
 
                 result = unchecked((int)(variableValue * 1024 * 1024)); // Multiply by 1MB
@@ -231,13 +231,13 @@ namespace System.Management.Automation.Remoting
          */
         internal static ConfigurationDataFromXML Create(string initializationParameters)
         {
-            ConfigurationDataFromXML result = new ConfigurationDataFromXML();
+            var result = new ConfigurationDataFromXML();
             if (string.IsNullOrEmpty(initializationParameters))
             {
                 return result;
             }
 
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            var readerSettings = new XmlReaderSettings();
             readerSettings.CheckCharacters = false;
             readerSettings.IgnoreComments = true;
             readerSettings.IgnoreProcessingInstructions = true;
@@ -770,7 +770,7 @@ namespace System.Management.Automation.Remoting
                 throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
             }
 
-            string s = value as string;
+            var s = value as string;
             if (string.IsNullOrEmpty(s) && mandatory)
             {
                 s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool ISSValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            string value = obj as string;
+            var value = obj as string;
 
             if (!string.IsNullOrEmpty(value))
             {
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool LanguageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            string value = obj as string;
+            var value = obj as string;
 
             if (!string.IsNullOrEmpty(value))
             {
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool ExecutionPolicyValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            string value = obj as string;
+            var value = obj as string;
 
             if (!string.IsNullOrEmpty(value))
             {
@@ -1120,7 +1120,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static bool HashtableTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            Hashtable hash = obj as Hashtable;
+            var hash = obj as Hashtable;
 
             if (hash == null)
             {
@@ -1401,7 +1401,7 @@ namespace System.Management.Automation.Remoting
         internal static ExternalScriptInfo GetScriptInfoForFile(ExecutionContext context, string fileName, out string scriptName)
         {
             scriptName = Path.GetFileName(fileName);
-            ExternalScriptInfo scriptInfo = new ExternalScriptInfo(scriptName, fileName, context);
+            var scriptInfo = new ExternalScriptInfo(scriptName, fileName, context);
 
             // Skip ShouldRun check for .psd1 files.
             // Use ValidateScriptInfo() for explicitly validating the checkpolicy for psd1 file.
@@ -1646,7 +1646,7 @@ namespace System.Management.Automation.Remoting
                 // Each role capability in the role definition item should contain a hash table with allowed role capability key.
                 //
 
-                IDictionary roleDefinition = roleDefinitions[roleKey] as IDictionary;
+                var roleDefinition = roleDefinitions[roleKey] as IDictionary;
                 if (roleDefinition == null)
                 {
                     var invalidOperationEx = new PSInvalidOperationException(
@@ -1658,7 +1658,7 @@ namespace System.Management.Automation.Remoting
                 foreach (var key in roleDefinition.Keys)
                 {
                     // Ensure each role capability key is valid.
-                    string roleCapabilityKey = key as string;
+                    var roleCapabilityKey = key as string;
                     if (roleCapabilityKey == null)
                     {
                         var invalidOperationEx = new PSInvalidOperationException(
@@ -1734,7 +1734,7 @@ namespace System.Management.Automation.Remoting
             catch (PSSecurityException e)
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, configFile);
-                PSInvalidOperationException ioe = new PSInvalidOperationException(message, e);
+                var ioe = new PSInvalidOperationException(message, e);
                 ioe.SetErrorId("InvalidPSSessionConfigurationFilePath");
 
                 throw ioe;
@@ -1751,11 +1751,11 @@ namespace System.Management.Automation.Remoting
             if (_configHash.ContainsKey(ConfigFileConstants.RoleDefinitions))
             {
                 // Extract the 'Roles' hashtable
-                IDictionary roleEntry = _configHash[ConfigFileConstants.RoleDefinitions] as IDictionary;
+                var roleEntry = _configHash[ConfigFileConstants.RoleDefinitions] as IDictionary;
                 if (roleEntry == null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleEntry, _configHash["Roles"].GetType().FullName);
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                    var ioe = new PSInvalidOperationException(message);
                     ioe.SetErrorId("InvalidRoleDefinitionNotHashtable");
                     throw ioe;
                 }
@@ -1770,12 +1770,12 @@ namespace System.Management.Automation.Remoting
                     if (roleVerifier(role.ToString()))
                     {
                         // Extract their specific configuration
-                        IDictionary roleCustomizations = roleEntry[role] as IDictionary;
+                        var roleCustomizations = roleEntry[role] as IDictionary;
 
                         if (roleCustomizations == null)
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleValue, role.ToString());
-                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            var ioe = new PSInvalidOperationException(message);
                             ioe.SetErrorId("InvalidRoleValueNotHashtable");
                             throw ioe;
                         }
@@ -1791,7 +1791,7 @@ namespace System.Management.Automation.Remoting
 
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
-            List<string> psrcFiles = new List<string>();
+            var psrcFiles = new List<string>();
 
             if (_configHash.ContainsKey(ConfigFileConstants.RoleCapabilities))
             {
@@ -1805,7 +1805,7 @@ namespace System.Management.Automation.Remoting
                         if (string.IsNullOrEmpty(roleCapabilityPath))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + PSRCExtension);
-                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            var ioe = new PSInvalidOperationException(message);
                             ioe.SetErrorId("CouldNotFindRoleCapability");
                             throw ioe;
                         }
@@ -1825,7 +1825,7 @@ namespace System.Management.Automation.Remoting
                         if (!Path.GetExtension(roleCapabilityFilePath).Equals(PSRCExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFileExtension, roleCapabilityFilePath);
-                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            var ioe = new PSInvalidOperationException(message);
                             ioe.SetErrorId("InvalidRoleCapabilityFileExtension");
                             throw ioe;
                         }
@@ -1833,7 +1833,7 @@ namespace System.Management.Automation.Remoting
                         if (!File.Exists(roleCapabilityFilePath))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapabilityFile, roleCapabilityFilePath);
-                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            var ioe = new PSInvalidOperationException(message);
                             ioe.SetErrorId("CouldNotFindRoleCapabilityFile");
                             throw ioe;
                         }
@@ -1845,7 +1845,7 @@ namespace System.Management.Automation.Remoting
 
             foreach (var roleCapabilityFile in psrcFiles)
             {
-                DISCPowerShellConfiguration roleCapabilityConfiguration = new DISCPowerShellConfiguration(roleCapabilityFile, null);
+                var roleCapabilityConfiguration = new DISCPowerShellConfiguration(roleCapabilityFile, null);
                 IDictionary roleCapabilityConfigurationItems = roleCapabilityConfiguration.ConfigHash;
                 MergeConfigHashIntoConfigHash(roleCapabilityConfigurationItems);
             }
@@ -1950,7 +1950,7 @@ namespace System.Management.Automation.Remoting
 
             // Create the initial session state
             string initialSessionState = TryGetValue(_configHash, ConfigFileConstants.SessionType);
-            SessionType sessionType = SessionType.Default;
+            var sessionType = SessionType.Default;
             bool cmdletVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleCmdlets);
             bool functionVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleFunctions);
             bool aliasVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleAliases);
@@ -2004,7 +2004,7 @@ namespace System.Management.Automation.Remoting
 
                 if (providers != null)
                 {
-                    System.Collections.Generic.HashSet<string> addedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var addedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string provider in providers)
                     {
                         if (!string.IsNullOrEmpty(provider))
@@ -2047,7 +2047,7 @@ namespace System.Management.Automation.Remoting
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.ModulesToImport);
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                    var ioe = new PSInvalidOperationException(message);
                     ioe.SetErrorId("InvalidModulesToImportKeyEntries");
 
                     throw ioe;
@@ -2055,18 +2055,18 @@ namespace System.Management.Automation.Remoting
 
                 if (modules != null)
                 {
-                    Collection<ModuleSpecification> modulesToImport = new Collection<ModuleSpecification>();
+                    var modulesToImport = new Collection<ModuleSpecification>();
                     foreach (object module in modules)
                     {
                         ModuleSpecification moduleSpec = null;
-                        string moduleName = module as string;
+                        var moduleName = module as string;
                         if (!string.IsNullOrEmpty(moduleName))
                         {
                             moduleSpec = new ModuleSpecification(moduleName);
                         }
                         else
                         {
-                            Hashtable moduleHash = module as Hashtable;
+                            var moduleHash = module as Hashtable;
                             if (moduleHash != null)
                             {
                                 moduleSpec = new ModuleSpecification(moduleHash);
@@ -2110,7 +2110,7 @@ namespace System.Management.Automation.Remoting
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.VisibleCmdlets);
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                    var ioe = new PSInvalidOperationException(message);
                     ioe.SetErrorId("InvalidVisibleCmdletsKeyEntries");
 
                     throw ioe;
@@ -2203,7 +2203,7 @@ namespace System.Management.Automation.Remoting
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.VisibleFunctions);
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                    var ioe = new PSInvalidOperationException(message);
                     ioe.SetErrorId("InvalidVisibleFunctionsKeyEntries");
 
                     throw ioe;
@@ -2247,7 +2247,7 @@ namespace System.Management.Automation.Remoting
                     {
                         foreach (DictionaryEntry variable in variables)
                         {
-                            SessionStateVariableEntry entry = new SessionStateVariableEntry(variable.Key.ToString(), variable.Value.ToString(), null);
+                            var entry = new SessionStateVariableEntry(variable.Key.ToString(), variable.Value.ToString(), null);
                             iss.EnvironmentVariables.Add(entry);
                         }
                     }
@@ -2370,7 +2370,7 @@ namespace System.Management.Automation.Remoting
             // Set the execution policy
             if (_configHash.ContainsKey(ConfigFileConstants.ExecutionPolicy))
             {
-                Microsoft.PowerShell.ExecutionPolicy executionPolicy = (Microsoft.PowerShell.ExecutionPolicy)Enum.Parse(
+                var executionPolicy = (Microsoft.PowerShell.ExecutionPolicy)Enum.Parse(
                     typeof(Microsoft.PowerShell.ExecutionPolicy), _configHash[ConfigFileConstants.ExecutionPolicy].ToString(), true);
                 iss.ExecutionPolicy = executionPolicy;
             }
@@ -2378,7 +2378,7 @@ namespace System.Management.Automation.Remoting
             // Set the language mode
             if (_configHash.ContainsKey(ConfigFileConstants.LanguageMode))
             {
-                System.Management.Automation.PSLanguageMode languageMode = (System.Management.Automation.PSLanguageMode)Enum.Parse(
+                var languageMode = (System.Management.Automation.PSLanguageMode)Enum.Parse(
                     typeof(System.Management.Automation.PSLanguageMode), _configHash[ConfigFileConstants.LanguageMode].ToString(), true);
                 iss.LanguageMode = languageMode;
             }
@@ -2448,11 +2448,11 @@ namespace System.Management.Automation.Remoting
             //  for that attribute, as a HashSet of strings. For ValidateSet, this will be used as a collection of strings
             //  directly during proxy generation. For For ValidatePattern, it will be combined into a regex
             //  like: '^(Pattern1|Pattern2|Pattern3)$' during proxy generation.
-            Dictionary<string, Hashtable> commandModifications = new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase);
+            var commandModifications = new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase);
 
             // Create a hash set of current modules to import so that fully qualified commands can include their
             // module if needed.
-            HashSet<string> commandModuleNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var commandModuleNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var moduleSpec in iss.ModuleSpecificationsToImport)
             {
                 commandModuleNames.Add(moduleSpec.Name);
@@ -2466,7 +2466,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // If it's just a string, this is a visible command
-                string command = commandObject as string;
+                var command = commandObject as string;
                 if (!string.IsNullOrEmpty(command))
                 {
                     ProcessVisibleCommand(iss, command, commandModuleNames);
@@ -2476,7 +2476,7 @@ namespace System.Management.Automation.Remoting
                     // If it's a hashtable, it represents a customization to a cmdlet.
                     // (I.e.: Exposed parameter with ValidateSet and / or ValidatePattern)
                     // Collect these so that we can post-process them.
-                    IDictionary commandModification = commandObject as IDictionary;
+                    var commandModification = commandObject as IDictionary;
                     if (commandModification != null)
                     {
                         ProcessCommandModification(commandModifications, commandModification);
@@ -2494,7 +2494,7 @@ namespace System.Management.Automation.Remoting
 
         private static void ProcessCommandModification(Dictionary<string, Hashtable> commandModifications, IDictionary commandModification)
         {
-            string commandName = commandModification["Name"] as string;
+            var commandName = commandModification["Name"] as string;
             Hashtable[] parameters = null;
 
             if (commandModification.Contains("Parameters"))
@@ -2528,7 +2528,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 string message = StringUtil.Format(RemotingErrorIdStrings.DISCCommandModificationSyntax, hashtableKey);
-                PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                var ioe = new PSInvalidOperationException(message);
                 ioe.SetErrorId("InvalidVisibleCommandKeyEntries");
 
                 throw ioe;
@@ -2546,7 +2546,7 @@ namespace System.Management.Automation.Remoting
             {
                 // Ensure we have the hashtable representing the current parameter being modified
                 string parameterName = parameter["Name"].ToString();
-                Hashtable currentParameterModification = parameterModifications[parameterName] as Hashtable;
+                var currentParameterModification = parameterModifications[parameterName] as Hashtable;
                 if (currentParameterModification == null)
                 {
                     currentParameterModification = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -2566,7 +2566,7 @@ namespace System.Management.Automation.Remoting
                         currentParameterModification[parameterModification] = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     }
 
-                    HashSet<string> currentParameterModificationValue = (HashSet<string>)currentParameterModification[parameterModification];
+                    var currentParameterModificationValue = (HashSet<string>)currentParameterModification[parameterModification];
 
                     foreach (string parameterModificationValue in TryGetStringArray(parameter[parameterModification]))
                     {
@@ -2638,7 +2638,7 @@ namespace System.Management.Automation.Remoting
 
             string description = TryGetValue(alias, ConfigFileConstants.AliasDescriptionToken);
 
-            ScopedItemOptions options = ScopedItemOptions.None;
+            var options = ScopedItemOptions.None;
 
             string optionsString = TryGetValue(alias, ConfigFileConstants.AliasOptionsToken);
 
@@ -2647,7 +2647,7 @@ namespace System.Management.Automation.Remoting
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
 
-            SessionStateEntryVisibility visibility = SessionStateEntryVisibility.Private;
+            var visibility = SessionStateEntryVisibility.Private;
             if (!isAliasVisibilityDefined)
             {
                 visibility = SessionStateEntryVisibility.Public;
@@ -2676,7 +2676,7 @@ namespace System.Management.Automation.Remoting
                 return null;
             }
 
-            ScopedItemOptions options = ScopedItemOptions.None;
+            var options = ScopedItemOptions.None;
 
             string optionsString = TryGetValue(function, ConfigFileConstants.FunctionOptionsToken);
 
@@ -2688,7 +2688,7 @@ namespace System.Management.Automation.Remoting
             ScriptBlock newFunction = ScriptBlock.Create(value);
             newFunction.LanguageMode = PSLanguageMode.FullLanguage;
 
-            SessionStateEntryVisibility functionVisibility = SessionStateEntryVisibility.Private;
+            var functionVisibility = SessionStateEntryVisibility.Private;
             if (!isFunctionVisibilityDefined)
             {
                 functionVisibility = SessionStateEntryVisibility.Public;
@@ -2718,7 +2718,7 @@ namespace System.Management.Automation.Remoting
 
             string description = TryGetValue(variable, ConfigFileConstants.AliasDescriptionToken);
 
-            ScopedItemOptions options = ScopedItemOptions.None;
+            var options = ScopedItemOptions.None;
 
             string optionsString = TryGetValue(variable, ConfigFileConstants.AliasOptionsToken);
 
@@ -2727,7 +2727,7 @@ namespace System.Management.Automation.Remoting
                 options = (ScopedItemOptions)Enum.Parse(typeof(ScopedItemOptions), optionsString, true);
             }
 
-            SessionStateEntryVisibility visibility = SessionStateEntryVisibility.Private;
+            var visibility = SessionStateEntryVisibility.Private;
             if (languageMode == PSLanguageMode.FullLanguage)
             {
                 visibility = SessionStateEntryVisibility.Public;
@@ -2783,7 +2783,7 @@ namespace System.Management.Automation.Remoting
         internal static Hashtable[] TryGetHashtableArray(object hashObj)
         {
             // Scalar case
-            Hashtable hashtable = hashObj as Hashtable;
+            var hashtable = hashObj as Hashtable;
 
             if (hashtable != null)
             {
@@ -2791,12 +2791,12 @@ namespace System.Management.Automation.Remoting
             }
 
             // 1. Direct conversion
-            Hashtable[] hashArray = hashObj as Hashtable[];
+            var hashArray = hashObj as Hashtable[];
 
             if (hashArray == null)
             {
                 // 2. Convert from object array
-                object[] objArray = hashObj as object[];
+                var objArray = hashObj as object[];
 
                 if (objArray != null)
                 {
@@ -2804,7 +2804,7 @@ namespace System.Management.Automation.Remoting
 
                     for (int i = 0; i < hashArray.Length; i++)
                     {
-                        Hashtable hash = objArray[i] as Hashtable;
+                        var hash = objArray[i] as Hashtable;
 
                         if (hash == null)
                         {
@@ -2826,12 +2826,12 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal static string[] TryGetStringArray(object hashObj)
         {
-            object[] objs = hashObj as object[];
+            var objs = hashObj as object[];
 
             if (objs == null)
             {
                 // Scalar case
-                object obj = hashObj as object;
+                var obj = hashObj as object;
 
                 if (obj != null)
                 {
@@ -2843,7 +2843,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            string[] result = new string[objs.Length];
+            var result = new string[objs.Length];
 
             for (int i = 0; i < objs.Length; i++)
             {
@@ -2855,7 +2855,7 @@ namespace System.Management.Automation.Remoting
 
         internal static T[] TryGetObjectsOfType<T>(object hashObj, IEnumerable<Type> types) where T : class
         {
-            object[] objs = hashObj as object[];
+            var objs = hashObj as object[];
             if (objs == null)
             {
                 // Scalar case
@@ -2874,7 +2874,7 @@ namespace System.Management.Automation.Remoting
                 return null;
             }
 
-            T[] result = new T[objs.Length];
+            var result = new T[objs.Length];
             for (int i = 0; i < objs.Length; i++)
             {
                 int i1 = i;

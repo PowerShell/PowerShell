@@ -547,7 +547,7 @@ namespace System.Management.Automation
                 Diagnostics.Assert(commandAst.Redirections.Count == 1, "only 1 kind of redirection is supported");
                 Diagnostics.Assert(commandAst.Redirections[0] is MergingRedirectionAst, "unexpected redirection type");
 
-                PipelineResultTypes toType = PipelineResultTypes.Output;
+                var toType = PipelineResultTypes.Output;
                 PipelineResultTypes fromType;
                 switch (commandAst.Redirections[0].FromStream)
                 {

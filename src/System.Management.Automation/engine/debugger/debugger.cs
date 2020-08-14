@@ -1283,21 +1283,21 @@ namespace System.Management.Automation
 
         private void AddNewBreakpoint(Breakpoint breakpoint)
         {
-            LineBreakpoint lineBreakpoint = breakpoint as LineBreakpoint;
+            var lineBreakpoint = breakpoint as LineBreakpoint;
             if (lineBreakpoint != null)
             {
                 AddLineBreakpoint(lineBreakpoint);
                 return;
             }
 
-            CommandBreakpoint cmdBreakpoint = breakpoint as CommandBreakpoint;
+            var cmdBreakpoint = breakpoint as CommandBreakpoint;
             if (cmdBreakpoint != null)
             {
                 AddCommandBreakpoint(cmdBreakpoint);
                 return;
             }
 
-            VariableBreakpoint varBreakpoint = breakpoint as VariableBreakpoint;
+            var varBreakpoint = breakpoint as VariableBreakpoint;
             if (varBreakpoint != null)
             {
                 AddVariableBreakpoint(varBreakpoint);
@@ -1504,7 +1504,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_context._debuggingMode == 1, "breakpoints only hit when debugging mode == 1");
 
-            List<Breakpoint> breaks = new List<Breakpoint>();
+            var breaks = new List<Breakpoint>();
             try
             {
                 SetInternalDebugMode(InternalDebugMode.InScriptStop);
@@ -1752,7 +1752,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(breakpoints != null, "The list of breakpoints should not be null");
 
-            LocalRunspace localRunspace = _context.CurrentRunspace as LocalRunspace;
+            var localRunspace = _context.CurrentRunspace as LocalRunspace;
 
             Diagnostics.Assert(localRunspace != null, "Debugging is only supported on local runspaces");
 
@@ -1859,11 +1859,11 @@ namespace System.Management.Automation
                 _commandProcessor.Reset();
 
                 // Save a copy of the stop arguments.
-                DebuggerStopEventArgs copyArgs = new DebuggerStopEventArgs(invocationInfo, breakpoints);
+                var copyArgs = new DebuggerStopEventArgs(invocationInfo, breakpoints);
                 _debuggerStopEventArgs.Push(copyArgs);
 
                 // Blocking call to raise debugger stop event.
-                DebuggerStopEventArgs e = new DebuggerStopEventArgs(invocationInfo, breakpoints);
+                var e = new DebuggerStopEventArgs(invocationInfo, breakpoints);
                 RaiseDebuggerStopEvent(e);
                 ResumeExecution(e.ResumeAction);
             }
@@ -2339,7 +2339,7 @@ namespace System.Management.Automation
             //
             // Otherwise let root script debugger handle it.
             //
-            LocalRunspace localRunspace = _context.CurrentRunspace as LocalRunspace;
+            var localRunspace = _context.CurrentRunspace as LocalRunspace;
             if (localRunspace == null)
             {
                 throw new PSInvalidOperationException(
@@ -2366,14 +2366,14 @@ namespace System.Management.Automation
                         cmd.MergeMyResults(PipelineResultTypes.All, PipelineResultTypes.Output);
                     }
 
-                    PSDataCollection<PSObject> internalOutput = new PSDataCollection<PSObject>();
+                    var internalOutput = new PSDataCollection<PSObject>();
                     internalOutput.DataAdded += (sender, args) =>
                         {
                             foreach (var item in internalOutput.ReadAll())
                             {
                                 if (item == null) { continue; }
 
-                                DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
+                                var dbgCmd = item.BaseObject as DebuggerCommand;
                                 if (dbgCmd != null)
                                 {
                                     bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
@@ -2586,13 +2586,13 @@ namespace System.Management.Automation
             // Create an Invocation object that has full source script from script debugger plus
             // line information provided from caller.
             string fullScript = _currentInvocationInfo.GetFullScript();
-            ScriptPosition startScriptPosition = new ScriptPosition(
+            var startScriptPosition = new ScriptPosition(
                 _currentInvocationInfo.ScriptName,
                 lineNum,
                 _currentInvocationInfo.ScriptPosition.StartScriptPosition.Offset,
                 _currentInvocationInfo.Line,
                 fullScript);
-            ScriptPosition endScriptPosition = new ScriptPosition(
+            var endScriptPosition = new ScriptPosition(
                 _currentInvocationInfo.ScriptName,
                 lineNum,
                 _currentInvocationInfo.ScriptPosition.StartScriptPosition.Offset,
@@ -2951,7 +2951,7 @@ namespace System.Management.Automation
 
         private bool TryAddDebugJob(Job job, bool breakAll)
         {
-            IJobDebugger debuggableJob = job as IJobDebugger;
+            var debuggableJob = job as IJobDebugger;
             if ((debuggableJob != null) && (debuggableJob.Debugger != null) &&
                 ((job.JobStateInfo.State == JobState.Running) || (job.JobStateInfo.State == JobState.AtBreakpoint)))
             {
@@ -2967,7 +2967,7 @@ namespace System.Management.Automation
                 // Raise debug stop event if job is already in stopped state.
                 if (jobDebugAlreadyStopped)
                 {
-                    RemotingJobDebugger remoteJobDebugger = debuggableJob.Debugger as RemotingJobDebugger;
+                    var remoteJobDebugger = debuggableJob.Debugger as RemotingJobDebugger;
                     if (remoteJobDebugger != null)
                     {
                         remoteJobDebugger.CheckStateAndRaiseStopEvent();
@@ -3128,7 +3128,7 @@ namespace System.Management.Automation
 
         private void ReleaseInternalRunspaceDebugProcessing(object sender, bool emptyQueue = false)
         {
-            Runspace runspace = sender as Runspace;
+            var runspace = sender as Runspace;
             if (runspace != null)
             {
                 runspace.StateChanged -= RunspaceStateChangedHandler;
@@ -3406,7 +3406,7 @@ namespace System.Management.Automation
             if (args != null)
             {
                 // Save copy of arguments.
-                DebuggerStopEventArgs copyArgs = new DebuggerStopEventArgs(
+                var copyArgs = new DebuggerStopEventArgs(
                     args.InvocationInfo,
                     new Collection<Breakpoint>(args.Breakpoints),
                     args.ResumeAction);
@@ -3467,7 +3467,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            Debugger senderDebugger = sender as Debugger;
+            var senderDebugger = sender as Debugger;
             bool pushSucceeded = false;
             lock (_syncActiveDebuggerStopObject)
             {
@@ -3522,7 +3522,7 @@ namespace System.Management.Automation
 
         private void HandleJobStateChanged(object sender, JobStateEventArgs args)
         {
-            Job job = sender as Job;
+            var job = sender as Job;
 
             if (job.IsPersistentState(args.JobStateInfo.State))
             {
@@ -3742,7 +3742,7 @@ namespace System.Management.Automation
 
         private void HandleRunspaceStateChanged(object sender, RunspaceStateEventArgs e)
         {
-            Runspace runspace = sender as Runspace;
+            var runspace = sender as Runspace;
             bool remove = false;
 
             switch (e.RunspaceStateInfo.State)
@@ -3770,7 +3770,7 @@ namespace System.Management.Automation
         {
             if (sender == null || args == null) { return; }
 
-            Debugger senderDebugger = sender as Debugger;
+            var senderDebugger = sender as Debugger;
             bool pushSucceeded = false;
             lock (_syncActiveDebuggerStopObject)
             {
@@ -3785,7 +3785,7 @@ namespace System.Management.Automation
                 }
 
                 // Get nested debugger runspace info.
-                NestedRunspaceDebugger nestedDebugger = senderDebugger as NestedRunspaceDebugger;
+                var nestedDebugger = senderDebugger as NestedRunspaceDebugger;
                 if (nestedDebugger == null) { return; }
 
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
@@ -3810,7 +3810,7 @@ namespace System.Management.Automation
         private void HandleActiveRunspaceDebuggerStop(object sender, DebuggerStopEventArgs args)
         {
             // Save copy of arguments.
-            DebuggerStopEventArgs copyArgs = new DebuggerStopEventArgs(
+            var copyArgs = new DebuggerStopEventArgs(
                 args.InvocationInfo,
                 new Collection<Breakpoint>(args.Breakpoints),
                 args.ResumeAction);
@@ -4094,7 +4094,7 @@ namespace System.Management.Automation
 
         internal void Trace(string messageId, string resourceString, params object[] args)
         {
-            ActionPreference pref = ActionPreference.Continue;
+            var pref = ActionPreference.Continue;
 
             string message;
             if (args == null || args.Length == 0)
@@ -4119,7 +4119,7 @@ namespace System.Management.Automation
         internal void TraceLine(IScriptExtent extent)
         {
             string msg = PositionUtilities.BriefMessage(extent.StartScriptPosition);
-            InternalHostUserInterface ui = (InternalHostUserInterface)_context.EngineHostInterface.UI;
+            var ui = (InternalHostUserInterface)_context.EngineHostInterface.UI;
 
             ActionPreference pref = _context.PSDebugTraceStep ?
                 ActionPreference.Inquire : ActionPreference.Continue;
@@ -4484,9 +4484,9 @@ namespace System.Management.Automation
             string promptScript = "'[DBG]: '" + " + " + processPart + " + " + "' [" + CodeGeneration.EscapeSingleQuotedStringContent(_runspace.Name) + "]: '" + " + " + locationPart;
 
             // Get the command prompt from the wrapped debugger.
-            PSCommand promptCommand = new PSCommand();
+            var promptCommand = new PSCommand();
             promptCommand.AddScript(promptScript);
-            PSDataCollection<PSObject> promptOutput = new PSDataCollection<PSObject>();
+            var promptOutput = new PSDataCollection<PSObject>();
             _wrappedDebugger.ProcessCommand(promptCommand, promptOutput);
             string promptString = (promptOutput.Count == 1) ? promptOutput[0].BaseObject as string : string.Empty;
             var nestedPromptString = new System.Text.StringBuilder();
@@ -4551,7 +4551,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {
-            RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
+            var remoteDebugger = _wrappedDebugger as RemoteDebugger;
             if (remoteDebugger != null)
             {
                 // Have remote debugger raise existing debugger stop event.
@@ -4566,7 +4566,7 @@ namespace System.Management.Automation
             {
                 // If this is a remote server debugger then we want to convert the pending remote
                 // debugger stop to a local debugger stop event for this Debug-Runspace to handle.
-                ServerRemoteDebugger serverRemoteDebugger = this._wrappedDebugger as ServerRemoteDebugger;
+                var serverRemoteDebugger = this._wrappedDebugger as ServerRemoteDebugger;
                 if (serverRemoteDebugger != null)
                 {
                     serverRemoteDebugger.ReleaseAndRaiseDebugStopLocal();
@@ -4581,9 +4581,9 @@ namespace System.Management.Automation
         internal PSDataCollection<PSObject> GetRSCallStack()
         {
             // Get call stack from wrapped debugger
-            PSCommand cmd = new PSCommand();
+            var cmd = new PSCommand();
             cmd.AddCommand("Get-PSCallStack");
-            PSDataCollection<PSObject> callStackOutput = new PSDataCollection<PSObject>();
+            var callStackOutput = new PSDataCollection<PSObject>();
             _wrappedDebugger.ProcessCommand(cmd, callStackOutput);
 
             return callStackOutput;
@@ -4650,7 +4650,7 @@ namespace System.Management.Automation
         private object DrainAndBlockRemoteOutput()
         {
             // We do this only for remote runspaces.
-            RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
+            var remoteRunspace = _runspace as RemoteRunspace;
             if (remoteRunspace == null) { return null; }
 
             var runningPowerShell = remoteRunspace.GetCurrentBasePowerShell();
@@ -4766,9 +4766,9 @@ namespace System.Management.Automation
         protected override DebuggerCommandResults HandleCallStack(PSDataCollection<PSObject> output)
         {
             // First get call stack from wrapped debugger
-            PSCommand cmd = new PSCommand();
+            var cmd = new PSCommand();
             cmd.AddCommand("Get-PSCallStack");
-            PSDataCollection<PSObject> callStackOutput = new PSDataCollection<PSObject>();
+            var callStackOutput = new PSDataCollection<PSObject>();
             _wrappedDebugger.ProcessCommand(cmd, callStackOutput);
 
             // Next get call stack from parent debugger.
@@ -4887,7 +4887,7 @@ namespace System.Management.Automation
                 int callingLineNumber = parentStackFrame.ScriptLineNumber;
 
                 StatementAst debugStatement = null;
-                StatementAst callingStatement = _parentScriptBlockAst.Find(
+                var callingStatement = _parentScriptBlockAst.Find(
                     ast =>
                     { return ((ast is StatementAst) && (ast.Extent.StartLineNumber == callingLineNumber)); }
 
@@ -4896,7 +4896,7 @@ namespace System.Management.Automation
                 if (callingStatement != null)
                 {
                     // Find first statement in calling statement.
-                    StatementAst firstStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber > callingLineNumber); }, true) as StatementAst;
+                    var firstStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber > callingLineNumber); }, true) as StatementAst;
                     if (firstStatement != null)
                     {
                         int adjustedLineNumber = firstStatement.Extent.StartLineNumber + debugLineNumber - 1;
@@ -4909,13 +4909,13 @@ namespace System.Management.Automation
                     int endColNum = debugStartColNumber + (debugEndColNumber - debugStartColNumber) - 2;
                     string statementExtentText = FixUpStatementExtent(debugStatement.Extent.StartColumnNumber - 1, debugStatement.Extent.Text);
 
-                    ScriptPosition scriptStartPosition = new ScriptPosition(
+                    var scriptStartPosition = new ScriptPosition(
                         parentStackFrame.ScriptName,
                         debugStatement.Extent.StartLineNumber,
                         debugStartColNumber,
                         statementExtentText);
 
-                    ScriptPosition scriptEndPosition = new ScriptPosition(
+                    var scriptEndPosition = new ScriptPosition(
                         parentStackFrame.ScriptName,
                         debugStatement.Extent.EndLineNumber,
                         endColNum,
@@ -4935,7 +4935,7 @@ namespace System.Management.Automation
 
         private string FixUpStatementExtent(int startColNum, string stateExtentText)
         {
-            Text.StringBuilder sb = new Text.StringBuilder();
+            var sb = new Text.StringBuilder();
             sb.Append(' ', startColNum);
             sb.Append(stateExtentText);
 
@@ -4976,14 +4976,14 @@ namespace System.Management.Automation
         {
             if (runningCmd == null) { return; }
 
-            PowerShell command = runningCmd as PowerShell;
+            var command = runningCmd as PowerShell;
             if (command != null)
             {
                 command.ResumeIncomingData();
             }
             else
             {
-                Pipeline pipelineCommand = runningCmd as Pipeline;
+                var pipelineCommand = runningCmd as Pipeline;
                 if (pipelineCommand != null)
                 {
                     pipelineCommand.ResumeIncomingData();
@@ -5205,7 +5205,7 @@ namespace System.Management.Automation
             }
 
             // Check for the list command using a regular expression
-            Regex listCommandRegex = new Regex(@"^l(ist)?(\s+(?<start>\S+))?(\s+(?<count>\S+))?$", RegexOptions.IgnoreCase);
+            var listCommandRegex = new Regex(@"^l(ist)?(\s+(?<start>\S+))?(\s+(?<count>\S+))?$", RegexOptions.IgnoreCase);
 
             Match match = listCommandRegex.Match(command);
 

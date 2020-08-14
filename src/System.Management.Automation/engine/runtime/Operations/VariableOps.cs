@@ -63,7 +63,7 @@ namespace System.Management.Automation
                     // a hot path (setting variable with type constraint) to get better performance.
                     if ((var.Options & (ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant)) != ScopedItemOptions.None)
                     {
-                        SessionStateUnauthorizedAccessException e =
+                        var e =
                             new SessionStateUnauthorizedAccessException(
                                     var.Name,
                                     SessionStateCategory.Variable,
@@ -76,7 +76,7 @@ namespace System.Management.Automation
                     value = PSVariable.TransformValue(attributes, value);
                     if (!PSVariable.IsValidValue(attributes, value))
                     {
-                        ValidationMetadataException e = new ValidationMetadataException(
+                        var e = new ValidationMetadataException(
                             "ValidateSetFailure",
                             null,
                             Metadata.InvalidValueFailure,

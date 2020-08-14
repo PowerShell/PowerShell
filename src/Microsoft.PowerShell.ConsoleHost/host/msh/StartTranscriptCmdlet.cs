@@ -201,14 +201,14 @@ namespace Microsoft.PowerShell.Commands
                             effectiveFilePath,
                             "NoClobber"); // prevents localization
                         Exception uae = new UnauthorizedAccessException(message);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        var errorRecord = new ErrorRecord(
                             uae, "NoClobber", ErrorCategory.ResourceExists, effectiveFilePath);
 
                         // NOTE: this call will throw
                         ThrowTerminatingError(errorRecord);
                     }
 
-                    System.IO.FileInfo fInfo = new System.IO.FileInfo(effectiveFilePath);
+                    var fInfo = new System.IO.FileInfo(effectiveFilePath);
                     if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                     {
                         // Save some disk write time by checking whether file is readonly..
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
+                var psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
                 Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent);
 
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
                 // NTRAID#Windows Out Of Band Releases-931008-2006/03/21
                 // Previous behavior was to write this even if ShouldProcess
                 // returned false.  Why would we want that?
-                PSObject outputObject = new PSObject(
+                var outputObject = new PSObject(
                     StringUtil.Format(TranscriptStrings.TranscriptionStarted, Path));
                 outputObject.Properties.Add(new PSNoteProperty("Path", Path));
                 WriteObject(outputObject);
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
                     System.Globalization.CultureInfo.CurrentCulture,
                     TranscriptStrings.CannotStartTranscription,
                     e.Message);
-                ErrorRecord er = new ErrorRecord(
+                var er = new ErrorRecord(
                     PSTraceSource.NewInvalidOperationException(e, errorMessage),
                     "CannotStartTranscription", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(this);
+                var cmdletProviderContext = new CmdletProviderContext(this);
                 ProviderInfo provider = null;
                 PSDriveInfo drive = null;
                 path =
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ReportWrongProviderType(string providerId)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewInvalidOperationException(TranscriptStrings.ReadWriteFileNotFileSystemProvider, providerId),
                 "ReadWriteFileNotFileSystemProvider",
                 ErrorCategory.InvalidArgument,
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ReportMultipleFilesNotSupported()
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 PSTraceSource.NewInvalidOperationException(TranscriptStrings.MultipleFilesNotSupported),
                 "MultipleFilesNotSupported",
                 ErrorCategory.InvalidArgument,

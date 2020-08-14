@@ -125,7 +125,7 @@ namespace System.Management.Automation
             {
                 if (_outputType == null)
                 {
-                    List<PSTypeName> l = new List<PSTypeName>();
+                    var l = new List<PSTypeName>();
                     l.Add(new PSTypeName(typeof(string)));
                     _outputType = new ReadOnlyCollection<PSTypeName>(l);
                 }

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #endif
         internal void AddAppliesToType(string typeName)
         {
-            TypeReference tr = new TypeReference();
+            var tr = new TypeReference();
 
             tr.name = typeName;
             this.referenceList.Add(tr);

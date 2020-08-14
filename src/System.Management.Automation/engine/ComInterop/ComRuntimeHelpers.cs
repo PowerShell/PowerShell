@@ -149,7 +149,7 @@ namespace System.Management.Automation.ComInterop
 
         internal static string GetNameOfMethod(ComTypes.ITypeInfo typeInfo, int memid)
         {
-            string[] rgNames = new string[1];
+            var rgNames = new string[1];
             typeInfo.GetNames(memid, rgNames, 1, out int _);
             return rgNames[0];
         }
@@ -388,7 +388,7 @@ namespace System.Management.Automation.ComInterop
         public static IntPtr GetIdsOfNamedParameters(IDispatch dispatch, string[] names, int methodDispId, out GCHandle pinningHandle)
         {
             pinningHandle = GCHandle.Alloc(null, GCHandleType.Pinned);
-            int[] dispIds = new int[names.Length];
+            var dispIds = new int[names.Length];
             Guid empty = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(ref empty, names, (uint)names.Length, 0, dispIds);
             if (hresult < 0)

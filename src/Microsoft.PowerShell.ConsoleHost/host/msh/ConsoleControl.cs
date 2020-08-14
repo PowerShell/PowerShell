@@ -755,7 +755,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(charactersToRead < editBuffer.Length, "charactersToRead must be less than editBuffer.Length");
             keyState = 0;
 
-            CONSOLE_READCONSOLE_CONTROL control = new CONSOLE_READCONSOLE_CONTROL();
+            var control = new CONSOLE_READCONSOLE_CONTROL();
 
             control.nLength = (ULONG)Marshal.SizeOf(control);
             control.nInitialChars = (ULONG)initialContentLength;
@@ -1049,7 +1049,7 @@ namespace Microsoft.PowerShell
 
         internal static WORD ColorToWORD(ConsoleColor foreground, ConsoleColor background)
         {
-            WORD result = (WORD)(((int)background << 4) | (int)foreground);
+            var result = (WORD)(((int)background << 4) | (int)foreground);
 
             return result;
         }
@@ -1093,13 +1093,13 @@ namespace Microsoft.PowerShell
             {
                 // contentsRegion indicates the area in contents (declared below) in which
                 // the data read from ReadConsoleOutput is stored.
-                Rectangle contentsRegion = new Rectangle();
+                var contentsRegion = new Rectangle();
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo =
                     GetConsoleScreenBufferInfo(consoleHandle);
 
                 int bufferWidth = bufferInfo.BufferSize.X;
                 int bufferHeight = bufferInfo.BufferSize.Y;
-                Rectangle screenRegion = new Rectangle(
+                var screenRegion = new Rectangle(
                     origin.X, origin.Y,
                     Math.Min(origin.X + contents.GetLength(1) - 1, bufferWidth - 1),
                     Math.Min(origin.Y + contents.GetLength(0) - 1, bufferHeight - 1));
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell
 #endif
 
                 // Identify edges and areas of identical contiguous edges in contentsRegion
-                List<BufferCellArrayRowTypeRange> sameEdgeAreas = new List<BufferCellArrayRowTypeRange>();
+                var sameEdgeAreas = new List<BufferCellArrayRowTypeRange>();
                 int firstLeftTrailingRow = -1, firstRightLeadingRow = -1;
                 BuildEdgeTypeInfo(contentsRegion, contents,
                     sameEdgeAreas, out firstLeftTrailingRow, out firstRightLeadingRow);
@@ -1129,9 +1129,9 @@ namespace Microsoft.PowerShell
 
                 foreach (BufferCellArrayRowTypeRange area in sameEdgeAreas)
                 {
-                    Coordinates o = new Coordinates(origin.X,
+                    var o = new Coordinates(origin.X,
                                                     origin.Y + area.Start - contentsRegion.Top);
-                    Rectangle contRegion = new Rectangle(
+                    var contRegion = new Rectangle(
                         contentsRegion.Left, area.Start, contentsRegion.Right, area.End);
                     if ((area.Type & BufferCellArrayRowType.LeftTrailing) != 0)
                     {
@@ -1257,7 +1257,7 @@ namespace Microsoft.PowerShell
             int firstLeftTrailingRow,
             int firstRightLeadingRow)
         {
-            Rectangle existingRegion = new Rectangle(0, 0, 1, contentsRegion.Bottom - contentsRegion.Top);
+            var existingRegion = new Rectangle(0, 0, 1, contentsRegion.Bottom - contentsRegion.Top);
             if (origin.X == 0)
             {
                 if (firstLeftTrailingRow >= 0)
@@ -1270,7 +1270,7 @@ namespace Microsoft.PowerShell
             {
                 // use ReadConsoleOutputCJK because checking the left and right edges of the existing output
                 // is NOT needed
-                BufferCell[,] leftExisting = new BufferCell[existingRegion.Bottom + 1, 2];
+                var leftExisting = new BufferCell[existingRegion.Bottom + 1, 2];
                 ReadConsoleOutputCJK(consoleHandle, codePage,
                     new Coordinates(origin.X - 1, origin.Y), existingRegion, ref leftExisting);
                 for (int r = contentsRegion.Top, i = 0; r <= contentsRegion.Bottom; r++, i++)
@@ -1296,7 +1296,7 @@ namespace Microsoft.PowerShell
             {
                 // use ReadConsoleOutputCJK because checking the left and right edges of the existing output
                 // is NOT needed
-                BufferCell[,] rightExisting = new BufferCell[existingRegion.Bottom + 1, 2];
+                var rightExisting = new BufferCell[existingRegion.Bottom + 1, 2];
                 ReadConsoleOutputCJK(consoleHandle, codePage,
                     new Coordinates(origin.X + (contentsRegion.Right - contentsRegion.Left), origin.Y), existingRegion, ref rightExisting);
                 for (int r = contentsRegion.Top, i = 0; r <= contentsRegion.Bottom; r++, i++)
@@ -1417,12 +1417,12 @@ namespace Microsoft.PowerShell
                         writeRegion.Right--;
                     }
 
-                    CHAR_INFO[] characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
+                    var characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
 
                     // copy characterBuffer to contents;
                     int characterBufferIndex = 0;
                     bool lastCharIsLeading = false;
-                    BufferCell lastLeadingCell = new BufferCell();
+                    var lastLeadingCell = new BufferCell();
                     for (int r = atRow; r < bufferSize.Y + atRow; r++)
                     {
                         for (int c = atCol; c < bufferSize.X + atCol; c++, characterBufferIndex++)
@@ -1618,7 +1618,7 @@ namespace Microsoft.PowerShell
 
                     // atCol is at which column of contents a particular iteration is operating
                     int atCol = cols - colsRemaining + contents.GetLowerBound(1);
-                    CHAR_INFO[] characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
+                    var characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
 
                     // copy characterBuffer to contents;
                     for (int r = atRow, characterBufferIndex = 0;
@@ -1723,7 +1723,7 @@ namespace Microsoft.PowerShell
                 // check left edge
                 BufferCell[,] cellArray = null;
                 Coordinates checkOrigin;
-                Rectangle cellArrayRegion = new Rectangle(0, 0, 1, contentsRegion.Bottom - contentsRegion.Top);
+                var cellArrayRegion = new Rectangle(0, 0, 1, contentsRegion.Bottom - contentsRegion.Top);
                 if (origin.X > 0 && ShouldCheck(contentsRegion.Left, contents, contentsRegion))
                 {
                     cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
@@ -1807,7 +1807,7 @@ namespace Microsoft.PowerShell
             COORD bufferCoord;
             bufferCoord.X = 0;
             bufferCoord.Y = 0;
-            CHAR_INFO[] characterBuffer = new CHAR_INFO[bufferSize.X * bufferSize.Y];
+            var characterBuffer = new CHAR_INFO[bufferSize.X * bufferSize.Y];
             SMALL_RECT readRegion;
             readRegion.Left = (short)origin.X;
             readRegion.Top = (short)origin.Y;
@@ -1965,7 +1965,7 @@ namespace Microsoft.PowerShell
                     readRegion.Right = (short)(readRegion.Left + bufferSize.X - 1);
 
                     // Now readRegion and bufferSize are updated.
-                    Rectangle atContents = new Rectangle(atContentsCol, atContentsRow,
+                    var atContents = new Rectangle(atContentsCol, atContentsRow,
                                 atContentsCol + bufferSize.X - 1, atContentsRow + bufferSize.Y - 1);
                     bool result =
                         ReadConsoleOutputCJKSmall(consoleHandle, codePage,
@@ -2136,7 +2136,7 @@ namespace Microsoft.PowerShell
 
                     // Now readRegion and bufferSize are updated.
                     // Call NativeMethods.ReadConsoleOutput
-                    CHAR_INFO[] characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
+                    var characterBuffer = new CHAR_INFO[bufferSize.Y * bufferSize.X];
                     bool result = NativeMethods.ReadConsoleOutput(
                                         consoleHandle.DangerousGetHandle(),
                                         characterBuffer,
@@ -2496,7 +2496,7 @@ namespace Microsoft.PowerShell
             const int MaxWindowTitleLength = 1024;
             DWORD bufferSize = MaxWindowTitleLength;
             DWORD result;
-            StringBuilder consoleTitle = new StringBuilder((int)bufferSize);
+            var consoleTitle = new StringBuilder((int)bufferSize);
 
             // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
             // get the error code.
@@ -2911,7 +2911,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            CONSOLE_FONT_INFO_EX fontInfo = new CONSOLE_FONT_INFO_EX();
+            var fontInfo = new CONSOLE_FONT_INFO_EX();
             fontInfo.cbSize = Marshal.SizeOf(fontInfo);
             bool result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
 
@@ -2972,9 +2972,9 @@ namespace Microsoft.PowerShell
         private static HostException CreateHostException(
             int win32Error, string errorId, ErrorCategory category, string resourceStr)
         {
-            Win32Exception innerException = new Win32Exception(win32Error);
+            var innerException = new Win32Exception(win32Error);
             string msg = StringUtil.Format(resourceStr, innerException.Message, win32Error);
-            HostException e = new HostException(msg, innerException, errorId, category);
+            var e = new HostException(msg, innerException, errorId, category);
             return e;
         }
 

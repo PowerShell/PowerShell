@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             FormatStartData startFormat = base.GenerateStartData(so);
 
-            WideViewHeaderInfo wideViewHeaderInfo = new WideViewHeaderInfo();
+            var wideViewHeaderInfo = new WideViewHeaderInfo();
             startFormat.shapeInfo = wideViewHeaderInfo;
 
             if (!this.AutoSize)
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // check command line first
                 if (parameters != null && parameters.shapeParameters != null)
                 {
-                    WideSpecificParameters wp = (WideSpecificParameters)parameters.shapeParameters;
+                    var wp = (WideSpecificParameters)parameters.shapeParameters;
                     if (wp.columns.HasValue)
                         return wp.columns.Value;
                 }
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // check if the view has info
                 if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
                 {
-                    WideControlBody wideControl = (WideControlBody)this.dataBaseInfo.view.mainControl;
+                    var wideControl = (WideControlBody)this.dataBaseInfo.view.mainControl;
                     return wideControl.columns;
                 }
                 // not specified
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override FormatEntryData GeneratePayload(PSObject so, int enumerationLimit)
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
 
             if (this.dataBaseInfo.view != null)
                 fed.formatEntryInfo = GenerateWideViewEntryFromDataBaseInfo(so, enumerationLimit);
@@ -73,12 +73,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private WideViewEntry GenerateWideViewEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
         {
-            WideControlBody wideBody = (WideControlBody)this.dataBaseInfo.view.mainControl;
+            var wideBody = (WideControlBody)this.dataBaseInfo.view.mainControl;
 
             WideControlEntryDefinition activeWideControlEntryDefinition =
                     GetActiveWideControlEntryDefinition(wideBody, so);
 
-            WideViewEntry wve = new WideViewEntry();
+            var wve = new WideViewEntry();
             wve.formatPropertyField = GenerateFormatPropertyField(activeWideControlEntryDefinition.formatTokenList, so, enumerationLimit);
 
             // wve.alignment = activeWideViewEntryDefinition.alignment;
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // see if we have an override that matches
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
+            var match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
             foreach (WideControlEntryDefinition x in wideBody.optionalEntryList)
             {
                 if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo)))
@@ -136,8 +136,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 SetUpActiveProperty(so);
             }
 
-            WideViewEntry wve = new WideViewEntry();
-            FormatPropertyField fpf = new FormatPropertyField();
+            var wve = new WideViewEntry();
+            var fpf = new FormatPropertyField();
 
             wve.formatPropertyField = fpf;
             if (this.activeAssociationList.Count > 0)

@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Objects the cache needs to return. It can be null.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
-            FormatStartData fsd = o as FormatStartData;
+            var fsd = o as FormatStartData;
             if (fsd != null)
             {
                 // just cache the reference (used during the notification call)
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Notify();
                 _processingGroup = false;
 
-                List<PacketInfoData> retVal = new List<PacketInfoData>();
+                var retVal = new List<PacketInfoData>();
 
                 while (_queue.Count > 0)
                 {
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we are not processing, so just return it
-            List<PacketInfoData> ret = new List<PacketInfoData>();
+            var ret = new List<PacketInfoData>();
 
             ret.Add(o);
             return ret;
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // add only of it's not a control message
             // and it's not out of band
-            FormatEntryData fed = o as FormatEntryData;
+            var fed = o as FormatEntryData;
 
             if (fed == null || fed.outOfBand)
                 return;
@@ -135,11 +135,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // filter out the out of band data, since they do not participate in the
             // auto resize algorithm
-            List<PacketInfoData> validObjects = new List<PacketInfoData>();
+            var validObjects = new List<PacketInfoData>();
 
             foreach (PacketInfoData x in _queue)
             {
-                FormatEntryData fed = x as FormatEntryData;
+                var fed = x as FormatEntryData;
                 if (fed != null && fed.outOfBand)
                     continue;
 
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // if neither there, pass thru
             if (_frontEndQueue == null && _groupQueue == null)
             {
-                List<PacketInfoData> retVal = new List<PacketInfoData>();
+                var retVal = new List<PacketInfoData>();
                 retVal.Add(o);
                 return retVal;
             }
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
 
-            List<PacketInfoData> retVal = new List<PacketInfoData>();
+            var retVal = new List<PacketInfoData>();
 
             if (_frontEndQueue != null)
             {

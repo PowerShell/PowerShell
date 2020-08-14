@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                 // WSMan is not supported on this platform
                 // throw new InvalidOperationException(
                 //     "WinPE does not support Windows PowerShell remoting");
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.WinPERemotingNotSupported)), null, ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.WinPERemotingNotSupported)), null, ErrorCategory.InvalidOperation, null);
                 throw new InvalidOperationException(errorRecord.ToString());
             }
         }

@@ -39,7 +39,7 @@ namespace System.Management.Automation
                 string ppName = (pp == null) ? null : pp.Name;
                 if (pp == null || key != ppName)
                 {
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             command.MyInvocation,

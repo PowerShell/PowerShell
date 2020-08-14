@@ -127,8 +127,8 @@ namespace System.Management.Automation.Help
         internal string GetExceptionMessage(UpdatableHelpCommandType commandType)
         {
             string message = string.Empty;
-            SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
-            SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
+            var sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
+            var sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
             string modules = string.Join(", ", sortedModules);
             string cultures = string.Join(", ", sortedCultures);
 
@@ -337,10 +337,10 @@ namespace System.Management.Automation.Help
                     HelpDisplayStrings.UpdateProgressLocating), 0));
 
                 string xml;
-                using (HttpClientHandler handler = new HttpClientHandler())
+                using (var handler = new HttpClientHandler())
                 {
                     handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
-                    using (HttpClient client = new HttpClient(handler))
+                    using (var client = new HttpClient(handler))
                     {
                         client.Timeout = _defaultTimeout;
                         Task<string> responseBody = client.GetStringAsync(uri);
@@ -417,11 +417,11 @@ namespace System.Management.Automation.Help
                         return uri;
                     }
 
-                    using (HttpClientHandler handler = new HttpClientHandler())
+                    using (var handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
                         handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
-                        using (HttpClient client = new HttpClient(handler))
+                        using (var client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
                             Task<HttpResponseMessage> responseMessage = client.GetAsync(uri);
@@ -440,7 +440,7 @@ namespace System.Management.Automation.Help
                                     }
                                     else
                                     {
-                                        Uri originalAbs = new Uri(uri);
+                                        var originalAbs = new Uri(uri);
                                         uri = uri.Replace(originalAbs.AbsolutePath, responseUri.ToString());
                                     }
 
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Help
 
             XmlNodeList cultures = document["HelpInfo"]["SupportedUICultures"].ChildNodes;
 
-            CultureSpecificUpdatableHelp[] updatableHelpItem = new CultureSpecificUpdatableHelp[cultures.Count];
+            var updatableHelpItem = new CultureSpecificUpdatableHelp[cultures.Count];
 
             for (int i = 0; i < cultures.Count; i++)
             {
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Help
                     new Version(cultures[i]["UICultureVersion"].InnerText));
             }
 
-            UpdatableHelpInfo helpInfo = new UpdatableHelpInfo(unresolvedUri, updatableHelpItem);
+            var helpInfo = new UpdatableHelpInfo(unresolvedUri, updatableHelpItem);
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
@@ -620,13 +620,13 @@ namespace System.Management.Automation.Help
         private XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
             bool helpInfo)
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
+            var settings = new XmlReaderSettings();
 
             settings.Schemas.Add(ns, new XmlTextReader(new StringReader(schema)));
             settings.ValidationType = ValidationType.Schema;
 
             XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
-            XmlDocument document = new XmlDocument();
+            var document = new XmlDocument();
 
             try
             {
@@ -778,11 +778,11 @@ namespace System.Management.Automation.Help
         private bool DownloadHelpContentHttpClient(string uri, string fileName, UpdatableHelpCommandType commandType)
         {
             // TODO: Was it intentional for them to remove IDisposable from Task?
-            using (HttpClientHandler handler = new HttpClientHandler())
+            using (var handler = new HttpClientHandler())
             {
                 handler.AllowAutoRedirect = false;
                 handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
-                using (HttpClient client = new HttpClient(handler))
+                using (var client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
                     Task<HttpResponseMessage> responseMsg = client.GetAsync(new Uri(uri), _cancelTokenSource.Token);
@@ -841,7 +841,7 @@ namespace System.Management.Automation.Help
         private void WriteResponseToFile(HttpResponseMessage response, string fileName)
         {
             // TODO: Settings to use? FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite
-            using (FileStream downloadedFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var downloadedFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 Task copyStreamOp = response.Content.CopyToAsync(downloadedFileStream);
                 copyStreamOp.Wait();
@@ -909,9 +909,9 @@ namespace System.Management.Automation.Help
                                              verbose: false, shouldResolveUri: false, ignoreValidationException: force);
             }
 
-            using (FileStream file = new FileStream(destHelpInfo, FileMode.Create, FileAccess.Write))
+            using (var file = new FileStream(destHelpInfo, FileMode.Create, FileAccess.Write))
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
+                var settings = new XmlWriterSettings();
                 settings.Encoding = Encoding.UTF8;
                 settings.Indent = true; // Default indentation is two spaces
                 using (XmlWriter writer = XmlWriter.Create(file, settings))
@@ -1203,7 +1203,7 @@ namespace System.Management.Automation.Help
                 {
                     if (File.Exists(file))
                     {
-                        FileInfo fInfo = new FileInfo(file);
+                        var fInfo = new FileInfo(file);
                         if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                         {
                             // Clear the read-only attribute
@@ -1255,7 +1255,7 @@ namespace System.Management.Automation.Help
                         string xml = LoadStringFromPath(_cmdlet, file, null);
 
                         XmlReader documentReader = XmlReader.Create(new StringReader(xml));
-                        XmlDocument contentDocument = new XmlDocument();
+                        var contentDocument = new XmlDocument();
 
                         contentDocument.Load(documentReader);
 
@@ -1345,11 +1345,11 @@ namespace System.Management.Automation.Help
                 }
                 else if (string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
-                    FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                    var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
                     if (fileStream.Length > 2)
                     {
-                        byte[] firstTwoBytes = new byte[2];
+                        var firstTwoBytes = new byte[2];
 
                         fileStream.Read(firstTwoBytes, 0, 2);
 
@@ -1382,7 +1382,7 @@ namespace System.Management.Automation.Help
                     {
                         if (File.Exists(destPath) && (_cmdlet.Force))
                         {
-                            FileInfo fInfo = new FileInfo(destPath);
+                            var fInfo = new FileInfo(destPath);
                             if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                             {
                                 // remember to reset the read-only attribute later
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation.Help
             {
                 // New PSDrive
 
-                using (UpdatableHelpSystemDrive drive = new UpdatableHelpSystemDrive(cmdlet, Path.GetDirectoryName(path), credential))
+                using (var drive = new UpdatableHelpSystemDrive(cmdlet, Path.GetDirectoryName(path), credential))
                 {
                     string tempPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
 
@@ -1441,9 +1441,9 @@ namespace System.Management.Automation.Help
             string filePath = GetFilePath(path);
             if (!string.IsNullOrEmpty(filePath))
             {
-                using (FileStream currentHelpInfoFile = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                using (var currentHelpInfoFile = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    StreamReader reader = new StreamReader(currentHelpInfoFile);
+                    var reader = new StreamReader(currentHelpInfoFile);
 
                     return reader.ReadToEnd();
                 }
@@ -1459,7 +1459,7 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal static string GetFilePath(string path)
         {
-            FileInfo item = new FileInfo(path);
+            var item = new FileInfo(path);
 
             // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
             // because we want to get exceptions

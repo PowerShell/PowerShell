@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cim
     {
         private static PSAdaptedProperty GetCimPropertyAdapter(CimProperty property, object baseObject, string propertyName)
         {
-            PSAdaptedProperty propertyToAdd = new PSAdaptedProperty(propertyName, property);
+            var propertyToAdd = new PSAdaptedProperty(propertyName, property);
             propertyToAdd.baseObject = baseObject;
             // propertyToAdd.adapter = this;
             return propertyToAdd;
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Cim
 
         private static PSAdaptedProperty GetPSComputerNameAdapter(CimInstance cimInstance)
         {
-            PSAdaptedProperty psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
+            var psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
             psComputerNameProperty.baseObject = cimInstance;
             // psComputerNameProperty.adapter = this;
             return psComputerNameProperty;
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Cim
         public override System.Collections.ObjectModel.Collection<PSAdaptedProperty> GetProperties(object baseObject)
         {
             // baseObject should never be null
-            CimInstance cimInstance = baseObject as CimInstance;
+            var cimInstance = baseObject as CimInstance;
             if (cimInstance == null)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new PSInvalidOperationException(msg);
             }
 
-            Collection<PSAdaptedProperty> result = new Collection<PSAdaptedProperty>();
+            var result = new Collection<PSAdaptedProperty>();
 
             if (cimInstance.CimInstanceProperties != null)
             {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             // baseObject should never be null
-            CimInstance cimInstance = baseObject as CimInstance;
+            var cimInstance = baseObject as CimInstance;
             if (cimInstance == null)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             // baseObject should never be null
-            CimInstance cimInstance = baseObject as CimInstance;
+            var cimInstance = baseObject as CimInstance;
             if (cimInstance == null)
             {
                 string msg = string.Format(
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
+            var cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
             {
                 return CimTypeToTypeNameDisplayString(cimProperty.CimType);
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
+            var cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
             {
                 return cimProperty.Value;
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (adaptedProperty.Name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase))
             {
-                CimInstance cimInstance = (CimInstance)adaptedProperty.Tag;
+                var cimInstance = (CimInstance)adaptedProperty.Tag;
                 return cimInstance.GetCimSessionComputerName();
             }
 
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Cim
 
         private List<CimClass> GetInheritanceChain(CimInstance cimInstance)
         {
-            List<CimClass> inheritanceChain = new List<CimClass>();
+            var inheritanceChain = new List<CimClass>();
             CimClass cimClass = cimInstance.CimClass;
             Dbg.Assert(cimClass != null, "CimInstance should always have ClassDecl");
             while (cimClass != null)
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Cim
                 return false;
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
+            var cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty == null)
             {
                 return false;
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Cim
                         adaptedProperty.Name);
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
+            var cimProperty = adaptedProperty.Tag as CimProperty;
             object valueToSet = value;
             if (valueToSet != null)
             {

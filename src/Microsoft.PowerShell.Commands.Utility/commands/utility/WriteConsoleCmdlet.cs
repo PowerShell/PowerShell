@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (o != null)
             {
-                string s = o as string;
+                var s = o as string;
                 IEnumerable enumerable = null;
                 if (s != null)
                 {
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
                     // unroll enumerables, including arrays.
 
                     bool printSeparator = false;
-                    StringBuilder result = new StringBuilder();
+                    var result = new StringBuilder();
 
                     foreach (object element in enumerable)
                     {
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = ProcessObject(Object) ?? string.Empty;
 
-            HostInformationMessage informationMessage = new HostInformationMessage();
+            var informationMessage = new HostInformationMessage();
             informationMessage.Message = result;
             informationMessage.NoNewLine = NoNewline.IsPresent;
 

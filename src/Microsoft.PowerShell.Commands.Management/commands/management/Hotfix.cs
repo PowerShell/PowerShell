@@ -87,8 +87,8 @@ namespace Microsoft.PowerShell.Commands
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
-                StringBuilder queryString = new StringBuilder();
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
+                var queryString = new StringBuilder();
+                var scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
                 scope.Connect();
                 if (Id != null)
                 {
@@ -129,12 +129,12 @@ namespace Microsoft.PowerShell.Commands
 
                     // try to translate the SID to a more friendly username
                     // just stick with the SID if anything goes wrong
-                    string installed = (string)obj["InstalledBy"];
+                    var installed = (string)obj["InstalledBy"];
                     if (!string.IsNullOrEmpty(installed))
                     {
                         try
                         {
-                            SecurityIdentifier secObj = new SecurityIdentifier(installed);
+                            var secObj = new SecurityIdentifier(installed);
                             obj["InstalledBy"] = secObj.Translate(typeof(NTAccount));
                         }
                         catch (IdentityNotMappedException)

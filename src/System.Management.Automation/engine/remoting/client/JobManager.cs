@@ -561,7 +561,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(cmdlet != null, "Cmdlet should be passed to JobManager");
 
-            List<Job2> allJobs = new List<Job2>();
+            var allJobs = new List<Job2>();
 
             lock (_syncObject)
             {
@@ -660,7 +660,7 @@ namespace System.Management.Automation
         /// implementation.</exception>
         private static List<Job2> CallJobFilter(JobSourceAdapter sourceAdapter, object filter, FilterType filterType, bool recurse)
         {
-            List<Job2> jobs = new List<Job2>();
+            var jobs = new List<Job2>();
             IList<Job2> matches;
 
             switch (filterType)
@@ -790,7 +790,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet,
             bool writeErrorOnException)
         {
-            List<Job2> jobs = new List<Job2>();
+            var jobs = new List<Job2>();
             WildcardPattern typeNamePattern = (definitionType != null) ?
                 WildcardPattern.Get(definitionType, WildcardOptions.IgnoreCase) : null;
 
@@ -871,7 +871,7 @@ namespace System.Management.Automation
         /// <returns>List of names.</returns>
         internal List<string> GetLoadedAdapterNames(string[] adapterTypeNames)
         {
-            List<string> adapterNames = new List<string>();
+            var adapterNames = new List<string>();
             lock (_syncObject)
             {
                 foreach (JobSourceAdapter sourceAdapter in _sourceAdapters.Values)
@@ -976,7 +976,7 @@ namespace System.Management.Automation
 
         private void RemoveJobIdForReuse(Job job)
         {
-            Hashtable duplicateDetector = new Hashtable();
+            var duplicateDetector = new Hashtable();
             duplicateDetector.Add(job.Id, job.Id);
 
             RemoveJobIdForReuseHelper(duplicateDetector, job);

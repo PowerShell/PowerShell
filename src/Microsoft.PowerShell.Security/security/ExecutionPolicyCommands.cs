@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message = ExecutionPolicyCommands.ListAndScopeSpecified;
 
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new InvalidOperationException(),
                     "ListAndScopeSpecified",
                     ErrorCategory.InvalidOperation,
@@ -83,10 +83,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (ExecutionPolicyScope scope in SecuritySupport.ExecutionPolicyScopePreferences)
                 {
-                    PSObject outputObject = new PSObject();
+                    var outputObject = new PSObject();
 
                     ExecutionPolicy policy = SecuritySupport.GetExecutionPolicy(shellId, scope);
-                    PSNoteProperty inputNote = new PSNoteProperty(
+                    var inputNote = new PSNoteProperty(
                             "Scope", scope);
                     outputObject.Properties.Add(inputNote);
                     inputNote = new PSNoteProperty(
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message = ExecutionPolicyCommands.CantSetGroupPolicy;
 
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new InvalidOperationException(),
                     "CantSetGroupPolicy",
                     ErrorCategory.InvalidOperation,
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
                         string message = StringUtil.Format(ExecutionPolicyCommands.ExecutionPolicyOverridden, effectiveExecutionPolicy);
                         string recommendedAction = ExecutionPolicyCommands.ExecutionPolicyOverriddenRecommendedAction;
 
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        var errorRecord = new ErrorRecord(
                             new System.Security.SecurityException(),
                             "ExecutionPolicyOverride",
                             ErrorCategory.PermissionDenied,
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
         private void OnAccessDeniedError(Exception exception)
         {
             string message = StringUtil.Format(ExecutionPolicyCommands.SetExecutionPolicyAccessDeniedError, exception.Message);
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 exception,
                 exception.GetType().FullName,
                 ErrorCategory.PermissionDenied,

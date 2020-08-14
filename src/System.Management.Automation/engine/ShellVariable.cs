@@ -325,7 +325,7 @@ namespace System.Management.Automation
 
             if (IsConstant || (!force && IsReadOnly))
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Variable,
@@ -344,7 +344,7 @@ namespace System.Management.Automation
                 // user is trying to set the variable to constant after
                 // creating the variable. Do not allow this (as per spec).
 
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Variable,
@@ -363,7 +363,7 @@ namespace System.Management.Automation
                 // user is trying to remove the AllScope option from the variable.
                 // Do not allow this (as per spec).
 
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Variable,
@@ -442,7 +442,7 @@ namespace System.Management.Automation
         {
             bool result = true;
 
-            ValidateArgumentsAttribute validationAttribute = attribute as ValidateArgumentsAttribute;
+            var validationAttribute = attribute as ValidateArgumentsAttribute;
             if (validationAttribute != null)
             {
                 try
@@ -502,7 +502,7 @@ namespace System.Management.Automation
 
             foreach (Attribute attribute in attributes)
             {
-                ArgumentTransformationAttribute transformationAttribute =
+                var transformationAttribute =
                     attribute as ArgumentTransformationAttribute;
                 if (transformationAttribute != null)
                 {
@@ -629,7 +629,7 @@ namespace System.Management.Automation
 
             if ((_options & (ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant)) != ScopedItemOptions.None)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Variable,
@@ -649,7 +649,7 @@ namespace System.Management.Automation
 
                 if (!IsValidValue(transformedValue))
                 {
-                    ValidationMetadataException e = new ValidationMetadataException(
+                    var e = new ValidationMetadataException(
                         "ValidateSetFailure",
                         null,
                         Metadata.InvalidValueFailure,
@@ -766,7 +766,7 @@ namespace System.Management.Automation
                 // Throw, but only if someone is actually changing the options.
                 if (value != base.Options)
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Variable,

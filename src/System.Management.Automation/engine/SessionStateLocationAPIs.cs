@@ -39,7 +39,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
-                PathInfo result =
+                var result =
                     new PathInfo(
                         CurrentDrive,
                         CurrentDrive.Provider,
@@ -93,7 +93,7 @@ namespace System.Management.Automation
 
             if (drive == null)
             {
-                DriveNotFoundException e =
+                var e =
                     new DriveNotFoundException(
                         namespaceID,
                         "DriveNotFound",
@@ -101,7 +101,7 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Drive = drive;
 
             // Now make the namespace specific path
@@ -380,7 +380,7 @@ namespace System.Management.Automation
 
             for (int index = 0; index < workingPath.Count; ++index)
             {
-                CmdletProviderContext normalizePathContext =
+                var normalizePathContext =
                     new CmdletProviderContext(context);
 
                 PathInfo resolvedPath = workingPath[index];
@@ -473,7 +473,7 @@ namespace System.Management.Automation
 
                 bool isContainer = false;
 
-                CmdletProviderContext itemContainerContext =
+                var itemContainerContext =
                     new CmdletProviderContext(context);
                 itemContainerContext.SuppressWildcardExpansion = true;
 
@@ -671,7 +671,7 @@ namespace System.Management.Automation
             {
                 // The path needs to be normalized to get rid of relative path tokens
                 // so they don't interfere with our path comparisons below
-                CmdletProviderContext normalizePathContext
+                var normalizePathContext
                     = new CmdletProviderContext(context);
 
                 try
@@ -843,7 +843,7 @@ namespace System.Management.Automation
             string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
 
-            PathInfo newPushLocation =
+            var newPushLocation =
                 new PathInfo(
                     CurrentDrive,
                     provider,
@@ -1016,7 +1016,7 @@ namespace System.Management.Automation
                 }
             }
 
-            PathInfoStack result = new PathInfoStack(stackName, locationStack);
+            var result = new PathInfoStack(stackName, locationStack);
 
             return result;
         }
@@ -1049,7 +1049,7 @@ namespace System.Management.Automation
                     return new PathInfoStack(startingDefaultStackName, new Stack<PathInfo>());
                 }
 
-                ItemNotFoundException itemNotFound =
+                var itemNotFound =
                     new ItemNotFoundException(
                         stackName,
                         "StackNotFound",

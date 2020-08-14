@@ -216,7 +216,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // NOTES: should move after this.Disposed, but need to log the exception
-            CimWriteError cimWriteError = actionArgs.Action as CimWriteError;
+            var cimWriteError = actionArgs.Action as CimWriteError;
             if (cimWriteError != null)
             {
                 this.exception = cimWriteError.Exception;
@@ -239,10 +239,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 DebugHelper.WriteLog("Got an exception: {0}", 2, exception);
             }
 
-            CimWriteResultObject cimWriteResultObject = actionArgs.Action as CimWriteResultObject;
+            var cimWriteResultObject = actionArgs.Action as CimWriteResultObject;
             if (cimWriteResultObject != null)
             {
-                CimSubscriptionResult result = cimWriteResultObject.Result as CimSubscriptionResult;
+                var result = cimWriteResultObject.Result as CimSubscriptionResult;
                 if (result != null)
                 {
                     EventHandler<CimSubscriptionEventArgs> temp = this.OnNewSubscriptionResult;

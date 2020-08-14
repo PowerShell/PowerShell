@@ -264,7 +264,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal static string BriefMessage(IScriptPosition position)
         {
-            StringBuilder message = new StringBuilder(position.Line);
+            var message = new StringBuilder(position.Line);
             if (position.ColumnNumber > message.Length)
             {
                 message.Append(" <<<< ");
@@ -294,8 +294,8 @@ namespace System.Management.Automation.Language
                 return start;
             }
 
-            InternalScriptExtent startExtent = start as InternalScriptExtent;
-            InternalScriptExtent endExtent = end as InternalScriptExtent;
+            var startExtent = start as InternalScriptExtent;
+            var endExtent = end as InternalScriptExtent;
             Diagnostics.Assert(startExtent != null && endExtent != null, "This function only handles internal and empty extents");
             Diagnostics.Assert(startExtent.PositionHelper == endExtent.PositionHelper, "Extents must be from same source");
 
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Language
 
         public override bool Equals(object obj)
         {
-            IScriptExtent otherPosition = obj as IScriptExtent;
+            var otherPosition = obj as IScriptExtent;
             if (otherPosition == null)
             {
                 return false;
@@ -791,8 +791,8 @@ namespace System.Management.Automation.Language
             int endLineNumber = RemotingDecoder.GetPropertyValue<int>(serializedScriptExtent, "ScriptExtent_EndLineNumber");
             int endColumnNumber = RemotingDecoder.GetPropertyValue<int>(serializedScriptExtent, "ScriptExtent_EndColumnNumber");
 
-            ScriptPosition startPosition = new ScriptPosition(file, startLineNumber, startColumnNumber, null);
-            ScriptPosition endPosition = new ScriptPosition(file, endLineNumber, endColumnNumber, null);
+            var startPosition = new ScriptPosition(file, startLineNumber, startColumnNumber, null);
+            var endPosition = new ScriptPosition(file, endLineNumber, endColumnNumber, null);
 
             _startPosition = startPosition;
             _endPosition = endPosition;
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Language
 
         internal static ScriptExtent FromPSObjectForRemoting(PSObject serializedScriptExtent)
         {
-            ScriptExtent extent = new ScriptExtent();
+            var extent = new ScriptExtent();
             extent.PopulateFromSerializedInfo(serializedScriptExtent);
             return extent;
         }

@@ -164,7 +164,7 @@ namespace System.Management.Automation
 
         internal static CmdletInfo NewCmdletInfo(SessionStateCmdletEntry entry, ExecutionContext context)
         {
-            CmdletInfo ci = new CmdletInfo(entry.Name, entry.ImplementingType, entry.HelpFileName, entry.PSSnapIn, context)
+            var ci = new CmdletInfo(entry.Name, entry.ImplementingType, entry.HelpFileName, entry.PSSnapIn, context)
             {
                 Visibility = entry.Visibility,
                 Module = entry.Module
@@ -174,7 +174,7 @@ namespace System.Management.Automation
 
         internal static AliasInfo NewAliasInfo(SessionStateAliasEntry entry, ExecutionContext context)
         {
-            AliasInfo ci = new AliasInfo(entry.Name, entry.Definition, context, entry.Options)
+            var ci = new AliasInfo(entry.Name, entry.Definition, context, entry.Options)
             {
                 Visibility = entry.Visibility,
                 Module = entry.Module
@@ -300,7 +300,7 @@ namespace System.Management.Automation
                         error: out error);
                     if (error != null)
                     {
-                        ScriptRequiresException scriptRequiresException =
+                        var scriptRequiresException =
                             new ScriptRequiresException(
                                 scriptInfo.Name,
                                 new Collection<string> { requiredModule.Name },
@@ -315,7 +315,7 @@ namespace System.Management.Automation
 
         private static Collection<string> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
         {
-            Collection<string> result = new Collection<string>();
+            var result = new Collection<string>();
 
             foreach (var PSSnapin in PSSnapins)
             {
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 VerifyRequiredSnapins(requiresPSSnapIns, context, out requiresMissingPSSnapIns);
                 if (requiresMissingPSSnapIns != null)
                 {
-                    ScriptRequiresException scriptRequiresException =
+                    var scriptRequiresException =
                         new ScriptRequiresException(
                             scriptInfo.Name,
                             requiresMissingPSSnapIns,
@@ -352,7 +352,7 @@ namespace System.Management.Automation
 
                 if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
                 {
-                    ScriptRequiresException sre =
+                    var sre =
                       new ScriptRequiresException(
                           scriptInfo.Name,
                           string.Empty,
@@ -430,7 +430,7 @@ namespace System.Management.Automation
             {
                 if (!Utils.IsPSVersionSupported(requiresPSVersion))
                 {
-                    ScriptRequiresException scriptRequiresException =
+                    var scriptRequiresException =
                         new ScriptRequiresException(
                             scriptInfo.Name,
                             requiresPSVersion,
@@ -480,7 +480,7 @@ namespace System.Management.Automation
             bool isAdministrator = Utils.IsAdministrator();
             if (requiresElevation && !isAdministrator)
             {
-                ScriptRequiresException scriptRequiresException =
+                var scriptRequiresException =
                         new ScriptRequiresException(
                             scriptInfo.Name,
                             "ScriptRequiresElevation");
@@ -540,7 +540,7 @@ namespace System.Management.Automation
         {
             CommandProcessorBase processor = null;
 
-            HashSet<string> processedAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var processedAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             while (commandInfo.CommandType == CommandTypes.Alias &&
                 (!processedAliases.Contains(commandInfo.Name)) &&
@@ -548,7 +548,7 @@ namespace System.Management.Automation
             {
                 processedAliases.Add(commandInfo.Name);
 
-                AliasInfo aliasCommandInfo = (AliasInfo)commandInfo;
+                var aliasCommandInfo = (AliasInfo)commandInfo;
                 commandInfo = aliasCommandInfo.ResolvedCommand ??
                               LookupCommandInfo(aliasCommandInfo.Definition, commandOrigin, Context);
 
@@ -556,7 +556,7 @@ namespace System.Management.Automation
 
                 if (commandInfo == null)
                 {
-                    CommandNotFoundException e =
+                    var e =
                         new CommandNotFoundException(
                             aliasCommandInfo.Name,
                             null,
@@ -578,7 +578,7 @@ namespace System.Management.Automation
                     processor = new CommandProcessor((CmdletInfo)commandInfo, Context);
                     break;
                 case CommandTypes.ExternalScript:
-                    ExternalScriptInfo scriptInfo = (ExternalScriptInfo)commandInfo;
+                    var scriptInfo = (ExternalScriptInfo)commandInfo;
                     scriptInfo.SignatureChecked = true;
                     try
                     {
@@ -586,7 +586,7 @@ namespace System.Management.Automation
                     }
                     catch (ScriptRequiresSyntaxException reqSyntaxException)
                     {
-                        CommandNotFoundException e =
+                        var e =
                             new CommandNotFoundException(reqSyntaxException.Message, reqSyntaxException);
                         throw e;
                     }
@@ -595,7 +595,7 @@ namespace System.Management.Automation
                 case CommandTypes.Filter:
                 case CommandTypes.Function:
                 case CommandTypes.Configuration:
-                    FunctionInfo functionInfo = (FunctionInfo)commandInfo;
+                    var functionInfo = (FunctionInfo)commandInfo;
                     processor = CreateCommandProcessorForScript(functionInfo, Context, useLocalScope ?? true, sessionState);
                     break;
                 case CommandTypes.Script:
@@ -604,7 +604,7 @@ namespace System.Management.Automation
                 case CommandTypes.Alias:
                 default:
                     {
-                        CommandNotFoundException e =
+                        var e =
                             new CommandNotFoundException(
                                 commandInfo.Name,
                                 null,
@@ -629,7 +629,7 @@ namespace System.Management.Automation
             {
                 if (commandOrigin == CommandOrigin.Runspace && commandInfo.Visibility != SessionStateEntryVisibility.Public)
                 {
-                    CommandNotFoundException e = new CommandNotFoundException(
+                    var e = new CommandNotFoundException(
                         commandInfo.Name, null, "CommandNotFoundException", DiscoveryExceptions.CommandNotFoundException);
                     throw e;
                 }
@@ -692,7 +692,7 @@ namespace System.Management.Automation
 
             if (scriptblock.UsesCmdletBinding)
             {
-                FunctionInfo fi = new FunctionInfo(string.Empty, scriptblock, context);
+                var fi = new FunctionInfo(string.Empty, scriptblock, context);
                 return GetScriptAsCmdletProcessor(fi, context, useNewScope, false, sessionState);
             }
 
@@ -868,7 +868,7 @@ namespace System.Management.Automation
                     "'{0}' is not recognized as a cmdlet, function, executable program or script file.",
                     commandName);
 
-                CommandNotFoundException e =
+                var e =
                     new CommandNotFoundException(
                         originalCommandName,
                         lastError,
@@ -920,7 +920,7 @@ namespace System.Management.Automation
             Collection<PSModuleInfo> matchingModules = null;
             CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, context);
             commandInfo.Visibility = visibility;
-            Command importModuleCommand = new Command(commandInfo);
+            var importModuleCommand = new Command(commandInfo);
 
             discoveryTracer.WriteLine("Attempting to load module: {0}", moduleName);
 
@@ -982,7 +982,7 @@ namespace System.Management.Automation
         {
             CommandInfo result = null;
 
-            CommandSearcher searcher =
+            var searcher =
                 new CommandSearcher(
                     commandName,
                     searchResolutionOptions,
@@ -1104,7 +1104,7 @@ namespace System.Management.Automation
                                 if ((matchingModule == null) || (matchingModule.Count == 0))
                                 {
                                     string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName);
-                                    CommandNotFoundException commandNotFound = new CommandNotFoundException(
+                                    var commandNotFound = new CommandNotFoundException(
                                         originalCommandName,
                                         lastError,
                                         "CouldNotAutoloadMatchingModule", error);
@@ -1216,7 +1216,7 @@ namespace System.Management.Automation
                         if ((importedModule == null) || (importedModule.Count == 0))
                         {
                             string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportModule, moduleName);
-                            CommandNotFoundException commandNotFound = new CommandNotFoundException(
+                            var commandNotFound = new CommandNotFoundException(
                                 originalCommandName,
                                 lastError,
                                 "CouldNotAutoLoadModule",
@@ -1298,7 +1298,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal LookupPathCollection GetLookupDirectoryPaths()
         {
-            LookupPathCollection result = new LookupPathCollection();
+            var result = new LookupPathCollection();
 
             string path = Environment.GetEnvironmentVariable("PATH");
 
@@ -1461,7 +1461,7 @@ namespace System.Management.Automation
 
             // Check the current cmdlet cache then check the top level
             // if we aren't already at the top level.
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(Context.EngineSessionState.CurrentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation
         /// </returns>
         internal Collection<int> IndexOfRelativePath()
         {
-            Collection<int> result = new Collection<int>();
+            var result = new Collection<int>();
 
             for (int index = 0; index < this.Count; ++index)
             {

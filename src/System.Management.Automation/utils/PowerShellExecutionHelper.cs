@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
             CurrentPowerShell.AddCommand(command);
 
-            Command cmd = new Command(command, isScript);
+            var cmd = new Command(command, isScript);
             if (args != null)
             {
                 foreach (DictionaryEntry arg in args)
@@ -184,7 +184,7 @@ namespace System.Management.Automation
 
             try
             {
-                PSObject pso = obj as PSObject;
+                var pso = obj as PSObject;
                 string result;
                 if (pso != null)
                 {

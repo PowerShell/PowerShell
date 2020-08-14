@@ -509,7 +509,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(base64));
             }
 
-            string output = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
+            var output = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
             return output;
         }
 
@@ -525,12 +525,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(base64));
             }
 
-            string decoded = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
+            var decoded = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
 
             // Deserialize string
             XmlReader reader = XmlReader.Create(new StringReader(decoded), InternalDeserializer.XmlReaderSettingsForCliXml);
             object dso;
-            Deserializer deserializer = new Deserializer(reader);
+            var deserializer = new Deserializer(reader);
             dso = deserializer.Deserialize();
             if (deserializer.Done() == false)
             {
@@ -539,7 +539,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            PSObject mo = dso as PSObject;
+            var mo = dso as PSObject;
             if (mo == null)
             {
                 // This helper function should move the host. Provide appropriate error message.

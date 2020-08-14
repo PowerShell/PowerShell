@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Hashtable CreateHashtable()
         {
-            Hashtable hash = new Hashtable(2);
+            var hash = new Hashtable(2);
             if (Add != null)
             {
                 hash.Add("Add", Add);
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
 
         private PSListModifier CreatePSListModifier()
         {
-            PSListModifier listModifier = new PSListModifier();
+            var listModifier = new PSListModifier();
             if (Add != null)
             {
                 foreach (object obj in Add)
@@ -180,8 +180,8 @@ namespace Microsoft.PowerShell.Commands
 
         private ErrorRecord NewError(string errorId, string resourceId, object targetObject, params object[] args)
         {
-            ErrorDetails details = new ErrorDetails(this.GetType().Assembly, "UpdateListStrings", resourceId, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            var details = new ErrorDetails(this.GetType().Assembly, "UpdateListStrings", resourceId, args);
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidOperation,

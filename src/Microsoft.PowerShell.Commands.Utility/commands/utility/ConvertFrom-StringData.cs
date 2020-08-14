@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
             if (string.IsNullOrEmpty(_stringData))
             {

@@ -118,7 +118,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
-            ErrorRecord errorRecord = new ErrorRecord(exception, operation, ErrorCategory.InvalidOperation, this);
+            var errorRecord = new ErrorRecord(exception, operation, ErrorCategory.InvalidOperation, this);
             cmdlet.ThrowTerminatingError(errorRecord);
         }
         #endregion
@@ -231,7 +231,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (sendToPipeline is CimInstance)
             {
-                CimSetCimInstanceContext setContext = context as CimSetCimInstanceContext;
+                var setContext = context as CimSetCimInstanceContext;
                 if (setContext != null)
                 {
                     if (string.Equals(setContext.ParameterSetName, CimBaseCommand.QueryComputerSet, StringComparison.OrdinalIgnoreCase) ||

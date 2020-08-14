@@ -225,13 +225,13 @@ namespace Microsoft.PowerShell.Commands
                 ReadOnlyPSMemberInfoCollection<PSMemberInfo> readOnlyMembers;
                 readOnlyMembers = membersToSearch.Match(nameElement, memberTypeToSearch, _matchOptions);
 
-                MemberDefinition[] members = new MemberDefinition[readOnlyMembers.Count];
+                var members = new MemberDefinition[readOnlyMembers.Count];
                 int resultCount = 0;
                 foreach (PSMemberInfo member in readOnlyMembers)
                 {
                     if (!Force)
                     {
-                        PSMethod memberAsPSMethod = member as PSMethod;
+                        var memberAsPSMethod = member as PSMethod;
                         if ((memberAsPSMethod != null) && (memberAsPSMethod.IsSpecial))
                         {
                             continue;
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_typesAlreadyDisplayed.Count == 0)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new InvalidOperationException(GetMember.NoObjectSpecified),
                     "NoObjectInGetMember",
                     ErrorCategory.CloseError,

@@ -133,7 +133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // create ciminstance on server
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            var proxys = new List<CimSessionProxy>();
 
             switch (cmdlet.ParameterSetName)
             {
@@ -180,7 +180,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            CimNewCimInstanceContext newCimInstanceContext = context as CimNewCimInstanceContext;
+            var newCimInstanceContext = context as CimNewCimInstanceContext;
             if (newCimInstanceContext == null)
             {
                 DebugHelper.WriteLog("Invalid (null) CimNewCimInstanceContext", 1);
@@ -267,13 +267,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(className, cimNamespace);
+            var cimInstance = new CimInstance(className, cimNamespace);
             if (properties == null)
             {
                 return cimInstance;
             }
 
-            List<string> keys = new List<string>();
+            var keys = new List<string>();
             if (key != null)
             {
                 foreach (string keyName in key)
@@ -285,7 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                CimFlags flag = CimFlags.None;
+                var flag = CimFlags.None;
                 string propertyName = enumerator.Key.ToString().Trim();
                 if (keys.Contains(propertyName, StringComparer.OrdinalIgnoreCase))
                 {
@@ -296,7 +296,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 
-                PSReference cimReference = propertyValue as PSReference;
+                var cimReference = propertyValue as PSReference;
                 if (cimReference != null)
                 {
                     CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
@@ -331,13 +331,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(cimClass);
+            var cimInstance = new CimInstance(cimClass);
             if (properties == null)
             {
                 return cimInstance;
             }
 
-            List<string> notfoundProperties = new List<string>();
+            var notfoundProperties = new List<string>();
             foreach (string property in properties.Keys)
             {
                 if (cimInstance.CimInstanceProperties[property] == null)

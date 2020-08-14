@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override FormatEntryData GeneratePayload(PSObject so, int enumerationLimit)
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
 
             if (this.dataBaseInfo.view != null)
                 fed.formatEntryInfo = GenerateComplexViewEntryFromDataBaseInfo(so, enumerationLimit);
@@ -39,18 +39,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ComplexViewEntry GenerateComplexViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            ComplexViewObjectBrowser browser = new ComplexViewObjectBrowser(this.ErrorManager, this.expressionFactory, enumerationLimit);
+            var browser = new ComplexViewObjectBrowser(this.ErrorManager, this.expressionFactory, enumerationLimit);
             return browser.GenerateView(so, this.inputParameters);
         }
 
         private ComplexViewEntry GenerateComplexViewEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
         {
             // execute on the format directive
-            ComplexViewEntry cve = new ComplexViewEntry();
+            var cve = new ComplexViewEntry();
 
             // NOTE: we set a max depth to protect ourselves from infinite loops
             const int maxTreeDepth = 50;
-            ComplexControlGenerator controlGenerator =
+            var controlGenerator =
                             new ComplexControlGenerator(this.dataBaseInfo.db,
                                     this.dataBaseInfo.view.loadingInfo,
                                     this.expressionFactory,
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ComplexControlBody complexBody = null;
 
             // we might have a reference
-            ControlReference controlReference = control as ControlReference;
+            var controlReference = control as ControlReference;
             if (controlReference != null && controlReference.controlType == typeof(ComplexControlBody))
             {
                 // retrieve the reference
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // see if we have an override that matches
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(_expressionFactory, _db, typeNames);
+            var match = new TypeMatch(_expressionFactory, _db, typeNames);
             foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)
             {
                 if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo, so)))
@@ -199,16 +199,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
             }
 
-            FormatEntry fe = new FormatEntry();
+            var fe = new FormatEntry();
 
             formatValueList.Add(fe);
             #region foreach loop
             foreach (FormatToken t in formatTokenList)
             {
-                TextToken tt = t as TextToken;
+                var tt = t as TextToken;
                 if (tt != null)
                 {
-                    FormatTextField ftf = new FormatTextField();
+                    var ftf = new FormatTextField();
                     ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
                     fe.formatValueList.Add(ftf);
                     continue;
@@ -225,11 +225,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FrameToken ft = t as FrameToken;
+                var ft = t as FrameToken;
                 if (ft != null)
                 {
                     // instantiate a new entry and attach a frame info object
-                    FormatEntry feFrame = new FormatEntry();
+                    var feFrame = new FormatEntry();
                     feFrame.frameInfo = new FrameInfo();
 
                     // add the frame info
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
                 #region CompoundPropertyToken
-                CompoundPropertyToken cpt = t as CompoundPropertyToken;
+                var cpt = t as CompoundPropertyToken;
                 if (cpt != null)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         IEnumerable e = PSObjectHelper.GetEnumerable(val);
-                        FormatPropertyField fpf = new FormatPropertyField();
+                        var fpf = new FormatPropertyField();
                         if (cpt.enumerateCollection && e != null)
                         {
                             foreach (object x in e)
@@ -440,17 +440,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
 
             int maxDepth = _complexSpecificParameters.maxDepth;
-            TraversalInfo level = new TraversalInfo(0, maxDepth);
+            var level = new TraversalInfo(0, maxDepth);
 
             List<MshParameter> mshParameterList = null;
             mshParameterList = inputParameters.mshParameterList;
 
             // create a top level entry as root of the tree
-            ComplexViewEntry cve = new ComplexViewEntry();
+            var cve = new ComplexViewEntry();
             var typeNames = so.InternalTypeNames;
             if (TreatAsScalarType(typeNames))
             {
-                FormatEntry fe = new FormatEntry();
+                var fe = new FormatEntry();
 
                 cve.formatValueList.Add(fe);
                 DisplayRawObject(so, fe.formatValueList);
@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (e != null)
                 {
                     // let's start the traversal with an enumeration
-                    FormatEntry fe = new FormatEntry();
+                    var fe = new FormatEntry();
 
                     cve.formatValueList.Add(fe);
                     DisplayEnumeration(e, level, fe.formatValueList);
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void DisplayRawObject(PSObject so, List<FormatValue> formatValueList)
         {
-            FormatPropertyField fpf = new FormatPropertyField();
+            var fpf = new FormatPropertyField();
 
             StringFormatError formatErrorObject = null;
             if (_errorManager.DisplayFormatErrorString)
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         AssociationManager.SetupActiveProperties(parameterList, so, _expressionFactory);
 
             // create a format entry
-            FormatEntry fe = new FormatEntry();
+            var fe = new FormatEntry();
             formatValueList.Add(fe);
 
             // add the display name of the object
@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (MshResolvedExpressionParameterAssociation a in activeAssociationList)
             {
-                FormatTextField ftf = new FormatTextField();
+                var ftf = new FormatTextField();
 
                 ftf.text = a.ResolvedExpression.ToString() + " = ";
                 formatValueList.Add(ftf);
@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     object maxDepthKey = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.DepthEntryKey);
                     if (maxDepthKey != AutomationNull.Value)
                     {
-                        int parameterMaxDept = (int)maxDepthKey;
+                        var parameterMaxDept = (int)maxDepthKey;
                         level = new TraversalInfo(currentLevel.Level, parameterMaxDept);
                     }
                 }
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="formatValueList">List of format tokens to add to.</param>
         private void DisplayLeaf(object val, List<FormatValue> formatValueList)
         {
-            FormatPropertyField fpf = new FormatPropertyField();
+            var fpf = new FormatPropertyField();
 
             fpf.propertyValue = PSObjectHelper.FormatField(null, PSObjectHelper.AsPSObject(val), _enumerationLimit, null, _expressionFactory);
             formatValueList.Add(fpf);
@@ -729,13 +729,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (label != null)
             {
-                FormatTextField ftfLabel = new FormatTextField();
+                var ftfLabel = new FormatTextField();
                 ftfLabel.text = label;
                 formatValueList.Add(ftfLabel);
                 formatValueList.Add(new FormatNewLine());
             }
 
-            FormatTextField ftf = new FormatTextField();
+            var ftf = new FormatTextField();
             ftf.text = openTag;
             formatValueList.Add(ftf);
 
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static void AddEpilogue(List<FormatValue> formatValueList, string closeTag)
         {
-            FormatTextField ftf = new FormatTextField();
+            var ftf = new FormatTextField();
 
             ftf.text = closeTag;
             formatValueList.Add(ftf);
@@ -754,7 +754,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private List<FormatValue> AddIndentationLevel(List<FormatValue> formatValueList)
         {
-            FormatEntry feFrame = new FormatEntry();
+            var feFrame = new FormatEntry();
             feFrame.frameInfo = new FrameInfo();
 
             // add the frame info

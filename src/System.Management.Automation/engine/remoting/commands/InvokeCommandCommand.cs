@@ -843,7 +843,7 @@ namespace Microsoft.PowerShell.Commands
                     ((LocalRunspace)this.Context.CurrentRunspace).GetCurrentlyRunningPipeline().InstanceId;
 
                 // Check for sessions in invalid state for running commands.
-                List<PSSession> availableSessions = new List<PSSession>();
+                var availableSessions = new List<PSSession>();
                 foreach (var session in Session)
                 {
                     if (session.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (session.Runspace.RunspaceAvailability != RunspaceAvailability.Available)
                     {
                         // Check to see if this is a steppable pipeline case.
-                        RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
+                        var remoteRunspace = session.Runspace as RemoteRunspace;
                         if ((remoteRunspace != null) &&
                             (remoteRunspace.RunspaceAvailability == RunspaceAvailability.Busy) &&
                             (remoteRunspace.IsAnotherInvokeCommandExecuting(this, localPipelineId)))
@@ -964,7 +964,7 @@ namespace Microsoft.PowerShell.Commands
                     ((LocalRunspace)this.Context.CurrentRunspace).GetCurrentlyRunningPipeline().InstanceId;
                 foreach (PSSession runspaceInfo in Session)
                 {
-                    RemoteRunspace remoteRunspace = (RemoteRunspace)runspaceInfo.Runspace;
+                    var remoteRunspace = (RemoteRunspace)runspaceInfo.Runspace;
                     if (remoteRunspace.IsAnotherInvokeCommandExecuting(this, localPipelineId))
                     {
                         // Use remote steppable pipeline only for non-input piping case.
@@ -974,10 +974,10 @@ namespace Microsoft.PowerShell.Commands
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
                         if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
                         {
-                            PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
+                            var table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                             if (table != null)
                             {
-                                Version version = (object)table[PSVersionInfo.PSRemotingProtocolVersionName] as Version;
+                                var version = (object)table[PSVersionInfo.PSRemotingProtocolVersionName] as Version;
 
                                 if (version != null)
                                 {
@@ -1007,7 +1007,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
+                    var ecHelper = operation as ExecutionCmdletHelperRunspace;
                     if (ecHelper == null)
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
@@ -1080,7 +1080,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (ResolvedComputerNames.Length != 0 && Operations.Count > 0)
                                     {
-                                        PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
+                                        var job = new PSRemotingJob(ResolvedComputerNames, Operations,
                                                 ScriptBlock.ToString(), ThrottleLimit, _name);
                                         job.PSJobTypeName = RemoteJobType;
                                         job.HideComputerName = _hideComputerName;
@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell.Commands
                             case InvokeCommandCommand.SessionParameterSet:
                             case InvokeCommandCommand.FilePathSessionParameterSet:
                                 {
-                                    PSRemotingJob job = new PSRemotingJob(Session, Operations,
+                                    var job = new PSRemotingJob(Session, Operations,
                                             ScriptBlock.ToString(), ThrottleLimit, _name);
                                     job.PSJobTypeName = RemoteJobType;
                                     job.HideComputerName = _hideComputerName;
@@ -1109,13 +1109,13 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (Operations.Count > 0)
                                     {
-                                        string[] locations = new string[ConnectionUri.Length];
+                                        var locations = new string[ConnectionUri.Length];
                                         for (int i = 0; i < locations.Length; i++)
                                         {
                                             locations[i] = ConnectionUri[i].ToString();
                                         }
 
-                                        PSRemotingJob job = new PSRemotingJob(locations, Operations,
+                                        var job = new PSRemotingJob(locations, Operations,
                                             ScriptBlock.ToString(), ThrottleLimit, _name);
                                         job.PSJobTypeName = RemoteJobType;
                                         job.HideComputerName = _hideComputerName;
@@ -1341,7 +1341,7 @@ namespace Microsoft.PowerShell.Commands
             Debugger hostDebugger = null;
             try
             {
-                System.Management.Automation.Internal.Host.InternalHost chost =
+                var chost =
                     this.Host as System.Management.Automation.Internal.Host.InternalHost;
                 hostDebugger = chost.Runspace.Debugger;
             }
@@ -1372,7 +1372,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (PSSession runspaceInfo in Session)
                 {
-                    RemoteRunspace remoteRunspace = (RemoteRunspace)runspaceInfo.Runspace;
+                    var remoteRunspace = (RemoteRunspace)runspaceInfo.Runspace;
                     remoteRunspace.ClearInvokeCommand();
                 }
             }
@@ -1539,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<PSSession> GetDisconnectedSessions(PSInvokeExpressionSyncJob job)
         {
-            List<PSSession> discSessions = new List<PSSession>();
+            var discSessions = new List<PSSession>();
 
             Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
             foreach (System.Management.Automation.PowerShell ps in powershells)
@@ -1547,7 +1547,7 @@ namespace Microsoft.PowerShell.Commands
                 // Get the command information from the PowerShell object.
                 string commandText = (ps.Commands != null && ps.Commands.Commands.Count > 0) ?
                     ps.Commands.Commands[0].CommandText : string.Empty;
-                ConnectCommandInfo cmdInfo = new ConnectCommandInfo(ps.InstanceId, commandText);
+                var cmdInfo = new ConnectCommandInfo(ps.InstanceId, commandText);
 
                 // Get the old RunspacePool object that the command was initially run on.
                 RunspacePool oldRunspacePool = null;
@@ -1558,14 +1558,14 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     object rsConnection = ps.GetRunspaceConnection();
-                    RunspacePool rsPool = rsConnection as RunspacePool;
+                    var rsPool = rsConnection as RunspacePool;
                     if (rsPool != null)
                     {
                         oldRunspacePool = rsPool;
                     }
                     else
                     {
-                        RemoteRunspace remoteRs = rsConnection as RemoteRunspace;
+                        var remoteRs = rsConnection as RemoteRunspace;
                         if (remoteRs != null)
                         {
                             oldRunspacePool = remoteRs.RunspacePool;
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
                         sessionName = PSSession.GenerateRunspaceName(out id);
                     }
 
-                    RunspacePool runspacePool = new RunspacePool(
+                    var runspacePool = new RunspacePool(
                                                         true,
                                                         oldRunspacePool.RemoteRunspacePoolInternal.InstanceId,
                                                         sessionName,
@@ -1611,7 +1611,7 @@ namespace Microsoft.PowerShell.Commands
                                                         this.Context.TypeTable);
                     runspacePool.RemoteRunspacePoolInternal.IsRemoteDebugStop = oldRunspacePool.RemoteRunspacePoolInternal.IsRemoteDebugStop;
 
-                    RemoteRunspace remoteRunspace = new RemoteRunspace(runspacePool);
+                    var remoteRunspace = new RemoteRunspace(runspacePool);
                     discSessions.Add(new PSSession(remoteRunspace));
                 }
             }
@@ -1639,7 +1639,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new StopUpstreamCommandsException(this);
             }
 
-            List<PipelineWriter> removeCollection = new List<PipelineWriter>();
+            var removeCollection = new List<PipelineWriter>();
 
             foreach (PipelineWriter writer in _inputWriters)
             {
@@ -1749,7 +1749,7 @@ namespace Microsoft.PowerShell.Commands
                             // Write warnings to user about each disconnect.
                             foreach (var cjob in rtnJob.ChildJobs)
                             {
-                                PSRemotingChildJob childJob = cjob as PSRemotingChildJob;
+                                var childJob = cjob as PSRemotingChildJob;
                                 if (childJob != null)
                                 {
                                     // Get session for this job.
@@ -1818,7 +1818,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteNetworkFailedError(PSSession session)
         {
-            RuntimeException reason = new RuntimeException(
+            var reason = new RuntimeException(
                 StringUtil.Format(RemotingErrorIdStrings.RCAutoDisconnectingError, session.ComputerName));
 
             WriteError(new ErrorRecord(reason,
@@ -1957,7 +1957,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="streamObject">Stream object to process.</param>
         private void PreProcessStreamObject(PSStreamObject streamObject)
         {
-            ErrorRecord errorRecord = streamObject.Value as ErrorRecord;
+            var errorRecord = streamObject.Value as ErrorRecord;
 
             //
             // In case of PSDirectException, we should output the precise error message
@@ -1967,7 +1967,7 @@ namespace Microsoft.PowerShell.Commands
                 (errorRecord.Exception != null) &&
                 (errorRecord.Exception.InnerException != null))
             {
-                PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
+                var ex = errorRecord.Exception.InnerException as PSDirectException;
                 if (ex != null)
                 {
                     streamObject.Value = new ErrorRecord(errorRecord.Exception.InnerException,

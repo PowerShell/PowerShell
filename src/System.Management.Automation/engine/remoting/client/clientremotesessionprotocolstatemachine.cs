@@ -130,10 +130,10 @@ namespace System.Management.Automation.Remoting
             // events to process.
 
             // Enqueue a fatal error event if such an exception occurs; clear all existing events.. we are going to terminate the session
-            PSRemotingDataStructureException fatalError = new PSRemotingDataStructureException(ex,
+            var fatalError = new PSRemotingDataStructureException(ex,
                         RemotingErrorIdStrings.FatalErrorCausingClose);
 
-            RemoteSessionStateMachineEventArgs closeEvent =
+            var closeEvent =
                 new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, fatalError);
 
             RaiseEvent(closeEvent, true);
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting
                 tmp.Dispose();
             }
 
-            PSRemotingDataStructureException exception =
+            var exception =
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
@@ -614,7 +614,7 @@ namespace System.Management.Automation.Remoting
                     // we are short-circuiting the state by going directly to NegotiationSending..
                     // This will save 1 network trip just to establish a connection.
                     // Raise the event for sending the negotiation
-                    RemoteSessionStateMachineEventArgs sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
+                    var sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
                     RaiseEvent(sendingArg);
                 }
             }
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // We need to send negotiation and connect algorithm related info
                     // Change state to let other DSHandlers add appropriate messages to be piggybacked on transport's Create payload
-                    RemoteSessionStateMachineEventArgs sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendingOnConnect);
+                    var sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendingOnConnect);
                     RaiseEvent(sendingArg);
                 }
             }
@@ -746,7 +746,7 @@ namespace System.Management.Automation.Remoting
                     case RemoteSessionState.Idle:
                     case RemoteSessionState.UndefinedState:
                     default:
-                        PSRemotingTransportException forceClosedException = new PSRemotingTransportException(arg.Reason, RemotingErrorIdStrings.ForceClosed);
+                        var forceClosedException = new PSRemotingTransportException(arg.Reason, RemotingErrorIdStrings.ForceClosed);
                         SetState(RemoteSessionState.Closed, forceClosedException);
                         break;
                 }
@@ -764,10 +764,10 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs">Arguments describing this event.</param>
         private void DoFatal(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
-            PSRemotingDataStructureException fatalError =
+            var fatalError =
                 new PSRemotingDataStructureException(eventArgs.Reason, RemotingErrorIdStrings.FatalErrorCausingClose);
 
-            RemoteSessionStateMachineEventArgs closeEvent =
+            var closeEvent =
                 new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, fatalError);
 
             RaiseEvent(closeEvent);
@@ -796,8 +796,8 @@ namespace System.Management.Automation.Remoting
                 _state = newState;
                 s_trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
 
-                RemoteSessionStateInfo stateInfo = new RemoteSessionStateInfo(_state, reason);
-                RemoteSessionStateEventArgs sessionStateEventArg = new RemoteSessionStateEventArgs(stateInfo);
+                var stateInfo = new RemoteSessionStateInfo(_state, reason);
+                var sessionStateEventArg = new RemoteSessionStateEventArgs(stateInfo);
 
                 _clientRemoteSessionStateChangeQueue.Enqueue(sessionStateEventArg);
             }

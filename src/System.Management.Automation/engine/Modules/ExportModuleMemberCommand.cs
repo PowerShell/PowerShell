@@ -144,8 +144,8 @@ namespace Microsoft.PowerShell.Commands
             if (Context.EngineSessionState == Context.TopLevelSessionState)
             {
                 string message = StringUtil.Format(Modules.CanOnlyBeUsedFromWithinAModule);
-                InvalidOperationException invalidOp = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(invalidOp, "Modules_CanOnlyExecuteExportModuleMemberInsideAModule",
+                var invalidOp = new InvalidOperationException(message);
+                var er = new ErrorRecord(invalidOp, "Modules_CanOnlyExecuteExportModuleMemberInsideAModule",
                     ErrorCategory.PermissionDenied, null);
                 ThrowTerminatingError(er);
             }

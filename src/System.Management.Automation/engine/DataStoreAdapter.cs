@@ -625,7 +625,7 @@ namespace System.Management.Automation
         /// </exception>
         public int CompareTo(object obj)
         {
-            PSDriveInfo drive = obj as PSDriveInfo;
+            var drive = obj as PSDriveInfo;
 
             if (drive == null)
             {

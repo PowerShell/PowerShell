@@ -957,7 +957,7 @@ namespace System.Management.Automation.Language
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
         {
             IAssignableValue av = left.GetAssignableValue();
-            ExpressionType et = ExpressionType.Extension;
+            var et = ExpressionType.Extension;
 
             switch (tokenKind)
             {
@@ -3749,8 +3749,8 @@ namespace System.Management.Automation.Language
                         commandsInPipe = pipeElements.Count;
                     }
 
-                    Expression[] pipelineExprs = new Expression[commandsInPipe];
-                    CommandBaseAst[] pipeElementAsts = new CommandBaseAst[commandsInPipe];
+                    var pipelineExprs = new Expression[commandsInPipe];
+                    var pipeElementAsts = new CommandBaseAst[commandsInPipe];
                     var commandRedirections = new object[commandsInPipe];
 
                     for (int j = 0; i < pipeElements.Count; ++i, ++j)
@@ -3820,7 +3820,7 @@ namespace System.Management.Automation.Language
 
             // Most redirections will be instances of CommandRedirection, but non-constant filenames
             // will generated a Linq.Expression, so we store objects.
-            object[] compiledRedirections = new object[count];
+            var compiledRedirections = new object[count];
             for (int i = 0; i < count; ++i)
             {
                 compiledRedirections[i] = command.Redirections[i].Accept(this);
@@ -4125,7 +4125,7 @@ namespace System.Management.Automation.Language
         public object VisitCommand(CommandAst commandAst)
         {
             var commandElements = commandAst.CommandElements;
-            Expression[] elementExprs = new Expression[commandElements.Count];
+            var elementExprs = new Expression[commandElements.Count];
 
             for (int i = 0; i < commandElements.Count; ++i)
             {
@@ -4139,13 +4139,13 @@ namespace System.Management.Automation.Language
                     var splatTest = element;
                     bool splatted = false;
 
-                    UsingExpressionAst usingExpression = element as UsingExpressionAst;
+                    var usingExpression = element as UsingExpressionAst;
                     if (usingExpression != null)
                     {
                         splatTest = usingExpression.SubExpression;
                     }
 
-                    VariableExpressionAst variableExpression = splatTest as VariableExpressionAst;
+                    var variableExpression = splatTest as VariableExpressionAst;
                     if (variableExpression != null)
                     {
                         splatted = variableExpression.Splatted;
@@ -4267,7 +4267,7 @@ namespace System.Management.Automation.Language
             var exceptionArgArray = exceptionArgs != null
                                         ? Expression.NewArrayInit(typeof(object), exceptionArgs.Select(e => e.Cast(typeof(object))))
                                         : ExpressionCache.NullConstant;
-            Expression[] argExprs = new Expression[]
+            var argExprs = new Expression[]
             {
                 ExpressionCache.NullConstant,                        // targetObject
                 Expression.Constant(exceptionType, typeof(Type)),    // exceptionType
@@ -4301,7 +4301,7 @@ namespace System.Management.Automation.Language
             var exceptionArgArray = exceptionArgs != null
                                         ? Expression.NewArrayInit(typeof(object), exceptionArgs)
                                         : ExpressionCache.NullConstant;
-            Expression[] argExprs = new Expression[]
+            var argExprs = new Expression[]
             {
                 ExpressionCache.NullConstant,                                   // targetObject
                 Expression.Constant(typeof(RuntimeException), typeof(Type)),    // exceptionType
@@ -4321,7 +4321,7 @@ namespace System.Management.Automation.Language
         {
             Diagnostics.Assert(exceptionArgTypes.Length == exceptionArgs.Length, "types count must match args count for constructor call.");
 
-            Expression[] argExprs = new Expression[exceptionArgs.Length];
+            var argExprs = new Expression[exceptionArgs.Length];
             for (int i = 0; i < exceptionArgs.Length; i++)
             {
                 object o = exceptionArgs[i];
@@ -4501,8 +4501,8 @@ namespace System.Management.Automation.Language
                            exprs.Add(Expression.Assign(skipDefault, ExpressionCache.Constant(false)));
                        }
 
-                       IsConstantValueVisitor iscvv = new IsConstantValueVisitor();
-                       ConstantValueVisitor cvv = new ConstantValueVisitor();
+                       var iscvv = new IsConstantValueVisitor();
+                       var cvv = new ConstantValueVisitor();
 
                        int clauseCount = switchStatementAst.Clauses.Count;
                        for (int i = 0; i < clauseCount; i++)
@@ -5229,7 +5229,7 @@ namespace System.Management.Automation.Language
                 //            $_ = oldDollarUnder
                 //            context.CurrentExceptionBeingHandled = oldrte
                 //        }
-                AutomaticVarSaver avs = new AutomaticVarSaver(
+                var avs = new AutomaticVarSaver(
                     this, SpecialVariables.UnderbarVarPath,
                     (int)AutomaticVariable.Underbar);
                 var rte = NewTemp(typeof(RuntimeException), "rte");
@@ -5369,7 +5369,7 @@ namespace System.Management.Automation.Language
                     catchTypesExpr = Expression.Block(dynamicCatchTypes.Append(catchTypesExpr));
                 }
 
-                AutomaticVarSaver avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath, (int)AutomaticVariable.Underbar);
+                var avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath, (int)AutomaticVariable.Underbar);
                 var swCond = Expression.Call(
                     CachedReflectionInfo.ExceptionHandlingOps_FindMatchingHandler,
                     LocalVariablesParameter,
@@ -6001,8 +6001,8 @@ namespace System.Management.Automation.Language
         private Expression CompileIncrementOrDecrement(ExpressionAst exprAst, int valueToAdd, bool prefix)
         {
             var av = ((ISupportsAssignment)exprAst).GetAssignableValue();
-            List<ParameterExpression> temps = new List<ParameterExpression>();
-            List<Expression> exprs = new List<Expression>();
+            var temps = new List<ParameterExpression>();
+            var exprs = new List<Expression>();
             ParameterExpression tmp;
             Expression beforeVal = av.GetValue(this, exprs, temps);
             if (prefix)
@@ -6445,7 +6445,7 @@ namespace System.Management.Automation.Language
 
         public object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
-            List<Expression> elementValues = new List<Expression>(arrayLiteralAst.Elements.Count);
+            var elementValues = new List<Expression>(arrayLiteralAst.Elements.Count);
             foreach (var element in arrayLiteralAst.Elements)
             {
                 var elementValue = Compile(element);

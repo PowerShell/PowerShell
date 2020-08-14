@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override ControlBase Copy()
         {
-            ListControlBody result = new ListControlBody();
+            var result = new ListControlBody();
             result.autosize = this.autosize;
             if (defaultEntryDefinition != null)
             {
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal ListControlEntryDefinition Copy()
         {
-            ListControlEntryDefinition result = new ListControlEntryDefinition();
+            var result = new ListControlEntryDefinition();
             result.appliesTo = this.appliesTo;
             foreach (ListControlItemDefinition lcid in this.itemDefinitionList)
             {
@@ -319,7 +319,7 @@ namespace System.Management.Automation
                 Label = definition.label.text;
             }
 
-            FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
+            var fpt = definition.formatTokenList[0] as FieldPropertyToken;
             if (fpt != null)
             {
                 if (fpt.fieldFormattingDirective.formatString != null)

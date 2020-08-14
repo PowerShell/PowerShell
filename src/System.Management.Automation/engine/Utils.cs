@@ -499,7 +499,7 @@ namespace System.Management.Automation
         {
             if (s_productFolderDirectories == null)
             {
-                List<string> baseDirectories = new List<string>();
+                var baseDirectories = new List<string>();
 
                 // Retrieve the application base from the registry
                 string appBase = Utils.DefaultPowerShellAppBase;
@@ -533,7 +533,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static bool IsUnderProductFolder(string filePath)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
+            var fileInfo = new FileInfo(filePath);
             string filename = fileInfo.FullName;
 
             var productFolderDirectories = GetProductFolderDirectories();
@@ -1399,14 +1399,14 @@ namespace System.Management.Automation
                 return ClrFacade.GetDefaultEncoding();
             }
 
-            byte[] initialBytes = new byte[100];
+            var initialBytes = new byte[100];
             int bytesRead = 0;
 
             try
             {
                 using (FileStream stream = System.IO.File.OpenRead(path))
                 {
-                    using (BinaryReader reader = new BinaryReader(stream))
+                    using (var reader = new BinaryReader(stream))
                     {
                         bytesRead = reader.Read(initialBytes, 0, 100);
                     }
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
             WaitCallback threadProc,
             object state)
         {
-            object[] args = new object[3];
+            var args = new object[3];
             args[0] = identityToImpersonate;
             args[1] = threadProc;
             args[2] = state;
@@ -1506,9 +1506,9 @@ namespace System.Management.Automation
 
         private static void WorkItemCallback(object callBackArgs)
         {
-            object[] args = callBackArgs as object[];
-            WindowsIdentity identityToImpersonate = args[0] as WindowsIdentity;
-            WaitCallback callback = args[1] as WaitCallback;
+            var args = callBackArgs as object[];
+            var identityToImpersonate = args[0] as WindowsIdentity;
+            var callback = args[1] as WaitCallback;
             object state = args[2];
 
             if (identityToImpersonate != null)

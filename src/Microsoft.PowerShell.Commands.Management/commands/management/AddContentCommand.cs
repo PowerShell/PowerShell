@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e) // Catch-all OK, 3rd party callout
                     {
-                        ProviderInvocationException providerException =
+                        var providerException =
                             new ProviderInvocationException(
                                 "ProviderSeekError",
                                 SessionStateStrings.ProviderSeekError,

@@ -222,7 +222,7 @@ namespace System.Management.Automation.Remoting
             if (WindowsIdentity != null)
             {
                 // Get Windows Principal for this identity
-                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
+                var windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
                 return windowsPrincipal.IsInRole(role);
             }
             else
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Remoting
             if (WindowsIdentity != null)
             {
                 // Get Windows Principal for this identity
-                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
+                var windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
                 return windowsPrincipal.IsInRole(role);
             }
             else

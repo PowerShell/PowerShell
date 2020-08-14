@@ -465,7 +465,7 @@ namespace System.Management.Automation.Internal
         {
             if (coll == null)
                 return null;
-            Collection<PSObject> retval = new Collection<PSObject>();
+            var retval = new Collection<PSObject>();
             foreach (object o in coll)
             {
                 retval.Add(MakePSObject(o));
@@ -581,7 +581,7 @@ namespace System.Management.Automation.Internal
                 return new Collection<ReturnType>();
             }
 
-            Collection<ReturnType> results = new Collection<ReturnType>();
+            var results = new Collection<ReturnType>();
             int readCount = maxRequested;
 
             while (readCount > 0)
@@ -763,7 +763,7 @@ namespace System.Management.Automation.Internal
                 return new Collection<ReturnType>();
             }
 
-            Collection<ReturnType> results = new Collection<ReturnType>();
+            var results = new Collection<ReturnType>();
             int readCount = maxRequested;
 
             while (readCount > 0)

@@ -206,7 +206,7 @@ namespace System.Management.Automation.Interpreter
         public static DebugInfo GetMatchingDebugInfo(DebugInfo[] debugInfos, int index)
         {
             // Create a faked DebugInfo to do the search
-            DebugInfo d = new DebugInfo { Index = index };
+            var d = new DebugInfo { Index = index };
 
             // to find the closest debug info before the current index
 
@@ -654,7 +654,7 @@ namespace System.Management.Automation.Interpreter
         {
             var member = (MemberExpression)node.Left;
 
-            PropertyInfo pi = member.Member as PropertyInfo;
+            var pi = member.Member as PropertyInfo;
             if (pi != null)
             {
                 var method = pi.SetMethod;
@@ -682,7 +682,7 @@ namespace System.Management.Automation.Interpreter
                 return;
             }
 
-            FieldInfo fi = member.Member as FieldInfo;
+            var fi = member.Member as FieldInfo;
             if (fi != null)
             {
                 if (member.Expression != null)
@@ -1365,7 +1365,7 @@ namespace System.Management.Automation.Interpreter
                 return node.Operand == null;
             }
 
-            BlockExpression block = expr as BlockExpression;
+            var block = expr as BlockExpression;
             if (block != null)
             {
                 return EndsWithRethrow(block.Expressions[block.Expressions.Count - 1]);
@@ -1629,7 +1629,7 @@ namespace System.Management.Automation.Interpreter
             var node = (MemberExpression)expr;
 
             var member = node.Member;
-            FieldInfo fi = member as FieldInfo;
+            var fi = member as FieldInfo;
             if (fi != null)
             {
                 if (fi.IsLiteral)
@@ -1656,7 +1656,7 @@ namespace System.Management.Automation.Interpreter
                 return;
             }
 
-            PropertyInfo pi = member as PropertyInfo;
+            var pi = member as PropertyInfo;
             if (pi != null)
             {
                 var method = pi.GetMethod;

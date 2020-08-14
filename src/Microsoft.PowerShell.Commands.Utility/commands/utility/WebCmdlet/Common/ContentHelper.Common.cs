@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)
         {
-            StringBuilder raw = new StringBuilder();
+            var raw = new StringBuilder();
 
             string protocol = WebResponseHelper.GetProtocol(response);
             if (!string.IsNullOrEmpty(protocol))
@@ -169,14 +169,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (contentTypeKey != null)
                     {
-                        string extension = contentTypeKey.GetValue("Extension") as string;
+                        var extension = contentTypeKey.GetValue("Extension") as string;
                         if (extension != null)
                         {
                             using (RegistryKey extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
                             {
                                 if (extensionKey != null)
                                 {
-                                    string perceivedType = extensionKey.GetValue("PerceivedType") as string;
+                                    var perceivedType = extensionKey.GetValue("PerceivedType") as string;
                                     isText = (perceivedType == "text");
                                 }
                             }

@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="expand">If the matched properties are property sets, expand them.</param>
         public List<PSPropertyExpression> ResolveNames(PSObject target, bool expand)
         {
-            List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
+            var retVal = new List<PSPropertyExpression>();
 
             if (_isResolved)
             {
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
             if (Script != null)
             {
                 // script block, just add it to the list and be done
-                PSPropertyExpression ex = new PSPropertyExpression(Script);
+                var ex = new PSPropertyExpression(Script);
 
                 ex._isResolved = true;
                 retVal.Add(ex);
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                List<PSMemberInfo> temp = new List<PSMemberInfo>();
+                var temp = new List<PSMemberInfo>();
                 if (x != null)
                 {
                     temp.Add(x);
@@ -210,12 +210,12 @@ namespace Microsoft.PowerShell.Commands
 
             // we now have a list of members, we have to expand property sets
             // and remove duplicates
-            List<PSMemberInfo> temporaryMemberList = new List<PSMemberInfo>();
+            var temporaryMemberList = new List<PSMemberInfo>();
 
             foreach (PSMemberInfo member in members)
             {
                 // it can be a property set
-                PSPropertySet propertySet = member as PSPropertySet;
+                var propertySet = member as PSPropertySet;
                 if (propertySet != null)
                 {
                     if (expand)
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!allMembers.Contains(m.Name))
                 {
-                    PSPropertyExpression ex = new PSPropertyExpression(m.Name);
+                    var ex = new PSPropertyExpression(m.Name);
 
                     ex._isResolved = true;
                     retVal.Add(ex);
@@ -284,12 +284,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="eatExceptions">If true, any exceptions that occur during the match process are ignored.</param>
         public List<PSPropertyExpressionResult> GetValues(PSObject target, bool expand, bool eatExceptions)
         {
-            List<PSPropertyExpressionResult> retVal = new List<PSPropertyExpressionResult>();
+            var retVal = new List<PSPropertyExpressionResult>();
 
             // process the script case
             if (Script != null)
             {
-                PSPropertyExpression scriptExpression = new PSPropertyExpression(Script);
+                var scriptExpression = new PSPropertyExpression(Script);
                 PSPropertyExpressionResult r = scriptExpression.GetValue(target, eatExceptions);
                 retVal.Add(r);
                 return retVal;

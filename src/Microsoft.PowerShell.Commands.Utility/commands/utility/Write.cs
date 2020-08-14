@@ -33,13 +33,13 @@ namespace Microsoft.PowerShell.Commands
             // so we create the DebugRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteDebug().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
+            var mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
 
             if (mshCommandRuntime != null)
             {
-                DebugRecord record = new DebugRecord(Message);
+                var record = new DebugRecord(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
+                var invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
                 if (invocationInfo != null)
                 {
@@ -81,13 +81,13 @@ namespace Microsoft.PowerShell.Commands
             // so we create the VerboseRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteVerbose().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
+            var mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
 
             if (mshCommandRuntime != null)
             {
-                VerboseRecord record = new VerboseRecord(Message);
+                var record = new VerboseRecord(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
+                var invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
                 if (invocationInfo != null)
                 {
@@ -129,13 +129,13 @@ namespace Microsoft.PowerShell.Commands
             // so we create the WarningRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteWarning().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
+            var mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
 
             if (mshCommandRuntime != null)
             {
-                WarningRecord record = new WarningRecord(Message);
+                var record = new WarningRecord(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
+                var invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
                 if (invocationInfo != null)
                 {
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (tag.StartsWith("PS", StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        var er = new ErrorRecord(
                             new InvalidOperationException(StringUtil.Format(UtilityCommonStrings.PSPrefixReservedInInformationTag, tag)),
                             "PSPrefixReservedInInformationTag", ErrorCategory.InvalidArgument, tag);
                         ThrowTerminatingError(er);
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
 
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
-            InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
+            var myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
             if (myInvocation != null)
             {
                 errorRecord.SetInvocationInfo(myInvocation);

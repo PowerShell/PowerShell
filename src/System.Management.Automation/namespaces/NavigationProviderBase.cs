@@ -947,7 +947,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         private Stack<string> TokenizePathToStack(string path, string basePath)
         {
-            Stack<string> tokenizedPathStack = new Stack<string>();
+            var tokenizedPathStack = new Stack<string>();
             string tempPath = path;
             string previousParent = path;
 
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation.Provider
             Stack<string> tokenizedPathStack, string path,
             string basePath, bool allowNonExistingPaths)
         {
-            Stack<string> normalizedPathStack = new Stack<string>();
+            var normalizedPathStack = new Stack<string>();
 
             while (tokenizedPathStack.Count > 0)
             {
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation.Provider
                     {
                         if (!allowNonExistingPaths)
                         {
-                            PSArgumentException e =
+                            var e =
                                 (PSArgumentException)
                                 PSTraceSource.NewArgumentException(
                                     nameof(path),

@@ -258,7 +258,7 @@ namespace System.Management.Automation
         {
             Hashtable properties = GetInsideProperties(xmlNode);
 
-            PSObject mshObject = new PSObject();
+            var mshObject = new PSObject();
 
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
 
@@ -298,7 +298,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private Hashtable GetInsideProperties(XmlNode xmlNode)
         {
-            Hashtable properties = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var properties = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
             if (xmlNode == null)
                 return properties;
@@ -376,7 +376,7 @@ namespace System.Management.Automation
         /// <param name="mshObject">Property value.</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
-            ArrayList propertyValues = (ArrayList)properties[name];
+            var propertyValues = (ArrayList)properties[name];
 
             if (propertyValues == null)
             {
@@ -394,7 +394,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            PSObject[] mshObjects = (PSObject[])mshObject.BaseObject;
+            var mshObjects = (PSObject[])mshObject.BaseObject;
 
             for (int i = 0; i < mshObjects.Length; i++)
             {
@@ -420,12 +420,12 @@ namespace System.Management.Automation
             if (properties == null)
                 return null;
 
-            Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
 
             while (enumerator.MoveNext())
             {
-                ArrayList propertyValues = (ArrayList)enumerator.Value;
+                var propertyValues = (ArrayList)enumerator.Value;
 
                 if (propertyValues == null || propertyValues.Count == 0)
                     continue;
@@ -434,7 +434,7 @@ namespace System.Management.Automation
                 {
                     if (!IsMamlFormattingPSObject((PSObject)propertyValues[0]))
                     {
-                        PSObject mshObject = (PSObject)propertyValues[0];
+                        var mshObject = (PSObject)propertyValues[0];
 
                         // Even for strings or other basic types, they need to be contained in PSObject in case
                         // there is attributes for this object.
@@ -593,7 +593,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSObject[] GetMamlFormattingPSObjects(XmlNode xmlNode)
         {
-            ArrayList mshObjects = new ArrayList();
+            var mshObjects = new ArrayList();
 
             int paraNodes = GetParaMamlNodeCount(xmlNode.ChildNodes);
             int count = 0;
@@ -673,7 +673,7 @@ namespace System.Management.Automation
         /// <param name="childNode"></param>
         private void WriteMamlInvalidChildNodeError(XmlNode node, XmlNode childNode)
         {
-            ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeError"), "MamlInvalidChildNodeError", ErrorCategory.SyntaxError, null);
+            var errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeError"), "MamlInvalidChildNodeError", ErrorCategory.SyntaxError, null);
             errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeError", node.LocalName, childNode.LocalName, GetNodePath(node));
             this.Errors.Add(errorRecord);
         }
@@ -686,7 +686,7 @@ namespace System.Management.Automation
         /// <param name="count"></param>
         private void WriteMamlInvalidChildNodeCountError(XmlNode node, string childNodeName, int count)
         {
-            ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeCountError"), "MamlInvalidChildNodeCountError", ErrorCategory.SyntaxError, null);
+            var errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeCountError"), "MamlInvalidChildNodeCountError", ErrorCategory.SyntaxError, null);
             errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeCountError", node.LocalName, childNodeName, count, GetNodePath(node));
             this.Errors.Add(errorRecord);
         }
@@ -754,9 +754,9 @@ namespace System.Management.Automation
             if (!xmlNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            PSObject mshObject = new PSObject();
+            var mshObject = new PSObject();
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (newLine && !xmlNode.InnerText.Trim().Equals(string.Empty))
             {
@@ -808,7 +808,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private ArrayList GetListPSObjects(XmlNode xmlNode)
         {
-            ArrayList mshObjects = new ArrayList();
+            var mshObjects = new ArrayList();
 
             if (xmlNode == null)
                 return mshObjects;
@@ -911,7 +911,7 @@ namespace System.Management.Automation
                 tag = "* ";
             }
 
-            PSObject mshObject = new PSObject();
+            var mshObject = new PSObject();
 
             mshObject.Properties.Add(new PSNoteProperty("Text", text));
             mshObject.Properties.Add(new PSNoteProperty("Tag", tag));
@@ -939,7 +939,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private ArrayList GetDefinitionListPSObjects(XmlNode xmlNode)
         {
-            ArrayList mshObjects = new ArrayList();
+            var mshObjects = new ArrayList();
 
             if (xmlNode == null)
                 return mshObjects;
@@ -1022,7 +1022,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(term))
                 return null;
 
-            PSObject mshObject = new PSObject();
+            var mshObject = new PSObject();
 
             mshObject.Properties.Add(new PSNoteProperty("Term", term));
             mshObject.Properties.Add(new PSNoteProperty("Definition", definition));
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
 
             int minIndentation = GetMinIndentation(trimedLines);
 
-            string[] shortedLines = new string[trimedLines.Length];
+            var shortedLines = new string[trimedLines.Length];
             for (int i = 0; i < trimedLines.Length; i++)
             {
                 if (IsEmptyLine(trimedLines[i]))
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation
                 }
             }
 
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             for (int i = 0; i < shortedLines.Length; i++)
             {
                 result.AppendLine(shortedLines[i]);
@@ -1169,7 +1169,7 @@ namespace System.Management.Automation
 
             int end = i;
 
-            string[] result = new string[end - start + 1];
+            var result = new string[end - start + 1];
             for (i = start; i <= end; i++)
             {
                 result[i - start] = lines[i];

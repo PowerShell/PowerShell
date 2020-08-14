@@ -65,7 +65,7 @@ namespace System.Management.Automation.Runspaces
             string typeName = null;
             PSMemberInfoInternalCollection<PSMemberInfo> typeMembers = null;
             PSMemberInfoInternalCollection<PSMemberInfo> memberSetMembers = null;
-            HashSet<string> newMembers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var newMembers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             #region System.Xml.XmlNode
 

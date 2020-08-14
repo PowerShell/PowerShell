@@ -115,9 +115,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Error:
                         {
-                            ErrorRecord errorRecord = (ErrorRecord)this.Value;
+                            var errorRecord = (ErrorRecord)this.Value;
                             errorRecord.PreserveInvocationInfoOnce = true;
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.WriteError(errorRecord, overrideInquire);
@@ -128,9 +128,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Debug:
                         {
-                            string debug = (string)Value;
-                            DebugRecord debugRecord = new DebugRecord(debug);
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var debug = (string)Value;
+                            var debugRecord = new DebugRecord(debug);
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
@@ -141,9 +141,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Warning:
                         {
-                            string warning = (string)Value;
-                            WarningRecord warningRecord = new WarningRecord(warning);
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var warning = (string)Value;
+                            var warningRecord = new WarningRecord(warning);
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
@@ -154,9 +154,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Verbose:
                         {
-                            string verbose = (string)Value;
-                            VerboseRecord verboseRecord = new VerboseRecord(verbose);
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var verbose = (string)Value;
+                            var verboseRecord = new VerboseRecord(verbose);
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Progress:
                         {
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.WriteProgress((ProgressRecord)Value, overrideInquire);
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Information:
                         {
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.WriteInformation((InformationRecord)Value, overrideInquire);
@@ -189,8 +189,8 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.WarningRecord:
                         {
-                            WarningRecord warningRecord = (WarningRecord)Value;
-                            MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                            var warningRecord = (WarningRecord)Value;
+                            var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                             if (mshCommandRuntime != null)
                             {
                                 mshCommandRuntime.AppendWarningVarList(warningRecord);
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             Dbg.Assert(this.Value is ClientMethodExecutor,
                                        "Expected psstreamObject.value is ClientMethodExecutor");
-                            ClientMethodExecutor methodExecutor = (ClientMethodExecutor)Value;
+                            var methodExecutor = (ClientMethodExecutor)Value;
                             methodExecutor.Execute(cmdlet);
                         }
 
@@ -211,7 +211,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.BlockingError:
                         {
-                            CmdletMethodInvoker<object> methodInvoker = (CmdletMethodInvoker<object>)Value;
+                            var methodInvoker = (CmdletMethodInvoker<object>)Value;
                             InvokeCmdletMethodAndWaitForResults(methodInvoker, cmdlet);
                         }
 
@@ -219,7 +219,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.ShouldMethod:
                         {
-                            CmdletMethodInvoker<bool> methodInvoker = (CmdletMethodInvoker<bool>)Value;
+                            var methodInvoker = (CmdletMethodInvoker<bool>)Value;
                             InvokeCmdletMethodAndWaitForResults(methodInvoker, cmdlet);
                         }
 
@@ -227,14 +227,14 @@ namespace System.Management.Automation.Remoting.Internal
 
                     case PSStreamObjectType.Exception:
                         {
-                            Exception e = (Exception)Value;
+                            var e = (Exception)Value;
                             throw e;
                         }
                 }
             }
             else if (ObjectType == PSStreamObjectType.Exception)
             {
-                Exception e = (Exception)Value;
+                var e = (Exception)Value;
                 throw e;
             }
         }
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Remoting.Internal
                     {
                         if (instanceId != Guid.Empty)
                         {
-                            PSObject o = Value as PSObject;
+                            var o = Value as PSObject;
                             if (o != null)
                                 AddSourceJobNoteProperty(o, instanceId);
                         }
@@ -283,8 +283,8 @@ namespace System.Management.Automation.Remoting.Internal
 
                 case PSStreamObjectType.Error:
                     {
-                        ErrorRecord errorRecord = (ErrorRecord)this.Value;
-                        RemotingErrorRecord remoteErrorRecord = errorRecord as RemotingErrorRecord;
+                        var errorRecord = (ErrorRecord)this.Value;
+                        var remoteErrorRecord = errorRecord as RemotingErrorRecord;
 
                         if (remoteErrorRecord == null)
                         {
@@ -308,7 +308,7 @@ namespace System.Management.Automation.Remoting.Internal
                         }
 
                         errorRecord.PreserveInvocationInfoOnce = true;
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                        var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             mshCommandRuntime.WriteError(errorRecord, overrideInquire);
@@ -319,9 +319,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                 case PSStreamObjectType.Warning:
                     {
-                        string warning = (string)Value;
-                        WarningRecord warningRecord = new WarningRecord(warning);
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                        var warning = (string)Value;
+                        var warningRecord = new WarningRecord(warning);
+                        var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
@@ -332,9 +332,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                 case PSStreamObjectType.Verbose:
                     {
-                        string verbose = (string)Value;
-                        VerboseRecord verboseRecord = new VerboseRecord(verbose);
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                        var verbose = (string)Value;
+                        var verboseRecord = new VerboseRecord(verbose);
+                        var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
@@ -345,16 +345,16 @@ namespace System.Management.Automation.Remoting.Internal
 
                 case PSStreamObjectType.Progress:
                     {
-                        ProgressRecord progressRecord = (ProgressRecord)Value;
+                        var progressRecord = (ProgressRecord)Value;
 
-                        RemotingProgressRecord remotingProgressRecord = progressRecord as RemotingProgressRecord;
+                        var remotingProgressRecord = progressRecord as RemotingProgressRecord;
                         if (remotingProgressRecord == null)
                         {
                             Guid jobInstanceId;
                             string computerName;
                             GetIdentifierInfo(progressRecord.CurrentOperation, out jobInstanceId,
                                               out computerName);
-                            OriginInfo info = new OriginInfo(computerName, Guid.Empty, jobInstanceId);
+                            var info = new OriginInfo(computerName, Guid.Empty, jobInstanceId);
                             progressRecord = new RemotingProgressRecord(progressRecord, info);
                         }
                         else
@@ -362,7 +362,7 @@ namespace System.Management.Automation.Remoting.Internal
                             progressRecord = remotingProgressRecord;
                         }
 
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                        var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             mshCommandRuntime.WriteProgress(progressRecord, overrideInquire);
@@ -373,9 +373,9 @@ namespace System.Management.Automation.Remoting.Internal
 
                 case PSStreamObjectType.Debug:
                     {
-                        string debug = (string)Value;
-                        DebugRecord debugRecord = new DebugRecord(debug);
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                        var debug = (string)Value;
+                        var debugRecord = new DebugRecord(debug);
+                        var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
@@ -386,8 +386,8 @@ namespace System.Management.Automation.Remoting.Internal
 
                 case PSStreamObjectType.Information:
                     {
-                        InformationRecord informationRecord = (InformationRecord)this.Value;
-                        RemotingInformationRecord remoteInformationRecord = informationRecord as RemotingInformationRecord;
+                        var informationRecord = (InformationRecord)this.Value;
+                        var remoteInformationRecord = informationRecord as RemotingInformationRecord;
 
                         if (remoteInformationRecord == null)
                         {
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Remoting.Internal
                             informationRecord = remoteInformationRecord;
                         }
 
-                        MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                        var mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             mshCommandRuntime.WriteInformation(informationRecord, overrideInquire);

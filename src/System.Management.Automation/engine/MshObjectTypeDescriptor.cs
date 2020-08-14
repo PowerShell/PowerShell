@@ -182,7 +182,7 @@ namespace System.Management.Automation
                 if (property == null)
                 {
                     PSObjectTypeDescriptor.typeDescriptor.WriteLine("Could not find property \"{0}\" to get its value.", this.Name);
-                    ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorGetValue",
+                    var e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorGetValue",
                         null,
                         ExtendedTypeSystem.PropertyNotFoundInTypeDescriptor, this.Name);
                     bool shouldThrow;
@@ -215,10 +215,10 @@ namespace System.Management.Automation
         {
             // If you use the PSObjectTypeDescriptor directly as your object, it will be the component
             // if you use a provider, the PSObject will be the component.
-            PSObject mshObj = component as PSObject;
+            var mshObj = component as PSObject;
             if (mshObj == null)
             {
-                PSObjectTypeDescriptor descriptor = component as PSObjectTypeDescriptor;
+                var descriptor = component as PSObjectTypeDescriptor;
                 if (descriptor == null)
                 {
                     throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
@@ -235,7 +235,7 @@ namespace System.Management.Automation
 
         private object DealWithGetValueException(ExtendedTypeSystemException e, out bool shouldThrow)
         {
-            GettingValueExceptionEventArgs eventArgs = new GettingValueExceptionEventArgs(e);
+            var eventArgs = new GettingValueExceptionEventArgs(e);
             if (GettingValueException != null)
             {
                 GettingValueException.SafeInvoke(this, eventArgs);
@@ -276,11 +276,11 @@ namespace System.Management.Automation
             PSObject mshObj = GetComponentPSObject(component);
             try
             {
-                PSPropertyInfo property = mshObj.Properties[this.Name] as PSPropertyInfo;
+                var property = mshObj.Properties[this.Name] as PSPropertyInfo;
                 if (property == null)
                 {
                     PSObjectTypeDescriptor.typeDescriptor.WriteLine("Could not find property \"{0}\" to set its value.", this.Name);
-                    ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorSetValue",
+                    var e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorSetValue",
                         null,
                         ExtendedTypeSystem.PropertyNotFoundInTypeDescriptor, this.Name);
                     bool shouldThrow;
@@ -311,7 +311,7 @@ namespace System.Management.Automation
 
         private void DealWithSetValueException(ExtendedTypeSystemException e, out bool shouldThrow)
         {
-            SettingValueExceptionEventArgs eventArgs = new SettingValueExceptionEventArgs(e);
+            var eventArgs = new SettingValueExceptionEventArgs(e);
             if (SettingValueException != null)
             {
                 SettingValueException.SafeInvoke(this, eventArgs);
@@ -380,10 +380,10 @@ namespace System.Management.Automation
                 Type propertyType = typeof(object);
                 if (attributes != null && attributes.Length != 0)
                 {
-                    PSProperty property = propertyInfo as PSProperty;
+                    var property = propertyInfo as PSProperty;
                     if (property != null)
                     {
-                        DotNetAdapter.PropertyCacheEntry propertyEntry = property.adapterData as DotNetAdapter.PropertyCacheEntry;
+                        var propertyEntry = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         if (propertyEntry == null)
                         {
                             typeDescriptor.WriteLine("Skipping attribute check for property \"{0}\" because it is an adapted property (not a .NET property).", property.Name);
@@ -417,7 +417,7 @@ namespace System.Management.Automation
 
                 typeDescriptor.WriteLine("Adding property \"{0}\".", propertyInfo.Name);
 
-                PSObjectPropertyDescriptor propertyDescriptor =
+                var propertyDescriptor =
                     new PSObjectPropertyDescriptor(propertyInfo.Name, propertyType, !propertyInfo.IsSettable, propertyAttributes);
 
                 propertyDescriptor.SettingValueException += this.SettingValueException;
@@ -445,7 +445,7 @@ namespace System.Management.Automation
         {
             using (typeDescriptor.TraceScope("Getting properties."))
             {
-                PropertyDescriptorCollection returnValue = new PropertyDescriptorCollection(null);
+                var returnValue = new PropertyDescriptorCollection(null);
                 if (Instance == null)
                 {
                     return returnValue;
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         /// <returns>True if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            PSObjectTypeDescriptor other = obj as PSObjectTypeDescriptor;
+            var other = obj as PSObjectTypeDescriptor;
             if (other == null)
             {
                 return false;
@@ -510,7 +510,7 @@ namespace System.Management.Automation
             PSMemberSet standardMembers = this.Instance.PSStandardMembers;
             if (standardMembers != null)
             {
-                PSNoteProperty note = standardMembers.Properties[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
+                var note = standardMembers.Properties[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
                 if (note != null)
                 {
                     defaultProperty = note.Value as string;
@@ -522,7 +522,7 @@ namespace System.Management.Automation
                 object[] defaultPropertyAttributes = this.Instance.BaseObject.GetType().GetCustomAttributes(typeof(DefaultPropertyAttribute), true);
                 if (defaultPropertyAttributes.Length == 1)
                 {
-                    DefaultPropertyAttribute defaultPropertyAttribute = defaultPropertyAttributes[0] as DefaultPropertyAttribute;
+                    var defaultPropertyAttribute = defaultPropertyAttributes[0] as DefaultPropertyAttribute;
                     if (defaultPropertyAttribute != null)
                     {
                         defaultProperty = defaultPropertyAttribute.Name;
@@ -734,7 +734,7 @@ namespace System.Management.Automation
         /// but has a type other than <see cref="PSObject"/>.</returns>
         public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
         {
-            PSObject mshObj = instance as PSObject;
+            var mshObj = instance as PSObject;
 
             #region ReadMe
             // Instance can be null, in a couple of circumstances:
@@ -764,7 +764,7 @@ namespace System.Management.Automation
             // null instance.
             #endregion ReadMe
 
-            PSObjectTypeDescriptor typeDescriptor = new PSObjectTypeDescriptor(mshObj);
+            var typeDescriptor = new PSObjectTypeDescriptor(mshObj);
             typeDescriptor.SettingValueException += this.SettingValueException;
             typeDescriptor.GettingValueException += this.GettingValueException;
             return typeDescriptor;

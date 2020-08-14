@@ -157,7 +157,7 @@ namespace System.Management.Automation
             _userName = (string)info.GetValue("UserName", typeof(string));
 
             // deserialize to secure string
-            string safePassword = (string)info.GetValue("Password", typeof(string));
+            var safePassword = (string)info.GetValue("Password", typeof(string));
             if (safePassword == string.Empty)
             {
                 _password = new SecureString();

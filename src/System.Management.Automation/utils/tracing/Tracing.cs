@@ -33,7 +33,7 @@ namespace System.Management.Automation.Tracing
             if (exception == null)
                 return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             while (WriteExceptionText(sb, exception))
             {
                 exception = exception.InnerException;

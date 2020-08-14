@@ -72,7 +72,7 @@ namespace System.Management.Automation
 
             // Construct a CmdletProviderContext and call the override
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             NewDrive(drive, scopeID, context);
 
@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
             string result = root;
 
-            SessionState sessionState = new SessionState(ExecutionContext.TopLevelSessionState);
+            var sessionState = new SessionState(ExecutionContext.TopLevelSessionState);
             Collection<string> resolvedPaths = null;
             ProviderInfo resolvedProvider = null;
 
@@ -302,7 +302,7 @@ namespace System.Management.Automation
                     {
                         // and the item exists
 
-                        ProviderIntrinsics providerIntrinsics =
+                        var providerIntrinsics =
                             new ProviderIntrinsics(this);
 
                         if (providerIntrinsics.Item.Exists(root))
@@ -440,7 +440,7 @@ namespace System.Management.Automation
             // Start searching through the scopes for the drive until the drive
             // is found or the global scope is reached.
 
-            SessionStateScopeEnumerator scopeEnumerator = new SessionStateScopeEnumerator(CurrentScope);
+            var scopeEnumerator = new SessionStateScopeEnumerator(CurrentScope);
 
             int scopeID = 0;
 
@@ -480,7 +480,7 @@ namespace System.Management.Automation
 
             if (result == null)
             {
-                DriveNotFoundException driveNotFound =
+                var driveNotFound =
                     new DriveNotFoundException(
                         name,
                         "DriveNotFound",
@@ -535,7 +535,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(scopeID))
             {
-                SessionStateScopeEnumerator scopeEnumerator =
+                var scopeEnumerator =
                     new SessionStateScopeEnumerator(CurrentScope);
 
                 foreach (SessionStateScope scope in scopeEnumerator)
@@ -607,7 +607,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    System.IO.DriveInfo driveInfo = new System.IO.DriveInfo(name);
+                    var driveInfo = new System.IO.DriveInfo(name);
                     result = AutomountFileSystemDrive(driveInfo);
                 }
                 catch (LoopFlowException)
@@ -682,7 +682,7 @@ namespace System.Management.Automation
                         catch (InvalidOperationException) { }
                     }
 
-                    PSDriveInfo newPSDriveInfo =
+                    var newPSDriveInfo =
                         new PSDriveInfo(
                             systemDriveName,
                             driveProvider.ProviderInfo,
@@ -693,7 +693,7 @@ namespace System.Management.Automation
 
                     newPSDriveInfo.IsAutoMounted = true;
 
-                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                    var context = new CmdletProviderContext(this.ExecutionContext);
 
                     newPSDriveInfo.DriveBeingCreated = true;
 
@@ -821,7 +821,7 @@ namespace System.Management.Automation
             bool result = true;
             try
             {
-                System.IO.DriveInfo systemDriveInfo = new System.IO.DriveInfo(drive.Name);
+                var systemDriveInfo = new System.IO.DriveInfo(drive.Name);
                 result = systemDriveInfo.DriveType != DriveType.NoRootDirectory;
             }
             catch (LoopFlowException)
@@ -862,7 +862,7 @@ namespace System.Management.Automation
 
                 if (driveProvider != null)
                 {
-                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                    var context = new CmdletProviderContext(this.ExecutionContext);
 
                     try
                     {
@@ -918,7 +918,7 @@ namespace System.Management.Automation
 
                     if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
                     {
-                        DriveInfo systemDriveInfo = new DriveInfo(drive.Name);
+                        var systemDriveInfo = new DriveInfo(drive.Name);
 
                         if (systemDriveInfo.DriveType == DriveType.NoRootDirectory)
                         {
@@ -957,7 +957,7 @@ namespace System.Management.Automation
             // Ensure that the provider name resolves to a single provider
             GetSingleProvider(providerId);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
 
             foreach (PSDriveInfo drive in Drives(null))
             {
@@ -1000,7 +1000,7 @@ namespace System.Management.Automation
 
             if (drive == null)
             {
-                DriveNotFoundException e = new DriveNotFoundException(
+                var e = new DriveNotFoundException(
                     driveName,
                     "DriveNotFound",
                     SessionStateStrings.DriveNotFound);
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation
 
             if (drive == null)
             {
-                DriveNotFoundException e = new DriveNotFoundException(
+                var e = new DriveNotFoundException(
                     driveName,
                     "DriveNotFound",
                     SessionStateStrings.DriveNotFound);
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             RemoveDrive(drive, force, scopeID, context);
 
@@ -1159,7 +1159,7 @@ namespace System.Management.Automation
 
                 if (string.IsNullOrEmpty(scopeID))
                 {
-                    SessionStateScopeEnumerator scopeEnumerator =
+                    var scopeEnumerator =
                         new SessionStateScopeEnumerator(CurrentScope);
 
                     foreach (SessionStateScope scope in scopeEnumerator)
@@ -1203,7 +1203,7 @@ namespace System.Management.Automation
             }
             else
             {
-                PSInvalidOperationException e =
+                var e =
                     (PSInvalidOperationException)
                     PSTraceSource.NewInvalidOperationException(
                         SessionStateStrings.DriveRemovalPreventedByProvider,
@@ -1325,7 +1325,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSDriveInfo> Drives(string scope)
         {
-            Dictionary<string, PSDriveInfo> driveTable = new Dictionary<string, PSDriveInfo>();
+            var driveTable = new Dictionary<string, PSDriveInfo>();
 
             SessionStateScope startingScope = _currentScope;
 
@@ -1334,10 +1334,10 @@ namespace System.Management.Automation
                 startingScope = GetScopeByID(scope);
             }
 
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(startingScope);
             DriveInfo[] alldrives = DriveInfo.GetDrives();
-            Collection<string> driveNames = new Collection<string>();
+            var driveNames = new Collection<string>();
             foreach (DriveInfo drive in alldrives)
             {
                 driveNames.Add(drive.Name.Substring(0, 1));
@@ -1415,7 +1415,7 @@ namespace System.Management.Automation
             {
             }
 
-            Collection<PSDriveInfo> results = new Collection<PSDriveInfo>();
+            var results = new Collection<PSDriveInfo>();
             foreach (PSDriveInfo drive in driveTable.Values)
             {
                 results.Add(drive);

@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((resolvedPaths.Count > 1) ||
                     (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ErrorRecord error = new ErrorRecord(
+                    var error = new ErrorRecord(
                         new ArgumentException(
                             string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_inputObjects.Count > 0)
             {
-                StringBuilder outputString = new StringBuilder();
+                var outputString = new StringBuilder();
 
                 Collection<PSObject> output = System.Management.Automation.PowerShell.Create()
                     .AddCommand("Microsoft.PowerShell.Utility\\Out-String")
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((resolvedPaths.Count > 1) ||
                     (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ErrorRecord error = new ErrorRecord(
+                    var error = new ErrorRecord(
                         new ArgumentException(
                             string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
@@ -304,17 +304,17 @@ namespace Microsoft.PowerShell.Commands
             byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
             if (contentBytes == null)
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     new ArgumentException(CmsCommands.InputContainedNoEncryptedContent),
                     "InputContainedNoEncryptedContent", ErrorCategory.ObjectNotFound, null);
                 ThrowTerminatingError(error);
             }
 
-            EnvelopedCms cms = new EnvelopedCms();
+            var cms = new EnvelopedCms();
             cms.Decode(contentBytes);
 
-            PSObject result = new PSObject(cms);
-            List<object> recipients = new List<object>();
+            var result = new PSObject(cms);
+            var recipients = new List<object>();
             foreach (RecipientInfo recipient in cms.RecipientInfos)
             {
                 recipients.Add(recipient.RecipientIdentifier.Value);
@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((resolvedPaths.Count > 1) ||
                     (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ErrorRecord error = new ErrorRecord(
+                    var error = new ErrorRecord(
                         new ArgumentException(
                             string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands
             byte[] messageBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
             if ((messageBytes == null) && (!IncludeContext))
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     new ArgumentException(
                         string.Format(CultureInfo.InvariantCulture,
                             CmsCommands.InputContainedNoEncryptedContentIncludeContext, "-IncludeContext")),
@@ -536,8 +536,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            EnvelopedCms cms = new EnvelopedCms();
-            X509Certificate2Collection certificates = new X509Certificate2Collection();
+            var cms = new EnvelopedCms();
+            var certificates = new X509Certificate2Collection();
 
             if ((To != null) && (To.Length > 0))
             {

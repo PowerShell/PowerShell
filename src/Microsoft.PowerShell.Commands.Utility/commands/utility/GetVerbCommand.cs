@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
+            var verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
                 typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
 
             Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        VerbInfo verb = new VerbInfo();
+                        var verb = new VerbInfo();
                         verb.Verb = field.Name;
                         verb.AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name);
                         verb.Group = groupName;

@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell
             }
 
             char ch;
-            SecureString ss = new SecureString();
+            var ss = new SecureString();
 
             //
             // each unicode char is 2 bytes.
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell
             //
             // each unicode char is 2 bytes.
             //
-            byte[] data = new byte[s.Length * 2];
+            var data = new byte[s.Length * 2];
 
             if (s.Length > 0)
             {
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell
         /// <returns>A string representing encoded data.</returns>
         internal static string ByteArrayToString(byte[] data)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < data.Length; i++)
             {
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell
             // two hex chars per byte
             //
             int dataLen = s.Length / 2;
-            byte[] data = new byte[dataLen];
+            var data = new byte[dataLen];
 
             if (s.Length > 0)
             {
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell
                 //
                 encryptedData = ms.ToArray();
 
-                EncryptionResult output = new EncryptionResult(ByteArrayToString(encryptedData), Convert.ToBase64String(iv));
+                var output = new EncryptionResult(ByteArrayToString(encryptedData), Convert.ToBase64String(iv));
 
                 return output;
             }
@@ -357,11 +357,11 @@ namespace Microsoft.PowerShell
 
             var decryptor = aes.CreateDecryptor(key, IV ?? aes.IV);
 
-            MemoryStream ms = new MemoryStream(encryptedData);
+            var ms = new MemoryStream(encryptedData);
 
-            using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+            using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
             {
-                byte[] tempDecryptedData = new byte[encryptedData.Length];
+                var tempDecryptedData = new byte[encryptedData.Length];
 
                 int numBytesRead = 0;
 
@@ -435,17 +435,17 @@ namespace Microsoft.PowerShell
                 throw new ArgumentNullException(nameof(userData));
             }
 
-            GCHandle pbDataIn = new GCHandle();
-            GCHandle pOptionalEntropy = new GCHandle();
-            CAPI.CRYPTOAPI_BLOB blob = new CAPI.CRYPTOAPI_BLOB();
+            var pbDataIn = new GCHandle();
+            var pOptionalEntropy = new GCHandle();
+            var blob = new CAPI.CRYPTOAPI_BLOB();
 
             try
             {
                 pbDataIn = GCHandle.Alloc(userData, GCHandleType.Pinned);
-                CAPI.CRYPTOAPI_BLOB dataIn = new CAPI.CRYPTOAPI_BLOB();
+                var dataIn = new CAPI.CRYPTOAPI_BLOB();
                 dataIn.cbData = (uint)userData.Length;
                 dataIn.pbData = pbDataIn.AddrOfPinnedObject();
-                CAPI.CRYPTOAPI_BLOB entropy = new CAPI.CRYPTOAPI_BLOB();
+                var entropy = new CAPI.CRYPTOAPI_BLOB();
                 if (optionalEntropy != null)
                 {
                     pOptionalEntropy = GCHandle.Alloc(optionalEntropy, GCHandleType.Pinned);
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell
                     throw new OutOfMemoryException();
                 }
 
-                byte[] encryptedData = new byte[(int)blob.cbData];
+                var encryptedData = new byte[(int)blob.cbData];
                 Marshal.Copy(blob.pbData, encryptedData, 0, encryptedData.Length);
 
                 return encryptedData;
@@ -523,17 +523,17 @@ namespace Microsoft.PowerShell
                 throw new ArgumentNullException(nameof(encryptedData));
             }
 
-            GCHandle pbDataIn = new GCHandle();
-            GCHandle pOptionalEntropy = new GCHandle();
-            CAPI.CRYPTOAPI_BLOB userData = new CAPI.CRYPTOAPI_BLOB();
+            var pbDataIn = new GCHandle();
+            var pOptionalEntropy = new GCHandle();
+            var userData = new CAPI.CRYPTOAPI_BLOB();
 
             try
             {
                 pbDataIn = GCHandle.Alloc(encryptedData, GCHandleType.Pinned);
-                CAPI.CRYPTOAPI_BLOB dataIn = new CAPI.CRYPTOAPI_BLOB();
+                var dataIn = new CAPI.CRYPTOAPI_BLOB();
                 dataIn.cbData = (uint)encryptedData.Length;
                 dataIn.pbData = pbDataIn.AddrOfPinnedObject();
-                CAPI.CRYPTOAPI_BLOB entropy = new CAPI.CRYPTOAPI_BLOB();
+                var entropy = new CAPI.CRYPTOAPI_BLOB();
                 if (optionalEntropy != null)
                 {
                     pOptionalEntropy = GCHandle.Alloc(optionalEntropy, GCHandleType.Pinned);
@@ -568,7 +568,7 @@ namespace Microsoft.PowerShell
                     throw new OutOfMemoryException();
                 }
 
-                byte[] data = new byte[(int)userData.cbData];
+                var data = new byte[(int)userData.cbData];
                 Marshal.Copy(userData.pbData, data, 0, data.Length);
 
                 return data;

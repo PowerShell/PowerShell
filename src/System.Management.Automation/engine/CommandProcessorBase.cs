@@ -47,7 +47,7 @@ namespace System.Management.Automation
                         ? DiscoveryExceptions.ScriptDisabledWhenFeatureOn
                         : DiscoveryExceptions.ScriptDisabledWhenFeatureOff;
                     string errorMsg = StringUtil.Format(errorTemplate, expAttribute.ExperimentName);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "ScriptCommandDisabled",
                         ErrorCategory.InvalidOperation,
@@ -215,7 +215,7 @@ namespace System.Management.Automation
 
                 if (!isSafeToDotSource)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                     new NotSupportedException(
                         DiscoveryExceptions.DotSourceNotSupported),
                         "DotSourceNotSupported",
@@ -773,7 +773,7 @@ namespace System.Management.Automation
                 {
                     do // false loop
                     {
-                        ProviderInvocationException pie = e as ProviderInvocationException;
+                        var pie = e as ProviderInvocationException;
                         if (pie != null)
                         {
                             // If a ProviderInvocationException occurred,
@@ -801,7 +801,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        RuntimeException rte = e as RuntimeException;
+                        var rte = e as RuntimeException;
                         if (rte != null && rte.WasThrownFromThrowStatement)
                         {
                             // do not rewrap a script based throw
@@ -838,7 +838,7 @@ namespace System.Management.Automation
 
                         if (isTimeoutException)
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            var errorRecord = new ErrorRecord(
                                 new InvalidOperationException(
                                     TransactionStrings.TransactionTimedOut),
                                 "TRANSACTION_TIMEOUT",
@@ -946,7 +946,7 @@ namespace System.Management.Automation
                 // 2004/03/05-JonN Look into using metadata to check
                 // whether IDisposable is implemented, in order to avoid
                 // this expensive reflection cast.
-                IDisposable id = Command as IDisposable;
+                var id = Command as IDisposable;
                 if (id != null)
                 {
                     id.Dispose();

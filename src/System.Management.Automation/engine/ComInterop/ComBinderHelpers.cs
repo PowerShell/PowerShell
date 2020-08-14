@@ -52,8 +52,8 @@ namespace System.Management.Automation.ComInterop
         {
             Debug.Assert(args != null);
 
-            DynamicMetaObject[] newArgs = new DynamicMetaObject[args.Length];
-            bool[] isByRefArg = new bool[args.Length];
+            var newArgs = new DynamicMetaObject[args.Length];
+            var isByRefArg = new bool[args.Length];
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -84,7 +84,7 @@ namespace System.Management.Automation.ComInterop
                             curArgument.LimitType.GetProperty("Value")
                         );
 
-                        PSReference value = curArgument.Value as PSReference;
+                        var value = curArgument.Value as PSReference;
                         object boxedValue = value?.Value;
 
                         newArgs[i] = new DynamicMetaObject(

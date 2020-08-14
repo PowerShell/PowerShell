@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<WSManConnectionInfo> GetConnectionObjects()
         {
-            Collection<WSManConnectionInfo> connectionInfos = new Collection<WSManConnectionInfo>();
+            var connectionInfos = new Collection<WSManConnectionInfo>();
 
             if (ParameterSetName == GetPSSessionCommand.ComputerNameParameterSet ||
                 ParameterSetName == GetPSSessionCommand.ComputerInstanceIdParameterSet)
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string computerName in ComputerName)
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
                     connectionInfo.Scheme = scheme;
                     connectionInfo.ComputerName = ResolveComputerName(computerName);
                     connectionInfo.AppName = ApplicationName;
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var connectionUri in ConnectionUri)
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
                     connectionInfo.ConnectionUri = connectionUri;
                     connectionInfo.ShellUri = ConfigurationName;
                     if (CertificateThumbprint != null)

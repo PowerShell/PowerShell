@@ -124,7 +124,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                MshCommandRuntime mcr = this.commandRuntime as MshCommandRuntime;
+                var mcr = this.commandRuntime as MshCommandRuntime;
                 return (mcr != null && mcr.IsStopping);
             }
         }

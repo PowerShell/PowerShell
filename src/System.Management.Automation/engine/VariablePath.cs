@@ -91,7 +91,7 @@ namespace System.Management.Automation
 
             string candidateScope = null;
             string candidateScopeUpper = null;
-            VariablePathFlags candidateFlags = VariablePathFlags.Unqualified;
+            var candidateFlags = VariablePathFlags.Unqualified;
 
             int currentCharIndex = 0;
             int lastScannedColon = -1;
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         {
             Debug.Assert(IsUnscopedVariable, "Special method to clone, input must be unqualified");
 
-            VariablePath result = new VariablePath();
+            var result = new VariablePath();
             result._userPath = _userPath;
             result._unqualifiedPath = _unqualifiedPath;
             result._flags = VariablePathFlags.Local | VariablePathFlags.Variable;

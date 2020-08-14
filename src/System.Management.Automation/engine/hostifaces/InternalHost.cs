@@ -267,7 +267,7 @@ namespace System.Management.Automation.Internal.Host
 
             // On entering a subshell, save and reset values of certain bits of session state
 
-            PromptContextData contextData = new PromptContextData();
+            var contextData = new PromptContextData();
             contextData.SavedContextData = Context.SaveContextData();
             contextData.SavedCurrentlyExecutingCommandVarValue = Context.GetVariableValue(SpecialVariables.CurrentlyExecutingCommandVarPath);
             contextData.SavedPSBoundParametersVarValue = Context.GetVariableValue(SpecialVariables.PSBoundParametersVarPath);
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Internal.Host
                 ExitNestedPromptHelper();
             }
 
-            ExitNestedPromptException enpe = new ExitNestedPromptException();
+            var enpe = new ExitNestedPromptException();
             throw enpe;
         }
 
@@ -448,7 +448,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         private IHostSupportsInteractiveSession GetIHostSupportsInteractiveSession()
         {
-            IHostSupportsInteractiveSession host = _externalHostRef.Value as IHostSupportsInteractiveSession;
+            var host = _externalHostRef.Value as IHostSupportsInteractiveSession;
             if (host == null)
             {
                 throw new PSNotImplementedException();

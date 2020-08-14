@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// <returns>An object that represents a total count of objects that the cmdlet would return without paging.</returns>
         public PSObject NewTotalCount(UInt64 totalCount, double accuracy)
         {
-            PSObject result = new PSObject(totalCount);
+            var result = new PSObject(totalCount);
 
             string toStringMethodBody = string.Format(
                 CultureInfo.CurrentCulture,
@@ -82,11 +82,11 @@ namespace System.Management.Automation
                 CodeGeneration.EscapeSingleQuotedStringContent(CommandBaseStrings.PagingSupportAccurateTotalCountTemplate),
                 CodeGeneration.EscapeSingleQuotedStringContent(CommandBaseStrings.PagingSupportUnknownTotalCountTemplate),
                 CodeGeneration.EscapeSingleQuotedStringContent(CommandBaseStrings.PagingSupportEstimatedTotalCountTemplate));
-            PSScriptMethod toStringMethod = new PSScriptMethod("ToString", ScriptBlock.Create(toStringMethodBody));
+            var toStringMethod = new PSScriptMethod("ToString", ScriptBlock.Create(toStringMethodBody));
             result.Members.Add(toStringMethod);
 
             accuracy = Math.Max(0.0, Math.Min(1.0, accuracy));
-            PSNoteProperty statusProperty = new PSNoteProperty("Accuracy", accuracy);
+            var statusProperty = new PSNoteProperty("Accuracy", accuracy);
             result.Members.Add(statusProperty);
 
             return result;

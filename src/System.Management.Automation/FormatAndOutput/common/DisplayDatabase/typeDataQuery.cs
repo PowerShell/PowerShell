@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 int currentMatch = BestMatchIndexUndefined;
-                TypeReference tr = r as TypeReference;
+                var tr = r as TypeReference;
 
                 if (tr != null)
                 {
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // we have a type group reference
-                    TypeGroupReference tgr = r as TypeGroupReference;
+                    var tgr = r as TypeGroupReference;
 
                     // find the type group definition the reference points to
                     TypeGroupDefinition tgd = DisplayDataQuery.FindGroupDefinition(_db, tgr.name);
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static EnumerableExpansion GetEnumerableExpansionFromType(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
         {
-            TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
+            var match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (EnumerableExpansionDirective expansionDirective in db.defaultSettingsSection.enumerableExpansionDirectiveList)
             {
                 if (match.PerfectMatch(new TypeMatchItem(expansionDirective, expansionDirective.appliesTo)))
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             ShapeSelectionDirectives shapeDirectives = db.defaultSettingsSection.shapeSelectionDirectives;
 
-            TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
+            var match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (FormatShapeSelectionOnType shapeSelOnType in shapeDirectives.formatShapeSelectionOnTypeList)
             {
                 if (match.PerfectMatch(new TypeMatchItem(shapeSelOnType, shapeSelOnType.appliesTo)))
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static ViewDefinition GetOutOfBandView(PSPropertyExpressionFactory expressionFactory,
                                                         TypeInfoDataBase db, Collection<string> typeNames)
         {
-            TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
+            var match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
                 if (!IsOutOfBandView(vd))
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // this is the best match we had
-            ViewDefinition result = match.BestMatch as ViewDefinition;
+            var result = match.BestMatch as ViewDefinition;
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static ViewDefinition GetView(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, System.Type mainControlType, Collection<string> typeNames, string viewName)
         {
-            TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
+            var match = new TypeMatch(expressionFactory, db, typeNames);
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
                 if (vd == null || mainControlType != vd.mainControl.GetType())
@@ -485,8 +485,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (TypeOrGroupReference togr in vd.appliesTo.referenceList)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    TypeReference tr = togr as TypeReference;
+                    var sb = new StringBuilder();
+                    var tr = togr as TypeReference;
                     sb.Append(isMatched ? "MATCH FOUND" : "NOT MATCH");
                     if (tr != null)
                     {
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        TypeGroupReference tgr = togr as TypeGroupReference;
+                        var tgr = togr as TypeGroupReference;
                         sb.AppendFormat(CultureInfo.InvariantCulture, " {0} NAME: {1}  GROUP: {2}",
                             ControlBase.GetControlShapeName(vd.mainControl), vd.name, tgr.name);
                     }
@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static ViewDefinition GetBestMatch(TypeMatch match)
         {
-            ViewDefinition bestMatchedVD = match.BestMatch as ViewDefinition;
+            var bestMatchedVD = match.BestMatch as ViewDefinition;
             if (bestMatchedVD != null)
             {
                 TraceHelper(bestMatchedVD, true);
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static ViewDefinition GetDefaultView(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
         {
-            TypeMatch match = new TypeMatch(expressionFactory, db, typeNames);
+            var match = new TypeMatch(expressionFactory, db, typeNames);
 
             foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
             {
@@ -593,7 +593,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (TypeOrGroupReference r in appliesTo.referenceList)
             {
                 // if it is a type reference, just add the type name
-                TypeReference tr = r as TypeReference;
+                var tr = r as TypeReference;
                 if (tr != null)
                 {
                     if (!allTypes.Contains(tr.name))
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // check if we have a type group reference
-                    TypeGroupReference tgr = r as TypeGroupReference;
+                    var tgr = r as TypeGroupReference;
 
                     if (tgr == null)
                         continue;
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            AppliesTo retVal = new AppliesTo();
+            var retVal = new AppliesTo();
             foreach (string x in allTypes)
             {
                 retVal.AddAppliesToType(x);

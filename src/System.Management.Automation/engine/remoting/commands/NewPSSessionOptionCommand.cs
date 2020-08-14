@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            PSSessionOption result = new PSSessionOption();
+            var result = new PSSessionOption();
             // Begin: WSMan specific options
 #if !UNIX
             result.ProxyAccessType = this.ProxyAccessType;

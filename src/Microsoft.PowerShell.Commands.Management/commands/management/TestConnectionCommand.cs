@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            TcpClient client = new TcpClient();
+            var client = new TcpClient();
 
             try
             {
@@ -351,11 +351,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             int currentHop = 1;
-            PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
+            var pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
             PingReply reply;
             PingReply discoveryReply;
             int timeout = TimeoutSeconds * 1000;
-            Stopwatch timer = new Stopwatch();
+            var timer = new Stopwatch();
 
             IPAddress hopAddress;
             do
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
                             resolvedTargetName,
                             ex.Message);
                         Exception pingException = new PingException(message, ex.InnerException);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        var errorRecord = new ErrorRecord(
                             pingException,
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                PingOptions pingOptions = new PingOptions(MaxHops, true);
+                var pingOptions = new PingOptions(MaxHops, true);
                 int retry = 1;
 
                 while (LowMTUSize < (HighMTUSize - 1))
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
                                 targetAddress,
                                 reply.Status.ToString());
                             Exception pingException = new PingException(message);
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            var errorRecord = new ErrorRecord(
                                 pingException,
                                 TestConnectionExceptionId,
                                 ErrorCategory.ResourceUnavailable,
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message = StringUtil.Format(TestConnectionResources.NoPingResult, targetAddress, ex.Message);
                 Exception pingException = new PingException(message, ex.InnerException);
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     pingException,
                     TestConnectionExceptionId,
                     ErrorCategory.ResourceUnavailable,
@@ -604,7 +604,7 @@ namespace Microsoft.PowerShell.Commands
             byte[] buffer = GetSendBuffer(BufferSize);
 
             PingReply reply;
-            PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
+            var pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string message = StringUtil.Format(TestConnectionResources.NoPingResult, resolvedTargetName, ex.Message);
                     Exception pingException = new PingException(message, ex.InnerException);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         pingException,
                         TestConnectionExceptionId,
                         ErrorCategory.ResourceUnavailable,
@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
                         resolvedTargetName,
                         TestConnectionResources.TargetAddressAbsent);
                     Exception pingException = new PingException(message, null);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         pingException,
                         TestConnectionExceptionId,
                         ErrorCategory.ResourceUnavailable,
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
                             resolvedTargetName,
                             TestConnectionResources.CannotResolveTargetName);
                         Exception pingException = new PingException(message, ex);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        var errorRecord = new ErrorRecord(
                             pingException,
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell.Commands
                             resolvedTargetName,
                             TestConnectionResources.TargetAddressAbsent);
                         Exception pingException = new PingException(message, null);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        var errorRecord = new ErrorRecord(
                             pingException,
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
                 return s_DefaultSendBuffer;
             }
 
-            byte[] sendBuffer = new byte[bufferSize];
+            var sendBuffer = new byte[bufferSize];
 
             for (int i = 0; i < bufferSize; i++)
             {

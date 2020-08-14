@@ -62,7 +62,7 @@ namespace System.Management.Automation
             ProviderInfo providerInfo = null;
             PSDriveInfo driveInfo = null;
             string resolvedProviderPath = null;
-            CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(_executionContext);
+            var cmdletProviderContext = new CmdletProviderContext(_executionContext);
 
             try
             {
@@ -108,7 +108,7 @@ namespace System.Management.Automation
 
             // Does the provider know how to generate MAML.
             CmdletProvider cmdletProvider = providerInfo.CreateInstance();
-            ICmdletProviderSupportsHelp provider = cmdletProvider as ICmdletProviderSupportsHelp;
+            var provider = cmdletProvider as ICmdletProviderSupportsHelp;
 
             // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
             if (provider == null)

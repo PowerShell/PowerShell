@@ -238,7 +238,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         protected CimSessionProxy CreateCimSessionProxy(CimSessionProxy originalProxy)
         {
-            CimSessionProxy proxy = new CimSessionProxy(originalProxy);
+            var proxy = new CimSessionProxy(originalProxy);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -260,7 +260,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         protected CimSessionProxy CreateCimSessionProxy(CimSession session)
         {
-            CimSessionProxy proxy = new CimSessionProxy(session);
+            var proxy = new CimSessionProxy(session);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -283,7 +283,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         protected CimSessionProxy CreateCimSessionProxy(string computerName)
         {
-            CimSessionProxy proxy = new CimSessionProxy(computerName);
+            var proxy = new CimSessionProxy(computerName);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -297,7 +297,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected CimSessionProxy CreateCimSessionProxy(string computerName, CimInstance cimInstance)
         {
-            CimSessionProxy proxy = new CimSessionProxy(computerName, cimInstance);
+            var proxy = new CimSessionProxy(computerName, cimInstance);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -348,7 +348,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected object GetBaseObject(object value)
         {
-            PSObject psObject = value as PSObject;
+            var psObject = value as PSObject;
             if (psObject == null)
             {
                 return value;
@@ -363,7 +363,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 else
                 {
-                    object[] arraybaseObject = new object[arrayObject.Length];
+                    var arraybaseObject = new object[arrayObject.Length];
                     for (int i = 0; i < arrayObject.Length; i++)
                     {
                         arraybaseObject[i] = GetBaseObject(arrayObject[i]);
@@ -384,11 +384,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns>The object.</returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
-            PSReference cimReference = value as PSReference;
+            var cimReference = value as PSReference;
             if (cimReference != null)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
-                CimInstance cimInstance = baseObject as CimInstance;
+                var cimInstance = baseObject as CimInstance;
                 if (cimInstance == null)
                 {
                     return null;
@@ -399,7 +399,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                object[] cimReferenceArray = value as object[];
+                var cimReferenceArray = value as object[];
                 if (cimReferenceArray == null)
                 {
                     return null;
@@ -409,10 +409,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return null;
                 }
 
-                CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
+                var cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
-                    PSReference tempCimReference = cimReferenceArray[i] as PSReference;
+                    var tempCimReference = cimReferenceArray[i] as PSReference;
                     if (tempCimReference == null)
                     {
                         return null;

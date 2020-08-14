@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // Pop it off the local host.
-            IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
+            var host = this.Host as IHostSupportsInteractiveSession;
             if (host == null)
             {
                 WriteError(

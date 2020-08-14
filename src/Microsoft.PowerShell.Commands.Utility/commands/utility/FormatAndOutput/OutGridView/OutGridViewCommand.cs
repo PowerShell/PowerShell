@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            IDictionary dictionary = InputObject.BaseObject as IDictionary;
+            var dictionary = InputObject.BaseObject as IDictionary;
             if (dictionary != null)
             {
                 // Dictionaries should be enumerated through because the pipeline does not enumerate through them.
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="liveObject">PSObject to be converted to a string.</param>
         internal string ConvertToString(PSObject liveObject)
         {
-            StringFormatError formatErrorObject = new StringFormatError();
+            var formatErrorObject = new StringFormatError();
             string smartToString = PSObjectHelper.SmartToString(liveObject,
                                                                 _expressionFactory,
                                                                 InnerFormatShapeCommand.FormatEnumerationLimit(),
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
             // Make sure the OGV window is not closed.
             if (_windowProxy.IsWindowClosed())
             {
-                LocalPipeline pipeline = (LocalPipeline)this.Context.CurrentRunspace.GetCurrentlyRunningPipeline();
+                var pipeline = (LocalPipeline)this.Context.CurrentRunspace.GetCurrentlyRunningPipeline();
 
                 if (pipeline != null && !pipeline.IsStopping)
                 {
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
                 baseObject is FormatInfoData ||
                 baseObject is PSObject)
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     new FormatException(StringUtil.Format(FormatAndOut_out_gridview.DataNotQualifiedForGridView)),
                     DataNotQualifiedForGridView,
                     ErrorCategory.InvalidType,
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             Exception exception = _windowProxy.GetLastException();
             if (exception != null)
             {
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     exception,
                     "ManagementListInvocationException",
                     ErrorCategory.OperationStopped,
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
             internal NonscalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
                 // Prepare a table view.
-                TableView tableView = new TableView();
+                var tableView = new TableView();
                 tableView.Initialize(parentCmd._expressionFactory, parentCmd._typeInfoDataBase);
 
                 // Request a view definition from the type database.

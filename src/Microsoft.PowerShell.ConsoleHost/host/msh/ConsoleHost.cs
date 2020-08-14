@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell
         {
             if (_runspaceRef == null) { return; }
 
-            RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
+            var remoteRunspace = newRunspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
             remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
@@ -1151,7 +1151,7 @@ namespace Microsoft.PowerShell
             this.ui = new ConsoleHostUserInterface(this);
             _consoleWriter = new ConsoleTextWriter(ui);
 
-            UnhandledExceptionEventHandler handler = new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            var handler = new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
             AppDomain.CurrentDomain.UnhandledException += handler;
         }
 
@@ -1476,7 +1476,7 @@ namespace Microsoft.PowerShell
 
             while (!ShouldEndSession)
             {
-                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
+                var args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
                 CreateRunspace(args);
 
                 if (ExitCode == ExitCodeInitFailure) { break; }
@@ -1499,7 +1499,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    Executor exec = new Executor(this, false, false);
+                    var exec = new Executor(this, false, false);
 
                     bool dollarHook = exec.ExecuteCommandAndGetResultAsBool("$global:?") ?? false;
 
@@ -1728,7 +1728,7 @@ namespace Microsoft.PowerShell
                 _runspaceRef.Runspace.Debugger.DebuggerStop += this.OnExecutionSuspended;
             }
 
-            Executor exec = new Executor(this, false, false);
+            var exec = new Executor(this, false, false);
 
             // If working directory was specified, set it
             if (s_cpp != null && s_cpp.WorkingDirectory != null)
@@ -1875,7 +1875,7 @@ namespace Microsoft.PowerShell
 
                 if (IsRunningAsync)
                 {
-                    Executor.ExecutionOptions executionOptions = Executor.ExecutionOptions.AddOutputter;
+                    var executionOptions = Executor.ExecutionOptions.AddOutputter;
 
                     Token[] tokens;
                     ParseError[] errors;
@@ -1937,7 +1937,7 @@ namespace Microsoft.PowerShell
 
                 if (IsRunningAsync)
                 {
-                    Executor.ExecutionOptions executionOptions = Executor.ExecutionOptions.AddOutputter;
+                    var executionOptions = Executor.ExecutionOptions.AddOutputter;
 
                     Token[] tokens;
                     ParseError[] errors;
@@ -2006,7 +2006,7 @@ namespace Microsoft.PowerShell
         internal static string EscapeSingleQuotes(string str)
         {
             // worst case we have to escape every character, so capacity is twice as large as input length
-            StringBuilder sb = new StringBuilder(str.Length * 2);
+            var sb = new StringBuilder(str.Length * 2);
 
             for (int i = 0; i < str.Length; ++i)
             {
@@ -2026,7 +2026,7 @@ namespace Microsoft.PowerShell
 
         private void WriteErrorLine(string line)
         {
-            ConsoleColor fg = ConsoleColor.Red;
+            var fg = ConsoleColor.Red;
             ConsoleColor bg = UI.RawUI.BackgroundColor;
 
             UI.WriteLine(fg, bg, line);
@@ -2050,7 +2050,7 @@ namespace Microsoft.PowerShell
 
             // NTRAID#Windows OS Bugs-1143621-2005/04/08-sburns
 
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
+            var icer = e as IContainsErrorRecord;
 
             if (icer != null)
             {
@@ -2061,7 +2061,7 @@ namespace Microsoft.PowerShell
                 error = (object)new ErrorRecord(e, "ConsoleHost.ReportException", ErrorCategory.NotSpecified, null);
             }
 
-            PSObject wrappedError = new PSObject(error)
+            var wrappedError = new PSObject(error)
             {
                 WriteStream = WriteStreamType.Error
             };
@@ -2109,7 +2109,7 @@ namespace Microsoft.PowerShell
 
             // See if the exception has an error record attached to it...
             ErrorRecord er = null;
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
+            var icer = e as IContainsErrorRecord;
             if (icer != null)
                 er = icer.ErrorRecord;
 
@@ -2320,7 +2320,7 @@ namespace Microsoft.PowerShell
                     throw PSTraceSource.NewInvalidOperationException(ConsoleHostStrings.TooManyNestedPromptsError);
                 }
 
-                InputLoop il = new InputLoop(parent, isNested);
+                var il = new InputLoop(parent, isNested);
 
                 s_instanceStack.Push(il);
                 il.Run(s_instanceStack.Count > 1);
@@ -2418,13 +2418,13 @@ namespace Microsoft.PowerShell
             internal void Run(bool inputLoopIsNested)
             {
                 System.Management.Automation.Host.PSHostUserInterface c = _parent.UI;
-                ConsoleHostUserInterface ui = c as ConsoleHostUserInterface;
+                var ui = c as ConsoleHostUserInterface;
 
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
                 bool previousResponseWasEmpty = false;
-                StringBuilder inputBlock = new StringBuilder();
+                var inputBlock = new StringBuilder();
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
@@ -2632,7 +2632,7 @@ namespace Microsoft.PowerShell
 
             internal void BlockCommandOutput()
             {
-                RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
+                var rCmdPipeline = _parent.runningCmd as RemotePipeline;
                 if (rCmdPipeline != null)
                 {
                     rCmdPipeline.DrainIncomingData();
@@ -2646,7 +2646,7 @@ namespace Microsoft.PowerShell
 
             internal void ResumeCommandOutput()
             {
-                RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
+                var rCmdPipeline = _parent.runningCmd as RemotePipeline;
                 if (rCmdPipeline != null)
                 {
                     rCmdPipeline.ResumeIncomingData();
@@ -2693,12 +2693,12 @@ namespace Microsoft.PowerShell
                     // Use PowerShell object to write streaming data to host.
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
-                        PSInvocationSettings settings = new PSInvocationSettings()
+                        var settings = new PSInvocationSettings()
                         {
                             Host = _parent
                         };
 
-                        PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                        var output = new PSDataCollection<PSObject>();
                         ps.AddCommand("Out-Default");
                         IAsyncResult async = ps.BeginInvoke<PSObject>(output, settings, null, null);
 
@@ -2737,7 +2737,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // If it is remote exception ferret out the real exception.
-                RemoteException remoteException = e as RemoteException;
+                var remoteException = e as RemoteException;
                 if (remoteException == null || remoteException.ErrorRecord == null)
                 {
                     return false;
@@ -2779,7 +2779,7 @@ namespace Microsoft.PowerShell
                     // Catch-all OK. This is a third-party call-out.
                     ui.WriteErrorLine(e.Message);
 
-                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
+                    var localRunspace = (LocalRunspace)_parent.Runspace;
                     localRunspace.GetExecutionContext.AppendDollarError(e);
                 }
             }
@@ -2797,7 +2797,7 @@ namespace Microsoft.PowerShell
                 // Check for the pushed runspace scenario.
                 if (_isRunspacePushed)
                 {
-                    RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
+                    var remoteRunspace = _parent.Runspace as RemoteRunspace;
                     if (remoteRunspace != null)
                     {
                         promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
@@ -2817,7 +2817,7 @@ namespace Microsoft.PowerShell
 
             private string EvaluateDebugPrompt()
             {
-                PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                var output = new PSDataCollection<PSObject>();
 
                 try
                 {
@@ -2834,7 +2834,7 @@ namespace Microsoft.PowerShell
                 string promptString = (prompt != null) ? (prompt.BaseObject as string) : null;
                 if (promptString != null)
                 {
-                    RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
+                    var remoteRunspace = _parent.Runspace as RemoteRunspace;
                     if (remoteRunspace != null)
                     {
                         promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);

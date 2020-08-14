@@ -129,7 +129,7 @@ namespace System.Management.Automation
             var driveInfos = GetDrives();
             if (driveInfos.ContainsKey(newDrive.Name))
             {
-                SessionStateException e =
+                var e =
                     new SessionStateException(
                         newDrive.Name,
                         SessionStateCategory.Drive,
@@ -245,7 +245,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<PSDriveInfo> result = new Collection<PSDriveInfo>();
+                var result = new Collection<PSDriveInfo>();
                 foreach (PSDriveInfo drive in GetDrives().Values)
                 {
                     result.Add(drive);
@@ -342,7 +342,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal object GetAutomaticVariableValue(AutomaticVariable variable)
         {
-            int index = (int)variable;
+            var index = (int)variable;
             foreach (var dottedScope in _dottedScopes)
             {
                 if (dottedScope.IsValueSet(index))
@@ -399,7 +399,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(name != null, "The caller should verify the name");
 
             PSVariable variable;
-            PSVariable variableToSet = value as PSVariable;
+            var variableToSet = value as PSVariable;
 
             // Set the variable directly in the table, bypassing all of the checks. This
             // can only be used for global scope otherwise the slow path is used.
@@ -429,7 +429,7 @@ namespace System.Management.Automation
 
                     if (variable == null || variable.IsConstant || (!force && variable.IsReadOnly))
                     {
-                        SessionStateUnauthorizedAccessException e =
+                        var e =
                             new SessionStateUnauthorizedAccessException(
                                     name,
                                     SessionStateCategory.Variable,
@@ -442,7 +442,7 @@ namespace System.Management.Automation
                     if (variable is LocalVariable
                         && (variableToSet.Attributes.Count > 0 || variableToSet.Options != variable.Options))
                     {
-                        SessionStateUnauthorizedAccessException e =
+                        var e =
                             new SessionStateUnauthorizedAccessException(
                                     name,
                                     SessionStateCategory.Variable,
@@ -550,7 +550,7 @@ namespace System.Management.Automation
 
                 if (variable == null || variable.IsConstant || (!force && variable.IsReadOnly))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 newVariable.Name,
                                 SessionStateCategory.Variable,
@@ -562,7 +562,7 @@ namespace System.Management.Automation
 
                 if (variable is LocalVariable)
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 newVariable.Name,
                                 SessionStateCategory.Variable,
@@ -622,7 +622,7 @@ namespace System.Management.Automation
 
             if (variable.IsConstant || (variable.IsReadOnly && !force))
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             name,
                             SessionStateCategory.Variable,
@@ -634,7 +634,7 @@ namespace System.Management.Automation
 
             if (variable is LocalVariable)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             name,
                             SessionStateCategory.Variable,
@@ -762,7 +762,7 @@ namespace System.Management.Automation
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     (!force && (aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Alias,
@@ -845,7 +845,7 @@ namespace System.Management.Automation
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     (!force && (aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Alias,
@@ -860,7 +860,7 @@ namespace System.Management.Automation
 
                 if ((options & ScopedItemOptions.Constant) != 0)
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Alias,
@@ -876,7 +876,7 @@ namespace System.Management.Automation
                     // user is trying to remove the AllScope option from the alias.
                     // Do not allow this (as per spec).
 
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Alias,
@@ -945,7 +945,7 @@ namespace System.Management.Automation
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !force))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 aliasToSet.Name,
                                 SessionStateCategory.Alias,
@@ -961,7 +961,7 @@ namespace System.Management.Automation
                     // user is trying to remove the AllScope option from the alias.
                     // Do not allow this (as per spec).
 
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 aliasToSet.Name,
                                 SessionStateCategory.Alias,
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     (!force && (aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Alias,
@@ -1264,7 +1264,7 @@ namespace System.Management.Automation
                 if (IsFunctionOptionSet(existingValue, ScopedItemOptions.Constant) ||
                     (!force && IsFunctionOptionSet(existingValue, ScopedItemOptions.ReadOnly)))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Function,
@@ -1279,7 +1279,7 @@ namespace System.Management.Automation
 
                 if ((options & ScopedItemOptions.Constant) != 0)
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Function,
@@ -1294,7 +1294,7 @@ namespace System.Management.Automation
                 if ((options & ScopedItemOptions.AllScope) == 0 &&
                     IsFunctionOptionSet(existingValue, ScopedItemOptions.AllScope))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Function,
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation
                 if (IsFunctionOptionSet(function, ScopedItemOptions.Constant) ||
                     (!force && IsFunctionOptionSet(function, ScopedItemOptions.ReadOnly)))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                                 name,
                                 SessionStateCategory.Function,
@@ -1921,7 +1921,7 @@ namespace System.Management.Automation
             List<string> existingAliases;
             if (!_commandsToAliasesCache.TryGetValue(value, out existingAliases))
             {
-                List<string> list = new List<string>();
+                var list = new List<string>();
                 list.Add(alias);
                 _commandsToAliasesCache.Add(value, list);
             }

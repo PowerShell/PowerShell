@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Construct a provider qualified path as the Path note
 
-                PSNoteProperty note = new PSNoteProperty("PSPath", PSPath);
+                var note = new PSNoteProperty("PSPath", PSPath);
                 content.Properties.Add(note, true);
                 tracer.WriteLine("Attaching {0} = {1}", "PSPath", PSPath);
 
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
                     // Catch all the exceptions caused by closing the writer
                     // and write out an error.
 
-                    ProviderInvocationException providerException =
+                    var providerException =
                         new ProviderInvocationException(
                             "ProviderContentCloseError",
                             SessionStateStrings.ProviderContentCloseError,
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
                     // Catch all the exceptions caused by closing the writer
                     // and write out an error.
 
-                    ProviderInvocationException providerException =
+                    var providerException =
                         new ProviderInvocationException(
                             "ProviderContentCloseError",
                             SessionStateStrings.ProviderContentCloseError,
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Create the results array
 
-            List<ContentHolder> results = new List<ContentHolder>();
+            var results = new List<ContentHolder>();
 
             foreach (PathInfo pathInfo in pathInfos)
             {
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (readers.Count == 1 && readers[0] != null)
                     {
-                        ContentHolder holder =
+                        var holder =
                             new ContentHolder(pathInfo, readers[0], null);
 
                         results.Add(holder);
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
             bool allowEmptyResult,
             CmdletProviderContext currentCommandContext)
         {
-            Collection<PathInfo> results = new Collection<PathInfo>();
+            var results = new Collection<PathInfo>();
 
             foreach (string path in pathsToResolve)
             {
@@ -652,7 +652,7 @@ namespace Microsoft.PowerShell.Commands
                                 out provider,
                                 out drive);
 
-                        PathInfo pathInfo =
+                        var pathInfo =
                             new PathInfo(
                                 drive,
                                 provider,
@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Detect if the path resolution failed to resolve to a file.
                             string error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
-                            Exception e = new Exception(error);
+                            var e = new Exception(error);
 
                             pathNotFoundErrorRecord = new ErrorRecord(
                                 e,

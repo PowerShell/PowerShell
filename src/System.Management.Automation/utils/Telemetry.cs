@@ -698,10 +698,10 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 // attempt to read the persisted identifier
                 const int GuidSize = 16;
-                byte[] buffer = new byte[GuidSize];
+                var buffer = new byte[GuidSize];
                 try
                 {
-                    using (FileStream fs = new FileStream(telemetryFilePath, FileMode.Open, FileAccess.Read))
+                    using (var fs = new FileStream(telemetryFilePath, FileMode.Open, FileAccess.Read))
                     {
                         // if the read is invalid, or wrong size, we return it
                         int n = fs.Read(buffer, 0, GuidSize);

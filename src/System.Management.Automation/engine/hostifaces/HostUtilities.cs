@@ -130,7 +130,7 @@ namespace System.Management.Automation
         /// <returns>A PSObject whose base object is currentUserCurrentHost and with notes for the other 4 parameters.</returns>
         internal static PSObject GetDollarProfile(string allUsersAllHosts, string allUsersCurrentHost, string currentUserAllHosts, string currentUserCurrentHost)
         {
-            PSObject returnValue = new PSObject(currentUserCurrentHost);
+            var returnValue = new PSObject(currentUserCurrentHost);
             returnValue.Properties.Add(new PSNoteProperty("AllUsersAllHosts", allUsersAllHosts));
             returnValue.Properties.Add(new PSNoteProperty("AllUsersCurrentHost", allUsersCurrentHost));
             returnValue.Properties.Add(new PSNoteProperty("CurrentUserAllHosts", currentUserAllHosts));
@@ -176,19 +176,19 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static PSCommand[] GetProfileCommands(string shellId, bool useTestProfile)
         {
-            List<PSCommand> commands = new List<PSCommand>();
+            var commands = new List<PSCommand>();
             string allUsersAllHosts, allUsersCurrentHost, currentUserAllHosts, currentUserCurrentHost;
             PSObject dollarProfile;
             HostUtilities.GetProfileObjectData(shellId, useTestProfile, out allUsersAllHosts, out allUsersCurrentHost, out currentUserAllHosts, out currentUserCurrentHost, out dollarProfile);
 
-            PSCommand command = new PSCommand();
+            var command = new PSCommand();
             command.AddCommand("set-variable");
             command.AddParameter("Name", "profile");
             command.AddParameter("Value", dollarProfile);
             command.AddParameter("Option", ScopedItemOptions.None);
             commands.Add(command);
 
-            string[] profilePaths = new string[] { allUsersAllHosts, allUsersCurrentHost, currentUserAllHosts, currentUserCurrentHost };
+            var profilePaths = new string[] { allUsersAllHosts, allUsersCurrentHost, currentUserAllHosts, currentUserCurrentHost };
             foreach (string profilePath in profilePaths)
             {
                 if (!System.IO.File.Exists(profilePath))
@@ -284,7 +284,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
 
             for (int i = 0, lineCount = 1; i < source.Length; i++)
             {
@@ -309,7 +309,7 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            LocalRunspace localRunspace = runspace as LocalRunspace;
+            var localRunspace = runspace as LocalRunspace;
             if (localRunspace == null) { return new List<string>(); }
 
             // Get the last value of $?
@@ -325,7 +325,7 @@ namespace System.Management.Automation
             HistoryInfo lastHistory = entries[0];
 
             // Get the last error
-            ArrayList errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
+            var errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
             object lastError = null;
 
             if (errorList.Count > 0)
@@ -387,7 +387,7 @@ namespace System.Management.Automation
         {
             var returnSuggestions = new List<string>();
 
-            PSModuleInfo invocationModule = new PSModuleInfo(true);
+            var invocationModule = new PSModuleInfo(true);
             invocationModule.SessionState.PSVariable.Set("lastHistory", lastHistory);
             invocationModule.SessionState.PSVariable.Set("lastError", lastError);
 
@@ -402,7 +402,7 @@ namespace System.Management.Automation
                 if (!LanguagePrimitives.IsTrue(suggestion["Enabled"]))
                     continue;
 
-                SuggestionMatchType matchType = (SuggestionMatchType)LanguagePrimitives.ConvertTo(
+                var matchType = (SuggestionMatchType)LanguagePrimitives.ConvertTo(
                     suggestion["MatchType"],
                     typeof(SuggestionMatchType),
                     CultureInfo.InvariantCulture);
@@ -412,7 +412,7 @@ namespace System.Management.Automation
                 {
                     object result = null;
 
-                    ScriptBlock evaluator = suggestion["Rule"] as ScriptBlock;
+                    var evaluator = suggestion["Rule"] as ScriptBlock;
                     if (evaluator == null)
                     {
                         suggestion["Enabled"] = false;
@@ -464,7 +464,7 @@ namespace System.Management.Automation
                     {
                         if (lastError != null)
                         {
-                            Exception lastException = lastError as Exception;
+                            var lastException = lastError as Exception;
                             if (lastException != null)
                             {
                                 matchText = lastException.Message;
@@ -574,7 +574,7 @@ namespace System.Management.Automation
         /// <returns>Hashtable representing the suggestion.</returns>
         private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, string suggestion, bool enabled)
         {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            var result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
             result["Id"] = id;
             result["Category"] = category;
@@ -599,7 +599,7 @@ namespace System.Management.Automation
         /// <returns>Hashtable representing the suggestion.</returns>
         private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
         {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            var result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
             result["Id"] = id;
             result["Category"] = category;
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         /// </summary>
         private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, bool enabled)
         {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            var result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
             result["Id"] = id;
             result["Category"] = category;
@@ -656,7 +656,7 @@ namespace System.Management.Automation
         {
             if (suggestion is ScriptBlock)
             {
-                ScriptBlock suggestionScript = (ScriptBlock)suggestion;
+                var suggestionScript = (ScriptBlock)suggestion;
 
                 object result = null;
                 try
@@ -690,7 +690,7 @@ namespace System.Management.Automation
                 return basePrompt;
             }
 
-            SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
+            var sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
 
             // Usernames are case-sensitive on Unix systems
             if (sshConnectionInfo != null &&
@@ -811,7 +811,7 @@ namespace System.Management.Automation
             if ((runspace.Debugger != null) && runspace.Debugger.InBreakpoint)
             {
                 // Use the Debugger API to run the command when a runspace is stopped in the debugger.
-                PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                var output = new PSDataCollection<PSObject>();
                 runspace.Debugger.ProcessCommand(
                     command,
                     output);

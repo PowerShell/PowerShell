@@ -189,7 +189,7 @@ namespace System.Management.Automation.Interpreter
                 return true;
             }
 
-            HashSet<LabelScopeInfo> definitions = _definitions as HashSet<LabelScopeInfo>;
+            var definitions = _definitions as HashSet<LabelScopeInfo>;
             if (definitions != null)
             {
                 return definitions.Contains(scope);
@@ -208,7 +208,7 @@ namespace System.Management.Automation.Interpreter
 
         private LabelScopeInfo FirstDefinition()
         {
-            LabelScopeInfo scope = _definitions as LabelScopeInfo;
+            var scope = _definitions as LabelScopeInfo;
             if (scope != null)
             {
                 return scope;
@@ -225,7 +225,7 @@ namespace System.Management.Automation.Interpreter
             }
             else
             {
-                HashSet<LabelScopeInfo> set = _definitions as HashSet<LabelScopeInfo>;
+                var set = _definitions as HashSet<LabelScopeInfo>;
                 if (set == null)
                 {
                     _definitions = set = new HashSet<LabelScopeInfo>() { (LabelScopeInfo)_definitions };

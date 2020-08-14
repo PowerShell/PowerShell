@@ -166,7 +166,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             e.ErrorCode = errorStruct.errorCode;
-            TransportErrorOccuredEventArgs eventargs =
+            var eventargs =
                 new TransportErrorOccuredEventArgs(e, transportMethodReportingError);
             return eventargs;
         }
@@ -512,31 +512,31 @@ namespace System.Management.Automation.Remoting.Client
         static WSManClientSessionTransportManager()
         {
             // Initialize callback delegates
-            WSManNativeApi.WSManShellCompletionFunction createDelegate =
+            var createDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCreateSessionCallback);
             s_sessionCreateCallback = new WSManNativeApi.WSManShellAsyncCallback(createDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction closeDelegate =
+            var closeDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCloseSessionCompleted);
             s_sessionCloseCallback = new WSManNativeApi.WSManShellAsyncCallback(closeDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction receiveDelegate =
+            var receiveDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionDataReceived);
             s_sessionReceiveCallback = new WSManNativeApi.WSManShellAsyncCallback(receiveDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction sendDelegate =
+            var sendDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionSendCompleted);
             s_sessionSendCallback = new WSManNativeApi.WSManShellAsyncCallback(sendDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction disconnectDelegate =
+            var disconnectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionDisconnectCompleted);
             s_sessionDisconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(disconnectDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction reconnectDelegate =
+            var reconnectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionReconnectCompleted);
             s_sessionReconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(reconnectDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction connectDelegate =
+            var connectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionConnectCallback);
             s_sessionConnectCallback = new WSManNativeApi.WSManShellAsyncCallback(connectDelegate);
         }
@@ -618,7 +618,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -702,7 +702,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -730,7 +730,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -758,7 +758,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -782,7 +782,7 @@ namespace System.Management.Automation.Remoting.Client
                 // Get the error message from WSMan
                 string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                var exception = new PSInvalidOperationException(errorMessage);
                 throw exception;
             }
         }
@@ -797,7 +797,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetWSManSessionOption(WSManNativeApi.WSManSessionOption option, string stringData)
         {
-            using (WSManNativeApi.WSManData_ManToUn data = new WSManNativeApi.WSManData_ManToUn(stringData))
+            using (var data = new WSManNativeApi.WSManData_ManToUn(stringData))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                       option, data);
@@ -807,7 +807,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Get the error message from WSMan
                     string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                    PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                    var exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
                 }
             }
@@ -832,7 +832,7 @@ namespace System.Management.Automation.Remoting.Client
                 (uint)ConnectionInfo.IdleTimeout : UseServerDefaultIdleTimeoutUInt;
 
             // startup info
-            WSManNativeApi.WSManShellDisconnectInfo disconnectInfo = new WSManNativeApi.WSManShellDisconnectInfo(uIdleTimeout);
+            var disconnectInfo = new WSManNativeApi.WSManShellDisconnectInfo(uIdleTimeout);
 
             // Add ETW traces
 
@@ -1036,15 +1036,15 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(!string.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
             Dbg.Assert(WSManAPIData != null, "WSManApiData should always be created before session creation.");
 
-            List<WSManNativeApi.WSManOption> shellOptions = new List<WSManNativeApi.WSManOption>(WSManAPIData.CommonOptionSet);
+            var shellOptions = new List<WSManNativeApi.WSManOption>(WSManAPIData.CommonOptionSet);
 
             #region SHIM: Redirection code for protocol version
 
             if (s_protocolVersionRedirect != null)
             {
-                string newProtocolVersion = (string)s_protocolVersionRedirect.DynamicInvoke();
+                var newProtocolVersion = (string)s_protocolVersionRedirect.DynamicInvoke();
                 shellOptions.Clear();
-                WSManNativeApi.WSManOption newPrtVOption = new WSManNativeApi.WSManOption();
+                var newPrtVOption = new WSManNativeApi.WSManOption();
                 newPrtVOption.name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME;
                 newPrtVOption.value = newProtocolVersion;
                 newPrtVOption.mustComply = true;
@@ -1060,7 +1060,7 @@ namespace System.Management.Automation.Remoting.Client
                 (uint)ConnectionInfo.IdleTimeout : UseServerDefaultIdleTimeoutUInt;
 
             // startup info
-            WSManNativeApi.WSManShellStartupInfo_ManToUn startupInfo =
+            var startupInfo =
                 new WSManNativeApi.WSManShellStartupInfo_ManToUn(WSManAPIData.InputStreamSet,
                 WSManAPIData.OutputStreamSet,
                 uIdleTimeout,
@@ -1079,7 +1079,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (s_sessionSendRedirect != null)
                 {
-                    object[] arguments = new object[2] { null, additionalData };
+                    var arguments = new object[2] { null, additionalData };
                     sendContinue = (bool)s_sessionSendRedirect.DynamicInvoke(arguments);
                     additionalData = (byte[])arguments[0];
                 }
@@ -1136,7 +1136,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     if (_noMachineProfile)
                     {
-                        WSManNativeApi.WSManOption noProfile = new WSManNativeApi.WSManOption();
+                        var noProfile = new WSManNativeApi.WSManOption();
                         noProfile.name = WSManNativeApi.NoProfile;
                         noProfile.mustComply = true;
                         noProfile.value = "1";
@@ -1149,7 +1149,7 @@ namespace System.Management.Automation.Remoting.Client
                     flags |= (ConnectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Drop) ?
                                     (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_SERVER_BUFFERING_MODE_DROP : 0;
 
-                    using (WSManNativeApi.WSManOptionSet optionSet = new WSManNativeApi.WSManOptionSet(shellOptions.ToArray()))
+                    using (var optionSet = new WSManNativeApi.WSManOptionSet(shellOptions.ToArray()))
                     {
                         WSManNativeApi.WSManCreateShellEx(_wsManSessionHandle,
                             flags,
@@ -1269,7 +1269,7 @@ namespace System.Management.Automation.Remoting.Client
                         // Get the error message from WSMan
                         string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                        PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                        var exception = new PSInvalidOperationException(errorMessage);
                         throw exception;
                     }
 
@@ -1346,10 +1346,10 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(cmd != null, "Cmd cannot be null");
 
-            WSManConnectionInfo wsmanConnectionInfo = connectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = connectionInfo as WSManConnectionInfo;
             Dbg.Assert(wsmanConnectionInfo != null, "ConnectionInfo must be WSManConnectionInfo");
 
-            WSManClientCommandTransportManager result = new
+            var result = new
                 WSManClientCommandTransportManager(wsmanConnectionInfo, _wsManShellOperationHandle, cmd, noInput, this);
             return result;
         }
@@ -1433,7 +1433,7 @@ namespace System.Management.Automation.Remoting.Client
                     password = connectionInfo.Credential.Password;
                 }
 
-                WSManNativeApi.WSManUserNameAuthenticationCredentials userNameCredentials =
+                var userNameCredentials =
                     new WSManNativeApi.WSManUserNameAuthenticationCredentials(userName,
                         password,
                         connectionInfo.WSManAuthenticationMechanism);
@@ -1445,7 +1445,7 @@ namespace System.Management.Automation.Remoting.Client
             WSManNativeApi.WSManUserNameAuthenticationCredentials proxyAuthCredentials = null;
             if (connectionInfo.ProxyCredential != null)
             {
-                WSManNativeApi.WSManAuthenticationMechanism authMechanism = WSManNativeApi.WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
+                var authMechanism = WSManNativeApi.WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
                 string userName = null;
                 System.Security.SecureString password = null;
 
@@ -1509,7 +1509,7 @@ namespace System.Management.Automation.Remoting.Client
                 // Get the error message from WSMan
                 string errorMessage = WSManNativeApi.WSManGetErrorMessage(WSManAPIData.WSManAPIHandle, result);
 
-                PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
+                var exception = new PSInvalidOperationException(errorMessage);
                 throw exception;
             }
 
@@ -1723,14 +1723,14 @@ namespace System.Management.Automation.Remoting.Client
         internal override void ProcessPrivateData(object privateData)
         {
             // Raise the Robust
-            ConnectionStatusEventArgs rcArgs = privateData as ConnectionStatusEventArgs;
+            var rcArgs = privateData as ConnectionStatusEventArgs;
             if (rcArgs != null)
             {
                 RaiseRobustConnectionNotification(rcArgs);
                 return;
             }
 
-            CompletionEventArgs completionArgs = privateData as CompletionEventArgs;
+            var completionArgs = privateData as CompletionEventArgs;
             if (completionArgs != null)
             {
                 switch (completionArgs.Notification)
@@ -2330,9 +2330,9 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
-                PSRemotingTransportException e = new PSRemotingTransportException(
+                var e = new PSRemotingTransportException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.SendExFailed, sessionTM.ConnectionInfo.ComputerName));
-                TransportErrorOccuredEventArgs eventargs =
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.SendShellInputEx);
                 sessionTM.ProcessWSManTransportError(eventargs);
 
@@ -2409,9 +2409,9 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
-                PSRemotingTransportException e = new PSRemotingTransportException(
+                var e = new PSRemotingTransportException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ReceiveExFailed, sessionTM.ConnectionInfo.ComputerName));
-                TransportErrorOccuredEventArgs eventargs =
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
                 sessionTM.ProcessWSManTransportError(eventargs);
 
@@ -2488,7 +2488,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (s_sessionSendRedirect != null)
             {
-                object[] arguments = new object[2] { null, package };
+                var arguments = new object[2] { null, package };
                 sendContinue = (bool)s_sessionSendRedirect.DynamicInvoke(arguments);
                 package = (byte[])arguments[0];
             }
@@ -2498,7 +2498,7 @@ namespace System.Management.Automation.Remoting.Client
 
             #endregion
 
-            using (WSManNativeApi.WSManData_ManToUn serializedContent =
+            using (var serializedContent =
                          new WSManNativeApi.WSManData_ManToUn(package))
             {
                 PSEtwLog.LogAnalyticInformational(
@@ -2573,7 +2573,7 @@ namespace System.Management.Automation.Remoting.Client
                 // of the rest of the parent object.
                 delegate (object state)
                 {
-                    IntPtr sessionHandle = (IntPtr)state;
+                    var sessionHandle = (IntPtr)state;
                     if (sessionHandle != IntPtr.Zero)
                     {
                         WSManNativeApi.WSManCloseSession(sessionHandle, 0);
@@ -2691,7 +2691,7 @@ namespace System.Management.Automation.Remoting.Client
                     new string[] { WSManNativeApi.WSMAN_STREAM_ID_STDOUT });
 
                 // startup options common to all connections
-                WSManNativeApi.WSManOption protocolStartupOption = new WSManNativeApi.WSManOption();
+                var protocolStartupOption = new WSManNativeApi.WSManOption();
                 protocolStartupOption.name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME;
                 protocolStartupOption.value = RemotingConstants.ProtocolVersion.ToString();
                 protocolStartupOption.mustComply = true;
@@ -2857,31 +2857,31 @@ namespace System.Management.Automation.Remoting.Client
         static WSManClientCommandTransportManager()
         {
             // Initialize callback delegates
-            WSManNativeApi.WSManShellCompletionFunction createDelegate =
+            var createDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCreateCmdCompleted);
             s_cmdCreateCallback = new WSManNativeApi.WSManShellAsyncCallback(createDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction closeDelegate =
+            var closeDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCloseCmdCompleted);
             s_cmdCloseCallback = new WSManNativeApi.WSManShellAsyncCallback(closeDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction receiveDelegate =
+            var receiveDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteCmdDataReceived);
             s_cmdReceiveCallback = new WSManNativeApi.WSManShellAsyncCallback(receiveDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction sendDelegate =
+            var sendDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteCmdSendCompleted);
             s_cmdSendCallback = new WSManNativeApi.WSManShellAsyncCallback(sendDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction signalDelegate =
+            var signalDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteCmdSignalCompleted);
             s_cmdSignalCallback = new WSManNativeApi.WSManShellAsyncCallback(signalDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction reconnectDelegate =
+            var reconnectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnReconnectCmdCompleted);
             s_cmdReconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(reconnectDelegate);
 
-            WSManNativeApi.WSManShellCompletionFunction connectDelegate =
+            var connectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnConnectCmdCompleted);
             s_cmdConnectCallback = new WSManNativeApi.WSManShellAsyncCallback(connectDelegate);
         }
@@ -2998,8 +2998,8 @@ namespace System.Management.Automation.Remoting.Client
 
             if (_wsManCmdOperationHandle == IntPtr.Zero)
             {
-                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ConnectShellCommandEx);
                 ProcessWSManTransportError(eventargs);
                 return;
@@ -3022,7 +3022,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (s_commandCodeSendRedirect != null)
                 {
-                    object[] arguments = new object[2] { null, cmdPart1 };
+                    var arguments = new object[2] { null, cmdPart1 };
                     sendContinue = (bool)s_commandCodeSendRedirect.DynamicInvoke(arguments);
                     cmdPart1 = (byte[])arguments[0];
                 }
@@ -3032,7 +3032,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 #endregion
 
-                WSManNativeApi.WSManCommandArgSet argSet = new WSManNativeApi.WSManCommandArgSet(cmdPart1);
+                var argSet = new WSManNativeApi.WSManCommandArgSet(cmdPart1);
 
                 // create cmdContextId
                 _cmdContextId = GetNextCmdTMHandleId();
@@ -3074,8 +3074,8 @@ namespace System.Management.Automation.Remoting.Client
 
             if (_wsManCmdOperationHandle == IntPtr.Zero)
             {
-                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.RunShellCommandEx);
                 ProcessWSManTransportError(eventargs);
                 return;
@@ -3259,7 +3259,7 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(privateData != null, "privateData cannot be null.");
 
             // For this version...only a boolean can be used for privateData.
-            bool shouldRaiseSignalCompleted = (bool)privateData;
+            var shouldRaiseSignalCompleted = (bool)privateData;
             if (shouldRaiseSignalCompleted)
             {
                 base.RaiseSignalCompleted();
@@ -3630,8 +3630,8 @@ namespace System.Management.Automation.Remoting.Client
                 tracer.WriteLine("SendShellInputEx callback: ShellOperationHandles are not the same as the Send is initiated with");
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
-                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.CommandInputEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
@@ -3713,8 +3713,8 @@ namespace System.Management.Automation.Remoting.Client
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
                 tracer.WriteLine("CmdReceive callback: ShellOperationHandles are not the same as the Receive is initiated with");
-                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandReceiveExFailed);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandReceiveExFailed);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveCommandOutputEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
@@ -3803,8 +3803,8 @@ namespace System.Management.Automation.Remoting.Client
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
                 tracer.WriteLine("Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
-                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ReconnectShellCommandExCallBackError);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(RemotingErrorIdStrings.ReconnectShellCommandExCallBackError);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReconnectShellCommandEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
@@ -3875,8 +3875,8 @@ namespace System.Management.Automation.Remoting.Client
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
                 tracer.WriteLine("Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
-                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.CommandInputEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
@@ -3936,7 +3936,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             byte[] data = null;
-            DataPriorityType priorityType = DataPriorityType.Default;
+            var priorityType = DataPriorityType.Default;
             // serializedPipeline is static ie., data is added to this collection at construction time only
             // and data is accessed by only one thread at any given time..so we can depend on this count
             if (serializedPipeline.Length > 0)
@@ -4001,7 +4001,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (s_commandSendRedirect != null)
             {
-                object[] arguments = new object[2] { null, package };
+                var arguments = new object[2] { null, package };
                 sendContinue = (bool)s_commandSendRedirect.DynamicInvoke(arguments);
                 package = (byte[])arguments[0];
             }
@@ -4011,7 +4011,7 @@ namespace System.Management.Automation.Remoting.Client
 
             #endregion
 
-            using (WSManNativeApi.WSManData_ManToUn serializedContent =
+            using (var serializedContent =
                          new WSManNativeApi.WSManData_ManToUn(package))
             {
                 PSEtwLog.LogAnalyticInformational(

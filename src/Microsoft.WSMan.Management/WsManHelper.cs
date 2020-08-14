@@ -148,7 +148,7 @@ namespace Microsoft.WSMan.Management
         internal static void ThrowIfNotAdministrator()
         {
             System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
+            var principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
             if (!principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
             {
                 string message = _resourceMgr.GetString("ErrorElevationNeeded");
@@ -266,8 +266,8 @@ namespace Microsoft.WSMan.Management
                 {
                     if (!Sessions.SessionObjCache.ContainsKey("localhost"))
                     {
-                        IWSManEx wsmanObject = (IWSManEx)new WSManClass();
-                        IWSManSession SessionObj = (IWSManSession)wsmanObject.CreateSession(null, 0, null);
+                        var wsmanObject = (IWSManEx)new WSManClass();
+                        var SessionObj = (IWSManSession)wsmanObject.CreateSession(null, 0, null);
                         Sessions.SessionObjCache.Add("localhost", SessionObj);
                     }
                 }
@@ -296,7 +296,7 @@ namespace Microsoft.WSMan.Management
                 resultStr = resourceUri;
                 resultStr = StripParams(resultStr);
 
-                Regex regexpr = new Regex(PTRN_URI_LAST, RegexOptions.IgnoreCase);
+                var regexpr = new Regex(PTRN_URI_LAST, RegexOptions.IgnoreCase);
                 MatchCollection matches = regexpr.Matches(resultStr);
                 if (matches.Count > 0)
                 {
@@ -345,27 +345,27 @@ namespace Microsoft.WSMan.Management
             }
             catch (ArgumentNullException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "ArgumentNullException", ErrorCategory.InvalidArgument, null);
+                var er = new ErrorRecord(e, "ArgumentNullException", ErrorCategory.InvalidArgument, null);
                 cmdletname.ThrowTerminatingError(er);
             }
             catch (UnauthorizedAccessException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "UnauthorizedAccessException", ErrorCategory.PermissionDenied, null);
+                var er = new ErrorRecord(e, "UnauthorizedAccessException", ErrorCategory.PermissionDenied, null);
                 cmdletname.ThrowTerminatingError(er);
             }
             catch (FileNotFoundException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "FileNotFoundException", ErrorCategory.ObjectNotFound, null);
+                var er = new ErrorRecord(e, "FileNotFoundException", ErrorCategory.ObjectNotFound, null);
                 cmdletname.ThrowTerminatingError(er);
             }
             catch (DirectoryNotFoundException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "DirectoryNotFoundException", ErrorCategory.ObjectNotFound, null);
+                var er = new ErrorRecord(e, "DirectoryNotFoundException", ErrorCategory.ObjectNotFound, null);
                 cmdletname.ThrowTerminatingError(er);
             }
             catch (System.Security.SecurityException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "SecurityException", ErrorCategory.SecurityError, null);
+                var er = new ErrorRecord(e, "SecurityException", ErrorCategory.SecurityError, null);
                 cmdletname.ThrowTerminatingError(er);
             }
             finally
@@ -432,7 +432,7 @@ namespace Microsoft.WSMan.Management
                 case "set":
 
                     string getResult = sessionObj.Get(resourceUri, 0);
-                    XmlDocument xmlfile = new XmlDocument();
+                    var xmlfile = new XmlDocument();
                     xmlfile.LoadXml(getResult);
 
                     string xpathString = null;
@@ -508,9 +508,9 @@ namespace Microsoft.WSMan.Management
         internal XmlNode GetXmlNode(string xmlString, string xpathpattern, string xmlnamespace)
         {
             XmlNode node = null;
-            XmlDocument xDoc = new XmlDocument();
+            var xDoc = new XmlDocument();
             xDoc.LoadXml(xmlString);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(xDoc.NameTable);
+            var nsmgr = new XmlNamespaceManager(xDoc.NameTable);
             if (!string.IsNullOrEmpty(xmlnamespace))
             {
                 nsmgr.AddNamespace("cfg", xmlnamespace);
@@ -690,11 +690,11 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            IWSManConnectionOptionsEx2 connObject = (IWSManConnectionOptionsEx2)wsmanObject.CreateConnectionOptions();
+            var connObject = (IWSManConnectionOptionsEx2)wsmanObject.CreateConnectionOptions();
             if (credential != null)
             {
                 // connObject = (IWSManConnectionOptionsEx2)wsmanObject.CreateConnectionOptions();
-                System.Net.NetworkCredential nwCredential = new System.Net.NetworkCredential();
+                var nwCredential = new System.Net.NetworkCredential();
                 if (credential.UserName != null)
                 {
                     nwCredential = credential.GetNetworkCredential();
@@ -865,7 +865,7 @@ namespace Microsoft.WSMan.Management
 
         internal string GetFilterString(Hashtable seletorset)
         {
-            StringBuilder filter = new StringBuilder();
+            var filter = new StringBuilder();
             foreach (DictionaryEntry entry in seletorset)
             {
                 if (entry.Key != null && entry.Value != null)
@@ -885,10 +885,10 @@ namespace Microsoft.WSMan.Management
         {
             if (IsWSManError)
             {
-                XmlDocument ErrorDoc = new XmlDocument();
+                var ErrorDoc = new XmlDocument();
                 ErrorDoc.LoadXml(ErrorMessage);
-                InvalidOperationException ex = new InvalidOperationException(ErrorDoc.OuterXml);
-                ErrorRecord er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, targetobject);
+                var ex = new InvalidOperationException(ErrorDoc.OuterXml);
+                var er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, targetobject);
                 if (cmdletname != null)
                 {
                     cmdletname.ThrowTerminatingError(er);
@@ -900,8 +900,8 @@ namespace Microsoft.WSMan.Management
             }
             else
             {
-                InvalidOperationException ex = new InvalidOperationException(ErrorMessage);
-                ErrorRecord er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, targetobject);
+                var ex = new InvalidOperationException(ErrorMessage);
+                var er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, targetobject);
                 if (cmdletname != null)
                 {
                     cmdletname.ThrowTerminatingError(er);
@@ -915,7 +915,7 @@ namespace Microsoft.WSMan.Management
 
         internal string GetURIWithFilter(string uri, string filter, Hashtable selectorset, string operation)
         {
-            StringBuilder sburi = new StringBuilder();
+            var sburi = new StringBuilder();
             sburi.Append(uri);
             sburi.Append("?");
 
@@ -946,7 +946,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="certificateThumbprint"></param>
         internal void CreateWsManConnection(string ParameterSetName, Uri connectionuri, int port, string computername, string applicationname, bool usessl, AuthenticationMechanism authentication, SessionOption sessionoption, PSCredential credential, string certificateThumbprint)
         {
-            IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+            var m_wsmanObject = (IWSManEx)new WSManClass();
             try
             {
                 string connectionStr = CreateConnectionString(connectionuri, port, computername, applicationname);
@@ -1033,7 +1033,7 @@ namespace Microsoft.WSMan.Management
                         return !AllowFreshCredentialsValueShouldBePresent;
                     }
 
-                    List<string> RegValues = new List<string>();
+                    var RegValues = new List<string>();
                     foreach (string value in valuenames)
                     {
                         object keyvalue = rGPOLocalMachineKey.GetValue(value);
@@ -1087,8 +1087,8 @@ namespace Microsoft.WSMan.Management
                     + "\\" + "winrm.ini";
                 if (File.Exists(filepath))
                 {
-                    FileStream _fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-                    StreamReader _sr = new StreamReader(_fs);
+                    var _fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                    var _sr = new StreamReader(_fs);
                     while (!_sr.EndOfStream)
                     {
                         string Line = _sr.ReadLine();

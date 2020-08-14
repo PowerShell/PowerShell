@@ -61,8 +61,8 @@ namespace Microsoft.PowerShell.Commands
             catch (ItemNotFoundException)
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, _path);
-                FileNotFoundException fnf = new FileNotFoundException(message);
-                ErrorRecord er = new ErrorRecord(fnf, "PSSessionConfigurationFileNotFound",
+                var fnf = new FileNotFoundException(message);
+                var er = new ErrorRecord(fnf, "PSSessionConfigurationFileNotFound",
                     ErrorCategory.ResourceUnavailable, _path);
                 WriteError(er);
                 return;
@@ -80,8 +80,8 @@ namespace Microsoft.PowerShell.Commands
             if (filePaths == null || filePaths.Count < 1)
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, _path);
-                FileNotFoundException fnf = new FileNotFoundException(message);
-                ErrorRecord er = new ErrorRecord(fnf, "PSSessionConfigurationFileNotFound",
+                var fnf = new FileNotFoundException(message);
+                var er = new ErrorRecord(fnf, "PSSessionConfigurationFileNotFound",
                     ErrorCategory.ResourceUnavailable, _path);
                 WriteError(er);
                 return;
@@ -128,8 +128,8 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, filePath);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
                     ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }

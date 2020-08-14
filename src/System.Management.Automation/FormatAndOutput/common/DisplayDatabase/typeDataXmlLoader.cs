@@ -460,15 +460,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ViewDefinition LoadViewFromObjectModel(List<string> typeNames, FormatViewDefinition formatView, int viewIndex)
         {
             // Get AppliesTo information
-            AppliesTo appliesTo = new AppliesTo();
+            var appliesTo = new AppliesTo();
             foreach (var typename in typeNames)
             {
-                TypeReference tr = new TypeReference { name = typename };
+                var tr = new TypeReference { name = typename };
                 appliesTo.referenceList.Add(tr);
             }
 
             // Set AppliesTo and Name in the view
-            ViewDefinition view = new ViewDefinition();
+            var view = new ViewDefinition();
             view.appliesTo = appliesTo;
             view.name = formatView.Name;
 
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private ControlBase LoadTableControlFromObjectModel(TableControl table, int viewIndex, string typeName)
         {
-            TableControlBody tableBody = new TableControlBody { autosize = table.AutoSize };
+            var tableBody = new TableControlBody { autosize = table.AutoSize };
 
             LoadHeadersSectionFromObjectModel(tableBody, table.Headers);
 
@@ -590,7 +590,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (TableControlColumnHeader header in headers)
             {
-                TableColumnHeaderDefinition chd = new TableColumnHeaderDefinition();
+                var chd = new TableColumnHeaderDefinition();
 
                 // Contains:
                 //   Label     --- Label     cardinality 0..1
@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 //   Alignment --- Alignment cardinality 0..1
                 if (!string.IsNullOrEmpty(header.Label))
                 {
-                    TextToken tt = new TextToken();
+                    var tt = new TextToken();
                     tt.text = header.Label;
                     chd.label = tt;
                 }
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (TableControlRow row in rowEntries)
             {
-                TableRowDefinition trd = new TableRowDefinition { multiLine = row.Wrap };
+                var trd = new TableRowDefinition { multiLine = row.Wrap };
 
                 // Contains:
                 //   Columns --- TableColumnItems cardinality: 0..1
@@ -667,7 +667,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (TableControlColumn column in columns)
             {
-                TableRowItemDefinition rid = new TableRowItemDefinition();
+                var rid = new TableRowItemDefinition();
 
                 // Contain:
                 //   DisplayEntry --- Expression cardinality: 0..1
@@ -681,7 +681,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return;
                     }
 
-                    FieldPropertyToken fpt = new FieldPropertyToken();
+                    var fpt = new FieldPropertyToken();
                     fpt.expression = expression;
                     fpt.fieldFormattingDirective.formatString = column.FormatString;
                     rid.formatTokenList.Add(fpt);
@@ -703,7 +703,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private ExpressionToken LoadExpressionFromObjectModel(DisplayEntry displayEntry, int viewIndex, string typeName)
         {
-            ExpressionToken token = new ExpressionToken();
+            var token = new ExpressionToken();
             if (displayEntry.ValueType == DisplayEntryValueType.Property)
             {
                 token.expressionValue = displayEntry.Value;
@@ -748,7 +748,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
         {
-            AppliesTo appliesTo = new AppliesTo();
+            var appliesTo = new AppliesTo();
 
             if (selectedBy != null)
             {
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     if (string.IsNullOrEmpty(type))
                         return null;
-                    TypeReference tr = new TypeReference { name = type };
+                    var tr = new TypeReference { name = type };
                     appliesTo.referenceList.Add(tr);
                 }
             }
@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private ListControlBody LoadListControlFromObjectModel(ListControl list, int viewIndex, string typeName)
         {
-            ListControlBody listBody = new ListControlBody();
+            var listBody = new ListControlBody();
 
             // load the list entries section
             LoadListControlEntriesFromObjectModel(listBody, list.Entries, viewIndex, typeName);
@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private ListControlEntryDefinition LoadListControlEntryDefinitionFromObjectModel(ListControlEntry listEntry, int viewIndex, string typeName)
         {
-            ListControlEntryDefinition lved = new ListControlEntryDefinition();
+            var lved = new ListControlEntryDefinition();
 
             // Contains:
             //   SelectedBy ---  EntrySelectedBy(TypeName)  cardinality 0..1
@@ -878,7 +878,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (ListControlEntryItem listItem in listItems)
             {
-                ListControlItemDefinition lvid = new ListControlItemDefinition();
+                var lvid = new ListControlItemDefinition();
 
                 // Contains:
                 //   DisplayEntry --- Expression  cardinality 0..1
@@ -892,7 +892,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return; // fatal
                     }
 
-                    FieldPropertyToken fpt = new FieldPropertyToken();
+                    var fpt = new FieldPropertyToken();
                     fpt.expression = expression;
                     fpt.fieldFormattingDirective.formatString = listItem.FormatString;
                     lvid.formatTokenList.Add(fpt);
@@ -900,7 +900,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (!string.IsNullOrEmpty(listItem.Label))
                 {
-                    TextToken tt = new TextToken();
+                    var tt = new TextToken();
                     tt.text = listItem.Label;
                     lvid.label = tt;
                 }
@@ -932,7 +932,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private WideControlBody LoadWideControlFromObjectModel(WideControl wide, int viewIndex, string typeName)
         {
-            WideControlBody wideBody = new WideControlBody();
+            var wideBody = new WideControlBody();
 
             // Contains:
             //   Columns --- ColumnNumbers  cardinality 0..1
@@ -1010,7 +1010,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private WideControlEntryDefinition LoadWideControlEntryFromObjectModel(WideControlEntryItem wideItem, int viewIndex, string typeName)
         {
-            WideControlEntryDefinition wved = new WideControlEntryDefinition();
+            var wved = new WideControlEntryDefinition();
 
             // Contains:
             //   SelectedBy   --- EntrySelectedBy (TypeName)  cardinality 0..1
@@ -1028,7 +1028,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null; // fatal
             }
 
-            FieldPropertyToken fpt = new FieldPropertyToken();
+            var fpt = new FieldPropertyToken();
             fpt.expression = expression;
             fpt.fieldFormattingDirective.formatString = wideItem.FormatString;
             wved.formatTokenList.Add(fpt);
@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private List<EnumerableExpansionDirective> LoadEnumerableExpansionDirectiveList(XmlNode expansionListNode)
         {
-            List<EnumerableExpansionDirective> retVal =
+            var retVal =
                                 new List<EnumerableExpansionDirective>();
             using (this.StackFrame(expansionListNode))
             {
@@ -1270,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(directive, index))
             {
-                EnumerableExpansionDirective eed = new EnumerableExpansionDirective();
+                var eed = new EnumerableExpansionDirective();
 
                 bool appliesToNodeFound = false;    // cardinality 1
                 bool expandNodeFound = false;    // cardinality 1
@@ -1350,7 +1350,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             using (this.StackFrame(typeGroupNode, index))
             {
                 // create data structure
-                TypeGroupDefinition typeGroupDefinition = new TypeGroupDefinition();
+                var typeGroupDefinition = new TypeGroupDefinition();
                 bool nameNodeFound = false;
 
                 foreach (XmlNode n in typeGroupNode.ChildNodes)
@@ -1398,7 +1398,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         using (this.StackFrame(n, typeRefCount++))
                         {
-                            TypeReference tr = new TypeReference();
+                            var tr = new TypeReference();
 
                             tr.name = GetMandatoryInnerText(n);
                             typeGroupDefinition.typeReferenceList.Add(tr);
@@ -1420,7 +1420,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(appliesToNode))
             {
-                AppliesTo appliesTo = new AppliesTo();
+                var appliesTo = new AppliesTo();
 
                 // expect: type ref, group ref, or nothing
                 foreach (XmlNode n in appliesToNode.ChildNodes)
@@ -1488,7 +1488,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (val != null)
             {
-                TypeReference tr = new TypeReference();
+                var tr = new TypeReference();
                 tr.name = val;
                 return tr;
             }
@@ -1502,7 +1502,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (val != null)
             {
-                TypeGroupReference tgr = new TypeGroupReference();
+                var tgr = new TypeGroupReference();
                 tgr.name = val;
                 return tgr;
             }
@@ -1522,7 +1522,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool typeFound = false;              // cardinality 0..1
                 bool typeGroupFound = false;              // cardinality 0..1
 
-                ExpressionNodeMatch expressionMatch = new ExpressionNodeMatch(this);
+                var expressionMatch = new ExpressionNodeMatch(this);
 
                 foreach (XmlNode n in selectionConditionNode.ChildNodes)
                 {
@@ -1621,8 +1621,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(groupByNode))
             {
-                ExpressionNodeMatch expressionMatch = new ExpressionNodeMatch(this);
-                ComplexControlMatch controlMatch = new ComplexControlMatch(this);
+                var expressionMatch = new ExpressionNodeMatch(this);
+                var controlMatch = new ComplexControlMatch(this);
 
                 bool expressionNodeFound = false;       // cardinality 0..1
 
@@ -1630,7 +1630,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool controlFound = false;              // cardinality 0..1
                 bool labelFound = false;              // cardinality 0..1
 
-                GroupBy groupBy = new GroupBy();
+                var groupBy = new GroupBy();
                 TextToken labelTextToken = null;
 
                 foreach (XmlNode n in groupByNode)
@@ -1737,7 +1737,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private TextToken LoadTextToken(XmlNode n)
         {
-            TextToken tt = new TextToken();
+            var tt = new TextToken();
 
             if (!LoadStringResourceReference(n, out tt.resource))
             {
@@ -1763,7 +1763,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool LoadStringResourceReference(XmlNode n, out StringResourceReference resource)
         {
             resource = null;
-            XmlElement e = n as XmlElement;
+            var e = n as XmlElement;
 
             if (e == null)
             {
@@ -1787,7 +1787,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private StringResourceReference LoadResourceAttributes(XmlAttributeCollection attributes)
         {
-            StringResourceReference resource = new StringResourceReference();
+            var resource = new StringResourceReference();
             foreach (XmlAttribute a in attributes)
             {
                 if (MatchAttributeName(a, XmlTags.AssemblyNameAttribute))
@@ -2058,7 +2058,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 string formatString = null;
                 TextToken textToken = null;
-                ExpressionNodeMatch expressionMatch = new ExpressionNodeMatch(_loader);
+                var expressionMatch = new ExpressionNodeMatch(_loader);
 
                 bool formatStringNodeFound = false; // cardinality 0..1
                 bool expressionNodeFound = false;   // cardinality 0..1
@@ -2211,7 +2211,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false;
                     }
 
-                    ControlReference controlRef = new ControlReference();
+                    var controlRef = new ControlReference();
                     controlRef.name = name;
                     controlRef.controlType = typeof(ComplexControlBody);
                     _control = controlRef;

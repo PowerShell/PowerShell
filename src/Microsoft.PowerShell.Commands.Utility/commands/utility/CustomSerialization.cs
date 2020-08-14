@@ -342,7 +342,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the parameter");
 
             bool sourceHandled = false;
-            PSObject moSource = source as PSObject;
+            var moSource = source as PSObject;
             if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
@@ -362,8 +362,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
-            ContainerType ct = ContainerType.None;
-            PSObject mshSource = source as PSObject;
+            var ct = ContainerType.None;
+            var mshSource = source as PSObject;
             IEnumerable enumerable = null;
             IDictionary dictionary = null;
 
@@ -710,7 +710,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSPropertyInfo property = info as PSPropertyInfo;
+                var property = info as PSPropertyInfo;
                 if (property == null)
                 {
                     continue;
@@ -743,7 +743,7 @@ namespace System.Management.Automation
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
             if (source.GetSerializationMethod(null) == SerializationMethod.SpecificProperties)
             {
-                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+                var specificProperties = new PSMemberInfoInternalCollection<PSPropertyInfo>();
                 foreach (string propertyName in source.GetSpecificPropertiesToSerialize(null))
                 {
                     PSPropertyInfo property = source.Properties[propertyName];
@@ -805,7 +805,7 @@ namespace System.Management.Automation
 
             foreach (PSMemberInfo info in propertyCollection)
             {
-                PSPropertyInfo prop = info as PSPropertyInfo;
+                var prop = info as PSPropertyInfo;
 
                 Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
 

@@ -69,7 +69,7 @@ namespace System.Management.Automation
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 
             string target = helpRequest.Target;
-            Collection<string> patternList = new Collection<string>();
+            var patternList = new Collection<string>();
 
             bool decoratedSearch = !WildcardPattern.ContainsWildcardCharacters(helpRequest.Target);
 
@@ -82,7 +82,7 @@ namespace System.Management.Automation
 
             foreach (string pattern in patternList)
             {
-                DscResourceSearcher searcher = new DscResourceSearcher(pattern, _context);
+                var searcher = new DscResourceSearcher(pattern, _context);
 
                 foreach (var helpInfo in GetHelpInfo(searcher))
                 {
@@ -108,7 +108,7 @@ namespace System.Management.Automation
 
             string target = helpRequest.Target;
 
-            DscResourceSearcher searcher = new DscResourceSearcher(target, _context);
+            var searcher = new DscResourceSearcher(target, _context);
 
             foreach (var helpInfo in GetHelpInfo(searcher))
             {
@@ -151,7 +151,7 @@ namespace System.Management.Automation
 
                     string helpFileName = null;
 
-                    Collection<string> searchPaths = new Collection<string>();
+                    var searchPaths = new Collection<string>();
                     searchPaths.Add(moduleDir);
 
                     HelpInfo helpInfo = GetHelpInfoFromHelpFile(current, helpFileToFind, searchPaths, true, out helpFileName);
@@ -239,7 +239,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                MamlCommandHelpInfo original = (MamlCommandHelpInfo)result;
+                var original = (MamlCommandHelpInfo)result;
                 result = original.Copy(helpCategory);
             }
 

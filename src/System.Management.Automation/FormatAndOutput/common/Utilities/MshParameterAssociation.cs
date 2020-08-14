@@ -73,11 +73,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static List<MshResolvedExpressionParameterAssociation> ExpandTableParameters(List<MshParameter> parameters, PSObject target)
         {
-            List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
+            var retVal = new List<MshResolvedExpressionParameterAssociation>();
 
             foreach (MshParameter par in parameters)
             {
-                PSPropertyExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                var expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> expandedExpressionList = expression.ResolveNames(target);
 
                 if (!expression.HasWildCardCharacters && expandedExpressionList.Count == 0)
@@ -97,11 +97,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static List<MshResolvedExpressionParameterAssociation> ExpandParameters(List<MshParameter> parameters, PSObject target)
         {
-            List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
+            var retVal = new List<MshResolvedExpressionParameterAssociation>();
 
             foreach (MshParameter par in parameters)
             {
-                PSPropertyExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                var expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> expandedExpressionList = expression.ResolveNames(target);
 
                 foreach (PSPropertyExpression ex in expandedExpressionList)
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static List<MshResolvedExpressionParameterAssociation> ExpandDefaultPropertySet(PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
-            List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
+            var retVal = new List<MshResolvedExpressionParameterAssociation>();
             List<PSPropertyExpression> expandedExpressionList = PSObjectHelper.GetDefaultPropertySet(target);
 
             foreach (PSPropertyExpression ex in expandedExpressionList)
@@ -131,13 +131,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Collection<CollectionEntry<PSMemberInfo>> memberCollection =
                 PSObject.GetMemberCollection(viewType);
 
-            PSMemberInfoIntegratingCollection<PSMemberInfo> membersToSearch =
+            var membersToSearch =
                 new PSMemberInfoIntegratingCollection<PSMemberInfo>(source, memberCollection);
 
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> matchedMembers =
                 membersToSearch.Match("*", PSMemberTypes.Properties);
 
-            List<string> retVal = new List<string>();
+            var retVal = new List<string>();
             foreach (PSMemberInfo member in matchedMembers)
             {
                 retVal.Add(member.Name);
@@ -155,13 +155,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             var displayedProperties = adaptedProperties.Count != 0 ? adaptedProperties : baseProperties;
             displayedProperties.AddRange(extendedProperties);
 
-            Dictionary<string, object> duplicatesFinder = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-            List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
+            var duplicatesFinder = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            var retVal = new List<MshResolvedExpressionParameterAssociation>();
             foreach (string property in displayedProperties)
             {
                 if (duplicatesFinder.TryAdd(property, null))
                 {
-                    PSPropertyExpression expr = new PSPropertyExpression(property, true);
+                    var expr = new PSPropertyExpression(property, true);
                     retVal.Add(new MshResolvedExpressionParameterAssociation(null, expr));
                 }
             }
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // always remove PSShowComputerName for the display. This is an internal property
                 // that should never be visible to the user.
-                Collection<MshResolvedExpressionParameterAssociation> itemsToRemove = new Collection<MshResolvedExpressionParameterAssociation>();
+                var itemsToRemove = new Collection<MshResolvedExpressionParameterAssociation>();
                 foreach (MshResolvedExpressionParameterAssociation cpProp in activeAssociationList)
                 {
                     if (cpProp.ResolvedExpression.ToString().Equals(RemotingConstants.ShowComputerNameNoteProperty,

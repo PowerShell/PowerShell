@@ -54,7 +54,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] argumentList)
         {
-            ScriptInfo copy = new ScriptInfo(this) { IsGetCommandCopy = true, Arguments = argumentList };
+            var copy = new ScriptInfo(this) { IsGetCommandCopy = true, Arguments = argumentList };
             return copy;
         }
 

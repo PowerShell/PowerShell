@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext =
+                var coreCommandContext =
                     new CmdletProviderContext(this);
 
                 Collection<string> includeFilter =
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
+            var sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
+            var sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
+            var sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
                 PSTraceSource.NewArgumentException(nameof(instance));
@@ -295,14 +295,14 @@ namespace Microsoft.PowerShell.Commands
 
             // Get DACL
             AuthorizationRuleCollection dacl;
-            CommonObjectSecurity cos = sd as CommonObjectSecurity;
+            var cos = sd as CommonObjectSecurity;
             if (cos != null)
             {
                 dacl = cos.GetAccessRules(true, true, typeof(NTAccount));
             }
             else
             {
-                DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
+                var dos = sd as DirectoryObjectSecurity;
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
                 dacl = dos.GetAccessRules(true, true, typeof(NTAccount));
             }
@@ -326,21 +326,21 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
+            var sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
                 PSTraceSource.NewArgumentException(nameof(instance));
             }
 
             AuthorizationRuleCollection sacl;
-            CommonObjectSecurity cos = sd as CommonObjectSecurity;
+            var cos = sd as CommonObjectSecurity;
             if (cos != null)
             {
                 sacl = cos.GetAuditRules(true, true, typeof(NTAccount));
             }
             else
             {
-                DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
+                var dos = sd as DirectoryObjectSecurity;
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
                 sacl = dos.GetAuditRules(true, true, typeof(NTAccount));
             }
@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static SecurityIdentifier GetCentralAccessPolicyId(PSObject instance)
         {
-            SessionState sessionState = new SessionState();
+            var sessionState = new SessionState();
             string path = sessionState.Path.GetUnresolvedProviderPathFromPSPath(
                 GetPath(instance));
             IntPtr pOwner = IntPtr.Zero, pGroup = IntPtr.Zero;
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
-                NativeMethods.ACL sacl = new NativeMethods.ACL();
+                var sacl = new NativeMethods.ACL();
                 sacl = Marshal.PtrToStructure<NativeMethods.ACL>(pSacl);
                 if (sacl.AceCount == 0)
                 {
@@ -398,7 +398,7 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr pAce = pSacl + Marshal.SizeOf(new NativeMethods.ACL());
                 for (ushort aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
                 {
-                    NativeMethods.ACE_HEADER ace = new NativeMethods.ACE_HEADER();
+                    var ace = new NativeMethods.ACE_HEADER();
                     ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
                     Dbg.Diagnostics.Assert(ace.AceType ==
                         NativeMethods.SYSTEM_SCOPED_POLICY_ID_ACE_TYPE,
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
+            var sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
@@ -818,7 +818,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string p in Path)
                 {
-                    List<string> pathsToProcess = new List<string>();
+                    var pathsToProcess = new List<string>();
 
                     string currentPath = null;
                     try
@@ -841,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             currentPath = rp;
 
-                            CmdletProviderContext context = new CmdletProviderContext(this.Context);
+                            var context = new CmdletProviderContext(this.Context);
                             context.SuppressWildcardExpansion = true;
 
                             if (!InvokeProvider.Item.Exists(rp, false, _isLiteralPath))
@@ -1150,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Find the supplied string among available CAP names, use the corresponding CAPID.
-                    NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
+                    var cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
                     IntPtr capPtr = caps;
                     for (uint capIdx = 0; capIdx < capCount; capIdx++)
                     {
@@ -1286,7 +1286,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Get the LUID of the specified privilege.
-                NativeMethods.LUID luid = new NativeMethods.LUID();
+                var luid = new NativeMethods.LUID();
                 ret = NativeMethods.LookupPrivilegeValue(
                     null,
                     privilege,
@@ -1297,7 +1297,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Enable the privilege.
-                NativeMethods.TOKEN_PRIVILEGE newState = new NativeMethods.TOKEN_PRIVILEGE();
+                var newState = new NativeMethods.TOKEN_PRIVILEGE();
                 newState.PrivilegeCount = 1;
                 newState.Privilege.Attributes = NativeMethods.SE_PRIVILEGE_ENABLED;
                 newState.Privilege.Luid = luid;
@@ -1332,7 +1332,7 @@ namespace Microsoft.PowerShell.Commands
         /// Access Control List (ACL).
         protected override void ProcessRecord()
         {
-            ObjectSecurity aclObjectSecurity = _securityDescriptor as ObjectSecurity;
+            var aclObjectSecurity = _securityDescriptor as ObjectSecurity;
 
             if (_inputObject != null)
             {
@@ -1340,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (methodInfo != null)
                 {
-                    CommonSecurityDescriptor aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
+                    var aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
                     string sddl;
 
                     if (aclObjectSecurity != null)
@@ -1442,7 +1442,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 IntPtr pSacl = IntPtr.Zero;
-                NativeMethods.TOKEN_PRIVILEGE previousState = new NativeMethods.TOKEN_PRIVILEGE();
+                var previousState = new NativeMethods.TOKEN_PRIVILEGE();
                 try
                 {
                     if (CentralAccessPolicy != null)
@@ -1450,7 +1450,7 @@ namespace Microsoft.PowerShell.Commands
                         pSacl = GetSaclWithCapId(CentralAccessPolicy);
                         if (pSacl == IntPtr.Zero)
                         {
-                            SystemException e = new SystemException(
+                            var e = new SystemException(
                                 UtilsStrings.GetSaclWithCapIdFail);
                             WriteError(new ErrorRecord(e,
                                                         "SetAcl_CentralAccessPolicy",
@@ -1464,7 +1464,7 @@ namespace Microsoft.PowerShell.Commands
                         pSacl = GetEmptySacl();
                         if (pSacl == IntPtr.Zero)
                         {
-                            SystemException e = new SystemException(
+                            var e = new SystemException(
                                 UtilsStrings.GetEmptySaclFail);
                             WriteError(new ErrorRecord(e,
                                                         "SetAcl_ClearCentralAccessPolicy",
@@ -1476,7 +1476,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (string p in Path)
                     {
-                        Collection<PathInfo> pathsToProcess = new Collection<PathInfo>();
+                        var pathsToProcess = new Collection<PathInfo>();
 
                         CmdletProviderContext context = this.CmdletProviderContext;
                         context.PassThru = Passthru;
@@ -1520,7 +1520,7 @@ namespace Microsoft.PowerShell.Commands
                                         IntPtr pToken = GetTokenWithEnabledPrivilege("SeSecurityPrivilege", previousState);
                                         if (pToken == IntPtr.Zero)
                                         {
-                                            SystemException e = new SystemException(
+                                            var e = new SystemException(
                                                 UtilsStrings.GetTokenWithEnabledPrivilegeFail);
                                             WriteError(new ErrorRecord(e,
                                                                         "SetAcl_AdjustTokenPrivileges",
@@ -1542,7 +1542,7 @@ namespace Microsoft.PowerShell.Commands
                                         // Restore privileges to the previous state.
                                         if (pToken != IntPtr.Zero)
                                         {
-                                            NativeMethods.TOKEN_PRIVILEGE newState = new NativeMethods.TOKEN_PRIVILEGE();
+                                            var newState = new NativeMethods.TOKEN_PRIVILEGE();
                                             uint newSize = 0;
                                             NativeMethods.AdjustTokenPrivileges(
                                                 pToken,

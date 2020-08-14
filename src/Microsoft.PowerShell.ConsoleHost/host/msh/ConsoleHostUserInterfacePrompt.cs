@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell
 
             lock (_instanceLock)
             {
-                Dictionary<string, PSObject> results = new Dictionary<string, PSObject>();
+                var results = new Dictionary<string, PSObject>();
 
                 bool cancelInput = false;
 
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell
                             string errMsg =
                                 StringUtil.Format(ConsoleHostUserInterfaceStrings.PromptTypeLoadErrorTemplate,
                                     desc.Name, desc.ParameterTypeFullName);
-                            PromptingException e = new PromptingException(errMsg,
+                            var e = new PromptingException(errMsg,
                                 null, "BadTypeName", ErrorCategory.InvalidType);
                             throw e;
                         }
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell
                     if (fieldType.GetInterface(typeof(IList).FullName) != null)
                     {
                         // field is a type implementing IList
-                        ArrayList inputList = new ArrayList(); // stores all converted user input before
+                        var inputList = new ArrayList(); // stores all converted user input before
                         // assigned to an array
 
                         // if the field is an array, the element type can be found; else, use Object
@@ -195,12 +195,12 @@ namespace Microsoft.PowerShell
                                 ArgumentException innerException = PSTraceSource.NewArgumentException(
                                     string.Format(CultureInfo.InvariantCulture,
                                     "descriptions[{0}].AssemblyFullName", descIndex));
-                                PromptingException e = new PromptingException(msg, innerException, "ZeroRankArray", ErrorCategory.InvalidOperation);
+                                var e = new PromptingException(msg, innerException, "ZeroRankArray", ErrorCategory.InvalidOperation);
                                 throw e;
                             }
                         }
 
-                        StringBuilder fieldPromptList = new StringBuilder(fieldPrompt);
+                        var fieldPromptList = new StringBuilder(fieldPrompt);
                         // fieldPromptList = fieldPrompt + "[i] :"
                         fieldPromptList.Append("[");
 
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell
                 else
                 {
                     object userInput = ReadLineSafe(false, null);
-                    string userInputString = userInput as string;
+                    var userInputString = userInput as string;
                     System.Management.Automation.Diagnostics.Assert(userInputString != null, "ReadLineSafe did not return a string");
                     rawInputString = userInputString;
                 }

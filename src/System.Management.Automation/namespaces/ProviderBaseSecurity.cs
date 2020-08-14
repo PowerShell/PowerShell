@@ -37,7 +37,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
 
-            ISecurityDescriptorCmdletProvider permissionProvider = this as ISecurityDescriptorCmdletProvider;
+            var permissionProvider = this as ISecurityDescriptorCmdletProvider;
 
             //
             // if this is not supported, the fn will throw
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Provider
         {
             Context = context;
 
-            ISecurityDescriptorCmdletProvider permissionProvider = this as ISecurityDescriptorCmdletProvider;
+            var permissionProvider = this as ISecurityDescriptorCmdletProvider;
 
             //
             // if this is not supported, the fn will throw

@@ -404,7 +404,7 @@ namespace System.Management.Automation.Language
 
             internal static List<Block> GenerateReverseDepthFirstOrder(Block block)
             {
-                List<Block> result = new List<Block>();
+                var result = new List<Block>();
 
                 VisitDepthFirstOrder(block, result);
                 result.Reverse();
@@ -572,7 +572,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal static bool AnalyzeMemberFunction(FunctionMemberAst ast)
         {
-            VariableAnalysis va = (new VariableAnalysis());
+            var va = (new VariableAnalysis());
             va.AnalyzeImpl(ast, false, false);
             return va._exitBlock._predecessors.All(b => b._returns || b._throws || b._unreachable);
         }
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation.Language
 
         public object VisitIfStatement(IfStatementAst ifStmtAst)
         {
-            Block afterStmt = new Block();
+            var afterStmt = new Block();
 
             if (ifStmtAst.ElseClause == null)
             {
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation.Language
             {
                 var clause = ifStmtAst.Clauses[i];
                 bool isLastClause = (i == (clauseCount - 1) && ifStmtAst.ElseClause == null);
-                Block clauseBlock = new Block();
+                var clauseBlock = new Block();
                 Block nextBlock = isLastClause ? afterStmt : new Block();
 
                 clause.Item1.Accept(this);
@@ -1110,13 +1110,13 @@ namespace System.Management.Automation.Language
             Action switchBodyGenerator = () =>
             {
                 bool hasDefault = (switchStatementAst.Default != null);
-                Block afterStmt = new Block();
+                var afterStmt = new Block();
 
                 int clauseCount = switchStatementAst.Clauses.Count;
                 for (int i = 0; i < clauseCount; i++)
                 {
                     var clause = switchStatementAst.Clauses[i];
-                    Block clauseBlock = new Block();
+                    var clauseBlock = new Block();
                     bool isLastClause = (i == (clauseCount - 1) && !hasDefault);
                     Block nextBlock = isLastClause ? afterStmt : new Block();
 

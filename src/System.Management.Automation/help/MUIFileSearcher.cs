@@ -205,7 +205,7 @@ namespace System.Management.Automation
         /// <param name="directory"></param>
         private void SearchForFiles(string pattern, string directory)
         {
-            List<string> cultureNameList = new List<string>();
+            var cultureNameList = new List<string>();
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
             while (culture != null && !string.IsNullOrEmpty(culture.Name))
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static Collection<string> NormalizeSearchPaths(string target, Collection<string> searchPaths)
         {
-            Collection<string> result = new Collection<string>();
+            var result = new Collection<string>();
 
             // step 1: if target has path attached, directly locate
             //         file from there.
@@ -320,7 +320,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static Collection<string> SearchFiles(string pattern, Collection<string> searchPaths)
         {
-            MUIFileSearcher searcher = new MUIFileSearcher(pattern, searchPaths);
+            var searcher = new MUIFileSearcher(pattern, searchPaths);
 
             return searcher.Result;
         }
@@ -346,7 +346,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static string LocateFile(string file, Collection<string> searchPaths)
         {
-            MUIFileSearcher searcher = new MUIFileSearcher(file, searchPaths, SearchMode.First);
+            var searcher = new MUIFileSearcher(file, searchPaths, SearchMode.First);
 
             if (searcher.Result == null || searcher.Result.Count == 0)
                 return null;

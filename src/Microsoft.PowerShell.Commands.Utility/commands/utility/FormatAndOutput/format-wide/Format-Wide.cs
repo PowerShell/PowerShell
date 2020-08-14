@@ -83,12 +83,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            var parameters = new FormattingCommandLineParameters();
 
             if (_prop != null)
             {
-                ParameterProcessor processor = new ParameterProcessor(new FormatWideParameterDefinition());
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                var processor = new ParameterProcessor(new FormatWideParameterDefinition());
+                var invocationContext = new TerminatingErrorContext(this);
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
                     // the user specified -autosize:true AND a column number
                     string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         new InvalidDataException(),
                         "FormatCannotSpecifyAutosizeAndColumns",
                         ErrorCategory.InvalidArgument,
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             if (_autosize.HasValue)
                 parameters.autosize = _autosize.Value;
 
-            WideSpecificParameters wideSpecific = new WideSpecificParameters();
+            var wideSpecific = new WideSpecificParameters();
             parameters.shapeParameters = wideSpecific;
             if (_column.HasValue)
             {

@@ -50,7 +50,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            SyntaxHelpInfo syntaxHelpInfo = new SyntaxHelpInfo(name, text, category);
+            var syntaxHelpInfo = new SyntaxHelpInfo(name, text, category);
 
             if (string.IsNullOrEmpty(syntaxHelpInfo.Name))
                 return null;

@@ -404,7 +404,7 @@ namespace System.Management.Automation.Language
                 (!remainingParameterSetIncludesDefault) &&
                 (!onlyOneRemainingParameterSet))
             {
-                ParameterBindingException bindingException =
+                var bindingException =
                     new ParameterBindingException(
                         ErrorCategory.InvalidArgument,
                         null,
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Language
             {
                 foreach (CommandParameterAst parameterNotFound in bindingInfo.ParametersNotFound)
                 {
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             null,
@@ -461,9 +461,9 @@ namespace System.Management.Automation.Language
             {
                 foreach (AstParameterArgumentPair unboundArgument in bindingInfo.UnboundArguments)
                 {
-                    AstPair argument = unboundArgument as AstPair;
+                    var argument = unboundArgument as AstPair;
 
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             null,
@@ -487,7 +487,7 @@ namespace System.Management.Automation.Language
                     object constantValue = null;
 
                     // This is a single argument
-                    AstPair argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
+                    var argumentAstPair = bindingInfo.BoundArguments[item.Key] as AstPair;
                     if (argumentAstPair != null)
                     {
                         value = argumentAstPair.Argument;
@@ -495,13 +495,13 @@ namespace System.Management.Automation.Language
 
                     // This is a parameter that took an argument, as well as ValueFromRemainingArguments.
                     // Merge the arguments into a single fake argument.
-                    AstArrayPair argumentAstArrayPair = bindingInfo.BoundArguments[item.Key] as AstArrayPair;
+                    var argumentAstArrayPair = bindingInfo.BoundArguments[item.Key] as AstArrayPair;
                     if (argumentAstArrayPair != null)
                     {
-                        List<ExpressionAst> arguments = new List<ExpressionAst>();
+                        var arguments = new List<ExpressionAst>();
                         foreach (ExpressionAst expression in argumentAstArrayPair.Argument)
                         {
-                            ArrayLiteralAst expressionArray = expression as ArrayLiteralAst;
+                            var expressionArray = expression as ArrayLiteralAst;
                             if (expressionArray != null)
                             {
                                 foreach (ExpressionAst newExpression in expressionArray.Elements)
@@ -517,7 +517,7 @@ namespace System.Management.Automation.Language
 
                         // Define the virtual extent and virtual ArrayLiteral.
                         IScriptExtent fakeExtent = arguments[0].Extent;
-                        ArrayLiteralAst fakeArguments = new ArrayLiteralAst(fakeExtent, arguments);
+                        var fakeArguments = new ArrayLiteralAst(fakeExtent, arguments);
                         value = fakeArguments;
                     }
 
@@ -553,7 +553,7 @@ namespace System.Management.Automation.Language
                         if (!takesValueFromPipeline)
                         {
                             // We have a parameter with no value that isn't a switch parameter, or input parameter
-                            ParameterBindingException bindingException =
+                            var bindingException =
                                 new ParameterBindingException(
                                     ErrorCategory.InvalidArgument,
                                     null,
@@ -579,7 +579,7 @@ namespace System.Management.Automation.Language
                 return;
             }
 
-            ParameterBindingException bindingException =
+            var bindingException =
                 new ParameterBindingException(
                     ErrorCategory.InvalidArgument,
                     null,
@@ -604,7 +604,7 @@ namespace System.Management.Automation.Language
 
             CommandParameterAst currentParameter = null;
             int position = 0;
-            ParameterBindingResult bindingResult = new ParameterBindingResult();
+            var bindingResult = new ParameterBindingResult();
 
             foreach (CommandElementAst commandElement in commandAst.CommandElements)
             {
@@ -615,7 +615,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                CommandParameterAst parameter = commandElement as CommandParameterAst;
+                var parameter = commandElement as CommandParameterAst;
                 if (parameter != null)
                 {
                     if (currentParameter != null)
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Language
             {
                 _value = value;
 
-                ConstantExpressionAst constantValueAst = value as ConstantExpressionAst;
+                var constantValueAst = value as ConstantExpressionAst;
                 if (constantValueAst != null)
                 {
                     this.ConstantValue = constantValueAst.Value;
@@ -956,7 +956,7 @@ namespace System.Management.Automation.Language
             InitializeMembers();
             _commandAst = command;
             _commandElements = command.CommandElements;
-            Collection<AstParameterArgumentPair> unboundArguments = new Collection<AstParameterArgumentPair>();
+            var unboundArguments = new Collection<AstParameterArgumentPair>();
 
             // analyze the command and reparse the arguments
             {
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation.Language
                 // Check if it's SwitchParameter
                 if (matchingParameter.Parameter.Type == typeof(SwitchParameter))
                 {
-                    SwitchPair newArg = new SwitchPair(argument.Parameter);
+                    var newArg = new SwitchPair(argument.Parameter);
                     result.Add(newArg);
                     continue;
                 }
@@ -1514,7 +1514,7 @@ namespace System.Management.Automation.Language
                             // The next parameter doesn't exist. We use it as an argument
                             if (nextMatchingParameter == null)
                             {
-                                AstPair newArg = new AstPair(argument.Parameter, nextArg.Parameter);
+                                var newArg = new AstPair(argument.Parameter, nextArg.Parameter);
                                 result.Add(newArg);
                                 index++;
                             }
@@ -1522,7 +1522,7 @@ namespace System.Management.Automation.Language
                             {
                                 // It's possible the user is typing tab for argument completion.
                                 // We set a fake argument for the current parameter in this case.
-                                FakePair newArg = new FakePair(argument.Parameter);
+                                var newArg = new FakePair(argument.Parameter);
                                 result.Add(newArg);
                             }
                         }
@@ -1530,18 +1530,18 @@ namespace System.Management.Automation.Language
                         {
                             // The next parameter name is ambiguous. We just set
                             // a fake argument for the current parameter.
-                            FakePair newArg = new FakePair(argument.Parameter);
+                            var newArg = new FakePair(argument.Parameter);
                             result.Add(newArg);
                         }
                     }
                     else
                     {
                         // The next item is a pure argument.
-                        AstPair nextArgument = nextArg as AstPair;
+                        var nextArgument = nextArg as AstPair;
                         Diagnostics.Assert(nextArgument != null, "the next item should be a pure argument here");
                         Diagnostics.Assert(nextArgument.ArgumentSpecified && !nextArgument.ArgumentIsCommandParameterAst, "the next item should be a pure argument here");
 
-                        AstPair newArg = new AstPair(argument.Parameter, (ExpressionAst)nextArgument.Argument);
+                        var newArg = new AstPair(argument.Parameter, (ExpressionAst)nextArgument.Argument);
                         result.Add(newArg);
                         index++;
                     }
@@ -1549,7 +1549,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     // The current parameter is the last item. Set a fake argument for it
-                    FakePair newArg = new FakePair(argument.Parameter);
+                    var newArg = new FakePair(argument.Parameter);
                     result.Add(newArg);
                 }
             }
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation.Language
 
         private Collection<AstParameterArgumentPair> BindNamedParameters()
         {
-            Collection<AstParameterArgumentPair> result = new Collection<AstParameterArgumentPair>();
+            var result = new Collection<AstParameterArgumentPair>();
 
             if (!_bindingEffective)
                 return result;
@@ -1630,11 +1630,11 @@ namespace System.Management.Automation.Language
             uint defaultParameterSetFlag,
             BindingType bindingType)
         {
-            Collection<AstParameterArgumentPair> result = new Collection<AstParameterArgumentPair>();
+            var result = new Collection<AstParameterArgumentPair>();
 
             if (_bindingEffective && unboundArguments.Count > 0)
             {
-                List<AstParameterArgumentPair> unboundArgumentsCollection = new List<AstParameterArgumentPair>(unboundArguments);
+                var unboundArgumentsCollection = new List<AstParameterArgumentPair>(unboundArguments);
                 // Get the unbound positional parameters
                 SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> positionalParameterDictionary;
                 try
@@ -1877,10 +1877,10 @@ namespace System.Management.Automation.Language
             if (!_bindingEffective || unboundArguments.Count == 0)
                 return unboundArguments;
 
-            Collection<ExpressionAst> argList = new Collection<ExpressionAst>();
+            var argList = new Collection<ExpressionAst>();
             foreach (AstParameterArgumentPair arg in unboundArguments)
             {
-                AstPair realArg = arg as AstPair;
+                var realArg = arg as AstPair;
                 Diagnostics.Assert(realArg != null && !realArg.ParameterSpecified && !realArg.ArgumentIsCommandParameterAst,
                     "all unbound arguments left should be pure ExpressionAst arguments");
                 argList.Add((ExpressionAst)realArg.Argument);

@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// <param name="setValue">Value to set this property.</param>
         internal void SetValue(object target, object setValue)
         {
-            object[] propValue = new object[1];
+            var propValue = new object[1];
             setValue = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, this.Type, CultureInfo.InvariantCulture);
             propValue[0] = setValue;
 
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         /// <returns>Property signature.</returns>
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.Append(this.GetDefinition());
             builder.Append(" ");
             if (IsGettable)

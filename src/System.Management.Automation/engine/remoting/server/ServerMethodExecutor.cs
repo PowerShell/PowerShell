@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
 
             // Use void call ID so that the call is known to not have a return value.
             long callId = ServerDispatchTable.VoidCallId;
-            RemoteHostCall remoteHostCall = new RemoteHostCall(callId, methodId, parameters);
+            var remoteHostCall = new RemoteHostCall(callId, methodId, parameters);
 
             // Dispatch the call but don't wait for response since the return value is void.
 
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Remoting
 
             // Create the method call object.
             long callId = _serverDispatchTable.CreateNewCallId();
-            RemoteHostCall remoteHostCall = new RemoteHostCall(callId, methodId, parameters);
+            var remoteHostCall = new RemoteHostCall(callId, methodId, parameters);
 
             RemoteDataObject<PSObject> dataToBeSent = RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Client,
                 _remoteHostCallDataType, _clientRunspacePoolId, _clientPowerShellId,

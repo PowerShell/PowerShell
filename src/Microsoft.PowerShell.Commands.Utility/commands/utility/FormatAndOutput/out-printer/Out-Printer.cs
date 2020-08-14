@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // set up the Screen Host interface
-            OutputManagerInner outInner = (OutputManagerInner)this.implementation;
+            var outInner = (OutputManagerInner)this.implementation;
 
             outInner.LineOutput = InstantiateLineOutputInterface();
 
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private LineOutput InstantiateLineOutputInterface()
         {
-            PrinterLineOutput printOutput = new PrinterLineOutput(_printerName);
+            var printOutput = new PrinterLineOutput(_printerName);
             return (LineOutput)printOutput;
         }
     }

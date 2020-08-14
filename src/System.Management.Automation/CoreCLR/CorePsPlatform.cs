@@ -742,7 +742,7 @@ namespace System.Management.Automation
                 public string GetModeString()
                 {
                     int offset = 0;
-                    char[] modeCharacters = new char[10];
+                    var modeCharacters = new char[10];
                     modeCharacters[offset++] = itemTypeTable[ItemType];
 
                     foreach (StatMask permission in permissions)
@@ -860,7 +860,7 @@ namespace System.Management.Automation
             /// <returns>A managed common stat class instance.</returns>
             private static CommonStat CopyStatStruct(NativeMethods.CommonStatStruct css)
             {
-                CommonStat cs = new CommonStat();
+                var cs = new CommonStat();
                 cs.Inode = css.Inode;
                 cs.Mode = css.Mode;
                 cs.UserId = css.UserId;

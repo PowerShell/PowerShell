@@ -119,7 +119,7 @@ namespace System.Management.Automation.Interpreter
     {
         internal static T[] AddLast<T>(this IList<T> list, T item)
         {
-            T[] res = new T[list.Count + 1];
+            var res = new T[list.Count + 1];
             list.CopyTo(res, 0);
             res[list.Count] = item;
             return res;
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Interpreter
 
             // we don't have any dynamic stack trace data, capture the data we can
             // from the raw exception object.
-            StackTrace st = new StackTrace(rethrow, true);
+            var st = new StackTrace(rethrow, true);
 
             if (!TryGetAssociatedStackTraces(rethrow, out prev))
             {
@@ -639,7 +639,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             // add the new entry to the head of the list and into the dictionary
-            LinkedListNode<TKey> listNode = new LinkedListNode<TKey>(key);
+            var listNode = new LinkedListNode<TKey>(key);
             _list.AddFirst(listNode);
             _dict[key] = new CacheDict<TKey, TValue>.KeyInfo(value, listNode);
         }
@@ -830,7 +830,7 @@ namespace System.Management.Automation.Interpreter
             try
             {
                 int threadId = Thread.CurrentThread.ManagedThreadId;
-                StorageInfo newInfo = new StorageInfo(Thread.CurrentThread);
+                var newInfo = new StorageInfo(Thread.CurrentThread);
 
                 // set to updating while potentially resizing/mutating, then we'll
                 // set back to the current value.
@@ -847,7 +847,7 @@ namespace System.Management.Automation.Interpreter
                 }
                 else if (curStorage.Length <= threadId)
                 {
-                    StorageInfo[] newStorage = new StorageInfo[threadId + 1];
+                    var newStorage = new StorageInfo[threadId + 1];
                     for (int i = 0; i < curStorage.Length; i++)
                     {
                         // leave out the threads that have exited
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation.Interpreter
         internal static U[] Map<T, U>(this ICollection<T> collection, Func<T, U> select)
         {
             int count = collection.Count;
-            U[] result = new U[count];
+            var result = new U[count];
             count = 0;
             foreach (T t in collection)
             {

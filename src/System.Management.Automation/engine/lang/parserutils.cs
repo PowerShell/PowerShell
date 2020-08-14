@@ -270,7 +270,7 @@ namespace System.Management.Automation
                 s_integerCache[i] = (object)(i + _MinCache);
             }
 
-            for (char ch = (char)0; ch < 255; ch++)
+            for (var ch = (char)0; ch < 255; ch++)
             {
                 s_chars[ch] = new string(ch, 1);
             }
@@ -312,7 +312,7 @@ namespace System.Management.Automation
 
         internal static PSObject WrappedNumber(object data, string text)
         {
-            PSObject wrapped = new PSObject(data);
+            var wrapped = new PSObject(data);
             wrapped.TokenText = text;
             return wrapped;
         }
@@ -352,7 +352,7 @@ namespace System.Management.Automation
             }
             catch (PSInvalidCastException mice)
             {
-                RuntimeException re = new RuntimeException(mice.Message, mice);
+                var re = new RuntimeException(mice.Message, mice);
                 re.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorPosition));
                 throw re;
             }
@@ -407,7 +407,7 @@ namespace System.Management.Automation
             }
 
             // None of the explicit conversions worked so try and invoke a method instead...
-            object[] parms = new object[2];
+            var parms = new object[2];
             parms[0] = lval;
             parms[1] = rval;
             return CallMethod(
@@ -429,7 +429,7 @@ namespace System.Management.Automation
 
         private static object[] unfoldTuple(ExecutionContext context, IScriptExtent errorPosition, object tuple)
         {
-            List<object> result = new List<object>();
+            var result = new List<object>();
 
             IEnumerator enumerator = LanguagePrimitives.GetEnumerator(tuple);
             if (enumerator != null)
@@ -470,7 +470,7 @@ namespace System.Management.Automation
 
         private static RegexOptions parseRegexOptions(SplitOptions options)
         {
-            RegexOptions result = RegexOptions.None;
+            var result = RegexOptions.None;
             if ((options & SplitOptions.CultureInvariant) != 0)
             {
                 result |= RegexOptions.CultureInvariant;
@@ -546,7 +546,7 @@ namespace System.Management.Automation
                 limit = FixNum(args[1], errorPosition);
             if (args.Length >= 3 && args[2] != null)
             {
-                string args2asString = args[2] as string;
+                var args2asString = args[2] as string;
                 if (args2asString == null || !string.IsNullOrEmpty(args2asString))
                 {
                     options = ConvertTo<SplitOptions>(args[2], errorPosition);
@@ -920,7 +920,7 @@ namespace System.Management.Automation
             object substitute = string.Empty;
 
             rval = PSObject.Base(rval);
-            IList rList = rval as IList;
+            var rList = rval as IList;
             if (rList != null)
             {
                 if (rList.Count > 2)
@@ -944,14 +944,14 @@ namespace System.Management.Automation
                 pattern = rval;
             }
 
-            RegexOptions rreOptions = RegexOptions.None;
+            var rreOptions = RegexOptions.None;
 
             if (ignoreCase)
             {
                 rreOptions = RegexOptions.IgnoreCase;
             }
 
-            Regex rr = pattern as Regex;
+            var rr = pattern as Regex;
             if (rr == null)
             {
                 try
@@ -982,7 +982,7 @@ namespace System.Management.Automation
             }
             else
             {
-                List<object> resultList = new List<object>();
+                var resultList = new List<object>();
                 while (ParserOps.MoveNext(context, errorPosition, list))
                 {
                     string lvalString = PSObject.ToStringParser(context, ParserOps.Current(errorPosition, list));
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 
-            Type rType = rval as Type;
+            var rType = rval as Type;
 
             if (rType == null)
             {
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 
-            Type rType = rval as Type;
+            var rType = rval as Type;
 
             if (rType == null)
             {
@@ -1144,7 +1144,7 @@ namespace System.Management.Automation
                 return BoolToObject(wcp.IsMatch(lvalString) ^ notLike);
             }
 
-            List<object> resultList = new List<object>();
+            var resultList = new List<object>();
 
             while (ParserOps.MoveNext(context, errorPosition, list))
             {
@@ -1195,7 +1195,7 @@ namespace System.Management.Automation
                     GroupCollection groups = m.Groups;
                     if (groups.Count > 0)
                     {
-                        Hashtable h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+                        var h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
                         foreach (string groupName in r.GetGroupNames())
                         {
@@ -1219,7 +1219,7 @@ namespace System.Management.Automation
             }
             else
             {
-                List<object> resultList = new List<object>();
+                var resultList = new List<object>();
                 int check = 0;
 
                 try
@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
                 return BoolToObject(compareDelegate(left, right, ignoreCase));
             }
 
-            List<object> resultList = new List<object>();
+            var resultList = new List<object>();
             while (ParserOps.MoveNext(context, errorPosition, list))
             {
                 object val = ParserOps.Current(errorPosition, list);
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            PSObject mshObj = obj as PSObject;
+            var mshObj = obj as PSObject;
             if (mshObj == null)
             {
                 return obj.GetType().FullName;
@@ -1571,7 +1571,7 @@ namespace System.Management.Automation
                 // not really a method call.
                 if (valueToSet != AutomationNull.Value)
                 {
-                    PSParameterizedProperty propertyToSet = targetMethod as PSParameterizedProperty;
+                    var propertyToSet = targetMethod as PSParameterizedProperty;
 
                     if (propertyToSet == null)
                     {
@@ -1584,7 +1584,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    PSMethod adaptedMethod = targetMethod as PSMethod;
+                    var adaptedMethod = targetMethod as PSMethod;
                     if (adaptedMethod != null)
                     {
                         return adaptedMethod.Invoke(invocationConstraints, paramArray);
@@ -1974,7 +1974,7 @@ namespace System.Management.Automation
 
         internal static void Trace(ExecutionContext context, int level, string messageId, string resourceString, params object[] args)
         {
-            ActionPreference pref = ActionPreference.Continue;
+            var pref = ActionPreference.Continue;
 
             if (context.PSDebugTraceLevel > level)
             {

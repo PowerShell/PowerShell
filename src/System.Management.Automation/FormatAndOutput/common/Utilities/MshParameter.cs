@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                             string errorId,
                                                             string msg)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                                 new NotSupportedException(),
                                 errorId,
                                 ErrorCategory.InvalidArgument,
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (p == null || p.Length == 0)
                 return null;
 
-            List<MshParameter> retVal = new List<MshParameter>();
+            var retVal = new List<MshParameter>();
             MshParameter currParam;
 
             bool originalParameterWasHashTable = false;
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // full blown hash, need to:
             // 1. verify names(keys) and expand names if there are partial matches
             // 2. verify value types
-            Hashtable retVal = new Hashtable();
+            var retVal = new Hashtable();
 
             foreach (DictionaryEntry e in hash)
             {
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ProcessNullHashTableKey(invocationContext);
                 }
 
-                string currentStringKey = e.Key as string;
+                var currentStringKey = e.Key as string;
                 if (currentStringKey == null)
                 {
                     ProcessNonStringHashTableKey(invocationContext, e.Key);
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static string CatenateTypeArray(Type[] arr)
         {
-            string[] strings = new string[arr.Length];
+            var strings = new string[arr.Length];
             for (int k = 0; k < arr.Length; k++)
             {
                 strings[k] = arr[k].FullName;
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static string CatenateStringArray(string[] arr)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("{");
             for (int k = 0; k < arr.Length; k++)
             {

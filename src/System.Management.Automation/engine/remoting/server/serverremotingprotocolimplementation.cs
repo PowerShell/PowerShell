@@ -67,7 +67,7 @@ namespace System.Management.Automation.Remoting
             RemoteDataObject data = RemotingEncoder.GenerateServerSessionCapability(serverCapability,
                 Guid.Empty);
 
-            RemoteSessionStateMachineEventArgs negotiationSendCompletedArg =
+            var negotiationSendCompletedArg =
                 new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendCompleted);
             _stateMachine.RaiseEvent(negotiationSendCompletedArg);
 
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Remoting
 
             _transportManager.Close(reasonForClose);
 
-            RemoteSessionStateMachineEventArgs closeCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CloseCompleted);
+            var closeCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CloseCompleted);
             _stateMachine.RaiseEvent(closeCompletedArg);
         }
 
@@ -194,8 +194,8 @@ namespace System.Management.Automation.Remoting
                     break;
 
                 case RemotingDataType.CloseSession:
-                    PSRemotingDataStructureException reasonOfClose = new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientRequestedToCloseSession);
-                    RemoteSessionStateMachineEventArgs closeSessionArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, reasonOfClose);
+                    var reasonOfClose = new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientRequestedToCloseSession);
+                    var closeSessionArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, reasonOfClose);
                     _stateMachine.RaiseEvent(closeSessionArg);
                     break;
 
@@ -213,13 +213,13 @@ namespace System.Management.Automation.Remoting
                             dse.Message, PSVersionInfo.GitCommitId, RemotingConstants.ProtocolVersion);
                     }
 
-                    RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
+                    var capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);
                     capabilityArg.RemoteSessionCapability = capability;
                     _stateMachine.RaiseEvent(capabilityArg);
 
                     if (NegotiationReceived != null)
                     {
-                        RemoteSessionNegotiationEventArgs negotiationArg = new RemoteSessionNegotiationEventArgs(capability);
+                        var negotiationArg = new RemoteSessionNegotiationEventArgs(capability);
                         negotiationArg.RemoteData = rcvdData;
                         NegotiationReceived.SafeInvoke(this, negotiationArg);
                     }

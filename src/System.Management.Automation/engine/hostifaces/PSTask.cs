@@ -1142,7 +1142,7 @@ namespace System.Management.Automation.PSTasks
                 }
 
                 // Final state will be 'Complete', only if all child jobs completed successfully.
-                JobState finalState = JobState.Completed;
+                var finalState = JobState.Completed;
                 foreach (var childJob in ChildJobs)
                 {
                     if (childJob.JobStateInfo.State != JobState.Completed)
@@ -1415,7 +1415,7 @@ namespace System.Management.Automation.PSTasks
             // Nested debugged runspace prompt should look like:
             // [DBG]: [JobName]: PS C:\>>
             string promptScript = "'[DBG]: '" + " + " + "'[" + CodeGeneration.EscapeSingleQuotedStringContent(_jobName) + "]: '" + " + " + @"""PS $($executionContext.SessionState.Path.CurrentLocation)>> """;
-            PSCommand promptCommand = new PSCommand();
+            var promptCommand = new PSCommand();
             promptCommand.AddScript(promptScript);
             _wrappedDebugger.ProcessCommand(promptCommand, output);
 

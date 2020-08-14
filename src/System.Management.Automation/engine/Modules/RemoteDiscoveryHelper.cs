@@ -57,7 +57,7 @@ namespace System.Management.Automation
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             string name = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Name", rehydrationFlags);
             string path = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Path", rehydrationFlags);
-            PSModuleInfo moduleInfo = new PSModuleInfo(name, path, context: null, sessionState: null);
+            var moduleInfo = new PSModuleInfo(name, path, context: null, sessionState: null);
 
             moduleInfo.SetGuid(DeserializingTypeConverter.GetPropertyValue<Guid>(deserializedModuleInfo, "Guid", rehydrationFlags));
             moduleInfo.SetModuleType(DeserializingTypeConverter.GetPropertyValue<ModuleType>(deserializedModuleInfo, "ModuleType", rehydrationFlags));
@@ -316,7 +316,7 @@ namespace System.Management.Automation
                 innerException.Message);
 
             Exception outerException = new InvalidOperationException(errorMessage, innerException);
-            ErrorRecord errorRecord = new ErrorRecord(outerException, innerException.GetType().Name, ErrorCategory.NotSpecified, moduleName);
+            var errorRecord = new ErrorRecord(outerException, innerException.GetType().Name, ErrorCategory.NotSpecified, moduleName);
             return errorRecord;
         }
 
@@ -324,7 +324,7 @@ namespace System.Management.Automation
 
         private static ErrorRecord GetErrorRecordForRemoteDiscoveryProvider(Exception innerException)
         {
-            CimException cimException = innerException as CimException;
+            var cimException = innerException as CimException;
             if ((cimException != null) &&
                 ((cimException.NativeErrorCode == NativeErrorCode.InvalidNamespace) ||
                  (cimException.NativeErrorCode == NativeErrorCode.InvalidClass) ||
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                     Modules.RemoteDiscoveryProviderNotFound,
                     innerException.Message);
                 Exception outerException = new InvalidOperationException(errorMessage, innerException);
-                ErrorRecord errorRecord = new ErrorRecord(outerException, DiscoveryProviderNotFoundErrorId, ErrorCategory.NotImplemented, null);
+                var errorRecord = new ErrorRecord(outerException, DiscoveryProviderNotFoundErrorId, ErrorCategory.NotImplemented, null);
                 return errorRecord;
             }
             else
@@ -346,7 +346,7 @@ namespace System.Management.Automation
                     Modules.RemoteDiscoveryFailureFromDiscoveryProvider,
                     innerException.Message);
                 Exception outerException = new InvalidOperationException(errorMessage, innerException);
-                ErrorRecord errorRecord = new ErrorRecord(outerException, "DiscoveryProviderFailure", ErrorCategory.NotSpecified, null);
+                var errorRecord = new ErrorRecord(outerException, "DiscoveryProviderFailure", ErrorCategory.NotSpecified, null);
                 return errorRecord;
             }
         }
@@ -359,11 +359,11 @@ namespace System.Management.Automation
                 innerException.Message);
             Exception outerException = new InvalidOperationException(errorMessage, innerException);
 
-            RemoteException remoteException = innerException as RemoteException;
+            var remoteException = innerException as RemoteException;
             ErrorRecord remoteErrorRecord = remoteException != null ? remoteException.ErrorRecord : null;
             string errorId = remoteErrorRecord != null ? remoteErrorRecord.FullyQualifiedErrorId : innerException.GetType().Name;
             ErrorCategory errorCategory = remoteErrorRecord != null ? remoteErrorRecord.CategoryInfo.Category : ErrorCategory.NotSpecified;
-            ErrorRecord errorRecord = new ErrorRecord(outerException, errorId, errorCategory, null);
+            var errorRecord = new ErrorRecord(outerException, errorId, errorCategory, null);
 
             return errorRecord;
         }
@@ -389,8 +389,8 @@ namespace System.Management.Automation
                 errorMessageTemplate,
                 innerErrorMessage);
 
-            ErrorRecord outerErrorRecord = new ErrorRecord(innerErrorRecord, null /* null means: do not replace the exception */);
-            ErrorDetails outerErrorDetails = new ErrorDetails(errorMessage);
+            var outerErrorRecord = new ErrorRecord(innerErrorRecord, null /* null means: do not replace the exception */);
+            var outerErrorDetails = new ErrorDetails(errorMessage);
             outerErrorRecord.ErrorDetails = outerErrorDetails;
 
             return outerErrorRecord;
@@ -426,7 +426,7 @@ namespace System.Management.Automation
 
                         if (gotResults)
                         {
-                            T currentItem = default(T);
+                            var currentItem = default(T);
                             bool gotCurrentItem = false;
                             try
                             {
@@ -518,7 +518,7 @@ namespace System.Management.Automation
 
             if (propertyValue is string)
             {
-                string stringValue = (string)propertyValue;
+                var stringValue = (string)propertyValue;
                 try
                 {
                     if (typeof(T) == typeof(bool))
@@ -652,7 +652,7 @@ namespace System.Management.Automation
                 get
                 {
                     UInt16 moduleTypeInt = GetPropertyValue<UInt16>(_baseObject, "ModuleType", 0);
-                    DiscoveredModuleType moduleType = (DiscoveredModuleType)moduleTypeInt;
+                    var moduleType = (DiscoveredModuleType)moduleTypeInt;
                     bool isPsCimModule = (moduleType == DiscoveredModuleType.Cim);
                     return isPsCimModule;
                 }
@@ -745,7 +745,7 @@ namespace System.Management.Automation
             CancellationToken cancellationToken)
         {
             moduleNamePatterns = moduleNamePatterns ?? new[] { "*" };
-            HashSet<string> alreadyEmittedNamesOfCimModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var alreadyEmittedNamesOfCimModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             IEnumerable<CimModule> remoteModules = moduleNamePatterns
                 .SelectMany(moduleNamePattern =>
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
             Hashtable data = null;
             if (!containedErrors)
             {
-                ScriptBlock scriptBlock = new ScriptBlock(scriptBlockAst, isFilter: false);
+                var scriptBlock = new ScriptBlock(scriptBlockAst, isFilter: false);
                 data = cmdlet.LoadModuleManifestData(
                     temporaryModuleManifestPath,
                     scriptBlock,
@@ -1082,14 +1082,14 @@ namespace System.Management.Automation
                 return;
             }
 
-            Tuple<CimSession, Uri, string> cimSessionInfo = weaklyTypeSession as Tuple<CimSession, Uri, string>;
+            var cimSessionInfo = weaklyTypeSession as Tuple<CimSession, Uri, string>;
             if (cimSessionInfo != null)
             {
                 cimSessionAction(cimSessionInfo.Item1, cimSessionInfo.Item2, cimSessionInfo.Item3);
                 return;
             }
 
-            PSSession psSession = weaklyTypeSession as PSSession;
+            var psSession = weaklyTypeSession as PSSession;
             if (psSession != null)
             {
                 psSessionAction(psSession);

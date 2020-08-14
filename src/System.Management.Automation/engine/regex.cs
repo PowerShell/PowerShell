@@ -715,16 +715,16 @@ namespace System.Management.Automation
                     invalidPattern
                 );
 
-            ParentContainsErrorRecordException pce =
+            var pce =
                 new ParentContainsErrorRecordException(message);
 
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(pce,
                                  "WildcardPattern_Invalid",
                                  ErrorCategory.InvalidArgument,
                                  null);
 
-            WildcardPatternException e =
+            var e =
                 new WildcardPatternException(er);
 
             return e;
@@ -768,7 +768,7 @@ namespace System.Management.Automation
 
         internal static RegexOptions TranslateWildcardOptionsIntoRegexOptions(WildcardOptions options)
         {
-            RegexOptions regexOptions = RegexOptions.Singleline;
+            var regexOptions = RegexOptions.Singleline;
 
             if ((options & WildcardOptions.Compiled) != 0)
             {
@@ -906,7 +906,7 @@ namespace System.Management.Automation
         /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/></returns>
         public static Regex Parse(WildcardPattern wildcardPattern)
         {
-            WildcardPatternToRegexParser parser = new WildcardPatternToRegexParser();
+            var parser = new WildcardPatternToRegexParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);
             try
             {

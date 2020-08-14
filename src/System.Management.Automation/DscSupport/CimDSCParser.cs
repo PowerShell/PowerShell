@@ -781,7 +781,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 // Load Regular and DSC PS modules
                 bool importInBoxResourcesImplicitly = false;
-                List<string> modulePaths = new List<string>();
+                var modulePaths = new List<string>();
                 if (modulePathList == null || modulePathList.Count == 0)
                 {
                     modulePaths.Add(Path.Combine(configSystemPath, inboxModulePath));
@@ -1128,7 +1128,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns>List of cached cim classes.</returns>
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
-            List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
+            var cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
             var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var dscClassCacheEntry in ClassCache)
             {
@@ -1148,7 +1148,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         public static List<string> GetFileDefiningClass(string className)
         {
-            List<string> files = new List<string>();
+            var files = new List<string>();
             foreach (var pair in ByFileClassCache)
             {
                 var file = pair.Key;
@@ -1295,7 +1295,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         public static Collection<DynamicKeyword> GetCachedKeywords()
         {
-            Collection<DynamicKeyword> keywords = new Collection<DynamicKeyword>();
+            var keywords = new Collection<DynamicKeyword>();
 
             foreach (KeyValuePair<string, DscClassCacheEntry> cachedClass in ClassCache)
             {
@@ -1906,7 +1906,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         // This function performs semantic checks for all DSC Resources keywords.
         private static ParseError[] CheckMandatoryPropertiesPresent(DynamicKeywordStatementAst kwAst)
         {
-            HashSet<string> mandatoryPropertiesNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var mandatoryPropertiesNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var pair in kwAst.Keyword.Properties)
             {
                 if (pair.Value.Mandatory)
@@ -1953,7 +1953,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (mandatoryPropertiesNames.Count > 0)
             {
-                ParseError[] errors = new ParseError[mandatoryPropertiesNames.Count];
+                var errors = new ParseError[mandatoryPropertiesNames.Count];
                 var extent = kwAst.CommandElements[0].Extent;
                 int i = 0;
                 foreach (string name in mandatoryPropertiesNames)
@@ -2358,7 +2358,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             ProcessMembers(sb, embeddedInstanceTypes, typeAst, className);
 
-            Queue<object> bases = new Queue<object>();
+            var bases = new Queue<object>();
             foreach (var b in typeAst.BaseTypes)
             {
                 bases.Enqueue(b);
@@ -2456,7 +2456,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             IEnumerable<Ast> resourceDefinitions;
-            List<string> moduleFiles = new List<string>();
+            var moduleFiles = new List<string>();
             if (moduleInfo.RootModule != null)
             {
                 moduleFiles.Add(moduleInfo.Path);
@@ -2590,7 +2590,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if (errorList != null && extent != null)
                 {
-                    List<string> errorMessages = new List<string>();
+                    var errorMessages = new List<string>();
                     foreach (var error in errors)
                     {
                         errorMessages.Add(error.ToString());
@@ -2668,7 +2668,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (skip) continue;
 
                 // Parse the Resource Attribute to see if RunAs behavior is specified for the resource.
-                DSCResourceRunAsCredential runAsBehavior = DSCResourceRunAsCredential.Default;
+                var runAsBehavior = DSCResourceRunAsCredential.Default;
                 foreach (var attr in resourceDefnAst.Attributes)
                 {
                     if (attr.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute))
@@ -2943,7 +2943,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (validateSet != null)
                 {
                     bool valueMapComma = false;
-                    StringBuilder sbValues = new StringBuilder(", Values{");
+                    var sbValues = new StringBuilder(", Values{");
                     sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                     needComma = true;
 
@@ -3659,7 +3659,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static StringBuilder FormatCimPropertyType(DynamicKeywordProperty prop, bool isOptionalProperty)
         {
             string cimTypeName = prop.TypeConstraint;
-            StringBuilder formattedTypeString = new StringBuilder();
+            var formattedTypeString = new StringBuilder();
 
             if (string.Equals(cimTypeName, "MSFT_Credential", StringComparison.OrdinalIgnoreCase))
             {

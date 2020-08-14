@@ -58,7 +58,7 @@ namespace System.Management.Automation
         /// </remarks>
         private MamlCommandHelpInfo(XmlNode xmlNode, HelpCategory helpCategory) : base(helpCategory)
         {
-            MamlNode mamlNode = new MamlNode(xmlNode);
+            var mamlNode = new MamlNode(xmlNode);
             _fullHelpObject = mamlNode.PSObject;
 
             this.Errors = mamlNode.Errors;
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlCommandHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
-            MamlCommandHelpInfo mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
+            var mamlCommandHelpInfo = new MamlCommandHelpInfo(xmlNode, helpCategory);
 
             if (string.IsNullOrEmpty(mamlCommandHelpInfo.Name))
                 return null;
@@ -347,7 +347,7 @@ namespace System.Management.Automation
             // so starting with this assumption..I did an average of all the cmdlet
             // help content available at the time of writing this code and came up
             // with this number.
-            StringBuilder result = new StringBuilder(400);
+            var result = new StringBuilder(400);
             foreach (PSPropertyInfo propertyInfo in psObject.Properties)
             {
                 string typeNameOfValue = propertyInfo.TypeNameOfValue;
@@ -363,7 +363,7 @@ namespace System.Management.Automation
                             typeof(string), CultureInfo.InvariantCulture));
                         break;
                     case "system.management.automation.psobject[]":
-                        PSObject[] items = (PSObject[])LanguagePrimitives.ConvertTo(
+                        var items = (PSObject[])LanguagePrimitives.ConvertTo(
                                 propertyInfo.Value,
                                 typeof(PSObject[]),
                                 CultureInfo.InvariantCulture);
@@ -434,13 +434,13 @@ namespace System.Management.Automation
 
         internal MamlCommandHelpInfo Copy()
         {
-            MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), this.HelpCategory);
+            var result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), this.HelpCategory);
             return result;
         }
 
         internal MamlCommandHelpInfo Copy(HelpCategory newCategoryToUse)
         {
-            MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
+            var result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
             result.FullHelp.Properties["Category"].Value = newCategoryToUse;
             return result;
         }

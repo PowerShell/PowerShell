@@ -61,7 +61,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.SuppressWildcardExpansion = literalPath;
 
             GetProperty(paths, providerSpecificPickList, context);
@@ -268,7 +268,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -424,7 +424,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("properties");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -640,7 +640,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -797,7 +797,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(propertyToClear));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),

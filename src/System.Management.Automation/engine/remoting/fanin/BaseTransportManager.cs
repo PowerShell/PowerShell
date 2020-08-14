@@ -260,8 +260,8 @@ namespace System.Management.Automation.Remoting
                 // all exceptions
                 s_baseTracer.WriteLine("Exception processing data. {0}", exception.Message);
 
-                PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(exception.Message, exception);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
                 RaiseErrorHandler(eventargs);
                 return;
@@ -293,7 +293,7 @@ namespace System.Management.Automation.Remoting
 
             bool shouldProcess = false;
 
-            DataPriorityType dataPriority = DataPriorityType.Default;
+            var dataPriority = DataPriorityType.Default;
             if (stream.Equals(WSManNativeApi.WSMAN_STREAM_ID_STDIN, StringComparison.OrdinalIgnoreCase) ||
                 stream.Equals(WSManNativeApi.WSMAN_STREAM_ID_STDOUT, StringComparison.OrdinalIgnoreCase))
             {
@@ -341,7 +341,7 @@ namespace System.Management.Automation.Remoting
             // This might throw exceptions which the caller handles.
             PowerShellGuidObserver.SafeInvoke(remoteObject.PowerShellId, EventArgs.Empty);
 
-            RemoteDataEventArgs eventArgs = new RemoteDataEventArgs(remoteObject);
+            var eventArgs = new RemoteDataEventArgs(remoteObject);
             DataReceived.SafeInvoke(this, eventArgs);
         }
 
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // PSRemotingTransportException need not be wrapped in another PSRemotingTransportException.
                 tracer.WriteLine("Exception processing data. {0}", pte.Message);
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(pte,
+                var eventargs = new TransportErrorOccuredEventArgs(pte,
                                     TransportMethodEnum.ReceiveShellOutputEx);
                 EnqueueAndStartProcessingThread(null, eventargs, null);
 
@@ -659,8 +659,8 @@ namespace System.Management.Automation.Remoting.Client
                 // WSManCloseShell/Command from a Receive callback results in a deadlock.
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
 
-                PSRemotingTransportException e = new PSRemotingTransportException(exception.Message);
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(e,
+                var e = new PSRemotingTransportException(exception.Message);
+                var eventargs = new TransportErrorOccuredEventArgs(e,
                                     TransportMethodEnum.ReceiveShellOutputEx);
                 EnqueueAndStartProcessingThread(null, eventargs, null);
                 return;
@@ -701,7 +701,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if ((remoteObject != null) || (transportErrorArgs != null) || (privateData != null))
                 {
-                    CallbackNotificationInformation rcvdDataInfo = new CallbackNotificationInformation();
+                    var rcvdDataInfo = new CallbackNotificationInformation();
                     rcvdDataInfo.remoteObject = remoteObject;
                     rcvdDataInfo.transportError = transportErrorArgs;
                     rcvdDataInfo.privateData = privateData;
@@ -852,8 +852,8 @@ namespace System.Management.Automation.Remoting.Client
                 // all exceptions
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
 
-                PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
-                TransportErrorOccuredEventArgs eventargs =
+                var e = new PSRemotingTransportException(exception.Message, exception);
+                var eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
                 RaiseErrorHandler(eventargs);
                 return;
@@ -1308,7 +1308,7 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         // tell stream to notify us whenever a fragment is available instead of writing data
                         // into internal buffers. This will save write + read + dispose.)
-                        using (SerializedDataStream serializedData =
+                        using (var serializedData =
                             new SerializedDataStream(Fragmentor.FragmentSize, _onDataAvailable))
                         {
                             _shouldFlushData = flush;
@@ -1385,7 +1385,7 @@ namespace System.Management.Automation.Remoting.Server
             string errorMessage = string.Format(CultureInfo.InvariantCulture,
                 messageResource, new object[] { errorCode, methodName });
 
-            PSRemotingTransportException e = new PSRemotingTransportException(errorMessage);
+            var e = new PSRemotingTransportException(errorMessage);
             e.ErrorCode = errorCode;
 
             // Use thread-pool thread to raise the error handler..see explanation
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation.Remoting.Server
             ThreadPool.QueueUserWorkItem(new WaitCallback(
                 delegate (object state)
                 {
-                    TransportErrorOccuredEventArgs eventArgs = new TransportErrorOccuredEventArgs(e,
+                    var eventArgs = new TransportErrorOccuredEventArgs(e,
                         TransportMethodEnum.Unknown);
                     RaiseErrorHandler(eventArgs);
                 }));
@@ -1516,7 +1516,7 @@ namespace System.Management.Automation.Remoting.Server
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.
             // Retrieve the string (Base64 encoded) we are interested in.
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            var readerSettings = new XmlReaderSettings();
             readerSettings.CheckCharacters = false;
             readerSettings.IgnoreComments = true;
             readerSettings.IgnoreProcessingInstructions = true;

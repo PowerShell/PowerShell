@@ -578,7 +578,7 @@ namespace System.Management.Automation
                     CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
                 }
 
-                T convertedResult = (T)val;
+                var convertedResult = (T)val;
 
                 defaultUsed = false;
                 return convertedResult;
@@ -591,7 +591,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    string valString = val as string;
+                    var valString = val as string;
                     if (valString != null)
                     {
                         result = (T)Enum.Parse(typeof(T), valString, true);
@@ -874,7 +874,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void AppendDollarError(object obj)
         {
-            ErrorRecord objAsErrorRecord = obj as ErrorRecord;
+            var objAsErrorRecord = obj as ErrorRecord;
             if (objAsErrorRecord == null && !(obj is Exception))
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
@@ -882,7 +882,7 @@ namespace System.Management.Automation
             }
 
             object old = this.DollarErrorVariable;
-            ArrayList arraylist = old as ArrayList;
+            var arraylist = old as ArrayList;
             if (arraylist == null)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
@@ -897,7 +897,7 @@ namespace System.Management.Automation
                 if (arraylist[0] == obj)
                     return;
                 // otherwise check the exception members of the error records...
-                ErrorRecord er1 = arraylist[0] as ErrorRecord;
+                var er1 = arraylist[0] as ErrorRecord;
 
                 if (er1 != null && objAsErrorRecord != null && er1.Exception == objAsErrorRecord.Exception)
                     return;
@@ -963,7 +963,7 @@ namespace System.Management.Automation
         {
             if (_currentRunspace == null)
                 return;
-            LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
+            var lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
             if (lpl == null)
                 return;
             lpl.Stopper.Push(pp);
@@ -977,7 +977,7 @@ namespace System.Management.Automation
         {
             if (_currentRunspace == null)
                 return;
-            LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
+            var lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
             if (lpl == null)
                 return;
             lpl.Stopper.Pop(fromSteppablePipeline);
@@ -993,7 +993,7 @@ namespace System.Management.Automation
             {
                 if (_currentRunspace == null)
                     return false;
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_currentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                     return false;
                 return lpl.IsStopping;

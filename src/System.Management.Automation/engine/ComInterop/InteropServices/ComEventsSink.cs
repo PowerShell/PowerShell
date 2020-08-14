@@ -98,7 +98,7 @@ namespace System.Management.Automation.InteropServices
 
         public ComEventsMethod AddMethod(int dispid)
         {
-            ComEventsMethod method = new ComEventsMethod(dispid);
+            var method = new ComEventsMethod(dispid);
             _methods = ComEventsMethod.Add(_methods, method);
             return method;
         }
@@ -130,7 +130,7 @@ namespace System.Management.Automation.InteropServices
                 // contains another VARIANT with VT_BYREF | VT_VARIANT, then we need to extract the
                 // inner VARIANT and use it instead of the outer one. Note that if the inner VARIANT
                 // is VT_BYREF | VT_VARIANT | VT_ARRAY, it will pass the below test too.
-                Span<Variant> pByRefVariant = new Span<Variant>(pSrc.AsByRefVariant.ToPointer(), 1);
+                var pByRefVariant = new Span<Variant>(pSrc.AsByRefVariant.ToPointer(), 1);
                 if ((pByRefVariant[0].VariantType & VT_BYREF_TYPEMASK) == VT_BYREF_VARIANT)
                 {
                     return ref pByRefVariant[0];
@@ -160,9 +160,9 @@ namespace System.Management.Automation.InteropServices
             // arguments marshalling. see code:ComEventsHelper#ComEventsArgsMarshalling
 
             const int InvalidIdx = -1;
-            object[] args = new object[pDispParams.cArgs];
-            int[] byrefsMap = new int[pDispParams.cArgs];
-            bool[] usedArgs = new bool[pDispParams.cArgs];
+            var args = new object[pDispParams.cArgs];
+            var byrefsMap = new int[pDispParams.cArgs];
+            var usedArgs = new bool[pDispParams.cArgs];
 
             int totalCount = pDispParams.cNamedArgs + pDispParams.cArgs;
             var vars = new Span<Variant>(pDispParams.rgvarg.ToPointer(), totalCount);
@@ -250,7 +250,7 @@ namespace System.Management.Automation.InteropServices
         {
             Debug.Assert(_connectionPoint == null, "COM event sink is already advised");
 
-            ComTypes.IConnectionPointContainer cpc = (ComTypes.IConnectionPointContainer)rcw;
+            var cpc = (ComTypes.IConnectionPointContainer)rcw;
             ComTypes.IConnectionPoint cp;
             cpc.FindConnectionPoint(ref _iidSourceItf, out cp!);
 

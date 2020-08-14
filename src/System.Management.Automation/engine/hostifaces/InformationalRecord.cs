@@ -39,7 +39,7 @@ namespace System.Management.Automation
             {
                 _invocationInfo = new InvocationInfo(serializedObject);
 
-                ArrayList pipelineIterationInfo = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(serializedObject, "InformationalRecord_PipelineIterationInfo");
+                var pipelineIterationInfo = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(serializedObject, "InformationalRecord_PipelineIterationInfo");
 
                 _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])pipelineIterationInfo.ToArray(typeof(int)));
             }
@@ -102,7 +102,7 @@ namespace System.Management.Automation
             //
             if (invocationInfo.PipelineIterationInfo != null)
             {
-                int[] snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
+                var snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
 
                 _pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
             }

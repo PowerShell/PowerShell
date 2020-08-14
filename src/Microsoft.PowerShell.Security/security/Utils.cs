@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         {
             long size = 0;
 
-            using (FileStream fs = new FileStream(filePath, FileMode.Open))
+            using (var fs = new FileStream(filePath, FileMode.Open))
             {
                 size = fs.Length;
             }
@@ -64,10 +64,10 @@ namespace Microsoft.PowerShell
                     args
                 );
 
-            FileNotFoundException e =
+            var e =
                 new FileNotFoundException(message);
 
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(e,
                                 errorId,
                                 ErrorCategory.ObjectNotFound,
@@ -85,10 +85,10 @@ namespace Microsoft.PowerShell
         ErrorRecord CreatePathNotFoundErrorRecord(string path,
                                                   string errorId)
         {
-            ItemNotFoundException e =
+            var e =
                 new ItemNotFoundException(path, "PathNotFound", SessionStateStrings.PathNotFound);
 
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(e,
                                 errorId,
                                 ErrorCategory.ObjectNotFound,
@@ -111,10 +111,10 @@ namespace Microsoft.PowerShell
         {
             string message = StringUtil.Format(resourceStr, args);
 
-            NotSupportedException e =
+            var e =
                 new NotSupportedException(message);
 
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(e,
                                 errorId,
                                 ErrorCategory.NotImplemented,
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell
         ErrorRecord CreateInvalidArgumentErrorRecord(Exception e,
                                                      string errorId)
         {
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(e,
                                 errorId,
                                 ErrorCategory.InvalidArgument,

@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             List<RemoteRunspace> remoteRunspaces = null;
-            List<IThrottleOperation> operations = new List<IThrottleOperation>();
+            var operations = new List<IThrottleOperation>();
 
             switch (ParameterSetName)
             {
@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 remoteRunspace.Events.ReceivedEvents.PSEventReceived += OnRunspacePSEventReceived;
 
-                OpenRunspaceOperation operation = new OpenRunspaceOperation(remoteRunspace);
+                var operation = new OpenRunspaceOperation(remoteRunspace);
                 // HandleRunspaceStateChanged callback is added before ThrottleManager complete
                 // callback handlers so HandleRunspaceStateChanged will always be called first.
                 operation.OperationComplete += HandleRunspaceStateChanged;
@@ -422,11 +422,11 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(stateEventArgs));
             }
 
-            RunspaceStateEventArgs runspaceStateEventArgs =
+            var runspaceStateEventArgs =
                         stateEventArgs.BaseEvent as RunspaceStateEventArgs;
             RunspaceStateInfo stateInfo = runspaceStateEventArgs.RunspaceStateInfo;
             RunspaceState state = stateInfo.State;
-            OpenRunspaceOperation operation = sender as OpenRunspaceOperation;
+            var operation = sender as OpenRunspaceOperation;
             RemoteRunspace remoteRunspace = operation.OperatedRunspace;
 
             // since we got state changed event..we dont need to listen on
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
                         // Indicates that runspace is successfully opened
                         // Write it to PipelineWriter to be handled in
                         // HandleRemoteRunspace
-                        PSSession remoteRunspaceInfo = new PSSession(remoteRunspace);
+                        var remoteRunspaceInfo = new PSSession(remoteRunspace);
 
                         this.RunspaceRepository.Add(remoteRunspaceInfo);
 
@@ -470,13 +470,13 @@ namespace Microsoft.PowerShell.Commands
                         // set the transport message in the error detail so that
                         // the user can directly get to see the message without
                         // having to mine through the error record details
-                        PSRemotingTransportException transException =
+                        var transException =
                             reason as PSRemotingTransportException;
                         string errorDetails = null;
                         int transErrorCode = 0;
                         if (transException != null)
                         {
-                            OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
+                            var senderAsOp = sender as OpenRunspaceOperation;
                             transErrorCode = transException.ErrorCode;
                             if (senderAsOp != null)
                             {
@@ -513,11 +513,11 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // add host identification information in data structure handler message
-                        PSRemotingDataStructureException protoException = reason as PSRemotingDataStructureException;
+                        var protoException = reason as PSRemotingDataStructureException;
 
                         if (protoException != null)
                         {
-                            OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
+                            var senderAsOp = sender as OpenRunspaceOperation;
 
                             if (senderAsOp != null)
                             {
@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
                             errorDetails += System.Environment.NewLine + string.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
                         }
 
-                        ErrorRecord errorRecord = new ErrorRecord(reason,
+                        var errorRecord = new ErrorRecord(reason,
                              remoteRunspace, fullyQualifiedErrorId,
                                    ErrorCategory.OpenError, null, null,
                                         null, null, null, errorDetails, null);
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
                             if ((errorRecord.Exception != null) &&
                                 (errorRecord.Exception.InnerException != null))
                             {
-                                PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
+                                var ex = errorRecord.Exception.InnerException as PSDirectException;
                                 if (ex != null)
                                 {
                                     errorRecord = new ErrorRecord(errorRecord.Exception.InnerException,
@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
                         // cases write an error record
                         if (reason != null)
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(reason,
+                            var errorRecord = new ErrorRecord(reason,
                                  "PSSessionStateClosed",
                                        ErrorCategory.OpenError, remoteRunspace);
 
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         private List<RemoteRunspace> CreateRunspacesWhenRunspaceParameterSpecified()
         {
-            List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
+            var remoteRunspaces = new List<RemoteRunspace>();
 
             // validate the runspaces specified before processing them.
             // The function will result in terminating errors, if any
@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell.Commands
                     // clone the object based on what's specified in the input parameter
                     try
                     {
-                        RemoteRunspace remoteRunspace = (RemoteRunspace)remoteRunspaceInfo.Runspace;
+                        var remoteRunspace = (RemoteRunspace)remoteRunspaceInfo.Runspace;
                         RunspaceConnectionInfo newConnectionInfo = null;
 
                         if (remoteRunspace.ConnectionInfo is VMConnectionInfo)
@@ -660,14 +660,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
                         {
-                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy() as ContainerConnectionInfo;
+                            var newContainerConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy() as ContainerConnectionInfo;
                             newContainerConnectionInfo.CreateContainerProcess();
                             newConnectionInfo = newContainerConnectionInfo;
                         }
                         else
                         {
                             // WSMan case
-                            WSManConnectionInfo originalWSManConnectionInfo = remoteRunspace.ConnectionInfo as WSManConnectionInfo;
+                            var originalWSManConnectionInfo = remoteRunspace.ConnectionInfo as WSManConnectionInfo;
                             WSManConnectionInfo newWSManConnectionInfo = null;
 
                             if (originalWSManConnectionInfo != null)
@@ -703,7 +703,7 @@ namespace Microsoft.PowerShell.Commands
                         // Create new remote runspace with name and Id.
                         int rsId;
                         string rsName = GetRunspaceName(rsIndex, out rsId);
-                        RemoteRunspace newRemoteRunspace = new RemoteRunspace(
+                        var newRemoteRunspace = new RemoteRunspace(
                             typeTable, newConnectionInfo, this.Host, this.SessionOption.ApplicationArguments,
                             rsName, rsId);
 
@@ -713,7 +713,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         PipelineWriter writer = _stream.ObjectWriter;
 
-                        ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
+                        var errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                                 ErrorCategory.InvalidArgument, remoteRunspaceInfo);
 
                         Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
@@ -736,7 +736,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenUriParameterSpecified()
         {
-            List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
+            var remoteRunspaces = new List<RemoteRunspace>();
 
             // parse the Uri to obtain information about the runspace
             // required
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
                     connectionInfo.ConnectionUri = ConnectionUri[i];
                     connectionInfo.ShellUri = ConfigurationName;
                     if (CertificateThumbprint != null)
@@ -764,7 +764,7 @@ namespace Microsoft.PowerShell.Commands
                     // Create new remote runspace with name and Id.
                     int rsId;
                     string rsName = GetRunspaceName(i, out rsId);
-                    RemoteRunspace remoteRunspace = new RemoteRunspace(
+                    var remoteRunspace = new RemoteRunspace(
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
 
@@ -800,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenComputerNameParameterSpecified()
         {
-            List<RemoteRunspace> remoteRunspaces =
+            var remoteRunspaces =
                 new List<RemoteRunspace>();
 
             // Resolve all the machine names
@@ -840,7 +840,7 @@ namespace Microsoft.PowerShell.Commands
                     // Create new remote runspace with name and Id.
                     int rsId;
                     string rsName = GetRunspaceName(i, out rsId);
-                    RemoteRunspace runspace = new RemoteRunspace(
+                    var runspace = new RemoteRunspace(
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
 
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PipelineWriter writer = _stream.ObjectWriter;
 
-                    ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
+                    var errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                             ErrorCategory.InvalidArgument, resolvedComputerNames[i]);
 
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
@@ -875,7 +875,7 @@ namespace Microsoft.PowerShell.Commands
             int index;
             string command;
             Collection<PSObject> results;
-            List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
+            var remoteRunspaces = new List<RemoteRunspace>();
 
             if (ParameterSetName == PSExecutionCmdlet.VMIdParameterSet)
             {
@@ -985,7 +985,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidOperationException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForVMFailed",
                         ErrorCategory.InvalidOperation,
                         null);
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ArgumentException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForVMFailed",
                         ErrorCategory.InvalidArgument,
                         null);
@@ -1014,8 +1014,8 @@ namespace Microsoft.PowerShell.Commands
         private List<RemoteRunspace> CreateRunspacesWhenContainerParameterSpecified()
         {
             int index = 0;
-            List<string> resolvedNameList = new List<string>();
-            List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
+            var resolvedNameList = new List<string>();
+            var remoteRunspaces = new List<RemoteRunspace>();
 
             Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet),
                        "Expected ParameterSetName == ContainerId");
@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidOperationException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForContainerFailed",
                         ErrorCategory.InvalidOperation,
                         null);
@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ArgumentException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForContainerFailed",
                         ErrorCategory.InvalidArgument,
                         null);
@@ -1070,7 +1070,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForContainerFailed",
                         ErrorCategory.InvalidOperation,
                         null);
@@ -1155,7 +1155,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var remoteRunspaces = new List<RemoteRunspace>();
 
-            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
+            var connectionInfo = new NewProcessConnectionInfo(this.Credential);
             connectionInfo.AuthenticationMechanism = this.Authentication;
 #if !UNIX
             connectionInfo.PSVersion = new Version(5, 1);
@@ -1259,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
 
             PipelineWriter writer = _stream.ObjectWriter;
 
-            ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
+            var errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                 ErrorCategory.InvalidArgument, uri);
 
             Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)

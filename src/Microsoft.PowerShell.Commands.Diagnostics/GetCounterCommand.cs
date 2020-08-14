@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Continuous.IsPresent && _maxSamplesSpecified)
             {
-                Exception exc = new Exception(string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterContinuousOrMaxSamples")));
+                var exc = new Exception(string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterContinuousOrMaxSamples")));
                 ThrowTerminatingError(new ErrorRecord(exc, "CounterContinuousOrMaxSamples", ErrorCategory.InvalidArgument, null));
             }
         }
@@ -317,20 +317,20 @@ namespace Microsoft.PowerShell.Commands
         //
         private void ProcessListSetPerMachine(string machine)
         {
-            StringCollection counterSets = new StringCollection();
+            var counterSets = new StringCollection();
             uint res = _pdhHelper.EnumObjects(machine, ref counterSets);
             if (res != 0)
             {
                 // add an error message
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoCounterSetsOnComputer"), machine, res);
-                Exception exc = new Exception(msg);
+                var exc = new Exception(msg);
                 WriteError(new ErrorRecord(exc, "NoCounterSetsOnComputer", ErrorCategory.InvalidResult, machine));
                 return;
             }
 
             CultureInfo culture = GetCurrentCulture();
             List<Tuple<char, char>> characterReplacementList = null;
-            StringCollection validPaths = new StringCollection();
+            var validPaths = new StringCollection();
 
             _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
 
@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                WildcardPattern wildLogPattern = new WildcardPattern(normalizedPattern, WildcardOptions.IgnoreCase);
+                var wildLogPattern = new WildcardPattern(normalizedPattern, WildcardOptions.IgnoreCase);
 
                 foreach (string counterSet in counterSets)
                 {
@@ -356,14 +356,14 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    StringCollection counterSetCounters = new StringCollection();
-                    StringCollection counterSetInstances = new StringCollection();
+                    var counterSetCounters = new StringCollection();
+                    var counterSetInstances = new StringCollection();
 
                     res = _pdhHelper.EnumObjectItems(machine, counterSet, ref counterSetCounters, ref counterSetInstances);
                     if (res == PdhResults.PDH_ACCESS_DENIED)
                     {
                         string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterSetEnumAccessDenied"), counterSet);
-                        Exception exc = new Exception(msg);
+                        var exc = new Exception(msg);
                         WriteError(new ErrorRecord(exc, "CounterSetEnumAccessDenied", ErrorCategory.InvalidResult, null));
                         continue;
                     }
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    string[] instanceArray = new string[counterSetInstances.Count];
+                    var instanceArray = new string[counterSetInstances.Count];
                     int i = 0;
                     foreach (string instance in counterSetInstances)
                     {
@@ -389,13 +389,13 @@ namespace Microsoft.PowerShell.Commands
                         instanceArray[0] = "*";
                     }
 
-                    Dictionary<string, string[]> counterInstanceMapping = new Dictionary<string, string[]>();
+                    var counterInstanceMapping = new Dictionary<string, string[]>();
                     foreach (string counter in counterSetCounters)
                     {
                         counterInstanceMapping.TryAdd(counter, instanceArray);
                     }
 
-                    PerformanceCounterCategoryType categoryType = PerformanceCounterCategoryType.Unknown;
+                    var categoryType = PerformanceCounterCategoryType.Unknown;
                     if (counterSetInstances.Count > 1)
                     {
                         categoryType = PerformanceCounterCategoryType.MultiInstance;
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
 
                     string setHelp = _pdhHelper.GetCounterSetHelp(machine, counterSet);
 
-                    CounterSet setObj = new CounterSet(counterSet, machine, categoryType, setHelp, ref counterInstanceMapping);
+                    var setObj = new CounterSet(counterSet, machine, categoryType, setHelp, ref counterInstanceMapping);
                     WriteObject(setObj);
                     bMatched = true;
                 }
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!bMatched)
                 {
                     string msg = _resourceMgr.GetString("NoMatchingCounterSetsFound");
-                    Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg,
+                    var exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg,
                       machine ?? "localhost", normalizedPattern));
                     WriteError(new ErrorRecord(exc, "NoMatchingCounterSetsFound", ErrorCategory.ObjectNotFound, null));
                 }
@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.Commands
                 _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
             }
 
-            StringCollection allExpandedPaths = new StringCollection();
+            var allExpandedPaths = new StringCollection();
             foreach (string path in paths)
             {
                 string localizedPath = path;
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                     if (res != 0)
                     {
                         string msg = string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterPathTranslationFailed"), res);
-                        Exception exc = new Exception(msg);
+                        var exc = new Exception(msg);
                         WriteError(new ErrorRecord(exc, "CounterPathTranslationFailed", ErrorCategory.InvalidResult, null));
 
                         localizedPath = path;
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!_pdhHelper.IsPathValid(expandedPath))
                     {
                         string msg = string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterPathIsInvalid"), localizedPath);
-                        Exception exc = new Exception(msg);
+                        var exc = new Exception(msg);
                         WriteError(new ErrorRecord(exc, "CounterPathIsInvalid", ErrorCategory.InvalidResult, null));
 
                         continue;
@@ -579,7 +579,7 @@ namespace Microsoft.PowerShell.Commands
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);
             }
 
-            Exception exc = new Exception(msg);
+            var exc = new Exception(msg);
             if (bTerminate)
             {
                 ThrowTerminatingError(new ErrorRecord(exc, "CounterApiError", ErrorCategory.InvalidResult, null));
@@ -597,7 +597,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private List<string> CombineMachinesAndCounterPaths()
         {
-            List<string> retColl = new List<string>();
+            var retColl = new List<string>();
 
             if (_computerName.Length == 0)
             {
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                 if (sample.Status != 0)
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterSampleDataInvalid"));
-                    Exception exc = new Exception(msg);
+                    var exc = new Exception(msg);
                     WriteError(new ErrorRecord(exc, "CounterApiError", ErrorCategory.InvalidResult, null));
                     break;
                 }

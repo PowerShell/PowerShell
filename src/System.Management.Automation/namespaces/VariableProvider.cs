@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string description = SessionStateStrings.VariableDriveDescription;
 
-            PSDriveInfo variableDrive =
+            var variableDrive =
                 new PSDriveInfo(
                     DriveNames.VariableDrive,
                     ProviderInfo,
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
                     description,
                     null);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
             drives.Add(variableDrive);
             return drives;
         }
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!string.Equals(name, variable.Name, StringComparison.OrdinalIgnoreCase))
                     {
-                        PSVariable newVar = new PSVariable(name, variable.Value, variable.Options, variable.Attributes);
+                        var newVar = new PSVariable(name, variable.Value, variable.Options, variable.Attributes);
                         newVar.Description = variable.Description;
                         variable = newVar;
                     }
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
                 variable = new PSVariable(name, null);
             }
 
-            PSVariable item = SessionState.Internal.SetVariable(variable, Force, Context.Origin) as PSVariable;
+            var item = SessionState.Internal.SetVariable(variable, Force, Context.Origin) as PSVariable;
 
             if (writeItem && item != null)
             {
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
 
             object value = base.GetValueOfItem(item);
 
-            PSVariable var = item as PSVariable;
+            var var = item as PSVariable;
             if (var != null)
             {
                 value = var.Value;
@@ -211,13 +211,13 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            PSVariable variable = item as PSVariable;
+            var variable = item as PSVariable;
             if (variable != null)
             {
                 if ((variable.Options & ScopedItemOptions.Constant) != 0 ||
                     ((variable.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                             variable.Name,
                             SessionStateCategory.Variable,

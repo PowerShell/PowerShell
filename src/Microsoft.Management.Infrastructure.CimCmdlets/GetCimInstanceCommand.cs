@@ -504,7 +504,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimGetInstance CreateOperationAgent()
         {
-            CimGetInstance cimGetInstance = new CimGetInstance();
+            var cimGetInstance = new CimGetInstance();
             this.AsyncOperation = cimGetInstance;
             return cimGetInstance;
         }

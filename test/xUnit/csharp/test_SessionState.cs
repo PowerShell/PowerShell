@@ -24,9 +24,9 @@ namespace PSTests.Parallel
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-            AutomationEngine engine = new AutomationEngine(hostInterface, iss);
-            ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
-            SessionStateInternal sessionState = new SessionStateInternal(executionContext);
+            var engine = new AutomationEngine(hostInterface, iss);
+            var executionContext = new ExecutionContext(engine, hostInterface, iss);
+            var sessionState = new SessionStateInternal(executionContext);
             Collection<PSDriveInfo> drives = sessionState.Drives(null);
             Assert.NotNull(drives);
         }

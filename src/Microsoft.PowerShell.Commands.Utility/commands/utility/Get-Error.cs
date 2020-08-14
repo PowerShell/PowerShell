@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var errorVariable = SessionState.PSVariable.Get("error");
                 var count = Newest;
-                ArrayList errors = (ArrayList)errorVariable.Value;
+                var errors = (ArrayList)errorVariable.Value;
                 if (count > errors.Count)
                 {
                     count = errors.Count;

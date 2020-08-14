@@ -74,8 +74,8 @@ namespace Microsoft.PowerShell.Commands
             catch (ItemNotFoundException)
             {
                 string message = StringUtil.Format(Modules.ModuleNotFound, _path);
-                FileNotFoundException fnf = new FileNotFoundException(message);
-                ErrorRecord er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
+                var fnf = new FileNotFoundException(message);
+                var er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
                     ErrorCategory.ResourceUnavailable, _path);
                 WriteError(er);
                 return;
@@ -93,8 +93,8 @@ namespace Microsoft.PowerShell.Commands
             if (filePaths == null || filePaths.Count < 1)
             {
                 string message = StringUtil.Format(Modules.ModuleNotFound, _path);
-                FileNotFoundException fnf = new FileNotFoundException(message);
-                ErrorRecord er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
+                var fnf = new FileNotFoundException(message);
+                var er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
                     ErrorCategory.ResourceUnavailable, _path);
                 WriteError(er);
                 return;
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string message = StringUtil.Format(Modules.InvalidModuleManifestVersion, filePath, module.Version.ToString(), parent.FullName);
                         var ioe = new InvalidOperationException(message);
-                        ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestVersion",
+                        var er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestVersion",
                             ErrorCategory.InvalidArgument, _path);
                         ThrowTerminatingError(er);
                     }
@@ -285,8 +285,8 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 string message = StringUtil.Format(Modules.InvalidModuleManifestPath, filePath);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath",
                     ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
@@ -364,13 +364,13 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // resolve the path so slashes are in the right direction
-                CmdletProviderContext cmdContext = new CmdletProviderContext(this);
+                var cmdContext = new CmdletProviderContext(this);
                 Collection<PathInfo> pathInfos = SessionState.Path.GetResolvedPSPathFromPSPath(path, cmdContext);
                 if (pathInfos.Count != 1)
                 {
                     string message = StringUtil.Format(Modules.InvalidModuleManifestPath, path);
-                    InvalidOperationException ioe = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
+                    var ioe = new InvalidOperationException(message);
+                    var er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
                     ThrowTerminatingError(er);
                 }
 

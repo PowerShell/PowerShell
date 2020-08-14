@@ -300,13 +300,13 @@ namespace System.Management.Automation
 
         private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
         {
-            string command = value as string;
+            var command = value as string;
             if (command != null)
             {
                 return AddPsd1EntryToResult(result, command, commandTypeToAdd, ref sawWildcard);
             }
 
-            object[] commands = value as object[];
+            var commands = value as object[];
             if (commands != null)
             {
                 foreach (var o in commands)
@@ -332,7 +332,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            List<WildcardPattern> scriptAnalysisPatterns = new List<WildcardPattern>();
+            var scriptAnalysisPatterns = new List<WildcardPattern>();
             foreach (string discoveredCommandFilter in scriptAnalysis.DiscoveredCommandFilters)
             {
                 scriptAnalysisPatterns.Add(new WildcardPattern(discoveredCommandFilter));
@@ -589,7 +589,7 @@ namespace System.Management.Automation
         private static void CallGetModuleDashList(ExecutionContext context, string modulePath)
         {
             CommandInfo commandInfo = new CmdletInfo("Get-Module", typeof(GetModuleCommand), null, null, context);
-            Command getModuleCommand = new Command(commandInfo);
+            var getModuleCommand = new Command(commandInfo);
 
             try
             {
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
                 // compute an CRC32 hash from the sorted feature names. We will use the CRC32 hash to generate the
                 // cache file name.
                 int index = 0;
-                string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
+                var featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
                 foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
                 {
                     featureNames[index++] = featureName.ToLowerInvariant();

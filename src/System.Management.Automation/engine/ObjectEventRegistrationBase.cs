@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                     )
                 {
                     // Detect if the event identifier already exists
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    var errorRecord = new ErrorRecord(
                         new ArgumentException(
                             string.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     e,
                     "INVALID_REGISTRATION",
                     ErrorCategory.InvalidArgument,
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     e,
                     "INVALID_REGISTRATION",
                     ErrorCategory.InvalidOperation,

@@ -101,14 +101,14 @@ namespace System.Management.Automation
         /// </exception>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            Cmdlet cmdlet = command as Cmdlet;
+            var cmdlet = command as Cmdlet;
             if (cmdlet == null)
             {
                 throw PSTraceSource.NewArgumentException(nameof(command));
             }
 
             ParameterBinderBase parameterBinder;
-            IScriptCommandInfo scriptCommandInfo = CommandInfo as IScriptCommandInfo;
+            var scriptCommandInfo = CommandInfo as IScriptCommandInfo;
             if (scriptCommandInfo != null)
             {
                 parameterBinder = new ScriptParameterBinder(scriptCommandInfo.ScriptBlock, cmdlet.MyInvocation, this._context, cmdlet, CommandScope);
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         {
             // When dotting a script cmdlet, push the locals of automatic variables to
             // the 'DottedScopes' of the current scope.
-            PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
+            var scriptCmdlet = this.Command as PSScriptCmdlet;
             if (scriptCmdlet != null && !UseLocalScope)
             {
                 scriptCmdlet.PushDottedScope(CommandSessionState.CurrentScope);
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         {
             // When dotting a script cmdlet, pop the locals of automatic variables from
             // the 'DottedScopes' of the current scope.
-            PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
+            var scriptCmdlet = this.Command as PSScriptCmdlet;
             if (scriptCmdlet != null && !UseLocalScope)
             {
                 scriptCmdlet.PopDottedScope(CommandSessionState.CurrentScope);
@@ -545,7 +545,7 @@ namespace System.Management.Automation
                     // Set the target and write the error
                     bindingError.ErrorRecord.SetTargetObject(inputObject);
 
-                    ErrorRecord errorRecord =
+                    var errorRecord =
                         new ErrorRecord(
                             bindingError.ErrorRecord,
                             bindingError);
@@ -610,7 +610,7 @@ namespace System.Management.Automation
         {
             Type inputObjectType = (inputObject == null) ? null : inputObject.GetType();
 
-            ParameterBindingException bindingException = new ParameterBindingException(
+            var bindingException = new ParameterBindingException(
                 ErrorCategory.InvalidArgument,
                 this.Command.MyInvocation,
                 null,
@@ -621,7 +621,7 @@ namespace System.Management.Automation
                 errorId,
                 args);
 
-            ErrorRecord errorRecord =
+            var errorRecord =
                 new ErrorRecord(
                     bindingException,
                     errorId,
@@ -750,7 +750,7 @@ namespace System.Management.Automation
                     initError,
                     Severity.Warning);
 
-                CommandNotFoundException exception =
+                var exception =
                     new CommandNotFoundException(
                         cmdletInformation.Name,
                         initError,

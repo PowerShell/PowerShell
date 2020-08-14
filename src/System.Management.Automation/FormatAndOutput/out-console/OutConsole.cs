@@ -66,11 +66,11 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, false, new TerminatingErrorContext(this));
+            var lineOutput = new ConsoleLineOutput(console, false, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
 
-            MshCommandRuntime mrt = this.CommandRuntime as MshCommandRuntime;
+            var mrt = this.CommandRuntime as MshCommandRuntime;
 
             if (mrt != null)
             {
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, _paging, new TerminatingErrorContext(this));
+            var lineOutput = new ConsoleLineOutput(console, _paging, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
             base.BeginProcessing();

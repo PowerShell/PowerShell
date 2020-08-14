@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public ScriptBlock GetNewClosure()
         {
-            PSModuleInfo m = new PSModuleInfo(true);
+            var m = new PSModuleInfo(true);
             m.CaptureLocals();
             return m.NewBoundScriptBlock(this);
         }
@@ -420,7 +420,7 @@ namespace System.Management.Automation
                 functionsToDefineDictionary = new Dictionary<string, ScriptBlock>();
                 foreach (DictionaryEntry pair in functionsToDefine)
                 {
-                    string functionName = pair.Key as string;
+                    var functionName = pair.Key as string;
                     if (string.IsNullOrWhiteSpace(functionName))
                     {
                         PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -430,7 +430,7 @@ namespace System.Management.Automation
                         throw e;
                     }
 
-                    ScriptBlock functionBody = pair.Value as ScriptBlock;
+                    var functionBody = pair.Value as ScriptBlock;
                     // null check for functionBody is done at the lower layer.
                     functionsToDefineDictionary.Add(functionName, functionBody);
                 }
@@ -488,8 +488,8 @@ namespace System.Management.Automation
                 }
             }
 
-            List<object> result = new List<object>();
-            Pipe outputPipe = new Pipe(result);
+            var result = new List<object>();
+            var outputPipe = new Pipe(result);
 
             InvokeWithPipe(
                 useLocalScope: true,
@@ -526,8 +526,8 @@ namespace System.Management.Automation
 
         internal T InvokeAsMemberFunctionT<T>(object instance, object[] args)
         {
-            List<object> result = new List<object>();
-            Pipe pipe = new Pipe(result);
+            var result = new List<object>();
+            var pipe = new Pipe(result);
 
             InvokeWithPipe(
                 useLocalScope: true,
@@ -556,8 +556,8 @@ namespace System.Management.Automation
 
         internal void InvokeAsMemberFunction(object instance, object[] args)
         {
-            List<object> result = new List<object>();
-            Pipe pipe = new Pipe(result);
+            var result = new List<object>();
+            var pipe = new Pipe(result);
 
             InvokeWithPipe(
                 useLocalScope: true,
@@ -626,10 +626,10 @@ namespace System.Management.Automation
         {
             get
             {
-                List<PSTypeName> result = new List<PSTypeName>();
+                var result = new List<PSTypeName>();
                 foreach (Attribute attribute in Attributes)
                 {
-                    OutputTypeAttribute outputType = attribute as OutputTypeAttribute;
+                    var outputType = attribute as OutputTypeAttribute;
                     if (outputType != null)
                     {
                         result.AddRange(outputType.Type);
@@ -794,10 +794,10 @@ namespace System.Management.Automation
         {
             // Retrieve context and current runspace to ensure that we throw exception, if this is non-default runspace.
             ExecutionContext context = GetContextFromTLS();
-            RunspaceBase runspace = (RunspaceBase)context.CurrentRunspace;
+            var runspace = (RunspaceBase)context.CurrentRunspace;
 
-            List<object> rawResult = new List<object>();
-            Pipe outputPipe = new Pipe(rawResult);
+            var rawResult = new List<object>();
+            var outputPipe = new Pipe(rawResult);
             InvokeWithPipe(
                 useLocalScope: true,
                 errorHandlingBehavior: ErrorHandlingBehavior.WriteToCurrentErrorPipe,
@@ -859,8 +859,8 @@ namespace System.Management.Automation
         /// <exception cref="FlowControlException">Internal exception from a flow control statement.</exception>
         internal Collection<PSObject> DoInvoke(object dollarUnder, object input, object[] args)
         {
-            List<object> result = new List<object>();
-            Pipe outputPipe = new Pipe(result);
+            var result = new List<object>();
+            var outputPipe = new Pipe(result);
             InvokeWithPipe(
                 useLocalScope: true,
                 errorHandlingBehavior: ErrorHandlingBehavior.WriteToExternalErrorPipe,
@@ -886,7 +886,7 @@ namespace System.Management.Automation
                 return new Collection<PSObject>();
             }
 
-            Collection<PSObject> wrappedResult = new Collection<PSObject>();
+            var wrappedResult = new Collection<PSObject>();
             for (int i = 0; i < result.Count; i++)
             {
                 wrappedResult.Add(LanguagePrimitives.AsPSObjectOrNull(result[i]));
@@ -923,8 +923,8 @@ namespace System.Management.Automation
             object scriptThis,
             object[] args)
         {
-            List<object> result = new List<object>();
-            Pipe outputPipe = new Pipe(result);
+            var result = new List<object>();
+            var outputPipe = new Pipe(result);
             InvokeWithPipe(
                 useLocalScope: useLocalScope,
                 errorHandlingBehavior: errorHandlingBehavior,
@@ -1169,7 +1169,7 @@ namespace System.Management.Automation
                 // Start the pipeline, if the command calling this pipeline is
                 // not expecting input (as indicated by it's position in the pipeline
                 // then neither should we.
-                MshCommandRuntime crt = commandRuntime as MshCommandRuntime;
+                var crt = commandRuntime as MshCommandRuntime;
                 if (crt != null)
                 {
                     if (crt.OutputPipe != null)

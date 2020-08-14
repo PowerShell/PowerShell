@@ -52,10 +52,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl.Copy();
                 // build up the definition for computer name.
-                ListControlItemDefinition cnListItemDefinition = new ListControlItemDefinition();
+                var cnListItemDefinition = new ListControlItemDefinition();
                 cnListItemDefinition.label = new TextToken();
                 cnListItemDefinition.label.text = RemotingConstants.ComputerNameNoteProperty;
-                FieldPropertyToken fpt = new FieldPropertyToken();
+                var fpt = new FieldPropertyToken();
                 fpt.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
                 cnListItemDefinition.formatTokenList.Add(fpt);
 
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override FormatEntryData GeneratePayload(PSObject so, int enumerationLimit)
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
 
             if (this.dataBaseInfo.view != null)
                 fed.formatEntryInfo = GenerateListViewEntryFromDataBaseInfo(so, enumerationLimit);
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ListViewEntry GenerateListViewEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
         {
-            ListViewEntry lve = new ListViewEntry();
+            var lve = new ListViewEntry();
 
             ListControlEntryDefinition activeListControlEntryDefinition =
                 GetActiveListControlEntryDefinition(_listBody, so);
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (!EvaluateDisplayCondition(so, listItem.conditionToken))
                     continue;
 
-                ListViewField lvf = new ListViewField();
+                var lvf = new ListViewField();
                 PSPropertyExpressionResult result;
                 lvf.formatPropertyField = GenerateFormatPropertyField(listItem.formatTokenList, so, enumerationLimit, out result);
 
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // we try to fall back and see if we have an un-resolved PSPropertyExpression
                     FormatToken token = listItem.formatTokenList[0];
-                    FieldPropertyToken fpt = token as FieldPropertyToken;
+                    var fpt = token as FieldPropertyToken;
                     if (fpt != null)
                     {
                         PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        TextToken tt = token as TextToken;
+                        var tt = token as TextToken;
                         if (tt != null)
                             // we had a text token, use it as a label (last resort...)
                             lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // see if we have an override that matches
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
+            var match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
             foreach (ListControlEntryDefinition x in listBody.optionalEntryList)
             {
                 if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo, so)))
@@ -187,12 +187,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 SetUpActiveProperties(so);
             }
 
-            ListViewEntry lve = new ListViewEntry();
+            var lve = new ListViewEntry();
 
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {
                 MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
-                ListViewField lvf = new ListViewField();
+                var lvf = new ListViewField();
 
                 if (a.OriginatingParameter != null)
                 {

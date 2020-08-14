@@ -279,7 +279,7 @@ namespace System.Management.Automation
         internal static bool EnableTokenPrivilege(string privilegeName, ref TOKEN_PRIVILEGE oldPrivilegeState)
         {
             bool success = false;
-            TOKEN_PRIVILEGE newPrivilegeState = new TOKEN_PRIVILEGE();
+            var newPrivilegeState = new TOKEN_PRIVILEGE();
 
             // Check if the caller has the specified privilege or not
             if (LookupPrivilegeValue(null, privilegeName, ref newPrivilegeState.Privilege.Luid))
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                     if (OpenProcessToken(processHandler, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out tokenHandler))
                     {
                         // Check if the specified privilege is already enabled
-                        PRIVILEGE_SET requiredPrivilege = new PRIVILEGE_SET();
+                        var requiredPrivilege = new PRIVILEGE_SET();
                         requiredPrivilege.Privilege.Luid = newPrivilegeState.Privilege.Luid;
                         requiredPrivilege.PrivilegeCount = 1;
                         // PRIVILEGE_SET_ALL_NECESSARY is defined as 1
@@ -365,7 +365,7 @@ namespace System.Management.Automation
             }
 
             bool success = false;
-            TOKEN_PRIVILEGE newState = new TOKEN_PRIVILEGE();
+            var newState = new TOKEN_PRIVILEGE();
 
             // Check if the caller has the specified privilege or not. If the caller has it, check the LUID specified in previousPrivilegeState
             // to see if the previousPrivilegeState is defined for the same privilege

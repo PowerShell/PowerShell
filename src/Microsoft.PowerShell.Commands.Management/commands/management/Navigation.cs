@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this);
+                var coreCommandContext = new CmdletProviderContext(this);
 
                 coreCommandContext.Force = Force;
 
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this, Credential);
+                var coreCommandContext = new CmdletProviderContext(this, Credential);
                 coreCommandContext.Force = Force;
 
                 Collection<string> includeFilter =
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (DriveNotFoundException e)
                             {
-                                ErrorRecord errorRecord =
+                                var errorRecord =
                                     new ErrorRecord(
                                         e,
                                         "GetLocationNoMatchingDrive",
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (ProviderNotFoundException e)
                             {
-                                ErrorRecord errorRecord =
+                                var errorRecord =
                                     new ErrorRecord(
                                         e,
                                         "GetLocationNoMatchingProvider",
@@ -468,7 +468,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (ArgumentException argException)
                             {
-                                ErrorRecord errorRecord =
+                                var errorRecord =
                                     new ErrorRecord(
                                         argException,
                                         "GetLocationNoMatchingDrive",
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 catch (ProviderNotFoundException e)
                                 {
-                                    ErrorRecord errorRecord =
+                                    var errorRecord =
                                         new ErrorRecord(
                                             e,
                                             "GetLocationNoMatchingProvider",
@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
                     // -Persist switch parameter is supported only for FileSystem provider.
                     if (Persist && !provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, this);
+                        var er = new ErrorRecord(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, this);
                         ThrowTerminatingError(er);
                     }
 
@@ -1248,7 +1248,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Create the new drive
-                    PSDriveInfo newDrive =
+                    var newDrive =
                         new PSDriveInfo(
                             Name,
                             provider,
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands
             string[] providerNames,
             string scope)
         {
-            List<PSDriveInfo> results = new List<PSDriveInfo>();
+            var results = new List<PSDriveInfo>();
 
             if (providerNames == null || providerNames.Length == 0)
             {
@@ -1608,7 +1608,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!Force && drive == SessionState.Drive.Current)
                             {
-                                PSInvalidOperationException invalidOperation =
+                                var invalidOperation =
                                     (PSInvalidOperationException)
                                     PSTraceSource.NewInvalidOperationException(
                                         NavigationResources.RemoveDriveInUse,
@@ -1637,7 +1637,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (verifyMatch && !foundMatch)
                 {
-                    DriveNotFoundException e = new DriveNotFoundException(
+                    var e = new DriveNotFoundException(
                         driveName,
                         "DriveNotFound",
                         SessionStateStrings.DriveNotFound);
@@ -1775,7 +1775,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (!WildcardPattern.ContainsWildcardCharacters(driveName))
                         {
-                            DriveNotFoundException driveNotFound =
+                            var driveNotFound =
                                 new DriveNotFoundException(
                                     driveName,
                                     "DriveNotFound",
@@ -1792,7 +1792,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (DriveNotFoundException driveNotFound)
                 {
-                    ErrorRecord errorRecord =
+                    var errorRecord =
                         new ErrorRecord(
                             driveNotFound,
                             "GetLocationNoMatchingDrive",
@@ -1802,7 +1802,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ProviderNotFoundException providerNotFound)
                 {
-                    ErrorRecord errorRecord =
+                    var errorRecord =
                         new ErrorRecord(
                             providerNotFound,
                             "GetLocationNoMatchingDrive",
@@ -2538,7 +2538,7 @@ namespace Microsoft.PowerShell.Commands
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
                         if (true == SuppressWildcardExpansion && 0 == resolvedPSPaths.Count)
                         {
-                            ItemNotFoundException pathNotFound =
+                            var pathNotFound =
                                 new ItemNotFoundException(
                                     path,
                                     "PathNotFound",
@@ -2636,7 +2636,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (isCurrentLocationOrAncestor)
                     {
-                        PSInvalidOperationException invalidOperation =
+                        var invalidOperation =
                             (PSInvalidOperationException)
                             PSTraceSource.NewInvalidOperationException(
                                 NavigationResources.RemoveItemInUse,
@@ -2700,7 +2700,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
+                            var di = new System.IO.DirectoryInfo(providerPath);
                             if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
                             {
                                 shouldRecurse = false;
@@ -2941,7 +2941,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<PathInfo> GetResolvedPaths(string path)
         {
-            Collection<PathInfo> results = new Collection<PathInfo>();
+            var results = new Collection<PathInfo>();
             try
             {
                 results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
@@ -3011,7 +3011,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
-                    PSInvalidOperationException invalidOperation =
+                    var invalidOperation =
                         (PSInvalidOperationException)
                         PSTraceSource.NewInvalidOperationException(
                             NavigationResources.MoveItemDoesntExist,
@@ -3098,7 +3098,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (isCurrentLocationOrAncestor)
             {
-                PSInvalidOperationException invalidOperation =
+                var invalidOperation =
                     (PSInvalidOperationException)
                     PSTraceSource.NewInvalidOperationException(
                         NavigationResources.MoveItemInUse,
@@ -3353,7 +3353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
-                    PSInvalidOperationException invalidOperation =
+                    var invalidOperation =
                         (PSInvalidOperationException)
                         PSTraceSource.NewInvalidOperationException(
                             NavigationResources.RenameItemDoesntExist,
@@ -3440,7 +3440,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (isCurrentLocationOrAncestor)
             {
-                PSInvalidOperationException invalidOperation =
+                var invalidOperation =
                     (PSInvalidOperationException)
                     PSTraceSource.NewInvalidOperationException(
                         NavigationResources.RenamedItemInUse,

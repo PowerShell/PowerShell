@@ -243,7 +243,7 @@ namespace System.Management.Automation.Runspaces
                 // Call fails if RunspaceState is not BeforeOpen.
                 if (RunspaceState != RunspaceState.BeforeOpen)
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.CannotOpenAgain, new object[] { RunspaceState.ToString() }),
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     if (RunspaceState != RunspaceState.Opened)
                     {
-                        InvalidRunspaceStateException e =
+                        var e =
                             new InvalidRunspaceStateException
                             (
                                 StringUtil.Format(RunspaceStrings.RunspaceNotInOpenedState, RunspaceState.ToString()),
@@ -831,7 +831,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (ByPassRunspaceStateCheck == false && RunspaceState != RunspaceState.Opened)
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline, RunspaceState.ToString()),
@@ -907,7 +907,7 @@ namespace System.Management.Automation.Runspaces
 
             if (runningPipelines.Length > 0)
             {
-                WaitHandle[] waitHandles = new WaitHandle[runningPipelines.Length];
+                var waitHandles = new WaitHandle[runningPipelines.Length];
 
                 for (int i = 0; i < runningPipelines.Length; i++)
                 {
@@ -919,9 +919,9 @@ namespace System.Management.Automation.Runspaces
                 {
                     // We use a worker thread to wait for all handles, and the STA thread can just wait on the worker thread -- the worker
                     // threads from the ThreadPool are MTA.
-                    using (ManualResetEvent waitAllIsDone = new ManualResetEvent(false))
+                    using (var waitAllIsDone = new ManualResetEvent(false))
                     {
-                        Tuple<WaitHandle[], ManualResetEvent> stateInfo = new Tuple<WaitHandle[], ManualResetEvent>(waitHandles, waitAllIsDone);
+                        var stateInfo = new Tuple<WaitHandle[], ManualResetEvent>(waitHandles, waitAllIsDone);
 
                         ThreadPool.QueueUserWorkItem(new WaitCallback(
                                                          delegate (object state)
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (RunspaceState != RunspaceState.Opened)
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.RunspaceNotInOpenedState, RunspaceState.ToString()),
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (RunspaceState != RunspaceState.Opened)
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.RunspaceNotInOpenedState, RunspaceState.ToString()),
@@ -1338,7 +1338,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (RunspaceState != RunspaceState.Opened)
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.RunspaceNotInOpenedState, RunspaceState.ToString()),

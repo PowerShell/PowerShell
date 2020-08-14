@@ -462,7 +462,7 @@ namespace System.Management.Automation.Internal
         private ClientRemoteSessionImpl CreateClientRemoteSession(
                     RemoteRunspacePoolInternal rsPoolInternal)
         {
-            ClientRemoteSession.URIDirectionReported uriRedirectionHandler =
+            var uriRedirectionHandler =
                 new ClientRemoteSession.URIDirectionReported(HandleURIDirectionReported);
             return new ClientRemoteSessionImpl(rsPoolInternal,
                                                uriRedirectionHandler);
@@ -691,7 +691,7 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(sender is ClientPowerShellDataStructureHandler, @"sender of the event
                 must be ClientPowerShellDataStructureHandler");
 
-            ClientPowerShellDataStructureHandler dsHandler =
+            var dsHandler =
                 sender as ClientPowerShellDataStructureHandler;
 
             lock (_associationSyncObject)
@@ -790,7 +790,7 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
-            BaseClientCommandTransportManager bcmdTM = (BaseClientCommandTransportManager)sender;
+            var bcmdTM = (BaseClientCommandTransportManager)sender;
 
             lock (_associationSyncObject)
             {
@@ -936,7 +936,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                WSManClientSessionTransportManager wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
+                var wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
                 return (wsmanTransportManager != null) ? wsmanTransportManager.SupportsDisconnect : false;
             }
         }
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation.Internal
         internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs e)
         {
             // notify associated powershell about the error and close transport manager
-            PSInvocationStateInfo stateInfo = new PSInvocationStateInfo(PSInvocationState.Failed, e.Exception);
+            var stateInfo = new PSInvocationStateInfo(PSInvocationState.Failed, e.Exception);
             InvocationStateInfoReceived.SafeInvoke(this, new RemoteDataEventArgs<PSInvocationStateInfo>(stateInfo));
 
             // The handler to InvocationStateInfoReceived would have already
@@ -1133,7 +1133,7 @@ namespace System.Management.Automation.Internal
             // is raised, the remote server would have sent state changed info.
             // A bad server may not send appropriate sate info, in which case we
             // fail safely
-            PSRemotingDataStructureException exception = new PSRemotingDataStructureException(
+            var exception = new PSRemotingDataStructureException(
                 RemotingErrorIdStrings.PipelineStopped);
             InvocationStateInfoReceived.SafeInvoke(this,
                 new RemoteDataEventArgs<PSInvocationStateInfo>(
@@ -1410,7 +1410,7 @@ namespace System.Management.Automation.Internal
         internal void ProcessDisconnect(RunspacePoolStateInfo rsStateInfo)
         {
             // disconnect may be called on a pipeline that is already disconnected.
-            PSInvocationStateInfo stateInfo =
+            var stateInfo =
                             new PSInvocationStateInfo(PSInvocationState.Disconnected,
                                 (rsStateInfo != null) ? rsStateInfo.Reason : null);
 
@@ -1529,7 +1529,7 @@ namespace System.Management.Automation.Internal
         /// the one used within the code</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            RemoteDataObject<object> dataToBeSent = (RemoteDataObject<object>)data;
+            var dataToBeSent = (RemoteDataObject<object>)data;
             TransportManager.DataToBeSentCollection.Add<object>(dataToBeSent);
         }
 
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation.Internal
             // make sure only one thread calls the WriteInput.
             lock (_inputSyncObject)
             {
-                ObjectStreamBase inputstream = sender as ObjectStreamBase;
+                var inputstream = sender as ObjectStreamBase;
                 WriteInput(inputstream);
             }
         }

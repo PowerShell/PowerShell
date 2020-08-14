@@ -122,13 +122,13 @@ namespace System.Management.Automation
             }
 
             // Set variable $Error
-            PSVariable errorvariable = new PSVariable("Error", new ArrayList(), ScopedItemOptions.Constant);
+            var errorvariable = new PSVariable("Error", new ArrayList(), ScopedItemOptions.Constant);
             GlobalScope.SetVariable(errorvariable.Name, errorvariable, false, false, this, fastPath: true);
 
             // Set variable $PSDefaultParameterValues
-            Collection<Attribute> attributes = new Collection<Attribute>();
+            var attributes = new Collection<Attribute>();
             attributes.Add(new ArgumentTypeConverterAttribute(typeof(System.Management.Automation.DefaultParameterDictionary)));
-            PSVariable psDefaultParameterValuesVariable = new PSVariable(SpecialVariables.PSDefaultParameterValues,
+            var psDefaultParameterValuesVariable = new PSVariable(SpecialVariables.PSDefaultParameterValues,
                                                                          new DefaultParameterDictionary(),
                                                                          ScopedItemOptions.None, attributes,
                                                                          RunspaceInit.PSDefaultParameterValuesDescription);
@@ -299,7 +299,7 @@ namespace System.Management.Automation
             //
 
             // $Host
-            PSVariable v = new PSVariable(
+            var v = new PSVariable(
                     SpecialVariables.Host,
                     ExecutionContext.EngineHostInterface,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
@@ -426,7 +426,7 @@ namespace System.Management.Automation
             {
                 // Remove all providers at the top level...
 
-                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                var context = new CmdletProviderContext(this.ExecutionContext);
 
                 foreach (string providerName in Providers.Keys)
                 {
@@ -521,7 +521,7 @@ namespace System.Management.Automation
             //  ProviderBase.ThrowTerminatingError, it is already a
             //  ProviderInvocationException, and we don't want to
             //  re-wrap it.
-            ProviderInvocationException pie = e as ProviderInvocationException;
+            var pie = e as ProviderInvocationException;
             if (pie != null)
             {
                 pie._providerInfo = provider;

@@ -39,7 +39,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Debug.Assert(inner != null, "Caller should verify inner != null");
 
-            CimException cimException = inner as CimException;
+            var cimException = inner as CimException;
             if (cimException != null)
             {
                 return CreateFromCimException(context, cimException, cimResultContext);
@@ -166,7 +166,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            ErrorRecord coreErrorRecord = new ErrorRecord(
+            var coreErrorRecord = new ErrorRecord(
                 exception: exception,
                 errorId: errorId,
                 errorCategory: errorCategory,
@@ -177,7 +177,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return coreErrorRecord;
             }
 
-            System.Management.Automation.Remoting.OriginInfo originInfo = new System.Management.Automation.Remoting.OriginInfo(
+            var originInfo = new System.Management.Automation.Remoting.OriginInfo(
                 context.ComputerName,
                 Guid.Empty);
 
@@ -196,7 +196,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static ErrorCategory ConvertCimExceptionToErrorCategory(CimException cimException)
         {
-            ErrorCategory result = ErrorCategory.NotSpecified;
+            var result = ErrorCategory.NotSpecified;
 
             if (cimException.ErrorData != null)
             {

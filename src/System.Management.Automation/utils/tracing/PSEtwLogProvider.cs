@@ -52,7 +52,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="additionalInfo"></param>
         internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<string, string> additionalInfo)
         {
-            StringBuilder payload = new StringBuilder();
+            var payload = new StringBuilder();
 
             AppendException(payload, exception);
             payload.AppendLine();
@@ -71,11 +71,11 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
-                StringBuilder payload = new StringBuilder();
+                var payload = new StringBuilder();
 
                 payload.AppendLine(StringUtil.Format(EtwLoggingStrings.EngineStateChange, previousState.ToString(), newState.ToString()));
 
-                PSTask task = PSTask.EngineStart;
+                var task = PSTask.EngineStart;
 
                 if (newState == EngineState.Stopped ||
                     newState == EngineState.OutOfService ||
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="exception"></param>
         internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
-            StringBuilder payload = new StringBuilder();
+            var payload = new StringBuilder();
 
             AppendException(payload, exception);
 
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Tracing
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
                 LogContext logContext = getLogContext();
-                StringBuilder payload = new StringBuilder();
+                var payload = new StringBuilder();
 
                 if (logContext.CommandType != null)
                 {
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Tracing
                     }
                 }
 
-                PSTask task = PSTask.CommandStart;
+                var task = PSTask.CommandStart;
 
                 if (newState == CommandState.Stopped ||
                     newState == CommandState.Terminated)
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="pipelineExecutionDetail"></param>
         internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<string> pipelineExecutionDetail)
         {
-            StringBuilder payload = new StringBuilder();
+            var payload = new StringBuilder();
 
             if (pipelineExecutionDetail != null)
             {
@@ -167,12 +167,12 @@ namespace System.Management.Automation.Tracing
         /// <param name="exception"></param>
         internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
-            StringBuilder payload = new StringBuilder();
+            var payload = new StringBuilder();
 
             AppendException(payload, exception);
             payload.AppendLine();
 
-            Dictionary<string, string> additionalInfo = new Dictionary<string, string>();
+            var additionalInfo = new Dictionary<string, string>();
 
             additionalInfo.Add(EtwLoggingStrings.ProviderNameString, providerName);
 
@@ -191,11 +191,11 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
-                StringBuilder payload = new StringBuilder();
+                var payload = new StringBuilder();
 
                 payload.AppendLine(StringUtil.Format(EtwLoggingStrings.ProviderStateChange, providerName, newState.ToString()));
 
-                PSTask task = PSTask.ProviderStart;
+                var task = PSTask.ProviderStart;
 
                 if (newState == ProviderState.Stopped)
                 {
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
-                StringBuilder payload = new StringBuilder();
+                var payload = new StringBuilder();
 
                 if (previousValue == null)
                 {
@@ -280,7 +280,7 @@ namespace System.Management.Automation.Tracing
                 longKeyword = (long)keyword;
             }
 
-            EventDescriptor desc = new EventDescriptor((int)id, (byte)PSEventVersion.One, (byte)channel,
+            var desc = new EventDescriptor((int)id, (byte)PSEventVersion.One, (byte)channel,
                 (byte)level, (byte)opcode, (int)task, longKeyword);
 
             etwProvider.WriteEvent(ref desc, args);

@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert((CatalogFilePath != null) && (CatalogFilePath.Length > 0),
                        "CatalogCommands: Param binder did not bind catalogFilePath");
 
-            Collection<string> paths = new Collection<string>();
+            var paths = new Collection<string>();
 
             if (Path != null)
             {
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
                 path.Add(SessionState.Path.CurrentFileSystemLocation.Path);
             }
 
-            FileInfo catalogFileInfo = new FileInfo(catalogFilePath);
+            var catalogFileInfo = new FileInfo(catalogFilePath);
 
             // If Path points to the expected cat file make sure
             // parent Directory exists other wise CryptoAPI fails to create a .cat file

@@ -726,8 +726,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 // if RawSteam, read all bytes and return. When RawStream is used, we dont
                 // support -first, -last
-                byte[] bytes = new byte[_stream.Length];
-                int numBytesToRead = (int)_stream.Length;
+                var bytes = new byte[_stream.Length];
+                var numBytesToRead = (int)_stream.Length;
                 int numBytesRead = 0;
                 while (numBytesToRead > 0)
                 {
@@ -896,10 +896,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Watch for changes, as a blocking call.
-            FileInfo watchFile = new FileInfo(filePath);
+            var watchFile = new FileInfo(filePath);
             long originalLength = watchFile.Length;
 
-            using (FileSystemWatcher watcher = new FileSystemWatcher(watchFile.DirectoryName, watchFile.Name))
+            using (var watcher = new FileSystemWatcher(watchFile.DirectoryName, watchFile.Name))
             {
                 ErrorEventArgs errorEventArgs = null;
                 var tcs = new TaskCompletionSource<FileSystemEventArgs>();
@@ -1056,7 +1056,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (object line in content)
             {
-                object[] contentArray = line as object[];
+                var contentArray = line as object[];
                 if (contentArray != null)
                 {
                     foreach (object obj in contentArray)
@@ -1084,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    byte byteToWrite = (byte)content;
+                    var byteToWrite = (byte)content;
 
                     _stream.WriteByte(byteToWrite);
                 }
@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             int charsToRemove = 0;
-            StringBuilder line = new StringBuilder();
+            var line = new StringBuilder();
 
             if (_charBuff[_charCount - 1] == '\r' ||
                 _charBuff[_charCount - 1] == '\n')
@@ -1443,7 +1443,7 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     _currentPosition = _stream.Position;
-                    byte curByte = (byte)_stream.ReadByte();
+                    var curByte = (byte)_stream.ReadByte();
                     if ((curByte & BothTopBitsSet) == BothTopBitsSet ||
                         (curByte & TopBitUnset) == 0x00)
                     {

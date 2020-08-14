@@ -139,8 +139,8 @@ namespace System.Management.Automation.Language
         /// <returns>The <see cref="ScriptBlockAst"/> that represents the input script file.</returns>
         public static ScriptBlockAst ParseInput(string input, string fileName, out Token[] tokens, out ParseError[] errors)
         {
-            Parser parser = new Parser();
-            List<Token> tokenList = new List<Token>();
+            var parser = new Parser();
+            var tokenList = new List<Token>();
             ScriptBlockAst result;
             try
             {
@@ -572,8 +572,8 @@ namespace System.Management.Automation.Language
 
             Diagnostics.Assert(first is InternalScriptExtent && last is InternalScriptExtent,
                 "Private method expects internal position representation");
-            InternalScriptExtent l = (InternalScriptExtent)first;
-            InternalScriptExtent r = (InternalScriptExtent)last;
+            var l = (InternalScriptExtent)first;
+            var r = (InternalScriptExtent)last;
             Diagnostics.Assert(l.PositionHelper == r.PositionHelper, "Can't get the extent across files");
             return new InternalScriptExtent(l.PositionHelper, l.StartOffset, r.EndOffset);
         }
@@ -581,7 +581,7 @@ namespace System.Management.Automation.Language
         internal static IScriptExtent Before(IScriptExtent extent)
         {
             Diagnostics.Assert(extent is InternalScriptExtent, "Private method expects internal position representation");
-            InternalScriptExtent scriptExtent = (InternalScriptExtent)extent;
+            var scriptExtent = (InternalScriptExtent)extent;
             int offset = scriptExtent.StartOffset - 1;
             if (offset < 0) offset = 0;
             return new InternalScriptExtent(scriptExtent.PositionHelper, offset, offset);
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Language
         internal static IScriptExtent After(IScriptExtent extent)
         {
             Diagnostics.Assert(extent is InternalScriptExtent, "Private method expects internal position representation");
-            InternalScriptExtent scriptExtent = (InternalScriptExtent)extent;
+            var scriptExtent = (InternalScriptExtent)extent;
             int offset = scriptExtent.EndOffset;
             return new InternalScriptExtent(scriptExtent.PositionHelper, offset, offset);
         }
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Language
         internal static IScriptExtent LastCharacterOf(IScriptExtent extent)
         {
             Diagnostics.Assert(extent is InternalScriptExtent, "Private method expects internal position representation");
-            InternalScriptExtent scriptExtent = (InternalScriptExtent)extent;
+            var scriptExtent = (InternalScriptExtent)extent;
             int offset = scriptExtent.EndOffset - 1;
             if (offset < 0)
             {
@@ -670,7 +670,7 @@ namespace System.Management.Automation.Language
             {
                 if (obj != null)
                 {
-                    Ast ast = obj as Ast;
+                    var ast = obj as Ast;
                     if (ast != null)
                     {
                         yield return ast;
@@ -885,12 +885,12 @@ namespace System.Management.Automation.Language
                     ParserStrings.MissingEndParenthesisInFunctionParameterList);
             }
 
-            List<AttributeAst> attributes = new List<AttributeAst>();
+            var attributes = new List<AttributeAst>();
             if (candidateAttributes != null)
             {
                 foreach (AttributeBaseAst attr in candidateAttributes)
                 {
-                    AttributeAst attribute = attr as AttributeAst;
+                    var attribute = attr as AttributeAst;
                     if (attribute != null)
                     {
                         attributes.Add(attribute);
@@ -917,7 +917,7 @@ namespace System.Management.Automation.Language
             // G      script-parameter
             // G      parameter-list   new-lines:opt   ','   script-parameter
 
-            List<ParameterAst> parameters = new List<ParameterAst>();
+            var parameters = new List<ParameterAst>();
             Token commaToken = null;
             while (true)
             {
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation.Language
             // G      attribute
             // G      attribute-list   attribute
 
-            List<AttributeBaseAst> attributes = new List<AttributeBaseAst>();
+            var attributes = new List<AttributeBaseAst>();
             AttributeBaseAst attribute = AttributeRule();
             while (attribute != null)
             {
@@ -1084,8 +1084,8 @@ namespace System.Management.Automation.Language
             {
                 SkipNewlines();
 
-                List<ExpressionAst> positionalArguments = new List<ExpressionAst>();
-                List<NamedAttributeArgumentAst> namedArguments = new List<NamedAttributeArgumentAst>();
+                var positionalArguments = new List<ExpressionAst>();
+                var namedArguments = new List<NamedAttributeArgumentAst>();
 
                 IScriptExtent lastItemExtent = lParenOrRBracket.Extent;
                 var oldTokenizerMode = _tokenizer.Mode;
@@ -1165,7 +1165,7 @@ namespace System.Management.Automation.Language
 
             bool oldDisableCommaOperator = _disableCommaOperator;
             Token commaToken = null;
-            HashSet<string> keysSeen = new HashSet<string>();
+            var keysSeen = new HashSet<string>();
             try
             {
                 _disableCommaOperator = true;
@@ -1661,8 +1661,8 @@ namespace System.Management.Automation.Language
                 return NamedBlockListRule(lCurly, usingStatements, paramBlockAst);
             }
 
-            List<TrapStatementAst> traps = new List<TrapStatementAst>();
-            List<StatementAst> statements = new List<StatementAst>();
+            var traps = new List<TrapStatementAst>();
+            var statements = new List<StatementAst>();
             if (predefinedStatementAst != null)
             {
                 statements.Add(predefinedStatementAst);
@@ -1829,8 +1829,8 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            List<TrapStatementAst> traps = new List<TrapStatementAst>();
-            List<StatementAst> statements = new List<StatementAst>();
+            var traps = new List<TrapStatementAst>();
+            var statements = new List<StatementAst>();
             IScriptExtent statementListExtent = StatementListRule(statements, traps);
 
             Token rCurly = NextToken();
@@ -2372,8 +2372,8 @@ namespace System.Management.Automation.Language
             // G  else-clause:
             // G      'else'   statement-block
 
-            List<IfClause> clauses = new List<IfClause>();
-            List<Ast> componentAsts = new List<Ast>();
+            var clauses = new List<IfClause>();
+            var componentAsts = new List<Ast>();
             StatementBlockAst elseClause = null;
             Token keyword = ifToken;
 
@@ -2545,7 +2545,7 @@ namespace System.Management.Automation.Language
             Dictionary<string, Tuple<Token, Ast>> specifiedFlags = null; // Only used to track all flags specified for the error ast
 
             Token switchParameterToken = PeekToken();
-            SwitchFlags flags = SwitchFlags.None;
+            var flags = SwitchFlags.None;
             while (switchParameterToken.Kind == TokenKind.Parameter)
             {
                 SkipToken();
@@ -2723,8 +2723,8 @@ namespace System.Management.Automation.Language
             SkipNewlines();
             Token lCurly = NextToken();
             StatementBlockAst @default = null;
-            List<SwitchClause> clauses = new List<SwitchClause>();
-            List<Ast> errorAsts = new List<Ast>();  // in case there is an error, we want the asts parsed up to the error.
+            var clauses = new List<SwitchClause>();
+            var errorAsts = new List<Ast>();  // in case there is an error, we want the asts parsed up to the error.
             Token rCurly = null;
             if (lCurly.Kind != TokenKind.LCurly)
             {
@@ -2996,7 +2996,7 @@ namespace System.Management.Automation.Language
                         if (DynamicKeyword.GetKeyword("OMI_ConfigurationDocument") == null)
                         {
                             // Load the default CIM keywords
-                            Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
+                            var CIMKeywordErrors = new Collection<Exception>();
                             Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
 
                             // Report any errors encountered while loading CIM dynamic keywords.
@@ -3153,7 +3153,7 @@ namespace System.Management.Automation.Language
                                                             }
                                                             else if (na.Argument != null)
                                                             {
-                                                                ConstantExpressionAst ceAst = na.Argument as ConstantExpressionAst;
+                                                                var ceAst = na.Argument as ConstantExpressionAst;
                                                                 if (ceAst != null)
                                                                 {
                                                                     keywordProp.Mandatory = System.Management.Automation.LanguagePrimitives.IsTrue(ceAst.Value);
@@ -3201,7 +3201,7 @@ namespace System.Management.Automation.Language
                                       (attribute.TypeName.GetReflectionAttributeType() == typeof(DscLocalConfigurationManagerAttribute)));
                 }
 
-                ScriptBlockExpressionAst bodyAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
+                var bodyAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
                 IScriptExtent configurationExtent = ExtentOf(startExtent, bodyAst);
                 return new ConfigurationDefinitionAst(configurationExtent,
                     bodyAst,
@@ -3307,7 +3307,7 @@ namespace System.Management.Automation.Language
 
             // Process parameters on foreach
             Token foreachParameterToken = PeekToken();
-            ForEachFlags flags = ForEachFlags.None;
+            var flags = ForEachFlags.None;
             ExpressionAst throttleLimit = null;
 
             while (foreachParameterToken.Kind == TokenKind.Parameter)
@@ -3873,7 +3873,7 @@ namespace System.Management.Automation.Language
                         //   }
                         // } # we don't want to simple report an unexpected token here, it would be super-confusing.
 
-                        InvokeMemberExpressionAst instanceInvokeMemberExpressionAst = instanceName as InvokeMemberExpressionAst;
+                        var instanceInvokeMemberExpressionAst = instanceName as InvokeMemberExpressionAst;
 
                         if (instanceInvokeMemberExpressionAst != null &&
                             instanceInvokeMemberExpressionAst.Arguments.Count == 1 &&
@@ -3973,7 +3973,7 @@ namespace System.Management.Automation.Language
                 //
                 // Create DynamicKeywordStatementAst
                 //
-                Collection<CommandElementAst> commandElements = new Collection<CommandElementAst>
+                var commandElements = new Collection<CommandElementAst>
                 {
                     new StringConstantExpressionAst(functionName.Extent, functionName.Text, StringConstantType.BareWord),
                     (ExpressionAst)instanceName.Copy(),
@@ -4243,7 +4243,7 @@ namespace System.Management.Automation.Language
                 IScriptExtent lastExtent = lCurly.Extent;
                 List<Ast> nestedAsts = null;
                 MemberAst member;
-                List<MemberAst> members = new List<MemberAst>();
+                var members = new List<MemberAst>();
                 List<Ast> astsOnError = null;
 
                 while ((member = ClassMemberRule(name.Value, out astsOnError)) != null || astsOnError != null)
@@ -4483,7 +4483,7 @@ namespace System.Management.Automation.Language
 #if SUPPORT_PUBLIC_PRIVATE
                 PropertyAttributes attributes = privateToken != null ? PropertyAttributes.Private : PropertyAttributes.Public;
 #else
-                PropertyAttributes attributes = PropertyAttributes.Public;
+                var attributes = PropertyAttributes.Public;
 #endif
                 if (staticToken != null)
                 {
@@ -4548,7 +4548,7 @@ namespace System.Management.Automation.Language
 #if SUPPORT_PUBLIC_PRIVATE
                 MethodAttributes attributes = privateToken != null ? MethodAttributes.Private : MethodAttributes.Public;
 #else
-                MethodAttributes attributes = MethodAttributes.Public;
+                var attributes = MethodAttributes.Public;
 #endif
                 if (staticToken != null)
                 {
@@ -4724,7 +4724,7 @@ namespace System.Management.Automation.Language
 
                 IScriptExtent lastExtent = lCurly.Extent;
                 MemberAst member;
-                List<MemberAst> members = new List<MemberAst>();
+                var members = new List<MemberAst>();
                 while ((member = EnumMemberRule()) != null)
                 {
                     members.Add(member);
@@ -4750,7 +4750,7 @@ namespace System.Management.Automation.Language
                 if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
                     // No need to report error since there is error reported in method StatementRule
-                    List<Ast> nestedAsts = new List<Ast>();
+                    var nestedAsts = new List<Ast>();
                     nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                     nestedAsts.Add(enumDefn);
                     return new ErrorStatementAst(startExtent, nestedAsts);
@@ -5337,7 +5337,7 @@ namespace System.Management.Automation.Language
                                        ? ((StringToken)functionNameToken).Value
                                        : functionNameToken.Text;
 
-                FunctionDefinitionAst result = new FunctionDefinitionAst(ExtentOf(functionToken, scriptBlock),
+                var result = new FunctionDefinitionAst(ExtentOf(functionToken, scriptBlock),
                     isFilter, isWorkflow, functionNameToken, parameters, scriptBlock);
                 return result;
             }
@@ -5560,7 +5560,7 @@ namespace System.Management.Automation.Language
 
             IScriptExtent endErrorStatement = null;
             CatchClauseAst catchClause;
-            List<CatchClauseAst> catches = new List<CatchClauseAst>();
+            var catches = new List<CatchClauseAst>();
             List<TypeConstraintAst> errorAsts = null;
             while ((catchClause = CatchBlockRule(ref endErrorStatement, ref errorAsts)) != null)
             {
@@ -6568,7 +6568,7 @@ namespace System.Management.Automation.Language
                                 var ast = GetCommandArgument(context, token);
 
                                 // If this is the special verbatim argument syntax, look for the next element
-                                StringToken argumentToken = token as StringToken;
+                                var argumentToken = token as StringToken;
                                 if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                                 {
                                     elements.Add(ast);
@@ -6818,8 +6818,8 @@ namespace System.Management.Automation.Language
 
                 SkipToken();
 
-                Stack<ExpressionAst> operandStack = new Stack<ExpressionAst>();
-                Stack<Token> operatorStack = new Stack<Token>();
+                var operandStack = new Stack<ExpressionAst>();
+                var operatorStack = new Stack<Token>();
 
                 operandStack.Push(expr);
                 operatorStack.Push(token);
@@ -7304,7 +7304,7 @@ namespace System.Management.Automation.Language
 
             SkipNewlines();
 
-            List<KeyValuePair> keyValuePairs = new List<KeyValuePair>();
+            var keyValuePairs = new List<KeyValuePair>();
             while (true)
             {
                 KeyValuePair pair = GetKeyValuePair(parsingSchemaElement);
@@ -7477,8 +7477,8 @@ namespace System.Management.Automation.Language
             // G      '$('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
 
             IScriptExtent statementListExtent;
-            List<TrapStatementAst> traps = new List<TrapStatementAst>();
-            List<StatementAst> statements = new List<StatementAst>();
+            var traps = new List<TrapStatementAst>();
+            var statements = new List<StatementAst>();
             Token rParen;
 
             bool oldDisableCommaOperator = _disableCommaOperator;
@@ -7573,7 +7573,7 @@ namespace System.Management.Automation.Language
 
         private List<ExpressionAst> ParseNestedExpressions(StringExpandableToken expandableStringToken)
         {
-            List<ExpressionAst> nestedExpressions = new List<ExpressionAst>();
+            var nestedExpressions = new List<ExpressionAst>();
             List<Token> newNestedTokens = _savingTokens ? new List<Token>() : null;
             foreach (var token in expandableStringToken.NestedTokens)
             {
@@ -7755,7 +7755,7 @@ namespace System.Management.Automation.Language
             // G      array-literal-expression is not allowed - the comma is used
             // G      to separate argument-expressions.
 
-            List<ExpressionAst> arguments = new List<ExpressionAst>();
+            var arguments = new List<ExpressionAst>();
             Token comma = null;
             Token rParen = null;
 
@@ -7898,7 +7898,7 @@ namespace System.Management.Automation.Language
                 errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, args);
             }
 
-            ParseError errorToSave = new ParseError(extent, errorId, errorMsg, incompleteInput);
+            var errorToSave = new ParseError(extent, errorId, errorMsg, incompleteInput);
             SaveError(errorToSave);
         }
 
@@ -7927,7 +7927,7 @@ namespace System.Management.Automation.Language
             bool msgCorrespondsToString = false;
             foreach (Type resxType in resxTypes)
             {
-                string resxErrorBody = resxType.GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string;
+                var resxErrorBody = resxType.GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string;
                 if (string.Equals(errorMsg, resxErrorBody, StringComparison.Ordinal))
                 {
                     msgCorrespondsToString = true;

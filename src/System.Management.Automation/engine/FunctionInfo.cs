@@ -152,7 +152,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] arguments)
         {
-            FunctionInfo copy = new FunctionInfo(this) { IsGetCommandCopy = true, Arguments = arguments };
+            var copy = new FunctionInfo(this) { IsGetCommandCopy = true, Arguments = arguments };
             return copy;
         }
 
@@ -227,7 +227,7 @@ namespace System.Management.Automation
 
             if ((_options & ScopedItemOptions.Constant) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Function,
@@ -239,7 +239,7 @@ namespace System.Management.Automation
 
             if (!force && (_options & ScopedItemOptions.ReadOnly) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Function,
@@ -316,7 +316,7 @@ namespace System.Management.Automation
 
                     if ((_options & ScopedItemOptions.Constant) != 0)
                     {
-                        SessionStateUnauthorizedAccessException e =
+                        var e =
                             new SessionStateUnauthorizedAccessException(
                                     Name,
                                     SessionStateCategory.Function,
@@ -335,7 +335,7 @@ namespace System.Management.Automation
                         // user is trying to set the function to constant after
                         // creating the function. Do not allow this (as per spec).
 
-                        SessionStateUnauthorizedAccessException e =
+                        var e =
                             new SessionStateUnauthorizedAccessException(
                                     Name,
                                     SessionStateCategory.Function,
@@ -350,7 +350,7 @@ namespace System.Management.Automation
                     if ((value & ScopedItemOptions.AllScope) == 0 &&
                         (_options & ScopedItemOptions.AllScope) != 0)
                     {
-                        SessionStateUnauthorizedAccessException e =
+                        var e =
                             new SessionStateUnauthorizedAccessException(
                                     this.Name,
                                     SessionStateCategory.Function,
@@ -447,7 +447,7 @@ namespace System.Management.Automation
         {
             get
             {
-                StringBuilder synopsis = new StringBuilder();
+                var synopsis = new StringBuilder();
 
                 foreach (CommandParameterSetInfo parameterSet in ParameterSets)
                 {

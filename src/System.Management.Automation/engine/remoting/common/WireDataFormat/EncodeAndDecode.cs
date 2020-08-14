@@ -582,7 +582,7 @@ namespace System.Management.Automation
 
         internal static void AddNoteProperty<T>(PSObject pso, string propertyName, ValueGetterDelegate<T> valueGetter)
         {
-            T value = default(T);
+            var value = default(T);
             try
             {
                 value = valueGetter();
@@ -615,7 +615,7 @@ namespace System.Management.Automation
 
         internal static PSObject CreateEmptyPSObject()
         {
-            PSObject pso = new PSObject();
+            var pso = new PSObject();
             // we don't care about serializing/deserializing TypeNames in remoting objects/messages
             // so we just omit TypeNames info to lower packet size and improve performance
             pso.InternalTypeNames = ConsolidatedString.Empty;
@@ -1046,7 +1046,7 @@ namespace System.Management.Automation
                 }
             }
 
-            RunspacePool rsPool = shell.PowerShell.GetRunspaceConnection() as RunspacePool;
+            var rsPool = shell.PowerShell.GetRunspaceConnection() as RunspacePool;
             Dbg.Assert(rsPool != null, "Runspacepool cannot be null for a CreatePowerShell request");
             Guid clientRunspacePoolId = rsPool.InstanceId;
 
@@ -1094,7 +1094,7 @@ namespace System.Management.Automation
             HostInfo hostInfo;
             PSNoteProperty hostInfoProperty;
 
-            RunspacePool rsPool = powerShell.GetRunspaceConnection() as RunspacePool;
+            var rsPool = powerShell.GetRunspaceConnection() as RunspacePool;
 
             Dbg.Assert(rsPool != null, "Runspacepool cannot be null for a CreatePowerShell request");
 
@@ -1188,7 +1188,7 @@ namespace System.Management.Automation
             PSObject dataAsPSObject = CreateEmptyPSObject();
 
             // Add State Property
-            PSNoteProperty stateProperty =
+            var stateProperty =
                         new PSNoteProperty(RemoteDataNameStrings.RunspaceState,
                             (int)(stateInfo.State));
             dataAsPSObject.Properties.Add(stateProperty);
@@ -1508,7 +1508,7 @@ namespace System.Management.Automation
             PSObject dataAsPSObject = CreateEmptyPSObject();
 
             // Convert the state to int and add as property
-            PSNoteProperty stateProperty = new PSNoteProperty(
+            var stateProperty = new PSNoteProperty(
                 RemoteDataNameStrings.PipelineState, (int)(stateInfo.State));
             dataAsPSObject.Properties.Add(stateProperty);
 
@@ -1548,7 +1548,7 @@ namespace System.Management.Automation
             Dbg.Assert(exception != null, "Caller should validate the data");
 
             ErrorRecord er = null;
-            IContainsErrorRecord cer = exception as IContainsErrorRecord;
+            var cer = exception as IContainsErrorRecord;
             if (cer != null)
             {
                 er = cer.ErrorRecord;
@@ -1646,8 +1646,8 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        string stringValue = (string)propertyValue;
-                        T value = (T)Enum.Parse(typeof(T), stringValue, true);
+                        var stringValue = (string)propertyValue;
+                        var value = (T)Enum.Parse(typeof(T), stringValue, true);
                         return value;
                     }
                     catch (ArgumentException)
@@ -1664,7 +1664,7 @@ namespace System.Management.Automation
                 {
                     Type underlyingType = Enum.GetUnderlyingType(typeof(T));
                     object underlyingValue = LanguagePrimitives.ConvertTo(propertyValue, underlyingType, CultureInfo.InvariantCulture);
-                    T value = (T)underlyingValue;
+                    var value = (T)underlyingValue;
                     return value;
                 }
                 catch (InvalidCastException)
@@ -1711,7 +1711,7 @@ namespace System.Management.Automation
             }
             else if (propertyValue is PSObject)
             {
-                PSObject psObject = (PSObject)propertyValue;
+                var psObject = (PSObject)propertyValue;
                 return ConvertPropertyValueTo<T>(propertyName, psObject.BaseObject);
             }
             else if ((propertyValue is Hashtable) && (typeof(T).Equals(typeof(PSPrimitiveDictionary))))
@@ -1917,7 +1917,7 @@ namespace System.Management.Automation
                 sourceArgs.Add(argument);
             }
 
-            PSEventArgs eventArgs = new PSEventArgs(
+            var eventArgs = new PSEventArgs(
                 computerName,
                 runspaceId,
                 eventIdentifier,
@@ -2088,7 +2088,7 @@ namespace System.Management.Automation
         /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
+            var dataAsPSObject = data as PSObject;
             if (dataAsPSObject == null)
             {
                 throw new PSRemotingDataStructureException(
@@ -2112,7 +2112,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(data));
             }
 
-            PSObject dataAsPSObject = data as PSObject;
+            var dataAsPSObject = data as PSObject;
 
             ErrorRecord errorRecord = ErrorRecord.FromPSObjectForRemoting(dataAsPSObject);
 
@@ -2357,7 +2357,7 @@ namespace System.Management.Automation
         /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
+            var dataAsPSObject = data as PSObject;
 
             if (dataAsPSObject == null)
             {
@@ -2370,7 +2370,7 @@ namespace System.Management.Automation
             Version serializationVersion = GetPropertyValue<Version>(dataAsPSObject,
                 RemoteDataNameStrings.SerializationVersion);
 
-            RemoteSessionCapability result = new RemoteSessionCapability(
+            var result = new RemoteSessionCapability(
                 RemotingDestination.InvalidDestination,
                 protocolVersion, psVersion, serializationVersion);
 

@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
                     // Need to write an error if the user tries to get an alias
                     // that doesn't exist and they are not globbing.
 
-                    ItemNotFoundException itemNotFound =
+                    var itemNotFound =
                         new ItemNotFoundException(
                             aliasName,
                             "AliasNotFound",
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string message = StringUtil.Format(AliasCommandStrings.ExportAliasFileOpenFailed, pathWithError, e.Message);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 e,
                 "FileOpenFailure",
                 ErrorCategory.OpenError,

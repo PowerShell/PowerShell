@@ -146,7 +146,7 @@ namespace System.Management.Automation
                         // so we'll do it here instead...
                         if (rte.ErrorRecord.InvocationInfo == null)
                         {
-                            InvocationInfo invocationInfo = new InvocationInfo(null, commandExtent, context)
+                            var invocationInfo = new InvocationInfo(null, commandExtent, context)
                             { InvocationName = invocationName };
                             rte.ErrorRecord.SetInvocationInfo(invocationInfo);
                         }
@@ -323,7 +323,7 @@ namespace System.Management.Automation
                 markUntrustedData = ExecutionContext.IsMarkedAsUntrusted(splattedValue);
             }
 
-            IDictionary splattedTable = splattedValue as IDictionary;
+            var splattedTable = splattedValue as IDictionary;
             if (splattedTable != null)
             {
                 foreach (DictionaryEntry de in splattedTable)
@@ -349,7 +349,7 @@ namespace System.Management.Automation
             }
             else
             {
-                IEnumerable enumerableValue = splattedValue as IEnumerable;
+                var enumerableValue = splattedValue as IEnumerable;
                 if (enumerableValue != null)
                 {
                     foreach (object obj in enumerableValue)
@@ -420,7 +420,7 @@ namespace System.Management.Automation
                                             CommandRedirection[][] commandRedirections,
                                             FunctionContext funcContext)
         {
-            PipelineProcessor pipelineProcessor = new PipelineProcessor();
+            var pipelineProcessor = new PipelineProcessor();
             ExecutionContext context = funcContext._executionContext;
             Pipe outputPipe = funcContext._outputPipe;
 
@@ -513,7 +513,7 @@ namespace System.Management.Automation
                                             PipelineBaseAst pipelineAst,
                                             FunctionContext funcContext)
         {
-            PipelineProcessor pipelineProcessor = new PipelineProcessor();
+            var pipelineProcessor = new PipelineProcessor();
             ExecutionContext context = funcContext._executionContext;
             Pipe outputPipe = funcContext._outputPipe;
 
@@ -535,7 +535,7 @@ namespace System.Management.Automation
                 const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
 
                 // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
-                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
+                var updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
                 updatedScriptblock.Append(cmdPrefix);
                 int position = 0;
 
@@ -971,7 +971,7 @@ namespace System.Management.Automation
         //   $(write-error) 2>&1 > out
         internal Pipe[] BindForExpression(ExecutionContext context, FunctionContext funcContext)
         {
-            Pipe[] oldPipes = new Pipe[(int)RedirectionStream.Information + 1];
+            var oldPipes = new Pipe[(int)RedirectionStream.Information + 1];
             Pipe pipe = funcContext._outputPipe;
 
             // We set the redirection pipe directly in Context because there is no command processor
@@ -1410,7 +1410,7 @@ namespace System.Management.Automation
         /// </remarks>
         private static int[] RankExceptionTypes(Type[] types)
         {
-            int[] ranks = new int[types.Length];
+            var ranks = new int[types.Length];
             int length = types.Length;
 
             // If 'CatchAll' is specified, it must be the last catch block.
@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
 
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            var lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
             if (lpl != null)
             {
                 bool oldIsStopping = lpl.Stopper.IsStopping;
@@ -1592,7 +1592,7 @@ namespace System.Management.Automation
 
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            var lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
             if (lpl != null)
             {
                 lpl.Stopper.IsStopping = oldIsStopping;
@@ -1854,9 +1854,9 @@ namespace System.Management.Automation
         /// </remarks>
         internal static ActionPreference InquireForActionPreference(string message, ExecutionContext context)
         {
-            InternalHostUserInterface ui = (InternalHostUserInterface)context.EngineHostInterface.UI;
+            var ui = (InternalHostUserInterface)context.EngineHostInterface.UI;
 
-            Collection<ChoiceDescription> choices = new Collection<ChoiceDescription>();
+            var choices = new Collection<ChoiceDescription>();
 
             string continueLabel = ParserStrings.ContinueLabel;
             string continueHelpMsg = ParserStrings.ContinueHelpMessage;
@@ -1981,7 +1981,7 @@ namespace System.Management.Automation
         {
             result = PSObject.Base(result);
 
-            RuntimeException runtimeException = result as RuntimeException;
+            var runtimeException = result as RuntimeException;
             if (runtimeException != null)
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(runtimeException, extent);
@@ -1990,7 +1990,7 @@ namespace System.Management.Automation
                 return runtimeException;
             }
 
-            ErrorRecord er = result as ErrorRecord;
+            var er = result as ErrorRecord;
             if (er != null)
             {
                 runtimeException = new RuntimeException(er.ToString(), er.Exception, er) { WasThrownFromThrowStatement = true, WasRethrown = rethrow };
@@ -1999,7 +1999,7 @@ namespace System.Management.Automation
                 return runtimeException;
             }
 
-            Exception exception = result as Exception;
+            var exception = result as Exception;
             if (exception != null)
             {
                 er = new ErrorRecord(exception, exception.Message, ErrorCategory.OperationStopped, null);
@@ -2023,7 +2023,7 @@ namespace System.Management.Automation
 
         internal static RuntimeException ConvertToRuntimeException(Exception exception, IScriptExtent extent)
         {
-            RuntimeException runtimeException = exception as RuntimeException;
+            var runtimeException = exception as RuntimeException;
             if (runtimeException == null)
             {
                 var icer = exception as IContainsErrorRecord;
@@ -2170,7 +2170,7 @@ namespace System.Management.Automation
             object lval = PSObject.Base(left);
             object rval = PSObject.Base(right);
 
-            Type rType = rval as Type;
+            var rType = rval as Type;
 
             if (rType == null)
             {
@@ -2341,7 +2341,7 @@ namespace System.Management.Automation
                                                         string str,
                                                         ExecutionContext context)
         {
-            WildcardPattern wildcard = condition as WildcardPattern;
+            var wildcard = condition as WildcardPattern;
             if (wildcard != null)
             {
                 // If case sensitivity doesn't agree between the existing wildcard pattern and the switch mode,
@@ -2375,7 +2375,7 @@ namespace System.Management.Automation
             {
                 Match m;
 
-                Regex regex = condition as Regex;
+                var regex = condition as Regex;
                 // Check if the regex agrees with the switch w.r.t. case sensitivity, if not,
                 // we must build a new regex.
                 if (regex != null && (((regex.Options & RegexOptions.IgnoreCase) != 0) != caseSensitive))
@@ -2404,7 +2404,7 @@ namespace System.Management.Automation
                     {
                         Diagnostics.Assert(regex != null, "Logic above ensures regex is not null.");
 
-                        Hashtable h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+                        var h = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
 
                         foreach (string groupName in regex.GetGroupNames())
                         {
@@ -2439,7 +2439,7 @@ namespace System.Management.Automation
         {
             try
             {
-                FileInfo file = obj as FileInfo;
+                var file = obj as FileInfo;
                 string filePath = file != null ? file.FullName : PSObject.ToStringParser(context, obj);
 
                 if (string.IsNullOrEmpty(filePath))
@@ -2449,7 +2449,7 @@ namespace System.Management.Automation
                 }
 
                 ProviderInfo provider;
-                SessionState sessionState = new SessionState(context.EngineSessionState);
+                var sessionState = new SessionState(context.EngineSessionState);
 
                 Collection<string> filePaths =
                     sessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
@@ -2606,7 +2606,7 @@ namespace System.Management.Automation
                     return rest.ToArray();
                 }
 
-                object[] first = new object[numberToReturn];
+                var first = new object[numberToReturn];
                 while (MoveNext(context, enumerator))
                 {
                     current = Current(enumerator);
@@ -2641,7 +2641,7 @@ namespace System.Management.Automation
                 return first;
             }
 
-            Collection<PSObject> matches = new Collection<PSObject>();
+            var matches = new Collection<PSObject>();
             Collection<PSObject> notMatched = null;
             if (selectionMode == WhereOperatorSelectionMode.Split)
             {
@@ -2649,7 +2649,7 @@ namespace System.Management.Automation
             }
 
             var resultCollection = new List<object>();
-            Pipe outputPipe = new Pipe(resultCollection);
+            var outputPipe = new Pipe(resultCollection);
             bool returnTheRest = false;
 
             while (MoveNext(context, enumerator))
@@ -2784,7 +2784,7 @@ namespace System.Management.Automation
             // If expression argument is a .Net type then convert the collection to that type
             // if the target type is a collection or array, then the result will be a collection of exactly
             // that type. If the target type is not a collection type then return a generic collection of that type.
-            Type targetType = expression as Type;
+            var targetType = expression as Type;
             if (targetType != null)
             {
                 dynamic resultCollection = null;
@@ -2853,10 +2853,10 @@ namespace System.Management.Automation
             // If the expression is a script block, it will be executed in the current scope
             // once on each element.
             var result = new Collection<PSObject>();
-            ScriptBlock sb = expression as ScriptBlock;
+            var sb = expression as ScriptBlock;
             if (sb != null)
             {
-                Pipe outputPipe = new Pipe(result);
+                var outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
                 {
                     sb.InvokeWithPipeImpl(ScriptBlockClauseToInvoke.Begin, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, AutomationNull.Value, AutomationNull.Value, AutomationNull.Value, outputPipe, null, arguments);
@@ -2890,7 +2890,7 @@ namespace System.Management.Automation
                 {
                     object current = Current(enumerator);
                     object basedCurrent = PSObject.Base(current);
-                    Hashtable ht = basedCurrent as Hashtable;
+                    var ht = basedCurrent as Hashtable;
                     if (ht != null)
                     {
                         // special case hashtables since we don't want to hit a method name
@@ -3151,7 +3151,7 @@ namespace System.Management.Automation
                 catch (TargetInvocationException tie)
                 {
                     // If we tried to invoke a method that didn't exist, then we'll try enumerating the object and call the method on it's members.
-                    RuntimeException rte = tie.InnerException as RuntimeException;
+                    var rte = tie.InnerException as RuntimeException;
                     if (rte != null && rte.ErrorRecord.FullyQualifiedErrorId.Equals(ParserOps.MethodNotFoundErrorId, StringComparison.Ordinal))
                     {
                         var nestedEnumerator = LanguagePrimitives.GetEnumerator(current);
@@ -3517,7 +3517,7 @@ namespace System.Management.Automation
         internal static object[] GetSlice(IList list, int startIndex)
         {
             int countElements = list.Count - startIndex;
-            object[] result = new object[countElements];
+            var result = new object[countElements];
 
             int i = startIndex;
             int j = 0;

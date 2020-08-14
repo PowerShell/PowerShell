@@ -79,7 +79,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (ComputerType == TargetMachineType.Container)
                 {
-                    ContainerConnectionInfo connectionInfo = _remoteRunspace.ConnectionInfo as ContainerConnectionInfo;
+                    var connectionInfo = _remoteRunspace.ConnectionInfo as ContainerConnectionInfo;
                     return connectionInfo.ContainerProc.ContainerId;
                 }
                 else
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (ComputerType == TargetMachineType.VirtualMachine)
                 {
-                    VMConnectionInfo connectionInfo = _remoteRunspace.ConnectionInfo as VMConnectionInfo;
+                    var connectionInfo = _remoteRunspace.ConnectionInfo as VMConnectionInfo;
                     return connectionInfo.VMGuid;
                 }
                 else

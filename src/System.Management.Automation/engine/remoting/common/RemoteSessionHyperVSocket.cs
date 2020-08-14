@@ -69,7 +69,7 @@ namespace System.Management.Automation.Remoting
                 return null;
             }
 
-            HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(SockAddr.Family, Guid.Empty, Guid.Empty);
+            var endpoint = new HyperVSocketEndPoint(SockAddr.Family, Guid.Empty, Guid.Empty);
 
             string sockAddress = SockAddr.ToString();
 
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Remoting
 
         public override bool Equals(object obj)
         {
-            HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
+            var endpoint = (HyperVSocketEndPoint)obj;
 
             if (endpoint == null)
             {
@@ -105,7 +105,7 @@ namespace System.Management.Automation.Remoting
 
         public override SocketAddress Serialize()
         {
-            SocketAddress sockAddress = new SocketAddress((System.Net.Sockets.AddressFamily)_addressFamily, HYPERV_SOCK_ADDR_SIZE);
+            var sockAddress = new SocketAddress((System.Net.Sockets.AddressFamily)_addressFamily, HYPERV_SOCK_ADDR_SIZE);
 
             byte[] vmId = _vmId.ToByteArray();
             byte[] serviceId = _serviceId.ToByteArray();
@@ -233,10 +233,10 @@ namespace System.Management.Automation.Remoting
                 */
 
                 // TODO: remove below 6 lines of code when .NET supports Hyper-V socket duplication
-                Guid serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220"); // HV_GUID_VM_SESSION_SERVICE_ID_2
-                HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, Guid.Empty, serviceId);
+                var serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220"); // HV_GUID_VM_SESSION_SERVICE_ID_2
+                var endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, Guid.Empty, serviceId);
 
-                Socket listenSocket = new Socket(endpoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
+                var listenSocket = new Socket(endpoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
                 listenSocket.Bind(endpoint);
 
                 listenSocket.Listen(1);
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Remoting
                     byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
                     byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
                     byte[] password = Encoding.Unicode.GetBytes(networkCredential.Password);
-                    byte[] response = new byte[4]; // either "PASS" or "FAIL"
+                    var response = new byte[4]; // either "PASS" or "FAIL"
                     string responseString;
 
                     //

@@ -94,9 +94,9 @@ namespace System.Management.Automation
         /// </summary>
         internal static void OverrideParameters(PSObject maml1, PSObject maml2)
         {
-            string[] parametersPath = new string[] { "Parameters", "Parameter" };
+            var parametersPath = new string[] { "Parameters", "Parameter" };
             // Final collection of PSObjects.
-            List<object> maml2items = new List<object>();
+            var maml2items = new List<object>();
 
             // Add maml2 first since we are prepending.
 
@@ -116,7 +116,7 @@ namespace System.Management.Automation
             EnsurePropertyInfoPathExists(maml1, parametersPath);
             // For maml1: Add as collection or single item. Do nothing if null or some other type.
             PSPropertyInfo propertyInfo1 = GetPropertyInfo(maml1, parametersPath);
-            List<object> maml1items = new List<object>();
+            var maml1items = new List<object>();
             array = propertyInfo1.Value as Array;
             if (array != null)
             {
@@ -233,7 +233,7 @@ namespace System.Management.Automation
         internal static void PrependPropertyValue(PSObject maml1, PSObject maml2, string[] path, bool shouldOverride)
         {
             // Final collection of PSObjects.
-            List<object> items = new List<object>();
+            var items = new List<object>();
 
             // Add maml2 first since we are prepending.
 

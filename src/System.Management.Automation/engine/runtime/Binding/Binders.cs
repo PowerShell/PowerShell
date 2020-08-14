@@ -376,7 +376,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(args != null && args.Length > 0, "args should not be null or empty");
             Diagnostics.Assert(args.Any(mo => mo.Value is PSObject), "At least one arg must be a psobject");
 
-            Expression[] exprs = new Expression[args.Length];
+            var exprs = new Expression[args.Length];
             BindingRestrictions restrictions = BindingRestrictions.Empty;
 
             // Target maps to arg[0] of the binder.
@@ -988,7 +988,7 @@ namespace System.Management.Automation.Language
                 }
 
                 int i;
-                Expression[] newArrayElements = new Expression[_elements];
+                var newArrayElements = new Expression[_elements];
                 var temp = Expression.Variable(typeof(IList));
                 if (iList.Count < _elements)
                 {
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation.Language
                 return Defer(target).WriteToDebugLog(this);
             }
 
-            IList pipelineResult = target.Value as IList;
+            var pipelineResult = target.Value as IList;
             Diagnostics.Assert(pipelineResult != null, "Pipeline result is always an IList");
 
             var ilistExpr = target.Expression;
@@ -2537,8 +2537,8 @@ namespace System.Management.Automation.Language
             //     try { /* as above */ }
             //     catch (InvalidCastException) { true or false (depending on Operation type) }
 
-            List<ParameterExpression> temps = new List<ParameterExpression>();
-            List<Expression> stmts = new List<Expression>();
+            var temps = new List<ParameterExpression>();
+            var stmts = new List<Expression>();
             Expression targetExpr = target.Expression;
             if (target.LimitType == typeof(string))
             {
@@ -3839,7 +3839,7 @@ namespace System.Management.Automation.Language
             if (baseObject != null && !(baseObject is PSObject))
             {
                 Type fromType = baseObject.GetType();
-                ConversionRank rank = ConversionRank.None;
+                var rank = ConversionRank.None;
 
                 LanguagePrimitives.FigureCastConversion(fromType, resultType, ref rank);
                 if (rank != ConversionRank.None)
@@ -4376,7 +4376,7 @@ namespace System.Management.Automation.Language
                     target.PSGetTypeRestriction());
             }
 
-            Expression[] indexExprs = new Expression[getterParams.Length];
+            var indexExprs = new Expression[getterParams.Length];
             for (int i = 0; i < getterParams.Length; ++i)
             {
                 var parameterType = getterParams[i].ParameterType;
@@ -4656,7 +4656,7 @@ namespace System.Management.Automation.Language
                     target.PSGetTypeRestriction());
             }
 
-            Expression[] indexExprs = new Expression[paramLength];
+            var indexExprs = new Expression[paramLength];
             for (int i = 0; i < paramLength; ++i)
             {
                 var parameterType = setterParams[i].ParameterType;
@@ -5508,7 +5508,7 @@ namespace System.Management.Automation.Language
             }
 
             // Otherwise, check if it's a core type
-            Type targetType = targetValue as Type;
+            var targetType = targetValue as Type;
             if ((!isStatic) || (targetType == null))
             {
                 targetType = targetValue.GetType();
@@ -5769,7 +5769,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
+                        var method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
                         memberInfo = PSMethod.Create(this.Name, PSObject.DotNetInstanceAdapter, null, method);
                     }
                 }
@@ -6874,7 +6874,7 @@ namespace System.Management.Automation.Language
                 numArgs -= 1;
             }
 
-            object[] argValues = new object[numArgs];
+            var argValues = new object[numArgs];
             for (int i = 0; i < numArgs; ++i)
             {
                 object arg = args[i].Value;
@@ -7002,12 +7002,12 @@ namespace System.Management.Automation.Language
 
         internal static Expression InvokeMethod(MethodBase mi, DynamicMetaObject target, DynamicMetaObject[] args, bool expandParameters, MethodInvocationType invocationType)
         {
-            List<ParameterExpression> temps = new List<ParameterExpression>();
-            List<Expression> initTemps = new List<Expression>();
-            List<Expression> copyOutTemps = new List<Expression>();
+            var temps = new List<ParameterExpression>();
+            var initTemps = new List<Expression>();
+            var copyOutTemps = new List<Expression>();
 
             ConstructorInfo constructorInfo = null;
-            MethodInfo methodInfo = mi as MethodInfo;
+            var methodInfo = mi as MethodInfo;
             if (methodInfo != null)
             {
                 Type returnType = methodInfo.ReturnType;

@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _hideHeader = suppressHeader;
 
             // make sure the column widths are correct; if not, take appropriate action
-            ColumnWidthManager manager = new ColumnWidthManager(
+            var manager = new ColumnWidthManager(
                 screenColumns - leftMarginIndent,
                 ScreenInfo.minimumColumnWidth,
                 ScreenInfo.separatorCharacterCount);
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // generate an array of "--" as header markers below
             // the column header labels
-            string[] breakLine = new string[values.Length];
+            var breakLine = new string[values.Length];
             for (int k = 0; k < breakLine.Length; k++)
             {
                 // the column can be hidden
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
 
-            StringCollection[] scArray = new StringCollection[validColumnCount];
+            var scArray = new StringCollection[validColumnCount];
             bool addPadding = true;
             for (int k = 0; k < scArray.Length; k++)
             {
@@ -362,10 +362,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // finally, build an array of strings
-            string[] rows = new string[screenRows];
+            var rows = new string[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private string GenerateRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells dc)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             bool addPadding = true;
             for (int k = 0; k < _si.columnInfo.Length; k++)

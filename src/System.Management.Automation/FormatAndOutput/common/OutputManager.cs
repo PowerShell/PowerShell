@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="commandType">Type of the command to execute.</param>
         private void RegisterCommandDefault(ExecutionContext context, string commandName, Type commandType)
         {
-            CommandEntry ce = new CommandEntry();
+            var ce = new CommandEntry();
 
             ce.command.Initialize(context, commandName, commandType);
             ce.command.AddNamedParameter("LineOutput", _lo);

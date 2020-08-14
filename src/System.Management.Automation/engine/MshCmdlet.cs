@@ -308,7 +308,7 @@ namespace System.Management.Automation
 
             try
             {
-                CommandOrigin commandOrigin = CommandOrigin.Runspace;
+                var commandOrigin = CommandOrigin.Runspace;
                 if (_cmdlet != null)
                 {
                     commandOrigin = _cmdlet.CommandOrigin;
@@ -383,7 +383,7 @@ namespace System.Management.Automation
         {
             CmdletInfo current = null;
 
-            CommandSearcher searcher = new CommandSearcher(
+            var searcher = new CommandSearcher(
                     commandName,
                     SearchResolutionOptions.None,
                     CommandTypes.Cmdlet,
@@ -488,11 +488,11 @@ namespace System.Management.Automation
             if (pattern == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
 
-            List<CmdletInfo> cmdlets = new List<CmdletInfo>();
+            var cmdlets = new List<CmdletInfo>();
 
             CmdletInfo current = null;
 
-            CommandSearcher searcher = new CommandSearcher(
+            var searcher = new CommandSearcher(
                     pattern,
                     SearchResolutionOptions.CommandNameIsPattern,
                     CommandTypes.Cmdlet,
@@ -551,7 +551,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            List<string> commands = new List<string>();
+            var commands = new List<string>();
 
             foreach (CommandInfo current in this.GetCommands(name, CommandTypes.All, nameIsPattern))
             {
@@ -620,7 +620,7 @@ namespace System.Management.Automation
 
         internal IEnumerable<CommandInfo> GetCommands(string name, CommandTypes commandTypes, SearchResolutionOptions options, CommandOrigin? commandOrigin = null)
         {
-            CommandSearcher searcher = new CommandSearcher(
+            var searcher = new CommandSearcher(
                 name,
                 options,
                 commandTypes,
@@ -661,7 +661,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                CommandInfo commandInfo = ((IEnumerator)searcher).Current as CommandInfo;
+                var commandInfo = ((IEnumerator)searcher).Current as CommandInfo;
                 if (commandInfo != null)
                 {
                     yield return commandInfo;
@@ -799,7 +799,7 @@ namespace System.Management.Automation
                 _cmdlet.ThrowIfStopping();
 
             Cmdlet cmdletToUse = null;
-            ScriptBlock.ErrorHandlingBehavior errorHandlingBehavior = ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe;
+            var errorHandlingBehavior = ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe;
 
             // Check if they want output
             if ((writeToPipeline & PipelineResultTypes.Output) == PipelineResultTypes.Output)
@@ -853,7 +853,7 @@ namespace System.Management.Automation
             }
 
             // If the result is already a collection of PSObjects, just return it...
-            Collection<PSObject> result = rawResult as Collection<PSObject>;
+            var result = rawResult as Collection<PSObject>;
             if (result != null)
                 return result;
 
@@ -971,7 +971,7 @@ namespace System.Management.Automation
 
                     if (_pagingParameters == null)
                     {
-                        MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
+                        var mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
                             _pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);

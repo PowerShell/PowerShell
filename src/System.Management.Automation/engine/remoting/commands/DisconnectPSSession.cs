@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             Dictionary<Guid, PSSession> psSessions;
-            List<IThrottleOperation> disconnectOperations = new List<IThrottleOperation>();
+            var disconnectOperations = new List<IThrottleOperation>();
 
             try
             {
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
                             string msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeDisconnectedForVMContainerSession,
                                 psSession.Name, psSession.ComputerName, psSession.ComputerType);
                             Exception reason = new PSNotSupportedException(msg);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, "CannotDisconnectVMContainerSession", ErrorCategory.InvalidOperation, psSession);
+                            var errorRecord = new ErrorRecord(reason, "CannotDisconnectVMContainerSession", ErrorCategory.InvalidOperation, psSession);
                             WriteError(errorRecord);
                             continue;
                         }
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            DisconnectRunspaceOperation disconnectOperation = new DisconnectRunspaceOperation(psSession, _stream);
+                            var disconnectOperation = new DisconnectRunspaceOperation(psSession, _stream);
                             disconnectOperations.Add(disconnectOperation);
                         }
                         else if (psSession.Runspace.RunspaceStateInfo.State != RunspaceState.Disconnected)
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
                             // Write error record.
                             string msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeDisconnected, psSession.Name);
                             Exception reason = new RuntimeException(msg);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, "CannotDisconnectSessionWhenNotOpened", ErrorCategory.InvalidOperation, psSession);
+                            var errorRecord = new ErrorRecord(reason, "CannotDisconnectSessionWhenNotOpened", ErrorCategory.InvalidOperation, psSession);
                             WriteError(errorRecord);
                         }
                         else
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string msg = StringUtil.Format(RemotingErrorIdStrings.CannotDisconnectSessionWithInvalidIdleTimeout,
                     session.Name, idleTimeout / 1000, maxIdleTimeout / 1000, minIdleTimeout / 1000);
-                ErrorRecord errorRecord = new ErrorRecord(new RuntimeException(msg),
+                var errorRecord = new ErrorRecord(new RuntimeException(msg),
                     "CannotDisconnectSessionWithInvalidIdleTimeout", ErrorCategory.InvalidArgument, session);
                 WriteError(errorRecord);
 
@@ -365,11 +365,11 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new System.Text.StringBuilder();
 
             foreach (PSSession psSession in psSessions.Values)
             {
-                WSManConnectionInfo wsManConnectionInfo = psSession.Runspace.ConnectionInfo as WSManConnectionInfo;
+                var wsManConnectionInfo = psSession.Runspace.ConnectionInfo as WSManConnectionInfo;
 
                 if ((wsManConnectionInfo != null) && (wsManConnectionInfo.IsLocalhostAndNetworkAccess))
                 {
@@ -465,14 +465,14 @@ namespace Microsoft.PowerShell.Commands
 
             private void SendStartComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+                var operationStateEventArgs = new OperationStateEventArgs();
                 operationStateEventArgs.OperationState = OperationState.StartComplete;
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
 
             private void SendStopComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+                var operationStateEventArgs = new OperationStateEventArgs();
                 operationStateEventArgs.OperationState = OperationState.StopComplete;
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     Exception reason = new RuntimeException(msg, e);
-                    ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
+                    var errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
                     {
                         cmdlet.WriteError(errorRecord);

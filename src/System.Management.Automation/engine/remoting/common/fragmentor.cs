@@ -212,7 +212,7 @@ namespace System.Management.Automation.Remoting
 
             int totalLength = objectIdSize + fragmentIdSize + flagsSize + blobLengthSize + BlobLength;
 
-            byte[] result = new byte[totalLength];
+            var result = new byte[totalLength];
 
             int idx = 0;
 
@@ -606,7 +606,7 @@ namespace System.Management.Automation.Remoting
         public override void WriteByte(byte value)
         {
             Dbg.Assert(_isEntered, "Stream should be Entered before writing into.");
-            byte[] buffer = new byte[1];
+            var buffer = new byte[1];
             buffer[0] = value;
             Write(buffer, 0, 1);
         }
@@ -633,7 +633,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 int bytesToRead = _length > _fragmentSize ? _fragmentSize : (int)_length;
-                byte[] result = new byte[bytesToRead];
+                var result = new byte[bytesToRead];
                 Read(result, 0, bytesToRead);
                 return result;
             }
@@ -655,7 +655,7 @@ namespace System.Management.Automation.Remoting
                 int bytesToRead = _length > _fragmentSize ? _fragmentSize : (int)_length;
                 if (bytesToRead > 0)
                 {
-                    byte[] result = new byte[bytesToRead];
+                    var result = new byte[bytesToRead];
                     Read(result, 0, bytesToRead);
                     return result;
                 }
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Remoting
         {
             int offSetToWriteTo = offset;
             int dataWritten = 0;
-            Collection<MemoryStream> memoryStreamsToDispose = new Collection<MemoryStream>();
+            var memoryStreamsToDispose = new Collection<MemoryStream>();
             MemoryStream prevReadStream = null;
 
             lock (_syncObject)
@@ -1056,7 +1056,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(obj != null, "Cannot serialize a null object");
             Dbg.Assert(streamToWriteTo != null, "Stream to write to cannot be null");
 
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            var xmlSettings = new XmlWriterSettings();
             xmlSettings.CheckCharacters = false;
             xmlSettings.Indent = false;
             // we dont want the underlying stream to be closed as we expect
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation.Remoting
 
             using (XmlWriter xmlWriter = XmlWriter.Create(streamToWriteTo, xmlSettings))
             {
-                Serializer serializer = new Serializer(xmlWriter, _serializationContext);
+                var serializer = new Serializer(xmlWriter, _serializationContext);
                 serializer.TypeTable = TypeTable;
                 serializer.Serialize(obj);
                 serializer.Done();
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation.Remoting
             object result = null;
             using (XmlReader xmlReader = XmlReader.Create(serializedDataStream, InternalDeserializer.XmlReaderSettingsForCliXml))
             {
-                Deserializer deserializer = new Deserializer(xmlReader, DeserializationContext);
+                var deserializer = new Deserializer(xmlReader, DeserializationContext);
                 deserializer.TypeTable = TypeTable;
                 result = deserializer.Deserialize();
                 deserializer.Done();

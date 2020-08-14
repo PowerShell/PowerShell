@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell
 
             if (SecondsRemaining >= 0)
             {
-                TimeSpan span = new TimeSpan(0, 0, this.SecondsRemaining);
+                var span = new TimeSpan(0, 0, this.SecondsRemaining);
 
                 strCollection.Add(
                     StringUtil.TruncateToBufferCellWidth(
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell
             string secRemain = string.Empty;
             if (SecondsRemaining >= 0)
             {
-                TimeSpan span = new TimeSpan(0, 0, SecondsRemaining);
+                var span = new TimeSpan(0, 0, SecondsRemaining);
                 secRemain = span.ToString() + " ";
             }
 
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell
             string secRemain = string.Empty;
             if (SecondsRemaining >= 0)
             {
-                TimeSpan span = new TimeSpan(0, 0, SecondsRemaining);
+                var span = new TimeSpan(0, 0, SecondsRemaining);
                 secRemain = span.ToString() + " ";
             }
 

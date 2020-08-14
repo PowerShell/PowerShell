@@ -796,7 +796,7 @@ namespace System.Management.Automation
             // If there are multiple, we can run them in parallel using the asynchronous versions.
             if (ChildJobs.Count == 1)
             {
-                Job2 child = ChildJobs[0] as Job2;
+                var child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
@@ -981,7 +981,7 @@ namespace System.Management.Automation
             // If there are multiple, we can run them in parallel using the asynchronous versions.
             if (ChildJobs.Count == 1)
             {
-                Job2 child = ChildJobs[0] as Job2;
+                var child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
@@ -1221,7 +1221,7 @@ namespace System.Management.Automation
             // If there are multiple, we can run them in parallel using the asynchronous versions.
             if (ChildJobs.Count == 1)
             {
-                Job2 child = ChildJobs[0] as Job2;
+                var child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
@@ -1389,7 +1389,7 @@ namespace System.Management.Automation
             // If there are multiple, we can run them in parallel using the asynchronous versions.
             if (ChildJobs.Count == 1)
             {
-                Job2 child = ChildJobs[0] as Job2;
+                var child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
@@ -1417,7 +1417,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            AutoResetEvent completed = new AutoResetEvent(false);
+            var completed = new AutoResetEvent(false);
             var suspendedChildJobsCount = 0;
             EventHandler<AsyncCompletedEventArgs> eventHandler = null;
             foreach (Job2 job in ChildJobs)
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
             // If there are multiple, we can run them in parallel using the asynchronous versions.
             if (ChildJobs.Count == 1)
             {
-                Job2 child = ChildJobs[0] as Job2;
+                var child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
 #pragma warning disable 56500
                 try
@@ -1593,7 +1593,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            AutoResetEvent completed = new AutoResetEvent(false);
+            var completed = new AutoResetEvent(false);
             // Count of StopJobCompleted events from children.
             var stoppedChildJobsCount = 0;
             EventHandler<AsyncCompletedEventArgs> eventHandler = null;
@@ -2047,7 +2047,7 @@ namespace System.Management.Automation
             if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < ChildJobs.Count; i++)
             {

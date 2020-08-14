@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Module != null && FullyQualifiedModule != null)
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                    var error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                     ThrowTerminatingError(error);
                 }
 
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_path == null && Recurse.IsPresent)
                     {
-                        PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
+                        var e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
 
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                ProgressRecord progress = new ProgressRecord(activityId, HelpDisplayStrings.UpdateProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling);
+                var progress = new ProgressRecord(activityId, HelpDisplayStrings.UpdateProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling);
 
                 progress.PercentComplete = 100;
                 progress.RecordType = ProgressRecordType.Completed;
@@ -255,14 +255,14 @@ namespace Microsoft.PowerShell.Commands
                 UpdatableHelpSystemDrive helpInfoDrive = null;
                 try
                 {
-                    Collection<string> resolvedPaths = new Collection<string>();
+                    var resolvedPaths = new Collection<string>();
 
                     // Search for the HelpInfo XML
                     foreach (string path in _path)
                     {
                         if (string.IsNullOrEmpty(path))
                         {
-                            PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
+                            var e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                             WriteError(e.ErrorRecord);
                             return false;
                         }
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (_credential != null)
                             {
-                                UpdatableHelpSystemDrive drive = new UpdatableHelpSystemDrive(this, path, _credential);
+                                var drive = new UpdatableHelpSystemDrive(this, path, _credential);
                                 sourcePath = drive.DriveName;
                             }
 
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
                         string xsdPath = SessionState.Path.Combine(Utils.GetApplicationBase(Context.ShellID), "Schemas\\PSMaml\\maml.xsd"); // TODO: Edit the maml XSDs and change this
 
                         // Gather destination paths
-                        Collection<string> destPaths = new Collection<string>();
+                        var destPaths = new Collection<string>();
 
                         if (!Directory.Exists(moduleBase))
                         {
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 try
                                 {
-                                    using (UpdatableHelpSystemDrive drive = new UpdatableHelpSystemDrive(this, helpContentUri, _credential))
+                                    using (var drive = new UpdatableHelpSystemDrive(this, helpContentUri, _credential))
                                     {
                                         if (!Directory.Exists(tempContentPath))
                                         {

@@ -254,14 +254,14 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // construct and populate a new DYNAMIC_TIME_ZONE_INFORMATION structure
-                    NativeMethods.DYNAMIC_TIME_ZONE_INFORMATION dtzi = new NativeMethods.DYNAMIC_TIME_ZONE_INFORMATION();
+                    var dtzi = new NativeMethods.DYNAMIC_TIME_ZONE_INFORMATION();
                     dtzi.Bias -= (int)InputObject.BaseUtcOffset.TotalMinutes;
                     dtzi.StandardName = InputObject.StandardName;
                     dtzi.DaylightName = InputObject.DaylightName;
                     dtzi.TimeZoneKeyName = InputObject.Id;
 
                     // Request time zone transition information for the current year
-                    NativeMethods.TIME_ZONE_INFORMATION tzi = new NativeMethods.TIME_ZONE_INFORMATION();
+                    var tzi = new NativeMethods.TIME_ZONE_INFORMATION();
                     if (!NativeMethods.GetTimeZoneInformationForYear((ushort)DateTime.Now.Year, ref dtzi, ref tzi))
                     {
                         ThrowWin32Error();
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // setup the privileges being checked
-                    NativeMethods.PRIVILEGE_SET ps = new NativeMethods.PRIVILEGE_SET()
+                    var ps = new NativeMethods.PRIVILEGE_SET()
                     {
                         PrivilegeCount = 1,
                         Control = 1,
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // setup the privileges being requested
-                NativeMethods.TOKEN_PRIVILEGES tp = new NativeMethods.TOKEN_PRIVILEGES()
+                var tp = new NativeMethods.TOKEN_PRIVILEGES()
                 {
                     PrivilegeCount = 1,
                     Luid = 0,
@@ -779,8 +779,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A TimeZoneInfo object array containing information about the specified system time zones.</returns>
         internal static TimeZoneInfo[] LookupSystemTimeZoneInfoByName(string name)
         {
-            WildcardPattern namePattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
-            List<TimeZoneInfo> tzi = new List<TimeZoneInfo>();
+            var namePattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
+            var tzi = new List<TimeZoneInfo>();
 
             // get the available system time zones
             ReadOnlyCollection<TimeZoneInfo> zones = TimeZoneInfo.GetSystemTimeZones();

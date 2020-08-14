@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                var error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
 
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                var error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
 
@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandNames);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.ResourceExists,
@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, typeName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.ResourceExists,
@@ -654,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
@@ -686,7 +686,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName, name);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle recognized types of exceptions first
             //
-            RemoteException remoteException = runtimeException as RemoteException;
+            var remoteException = runtimeException as RemoteException;
             if ((remoteException != null) && (remoteException.SerializedRemoteException != null))
             {
                 if (Deserializer.IsInstanceOfType(remoteException.SerializedRemoteException, typeof(CommandNotFoundException)))
@@ -761,7 +761,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, aliasName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.OperationTimeout,
@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
@@ -833,7 +833,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_existingCommands == null)
                 {
                     _existingCommands = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                    CommandSearcher searcher = new CommandSearcher(
+                    var searcher = new CommandSearcher(
                         "*",
                         SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveAliasPatterns | SearchResolutionOptions.ResolveFunctionPatterns,
                         CommandTypes.All,
@@ -852,7 +852,7 @@ namespace Microsoft.PowerShell.Commands
         {
             commandName = ModuleCmdletBase.AddPrefixToCommandName(commandName, this.Prefix);
 
-            CommandSearcher searcher = new CommandSearcher(commandName, SearchResolutionOptions.None, CommandTypes.All, this.Context);
+            var searcher = new CommandSearcher(commandName, SearchResolutionOptions.None, CommandTypes.All, this.Context);
             foreach (string expandedCommandName in searcher.ConstructSearchPatternsFromName(commandName))
             {
                 if (this.ExistingCommands.ContainsKey(expandedCommandName))
@@ -1062,7 +1062,7 @@ namespace Microsoft.PowerShell.Commands
                 valueRehydrator = delegate (PSObject pso) { return ConvertTo<V>(commandName, pso); };
             }
 
-            Dictionary<K, V> result = new Dictionary<K, V>();
+            var result = new Dictionary<K, V>();
             PSPropertyInfo deserializedDictionaryProperty = deserializedObject.Properties[propertyName];
             if (deserializedDictionaryProperty != null)
             {
@@ -1280,8 +1280,8 @@ namespace Microsoft.PowerShell.Commands
             Type parameterType = RehydrateParameterType(deserializedParameterMetadata);
             List<string> aliases = RehydrateList<string>("Get-Command", deserializedParameterMetadata, "Aliases", null);
 
-            ParameterSetMetadata parameterSetMetadata = new ParameterSetMetadata(int.MinValue, 0, null);
-            Dictionary<string, ParameterSetMetadata> parameterSets = new Dictionary<string, ParameterSetMetadata>(StringComparer.OrdinalIgnoreCase);
+            var parameterSetMetadata = new ParameterSetMetadata(int.MinValue, 0, null);
+            var parameterSets = new Dictionary<string, ParameterSetMetadata>(StringComparer.OrdinalIgnoreCase);
             parameterSets.Add(ParameterAttribute.AllParameterSets, parameterSetMetadata);
 
             return new ParameterMetadata(
@@ -1335,7 +1335,7 @@ namespace Microsoft.PowerShell.Commands
 
             // add client-side AsJob parameter
             parameters.Remove("AsJob");
-            ParameterMetadata asJobParameter = new ParameterMetadata("AsJob", typeof(SwitchParameter));
+            var asJobParameter = new ParameterMetadata("AsJob", typeof(SwitchParameter));
             parameters.Add(asJobParameter.Name, asJobParameter);
 
             return new CommandMetadata(
@@ -1566,7 +1566,7 @@ namespace Microsoft.PowerShell.Commands
             powerShell.AddParameter("TypeName", this.FormatTypeName);
 
             // For remote PS version 5.1 and greater, we need to include the new -PowerShellVersion parameter
-            RemoteRunspace remoteRunspace = Session.Runspace as RemoteRunspace;
+            var remoteRunspace = Session.Runspace as RemoteRunspace;
             if ((remoteRunspace != null) && (remoteRunspace.ServerVersion != null) &&
                 (remoteRunspace.ServerVersion >= new Version(5, 1)))
             {
@@ -1608,12 +1608,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         DateTime startTime = DateTime.UtcNow;
 
-                        PSDataCollection<PSObject> asyncOutput = new PSDataCollection<PSObject>();
+                        var asyncOutput = new PSDataCollection<PSObject>();
 
                         // process output and errors as soon as possible
                         asyncResult = powerShell.BeginInvoke<PSObject, PSObject>(null, asyncOutput);
                         int numberOfReceivedObjects = 0;
-                        List<ExtendedTypeDefinition> result = new List<ExtendedTypeDefinition>();
+                        var result = new List<ExtendedTypeDefinition>();
                         foreach (PSObject deserializedFormatData in asyncOutput)
                         {
                             AddRemoteTypeDefinition(result, deserializedFormatData);
@@ -1718,7 +1718,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    Dictionary<string, CommandMetadata> name2commandMetadata =
+                    var name2commandMetadata =
                         new Dictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
 
                     // invoke
@@ -1726,7 +1726,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         DateTime startTime = DateTime.UtcNow;
 
-                        PSDataCollection<PSObject> asyncOutput = new PSDataCollection<PSObject>();
+                        var asyncOutput = new PSDataCollection<PSObject>();
 
                         // process output and errors as soon as possible
                         asyncResult = powerShell.BeginInvoke<PSObject, PSObject>(null, asyncOutput);
@@ -1801,7 +1801,7 @@ namespace Microsoft.PowerShell.Commands
             _lastTimeProgressWasWritten = DateTime.UtcNow;
 
             string activityDescription = StringUtil.Format(ImplicitRemotingStrings.ProgressActivity);
-            ProgressRecord progressRecord = new ProgressRecord(
+            var progressRecord = new ProgressRecord(
                 1905347799, // unique id for ImplicitRemoting (I just picked a random number)
                 activityDescription,
                 statusDescription);
@@ -1876,7 +1876,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            ImplicitRemotingCodeGenerator codeGenerator = new ImplicitRemotingCodeGenerator(
+            var codeGenerator = new ImplicitRemotingCodeGenerator(
                 this.Session,
                 this.ModuleGuid,
                 this.MyInvocation);
@@ -1933,19 +1933,19 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Connection URI associated with the remote runspace.</returns>
         private string GetConnectionString()
         {
-            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            var connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (connectionInfo != null)
             {
                 return connectionInfo.ConnectionUri.ToString();
             }
 
-            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
+            var vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
             if (vmConnectionInfo != null)
             {
                 return vmConnectionInfo.ComputerName;
             }
 
-            ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
+            var containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
             if (containerConnectionInfo != null)
             {
                 return containerConnectionInfo.ComputerName;
@@ -1968,7 +1968,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            StringBuilder result = new StringBuilder(name.Length);
+            var result = new StringBuilder(name.Length);
             foreach (char c in name)
             {
                 if (("\"'`$".IndexOf(c) == (-1)) &&
@@ -2222,7 +2222,7 @@ function Get-PSImplicitRemotingSessionOption
 
         private PSPrimitiveDictionary GetApplicationArguments()
         {
-            RemoteRunspace remoteRunspace = _remoteRunspaceInfo.Runspace as RemoteRunspace;
+            var remoteRunspace = _remoteRunspaceInfo.Runspace as RemoteRunspace;
 
             Dbg.Assert(remoteRunspace != null, "PSSessionInfo should refer to a *remote* runspace");
             Dbg.Assert(remoteRunspace.RunspacePool != null, "All remote runspaces are implemented using a runspace pool");
@@ -2233,9 +2233,9 @@ function Get-PSImplicitRemotingSessionOption
 
         private string GenerateNewPSSessionOption()
         {
-            StringBuilder result = new StringBuilder("& $script:NewPSSessionOption ");
+            var result = new StringBuilder("& $script:NewPSSessionOption ");
 
-            RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
+            var runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
             if (runspaceConnectionInfo != null)
             {
                 result.AppendFormat(null, "-Culture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString()));
@@ -2247,7 +2247,7 @@ function Get-PSImplicitRemotingSessionOption
                 result.AppendFormat(null, "-OperationTimeOut {0} ", runspaceConnectionInfo.OperationTimeout);
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
@@ -2441,11 +2441,11 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateReimportingOfModules()
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
 
             if (_invocationInfo.BoundParameters.ContainsKey(nameof(Module)))
             {
-                string[] moduleNames = (string[])_invocationInfo.BoundParameters[nameof(Module)];
+                var moduleNames = (string[])_invocationInfo.BoundParameters[nameof(Module)];
                 foreach (string moduleName in moduleNames)
                 {
                     result.AppendFormat(
@@ -2507,7 +2507,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateNewRunspaceExpression()
         {
-            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
+            var vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
             if (vmConnectionInfo != null)
             {
                 string vmConfigurationName = vmConnectionInfo.ConfigurationName;
@@ -2520,7 +2520,7 @@ function Get-PSImplicitRemotingSession
             }
             else
             {
-                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
+                var containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
                 if (containerConnectionInfo != null)
                 {
                     string containerConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
@@ -2563,10 +2563,10 @@ function Get-PSImplicitRemotingSession
         /// <returns></returns>
         private string GenerateConnectionStringForNewRunspace()
         {
-            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            var connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (connectionInfo == null)
             {
-                VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
+                var vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
                 if (vmConnectionInfo != null)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
@@ -2574,7 +2574,7 @@ function Get-PSImplicitRemotingSession
                         CodeGeneration.EscapeSingleQuotedStringContent(vmConnectionInfo.VMGuid.ToString()));
                 }
 
-                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
+                var containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
                 if (containerConnectionInfo != null)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
@@ -2609,7 +2609,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateAllowRedirectionParameter()
         {
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo == null)
             {
                 return string.Empty;
@@ -2636,7 +2636,7 @@ function Get-PSImplicitRemotingSession
                 return string.Empty;
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo == null)
             {
                 return string.Empty;
@@ -2909,7 +2909,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
 
-            List<string> listOfCommandNames = new List<string>();
+            var listOfCommandNames = new List<string>();
             foreach (CommandMetadata commandMetadata in listOfCommandMetadata)
             {
                 listOfCommandNames.Add(commandMetadata.Name);
@@ -2925,7 +2925,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfStrings));
             }
 
-            StringBuilder arrayString = new StringBuilder();
+            var arrayString = new StringBuilder();
             foreach (string s in listOfStrings)
             {
                 if (arrayString.Length != 0)
@@ -2991,7 +2991,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfFormatData));
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings();
+            var settings = new XmlWriterSettings();
             settings.CloseOutput = false;
             settings.ConformanceLevel = ConformanceLevel.Document;
             settings.Encoding = writer.Encoding;
@@ -3026,7 +3026,7 @@ function Get-PSImplicitRemotingClientSideParameters
             List<ExtendedTypeDefinition> listOfFormatData,
             X509Certificate2 certificate)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             Dbg.Assert(moduleRootDirectory != null, "Caller should validate moduleRootDirectory != null");
             Dbg.Assert(Directory.Exists(moduleRootDirectory.FullName), "Caller should validate moduleRootDirectory exists");
@@ -3036,7 +3036,7 @@ function Get-PSImplicitRemotingClientSideParameters
             FileMode fileMode = force ? FileMode.OpenOrCreate : FileMode.CreateNew;
 
             result.Add(baseName + ".psm1");
-            FileStream psm1 = new FileStream(
+            var psm1 = new FileStream(
                 baseName + ".psm1",
                 fileMode,
                 FileAccess.Write,
@@ -3057,7 +3057,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             result.Add(baseName + ".format.ps1xml");
-            FileStream formatPs1xml = new FileStream(
+            var formatPs1xml = new FileStream(
                 baseName + ".format.ps1xml",
                 fileMode,
                 FileAccess.Write,
@@ -3102,8 +3102,8 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             result.Add(baseName + ".psd1");
-            FileInfo manifestFile = new FileInfo(baseName + ".psd1");
-            FileStream psd1 = new FileStream(
+            var manifestFile = new FileInfo(baseName + ".psd1");
+            var psd1 = new FileStream(
                 manifestFile.FullName,
                 fileMode,
                 FileAccess.Write,
@@ -3123,7 +3123,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 using (var stream = new FileStream(applicationArgumentsFile, FileMode.Create, FileAccess.Write, FileShare.Read))
                 using (var xmlWriter = XmlWriter.Create(stream))
                 {
-                    Serializer serializer = new Serializer(xmlWriter);
+                    var serializer = new Serializer(xmlWriter);
                     serializer.Serialize(applicationArguments);
                     serializer.Done();
                 }

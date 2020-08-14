@@ -423,7 +423,7 @@ namespace System.Management.Automation
 
                 // Assembly File timestamp
 
-                FileInfo assemblyFileInfo =
+                var assemblyFileInfo =
                     new FileInfo(callingAssembly.Location);
 
                 OutputLine(
@@ -432,7 +432,7 @@ namespace System.Management.Automation
                     assemblyFileInfo.CreationTime.ToString());
             }
 
-            StringBuilder flagBuilder = new StringBuilder();
+            var flagBuilder = new StringBuilder();
             // Label
 
             flagBuilder.Append("\tFlags: ");
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
             {
                 // First format the class format string and the
                 // user provided format string together
-                StringBuilder output = new StringBuilder();
+                var output = new StringBuilder();
 
                 if (classFormatter != null)
                 {
@@ -1170,7 +1170,7 @@ namespace System.Management.Automation
                 // Use the stack to get the method and type information
                 // for the calling method
 
-                StackFrame stackFrame = new StackFrame(++skipFrames);
+                var stackFrame = new StackFrame(++skipFrames);
                 MethodBase callingMethod = stackFrame.GetMethod();
 
                 Type declaringType = callingMethod.DeclaringType;
@@ -1288,7 +1288,7 @@ namespace System.Management.Automation
 
         private static StringBuilder GetLinePrefix(PSTraceSourceOptions flag)
         {
-            StringBuilder prefixBuilder = new StringBuilder();
+            var prefixBuilder = new StringBuilder();
 
             // Add the flag that caused this line to be traced
 
@@ -1350,7 +1350,7 @@ namespace System.Management.Automation
                     format != null,
                     "The format string should not be null");
 
-                StringBuilder lineBuilder = new StringBuilder();
+                var lineBuilder = new StringBuilder();
 
                 if (ShowHeaders)
                 {
@@ -1715,7 +1715,7 @@ namespace System.Management.Automation
 
             // Format the string for output
 
-            StringBuilder output = new StringBuilder();
+            var output = new StringBuilder();
 
             if (!string.IsNullOrEmpty(scopeOutputFormatter))
             {

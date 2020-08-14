@@ -232,7 +232,7 @@ namespace System.Management.Automation
 
             // Create the new child scope.
 
-            SessionStateScope newScope = new SessionStateScope(_currentScope);
+            var newScope = new SessionStateScope(_currentScope);
 
             if (isScriptScope)
             {
@@ -260,7 +260,7 @@ namespace System.Management.Automation
 
             if (scope == GlobalScope)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             StringLiterals.Global,
                             SessionStateCategory.Scope,
@@ -280,7 +280,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                var context = new CmdletProviderContext(this.ExecutionContext);
 
                 // Call CanRemoveDrive to give the provider a chance to cleanup
                 // but ignore the return value and exceptions

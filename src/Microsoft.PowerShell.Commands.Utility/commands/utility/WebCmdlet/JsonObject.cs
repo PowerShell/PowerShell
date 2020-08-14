@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         private static Hashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
         {
             error = null;
-            Hashtable result = new Hashtable(entries.Count);
+            var result = new Hashtable(entries.Count);
             foreach (var entry in entries)
             {
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            PSObject pso = obj as PSObject;
+            var pso = obj as PSObject;
 
             if (pso != null)
             {
@@ -577,14 +577,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        IDictionary dict = obj as IDictionary;
+                        var dict = obj as IDictionary;
                         if (dict != null)
                         {
                             rv = ProcessDictionary(dict, currentDepth, in context);
                         }
                         else
                         {
-                            IEnumerable enumerable = obj as IEnumerable;
+                            var enumerable = obj as IEnumerable;
                             if (enumerable != null)
                             {
                                 rv = ProcessEnumerable(enumerable, currentDepth, in context);
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static object AddPsProperties(object psObj, object obj, int depth, bool isPurePSObj, bool isCustomObj, in ConvertToJsonContext context)
         {
-            PSObject pso = psObj as PSObject;
+            var pso = psObj as PSObject;
 
             if (pso == null)
             {
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool wasDictionary = true;
-            IDictionary dict = obj as IDictionary;
+            var dict = obj as IDictionary;
 
             if (dict == null)
             {
@@ -697,11 +697,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object ProcessDictionary(IDictionary dict, int depth, in ConvertToJsonContext context)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>(dict.Count);
+            var result = new Dictionary<string, object>(dict.Count);
 
             foreach (DictionaryEntry entry in dict)
             {
-                string name = entry.Key as string;
+                var name = entry.Key as string;
                 if (name == null)
                 {
                     // use the error string that matches the message from JavaScriptSerializer
@@ -734,7 +734,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object ProcessEnumerable(IEnumerable enumerable, int depth, in ConvertToJsonContext context)
         {
-            List<object> result = new List<object>();
+            var result = new List<object>();
 
             foreach (object o in enumerable)
             {
@@ -754,7 +754,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object ProcessCustomObject<T>(object o, int depth, in ConvertToJsonContext context)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>();
+            var result = new Dictionary<string, object>();
             Type t = o.GetType();
 
             foreach (FieldInfo info in t.GetFields(BindingFlags.Public | BindingFlags.Instance))

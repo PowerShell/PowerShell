@@ -147,7 +147,7 @@ namespace System.Management.Automation
         public CommandMetadata(string path)
         {
             string scriptName = IO.Path.GetFileName(path);
-            ExternalScriptInfo scriptInfo = new ExternalScriptInfo(scriptName, path);
+            var scriptInfo = new ExternalScriptInfo(scriptName, path);
 
             Init(scriptInfo.ScriptBlock, path, false);
             _wrappedCommandType = CommandTypes.ExternalScript;
@@ -693,7 +693,7 @@ namespace System.Management.Automation
 
             foreach (Attribute attribute in customAttributes)
             {
-                CmdletAttribute cmdletAttribute = attribute as CmdletAttribute;
+                var cmdletAttribute = attribute as CmdletAttribute;
                 if (cmdletAttribute != null)
                 {
                     ProcessCmdletAttribute(cmdletAttribute);
@@ -771,7 +771,7 @@ namespace System.Management.Automation
         private MergedCommandParameterMetadata MergeParameterMetadata(ExecutionContext context, InternalParameterMetadata parameterMetadata, bool shouldGenerateCommonParameters)
         {
             // Create an instance of the static metadata class
-            MergedCommandParameterMetadata staticCommandParameterMetadata =
+            var staticCommandParameterMetadata =
                 new MergedCommandParameterMetadata();
 
             // First add the metadata for the formal cmdlet parameters
@@ -890,7 +890,7 @@ end
             string separator = string.Empty;
             if (_wrappedAnyCmdlet)
             {
-                StringBuilder decl = new StringBuilder("[CmdletBinding(");
+                var decl = new StringBuilder("[CmdletBinding(");
 
                 if (!string.IsNullOrEmpty(_defaultParameterSetName))
                 {
@@ -963,7 +963,7 @@ end
         {
             if (Parameters.Keys.Count > 0)
             {
-                StringBuilder parameters = new StringBuilder();
+                var parameters = new StringBuilder();
                 string prefix = string.Concat(Environment.NewLine, "    ");
                 string paramDataPrefix = null;
 
@@ -1115,7 +1115,7 @@ end
 
         private static CommandMetadata GetRestrictedCmdlet(string cmdletName, string defaultParameterSet, string helpUri, params ParameterMetadata[] parameters)
         {
-            Dictionary<string, ParameterMetadata> parametersDictionary = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
+            var parametersDictionary = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
             foreach (ParameterMetadata parameter in parameters)
             {
                 parametersDictionary.Add(parameter.Name, parameter);
@@ -1130,7 +1130,7 @@ end
             // 2. otoh without cmdletbinding() unspecified parameters get bound to $null which might
             //    unnecessarily trigger validation attribute failures - see bug Windows 7: #477218
 
-            CommandMetadata metadata = new CommandMetadata(
+            var metadata = new CommandMetadata(
                                    name: cmdletName,
                             commandType: CommandTypes.Cmdlet,
                        isProxyForCmdlet: true,
@@ -1156,30 +1156,30 @@ end
 
             // value passed directly from Import-PSSession -CommandName to Get-Command -Name
             // can't really restrict beyond basics
-            ParameterMetadata nameParameter = new ParameterMetadata("Name", typeof(string[]));
+            var nameParameter = new ParameterMetadata("Name", typeof(string[]));
             nameParameter.Attributes.Add(new ValidateLengthAttribute(0, 1000));
             nameParameter.Attributes.Add(new ValidateCountAttribute(0, 1000));
 
             // value passed directly from Import-PSSession -PSSnapIn to Get-Command -Module
             // can't really restrict beyond basics
-            ParameterMetadata moduleParameter = new ParameterMetadata("Module", typeof(string[]));
+            var moduleParameter = new ParameterMetadata("Module", typeof(string[]));
             moduleParameter.Attributes.Add(new ValidateLengthAttribute(0, 1000));
             moduleParameter.Attributes.Add(new ValidateCountAttribute(0, 100));
 
             // value passed directly from Import-PSSession -ArgumentList to Get-Command -ArgumentList
             // can't really restrict beyond basics
-            ParameterMetadata argumentListParameter = new ParameterMetadata("ArgumentList", typeof(object[]));
+            var argumentListParameter = new ParameterMetadata("ArgumentList", typeof(object[]));
             argumentListParameter.Attributes.Add(new ValidateCountAttribute(0, 100));
 
             // value passed directly from Import-PSSession -CommandType to Get-Command -CommandType
             // can't really restrict beyond basics
-            ParameterMetadata commandTypeParameter = new ParameterMetadata("CommandType", typeof(CommandTypes));
+            var commandTypeParameter = new ParameterMetadata("CommandType", typeof(CommandTypes));
 
             // we do allow -ListImported switch
-            ParameterMetadata listImportedParameter = new ParameterMetadata("ListImported", typeof(SwitchParameter));
+            var listImportedParameter = new ParameterMetadata("ListImported", typeof(SwitchParameter));
 
             // Need to expose ShowCommandInfo parameter for remote ShowCommand support.
-            ParameterMetadata showCommandInfo = new ParameterMetadata("ShowCommandInfo", typeof(SwitchParameter));
+            var showCommandInfo = new ParameterMetadata("ShowCommandInfo", typeof(SwitchParameter));
 
             return GetRestrictedCmdlet(
                 "Get-Command",
@@ -1199,12 +1199,12 @@ end
 
             // value passed directly from Import-PSSession -FormatTypeName to Get-FormatData -TypeName
             // can't really restrict beyond basics
-            ParameterMetadata typeNameParameter = new ParameterMetadata("TypeName", typeof(string[]));
+            var typeNameParameter = new ParameterMetadata("TypeName", typeof(string[]));
             typeNameParameter.Attributes.Add(new ValidateLengthAttribute(0, 1000));
             typeNameParameter.Attributes.Add(new ValidateCountAttribute(0, 1000));
 
             // This parameter is required for implicit remoting in PS V5.1.
-            ParameterMetadata powershellVersionParameter = new ParameterMetadata("PowerShellVersion", typeof(Version));
+            var powershellVersionParameter = new ParameterMetadata("PowerShellVersion", typeof(Version));
 
             return GetRestrictedCmdlet("Get-FormatData", null, "https://go.microsoft.com/fwlink/?LinkID=144303", typeNameParameter, powershellVersionParameter);
         }
@@ -1216,12 +1216,12 @@ end
             // This should only be called with 1 "safe" command name (unless ipsn is called with -Force)
             // (it seems ok to disallow getting help for "unsafe" commands [possible when ipsn is called with -Force]
             //  - host can always generate its own proxy for Get-Help if it cares about "unsafe" command names)
-            ParameterMetadata nameParameter = new ParameterMetadata("Name", typeof(string));
+            var nameParameter = new ParameterMetadata("Name", typeof(string));
             nameParameter.Attributes.Add(new ValidatePatternAttribute(isSafeNameOrIdentifierRegex));
             nameParameter.Attributes.Add(new ValidateLengthAttribute(0, 1000));
 
             // This should only be called with 1 valid category
-            ParameterMetadata categoryParameter = new ParameterMetadata("Category", typeof(string[]));
+            var categoryParameter = new ParameterMetadata("Category", typeof(string[]));
             categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
@@ -1235,15 +1235,15 @@ end
             // 2) artificially increase serialization depth of selected properties (especially "Parameters" property)
 
             // only called with a fixed set of values
-            string[] validPropertyValues = new string[] {
+            var validPropertyValues = new string[] {
                 "ModuleName", "Namespace", "OutputType", "Count", "HelpUri",
                 "Name", "CommandType", "ResolvedCommandName", "DefaultParameterSet", "CmdletBinding", "Parameters" };
-            ParameterMetadata propertyParameter = new ParameterMetadata("Property", typeof(string[]));
+            var propertyParameter = new ParameterMetadata("Property", typeof(string[]));
             propertyParameter.Attributes.Add(new ValidateSetAttribute(validPropertyValues));
             propertyParameter.Attributes.Add(new ValidateCountAttribute(1, validPropertyValues.Length));
 
             // needed for pipeline input if cmdlet binding has to be used (i.e. if Windows 7: #477218 is not fixed)
-            ParameterMetadata inputParameter = new ParameterMetadata("InputObject", typeof(object));
+            var inputParameter = new ParameterMetadata("InputObject", typeof(object));
             inputParameter.ParameterSets.Add(
                 ParameterAttribute.AllParameterSets,
                 new ParameterSetMetadata(
@@ -1260,7 +1260,7 @@ end
             // it is going to receive and to display a nice progress bar
 
             // needed for pipeline input if cmdlet binding has to be used (i.e. if Windows 7: #477218 is not fixed)
-            ParameterMetadata inputParameter = new ParameterMetadata("InputObject", typeof(object));
+            var inputParameter = new ParameterMetadata("InputObject", typeof(object));
             inputParameter.ParameterSets.Add(
                 ParameterAttribute.AllParameterSets,
                 new ParameterSetMetadata(
@@ -1276,7 +1276,7 @@ end
             // remote Out-Default is called by interactive remoting (without any parameters, only using pipelines to pass data)
 
             // needed for pipeline input if cmdlet binding has to be used (i.e. if Windows 7: #477218 is not fixed)
-            ParameterMetadata inputParameter = new ParameterMetadata("InputObject", typeof(object));
+            var inputParameter = new ParameterMetadata("InputObject", typeof(object));
             inputParameter.ParameterSets.Add(
                 ParameterAttribute.AllParameterSets,
                 new ParameterSetMetadata(
@@ -1313,7 +1313,7 @@ end
         /// <seealso cref="System.Management.Automation.Runspaces.InitialSessionState.CreateRestricted(SessionCapabilities)"/>
         public static Dictionary<string, CommandMetadata> GetRestrictedCommands(SessionCapabilities sessionCapabilities)
         {
-            List<CommandMetadata> restrictedCommands = new List<CommandMetadata>();
+            var restrictedCommands = new List<CommandMetadata>();
 
             // all remoting cmdlets need to be included for workflow scenarios as wel
             if (SessionCapabilities.RemoteServer == (sessionCapabilities & SessionCapabilities.RemoteServer))
@@ -1321,7 +1321,7 @@ end
                 restrictedCommands.AddRange(GetRestrictedRemotingCommands());
             }
 
-            Dictionary<string, CommandMetadata> result = new Dictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
+            var result = new Dictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
             foreach (CommandMetadata restrictedCommand in restrictedCommands)
             {
                 result.Add(restrictedCommand.Name, restrictedCommand);
@@ -1332,7 +1332,7 @@ end
 
         private static Collection<CommandMetadata> GetRestrictedRemotingCommands()
         {
-            Collection<CommandMetadata> remotingCommands = new Collection<CommandMetadata>
+            var remotingCommands = new Collection<CommandMetadata>
                                                            {
                                                                GetRestrictedGetCommand(),
                                                                GetRestrictedGetFormatData(),

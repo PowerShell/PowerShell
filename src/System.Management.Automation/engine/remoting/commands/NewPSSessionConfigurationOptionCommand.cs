@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal override Hashtable ConstructQuotasAsHashtable()
         {
-            Hashtable quotas = new Hashtable();
+            var quotas = new Hashtable();
 
             if (_idleTimeoutSec.HasValue)
             {
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal override string ConstructQuotas()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (_idleTimeoutSec.HasValue)
             {
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal override string ConstructOptionsAsXmlAttributes()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (_outputBufferingMode.HasValue)
             {
                 sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribOutputBufferingMode, _outputBufferingMode.ToString()));
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal override Hashtable ConstructOptionsAsHashtable()
         {
-            Hashtable table = new Hashtable();
+            var table = new Hashtable();
             if (_outputBufferingMode.HasValue)
             {
                 table[AttribOutputBufferingMode] = _outputBufferingMode.ToString();

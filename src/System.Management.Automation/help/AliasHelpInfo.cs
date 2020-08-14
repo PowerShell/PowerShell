@@ -98,7 +98,7 @@ namespace System.Management.Automation
             if (aliasInfo.ResolvedCommand == null && aliasInfo.UnresolvedCommandName == null)
                 return null;
 
-            AliasHelpInfo aliasHelpInfo = new AliasHelpInfo(aliasInfo);
+            var aliasHelpInfo = new AliasHelpInfo(aliasInfo);
 
             if (string.IsNullOrEmpty(aliasHelpInfo.Name))
                 return null;

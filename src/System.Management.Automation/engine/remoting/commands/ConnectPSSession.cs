@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
 
             internal PSSession QueryForSession(PSSession session)
             {
-                Collection<WSManConnectionInfo> wsManConnectionInfos = new Collection<WSManConnectionInfo>();
+                var wsManConnectionInfos = new Collection<WSManConnectionInfo>();
                 wsManConnectionInfos.Add(session.Runspace.ConnectionInfo as WSManConnectionInfo);
 
                 Exception ex = null;
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                     bool writeError = true;
                     if (_queryRunspaces == null)
                     {
-                        PSRemotingTransportException transportException = eArgs.RunspaceStateInfo.Reason as PSRemotingTransportException;
+                        var transportException = eArgs.RunspaceStateInfo.Reason as PSRemotingTransportException;
                         if (transportException != null &&
                             transportException.ErrorCode == WSManNativeApi.ERROR_WSMAN_INUSE_CANNOT_RECONNECT)
                         {
@@ -650,14 +650,14 @@ namespace Microsoft.PowerShell.Commands
 
             private void SendStartComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+                var operationStateEventArgs = new OperationStateEventArgs();
                 operationStateEventArgs.OperationState = OperationState.StartComplete;
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
 
             private void SendStopComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+                var operationStateEventArgs = new OperationStateEventArgs();
                 operationStateEventArgs.OperationState = OperationState.StopComplete;
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
@@ -710,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
                     if (e != null && !string.IsNullOrEmpty(e.Message))
                     {
                         // Update fully qualified error Id if we have a transport error.
-                        PSRemotingTransportException transportException = e as PSRemotingTransportException;
+                        var transportException = e as PSRemotingTransportException;
                         if (transportException != null)
                         {
                             FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(transportException.ErrorCode, FQEID);
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands
                                 session.Runspace.RunspaceStateInfo.State.ToString()), null);
                     }
 
-                    ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
+                    var errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
                     Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
                     {
                         cmdlet.WriteError(errorRecord);
@@ -792,7 +792,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Collection of PSSession objects in disconnected state.</returns>
         private Collection<PSSession> CollectDisconnectedSessions(OverrideParameter overrideParam = OverrideParameter.None)
         {
-            Collection<PSSession> psSessions = new Collection<PSSession>();
+            var psSessions = new Collection<PSSession>();
 
             // Get all remote runspaces to disconnect.
             if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
@@ -841,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ConnectSessions(Collection<PSSession> psSessions)
         {
-            List<IThrottleOperation> connectOperations = new List<IThrottleOperation>();
+            var connectOperations = new List<IThrottleOperation>();
 
             // Create a disconnect operation for each runspace to disconnect.
             foreach (PSSession psSession in psSessions)
@@ -854,7 +854,7 @@ namespace Microsoft.PowerShell.Commands
                         string msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnectedForVMContainerSession,
                             psSession.Name, psSession.ComputerName, psSession.ComputerType);
                         Exception reason = new PSNotSupportedException(msg);
-                        ErrorRecord errorRecord = new ErrorRecord(reason, "CannotConnectVMContainerSession", ErrorCategory.InvalidOperation, psSession);
+                        var errorRecord = new ErrorRecord(reason, "CannotConnectVMContainerSession", ErrorCategory.InvalidOperation, psSession);
                         WriteError(errorRecord);
                     }
                     else if (psSession.Runspace.RunspaceStateInfo.State == RunspaceState.Disconnected &&
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
                         // Update session connection information based on cmdlet parameters.
                         UpdateConnectionInfo(psSession.Runspace.ConnectionInfo as WSManConnectionInfo);
 
-                        ConnectRunspaceOperation connectOperation = new ConnectRunspaceOperation(
+                        var connectOperation = new ConnectRunspaceOperation(
                             psSession,
                             _stream,
                             this.Host,
@@ -877,7 +877,7 @@ namespace Microsoft.PowerShell.Commands
                         // Write error record if runspace is not already in the Opened state.
                         string msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeConnected, psSession.Name);
                         Exception reason = new RuntimeException(msg);
-                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionConnectFailed", ErrorCategory.InvalidOperation, psSession);
+                        var errorRecord = new ErrorRecord(reason, "PSSessionConnectFailed", ErrorCategory.InvalidOperation, psSession);
                         WriteError(errorRecord);
                     }
                     else
@@ -919,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<WSManConnectionInfo> GetConnectionObjects()
         {
-            Collection<WSManConnectionInfo> connectionInfos = new Collection<WSManConnectionInfo>();
+            var connectionInfos = new Collection<WSManConnectionInfo>();
 
             if (ParameterSetName == ConnectPSSessionCommand.ComputerNameParameterSet ||
                 ParameterSetName == ConnectPSSessionCommand.ComputerNameGuidParameterSet)
@@ -928,7 +928,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string computerName in ComputerName)
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
                     connectionInfo.Scheme = scheme;
                     connectionInfo.ComputerName = ResolveComputerName(computerName);
                     connectionInfo.AppName = ApplicationName;
@@ -954,7 +954,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var connectionUri in ConnectionUri)
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
                     connectionInfo.ConnectionUri = connectionUri;
                     connectionInfo.ShellUri = ConfigurationName;
                     if (CertificateThumbprint != null)
@@ -1004,10 +1004,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void RetryFailedSessions()
         {
-            using (ManualResetEvent retrysComplete = new ManualResetEvent(false))
+            using (var retrysComplete = new ManualResetEvent(false))
             {
-                Collection<PSSession> connectedSessions = new Collection<PSSession>();
-                List<IThrottleOperation> retryConnectionOperations = new List<IThrottleOperation>();
+                var connectedSessions = new Collection<PSSession>();
+                var retryConnectionOperations = new List<IThrottleOperation>();
                 _retryThrottleManager.ThrottleLimit = ThrottleLimit;
                 _retryThrottleManager.ThrottleComplete += (sender, eventArgs) =>
                     {

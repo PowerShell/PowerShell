@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
                (!_foundMatch))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new ArgumentException(
                         string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             else if ((SubscriptionId >= 0) &&
                (!_foundMatch))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new ArgumentException(
                         string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,

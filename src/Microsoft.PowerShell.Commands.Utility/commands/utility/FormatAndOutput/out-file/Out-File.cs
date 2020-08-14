@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // set up the Screen Host interface
-            OutputManagerInner outInner = (OutputManagerInner)this.implementation;
+            var outInner = (OutputManagerInner)this.implementation;
 
             // NOTICE: if any exception is thrown from here to the end of the method, the
             // cleanup code will be called in IDisposable.Dispose()
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use the stream writer to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput(_sw, computedWidth, _suppressNewline);
+            var twlo = new TextWriterLineOutput(_sw, computedWidth, _suppressNewline);
 
             // finally have the ILineOutput interface extracted
             return (LineOutput)twlo;

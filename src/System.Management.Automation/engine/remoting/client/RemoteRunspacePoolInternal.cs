@@ -492,7 +492,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal void HandleInitInfoReceived(object sender,
                         RemoteDataEventArgs<RunspacePoolInitInfo> eventArgs)
         {
-            RunspacePoolStateInfo info = new RunspacePoolStateInfo(RunspacePoolState.Opened, null);
+            var info = new RunspacePoolStateInfo(RunspacePoolState.Opened, null);
 
             bool raiseEvents = false;
 
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // to lock
             RaiseStateChangeEvent(stateInfo);
 
-            RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(
+            var asyncResult = new RunspacePoolAsyncResult(
                     instanceId, callback, asyncState, true);
 
             _openAsyncResult = asyncResult;
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             bool raiseEvents = false;
             bool skipClosing = false;
-            RunspacePoolStateInfo copyState = new RunspacePoolStateInfo(RunspacePoolState.BeforeOpen, null);
+            var copyState = new RunspacePoolStateInfo(RunspacePoolState.BeforeOpen, null);
             RunspacePoolAsyncResult asyncResult = null;
 
             lock (syncObject)
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 currentState = stateInfo.State;
                 if (currentState == RunspacePoolState.Opened)
                 {
-                    RunspacePoolStateInfo newStateInfo = new RunspacePoolStateInfo(RunspacePoolState.Disconnecting, null);
+                    var newStateInfo = new RunspacePoolStateInfo(RunspacePoolState.Disconnecting, null);
 
                     SetRunspacePoolState(newStateInfo);
                     raiseEvents = true;
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (currentState == RunspacePoolState.Opened)
             {
-                RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(
+                var asyncResult = new RunspacePoolAsyncResult(
                     instanceId, callback, state, false);
 
                 _disconnectAsyncResult = asyncResult;
@@ -1046,7 +1046,7 @@ namespace System.Management.Automation.Runspaces.Internal
             else
             {
                 string message = StringUtil.Format(RunspacePoolStrings.InvalidRunspacePoolState, RunspacePoolState.Opened, stateInfo.State);
-                InvalidRunspacePoolStateException invalidStateException = new InvalidRunspacePoolStateException(message,
+                var invalidStateException = new InvalidRunspacePoolStateException(message,
                         stateInfo.State, RunspacePoolState.Opened);
 
                 throw invalidStateException;
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
+            var rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 currentState = stateInfo.State;
                 if (currentState == RunspacePoolState.Disconnected)
                 {
-                    RunspacePoolStateInfo newStateInfo = new RunspacePoolStateInfo(RunspacePoolState.Connecting, null);
+                    var newStateInfo = new RunspacePoolStateInfo(RunspacePoolState.Connecting, null);
 
                     SetRunspacePoolState(newStateInfo);
                     raiseEvents = true;
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 // Assign to local variable to ensure we always pass a non-null value.
                 // The async class members can be nulled out if the session closes suddenly.
-                RunspacePoolAsyncResult ret = new RunspacePoolAsyncResult(
+                var ret = new RunspacePoolAsyncResult(
                     instanceId, callback, state, false);
 
                 if (_canReconnect)
@@ -1156,7 +1156,7 @@ namespace System.Management.Automation.Runspaces.Internal
             else
             {
                 string message = StringUtil.Format(RunspacePoolStrings.InvalidRunspacePoolState, RunspacePoolState.Disconnected, stateInfo.State);
-                InvalidRunspacePoolStateException invalidStateException = new InvalidRunspacePoolStateException(message,
+                var invalidStateException = new InvalidRunspacePoolStateException(message,
                         stateInfo.State, RunspacePoolState.Disconnected);
 
                 throw invalidStateException;
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
+            var rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
@@ -1196,7 +1196,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <returns>Array of PowerShell objects.</returns>
         public override Collection<PowerShell> CreateDisconnectedPowerShells(RunspacePool runspacePool)
         {
-            Collection<PowerShell> psCollection = new Collection<PowerShell>();
+            var psCollection = new Collection<PowerShell>();
 
             if (ConnectCommands == null)
             {
@@ -1221,7 +1221,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <returns>RunspacePoolCapability.</returns>
         public override RunspacePoolCapability GetCapabilities()
         {
-            RunspacePoolCapability returnCaps = RunspacePoolCapability.Default;
+            var returnCaps = RunspacePoolCapability.Default;
 
             if (CanDisconnect)
             {
@@ -1237,7 +1237,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            WSManConnectionInfo wsmanConnectionInfoParam = connectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfoParam = connectionInfo as WSManConnectionInfo;
 
             // Disconnect-Connect currently only supported by WSMan.
             if (wsmanConnectionInfoParam == null)
@@ -1245,7 +1245,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw new NotSupportedException();
             }
 
-            List<RunspacePool> discRunspacePools = new List<RunspacePool>();
+            var discRunspacePools = new List<RunspacePool>();
 
             // Enumerate all runspacepools
             Collection<PSObject> runspaceItems = RemoteRunspacePoolEnumeration.GetRemotePools(wsmanConnectionInfoParam);
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     wsmanConnectionInfo.ExpiresOn = expiresOn;
                 }
 
-                List<ConnectCommandInfo> connectCmdInfos = new List<ConnectCommandInfo>();
+                var connectCmdInfos = new List<ConnectCommandInfo>();
 
                 // Enumerate all commands on runspace pool.
                 Collection<PSObject> commandItems;
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // At this point we don't know if the runspace pool we want to connect to has just one runspace
                 // (a RemoteRunspace/PSSession) or multiple runspaces in its pool.  We do have an array of
                 // running command information which will indicate a runspace pool if the count is gt one.
-                RunspacePool runspacePool = new RunspacePool(isDisconnected, shellId, strName,
+                var runspacePool = new RunspacePool(isDisconnected, shellId, strName,
                     connectCmdInfos.ToArray(), wsmanConnectionInfo, host, typeTable);
                 discRunspacePools.Add(runspacePool);
             }
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool GetRemoteRunspacePool(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
-            List<ConnectCommandInfo> connectCmdInfos = new List<ConnectCommandInfo>();
+            var connectCmdInfos = new List<ConnectCommandInfo>();
             if (commandId != null)
             {
                 connectCmdInfos.Add(new ConnectCommandInfo(commandId.Value, string.Empty));
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspBufferMode != null)
             {
-                string bufferingMode = pspBufferMode.Value as string;
+                var bufferingMode = pspBufferMode.Value as string;
                 if (bufferingMode != null)
                 {
                     OutputBufferingMode outputBufferingMode;
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspResourceUri != null)
             {
-                string strShellUri = pspResourceUri.Value as string;
+                var strShellUri = pspResourceUri.Value as string;
                 if (strShellUri != null)
                 {
                     wsmanConnectionInfo.ShellUri = strShellUri;
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspLocale != null)
             {
-                string localString = pspLocale.Value as string;
+                var localString = pspLocale.Value as string;
                 if (localString != null)
                 {
                     try
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspDataLocale != null)
             {
-                string dataLocalString = pspDataLocale.Value as string;
+                var dataLocalString = pspDataLocale.Value as string;
                 if (dataLocalString != null)
                 {
                     try
@@ -1425,7 +1425,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspCompressionMode != null)
             {
-                string compressionModeString = pspCompressionMode.Value as string;
+                var compressionModeString = pspCompressionMode.Value as string;
                 if (compressionModeString != null)
                 {
                     wsmanConnectionInfo.UseCompression = compressionModeString.Equals("NoCompression", StringComparison.OrdinalIgnoreCase)
@@ -1435,7 +1435,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspEncoding != null)
             {
-                string encodingString = pspEncoding.Value as string;
+                var encodingString = pspEncoding.Value as string;
                 if (encodingString != null)
                 {
                     wsmanConnectionInfo.UseUTF16 = encodingString.Equals("UTF16", StringComparison.OrdinalIgnoreCase)
@@ -1445,7 +1445,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspProfile != null)
             {
-                string machineProfileLoadedString = pspProfile.Value as string;
+                var machineProfileLoadedString = pspProfile.Value as string;
                 if (machineProfileLoadedString != null)
                 {
                     wsmanConnectionInfo.NoMachineProfile = machineProfileLoadedString.Equals("Yes", StringComparison.OrdinalIgnoreCase)
@@ -1473,7 +1473,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspIdleTimeOut != null && pspShellInactivity != null)
             {
-                string shellInactivityString = pspShellInactivity.Value as string;
+                var shellInactivityString = pspShellInactivity.Value as string;
                 int idleTimeout;
                 if ((shellInactivityString != null) &&
                     GetTimeIntValue(pspIdleTimeOut.Value as string, out idleTimeout))
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 try
                 {
                     // Convert time from seconds to milliseconds.
-                    int idleTimeout = (int)(Convert.ToDouble(timeoutString, CultureInfo.InvariantCulture) * 1000);
+                    var idleTimeout = (int)(Convert.ToDouble(timeoutString, CultureInfo.InvariantCulture) * 1000);
                     if (idleTimeout > 0)
                     {
                         value = idleTimeout;
@@ -1768,7 +1768,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs"></param>
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
-            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
                 _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
-                WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
+                var wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
                 if (wsmanConnectionInfo != null)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
@@ -1830,7 +1830,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void ResetDisconnectedOnExpiresOn()
         {
             // Reset DisconnectedOn/ExpiresOn
-            WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
+            var wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsManConnectionInfo != null)
             {
                 wsManConnectionInfo.NullDisconnectedExpiresOn();
@@ -1840,7 +1840,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void UpdateDisconnectedExpiresOn()
         {
             // Set DisconnectedOn/ExpiresOn for disconnected session.
-            WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
+            var wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsManConnectionInfo != null)
             {
                 wsManConnectionInfo.SetDisconnectedExpiresOnToNow();
@@ -1854,7 +1854,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="state"></param>
         private void WaitAndRaiseConnectEventsProc(object state)
         {
-            RunspacePoolStateInfo info = state as RunspacePoolStateInfo;
+            var info = state as RunspacePoolStateInfo;
             Dbg.Assert(info != null, "State -> Event arguments cannot be null.");
 
             // Wait for private application data to arrive from server.

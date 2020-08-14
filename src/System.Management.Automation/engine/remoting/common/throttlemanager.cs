@@ -464,7 +464,7 @@ namespace System.Management.Automation.Remoting
             // which completed, then remove the instance from both queues
             lock (_syncObject)
             {
-                IThrottleOperation operation = source as IThrottleOperation;
+                var operation = source as IThrottleOperation;
 
                 Dbg.Assert(operation != null, "Source of event should not be null");
 

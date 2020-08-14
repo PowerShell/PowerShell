@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
 
             drives.Add(
                 new PSDriveInfo(
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
                 bool valueSet = false;
                 if (DynamicParameters != null)
                 {
-                    RegistryProviderSetItemDynamicParameter dynParams =
+                    var dynParams =
                         DynamicParameters as RegistryProviderSetItemDynamicParameter;
 
                     if (dynParams != null)
@@ -773,7 +773,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private static string EscapeSpecialChars(string path)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
 
             // Get the text enumerator..this will iterate through each character
             // the character can be a surrogate pair
@@ -822,7 +822,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private static string EscapeChildName(string name)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
 
             // Get the text enumerator..this will iterate through each character
             // the character can be a surrogate pair
@@ -1037,7 +1037,7 @@ namespace Microsoft.PowerShell.Commands
                             (exception is System.UnauthorizedAccessException) ||
                             (exception is NotSupportedException))
                         {
-                            ErrorRecord rec = new ErrorRecord(
+                            var rec = new ErrorRecord(
                                 exception,
                                 exception.GetType().FullName,
                                 ErrorCategory.WriteError,
@@ -1808,7 +1808,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool valueAdded = false;
-            PSObject propertyResults = new PSObject();
+            var propertyResults = new PSObject();
             foreach (string valueName in filteredPropertyCollection)
             {
                 string notePropertyName = valueName;
@@ -1873,13 +1873,13 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            RegistryValueKind kind = RegistryValueKind.Unknown;
+            var kind = RegistryValueKind.Unknown;
 
             // Get the kind of the value using the dynamic parameters
 
             if (DynamicParameters != null)
             {
-                RegistryProviderSetItemDynamicParameter dynParams =
+                var dynParams =
                     DynamicParameters as RegistryProviderSetItemDynamicParameter;
 
                 if (dynParams != null)
@@ -2005,7 +2005,7 @@ namespace Microsoft.PowerShell.Commands
             string resourceTemplate = RegistryProviderStrings.ClearPropertyResourceTemplate;
 
             bool addedOnce = false;
-            PSObject result = new PSObject();
+            var result = new PSObject();
 
             foreach (string valueName in filteredPropertyCollection)
             {
@@ -2173,7 +2173,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // The property already exists
 
-                        System.IO.IOException e =
+                        var e =
                             new System.IO.IOException(
                                 RegistryProviderStrings.PropertyAlreadyExists);
                         WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.ResourceExists, path));
@@ -3224,7 +3224,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message = RegistryProviderStrings.ContainerInvalidOperationTemplate;
 
-                InvalidOperationException ex = new InvalidOperationException(message);
+                var ex = new InvalidOperationException(message);
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, path));
                 return false;
             }
@@ -3243,7 +3243,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsHiveContainer(sourcePath))
             {
                 string message = RegistryProviderStrings.SourceContainerInvalidOperationTemplate;
-                InvalidOperationException ex = new InvalidOperationException(message);
+                var ex = new InvalidOperationException(message);
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, sourcePath));
                 return false;
             }
@@ -3252,7 +3252,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message =
                 RegistryProviderStrings.DestinationContainerInvalidOperationTemplate;
-                InvalidOperationException ex = new InvalidOperationException(message);
+                var ex = new InvalidOperationException(message);
                 WriteError(new ErrorRecord(ex, "InvalidContainer", ErrorCategory.InvalidArgument, destinationPath));
                 return false;
             }
@@ -3443,7 +3443,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // The key was not found, write out an error.
 
-                    ArgumentException exception =
+                    var exception =
                         new ArgumentException(
                         RegistryProviderStrings.KeyDoesNotExist);
                     WriteError(new ErrorRecord(exception, exception.GetType().FullName, ErrorCategory.InvalidArgument, path));
@@ -3504,7 +3504,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // The key was not found, write out an error.
 
-                ArgumentException exception =
+                var exception =
                     new ArgumentException(
                     RegistryProviderStrings.KeyDoesNotExist);
                 throw exception;
@@ -3709,7 +3709,7 @@ namespace Microsoft.PowerShell.Commands
 
             string propertyNameToSet = GetPropertyName(propertyName);
 
-            RegistryValueKind existingKind = RegistryValueKind.Unknown;
+            var existingKind = RegistryValueKind.Unknown;
 
             // If user does not specify a kind: get the valuekind if the property
             // already exists
@@ -3777,7 +3777,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">The path of the item being written.</param>
         private void WriteWrappedPropertyObject(object value, string propertyName, string path)
         {
-            PSObject result = new PSObject();
+            var result = new PSObject();
 
             string propertyNameToAdd = propertyName;
             if (string.IsNullOrEmpty(propertyName))
@@ -3899,7 +3899,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
-            RegistryValueKind result = RegistryValueKind.Unknown;
+            var result = RegistryValueKind.Unknown;
 
             Type valueType = value.GetType();
             if (valueType == typeof(byte[]))

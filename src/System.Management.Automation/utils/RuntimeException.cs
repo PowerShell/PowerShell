@@ -242,7 +242,7 @@ namespace System.Management.Automation
             if (e == null)
                 return string.Empty;
 
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
+            var icer = e as IContainsErrorRecord;
             if (icer == null)
                 return e.Message;
             ErrorRecord er = icer.ErrorRecord;
@@ -273,7 +273,7 @@ namespace System.Management.Automation
                 _thrownByThrowStatement = value;
                 if (_errorRecord != null)
                 {
-                    RuntimeException exception = _errorRecord.Exception as RuntimeException;
+                    var exception = _errorRecord.Exception as RuntimeException;
                     if (exception != null)
                     {
                         exception.WasThrownFromThrowStatement = value;

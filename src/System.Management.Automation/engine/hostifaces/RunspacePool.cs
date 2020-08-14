@@ -130,7 +130,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal InvalidRunspaceStateException ToInvalidRunspaceStateException()
         {
-            InvalidRunspaceStateException exception = new InvalidRunspaceStateException(
+            var exception = new InvalidRunspaceStateException(
                 RunspaceStrings.InvalidRunspaceStateGeneral,
                 this);
             exception.CurrentState = RunspacePoolStateToRunspaceState(this.CurrentState);
@@ -775,7 +775,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (ConnectionInfo is NewProcessConnectionInfo)
             {
-                NewProcessConnectionInfo connectionInfo = ConnectionInfo as NewProcessConnectionInfo;
+                var connectionInfo = ConnectionInfo as NewProcessConnectionInfo;
                 if (connectionInfo.Process != null &&
                     (args.RunspacePoolStateInfo.State == RunspacePoolState.Opened ||
                      args.RunspacePoolStateInfo.State == RunspacePoolState.Broken))

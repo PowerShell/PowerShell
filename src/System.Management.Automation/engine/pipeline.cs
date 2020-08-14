@@ -189,7 +189,7 @@ namespace System.Management.Automation.Internal
 
         private string GetCommand(Exception exception)
         {
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
+            var icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
                 return GetCommand(icer.ErrorRecord.InvocationInfo);
 
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Internal
 
             foreach (CommandProcessorBase commandProcessor in _commands)
             {
-                MshCommandRuntime cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
+                var cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
 
                 if (cmdRuntime != null && cmdRuntime.LogPipelineExecutionDetail)
                     return true;
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
+                var prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
                 if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
                 {
                     // "PipelineProcessor.AddCommand(): previous request object == null"
@@ -992,7 +992,7 @@ namespace System.Management.Automation.Internal
 
             // We want the value of PSDefaultParameterValues before possibly changing to the commands scopes.
             // This ensures we use the value from the callers scope, not the callees scope.
-            IDictionary psDefaultParameterValues =
+            var psDefaultParameterValues =
                 firstcommandProcessor.Context.GetVariableValue(SpecialVariables.PSDefaultParameterValuesVarPath, false) as IDictionary;
 
             _executionStarted = true;
@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Internal
             // Allocate the pipeline iteration array; note that the pipeline position for
             // each command starts at 1 so we need to allocate _commands.Count + 1 items.
             //
-            int[] pipelineIterationInfo = new int[_commands.Count + 1];
+            var pipelineIterationInfo = new int[_commands.Count + 1];
 
             // Prepare all commands from Engine's side,
             // and make sure they are all valid
@@ -1327,7 +1327,7 @@ namespace System.Management.Automation.Internal
                             if (commandProcessor.Command != null)
                                 myInvocation = commandProcessor.Command.MyInvocation;
 
-                            ProviderInvocationException pie =
+                            var pie =
                                 e as ProviderInvocationException;
                             if (pie != null)
                             {
@@ -1424,7 +1424,7 @@ namespace System.Management.Automation.Internal
                             ex.GetType().Name,
                             ex.StackTrace
                         );
-                        InvalidOperationException ioe
+                        var ioe
                             = new InvalidOperationException(message, ex);
                         MshLog.LogCommandHealthEvent(
                             command.Context,

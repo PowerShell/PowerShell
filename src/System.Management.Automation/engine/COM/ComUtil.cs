@@ -34,11 +34,11 @@ namespace System.Management.Automation
         /// <returns>Signature of the method.</returns>
         internal static string GetMethodSignatureFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc, bool isPropertyPut)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             // First value is function name
             int namesCount = funcdesc.cParams + 1;
-            string[] names = new string[funcdesc.cParams + 1];
+            var names = new string[funcdesc.cParams + 1];
             typeinfo.GetNames(funcdesc.memid, names, namesCount, out namesCount);
 
             if (!isPropertyPut)
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         /// <returns>Type represented by the typedesc.</returns>
         internal static Type GetTypeFromTypeDesc(COM.TYPEDESC typedesc)
         {
-            VarEnum vt = (VarEnum)typedesc.vt;
+            var vt = (VarEnum)typedesc.vt;
             return VarEnumSelector.GetTypeForVarEnum(vt);
         }
 
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                 cParams--;
             }
 
-            ParameterInformation[] parameters = new ParameterInformation[cParams];
+            var parameters = new ParameterInformation[cParams];
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
             int ElementDescriptionSize = Marshal.SizeOf<COM.ELEMDESC>();
@@ -350,7 +350,7 @@ namespace System.Management.Automation
         {
             int methodCount = methods.Count;
             int count = 0;
-            ComMethodInformation[] returnValue = new ComMethodInformation[methodCount];
+            var returnValue = new ComMethodInformation[methodCount];
 
             foreach (int index in methods)
             {

@@ -54,7 +54,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -80,7 +80,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         {
             int absRange = Math.Abs(checked(upper - lower));
 
-            object[] ra = new object[absRange + 1];
+            var ra = new object[absRange + 1];
             if (lower > upper)
             {
                 // 3 .. 1 => 3 2 1
@@ -170,7 +170,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -190,7 +190,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -255,7 +255,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -282,7 +282,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -354,7 +354,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -374,7 +374,7 @@ namespace System.Management.Automation
 
             if (rhs == 0)
             {
-                DivideByZeroException dbze = new DivideByZeroException();
+                var dbze = new DivideByZeroException();
                 throw new RuntimeException(dbze.Message, dbze);
             }
 
@@ -920,12 +920,12 @@ namespace System.Management.Automation
 
         internal static object[] Range(char start, char end)
         {
-            int lower = (int)start;
-            int upper = (int)end;
+            var lower = (int)start;
+            var upper = (int)end;
 
             int absRange = Math.Abs(checked(upper - lower));
 
-            object[] ra = new object[absRange + 1];
+            var ra = new object[absRange + 1];
             if (lower > upper)
             {
                 // 3 .. 1 => 3 2 1

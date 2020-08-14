@@ -470,7 +470,7 @@ namespace System.Management.Automation
             {
                 if ((_command != null) && (_command.CommandRuntime != null))
                 {
-                    MshCommandRuntime mshRuntime = _command.CommandRuntime as MshCommandRuntime;
+                    var mshRuntime = _command.CommandRuntime as MshCommandRuntime;
 
                     if (mshRuntime != null)
                     {
@@ -949,7 +949,7 @@ namespace System.Management.Automation
                             providerInfo = this.ProviderInstance.ProviderInfo;
                         }
 
-                        ProviderInvocationException e =
+                        var e =
                             new ProviderInvocationException(
                                 providerInfo,
                                 errors[0]);
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
 
             if (Stopping)
             {
-                PipelineStoppedException stopPipeline =
+                var stopPipeline =
                     new PipelineStoppedException();
 
                 throw stopPipeline;
@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
 
             if (Stopping)
             {
-                PipelineStoppedException stopPipeline =
+                var stopPipeline =
                     new PipelineStoppedException();
 
                 throw stopPipeline;

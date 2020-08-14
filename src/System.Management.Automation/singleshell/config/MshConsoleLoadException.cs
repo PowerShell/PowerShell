@@ -72,7 +72,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void CreateErrorRecord()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (PSSnapInExceptions != null)
             {

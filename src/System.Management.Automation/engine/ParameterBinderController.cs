@@ -132,7 +132,7 @@ namespace System.Management.Automation
         /// </exception>
         protected void ReparseUnboundArguments()
         {
-            Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
+            var result = new Collection<CommandParameterInternal>();
 
             for (int index = 0; index < UnboundArguments.Count; ++index)
             {
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                             // It is an error to have an argument that is a parameter name
                             // but doesn't have a value
 
-                            ParameterBindingException exception =
+                            var exception =
                                 new ParameterBindingException(
                                     ErrorCategory.InvalidArgument,
                                     this.InvocationInfo,
@@ -242,7 +242,7 @@ namespace System.Management.Automation
                     // It is an error to have a argument that is a parameter name
                     // but doesn't have a value
 
-                    ParameterBindingException exception =
+                    var exception =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             this.InvocationInfo,
@@ -343,7 +343,7 @@ namespace System.Management.Automation
         {
             if ((arguments != null) && (arguments.Length > 0))
             {
-                PSBoundParametersDictionary boundParameters = arguments[0] as PSBoundParametersDictionary;
+                var boundParameters = arguments[0] as PSBoundParametersDictionary;
                 if ((boundParameters != null) && (arguments.Length == 1))
                 {
                     // If they are supplying a dictionary of parameters, use those directly
@@ -361,7 +361,7 @@ namespace System.Management.Automation
                     for (int argIndex = 0; argIndex < arguments.Length; ++argIndex)
                     {
                         CommandParameterInternal param;
-                        string paramText = arguments[argIndex] as string;
+                        var paramText = arguments[argIndex] as string;
                         if (ArgumentLooksLikeParameter(paramText))
                         {
                             // The argument looks like a parameter.
@@ -445,7 +445,7 @@ namespace System.Management.Automation
 
                 if (BoundParameters.ContainsKey(matchingParameter.Parameter.Name))
                 {
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             this.InvocationInfo,
@@ -581,7 +581,7 @@ namespace System.Management.Automation
         /// </exception>
         protected Collection<CommandParameterInternal> BindNamedParameters(uint parameterSets, Collection<CommandParameterInternal> arguments)
         {
-            Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
+            var result = new Collection<CommandParameterInternal>();
             HashSet<string> boundExplicitNamedParams = null;
 
             foreach (CommandParameterInternal argument in arguments)
@@ -628,7 +628,7 @@ namespace System.Management.Automation
 
                     if (BoundParameters.ContainsKey(formalParamName))
                     {
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                 ErrorCategory.InvalidArgument,
                                 this.InvocationInfo,
@@ -703,7 +703,7 @@ namespace System.Management.Automation
             out ParameterBindingException outgoingBindingException
             )
         {
-            Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
+            var result = new Collection<CommandParameterInternal>();
             outgoingBindingException = null;
 
             if (unboundArguments.Count > 0)
@@ -711,7 +711,7 @@ namespace System.Management.Automation
                 // Create a new collection to iterate over so that we can remove
                 // unbound arguments while binding them.
 
-                List<CommandParameterInternal> unboundArgumentsCollection = new List<CommandParameterInternal>(unboundArguments);
+                var unboundArgumentsCollection = new List<CommandParameterInternal>(unboundArguments);
 
                 // Get a sorted dictionary of the positional parameters with the position
                 // as the key
@@ -728,7 +728,7 @@ namespace System.Management.Automation
                     // The parameter set declaration is ambiguous so
                     // throw an exception.
 
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             this.InvocationInfo,
@@ -886,7 +886,7 @@ namespace System.Management.Automation
         {
             foreach (Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter> parameterCollection in positionalParameterDictionary.Values)
             {
-                Collection<MergedCompiledCommandParameter> paramToRemove = new Collection<MergedCompiledCommandParameter>();
+                var paramToRemove = new Collection<MergedCompiledCommandParameter>();
 
                 foreach (PositionalCommandParameter positionalParameter in parameterCollection.Values)
                 {
@@ -1026,7 +1026,7 @@ namespace System.Management.Automation
             // Original error message
             string oldMsg = pbex.Message;
             // Default parameters get bound so far
-            StringBuilder defaultParamsGetBound = new StringBuilder();
+            var defaultParamsGetBound = new StringBuilder();
             foreach (string paramName in BoundDefaultParameters)
             {
                 defaultParamsGetBound.AppendFormat(CultureInfo.InvariantCulture, " -{0}", paramName);
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
                 resourceString = ParameterBinderStrings.DefaultBindingErrorElaborationMultiple;
             }
 
-            ParameterBindingException newBindingException =
+            var newBindingException =
                 new ParameterBindingException(
                     pbex.InnerException,
                     pbex,
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation
         internal static SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> EvaluateUnboundPositionalParameters(
             ICollection<MergedCompiledCommandParameter> unboundParameters, uint validParameterSetFlag)
         {
-            SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> result =
+            var result =
                 new SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>>();
 
             if (unboundParameters.Count > 0)
@@ -1178,10 +1178,10 @@ namespace System.Management.Automation
             }
             else
             {
-                Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter> newPositionDictionary =
+                var newPositionDictionary =
                     new Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>();
 
-                PositionalCommandParameter newPositionalParameter = new PositionalCommandParameter(parameter);
+                var newPositionalParameter = new PositionalCommandParameter(parameter);
                 newPositionalParameter.ParameterSetData.Add(parameterSetData);
                 newPositionDictionary.Add(parameter, newPositionalParameter);
 
@@ -1258,7 +1258,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void BindUnboundScriptParameterWithDefaultValue(MergedCompiledCommandParameter parameter)
         {
-            ScriptParameterBinder spb = (ScriptParameterBinder)this.DefaultParameterBinder;
+            var spb = (ScriptParameterBinder)this.DefaultParameterBinder;
             ScriptBlock script = spb.Script;
             RuntimeDefinedParameter runtimeDefinedParameter;
             if (script.RuntimeDefinedParameters.TryGetValue(parameter.Parameter.Name, out runtimeDefinedParameter))
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation
                         /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
                         /*argumentAst*/null, result,
                         false);
-                    ParameterBindingFlags flags = ParameterBindingFlags.IsDefaultValue;
+                    var flags = ParameterBindingFlags.IsDefaultValue;
                     // Only coerce explicit values.  We default to null, which isn't always convertible.
                     if (runtimeDefinedParameter.IsSet)
                     {

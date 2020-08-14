@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             // comparison of 'char' is case-sensitive in WQL (comparison of 'string' is case-insensitive)
             if (propertyValue is char)
             {
-                char c = (char)propertyValue;
+                var c = (char)propertyValue;
                 char lowerCase = char.ToLowerInvariant(c);
                 char upperCase = char.ToUpperInvariant(c);
                 string lowerCaseLiteral = CimQuery.ObjectToWqlLiteral(lowerCase);

@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
             if (_totalCountSpecified && _tailSpecified)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "TotalCount", "Tail");
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "TailAndHeadCannotCoexist", ErrorCategory.InvalidOperation, null);
+                var error = new ErrorRecord(new InvalidOperationException(errMsg), "TailAndHeadCannotCoexist", ErrorCategory.InvalidOperation, null);
                 WriteError(error);
                 return;
             }
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_tailSpecified && !(holder.Reader is FileSystemContentReaderWriter))
                     {
                         string errMsg = SessionStateStrings.GetContent_TailNotSupported;
-                        ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "TailNotSupported", ErrorCategory.InvalidOperation, Tail);
+                        var error = new ErrorRecord(new InvalidOperationException(errMsg), "TailNotSupported", ErrorCategory.InvalidOperation, Tail);
                         WriteError(error);
                         continue;
                     }
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e)
                         {
-                            ProviderInvocationException providerException =
+                            var providerException =
                                 new ProviderInvocationException(
                                     "ProviderContentReadError",
                                     SessionStateStrings.ProviderContentReadError,
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (Exception e) // Catch-all OK. 3rd party callout
                             {
-                                ProviderInvocationException providerException =
+                                var providerException =
                                     new ProviderInvocationException(
                                         "ProviderContentReadError",
                                         SessionStateStrings.ProviderContentReadError,
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e)
                 {
-                    ProviderInvocationException providerException =
+                    var providerException =
                         new ProviderInvocationException(
                             "ProviderContentReadError",
                             SessionStateStrings.ProviderContentReadError,

@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string BuildName(List<ObjectCommandPropertyValue> propValues)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (ObjectCommandPropertyValue propValue in propValues)
             {
                 var propValuePropertyValue = propValue?.PropertyValue;
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                ArrayList values = new ArrayList();
+                var values = new ArrayList();
                 foreach (ObjectCommandPropertyValue propValue in GroupValue.orderValues)
                 {
                     values.Add(propValue.PropertyValue);
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteNonTerminatingError(Exception exception, string resourceIdAndErrorId, ErrorCategory category)
         {
-            Exception ex = new Exception(StringUtil.Format(resourceIdAndErrorId), exception);
+            var ex = new Exception(StringUtil.Format(resourceIdAndErrorId), exception);
             WriteError(new ErrorRecord(ex, resourceIdAndErrorId, category, null));
         }
 
@@ -402,20 +402,20 @@ namespace Microsoft.PowerShell.Commands
 
                     if (AsString && !AsHashTable)
                     {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
+                        var ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
+                        var er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
                         ThrowTerminatingError(er);
                     }
 
                     if (AsHashTable && !AsString && (Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
                     {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
+                        var ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
+                        var er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
                         ThrowTerminatingError(er);
                     }
 
                     currentEntry = _orderByProperty.CreateOrderByPropertyEntry(this, InputObject, CaseSensitive, _cultureInfo);
-                    bool[] ascending = new bool[currentEntry.orderValues.Count];
+                    var ascending = new bool[currentEntry.orderValues.Count];
                     for (int index = 0; index < currentEntry.orderValues.Count; index++)
                     {
                         ascending[index] = true;

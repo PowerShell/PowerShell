@@ -63,7 +63,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -258,7 +258,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -395,7 +395,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             bool result = IsValidPath(path, context);
 
@@ -565,7 +565,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             bool result = IsItemContainer(path, context);
 
@@ -792,7 +792,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -1521,7 +1521,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    ItemNotFoundException pathNotFound =
+                    var pathNotFound =
                         new ItemNotFoundException(
                             path,
                             "PathNotFound",
@@ -1782,7 +1782,7 @@ namespace System.Management.Automation
             // Use a hint + lazy evaluation to skip a container check
             if (skipIsItemContainerCheck || IsPathContainer(providerInstance, path, context))
             {
-                CmdletProviderContext newContext =
+                var newContext =
                     new CmdletProviderContext(context);
 
                 Collection<PSObject> childNameObjects = null;
@@ -1818,7 +1818,7 @@ namespace System.Management.Automation
 
                         foreach (PSObject filteredChildName in filteredChildNameObjects)
                         {
-                            string filteredName = filteredChildName.BaseObject as string;
+                            var filteredName = filteredChildName.BaseObject as string;
                             if (filteredName != null)
                             {
                                 filteredChildNameDictionary[filteredName] = true;
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    string childName = childNameObjects[index].BaseObject as string;
+                    var childName = childNameObjects[index].BaseObject as string;
 
                     if (childName == null)
                     {
@@ -2007,7 +2007,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -2232,7 +2232,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -2250,7 +2250,7 @@ namespace System.Management.Automation
 
             Collection<PSObject> objectResults = context.GetAccumulatedObjects();
 
-            Collection<string> results = new Collection<string>();
+            var results = new Collection<string>();
 
             foreach (PSObject resultObject in objectResults)
             {
@@ -2346,7 +2346,7 @@ namespace System.Management.Automation
                 // when globbing the targets of the operation, so
                 // copy the context without the filters.
 
-                CmdletProviderContext resolvePathContext =
+                var resolvePathContext =
                     new CmdletProviderContext(context);
                 resolvePathContext.SetFilters(
                     new Collection<string>(),
@@ -2455,7 +2455,7 @@ namespace System.Management.Automation
 
                 if (!providerInstance.ItemExists(providerPath, context))
                 {
-                    ItemNotFoundException pathNotFound =
+                    var pathNotFound =
                         new ItemNotFoundException(
                             providerPath,
                             "PathNotFound",
@@ -2565,7 +2565,7 @@ namespace System.Management.Automation
                     relativePath,
                     context);
 
-            CmdletProviderContext childNamesContext =
+            var childNamesContext =
                 new CmdletProviderContext(context);
 
             try
@@ -2588,7 +2588,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    string name = result.BaseObject as string;
+                    var name = result.BaseObject as string;
 
                     if (name == null)
                     {
@@ -2638,7 +2638,7 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            string name = result.BaseObject as string;
+                            var name = result.BaseObject as string;
 
                             if (name == null)
                             {
@@ -2806,7 +2806,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -2982,7 +2982,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
 
             RenameItem(path, newName, context);
@@ -3194,7 +3194,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -3348,7 +3348,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
 
             NewItem(paths, name, type, content, context);
@@ -3436,7 +3436,7 @@ namespace System.Management.Automation
                 PSDriveInfo driveInfo;
                 CmdletProvider providerInstance = null;
 
-                Collection<string> providerPaths = new Collection<string>();
+                var providerPaths = new Collection<string>();
 
                 // Only glob the path if the name is specified
 
@@ -3666,7 +3666,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -3817,7 +3817,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -3927,7 +3927,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             result = HasChildItems(providerId, path, context);
             context.ThrowFirstErrorOrDoNothing();
@@ -4100,7 +4100,7 @@ namespace System.Management.Automation
                 copyPath = string.Empty;
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -4170,7 +4170,7 @@ namespace System.Management.Automation
 
             PSDriveInfo unusedDrive = null;
             ProviderInfo destinationProvider = null;
-            Microsoft.PowerShell.Commands.CopyItemDynamicParameters dynamicParams = context.DynamicParameters as Microsoft.PowerShell.Commands.CopyItemDynamicParameters;
+            var dynamicParams = context.DynamicParameters as Microsoft.PowerShell.Commands.CopyItemDynamicParameters;
             bool destinationIsRemote = false;
             bool sourceIsRemote = false;
             string providerDestinationPath;
@@ -4637,7 +4637,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -4855,7 +4855,7 @@ namespace System.Management.Automation
             // If the remote path is not absolute, display an error to the user.
             if (op["IsAbsolute"] != null)
             {
-                bool isAbsolute = (bool)op["IsAbsolute"];
+                var isAbsolute = (bool)op["IsAbsolute"];
                 if (!isAbsolute)
                 {
                     context.WriteError(new ErrorRecord(

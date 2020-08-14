@@ -108,7 +108,7 @@ namespace System.Management.Automation
 
             if ((commandInfo != null) && (commandInfo.CommandType == CommandTypes.Alias))
             {
-                AliasInfo aliasInfo = (AliasInfo)commandInfo;
+                var aliasInfo = (AliasInfo)commandInfo;
 
                 HelpInfo helpInfo = AliasHelpInfo.GetHelpInfo(aliasInfo);
                 if (helpInfo != null)
@@ -181,7 +181,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                CommandSearcher searcher =
+                var searcher =
                         new CommandSearcher(
                             pattern,
                             SearchResolutionOptions.ResolveAliasPatterns, CommandTypes.Alias,
@@ -196,7 +196,7 @@ namespace System.Management.Automation
                         yield break;
                     }
 
-                    AliasInfo alias = current as AliasInfo;
+                    var alias = current as AliasInfo;
 
                     if (alias != null)
                     {
@@ -235,7 +235,7 @@ namespace System.Management.Automation
                         yield break;
                     }
 
-                    AliasInfo alias = current as AliasInfo;
+                    var alias = current as AliasInfo;
 
                     if (alias != null)
                     {

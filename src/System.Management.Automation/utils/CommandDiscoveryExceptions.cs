@@ -467,7 +467,7 @@ namespace System.Management.Automation
             Collection<string> missingItems,
             bool forSnapins)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (missingItems == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(missingItems));

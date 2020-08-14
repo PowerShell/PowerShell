@@ -499,14 +499,14 @@ namespace System.Management.Automation.Internal
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
-            SaferPolicy status = SaferPolicy.Allowed;
+            var status = SaferPolicy.Allowed;
 
             if (!_saferIdentifyLevelApiSupported)
             {
                 return status;
             }
 
-            SAFER_CODE_PROPERTIES codeProperties = new SAFER_CODE_PROPERTIES();
+            var codeProperties = new SAFER_CODE_PROPERTIES();
             IntPtr hAuthzLevel;
 
             // Prepare the code properties struct.
@@ -664,7 +664,7 @@ namespace System.Management.Automation.Internal
         {
             foreach (X509Extension extension in c.Extensions)
             {
-                X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
+                var keyUsageExtension = extension as X509KeyUsageExtension;
                 if (keyUsageExtension != null)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Internal
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
-            Collection<string> ekus = new Collection<string>();
+            var ekus = new Collection<string>();
             IntPtr pCert = cert.Handle;
             int structSize = 0;
             IntPtr dummy = IntPtr.Zero;
@@ -703,7 +703,7 @@ namespace System.Management.Automation.Internal
                                                                   ekuBuffer,
                                                                   out structSize))
                         {
-                            Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
+                            var ekuStruct =
                                 (Security.NativeMethods.CERT_ENHKEY_USAGE)
                                 Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
                             IntPtr ep = ekuStruct.rgpszUsageIdentifier;
@@ -878,12 +878,12 @@ namespace System.Management.Automation
             // encryption to prevent padding attacks.
             const string szOID_NIST_AES256_CBC = "2.16.840.1.101.3.4.1.42";
 
-            ContentInfo content = new ContentInfo(contentBytes);
-            EnvelopedCms cms = new EnvelopedCms(content,
+            var content = new ContentInfo(contentBytes);
+            var cms = new EnvelopedCms(content,
                 new AlgorithmIdentifier(
                     Oid.FromOidValue(szOID_NIST_AES256_CBC, OidGroup.EncryptionAlgorithm)));
 
-            CmsRecipientCollection recipientCollection = new CmsRecipientCollection();
+            var recipientCollection = new CmsRecipientCollection();
             foreach (CmsMessageRecipient recipient in recipients)
             {
                 // Resolve the recipient, if it hasn't been done yet.
@@ -922,7 +922,7 @@ namespace System.Management.Automation
         /// <param name="bytes">The bytes to encode.</param>
         internal static string GetAsciiArmor(byte[] bytes)
         {
-            StringBuilder output = new StringBuilder();
+            var output = new StringBuilder();
             output.AppendLine(BEGIN_CMS_SIGIL);
 
             string encodedString = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
@@ -1107,7 +1107,7 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
-                X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
+                var newCertificate = new X509Certificate2(messageBytes);
                 certificatesToProcess.Add(newCertificate);
             }
             catch (Exception)
@@ -1154,8 +1154,8 @@ namespace System.Management.Automation
                 // If this is a directory, add all certificates in it. This will be the primary
                 // scenario for decryption via Group Protected PFX files
                 // (http://social.technet.microsoft.com/wiki/contents/articles/13922.certificate-pfx-export-and-import-using-ad-ds-account-protection.aspx)
-                List<string> pathsToAdd = new List<string>();
-                List<string> pathsToRemove = new List<string>();
+                var pathsToAdd = new List<string>();
+                var pathsToRemove = new List<string>();
                 foreach (string resolvedPath in resolvedPaths)
                 {
                     if (System.IO.Directory.Exists(resolvedPath))
@@ -1247,7 +1247,7 @@ namespace System.Management.Automation
         private void ProcessResolvedCertificates(ResolutionPurpose purpose, X509Certificate2Collection certificatesToProcess, out ErrorRecord error)
         {
             error = null;
-            HashSet<string> processedThumbprints = new HashSet<string>();
+            var processedThumbprints = new HashSet<string>();
 
             foreach (X509Certificate2 certificate in certificatesToProcess)
             {
@@ -1464,7 +1464,7 @@ namespace System.Management.Automation
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
-                    AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;
+                    var result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;
 
                     // Run AMSI content scan
                     unsafe

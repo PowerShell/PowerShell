@@ -245,7 +245,7 @@ namespace System.Management.Automation
 
         private static PSDataCollection<T> CreateAndInitializeFromExplicitValue(object valueToConvert)
         {
-            PSDataCollection<T> psdc = new PSDataCollection<T>();
+            var psdc = new PSDataCollection<T>();
             psdc.Add(LanguagePrimitives.ConvertTo<T>(valueToConvert));
             psdc.Complete();
             return psdc;
@@ -260,7 +260,7 @@ namespace System.Management.Automation
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(Hashtable valueToConvert)
         {
-            PSDataCollection<T> psdc = new PSDataCollection<T>();
+            var psdc = new PSDataCollection<T>();
             psdc.Add(LanguagePrimitives.ConvertTo<T>(valueToConvert));
             psdc.Complete();
             return psdc;
@@ -275,7 +275,7 @@ namespace System.Management.Automation
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(T valueToConvert)
         {
-            PSDataCollection<T> psdc = new PSDataCollection<T>();
+            var psdc = new PSDataCollection<T>();
             psdc.Add(LanguagePrimitives.ConvertTo<T>(valueToConvert));
             psdc.Complete();
             return psdc;
@@ -290,7 +290,7 @@ namespace System.Management.Automation
             Justification = "There are already alternates to the implicit casts, ToXXX and FromXXX methods are unnecessary and redundant")]
         public static implicit operator PSDataCollection<T>(object[] arrayToConvert)
         {
-            PSDataCollection<T> psdc = new PSDataCollection<T>();
+            var psdc = new PSDataCollection<T>();
             if (arrayToConvert != null)
             {
                 foreach (var ae in arrayToConvert)
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            IList<T> listToUse = info.GetValue("Data", typeof(IList<T>)) as IList<T>;
+            var listToUse = info.GetValue("Data", typeof(IList<T>)) as IList<T>;
 
             if (listToUse == null)
             {
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation
             {
                 // Copy the elements into a new collection
                 // and clear.
-                Collection<T> result = new Collection<T>();
+                var result = new Collection<T>();
 
                 for (int i = 0; i < resolvedReadCount; i++)
                 {
@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
 
         internal T ReadAndRemoveAt0()
         {
-            T value = default(T);
+            var value = default(T);
 
             lock (SyncObject)
             {
@@ -1647,7 +1647,7 @@ namespace System.Management.Automation
         {
             // This is a safe cast, as this method is only called with "SerializeInput" is set,
             // and that method throws if the collection type is not PSObject.
-            PSObject result = value as PSObject;
+            var result = value as PSObject;
 
             // Check if serialization would be idempotent
             if (SerializationWouldHaveNoEffect(result))

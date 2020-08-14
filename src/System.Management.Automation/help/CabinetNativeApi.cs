@@ -34,7 +34,7 @@ namespace System.Management.Automation.Internal
 
         internal CabinetExtractor()
         {
-            CabinetNativeApi.FdiERF err = new CabinetNativeApi.FdiERF();
+            var err = new CabinetNativeApi.FdiERF();
 
             populateDelegates();
 
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Internal
 
             try
             {
-                FileStream stream = new FileStream(filename, mode, access, share);
+                var stream = new FileStream(filename, mode, access, share);
 
                 if (stream == null)
                 {
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Internal
         internal static int FdiRead(IntPtr fp, byte[] buffer, int count)
         {
             GCHandle handle = GCHandle.FromIntPtr(fp);
-            FileStream stream = (FileStream)handle.Target;
+            var stream = (FileStream)handle.Target;
 
             int numCharactersRead = 0;
             try
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Internal
         internal static int FdiWrite(IntPtr fp, byte[] buffer, int count)
         {
             GCHandle handle = GCHandle.FromIntPtr(fp);
-            FileStream stream = (FileStream)handle.Target;
+            var stream = (FileStream)handle.Target;
 
             int numCharactersWritten = 0;
             try
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Internal
         internal static int FdiClose(IntPtr fp)
         {
             GCHandle handle = GCHandle.FromIntPtr(fp);
-            FileStream stream = (FileStream)handle.Target;
+            var stream = (FileStream)handle.Target;
 
             if (stream == null)
             {
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Internal
         internal static int FdiSeek(IntPtr fp, int offset, int origin)
         {
             GCHandle handle = GCHandle.FromIntPtr(fp);
-            FileStream stream = (FileStream)handle.Target;
+            var stream = (FileStream)handle.Target;
 
             SeekOrigin seekOrigin = CabinetNativeApi.ConvertOriginToSeekOrigin(origin);
             long status = 0;
@@ -400,10 +400,10 @@ namespace System.Management.Automation.Internal
 
                         if (hFile != IntPtr.Zero)
                         {
-                            PlatformInvokes.FILETIME ftFile = new PlatformInvokes.FILETIME();
+                            var ftFile = new PlatformInvokes.FILETIME();
                             if (PlatformInvokes.DosDateTimeToFileTime(fdin.date, fdin.time, ftFile))
                             {
-                                PlatformInvokes.FILETIME ftLocal = new PlatformInvokes.FILETIME();
+                                var ftLocal = new PlatformInvokes.FILETIME();
                                 if (PlatformInvokes.LocalFileTimeToFileTime(ftFile, ftLocal))
                                 {
                                     PlatformInvokes.SetFileTime(hFile, ftLocal, null, ftLocal);

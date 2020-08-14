@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string message = RemotingErrorIdStrings.JobBlockedSoWaitJobCannotContinue;
             Exception exception = new ArgumentException(message);
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 exception,
                 "BlockedJobsDeadlockWithWaitJob",
                 ErrorCategory.DeadlockDetected,

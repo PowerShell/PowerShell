@@ -105,8 +105,8 @@ namespace System.Management.Automation
         public static string Serialize(object source, int depth)
         {
             // Create an xml writer
-            StringBuilder sb = new StringBuilder();
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            var sb = new StringBuilder();
+            var xmlSettings = new XmlWriterSettings();
             xmlSettings.CloseOutput = true;
             xmlSettings.Encoding = System.Text.Encoding.Unicode;
             xmlSettings.Indent = true;
@@ -114,7 +114,7 @@ namespace System.Management.Automation
             XmlWriter xw = XmlWriter.Create(sb, xmlSettings);
 
             // Serialize the objects
-            Serializer serializer = new Serializer(xw, depth, true);
+            var serializer = new Serializer(xw, depth, true);
             serializer.Serialize(source);
             serializer.Done();
             serializer = null;
@@ -154,14 +154,14 @@ namespace System.Management.Automation
         /// <returns>An object array represents the serialized content.</returns>
         public static object[] DeserializeAsList(string source)
         {
-            List<object> results = new List<object>();
+            var results = new List<object>();
 
             // Create the text reader to hold the content
             TextReader textReader = new StringReader(source);
             XmlReader xmlReader = XmlReader.Create(textReader, InternalDeserializer.XmlReaderSettingsForCliXml);
 
             // Deserialize the content
-            Deserializer deserializer = new Deserializer(xmlReader);
+            var deserializer = new Deserializer(xmlReader);
             while (!deserializer.Done())
             {
                 object result = deserializer.Deserialize();
@@ -695,7 +695,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            PSObject pso = o as PSObject;
+            var pso = o as PSObject;
             if (pso != null)
             {
                 IEnumerable<string> typeNames = pso.InternalTypeNames;
@@ -748,7 +748,7 @@ namespace System.Management.Automation
 
             bool atleastOneDeserializedTypeFound = false;
 
-            Collection<string> typesWithoutPrefix = new Collection<string>();
+            var typesWithoutPrefix = new Collection<string>();
             foreach (string type in typeNames)
             {
                 if (type.StartsWith(Deserializer.DeserializationTypeNamePrefix,
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the parameter");
 
             bool sourceHandled = false;
-            PSObject moSource = source as PSObject;
+            var moSource = source as PSObject;
             if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
@@ -1199,8 +1199,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
-            ContainerType ct = ContainerType.None;
-            PSObject mshSource = source as PSObject;
+            var ct = ContainerType.None;
+            var mshSource = source as PSObject;
             IEnumerable enumerable = null;
             IDictionary dictionary = null;
 
@@ -1466,14 +1466,14 @@ namespace System.Management.Automation
             {
                 do // false loop
                 {
-                    CimInstance cimInstance = mshSource.ImmediateBaseObject as CimInstance;
+                    var cimInstance = mshSource.ImmediateBaseObject as CimInstance;
                     if (cimInstance != null)
                     {
                         isCimInstance = true;
                         break;
                     }
 
-                    ErrorRecord errorRecord = mshSource.ImmediateBaseObject as ErrorRecord;
+                    var errorRecord = mshSource.ImmediateBaseObject as ErrorRecord;
                     if (errorRecord != null)
                     {
                         errorRecord.ToPSObjectForRemoting(mshSource);
@@ -1481,7 +1481,7 @@ namespace System.Management.Automation
                         break;
                     }
 
-                    InformationalRecord informationalRecord = mshSource.ImmediateBaseObject as InformationalRecord;
+                    var informationalRecord = mshSource.ImmediateBaseObject as InformationalRecord;
                     if (informationalRecord != null)
                     {
                         informationalRecord.ToPSObjectForRemoting(mshSource);
@@ -1534,7 +1534,7 @@ namespace System.Management.Automation
 
             if (isCimInstance)
             {
-                CimInstance cimInstance = mshSource.ImmediateBaseObject as CimInstance;
+                var cimInstance = mshSource.ImmediateBaseObject as CimInstance;
                 PrepareCimInstanceForSerialization(mshSource, cimInstance);
             }
 
@@ -1547,15 +1547,15 @@ namespace System.Management.Automation
 
         private void PrepareCimInstanceForSerialization(PSObject psObject, CimInstance cimInstance)
         {
-            Queue<CimClassSerializationId> serializedClasses = new Queue<CimClassSerializationId>();
+            var serializedClasses = new Queue<CimClassSerializationId>();
 
             //
             // CREATE SERIALIZED FORM OF THE CLASS METADATA
             //
-            ArrayList psoClasses = new ArrayList();
+            var psoClasses = new ArrayList();
             for (CimClass cimClass = cimInstance.CimClass; cimClass != null; cimClass = cimClass.CimSuperClass)
             {
-                PSObject psoClass = new PSObject();
+                var psoClass = new PSObject();
                 psoClass.TypeNames.Clear();
                 psoClasses.Add(psoClass);
 
@@ -1564,7 +1564,7 @@ namespace System.Management.Automation
                 psoClass.Properties.Add(new PSNoteProperty(InternalDeserializer.CimServerNameProperty, cimClass.CimSystemProperties.ServerName));
                 psoClass.Properties.Add(new PSNoteProperty(InternalDeserializer.CimHashCodeProperty, cimClass.GetHashCode()));
 
-                CimClassSerializationId cimClassSerializationId = new CimClassSerializationId(
+                var cimClassSerializationId = new CimClassSerializationId(
                     cimClass.CimSystemProperties.ClassName,
                     cimClass.CimSystemProperties.Namespace,
                     cimClass.CimSystemProperties.ServerName,
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation
             }
             else
             {
-                PSNoteProperty classMetadataNote = new PSNoteProperty(
+                var classMetadataNote = new PSNoteProperty(
                     InternalDeserializer.CimClassMetadataProperty,
                     psoClasses);
                 classMetadataNote.IsHidden = true;
@@ -1615,7 +1615,7 @@ namespace System.Management.Automation
                 .ToList();
             if (namesOfModifiedProperties.Count != 0)
             {
-                PSObject instanceMetadata = new PSObject();
+                var instanceMetadata = new PSObject();
                 PSPropertyInfo instanceMetadataProperty = psObject.Properties[InternalDeserializer.CimInstanceMetadataProperty];
                 if (instanceMetadataProperty != null)
                 {
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    PSNoteProperty instanceMetadataNote = new PSNoteProperty(InternalDeserializer.CimInstanceMetadataProperty, instanceMetadata);
+                    var instanceMetadataNote = new PSNoteProperty(InternalDeserializer.CimInstanceMetadataProperty, instanceMetadata);
                     instanceMetadataNote.IsHidden = true;
                     psObject.Properties.Add(instanceMetadataNote);
                 }
@@ -1923,7 +1923,7 @@ namespace System.Management.Automation
             if (specificPropertiesToSerialize == null)
             {
                 // Get only extended members including hidden members from the psobect source.
-                PSMemberInfoIntegratingCollection<PSMemberInfo> membersToSearch =
+                var membersToSearch =
                     new PSMemberInfoIntegratingCollection<PSMemberInfo>(source, ExtendedMembersCollection);
                 extendedMembersEnumerable = membersToSearch.Match(
                         "*",
@@ -1932,7 +1932,7 @@ namespace System.Management.Automation
             }
             else
             {
-                List<PSMemberInfo> extendedMembersList = new List<PSMemberInfo>(source.InstanceMembers);
+                var extendedMembersList = new List<PSMemberInfo>(source.InstanceMembers);
                 extendedMembersEnumerable = extendedMembersList;
 
                 foreach (PSMemberInfo member in specificPropertiesToSerialize)
@@ -1982,7 +1982,7 @@ namespace System.Management.Automation
 
             foreach (PSMemberInfo info in propertyCollection)
             {
-                PSProperty prop = info as PSProperty;
+                var prop = info as PSProperty;
                 if (prop == null)
                 {
                     continue;
@@ -2564,7 +2564,7 @@ namespace System.Management.Automation
             // does necessary escaping which may be needed for certain
             // characters.
             Dbg.Assert(source is string, "Caller should verify that typeof(source) is String");
-            string s = (string)source;
+            var s = (string)source;
             string encoded = EncodeString(s);
             serializer._writer.WriteString(encoded);
 
@@ -2671,7 +2671,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            byte[] bytes = (byte[])source;
+            var bytes = (byte[])source;
             if (property != null)
             {
                 serializer.WriteStartElement(entry.PropertyTag);
@@ -2707,7 +2707,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            ProgressRecord rec = (ProgressRecord)source;
+            var rec = (ProgressRecord)source;
             serializer.WriteStartElement(entry.PropertyTag);
             if (property != null)
             {
@@ -2841,7 +2841,7 @@ namespace System.Management.Automation
             Dbg.Assert(indexOfFirstEncodableCharacter < s.Length, "Caller should verify validity of indexOfFirstEncodableCharacter");
 
             int slen = s.Length;
-            char[] result = new char[indexOfFirstEncodableCharacter + (slen - indexOfFirstEncodableCharacter) * 7];
+            var result = new char[indexOfFirstEncodableCharacter + (slen - indexOfFirstEncodableCharacter) * 7];
 
             s.CopyTo(0, result, 0, indexOfFirstEncodableCharacter);
             int rlen = indexOfFirstEncodableCharacter;
@@ -2964,7 +2964,7 @@ namespace System.Management.Automation
             {
 #if DEBUG
                 Dbg.Assert(_version.Major <= 1, "Deserializer assumes clixml version is <= 1.1");
-                Version boundaryVersion = new Version(1, 1, 0, 1);
+                var boundaryVersion = new Version(1, 1, 0, 1);
                 return (_version < boundaryVersion);
 #else
                 return true; // handle v1 stuff gracefully
@@ -3207,7 +3207,7 @@ namespace System.Management.Automation
 
             if (deserializedProperty.Name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase))
             {
-                string psComputerNameValue = deserializedProperty.Value as string;
+                var psComputerNameValue = deserializedProperty.Value as string;
                 if (psComputerNameValue != null)
                 {
                     cimInstance.SetCimSessionComputerName(psComputerNameValue);
@@ -3313,7 +3313,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            Stack<KeyValuePair<CimClassSerializationId, CimClass>> cimClassesToAddToCache = new Stack<KeyValuePair<CimClassSerializationId, CimClass>>();
+            var cimClassesToAddToCache = new Stack<KeyValuePair<CimClassSerializationId, CimClass>>();
 
             //
             // REHYDRATE CLASS METADATA
@@ -3331,31 +3331,31 @@ namespace System.Management.Automation
 
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
-                PSPropertyInfo namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
+                var namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
                 if (namespaceProperty == null)
                 {
                     return null;
                 }
 
-                string cimNamespace = namespaceProperty.Value as string;
+                var cimNamespace = namespaceProperty.Value as string;
 
-                PSPropertyInfo classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
+                var classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
                 if (classNameProperty == null)
                 {
                     return null;
                 }
 
-                string cimClassName = classNameProperty.Value as string;
+                var cimClassName = classNameProperty.Value as string;
 
-                PSPropertyInfo computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
+                var computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
                 if (computerNameProperty == null)
                 {
                     return null;
                 }
 
-                string computerName = computerNameProperty.Value as string;
+                var computerName = computerNameProperty.Value as string;
 
-                PSPropertyInfo hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
+                var hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
                 if (hashCodeProperty == null)
                 {
                     return null;
@@ -3377,16 +3377,16 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                int hashCode = (int)hashCodeObject;
+                var hashCode = (int)hashCodeObject;
 
-                CimClassSerializationId cimClassSerializationId = new CimClassSerializationId(cimClassName, cimNamespace, computerName, hashCode);
+                var cimClassSerializationId = new CimClassSerializationId(cimClassName, cimNamespace, computerName, hashCode);
                 currentClass = _context.cimClassSerializationIdCache.GetCimClassFromCache(cimClassSerializationId);
                 if (currentClass != null)
                 {
                     continue;
                 }
 
-                PSPropertyInfo miXmlProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimMiXmlProperty] as PSPropertyInfo;
+                var miXmlProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimMiXmlProperty] as PSPropertyInfo;
                 if ((miXmlProperty == null) || (miXmlProperty.Value == null))
                 {
                     return null;
@@ -3431,7 +3431,7 @@ namespace System.Management.Automation
                 return deserializedObject;
             }
 
-            PSPropertyInfo classMetadataProperty = deserializedObject.InstanceMembers[CimClassMetadataProperty] as PSPropertyInfo;
+            var classMetadataProperty = deserializedObject.InstanceMembers[CimClassMetadataProperty] as PSPropertyInfo;
             CimClass cimClass = RehydrateCimClass(classMetadataProperty);
             if (cimClass == null)
             {
@@ -3451,13 +3451,13 @@ namespace System.Management.Automation
             PSObject psoCimInstance = PSObject.AsPSObject(cimInstance);
 
             // process __InstanceMetadata
-            HashSet<string> namesOfModifiedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            PSPropertyInfo instanceMetadataProperty = deserializedObject.InstanceMembers[CimInstanceMetadataProperty] as PSPropertyInfo;
+            var namesOfModifiedProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var instanceMetadataProperty = deserializedObject.InstanceMembers[CimInstanceMetadataProperty] as PSPropertyInfo;
             if ((instanceMetadataProperty != null) && (instanceMetadataProperty.Value != null))
             {
                 PSObject instanceMetadata = PSObject.AsPSObject(instanceMetadataProperty.Value);
 
-                PSPropertyInfo modifiedPropertiesProperty = instanceMetadata.InstanceMembers[CimModifiedProperties] as PSPropertyInfo;
+                var modifiedPropertiesProperty = instanceMetadata.InstanceMembers[CimModifiedProperties] as PSPropertyInfo;
                 if ((modifiedPropertiesProperty != null) && (modifiedPropertiesProperty.Value != null))
                 {
                     string modifiedPropertiesString = modifiedPropertiesProperty.Value.ToString();
@@ -3473,7 +3473,7 @@ namespace System.Management.Automation
             {
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
-                    PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
+                    var deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
                     if (deserializedProperty == null)
                     {
                         continue;
@@ -3494,7 +3494,7 @@ namespace System.Management.Automation
             // process properties that were originally "extended" properties
             foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.InstanceMembers)
             {
-                PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
+                var deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
                 if (deserializedProperty == null)
                 {
                     continue;
@@ -3518,7 +3518,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSNoteProperty noteProperty = new PSNoteProperty(deserializedProperty.Name, deserializedProperty.Value);
+                var noteProperty = new PSNoteProperty(deserializedProperty.Name, deserializedProperty.Value);
                 psoCimInstance.Properties.Add(noteProperty);
             }
 
@@ -3663,7 +3663,7 @@ namespace System.Management.Automation
                 {
                     // Handle BaseObject
                     object baseObject = null;
-                    ContainerType ct = ContainerType.None;
+                    var ct = ContainerType.None;
 
                     // Check if tag is PrimaryKnownType.
                     TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
@@ -3705,7 +3705,7 @@ namespace System.Management.Automation
 
             ReadEndElement();
 
-            PSObject immediateBasePso = dso.ImmediateBaseObject as PSObject;
+            var immediateBasePso = dso.ImmediateBaseObject as PSObject;
             if (immediateBasePso != null)
             {
                 PSObject.CopyDeserializerFields(source: immediateBasePso, target: dso);
@@ -3722,7 +3722,7 @@ namespace System.Management.Automation
         private PSObject ReadAttributeAndCreatePSObject()
         {
             string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
-            PSObject sh = new PSObject();
+            var sh = new PSObject();
 
             // RefId is not mandatory attribute
             if (refId != null)
@@ -3747,7 +3747,7 @@ namespace System.Management.Automation
 
             if (IsNextElement(SerializationStrings.TypeNamesTag))
             {
-                Collection<string> typeNames = new Collection<string>();
+                var typeNames = new Collection<string>();
 
                 // Read refId attribute if available
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
@@ -3845,7 +3845,7 @@ namespace System.Management.Automation
                 {
                     string property = ReadNameAttribute();
                     object value = ReadOneObject();
-                    PSProperty prop = new PSProperty(property, value);
+                    var prop = new PSProperty(property, value);
                     dso.AdaptedMembers.Add(prop);
                 }
 
@@ -3872,7 +3872,7 @@ namespace System.Management.Automation
                     if (IsNextElement(SerializationStrings.MemberSet))
                     {
                         string name = ReadNameAttribute();
-                        PSMemberSet set = new PSMemberSet(name);
+                        var set = new PSMemberSet(name);
                         collection.Add(set);
                         ReadMemberSet(set.Members);
 
@@ -3899,7 +3899,7 @@ namespace System.Management.Automation
         {
             string name = ReadNameAttribute();
             object value = ReadOneObject();
-            PSNoteProperty note = new PSNoteProperty(name, value);
+            var note = new PSNoteProperty(name, value);
             return note;
         }
 
@@ -3969,7 +3969,7 @@ namespace System.Management.Automation
                        ct == ContainerType.Queue ||
                        ct == ContainerType.Stack, "ct should be queue, stack, enumerable or list");
 
-            ArrayList list = new ArrayList();
+            var list = new ArrayList();
             if (ReadStartElementAndHandleEmpty(_reader.LocalName))
             {
                 while (_reader.NodeType == XmlNodeType.Element)
@@ -4004,7 +4004,7 @@ namespace System.Management.Automation
             // We assume the hash table is a PowerShell hash table and hence uses
             // a case insensitive string comparer.  If we discover a key collision,
             // we'll revert back to the default comparer.
-            Hashtable table = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            var table = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
             int keyClashFoundIteration = 0;
             if (ReadStartElementAndHandleEmpty(SerializationStrings.DictionaryTag))
             {
@@ -4048,7 +4048,7 @@ namespace System.Management.Automation
                     if (table.ContainsKey(key) && (keyClashFoundIteration == 0))
                     {
                         keyClashFoundIteration++;
-                        Hashtable newHashTable = new Hashtable();
+                        var newHashTable = new Hashtable();
                         foreach (DictionaryEntry entry in table)
                         {
                             newHashTable.Add(entry.Key, entry.Value);
@@ -4063,7 +4063,7 @@ namespace System.Management.Automation
                     {
                         keyClashFoundIteration++;
                         IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
-                        Hashtable newHashTable = new Hashtable(equalityComparer);
+                        var newHashTable = new Hashtable(equalityComparer);
                         foreach (DictionaryEntry entry in table)
                         {
                             newHashTable.Add(entry.Key, entry.Value);
@@ -4101,7 +4101,7 @@ namespace System.Management.Automation
 
         private static XmlReaderSettings GetXmlReaderSettingsForCliXml()
         {
-            XmlReaderSettings xrs = new XmlReaderSettings();
+            var xrs = new XmlReaderSettings();
 
             xrs.CheckCharacters = false;
             xrs.CloseInput = false;
@@ -4124,7 +4124,7 @@ namespace System.Management.Automation
 
         private static XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
+            var settings = new XmlReaderSettings();
 
             settings.CheckCharacters = false;
             settings.ConformanceLevel = ConformanceLevel.Auto;
@@ -4600,7 +4600,7 @@ namespace System.Management.Automation
             try
             {
                 XmlReader xmlReader = XmlReader.Create(textReader, settings);
-                XmlDocument xmlDocument = new XmlDocument();
+                var xmlDocument = new XmlDocument();
                 xmlDocument.PreserveWhitespace = preserveNonElements;
                 xmlDocument.Load(xmlReader);
                 return xmlDocument;
@@ -4699,7 +4699,7 @@ namespace System.Management.Automation
 
             try
             {
-                ProgressRecord record = new ProgressRecord(activityId, activity, statusDescription);
+                var record = new ProgressRecord(activityId, activity, statusDescription);
 
                 if (!string.IsNullOrEmpty(currentOperation))
                 {
@@ -4884,7 +4884,7 @@ namespace System.Management.Automation
             string message = StringUtil.Format(resourceString, args);
 
             XmlException ex = null;
-            IXmlLineInfo xmlLineInfo = _reader as IXmlLineInfo;
+            var xmlLineInfo = _reader as IXmlLineInfo;
             if (xmlLineInfo != null)
             {
                 if (xmlLineInfo.HasLineInfo())
@@ -5315,7 +5315,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object GetPropertyValue(PSObject psObject, string propertyName)
         {
-            PSNoteProperty property = (PSNoteProperty)psObject.Properties[propertyName];
+            var property = (PSNoteProperty)psObject.Properties[propertyName];
 
             if (property == null)
             {
@@ -5330,7 +5330,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object GetPsObjectPropertyBaseObject(PSObject psObject, string propertyName)
         {
-            PSObject propertyPsObject = (PSObject)GetPropertyValue(psObject, propertyName);
+            var propertyPsObject = (PSObject)GetPropertyValue(psObject, propertyName);
 
             if (propertyPsObject == null)
             {
@@ -5551,9 +5551,9 @@ namespace System.Management.Automation
                     source.InternalTypeNames.Key,
                     (UInt32)(SerializationMethod.SpecificProperties));
 
-                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties =
+                var specificProperties =
                     new PSMemberInfoInternalCollection<PSPropertyInfo>();
-                PSMemberInfoIntegratingCollection<PSPropertyInfo> allProperties =
+                var allProperties =
                     new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
                         source,
                         allPropertiesCollection);
@@ -5592,13 +5592,13 @@ namespace System.Management.Automation
                 return null;
             }
 
-            PSAliasProperty alias = property as PSAliasProperty;
+            var alias = property as PSAliasProperty;
             if (alias != null)
             {
                 property = alias.ReferencedMember as PSPropertyInfo;
             }
 
-            PSScriptProperty script = property as PSScriptProperty;
+            var script = property as PSScriptProperty;
             Dbg.Assert(script == null || script.GetterScript != null, "scriptProperty.IsGettable => (scriptProperty.GetterScript != null)");
             if ((script != null) && (!canUseDefaultRunspaceInThreadSafeManner))
             {
@@ -5699,7 +5699,7 @@ namespace System.Management.Automation
         {
             if (this.Count > _cleanupTriggerSize)
             {
-                Dictionary<WeakReference, T> alive = new Dictionary<WeakReference, T>(_weakEqualityComparer);
+                var alive = new Dictionary<WeakReference, T>(_weakEqualityComparer);
                 foreach (KeyValuePair<WeakReference, T> weakKeyValuePair in _dictionary)
                 {
                     object key = weakKeyValuePair.Key.Target;
@@ -5731,7 +5731,7 @@ namespace System.Management.Automation
         {
             get
             {
-                List<object> keys = new List<object>(_dictionary.Keys.Count);
+                var keys = new List<object>(_dictionary.Keys.Count);
                 foreach (WeakReference weakKey in _dictionary.Keys)
                 {
                     object key = weakKey.Target;
@@ -5752,7 +5752,7 @@ namespace System.Management.Automation
 
         public bool TryGetValue(object key, out T value)
         {
-            WeakReference weakKey = new WeakReference(key);
+            var weakKey = new WeakReference(key);
             return _dictionary.TryGetValue(weakKey, out value);
         }
 
@@ -5813,7 +5813,7 @@ namespace System.Management.Automation
 
         public void CopyTo(KeyValuePair<object, T>[] array, int arrayIndex)
         {
-            List<KeyValuePair<object, T>> rawList = new List<KeyValuePair<object, T>>(this.WeakCollection.Count);
+            var rawList = new List<KeyValuePair<object, T>>(this.WeakCollection.Count);
             foreach (KeyValuePair<object, T> keyValuePair in this)
             {
                 rawList.Add(keyValuePair);
@@ -5912,7 +5912,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in other)
             {
-                Hashtable valueAsHashtable = PSObject.Base(entry.Value) as Hashtable;
+                var valueAsHashtable = PSObject.Base(entry.Value) as Hashtable;
                 if (valueAsHashtable != null)
                 {
                     this.Add(entry.Key, new PSPrimitiveDictionary(valueAsHashtable));
@@ -5940,7 +5940,7 @@ namespace System.Management.Automation
         private string VerifyKey(object key)
         {
             key = PSObject.Base(key);
-            string keyAsString = key as string;
+            var keyAsString = key as string;
             if (keyAsString == null)
             {
                 string message = StringUtil.Format(Serialization.PrimitiveHashtableInvalidKey,
@@ -6521,7 +6521,7 @@ namespace System.Management.Automation
                 result = new PSPrimitiveDictionary();
             }
 
-            PSPrimitiveDictionary versionTable = new PSPrimitiveDictionary(PSVersionInfo.GetPSVersionTableForDownLevel())
+            var versionTable = new PSPrimitiveDictionary(PSVersionInfo.GetPSVersionTableForDownLevel())
             {
                 {"PSSemanticVersion", PSVersionInfo.PSVersion.ToString()}
             };
@@ -6562,7 +6562,7 @@ namespace System.Management.Automation
                 if (LanguagePrimitives.TryConvertTo<IDictionary>(data[keys[0]], out subData)
                     && subData != null)
                 {
-                    string[] subKeys = new string[keys.Length - 1];
+                    var subKeys = new string[keys.Length - 1];
                     Array.Copy(keys, 1, subKeys, 0, subKeys.Length);
                     return TryPathGet<T>(subData, out result, subKeys);
                 }
@@ -6870,7 +6870,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    T t = (T)LanguagePrimitives.ConvertTo(propertyValue, typeof(T), CultureInfo.InvariantCulture);
+                    var t = (T)LanguagePrimitives.ConvertTo(propertyValue, typeof(T), CultureInfo.InvariantCulture);
                     return t;
                 }
             }
@@ -6893,10 +6893,10 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                ListType newList = new ListType();
+                var newList = new ListType();
                 foreach (object deserializedItem in deserializedList)
                 {
-                    ItemType item = (ItemType)LanguagePrimitives.ConvertTo(deserializedItem, typeof(ItemType), CultureInfo.InvariantCulture);
+                    var item = (ItemType)LanguagePrimitives.ConvertTo(deserializedItem, typeof(ItemType), CultureInfo.InvariantCulture);
                     newList.Add(item);
                 }
 
@@ -6910,7 +6910,7 @@ namespace Microsoft.PowerShell
 
         private static object RehydratePrimitiveHashtable(PSObject pso)
         {
-            Hashtable hashtable = (Hashtable)LanguagePrimitives.ConvertTo(pso, typeof(Hashtable), CultureInfo.InvariantCulture);
+            var hashtable = (Hashtable)LanguagePrimitives.ConvertTo(pso, typeof(Hashtable), CultureInfo.InvariantCulture);
             return new PSPrimitiveDictionary(hashtable);
         }
 
@@ -6927,7 +6927,7 @@ namespace Microsoft.PowerShell
 
         private static PSListModifier RehydratePSListModifier(PSObject pso)
         {
-            Hashtable h = new Hashtable();
+            var h = new Hashtable();
 
             PSPropertyInfo addProperty = pso.Properties[PSListModifier.AddKey];
             if ((addProperty != null) && (addProperty.Value != null))
@@ -7052,7 +7052,7 @@ namespace Microsoft.PowerShell
 
         internal static PSSessionOption RehydratePSSessionOption(PSObject pso)
         {
-            PSSessionOption option = new PSSessionOption();
+            var option = new PSSessionOption();
 
             option.ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments");
             option.CancelTimeout = GetPropertyValue<TimeSpan>(pso, "CancelTimeout");
@@ -7158,10 +7158,10 @@ namespace Microsoft.PowerShell
             PSObject psoInvocationInfo = GetPropertyValue<PSObject>(pso, "SerializedInvocationInfo", RehydrationFlags.NullValueOk | RehydrationFlags.MissingPropertyOk);
             InvocationInfo invocationInfo = (psoInvocationInfo != null) ? new InvocationInfo(psoInvocationInfo) : null;
             DebuggerResumeAction resumeAction = GetPropertyValue<DebuggerResumeAction>(pso, "ResumeAction");
-            Collection<Breakpoint> breakpoints = new Collection<Breakpoint>();
+            var breakpoints = new Collection<Breakpoint>();
             foreach (var item in GetPropertyValue<ArrayList>(pso, "Breakpoints"))
             {
-                Breakpoint bp = item as Breakpoint;
+                var bp = item as Breakpoint;
                 if (bp != null)
                 {
                     breakpoints.Add(bp);
@@ -7210,14 +7210,14 @@ namespace Microsoft.PowerShell
                 GetPropertyValue<string>(certDetails, "Subject"),
                 GetPropertyValue<string>(certDetails, "IssuerName"),
                 GetPropertyValue<string>(certDetails, "IssuerThumbprint"));
-            PSIdentity psIdentity = new PSIdentity(
+            var psIdentity = new PSIdentity(
                 GetPropertyValue<string>(userIdentity, "AuthenticationType"),
                 GetPropertyValue<bool>(userIdentity, "IsAuthenticated"),
                 GetPropertyValue<string>(userIdentity, "Name"),
                 psCertDetails);
-            PSPrincipal psPrincipal = new PSPrincipal(psIdentity, WindowsIdentity.GetCurrent());
+            var psPrincipal = new PSPrincipal(psIdentity, WindowsIdentity.GetCurrent());
 
-            PSSenderInfo senderInfo = new PSSenderInfo(psPrincipal, GetPropertyValue<string>(pso, "ConnectionString"));
+            var senderInfo = new PSSenderInfo(psPrincipal, GetPropertyValue<string>(pso, "ConnectionString"));
 
             senderInfo.ClientTimeZone = TimeZoneInfo.Local;
             senderInfo.ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments");
@@ -7254,7 +7254,7 @@ namespace Microsoft.PowerShell
         {
             string sddl = GetPropertyValue<string>(pso, "SDDL");
 
-            T t = new T();
+            var t = new T();
             t.SetSecurityDescriptorSddlForm(sddl);
             return t;
         }
@@ -7279,7 +7279,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
+            var parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
             if (parameterSetMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
@@ -7301,7 +7301,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
+            var dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
             if (dbgStopEventArgs == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
@@ -7312,7 +7312,7 @@ namespace Microsoft.PowerShell
                 return null;
             }
 
-            PSObject psoInvocationInfo = new PSObject();
+            var psoInvocationInfo = new PSObject();
             dbgStopEventArgs.InvocationInfo.ToPSObjectForRemoting(psoInvocationInfo);
             return psoInvocationInfo;
         }
@@ -7561,7 +7561,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
+            var formatViewDefinition = instance.BaseObject as FormatViewDefinition;
             if (formatViewDefinition == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));

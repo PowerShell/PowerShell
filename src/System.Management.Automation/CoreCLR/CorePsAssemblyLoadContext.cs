@@ -509,7 +509,7 @@ namespace System.Management.Automation
             //     it back from the cache of default context.
             //   - If the requested TPA is not loaded yet, then 'Assembly.Load' will make the
             //     default context to load it
-            AssemblyName assemblyName = new AssemblyName(tpaStrongName);
+            var assemblyName = new AssemblyName(tpaStrongName);
             Assembly asmLoaded = Assembly.Load(assemblyName);
             return asmLoaded;
         }

@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_bindingVariable != null)
                 {
-                    VariablePath variablePath = new VariablePath(_bindingVariable);
+                    var variablePath = new VariablePath(_bindingVariable);
                     if (variablePath.IsUnscopedVariable)
                     {
                         variablePath = variablePath.CloneAndSetLocal();
@@ -340,8 +340,8 @@ namespace Microsoft.PowerShell.Commands
                 // 197751: WR BUG BASH: Powershell: localized text display as garbage
                 // leaving the encoding to be decided by the StreamReader. StreamReader
                 // will read the preamble and decide proper encoding.
-                using (FileStream scriptStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (StreamReader scriptReader = new StreamReader(scriptStream))
+                using (var scriptStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var scriptReader = new StreamReader(scriptStream))
                 {
                     return scriptReader.ReadToEnd();
                 }

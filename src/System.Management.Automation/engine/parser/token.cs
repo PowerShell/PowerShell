@@ -1439,7 +1439,7 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append(base.ToDebugString(indent));
             if (_nestedTokens != null)

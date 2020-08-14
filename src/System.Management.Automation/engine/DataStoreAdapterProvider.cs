@@ -625,7 +625,7 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            Provider.CmdletProvider result = providerInstance as Provider.CmdletProvider;
+            var result = providerInstance as Provider.CmdletProvider;
             ItemSeparator = result.ItemSeparator;
             AltItemSeparator = result.AltItemSeparator;
 

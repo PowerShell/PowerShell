@@ -53,14 +53,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // we failed the default display name, let's try some well known names
             // trying to get something potentially useful
-            string[] knownPatterns = new string[] {
+            var knownPatterns = new string[] {
                 "name", "id", "key", "*key", "*name", "*id",
             };
 
             // go over the patterns, looking for the first match
             foreach (string pattern in knownPatterns)
             {
-                PSPropertyExpression ex = new PSPropertyExpression(pattern);
+                var ex = new PSPropertyExpression(pattern);
                 List<PSPropertyExpression> exprList = ex.ResolveNames(target);
 
                 while ((exprList.Count > 0) && (
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="obj">Object to extract the IEnumerable from.</param>
         internal static IEnumerable GetEnumerable(object obj)
         {
-            PSObject mshObj = obj as PSObject;
+            var mshObj = obj as PSObject;
             if (mshObj != null)
             {
                 obj = mshObj.BaseObject;
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 IEnumerable e = PSObjectHelper.GetEnumerable(so);
                 if (e != null)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    var sb = new StringBuilder();
                     sb.Append("{");
 
                     bool first = true;
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     IEnumerator enumerator = e.GetEnumerator();
                     if (enumerator != null)
                     {
-                        IBlockingEnumerator<object> be = enumerator as IBlockingEnumerator<object>;
+                        var be = enumerator as IBlockingEnumerator<object>;
                         if (be != null)
                         {
                             while (be.MoveNext(false))
@@ -388,10 +388,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (standardMembersSet != null)
             {
-                PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
+                var defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
                 if (defaultDisplayPropertySet != null)
                 {
-                    List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
+                    var retVal = new List<PSPropertyExpression>();
                     foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
                     {
                         if (!string.IsNullOrEmpty(prop))
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (standardMembersSet != null)
             {
-                PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
+                var defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
                 if (defaultDisplayProperty != null)
                 {
                     string expressionString = defaultDisplayProperty.Value.ToString();
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     sb.LanguageMode = PSLanguageMode.FullLanguage;
                 }
 
-                PSPropertyExpression ex = new PSPropertyExpression(sb);
+                var ex = new PSPropertyExpression(sb);
 
                 _expressionCache.Add(et, ex);
 

@@ -97,7 +97,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<PSToken> resultTokens = new Collection<PSToken>();
+                var resultTokens = new Collection<PSToken>();
                 // Skip the last token, it's always EOF.
                 for (int i = 0; i < _tokenList.Count - 1; i++)
                 {
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<PSParseError> resultErrors = new Collection<PSParseError>();
+                var resultErrors = new Collection<PSParseError>();
                 foreach (var error in _errors)
                 {
                     resultErrors.Add(new PSParseError(error));
@@ -149,7 +149,7 @@ namespace System.Management.Automation
             if (script == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
 
-            PSParser psParser = new PSParser();
+            var psParser = new PSParser();
 
             psParser.Parse(script);
             errors = psParser.Errors;
@@ -176,7 +176,7 @@ namespace System.Management.Automation
             if (script == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(script));
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (object obj in script)
             {
                 if (obj != null)

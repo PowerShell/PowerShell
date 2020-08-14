@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
 
             BaseResponse = response;
 
-            MemoryStream ms = contentStream as MemoryStream;
+            var ms = contentStream as MemoryStream;
             if (ms != null)
             {
                 _rawContentStream = ms;
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
                     contentLength = StreamHelper.DefaultReadBuffer;
                 }
 
-                int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
+                var initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
                 _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, null);
             }
             // set the position of the content stream to the beginning

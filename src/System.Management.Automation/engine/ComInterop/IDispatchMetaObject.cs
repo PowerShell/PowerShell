@@ -28,7 +28,7 @@ namespace System.Management.Automation.ComInterop
             ComMethodDesc method = null;
 
             // See if this is actually a property set
-            ComBinder.ComInvokeMemberBinder comInvokeBinder = binder as ComBinder.ComInvokeMemberBinder;
+            var comInvokeBinder = binder as ComBinder.ComInvokeMemberBinder;
             if ((comInvokeBinder != null) && (comInvokeBinder.IsPropertySet))
             {
                 DynamicMetaObject value = args[args.Length - 1];
@@ -51,8 +51,8 @@ namespace System.Management.Automation.ComInterop
 
             if (method != null)
             {
-                List<ParameterExpression> temps = new List<ParameterExpression>();
-                List<Expression> initTemps = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var initTemps = new List<Expression>();
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
                 return BindComInvoke(args, method, binder.CallInfo, isByRef, temps, initTemps);
@@ -67,8 +67,8 @@ namespace System.Management.Automation.ComInterop
 
             if (_self.TryGetGetItem(out ComMethodDesc method))
             {
-                List<ParameterExpression> temps = new List<ParameterExpression>();
-                List<Expression> initTemps = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var initTemps = new List<Expression>();
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
                 return BindComInvoke(args, method, binder.CallInfo, isByRef, temps, initTemps);
@@ -105,7 +105,7 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
-            ComBinder.ComGetMemberBinder comBinder = binder as ComBinder.ComGetMemberBinder;
+            var comBinder = binder as ComBinder.ComGetMemberBinder;
             bool canReturnCallables = comBinder?._canReturnCallables ?? false;
 
             Requires.NotNull(binder, nameof(binder));
@@ -191,8 +191,8 @@ namespace System.Management.Automation.ComInterop
 
             if (_self.TryGetGetItem(out ComMethodDesc getItem))
             {
-                List<ParameterExpression> temps = new List<ParameterExpression>();
-                List<Expression> initTemps = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var initTemps = new List<Expression>();
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(getItem, ref indexes, temps, initTemps);
                 return BindComInvoke(indexes, getItem, binder.CallInfo, isByRef, temps, initTemps);
@@ -207,14 +207,14 @@ namespace System.Management.Automation.ComInterop
 
             if (_self.TryGetSetItem(out ComMethodDesc setItem))
             {
-                List<ParameterExpression> temps = new List<ParameterExpression>();
-                List<Expression> initTemps = new List<Expression>();
+                var temps = new List<ParameterExpression>();
+                var initTemps = new List<Expression>();
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(setItem, ref indexes, temps, initTemps);
                 isByRef = isByRef.AddLast(false);
 
                 // Convert the value to the target type
-                DynamicMetaObject updatedValue = new DynamicMetaObject(
+                var updatedValue = new DynamicMetaObject(
                     value.CastOrConvertMethodArgument(
                         value.LimitType,
                         setItem.Name,

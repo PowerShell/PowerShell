@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Since the alias already exists, write an error.
 
-                    SessionStateException aliasExists =
+                    var aliasExists =
                         new SessionStateException(
                             Name,
                             SessionStateCategory.Alias,
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Create the alias info
 
-            AliasInfo newAlias =
+            var newAlias =
                 new AliasInfo(
                     Name,
                     Value,

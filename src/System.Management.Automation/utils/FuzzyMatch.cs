@@ -35,7 +35,7 @@ namespace System.Management.Automation
 
             var bounds = new { Height = string1.Length + 1, Width = string2.Length + 1 };
 
-            int[,] matrix = new int[bounds.Height, bounds.Width];
+            var matrix = new int[bounds.Height, bounds.Width];
 
             for (int height = 0; height < bounds.Height; height++) { matrix[height, 0] = height; }
             for (int width = 0; width < bounds.Width; width++) { matrix[0, width] = width; }

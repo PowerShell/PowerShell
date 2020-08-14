@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             bool checkForRecurse = false;
-            List<Job> jobsToWrite = new List<Job>();
+            var jobsToWrite = new List<Job>();
 
             switch (ParameterSetName)
             {
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (Job job in _jobs)
                         {
-                            PSRemotingJob remoteJob =
+                            var remoteJob =
                                         job as PSRemotingJob;
 
                             if (remoteJob == null)
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (Job job in _jobs)
                         {
                             // the job can either be a remoting job or another one
-                            PSRemotingJob remoteJob =
+                            var remoteJob =
                                         job as PSRemotingJob;
 
                             // ComputerName parameter can only be used with remoting jobs
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             _writeExistingData.Set();
-            Job[] aggregatedJobs = new Job[_jobsBeingAggregated.Count];
+            var aggregatedJobs = new Job[_jobsBeingAggregated.Count];
 
             for (int i = 0; i < _jobsBeingAggregated.Count; i++)
             {
@@ -706,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
             // we have a better way of handling blocked state logic
             // for remoting jobs, so use that if job is a remoting
             // job
-            PSRemotingChildJob remotingChildJob = job as PSRemotingChildJob;
+            var remotingChildJob = job as PSRemotingChildJob;
             if (remotingChildJob != null)
             {
                 remotingChildJob.UnblockJob();
@@ -747,7 +747,7 @@ namespace Microsoft.PowerShell.Commands
             // job is re-connected.
             if (job.JobStateInfo.State == JobState.Disconnected)
             {
-                PSRemotingChildJob remotingChildJob = job as PSRemotingChildJob;
+                var remotingChildJob = job as PSRemotingChildJob;
                 if (remotingChildJob != null && remotingChildJob.DisconnectedAndBlocked)
                 {
                     return;
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ErrorRecord e in errorRecords)
                 {
                     if (e == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
+                    var mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
                         e.PreserveInvocationInfoOnce = true;
@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (VerboseRecord v in verboseRecords)
                 {
                     if (v == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
+                    var mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
                         mshCommandRuntime.WriteVerbose(v, true);
@@ -828,7 +828,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (DebugRecord d in debugRecords)
                 {
                     if (d == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
+                    var mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
                         mshCommandRuntime.WriteDebug(d, true);
@@ -840,7 +840,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (WarningRecord w in warningRecords)
                 {
                     if (w == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
+                    var mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
                         mshCommandRuntime.WriteWarning(w, true);
@@ -852,7 +852,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ProgressRecord p in progressRecords)
                 {
                     if (p == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
+                    var mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
                         mshCommandRuntime.WriteProgress(p, true);
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (InformationRecord p in informationRecords)
                 {
                     if (p == null) continue;
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
+                    var mshCommandRuntime = CommandRuntime as MshCommandRuntime;
                     if (mshCommandRuntime != null)
                     {
                         mshCommandRuntime.WriteInformation(p, true);
@@ -880,7 +880,7 @@ namespace Microsoft.PowerShell.Commands
         private void WriteReasonError(Job job)
         {
             // Write better error for the remoting case and generic error for the other case
-            PSRemotingChildJob child = job as PSRemotingChildJob;
+            var child = job as PSRemotingChildJob;
             if (child != null && child.FailureErrorRecord != null)
             {
                 _results.Add(new PSStreamObject(PSStreamObjectType.Error, child.FailureErrorRecord, child.InstanceId));
@@ -892,13 +892,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // If it was generated by a job that gave location information, unpack the
                 // base exception.
-                JobFailedException exceptionWithLocation = baseReason as JobFailedException;
+                var exceptionWithLocation = baseReason as JobFailedException;
                 if (exceptionWithLocation != null)
                 {
                     resultReason = exceptionWithLocation.Reason;
                 }
 
-                ErrorRecord errorRecord = new ErrorRecord(resultReason, "JobStateFailed", ErrorCategory.InvalidResult, null);
+                var errorRecord = new ErrorRecord(resultReason, "JobStateFailed", ErrorCategory.InvalidResult, null);
 
                 // If it was generated by a job that gave location information, set the
                 // location information.
@@ -928,9 +928,9 @@ namespace Microsoft.PowerShell.Commands
                 return psDataCollection.ReadAll();
             }
 
-            T[] array = new T[psDataCollection.Count];
+            var array = new T[psDataCollection.Count];
             psDataCollection.CopyTo(array, 0);
-            Collection<T> collection = new Collection<T>();
+            var collection = new Collection<T>();
             foreach (T t in array)
             {
                 collection.Add(t);
@@ -1081,7 +1081,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             _writeExistingData.WaitOne();
-            PSDataCollection<PSStreamObject> results = sender as PSDataCollection<PSStreamObject>;
+            var results = sender as PSDataCollection<PSStreamObject>;
 
             Dbg.Assert(results != null, "PSDataCollection is raising an inappropriate event");
             PSStreamObject record = GetData(results, e.Index);
@@ -1095,7 +1095,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandleJobStateChanged(object sender, JobStateEventArgs e)
         {
-            Job job = sender as Job;
+            var job = sender as Job;
             Dbg.Assert(job != null, "Job state info cannot be raised with reference to job");
 
             // waiting for existing data to be written ensures two things
@@ -1156,7 +1156,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<ProgressRecord> progressRecords = sender as PSDataCollection<ProgressRecord>;
+                var progressRecords = sender as PSDataCollection<ProgressRecord>;
                 Diagnostics.Assert(progressRecords != null, "PSDataCollection is raising an inappropriate event");
 
                 ProgressRecord record = GetData(progressRecords, e.Index);
@@ -1183,7 +1183,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<ErrorRecord> errorRecords = sender as PSDataCollection<ErrorRecord>;
+                var errorRecords = sender as PSDataCollection<ErrorRecord>;
                 Diagnostics.Assert(errorRecords != null, "PSDataCollection is raising an inappropriate event");
                 ErrorRecord errorRecord = GetData(errorRecords, e.Index);
                 if (errorRecord != null)
@@ -1210,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<DebugRecord> debugRecords = sender as PSDataCollection<DebugRecord>;
+                var debugRecords = sender as PSDataCollection<DebugRecord>;
                 Diagnostics.Assert(debugRecords != null, "PSDataCollection is raising an inappropriate event");
                 DebugRecord record = GetData(debugRecords, e.Index);
                 if (record != null)
@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<WarningRecord> warningRecords = sender as PSDataCollection<WarningRecord>;
+                var warningRecords = sender as PSDataCollection<WarningRecord>;
                 Diagnostics.Assert(warningRecords != null, "PSDataCollection is raising an inappropriate event");
                 WarningRecord record = GetData(warningRecords, e.Index);
                 if (record != null)
@@ -1264,7 +1264,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<VerboseRecord> verboseRecords = sender as PSDataCollection<VerboseRecord>;
+                var verboseRecords = sender as PSDataCollection<VerboseRecord>;
                 Dbg.Assert(verboseRecords != null, "PSDataCollection is raising an inappropriate event");
                 VerboseRecord record = GetData(verboseRecords, e.Index);
                 if (record != null)
@@ -1291,7 +1291,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<InformationRecord> informationRecords = sender as PSDataCollection<InformationRecord>;
+                var informationRecords = sender as PSDataCollection<InformationRecord>;
                 Dbg.Assert(informationRecords != null, "PSDataCollection is raising an inappropriate event");
                 InformationRecord record = GetData(informationRecords, e.Index);
                 if (record != null)
@@ -1318,7 +1318,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (!_results.IsOpen) return;
-                PSDataCollection<PSObject> output = sender as PSDataCollection<PSObject>;
+                var output = sender as PSDataCollection<PSObject>;
                 Dbg.Assert(output != null, "PSDataCollection is raising an inappropriate event");
                 PSObject obj = GetData(output, e.Index);
                 if (obj != null)
@@ -1406,7 +1406,7 @@ namespace Microsoft.PowerShell.Commands
                                      "Job has data and is being removed.");
             }
 
-            Job2 job2 = job as Job2;
+            var job2 = job as Job2;
             if (job2 != null)
             {
 #pragma warning disable 56500
@@ -1453,7 +1453,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="registerInsteadOfWrite"></param>
         private void WriteJobResultsRecursively(Job job, bool registerInsteadOfWrite)
         {
-            Hashtable duplicateDetector = new Hashtable();
+            var duplicateDetector = new Hashtable();
             WriteJobResultsRecursivelyHelper(duplicateDetector, job, registerInsteadOfWrite);
             duplicateDetector.Clear();
         }
@@ -1515,7 +1515,7 @@ namespace Microsoft.PowerShell.Commands
             _eventArgsWritten[job.InstanceId] = true;
 
             _tracer.WriteMessage(ClassNameTrace, "WriteJobStateInformation", Guid.Empty, job, "Writing job state changed event args", null);
-            PSObject obj = new PSObject(eventArgs);
+            var obj = new PSObject(eventArgs);
             obj.Properties.Add(new PSNoteProperty(RemotingConstants.EventObject, true));
             _results.Add(new PSStreamObject(PSStreamObjectType.Output, obj, job.InstanceId));
         }

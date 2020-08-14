@@ -25,7 +25,7 @@ namespace System.Management.Automation.Language
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder(value.Length);
+            var sb = new StringBuilder(value.Length);
             foreach (char c in value)
             {
                 sb.Append(c);
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Language
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder(value.Length);
+            var sb = new StringBuilder(value.Length);
             foreach (char c in value)
             {
                 sb.Append(c);

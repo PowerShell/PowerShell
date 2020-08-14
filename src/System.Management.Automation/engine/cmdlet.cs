@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// </exception>
         internal override void DoBeginProcessing()
         {
-            MshCommandRuntime mshRuntime = this.CommandRuntime as MshCommandRuntime;
+            var mshRuntime = this.CommandRuntime as MshCommandRuntime;
 
             if (mshRuntime != null)
             {
@@ -678,7 +678,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                ICommandRuntime2 commandRuntime2 = commandRuntime as ICommandRuntime2;
+                var commandRuntime2 = commandRuntime as ICommandRuntime2;
                 if (commandRuntime2 != null)
                 {
                     string source = this.MyInvocation.PSCommandPath;
@@ -687,7 +687,7 @@ namespace System.Management.Automation
                         source = this.MyInvocation.MyCommand.Name;
                     }
 
-                    InformationRecord informationRecord = new InformationRecord(messageData, source);
+                    var informationRecord = new InformationRecord(messageData, source);
 
                     if (tags != null)
                     {
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                ICommandRuntime2 commandRuntime2 = commandRuntime as ICommandRuntime2;
+                var commandRuntime2 = commandRuntime as ICommandRuntime2;
                 if (commandRuntime2 != null)
                 {
                     commandRuntime2.WriteInformation(informationRecord);
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
             {
                 if (commandRuntime != null)
                 {
-                    ICommandRuntime2 runtime2 = commandRuntime as ICommandRuntime2;
+                    var runtime2 = commandRuntime as ICommandRuntime2;
                     if (runtime2 != null)
                     {
                         return runtime2.ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);

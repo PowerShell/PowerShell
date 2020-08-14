@@ -142,7 +142,7 @@ namespace System.Management.Automation
         /// </remarks>
         private void HandleRemainingArguments(Collection<CommandParameterInternal> arguments)
         {
-            List<object> args = new List<object>();
+            var args = new List<object>();
 
             foreach (CommandParameterInternal parameter in arguments)
             {

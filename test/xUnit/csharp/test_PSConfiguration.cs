@@ -365,7 +365,7 @@ namespace PSTests.Sequential
         {
             // Reset the cached roots.
             FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
-            JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
+            var value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
             value[0] = null;
             value[1] = null;
         }

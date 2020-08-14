@@ -278,11 +278,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void WriteNewLineObject()
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
             fed.outOfBand = true;
 
-            ComplexViewEntry cve = new ComplexViewEntry();
-            FormatEntry fe = new FormatEntry();
+            var cve = new ComplexViewEntry();
+            var fe = new FormatEntry();
             cve.formatValueList.Add(fe);
 
             // Formating system writes newline before each object
@@ -367,17 +367,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected void WriteInternalErrorMessage(string message)
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
             fed.outOfBand = true;
 
-            ComplexViewEntry cve = new ComplexViewEntry();
-            FormatEntry fe = new FormatEntry();
+            var cve = new ComplexViewEntry();
+            var fe = new FormatEntry();
             cve.formatValueList.Add(fe);
 
             fe.formatValueList.Add(new FormatNewLine());
 
             // get a field for the message
-            FormatTextField ftf = new FormatTextField();
+            var ftf = new FormatTextField();
             ftf.text = message;
             fe.formatValueList.Add(ftf);
 
@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else if (ctx == FormattingContextState.document)
                 {
                     // inject the end format information
-                    FormatEndData endFormat = new FormatEndData();
+                    var endFormat = new FormatEndData();
                     this.WriteObject(endFormat);
                     contextManager.Pop();
                 }
@@ -651,9 +651,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (GroupBy != null)
             {
-                TerminatingErrorContext invocationContext =
+                var invocationContext =
                         new TerminatingErrorContext(this);
-                ParameterProcessor processor = new ParameterProcessor(new FormatGroupByParameterDefinition());
+                var processor = new ParameterProcessor(new FormatGroupByParameterDefinition());
                 List<MshParameter> groupParameterList =
                     processor.ProcessParameters(new object[] { GroupBy },
                                                 invocationContext);
@@ -671,7 +671,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         protected override void BeginProcessing()
         {
-            InnerFormatShapeCommand innerFormatCommand =
+            var innerFormatCommand =
                             (InnerFormatShapeCommand)this.implementation;
 
             // read command line switches and pass them to the inner command
@@ -697,7 +697,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyViewAndPropertyError);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new InvalidDataException(),
                 "FormatCannotSpecifyViewAndProperty",
                 ErrorCategory.InvalidArgument,
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            var parameters = new FormattingCommandLineParameters();
 
             GetCommandLineProperties(parameters, false);
             parameters.groupByParameter = this.ProcessGroupByParameter();
@@ -753,8 +753,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     def = new FormatTableParameterDefinition();
                 else
                     def = new FormatListParameterDefinition();
-                ParameterProcessor processor = new ParameterProcessor(def);
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                var processor = new ParameterProcessor(def);
+                var invocationContext = new TerminatingErrorContext(this);
 
                 parameters.mshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
@@ -844,7 +844,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            var parameters = new FormattingCommandLineParameters();
 
             GetCommandLineProperties(parameters, true);
             parameters.forceFormattingAlsoOnOutOfBand = this.Force;
@@ -865,7 +865,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             parameters.groupByParameter = this.ProcessGroupByParameter();
 
-            TableSpecificParameters tableParameters = new TableSpecificParameters();
+            var tableParameters = new TableSpecificParameters();
             parameters.shapeParameters = tableParameters;
 
             if (_hideHeaders.HasValue)

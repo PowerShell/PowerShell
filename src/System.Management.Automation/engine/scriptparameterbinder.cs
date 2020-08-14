@@ -124,7 +124,7 @@ namespace System.Management.Automation
             // First we need to make a variable instance and apply
             // any attributes from the script.
 
-            PSVariable variable = new PSVariable(varPath.UnqualifiedPath, value,
+            var variable = new PSVariable(varPath.UnqualifiedPath, value,
                                                  varPath.IsPrivate ? ScopedItemOptions.Private : ScopedItemOptions.None);
             Context.EngineSessionState.SetVariable(varPath, variable, false, CommandOrigin.Internal);
             RuntimeDefinedParameter runtimeDefinedParameter;

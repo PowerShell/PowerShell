@@ -127,7 +127,7 @@ namespace System.Management.Automation
                 if (this.FullHelp == null)
                     return null;
 
-                PSObject shortHelpObject = new PSObject(this.FullHelp);
+                var shortHelpObject = new PSObject(this.FullHelp);
 
                 shortHelpObject.TypeNames.Clear();
                 shortHelpObject.TypeNames.Add("HelpInfoShort");

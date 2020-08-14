@@ -868,7 +868,7 @@ namespace Microsoft.PowerShell.Commands
             port = this.Port;
             try
             {
-                Uri uri = new System.Uri("ssh://" + hostname);
+                var uri = new System.Uri("ssh://" + hostname);
                 host = ResolveComputerName(uri.Host);
                 ValidateComputerName(new string[] { host });
                 if (uri.UserInfo != string.Empty)
@@ -896,7 +896,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Array of SSHConnection objects.</returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
-            List<SSHConnection> connections = new List<SSHConnection>();
+            var connections = new List<SSHConnection>();
             foreach (var item in this.SSHConnection)
             {
                 if (item.ContainsKey(ComputerNameParameter) && item.ContainsKey(HostNameAlias))
@@ -909,10 +909,10 @@ namespace Microsoft.PowerShell.Commands
                     throw new PSArgumentException(RemotingErrorIdStrings.SSHConnectionDuplicateKeyPath);
                 }
 
-                SSHConnection connectionInfo = new SSHConnection();
+                var connectionInfo = new SSHConnection();
                 foreach (var key in item.Keys)
                 {
-                    string paramName = key as string;
+                    var paramName = key as string;
                     if (string.IsNullOrEmpty(paramName))
                     {
                         throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
@@ -1126,7 +1126,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Validate IdleTimeout parameter.
-            int idleTimeout = (int)SessionOption.IdleTimeout.TotalMilliseconds;
+            var idleTimeout = (int)SessionOption.IdleTimeout.TotalMilliseconds;
             if (idleTimeout != BaseTransportManager.UseServerDefaultIdleTimeout &&
                 idleTimeout < BaseTransportManager.MinimumIdleTimeout)
             {
@@ -1381,7 +1381,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
                     connectionInfo.Scheme = scheme;
                     connectionInfo.ComputerName = ResolvedComputerNames[i];
                     connectionInfo.Port = Port;
@@ -1415,7 +1415,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (UriFormatException uriException)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(uriException, "CreateRemoteRunspaceFailed",
+                    var errorRecord = new ErrorRecord(uriException, "CreateRemoteRunspaceFailed",
                             ErrorCategory.InvalidArgument, ResolvedComputerNames[i]);
 
                     WriteError(errorRecord);
@@ -1520,7 +1520,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                    var connectionInfo = new WSManConnectionInfo();
 
                     connectionInfo.ConnectionUri = ConnectionUri[i];
                     connectionInfo.ShellUri = ConfigurationName;
@@ -1741,7 +1741,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidOperationException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForVMFailed",
                         ErrorCategory.InvalidOperation,
                         null);
@@ -1750,7 +1750,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ArgumentException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForVMFailed",
                         ErrorCategory.InvalidArgument,
                         null);
@@ -1773,7 +1773,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected virtual void CreateHelpersForSpecifiedContainerSession()
         {
-            List<string> resolvedNameList = new List<string>();
+            var resolvedNameList = new List<string>();
 
             Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet) ||
                        (ParameterSetName == PSExecutionCmdlet.FilePathContainerIdParameterSet),
@@ -1806,7 +1806,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidOperationException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForContainerFailed",
                         ErrorCategory.InvalidOperation,
                         null);
@@ -1816,7 +1816,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ArgumentException e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForContainerFailed",
                         ErrorCategory.InvalidArgument,
                         null);
@@ -1826,7 +1826,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e,
+                    var errorRecord = new ErrorRecord(e,
                         "CreateRemoteRunspaceForContainerFailed",
                         ErrorCategory.InvalidOperation,
                         null);
@@ -1948,7 +1948,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (IThrottleOperation operation in Operations)
             {
-                ExecutionCmdletHelper helper = (ExecutionCmdletHelper)operation;
+                var helper = (ExecutionCmdletHelper)operation;
                 helper.Pipeline.Input.Close();
             }
         }
@@ -1966,7 +1966,7 @@ namespace Microsoft.PowerShell.Commands
                        e is ArgumentException,
                        "Exception has to be of type UriFormatException or InvalidOperationException or ArgumentException");
 
-            ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
+            var errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                 ErrorCategory.InvalidArgument, uri);
 
             WriteError(errorRecord);
@@ -2026,7 +2026,7 @@ namespace Microsoft.PowerShell.Commands
             string resolvedPath = PathResolver.ResolveProviderAndPath(filePath, isLiteralPath, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
 
             // read content of file
-            ExternalScriptInfo scriptInfo = new ExternalScriptInfo(filePath, resolvedPath, this.Context);
+            var scriptInfo = new ExternalScriptInfo(filePath, resolvedPath, this.Context);
 
             // Skip ShouldRun check for .psd1 files.
             // Use ValidateScriptInfo() for explicitly validating the checkpolicy for psd1 file.
@@ -2696,7 +2696,7 @@ namespace Microsoft.PowerShell.Commands
         internal Dictionary<Guid, PSSession> GetAllRunspaces(bool writeobject,
             bool writeErrorOnNoMatch)
         {
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
             foreach (PSSession remoteRunspaceInfo in remoteRunspaceInfos)
             {
@@ -2730,7 +2730,7 @@ namespace Microsoft.PowerShell.Commands
                 return GetAllRunspaces(writeobject, writeErrorOnNoMatch);
             }
 
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
 
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2789,7 +2789,7 @@ namespace Microsoft.PowerShell.Commands
         protected Dictionary<Guid, PSSession> GetMatchingRunspacesByName(bool writeobject,
             bool writeErrorOnNoMatch)
         {
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
 
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2848,7 +2848,7 @@ namespace Microsoft.PowerShell.Commands
         protected Dictionary<Guid, PSSession> GetMatchingRunspacesByRunspaceId(bool writeobject,
             bool writeErrorOnNoMatch)
         {
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
 
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2904,7 +2904,7 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<Guid, PSSession> GetMatchingRunspacesBySessionId(bool writeobject,
             bool writeErrorOnNoMatch)
         {
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
 
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2967,7 +2967,7 @@ namespace Microsoft.PowerShell.Commands
             string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
                 string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
             // vm name support wild characters, while container id does not.
@@ -3034,7 +3034,7 @@ namespace Microsoft.PowerShell.Commands
             bool supportWildChar;
             WildcardPattern configurationNamePattern =
                 string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
             // vm name support wild characters, while container id does not.
@@ -3088,7 +3088,7 @@ namespace Microsoft.PowerShell.Commands
             string[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern =
                 string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
             // When "-name" is not set, we use "*" that means matching all .
@@ -3132,7 +3132,7 @@ namespace Microsoft.PowerShell.Commands
         {
             WildcardPattern configurationNamePattern =
                 string.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);
-            Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
+            var matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
             foreach (Guid vmId in VMId)
@@ -3440,7 +3440,7 @@ namespace Microsoft.PowerShell.Commands
                 pipeline.Dispose();
             }
 
-            OperationStateEventArgs operationStateEventArgs =
+            var operationStateEventArgs =
                     new OperationStateEventArgs();
             operationStateEventArgs.OperationState =
                     OperationState.StopComplete;
@@ -3684,7 +3684,7 @@ namespace Microsoft.PowerShell.Commands
                 RemoteRunspace = null;
             }
 
-            OperationStateEventArgs operationStateEventArgs =
+            var operationStateEventArgs =
                     new OperationStateEventArgs();
             operationStateEventArgs.OperationState =
                     OperationState.StopComplete;
@@ -3749,10 +3749,10 @@ namespace Microsoft.PowerShell.Commands
             PSCmdlet cmdlet)
         {
             // Construct cmdletprovidercontext
-            CmdletProviderContext cmdContext = new CmdletProviderContext(cmdlet);
+            var cmdContext = new CmdletProviderContext(cmdlet);
             cmdContext.SuppressWildcardExpansion = isLiteralPath;
 
-            Collection<PathInfo> results = new Collection<PathInfo>();
+            var results = new Collection<PathInfo>();
 
             try
             {
@@ -3801,7 +3801,7 @@ namespace Microsoft.PowerShell.Commands
                             out provider,
                             out drive);
 
-                    PathInfo pathInfo =
+                    var pathInfo =
                         new PathInfo(
                             drive,
                             provider,
@@ -3872,7 +3872,7 @@ namespace Microsoft.PowerShell.Commands
                                                                int throttleLimit, SessionFilterState filterState,
                                                                Guid[] matchIds, string[] matchNames, string configurationName)
         {
-            Collection<PSSession> filteredPSSessions = new Collection<PSSession>();
+            var filteredPSSessions = new Collection<PSSession>();
 
             // Create a query operation for each connection information object.
             foreach (WSManConnectionInfo connectionInfo in connectionInfos)
@@ -3897,7 +3897,7 @@ namespace Microsoft.PowerShell.Commands
                             string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
                             string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
                             Exception reason = new RuntimeException(msg, e.InnerException);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
+                            var errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
                             stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
                         }
                     }
@@ -3930,7 +3930,7 @@ namespace Microsoft.PowerShell.Commands
                         if (shellUri != null)
                         {
                             // Compare with returned shell Uri in connection info.
-                            WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
+                            var wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
                             if (wsmanConnectionInfo != null &&
                                 !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
                             {
@@ -3967,7 +3967,7 @@ namespace Microsoft.PowerShell.Commands
             // Return only PSSessions that match provided Ids or Names.
             if ((matchIds != null) && (filteredPSSessions.Count > 0))
             {
-                Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
+                var matchIdsSessions = new Collection<PSSession>();
                 foreach (Guid id in matchIds)
                 {
                     bool matchFound = false;
@@ -3990,7 +3990,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string msg = StringUtil.Format(RemotingErrorIdStrings.SessionIdMatchFailed, id);
                         Exception reason = new RuntimeException(msg);
-                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionIdMatchFail", ErrorCategory.InvalidOperation, id);
+                        var errorRecord = new ErrorRecord(reason, "PSSessionIdMatchFail", ErrorCategory.InvalidOperation, id);
                         stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
                     }
                 }
@@ -4000,7 +4000,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if ((matchNames != null) && (filteredPSSessions.Count > 0))
             {
-                Collection<PSSession> matchNamesSessions = new Collection<PSSession>();
+                var matchNamesSessions = new Collection<PSSession>();
                 foreach (string name in matchNames)
                 {
                     WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
@@ -4023,7 +4023,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string msg = StringUtil.Format(RemotingErrorIdStrings.SessionNameMatchFailed, name);
                         Exception reason = new RuntimeException(msg);
-                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionNameMatchFail", ErrorCategory.InvalidOperation, name);
+                        var errorRecord = new ErrorRecord(reason, "PSSessionNameMatchFail", ErrorCategory.InvalidOperation, name);
                         stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
                     }
                 }

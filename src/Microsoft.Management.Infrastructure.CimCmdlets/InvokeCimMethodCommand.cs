@@ -427,7 +427,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimInvokeCimMethod CreateOperationAgent()
         {
-            CimInvokeCimMethod cimInvokeMethod = new CimInvokeCimMethod();
+            var cimInvokeMethod = new CimInvokeCimMethod();
             this.AsyncOperation = cimInvokeMethod;
             return cimInvokeMethod;
         }

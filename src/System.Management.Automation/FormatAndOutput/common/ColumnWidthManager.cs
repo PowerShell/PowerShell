@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we have columns with no width assigned
             // remember the columns we are trying to size
             // assign them the minimum column size
-            bool[] fixedColumn = new bool[columnWidths.Length];
+            var fixedColumn = new bool[columnWidths.Length];
             for (int k = 0; k < columnWidths.Length; k++)
             {
                 fixedColumn[k] = columnWidths[k] > 0;

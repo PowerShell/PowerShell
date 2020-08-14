@@ -218,8 +218,8 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 long totalLength = 0;
-                byte[] buffer = new byte[StreamHelper.ChunkSize];
-                ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
+                var buffer = new byte[StreamHelper.ChunkSize];
+                var record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
                     if (_ownerCmdlet != null)
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
-            ProgressRecord record = new ProgressRecord(
+            var record = new ProgressRecord(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
@@ -322,13 +322,13 @@ namespace Microsoft.PowerShell.Commands
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
-            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            using var output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
             WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
         {
-            StringBuilder result = new StringBuilder(capacity: ChunkSize);
+            var result = new StringBuilder(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
             int useBufferSize = 64;
@@ -337,8 +337,8 @@ namespace Microsoft.PowerShell.Commands
                 useBufferSize = encoding.GetMaxCharCount(10);
             }
 
-            char[] chars = new char[useBufferSize];
-            byte[] bytes = new byte[useBufferSize * 4];
+            var chars = new char[useBufferSize];
+            var bytes = new byte[useBufferSize * 4];
             int bytesRead = 0;
             do
             {

@@ -78,7 +78,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -314,7 +314,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -475,7 +475,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -680,7 +680,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -858,7 +858,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -1345,7 +1345,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -1434,7 +1434,7 @@ namespace System.Management.Automation
 
             // We shouldn't be filtering the destination path
 
-            CmdletProviderContext destinationContext = new CmdletProviderContext(context);
+            var destinationContext = new CmdletProviderContext(context);
 
             destinationContext.SetFilters(
                 new Collection<string>(),
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),
@@ -1818,7 +1818,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(destinationProperty));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),

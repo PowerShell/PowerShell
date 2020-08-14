@@ -137,8 +137,8 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-            WSManHelper helper = new WSManHelper(this);
-            IWSManEx wsmanObject = (IWSManEx)new WSManClass();
+            var helper = new WSManHelper(this);
+            var wsmanObject = (IWSManEx)new WSManClass();
             string connectionStr = string.Empty;
             connectionStr = helper.CreateConnectionString(null, port, computername, applicationname);
             IWSManSession m_SessionObj = null;
@@ -146,7 +146,7 @@ namespace Microsoft.WSMan.Management
             {
                 m_SessionObj = helper.CreateSessionObject(wsmanObject, Authentication, null, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
                 m_SessionObj.Timeout = 1000; // 1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive.
-                XmlDocument xmldoc = new XmlDocument();
+                var xmldoc = new XmlDocument();
                 xmldoc.LoadXml(m_SessionObj.Identify(0));
                 WriteObject(xmldoc.DocumentElement);
             }
@@ -156,10 +156,10 @@ namespace Microsoft.WSMan.Management
                 {
                     if (!string.IsNullOrEmpty(m_SessionObj.Error))
                     {
-                        XmlDocument ErrorDoc = new XmlDocument();
+                        var ErrorDoc = new XmlDocument();
                         ErrorDoc.LoadXml(m_SessionObj.Error);
-                        InvalidOperationException ex = new InvalidOperationException(ErrorDoc.OuterXml);
-                        ErrorRecord er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, computername);
+                        var ex = new InvalidOperationException(ErrorDoc.OuterXml);
+                        var er = new ErrorRecord(ex, "WsManError", ErrorCategory.InvalidOperation, computername);
                         this.WriteError(er);
                     }
                 }

@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static Exception ModuleSpecificationInitHelper(ModuleSpecification moduleSpecification, Hashtable hashtable)
         {
-            StringBuilder badKeys = new StringBuilder();
+            var badKeys = new StringBuilder();
             try
             {
                 foreach (DictionaryEntry entry in hashtable)

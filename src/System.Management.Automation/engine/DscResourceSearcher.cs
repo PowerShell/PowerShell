@@ -140,7 +140,7 @@ namespace System.Management.Automation
 
                         if (resourceMatcher.IsMatch(resourceName))
                         {
-                            DscResourceInfo resourceInfo = new DscResourceInfo(resourceName,
+                            var resourceInfo = new DscResourceInfo(resourceName,
                                                                                resource.ResourceType,
                                                                                resource.Path,
                                                                                resource.ParentPath,
@@ -151,7 +151,7 @@ namespace System.Management.Automation
 
                             resourceInfo.CompanyName = resource.CompanyName;
 
-                            PSModuleInfo psMod = resource.Module as PSModuleInfo;
+                            var psMod = resource.Module as PSModuleInfo;
 
                             if (psMod != null)
                                 resourceInfo.Module = psMod;
@@ -167,11 +167,11 @@ namespace System.Management.Automation
 
                             if (properties != null)
                             {
-                                List<DscResourcePropertyInfo> propertyList = new List<DscResourcePropertyInfo>();
+                                var propertyList = new List<DscResourcePropertyInfo>();
 
                                 foreach (dynamic prop in properties)
                                 {
-                                    DscResourcePropertyInfo propInfo = new DscResourcePropertyInfo();
+                                    var propInfo = new DscResourcePropertyInfo();
                                     propInfo.Name = prop.Name;
                                     propInfo.PropertyType = prop.PropertyType;
                                     propInfo.UpdateValues(prop.Values);

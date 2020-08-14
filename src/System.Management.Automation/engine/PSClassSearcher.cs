@@ -262,7 +262,7 @@ namespace System.Management.Automation
             }
 
             CommandInfo commandInfo = new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand), null, null, _context);
-            System.Management.Automation.Runspaces.Command getModuleCommand = new System.Management.Automation.Runspaces.Command(commandInfo);
+            var getModuleCommand = new System.Management.Automation.Runspaces.Command(commandInfo);
 
             string moduleName = Path.GetFileNameWithoutExtension(modulePath);
 
@@ -290,10 +290,10 @@ namespace System.Management.Automation
 
         private PSClassInfo ConvertToClassInfo(PSModuleInfo module, ScriptBlockAst ast, TypeDefinitionAst statement)
         {
-            PSClassInfo classInfo = new PSClassInfo(statement.Name);
+            var classInfo = new PSClassInfo(statement.Name);
             Dbg.Assert(statement.Name != null, "statement should have a name.");
             classInfo.Module = module;
-            Collection<PSClassMemberInfo> properties = new Collection<PSClassMemberInfo>();
+            var properties = new Collection<PSClassMemberInfo>();
 
             foreach (var member in statement.Members)
             {
@@ -305,7 +305,7 @@ namespace System.Management.Automation
                     Dbg.Assert(propAst.Extent != null, "Property Extent cannot be null");
                     Dbg.Assert(propAst.Extent.Text != null, "Property ExtentText cannot be null");
 
-                    PSClassMemberInfo classProperty = new PSClassMemberInfo(propAst.Name,
+                    var classProperty = new PSClassMemberInfo(propAst.Name,
                                                                           propAst.PropertyType.TypeName.FullName,
                                                                           propAst.Extent.Text);
                     properties.Add(classProperty);

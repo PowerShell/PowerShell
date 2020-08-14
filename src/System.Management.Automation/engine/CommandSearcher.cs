@@ -472,7 +472,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                Collection<string> resolvedPaths = new Collection<string>();
+                var resolvedPaths = new Collection<string>();
                 if (WildcardPattern.ContainsWildcardCharacters(_commandName))
                 {
                     resolvedPaths = GetNextFromPathUsingWildcards(_commandName, out _);
@@ -695,7 +695,7 @@ namespace System.Management.Automation
                 {
                     // Generate the enumerator of matching alias names
 
-                    Collection<AliasInfo> matchingAliases = new Collection<AliasInfo>();
+                    var matchingAliases = new Collection<AliasInfo>();
 
                     WildcardPattern aliasMatcher =
                         WildcardPattern.Get(
@@ -774,7 +774,7 @@ namespace System.Management.Automation
             {
                 if (_matchingFunctionEnumerator == null)
                 {
-                    Collection<CommandInfo?> matchingFunction = new Collection<CommandInfo?>();
+                    var matchingFunction = new Collection<CommandInfo?>();
 
                     // Generate the enumerator of matching function names
                     WildcardPattern functionMatcher =
@@ -998,7 +998,7 @@ namespace System.Management.Automation
             {
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.CommandNameIsPattern) || useAbbreviationExpansion)
                 {
-                    Collection<CmdletInfo> matchingCmdletInfo = new Collection<CmdletInfo>();
+                    var matchingCmdletInfo = new Collection<CmdletInfo>();
 
                     PSSnapinQualifiedName? PSSnapinQualifiedCommandName =
                         PSSnapinQualifiedName.GetInstance(_commandName);
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation
         /// </returns>
         private static CanDoPathLookupResult CanDoPathLookup(string possiblePath)
         {
-            CanDoPathLookupResult result = CanDoPathLookupResult.Yes;
+            var result = CanDoPathLookupResult.Yes;
 
             do // false loop
             {

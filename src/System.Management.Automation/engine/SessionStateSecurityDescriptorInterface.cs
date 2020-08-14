@@ -35,7 +35,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            ISecurityDescriptorCmdletProvider permissionCmdletProvider =
+            var permissionCmdletProvider =
                 providerInstance as ISecurityDescriptorCmdletProvider;
 
             if (permissionCmdletProvider == null)
@@ -72,7 +72,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             GetSecurityDescriptor(path, sections, context);
 
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             SetSecurityDescriptor(path, securityDescriptor, context);
 

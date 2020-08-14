@@ -93,7 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             string nameSpace;
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            var proxys = new List<CimSessionProxy>();
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cmdlet.MethodName);
 
             switch (cmdlet.ParameterSetName)
@@ -195,7 +195,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (CimSessionProxy proxy in proxys)
                     {
                         // create context object
-                        CimInvokeCimMethodContext context = new CimInvokeCimMethodContext(
+                        var context = new CimInvokeCimMethodContext(
                             nameSpace,
                             cmdlet.MethodName,
                             paramsCollection,
@@ -249,7 +249,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public void InvokeCimMethodOnCimInstance(CimInstance cimInstance, XOperationContextBase context, CmdletOperationBase operation)
         {
             DebugHelper.WriteLogEx();
-            CimInvokeCimMethodContext cimInvokeCimMethodContext = context as CimInvokeCimMethodContext;
+            var cimInvokeCimMethodContext = context as CimInvokeCimMethodContext;
             Debug.Assert(cimInvokeCimMethodContext != null, "CimInvokeCimMethod::InvokeCimMethodOnCimInstance should has CimInvokeCimMethodContext != NULL.");
 
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cimInvokeCimMethodContext.MethodName);
@@ -374,7 +374,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 string parameterName = enumerator.Key.ToString();
 
-                CimFlags parameterFlags = CimFlags.In;
+                var parameterFlags = CimFlags.In;
                 object parameterValue = GetBaseObject(enumerator.Value);
 
                 DebugHelper.WriteLog(@"Create parameter name= {0}, value= {1}, flags= {2}.", 4,
@@ -431,7 +431,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
                     else
                     {
-                        CimType referenceType = CimType.Unknown;
+                        var referenceType = CimType.Unknown;
                         object referenceObject = GetReferenceOrReferenceArrayObject(parameterValue, ref referenceType);
                         if (referenceObject != null)
                         {

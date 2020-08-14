@@ -385,8 +385,8 @@ else
             if (isSddlSpecified)
             {
                 // Constructor call should succeed. The sddl is check in the property setter
-                CommonSecurityDescriptor descriptor = new CommonSecurityDescriptor(false, false, sddl);
-                SecurityIdentifier networkSidIdentifier = new SecurityIdentifier(WellKnownSidType.NetworkSid, null);
+                var descriptor = new CommonSecurityDescriptor(false, false, sddl);
+                var networkSidIdentifier = new SecurityIdentifier(WellKnownSidType.NetworkSid, null);
                 bool networkDenyAllExists = false;
                 foreach (CommonAce ace in descriptor.DiscretionaryAcl)
                 {
@@ -416,19 +416,19 @@ else
                             if (descriptor.DiscretionaryAcl.Count == 0)
                             {
                                 // BA
-                                SecurityIdentifier baSidIdentifier = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+                                var baSidIdentifier = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
                                 descriptor.DiscretionaryAcl.AddAccess(AccessControlType.Allow, baSidIdentifier, 268435456, InheritanceFlags.None, PropagationFlags.None);
 
                                 // Only for Win8+
                                 if (Environment.OSVersion.Version >= new Version(6, 2))
                                 {
                                     // Remote Management Users
-                                    SecurityIdentifier rmSidIdentifier = new SecurityIdentifier(RemoteManagementUsersSID);
+                                    var rmSidIdentifier = new SecurityIdentifier(RemoteManagementUsersSID);
                                     descriptor.DiscretionaryAcl.AddAccess(AccessControlType.Allow, rmSidIdentifier, 268435456, InheritanceFlags.None, PropagationFlags.None);
                                 }
 
                                 // Interactive Users
-                                SecurityIdentifier iaSidIdentifier = new SecurityIdentifier(InteractiveUsersSID);
+                                var iaSidIdentifier = new SecurityIdentifier(InteractiveUsersSID);
                                 descriptor.DiscretionaryAcl.AddAccess(AccessControlType.Allow, iaSidIdentifier, 268435456, InheritanceFlags.None, PropagationFlags.None);
                             }
 
@@ -459,13 +459,13 @@ else
             RemotingCommandUtil.CheckRemotingCmdletPrerequisites();
             PSSessionConfigurationCommandUtilities.ThrowIfNotAdministrator();
 
-            WSManConfigurationOption wsmanOption = transportOption as WSManConfigurationOption;
+            var wsmanOption = transportOption as WSManConfigurationOption;
 
             if (wsmanOption != null)
             {
                 if (wsmanOption.ProcessIdleTimeoutSec != null && !isUseSharedProcessSpecified)
                 {
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(
+                    var ioe = new PSInvalidOperationException(
                         StringUtil.Format(RemotingErrorIdStrings.InvalidConfigurationXMLAttribute, "ProcessIdleTimeoutSec",
                         "UseSharedProcess"));
                     ThrowTerminatingError(ioe.ErrorRecord);
@@ -476,7 +476,7 @@ else
             pluginPath = Environment.ExpandEnvironmentVariables(pluginPath);
             if (!System.IO.File.Exists(pluginPath))
             {
-                PSInvalidOperationException ioe = new PSInvalidOperationException(
+                var ioe = new PSInvalidOperationException(
                         StringUtil.Format(RemotingErrorIdStrings.PluginDllMissing, RemotingConstants.PSPluginDLLName));
                 ThrowTerminatingError(ioe.ErrorRecord);
             }
@@ -560,7 +560,7 @@ else
                     errorAction = Context.CurrentCommandProcessor.CommandRuntime.ErrorAction;
                 }
 
-                ArrayList errorList = (ArrayList)Context.DollarErrorVariable;
+                var errorList = (ArrayList)Context.DollarErrorVariable;
                 int errorCountBefore = errorList.Count;
 
                 if (force &&
@@ -625,7 +625,7 @@ else
         /// </summary>
         protected override void EndProcessing()
         {
-            System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
+            var tracer = new System.Management.Automation.Tracing.Tracer();
             tracer.EndpointRegistered(this.Name, WindowsIdentity.GetCurrent().Name);
         }
 
@@ -702,7 +702,7 @@ else
             // Remove the temp file if it exists.
             if (File.Exists(tmpFileName))
             {
-                FileInfo destfile = new FileInfo(tmpFileName);
+                var destfile = new FileInfo(tmpFileName);
                 if (destfile != null)
                 {
                     try
@@ -796,7 +796,7 @@ else
         {
             srcConfigFilePath = null;
             destConfigFilePath = null;
-            StringBuilder initParameters = new StringBuilder();
+            var initParameters = new StringBuilder();
 
             bool assemblyAndTypeTokensSet = false;
 
@@ -810,8 +810,8 @@ else
                 if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, filePath);
-                    InvalidOperationException ioe = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
+                    var ioe = new InvalidOperationException(message);
+                    var er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
                         ErrorCategory.InvalidArgument, Path);
                     ThrowTerminatingError(er);
                 }
@@ -831,8 +831,8 @@ else
                 catch (RuntimeException rte)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFileErrorProcessing, filePath, rte.Message);
-                    InvalidOperationException ioe = new InvalidOperationException(message, rte);
-                    ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
+                    var ioe = new InvalidOperationException(message, rte);
+                    var er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
                         ErrorCategory.InvalidArgument, Path);
                     ThrowTerminatingError(er);
                 }
@@ -840,8 +840,8 @@ else
                 if (configTable == null)
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFile, filePath);
-                    InvalidOperationException ioe = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFile",
+                    var ioe = new InvalidOperationException(message);
+                    var er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFile",
                         ErrorCategory.InvalidArgument, Path);
                     ThrowTerminatingError(er);
                 }
@@ -857,7 +857,7 @@ else
                             }
                             else
                             {
-                                InvalidOperationException invalidOperationException = new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ErrorParsingTheKeyInPSSessionConfigurationFile, ConfigFileConstants.Guid, filePath));
+                                var invalidOperationException = new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ErrorParsingTheKeyInPSSessionConfigurationFile, ConfigFileConstants.Guid, filePath));
                                 ThrowTerminatingError(new ErrorRecord(invalidOperationException, "InvalidGuidInPSSessionConfigurationFile", ErrorCategory.InvalidOperation, null));
                             }
                         }
@@ -963,8 +963,8 @@ else
                         string.Equals(procArch, "ia64", StringComparison.OrdinalIgnoreCase))
                     {
 #if CORECLR
-                        InvalidOperationException ioe = new InvalidOperationException(RemotingErrorIdStrings.InvalidProcessorArchitecture);
-                        ErrorRecord er = new ErrorRecord(ioe, "InvalidProcessorArchitecture", ErrorCategory.InvalidArgument, Path);
+                        var ioe = new InvalidOperationException(RemotingErrorIdStrings.InvalidProcessorArchitecture);
+                        var er = new ErrorRecord(ioe, "InvalidProcessorArchitecture", ErrorCategory.InvalidArgument, Path);
                         ThrowTerminatingError(er);
 #else
                         // syswow64 is applicable only on 64 bit platforms.
@@ -1163,7 +1163,7 @@ else
                     break;
             }
 
-            StringBuilder sessionConfigurationData = new StringBuilder();
+            var sessionConfigurationData = new StringBuilder();
 
             if (modulesToImport != null && modulesToImport.Length > 0)
             {
@@ -1331,7 +1331,7 @@ else
             whatIf = false;
             // confirm is always true to start with
             confirm = false;
-            MshCommandRuntime cmdRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+            var cmdRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
             if (cmdRuntime != null)
             {
                 whatIf = cmdRuntime.WhatIf;
@@ -1352,7 +1352,7 @@ else
         internal static void ThrowIfNotAdministrator()
         {
             System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
+            var principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
             if (!principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.EDcsRequiresElevation);
@@ -1384,7 +1384,7 @@ else
 
             // Use the provided GMSA account name (Domain\UserName$) with empty password.
             string userName = gmsaAccount + "$";
-            SecureString password = new SecureString();
+            var password = new SecureString();
             return new PSCredential(userName, password);
         }
 
@@ -1410,7 +1410,7 @@ else
         {
             if (modulePath != null && modulePath.Length > 0)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 foreach (object s in modulePath)
                 {
                     var module = s as string;
@@ -1522,10 +1522,10 @@ else
                     sddl = PSSessionConfigurationCommandBase.GetRemoteSddl();
                 }
 
-                CommonSecurityDescriptor descriptor = new CommonSecurityDescriptor(false, false, sddl);
+                var descriptor = new CommonSecurityDescriptor(false, false, sddl);
 
                 // Purge all existing access rules so that only role definition principals are granted access.
-                List<SecurityIdentifier> sidsToRemove = new List<SecurityIdentifier>();
+                var sidsToRemove = new List<SecurityIdentifier>();
                 foreach (CommonAce ace in descriptor.DiscretionaryAcl)
                 {
                     sidsToRemove.Add(ace.SecurityIdentifier);
@@ -1536,22 +1536,22 @@ else
                     descriptor.PurgeAccessControl(sidToRemove);
                 }
 
-                Hashtable roleNamesHash = configTable[ConfigFileConstants.RoleDefinitions] as Hashtable;
+                var roleNamesHash = configTable[ConfigFileConstants.RoleDefinitions] as Hashtable;
                 foreach (object roleName in roleNamesHash.Keys)
                 {
                     string roleNameValue = roleName.ToString();
 
                     try
                     {
-                        NTAccount ntAccount = new NTAccount(roleNameValue);
-                        SecurityIdentifier accountSid = (SecurityIdentifier)ntAccount.Translate(typeof(SecurityIdentifier));
+                        var ntAccount = new NTAccount(roleNameValue);
+                        var accountSid = (SecurityIdentifier)ntAccount.Translate(typeof(SecurityIdentifier));
                         // AccessMask = 268435456 == 0x10000000 == GR == Generic Read
                         descriptor.DiscretionaryAcl.AddAccess(AccessControlType.Allow, accountSid, 268435456, InheritanceFlags.None, PropagationFlags.None);
                     }
                     catch (IdentityNotMappedException e)
                     {
                         string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotResolveRoleDefinitionPrincipal, roleNameValue, e.Message);
-                        InvalidOperationException ioe = new InvalidOperationException(message, e);
+                        var ioe = new InvalidOperationException(message, e);
                         error = new ErrorRecord(ioe, "CouldNotResolveRoleDefinitionPrincipal", ErrorCategory.ObjectNotFound, roleNameValue);
                     }
                 }
@@ -1605,7 +1605,7 @@ else
 
             if (aces.Count == 0) { return sddl; }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(prologue);
 
             //
@@ -1677,7 +1677,7 @@ else
             // DACL ACEs = "(A;;GA;;;BA)(XA;;GA;;;RM)(XA;;GA;;;IU)"
             // epilogue  = "S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)"
             //
-            Collection<string> sddlACEs = new Collection<string>();
+            var sddlACEs = new Collection<string>();
 
             // Find beginning of DACL ACEs
             int index = sddl.IndexOf(DACLPrefix, StringComparison.OrdinalIgnoreCase);
@@ -1752,8 +1752,8 @@ else
                 return null;
             }
 
-            StringBuilder conditionalACE = new StringBuilder();
-            Hashtable requiredGroupsHash = configTable[ConfigFileConstants.RequiredGroups] as Hashtable;
+            var conditionalACE = new StringBuilder();
+            var requiredGroupsHash = configTable[ConfigFileConstants.RequiredGroups] as Hashtable;
             if (requiredGroupsHash == null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.RequiredGroupsNotHashTable);
@@ -1816,7 +1816,7 @@ else
             //  Mixed
             //      @{ Or = 'Group1', @{ And = 'Group2','Group3' } }
             //      (Member_of {SID(Group1)} || (Member_of {SID(Group2)} && Member_of {SID(Group3)}))
-            object[] values = keyValue as object[];
+            var values = keyValue as object[];
             if (values != null)
             {
                 int count = values.Length;
@@ -1844,7 +1844,7 @@ else
             object inValue)
         {
             // Value to parse can be a single object or an array of objects
-            object[] values = inValue as object[];
+            var values = inValue as object[];
             if (values != null)
             {
                 foreach (object value in values)
@@ -1863,17 +1863,17 @@ else
             object value)
         {
             // Single value objects can be either a group name or a new logical hash table
-            string groupName = value as string;
+            var groupName = value as string;
             if (groupName != null)
             {
                 // Resolve group name to SID
-                NTAccount ntAccount = new NTAccount(groupName);
-                SecurityIdentifier accountSid = (SecurityIdentifier)ntAccount.Translate(typeof(SecurityIdentifier));
+                var ntAccount = new NTAccount(groupName);
+                var accountSid = (SecurityIdentifier)ntAccount.Translate(typeof(SecurityIdentifier));
                 sb.Append(StringUtil.Format(MemberOfFormat, accountSid.ToString()));
             }
             else
             {
-                Hashtable recurseCondition = value as Hashtable;
+                var recurseCondition = value as Hashtable;
                 if (recurseCondition != null)
                 {
                     // Recurse to handle logical hash table
@@ -2206,7 +2206,7 @@ else
                 if (!string.IsNullOrEmpty(value))
                 {
                     // this will validate if the sddl is valid.
-                    CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
+                    var c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
                     if (c == null)
@@ -2351,7 +2351,7 @@ else
 
             set
             {
-                List<object> modulesToImportList = new List<object>();
+                var modulesToImportList = new List<object>();
                 if (value != null)
                 {
                     foreach (var s in value)
@@ -2631,7 +2631,7 @@ else
                 errorAction = Context.CurrentCommandProcessor.CommandRuntime.ErrorAction;
             }
 
-            ArrayList errorList = (ArrayList)Context.DollarErrorVariable;
+            var errorList = (ArrayList)Context.DollarErrorVariable;
             int errorCountBefore = errorList.Count;
 
             s_removePluginSb.InvokeUsingCmdlet(
@@ -2660,7 +2660,7 @@ else
         /// </summary>
         protected override void EndProcessing()
         {
-            System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
+            var tracer = new System.Management.Automation.Tracing.Tracer();
             tracer.EndpointUnregistered(this.Name, WindowsIdentity.GetCurrent().Name);
         }
 
@@ -3307,8 +3307,8 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             if (isSddlSpecified && accessModeSpecified)
             {
                 // Constructor call should succeed. The sddl is check in the property setter
-                CommonSecurityDescriptor descriptor = new CommonSecurityDescriptor(false, false, sddl);
-                SecurityIdentifier networkSidIdentifier = new SecurityIdentifier(WellKnownSidType.NetworkSid, null);
+                var descriptor = new CommonSecurityDescriptor(false, false, sddl);
+                var networkSidIdentifier = new SecurityIdentifier(WellKnownSidType.NetworkSid, null);
                 bool networkDenyAllExists = false;
                 foreach (CommonAce ace in descriptor.DiscretionaryAcl)
                 {
@@ -3396,7 +3396,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
                     ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionTypeFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                    Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
+                    var psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
                     if (psObjectCollection == null || psObjectCollection.Count != 1)
                     {
                         Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
@@ -3437,7 +3437,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             PSObject propertiesToUpdate = ConstructPropertiesForUpdate();
 
             // hack to see if there is any error reported running the script.
-            ArrayList errorList = (ArrayList)Context.DollarErrorVariable;
+            var errorList = (ArrayList)Context.DollarErrorVariable;
             int errorCountBefore = errorList.Count;
             s_setPluginSb.InvokeUsingCmdlet(
                 contextCmdlet: this,
@@ -3631,7 +3631,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
                     ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionConfigurationDataSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                    Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
+                    var psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
                     if (psObjectCollection == null || psObjectCollection.Count != 1)
                     {
                         Dbg.Assert(false, "This should never happen.  Plugin must exist because caller code has already checked this.");
@@ -3641,7 +3641,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     PSSessionTypeOption original = sessionTypeOption.ConstructObjectFromPrivateData(scd.PrivateData);
                     original.CopyUpdatedValuesFrom(sessionTypeOption);
 
-                    StringBuilder sessionConfigurationData = new StringBuilder();
+                    var sessionConfigurationData = new StringBuilder();
 
                     string modulePathParameter = null;
                     bool unsetModulePath = false;
@@ -3734,7 +3734,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 WriteWarning(StringUtil.Format(RemotingErrorIdStrings.WinRMRequiresRestart, action));
             }
 
-            System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
+            var tracer = new System.Management.Automation.Tracing.Tracer();
             tracer.EndpointModified(this.Name, WindowsIdentity.GetCurrent().Name);
         }
 
@@ -3744,7 +3744,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
         private PSObject ConstructPropertiesForUpdate()
         {
-            PSObject result = new PSObject();
+            var result = new PSObject();
             result.Properties.Add(new PSNoteProperty("Name", shellName));
 
             if (isAssemblyNameSpecified)
@@ -3827,13 +3827,13 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     {
                         // Get the SessionConfigurationDataFormat
                         ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionConfigurationDataSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                        Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
+                        var psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
                         if (psObjectCollection == null || psObjectCollection.Count != 1)
                         {
                             Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
                         }
 
-                        StringBuilder sessionConfigurationData = new StringBuilder();
+                        var sessionConfigurationData = new StringBuilder();
 
                         // SessionConfigurationData doesn't exist in InitializationParameters
                         if (psObjectCollection[0] == null)
@@ -3909,8 +3909,8 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, Path);
-                    InvalidOperationException ioe = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
+                    var ioe = new InvalidOperationException(message);
+                    var er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
                         ErrorCategory.InvalidArgument, Path);
                     ThrowTerminatingError(er);
                 }
@@ -4236,7 +4236,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                 if (!string.IsNullOrEmpty(value))
                 {
                     // this will validate if the sddl is valid.
-                    CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
+                    var c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
                     if (c == null)
@@ -4362,9 +4362,9 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                                                _skipNetworkProfileCheck,
                                                _noRestart});
 
-            System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
+            var tracer = new System.Management.Automation.Tracing.Tracer();
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string endPointName in Name ?? Array.Empty<string>())
             {
                 sb.Append(endPointName);
@@ -4590,9 +4590,9 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
                                                setEnabledAction,
                                                _noRestart});
 
-            System.Management.Automation.Tracing.Tracer tracer = new System.Management.Automation.Tracing.Tracer();
+            var tracer = new System.Management.Automation.Tracing.Tracer();
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string endPointName in Name ?? Array.Empty<string>())
             {
                 sb.Append(endPointName);
@@ -5252,7 +5252,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
 
                 try
                 {
-                    System.Security.Principal.WindowsPrincipal windowsPrincipal = new System.Security.Principal.WindowsPrincipal(
+                    var windowsPrincipal = new System.Security.Principal.WindowsPrincipal(
                         new System.Security.Principal.WindowsIdentity(this.Username));
                     validator = (role) => windowsPrincipal.IsInRole(role);
                 }
@@ -5260,8 +5260,8 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
                 {
                     // Identity could not be mapped
                     string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotResolveUsername, this.Username);
-                    ArgumentException ioe = new ArgumentException(message, e);
-                    ErrorRecord er = new ErrorRecord(ioe, "CouldNotResolveUsername", ErrorCategory.InvalidArgument, this.Username);
+                    var ioe = new ArgumentException(message, e);
+                    var er = new ErrorRecord(ioe, "CouldNotResolveUsername", ErrorCategory.InvalidArgument, this.Username);
                     ThrowTerminatingError(er);
                     return;
                 }
@@ -5280,10 +5280,10 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
                 // config file-based session configurations.
                 if (configFilePath == null)
                 {
-                    string configurationName = (string)foundConfiguration.Properties["Name"].Value;
+                    var configurationName = (string)foundConfiguration.Properties["Name"].Value;
                     string message = StringUtil.Format(RemotingErrorIdStrings.SessionConfigurationMustBeFileBased, configurationName);
-                    ArgumentException ioe = new ArgumentException(message);
-                    ErrorRecord er = new ErrorRecord(ioe, "SessionConfigurationMustBeFileBased", ErrorCategory.InvalidArgument, foundConfiguration);
+                    var ioe = new ArgumentException(message);
+                    var er = new ErrorRecord(ioe, "SessionConfigurationMustBeFileBased", ErrorCategory.InvalidArgument, foundConfiguration);
                     WriteError(er);
                     continue;
                 }

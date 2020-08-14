@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("ProviderNotSpecified")), "ProviderName");
             }
 
-            using (EventLogSession session = new EventLogSession())
+            using (var session = new EventLogSession())
             {
                 foreach (string providerName in session.GetProviderNames())
                 {
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_idSpecified)
             {
-                List<EventMetadata> matchedEvents = new List<EventMetadata>();
+                var matchedEvents = new List<EventMetadata>();
                 foreach (EventMetadata emd in _providerMetadata.Events)
                 {
                     if (emd.Id == _id)
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (emd.Template != null)
             {
-                XmlReaderSettings readerSettings = new XmlReaderSettings
+                var readerSettings = new XmlReaderSettings
                 {
                     CheckCharacters = false,
                     IgnoreComments = true,
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            using (EventProvider provider = new EventProvider(_providerMetadata.Id))
+            using (var provider = new EventProvider(_providerMetadata.Id))
             {
                 EventDescriptor ed = _eventDescriptor.Value;
 

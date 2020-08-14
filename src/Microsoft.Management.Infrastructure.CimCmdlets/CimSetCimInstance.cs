@@ -107,7 +107,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            var proxys = new List<CimSessionProxy>();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:
@@ -253,7 +253,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
                         else
                         {
-                            CimType referenceType = CimType.Unknown;
+                            var referenceType = CimType.Unknown;
                             object referenceObject = GetReferenceOrReferenceArrayObject(value, ref referenceType);
                             if (referenceObject != null)
                             {

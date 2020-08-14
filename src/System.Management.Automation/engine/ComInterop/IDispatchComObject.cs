@@ -116,7 +116,7 @@ namespace System.Management.Automation.ComInterop
 
         private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
         {
-            int[] dispIds = new int[1];
+            var dispIds = new int[1];
             Guid emptyRiid = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(
                 ref emptyRiid,
@@ -211,7 +211,7 @@ namespace System.Management.Automation.ComInterop
 
             if (hresult == ComHresults.S_OK)
             {
-                ComMethodDesc cmd = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_FUNC);
+                var cmd = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_FUNC);
                 _comTypeDesc.AddFunc(name, cmd);
                 method = cmd;
                 return true;
@@ -236,10 +236,10 @@ namespace System.Management.Automation.ComInterop
             {
                 // we do not know whether we have put or putref here
                 // and we will not guess and pretend we found both.
-                ComMethodDesc put = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT);
+                var put = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT);
                 _comTypeDesc.AddPut(name, put);
 
-                ComMethodDesc putref = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF);
+                var putref = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF);
                 _comTypeDesc.AddPutRef(name, putref);
 
                 if (ComBinderHelpers.PreferPut(limitType, holdsNull))
@@ -452,7 +452,7 @@ namespace System.Management.Automation.ComInterop
                     // resolving by keeping only the first event with the same name.
                     if (events.ContainsKey(name) == false)
                     {
-                        ComEventDesc eventDesc = new ComEventDesc
+                        var eventDesc = new ComEventDesc
                         {
                             Dispid = funcDesc.memid,
                             SourceIID = sourceTypeAttribute.guid
@@ -558,9 +558,9 @@ namespace System.Management.Automation.ComInterop
 
             ComMethodDesc getItem = null;
             ComMethodDesc setItem = null;
-            Hashtable funcs = new Hashtable(typeAttr.cFuncs);
-            Hashtable puts = new Hashtable();
-            Hashtable putrefs = new Hashtable();
+            var funcs = new Hashtable(typeAttr.cFuncs);
+            var puts = new Hashtable();
+            var putrefs = new Hashtable();
 
             for (int definedFuncIndex = 0; definedFuncIndex < typeAttr.cFuncs; definedFuncIndex++)
             {
@@ -576,7 +576,7 @@ namespace System.Management.Automation.ComInterop
                         continue;
                     }
 
-                    ComMethodDesc method = new ComMethodDesc(typeInfo, funcDesc);
+                    var method = new ComMethodDesc(typeInfo, funcDesc);
                     string name = method.Name.ToUpper(CultureInfo.InvariantCulture);
 
                     if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT) != 0)

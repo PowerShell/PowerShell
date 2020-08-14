@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
         private static PSObject EncodeParameters(object[] parameters)
         {
             // Encode the parameters and wrap the array into an ArrayList and then into a PSObject.
-            ArrayList parameterList = new ArrayList();
+            var parameterList = new ArrayList();
             for (int i = 0; i < parameters.Length; ++i)
             {
                 object parameter = parameters[i] == null ? null : RemoteHostEncoder.EncodeObject(parameters[i]);
@@ -99,8 +99,8 @@ namespace System.Management.Automation.Remoting
         private static object[] DecodeParameters(PSObject parametersPSObject, Type[] parameterTypes)
         {
             // Extract the ArrayList and decode the parameters.
-            ArrayList parameters = (ArrayList)parametersPSObject.BaseObject;
-            List<object> decodedParameters = new List<object>();
+            var parameters = (ArrayList)parametersPSObject.BaseObject;
+            var decodedParameters = new List<object>();
             Dbg.Assert(parameters.Count == parameterTypes.Length, "Expected parameters.Count == parameterTypes.Length");
             for (int i = 0; i < parameters.Count; ++i)
             {
@@ -203,14 +203,14 @@ namespace System.Management.Automation.Remoting
             // Figure out if we need to close the remote runspace. Return null if we don't.
 
             // Are we a Start-PSSession enabled host?
-            IHostSupportsInteractiveSession host = clientHost as IHostSupportsInteractiveSession;
+            var host = clientHost as IHostSupportsInteractiveSession;
             if (host == null || !host.IsRunspacePushed)
             {
                 return null;
             }
 
             // Now inspect the runspace.
-            RemoteRunspace remoteRunspace = host.Runspace as RemoteRunspace;
+            var remoteRunspace = host.Runspace as RemoteRunspace;
             if (remoteRunspace == null || !remoteRunspace.ShouldCloseOnPop)
             {
                 return null;
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(!string.IsNullOrEmpty(computerName),
                 "Computer Name must be passed for use in warning messages");
             _computerName = computerName;
-            Collection<RemoteHostCall> prerequisiteCalls = new Collection<RemoteHostCall>();
+            var prerequisiteCalls = new Collection<RemoteHostCall>();
 
             // check if the incoming message is a PromptForCredential message
             // if so, do the following:
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Remoting
                 // PSCredential
                 if (Parameters.Length == 3)
                 {
-                    Collection<FieldDescription> fieldDescs =
+                    var fieldDescs =
                         (Collection<FieldDescription>)Parameters[2];
 
                     bool havePSCredential = false;

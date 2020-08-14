@@ -31,7 +31,7 @@ namespace System.Management.Automation
             PSInformationalBuffers newBuffers,
             PSHost newHost)
         {
-            ExecutionContextForStepping result = new ExecutionContextForStepping(ctxt);
+            var result = new ExecutionContextForStepping(ctxt);
 
             result._originalInformationalBuffers
                 = ctxt.InternalHost.InternalUI.GetInformationalMessageBuffers();
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         /// <param name="reason"></param>
         internal void SetState(PSInvocationState newState, Exception reason)
         {
-            PSInvocationState copyState = PSInvocationState.NotStarted;
+            var copyState = PSInvocationState.NotStarted;
             bool shouldRaiseEvents = false;
             lock (SyncObject)
             {

@@ -53,7 +53,7 @@ namespace System.Management.Automation.Remoting
             // Note: Only CreateNewCallId adds new records.
 
             long callId = Interlocked.Increment(ref _nextCallId);
-            AsyncObject<T> responseAsyncObject = new AsyncObject<T>();
+            var responseAsyncObject = new AsyncObject<T>();
             lock (_responseAsyncObjects)
             {
                 _responseAsyncObjects[callId] = responseAsyncObject;
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Remoting
         private List<long> GetAllCalls()
         {
             // Gets all the callIds that are waiting on calls.
-            List<long> callIds = new List<long>();
+            var callIds = new List<long>();
             foreach (KeyValuePair<long, AsyncObject<T>> callIdResponseAsyncObjectPair in _responseAsyncObjects)
             {
                 callIds.Add(callIdResponseAsyncObjectPair.Key);

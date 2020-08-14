@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Matching jobs.</returns>
         protected List<Job> FindJobs()
         {
-            List<Job> jobList = new List<Job>();
+            var jobList = new List<Job>();
 
             switch (ParameterSetName)
             {
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 return jobList;
             }
 
-            List<Job> matches = new List<Job>();
+            var matches = new List<Job>();
 
             foreach (Job job in jobList)
             {
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
             bool childJobStateParameter = MyInvocation.BoundParameters.ContainsKey(nameof(ChildJobState));
             bool includeChildJobParameter = MyInvocation.BoundParameters.ContainsKey(nameof(IncludeChildJob));
 
-            List<Job> matches = new List<Job>();
+            var matches = new List<Job>();
 
             if (!childJobStateParameter && !includeChildJobParameter)
             {
@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 });
 
-            List<Job> newestJobs = new List<Job>();
+            var newestJobs = new List<Job>();
             int count = 0;
             foreach (Job job in filteredJobs)
             {

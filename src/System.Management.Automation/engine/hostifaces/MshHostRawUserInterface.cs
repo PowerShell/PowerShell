@@ -1810,7 +1810,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentNullException(nameof(contents));
             }
 
-            byte[][] charLengths = new byte[contents.Length][];
+            var charLengths = new byte[contents.Length][];
             int maxStringLengthInBufferCells = 0;
             for (int i = 0; i < contents.Length; i++)
             {
@@ -1838,7 +1838,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException(nameof(contents), MshHostRawUserInterfaceStrings.AllNullOrEmptyStringsErrorTemplate);
             }
 
-            BufferCell[,] results = new BufferCell[contents.Length, maxStringLengthInBufferCells];
+            var results = new BufferCell[contents.Length, maxStringLengthInBufferCells];
             for (int i = 0; i < contents.Length; i++)
             {
                 int resultJ = 0;
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation.Host
                     MshHostRawUserInterfaceStrings.NonPositiveNumberErrorTemplate, "height");
             }
 
-            BufferCell[,] buffer = new BufferCell[height, width];
+            var buffer = new BufferCell[height, width];
             int charLength = LengthInBufferCells(contents.Character);
             if (charLength == 1)
             {

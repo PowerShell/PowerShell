@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell
                 string[,] hotkeysAndPlainLabels = null;
                 HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
 
-                Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
+                var defaultChoiceKeys = new Dictionary<int, bool>();
                 // add the default choice key only if it is valid. -1 is used to specify
                 // no default.
                 if (defaultChoice >= 0)
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
                         string msg = ConsoleHostUserInterfaceStrings.PromptCanceledError;
-                        PromptingException e = new PromptingException(
+                        var e = new PromptingException(
                             msg, null, "PromptForChoiceCanceled", ErrorCategory.OperationStopped);
                         throw e;
                     }
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell
                     ConsoleHostUserInterfaceStrings.EmptyChoicesErrorTemplate, "choices");
             }
 
-            Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
+            var defaultChoiceKeys = new Dictionary<int, bool>();
 
             if (defaultChoices != null)
             {
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            Collection<int> result = new Collection<int>();
+            var result = new Collection<int>();
             // we lock here so that multiple threads won't interleave the various reads and writes here.
             lock (_instanceLock)
             {
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
                         string msg = ConsoleHostUserInterfaceStrings.PromptCanceledError;
-                        PromptingException e = new PromptingException(
+                        var e = new PromptingException(
                             msg, null, "PromptForChoiceCanceled", ErrorCategory.OperationStopped);
                         throw e;
                     }
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell
             if (defaultChoiceKeys.Count > 0)
             {
                 string prepend = string.Empty;
-                StringBuilder defaultChoicesBuilder = new StringBuilder();
+                var defaultChoicesBuilder = new StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {
                     string defaultStr = hotkeysAndPlainLabels[0, defaultChoice];

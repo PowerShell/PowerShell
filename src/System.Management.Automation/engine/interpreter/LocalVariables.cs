@@ -109,7 +109,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (obj is LocalDefinition)
             {
-                LocalDefinition other = (LocalDefinition)obj;
+                var other = (LocalDefinition)obj;
                 return other.Index == Index && other.Parameter == Parameter;
             }
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Interpreter
             // ContractUtils.RequiresNotNull(variable, "variable");
             // ContractUtils.Requires(start >= 0, "start", "start must be positive");
 
-            LocalVariable result = new LocalVariable(_localCount++, false, false);
+            var result = new LocalVariable(_localCount++, false, false);
             _maxLocalCount = System.Math.Max(_localCount, _maxLocalCount);
 
             VariableScope existing, newScope;
@@ -298,7 +298,7 @@ namespace System.Management.Automation.Interpreter
                 _closureVariables = new Dictionary<ParameterExpression, LocalVariable>();
             }
 
-            LocalVariable result = new LocalVariable(_closureVariables.Count, true, false);
+            var result = new LocalVariable(_closureVariables.Count, true, false);
             _closureVariables.Add(variable, result);
             return result;
         }

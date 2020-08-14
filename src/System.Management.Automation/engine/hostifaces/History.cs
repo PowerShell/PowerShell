@@ -172,9 +172,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // Create history size variable. Add ValidateRangeAttribute to
             // validate the range.
-            Collection<Attribute> attrs = new Collection<Attribute>();
+            var attrs = new Collection<Attribute>();
             attrs.Add(new ValidateRangeAttribute(1, (int)Int16.MaxValue));
-            PSVariable historySizeVar = new PSVariable(SpecialVariables.HistorySize, DefaultHistorySize, ScopedItemOptions.None, attrs);
+            var historySizeVar = new PSVariable(SpecialVariables.HistorySize, DefaultHistorySize, ScopedItemOptions.None, attrs);
             historySizeVar.Description = SessionStateStrings.MaxHistoryCountDescription;
 
             context.EngineSessionState.SetVariable(historySizeVar, false, CommandOrigin.Internal);
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ReallocateBufferIfNeeded();
 
-                HistoryInfo entry = new HistoryInfo(pipelineId, cmdline, status, startTime, endTime);
+                var entry = new HistoryInfo(pipelineId, cmdline, status, startTime, endTime);
                 return Add(entry);
             }
             finally
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Using list instead of an array to store the entries.With array we are getting null values
                 // when the historybuffer size is changed
-                List<HistoryInfo> entriesList = new List<HistoryInfo>();
+                var entriesList = new List<HistoryInfo>();
                 if (id > 0)
                 {
                     long firstId, baseId;
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                HistoryInfo[] entries = new HistoryInfo[entriesList.Count];
+                var entries = new HistoryInfo[entriesList.Count];
                 entriesList.CopyTo(entries);
                 return entries;
             }
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
                     count = _countEntriesInBuffer;
                 }
 
-                List<HistoryInfo> cmdlist = new List<HistoryInfo>();
+                var cmdlist = new List<HistoryInfo>();
                 long SmallestID = 1;
                 // if buffersize is changes,Get the smallest entry that's not cleared in the buffer
                 if (_capacity != DefaultHistorySize)
@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                HistoryInfo[] entries = new HistoryInfo[cmdlist.Count];
+                var entries = new HistoryInfo[cmdlist.Count];
                 cmdlist.CopyTo(entries);
                 return entries;
             }
@@ -691,7 +691,7 @@ namespace Microsoft.PowerShell.Commands
             if (historySize == _capacity)
                 return;
 
-            HistoryInfo[] tempBuffer = new HistoryInfo[historySize];
+            var tempBuffer = new HistoryInfo[historySize];
 
             // Calculate number of entries to copy in new buffer.
             int numberOfEntries = _countEntriesInBuffer;
@@ -1101,12 +1101,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 ps.AddScript(commandToInvoke);
 
-                EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e) { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
-                EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e) { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
-                EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e) { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
-                EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e) { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
-                EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e) { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
-                EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e) { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
+                EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e) { var record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
+                EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e) { var record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
+                EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e) { var record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
+                EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e) { var record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
+                EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e) { var record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
+                EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e) { var record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
 
                 ps.Streams.Debug.DataAdded += debugAdded;
                 ps.Streams.Error.DataAdded += errorAdded;
@@ -1115,7 +1115,7 @@ namespace Microsoft.PowerShell.Commands
                 ps.Streams.Verbose.DataAdded += verboseAdded;
                 ps.Streams.Warning.DataAdded += warningAdded;
 
-                LocalRunspace localRunspace = ps.Runspace as LocalRunspace;
+                var localRunspace = ps.Runspace as LocalRunspace;
 
                 try
                 {
@@ -1372,7 +1372,7 @@ namespace Microsoft.PowerShell.Commands
             // However Add-history adds additional entries in to history and
             // additional entries must be added after history for current pipeline.
             // This is done by adding the history entry for current pipeline below.
-            LocalPipeline lpl = (LocalPipeline)((RunspaceBase)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+            var lpl = (LocalPipeline)((RunspaceBase)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
             lpl.AddHistoryEntryFromAddHistoryCmdlet();
         }
 
@@ -1437,7 +1437,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
                 // Read CommandLine property
-                string commandLine = GetPropertyValue(mshObject, "CommandLine") as string;
+                var commandLine = GetPropertyValue(mshObject, "CommandLine") as string;
                 if (commandLine == null)
                 {
                     break;
@@ -1457,7 +1457,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (pipelineState is PSObject)
                 {
-                    PSObject serializedPipelineState = pipelineState as PSObject;
+                    var serializedPipelineState = pipelineState as PSObject;
                     object baseObject = serializedPipelineState.BaseObject;
                     if (baseObject is not int)
                     {

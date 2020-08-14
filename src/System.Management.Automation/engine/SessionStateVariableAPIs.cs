@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// <param name="entry">The entry to add.</param>
         internal void AddSessionStateEntry(SessionStateVariableEntry entry)
         {
-            PSVariable v = new PSVariable(entry.Name, entry.Value,
+            var v = new PSVariable(entry.Name, entry.Value,
                     entry.Options, entry.Attributes, entry.Description);
             v.Visibility = entry.Visibility;
             this.SetVariableAtScope(v, "global", true, CommandOrigin.Internal);
@@ -57,7 +57,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
+            var variablePath = new VariablePath(name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
             SessionStateScope scope = null;
 
             PSVariable resultItem = GetVariableItem(variablePath, out scope, origin);
@@ -117,7 +117,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name);
+            var variablePath = new VariablePath(name);
             CmdletProviderContext context = null;
             SessionStateScope scope = null;
 
@@ -296,7 +296,7 @@ namespace System.Management.Automation
 
             context = null;
 
-            DriveScopeItemSearcher searcher =
+            var searcher =
                 new DriveScopeItemSearcher(
                     this,
                     variablePath);
@@ -448,7 +448,7 @@ namespace System.Management.Automation
                     string unused =
                         this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
-                    ProviderInvocationException providerException =
+                    var providerException =
                         new ProviderInvocationException(
                             "ProviderContentReadError",
                             SessionStateStrings.ProviderContentReadError,
@@ -547,7 +547,7 @@ namespace System.Management.Automation
 
             Dbg.Diagnostics.Assert(variablePath.IsVariable, "Can't get variable w/ non-variable path");
 
-            VariableScopeItemSearcher searcher =
+            var searcher =
                 new VariableScopeItemSearcher(this, variablePath, origin);
 
             PSVariable result = null;
@@ -624,7 +624,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name);
+            var variablePath = new VariablePath(name);
 
             SessionStateScope lookupScope = null;
 
@@ -688,7 +688,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name);
+            var variablePath = new VariablePath(name);
 
             SessionStateScope lookupScope = null;
 
@@ -709,7 +709,7 @@ namespace System.Management.Automation
 
                 if (drive != null)
                 {
-                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                    var context = new CmdletProviderContext(this.ExecutionContext);
                     context.Drive = drive;
 
 #if true
@@ -838,7 +838,7 @@ namespace System.Management.Automation
                         string unused =
                             this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
-                        ProviderInvocationException providerException =
+                        var providerException =
                             new ProviderInvocationException(
                                 "ProviderContentReadError",
                                 SessionStateStrings.ProviderContentReadError,
@@ -881,7 +881,7 @@ namespace System.Management.Automation
 
             if (resultItem != null)
             {
-                PSVariable variable = resultItem as PSVariable;
+                var variable = resultItem as PSVariable;
 
                 if (variable != null)
                 {
@@ -891,7 +891,7 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        DictionaryEntry entry = (DictionaryEntry)resultItem;
+                        var entry = (DictionaryEntry)resultItem;
                         resultItem = entry.Value;
                     }
                     catch (InvalidCastException)
@@ -959,7 +959,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name);
+            var variablePath = new VariablePath(name);
 
             SetVariable(variablePath, newValue, true, origin);
         }
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
-            VariablePath variablePath = new VariablePath(variable.Name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
+            var variablePath = new VariablePath(variable.Name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
 
             return SetVariable(variablePath, variable, false, force, origin);
         }
@@ -1203,7 +1203,7 @@ namespace System.Management.Automation
                     {
                         try
                         {
-                            CmdletProviderContext clearContentContext = new CmdletProviderContext(context);
+                            var clearContentContext = new CmdletProviderContext(context);
 
                             // First clear the content if it is supported.
                             ClearContent(new string[] { variablePath.QualifiedName }, clearContentContext);
@@ -1275,7 +1275,7 @@ namespace System.Management.Automation
 
                 if (writers == null || writers.Count == 0)
                 {
-                    ItemNotFoundException itemNotFound =
+                    var itemNotFound =
                         new ItemNotFoundException(
                             variablePath.QualifiedName,
                             "PathNotFound",
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
                     string unused =
                         this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
-                    ProviderInvocationException providerException =
+                    var providerException =
                         new ProviderInvocationException(
                             "ProviderContentWriteError",
                             SessionStateStrings.ProviderContentWriteError,
@@ -1567,7 +1567,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name);
+            var variablePath = new VariablePath(name);
             SessionStateScope scope = null;
 
             if (variablePath.IsVariable)
@@ -1579,7 +1579,7 @@ namespace System.Management.Automation
             }
             else
             {
-                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                var context = new CmdletProviderContext(this.ExecutionContext);
                 context.Force = force;
 
                 RemoveItem(new string[] { variablePath.QualifiedName }, false, context);
@@ -1626,7 +1626,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
-            VariablePath variablePath = new VariablePath(variable.Name);
+            var variablePath = new VariablePath(variable.Name);
 
             SessionStateScope scope = null;
 
@@ -1701,7 +1701,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            VariablePath variablePath = new VariablePath(name);
+            var variablePath = new VariablePath(name);
 
             SessionStateScope lookupScope = null;
 
@@ -1720,7 +1720,7 @@ namespace System.Management.Automation
 
                 if (drive != null)
                 {
-                    CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+                    var context = new CmdletProviderContext(this.ExecutionContext);
                     context.Drive = drive;
                     context.Force = force;
 
@@ -1783,7 +1783,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
-            VariablePath variablePath = new VariablePath(variable.Name);
+            var variablePath = new VariablePath(variable.Name);
 
             // The lookup scope is retrieved by ID.
 
@@ -1802,10 +1802,10 @@ namespace System.Management.Automation
         /// </returns>
         internal IDictionary<string, PSVariable> GetVariableTable()
         {
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
-            Dictionary<string, PSVariable> result =
+            var result =
                 new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
 
             foreach (SessionStateScope scope in scopeEnumerator)

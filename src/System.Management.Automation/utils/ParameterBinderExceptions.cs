@@ -670,7 +670,7 @@ namespace System.Management.Automation
                 errorId,
                 args)
         {
-            ValidationMetadataException validationException = innerException as ValidationMetadataException;
+            var validationException = innerException as ValidationMetadataException;
             if (validationException != null && validationException.SwallowException)
             {
                 _swallowException = true;

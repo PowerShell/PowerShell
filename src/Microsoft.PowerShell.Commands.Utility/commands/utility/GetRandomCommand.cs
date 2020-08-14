@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("max");
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                 new ArgumentException(string.Format(
                     CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, minValue, maxValue)),
                 "MinGreaterThanOrEqualMax",
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
                 return defaultIfNull;
             }
 
-            double result = (double)LanguagePrimitives.ConvertTo(o, typeof(double), CultureInfo.InvariantCulture);
+            var result = (double)LanguagePrimitives.ConvertTo(o, typeof(double), CultureInfo.InvariantCulture);
             return result;
         }
 
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // The difference of two Int64 numbers would not exceed UInt64.MaxValue, so it can be represented by a UInt64 number.
-            UInt64 uint64Diff = (UInt64)bigIntegerDiff;
+            var uint64Diff = (UInt64)bigIntegerDiff;
 
             // Calculate the number of bits to represent the diff in type UInt64
             int bitsToRepresentDiff = 0;
@@ -703,7 +703,7 @@ namespace Microsoft.PowerShell.Commands
         private int InternalSample()
         {
             int randomNumber;
-            byte[] data = new byte[sizeof(int)];
+            var data = new byte[sizeof(int)];
 
             NextBytes(data);
             randomNumber = BitConverter.ToInt32(data, 0);

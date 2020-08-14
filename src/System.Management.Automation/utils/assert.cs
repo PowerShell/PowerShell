@@ -58,9 +58,9 @@ namespace System.Management.Automation
     {
         internal static string StackTrace(int framesToSkip)
         {
-            StackTrace trace = new StackTrace(true);
+            var trace = new StackTrace(true);
             StackFrame[] frames = trace.GetFrames();
-            StringBuilder frameString = new StringBuilder();
+            var frameString = new StringBuilder();
             int maxFrames = 10;
             maxFrames += framesToSkip;
             for (int i = framesToSkip; (i < frames.Length) && (i < maxFrames); i++)

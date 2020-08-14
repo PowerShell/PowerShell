@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell
             Task.Run(() =>
             {
                 WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                var principal = new WindowsPrincipal(identity);
                 if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                 {
                     string prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell
                     ConsoleHandle handle = GetBufferInfo(out bufferInfo);
 
                     // mask in the foreground from the current color.
-                    short a = (short)bufferInfo.Attributes;
+                    var a = (short)bufferInfo.Attributes;
 
                     a &= (short)~0x0f;
                     a = (short)((ushort)a | (ushort)value);
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell
                     ConsoleHandle handle = GetBufferInfo(out bufferInfo);
 
                     // mask in the background from the current color.
-                    short a = (short)bufferInfo.Attributes;
+                    var a = (short)bufferInfo.Attributes;
 
                     a &= (short)~0xf0;
                     a = (short)((ushort)a | (ushort)((uint)value << 4));
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
                 GetBufferInfo(out bufferInfo);
 
-                Coordinates c = new Coordinates(bufferInfo.CursorPosition.X, bufferInfo.CursorPosition.Y);
+                var c = new Coordinates(bufferInfo.CursorPosition.X, bufferInfo.CursorPosition.Y);
                 return c;
             }
 
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell
             get
             {
                 ConsoleHandle consoleHandle = ConsoleControl.GetActiveScreenBufferHandle();
-                int size = (int)ConsoleControl.GetConsoleCursorInfo(consoleHandle).Size;
+                var size = (int)ConsoleControl.GetConsoleCursorInfo(consoleHandle).Size;
 
                 return size;
             }
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
                 GetBufferInfo(out bufferInfo);
 
-                Coordinates c = new Coordinates(bufferInfo.WindowRect.Left, bufferInfo.WindowRect.Top);
+                var c = new Coordinates(bufferInfo.WindowRect.Left, bufferInfo.WindowRect.Top);
 
                 return c;
             }
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell
                 }
                 catch (HostException e)
                 {
-                    Win32Exception win32exception = e.InnerException as Win32Exception;
+                    var win32exception = e.InnerException as Win32Exception;
                     if (win32exception != null &&
                         win32exception.NativeErrorCode == 0x57)
                     {
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
                 GetBufferInfo(out bufferInfo);
 
-                Size s =
+                var s =
                     new Size(
                         bufferInfo.WindowRect.Right - bufferInfo.WindowRect.Left + 1,
                         bufferInfo.WindowRect.Bottom - bufferInfo.WindowRect.Top + 1);
@@ -481,8 +481,8 @@ namespace Microsoft.PowerShell
                 // bufferInfo.BufferSize.X - 1 will give us the rightmost coordinate of the buffer.
                 // r.Right - rightCoordinateOfBuffer will give us how much we need to adjust the window left and right coordinates.
                 // Then we can do the same for top and bottom.
-                short adjustLeft = (short)(r.Right - (bufferInfo.BufferSize.X - 1));
-                short adjustTop = (short)(r.Bottom - (bufferInfo.BufferSize.Y - 1));
+                var adjustLeft = (short)(r.Right - (bufferInfo.BufferSize.X - 1));
+                var adjustTop = (short)(r.Bottom - (bufferInfo.BufferSize.Y - 1));
 
                 if (adjustLeft > 0)
                 {
@@ -528,7 +528,7 @@ namespace Microsoft.PowerShell
             {
                 ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
                 GetBufferInfo(out bufferInfo);
-                Size s = new Size(bufferInfo.MaxWindowSize.X, bufferInfo.MaxWindowSize.Y);
+                var s = new Size(bufferInfo.MaxWindowSize.X, bufferInfo.MaxWindowSize.Y);
 
                 return s;
             }
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell
         /// <returns></returns>
         private PipelineStoppedException NewPipelineStoppedException()
         {
-            PipelineStoppedException e = new PipelineStoppedException();
+            var e = new PipelineStoppedException();
             return e;
         }
 
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell
             else
             {
                 ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
-                ConsoleControl.INPUT_RECORD[] inputRecords = new ConsoleControl.INPUT_RECORD[1];
+                var inputRecords = new ConsoleControl.INPUT_RECORD[1];
                 ConsoleControl.ConsoleModes originalMode = ConsoleControl.GetMode(handle);
 
                 // set input mode to exclude mouse or window events
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell
                 }
 
                 ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
-                ConsoleControl.INPUT_RECORD[] inputRecords =
+                var inputRecords =
                     new ConsoleControl.INPUT_RECORD[ConsoleControl.GetNumberOfConsoleInputEvents(handle)];
 
                 int actualNumberOfInputRecords = ConsoleControl.PeekConsoleInput(handle, ref inputRecords);
@@ -950,7 +950,7 @@ namespace Microsoft.PowerShell
             int bufferWidth = bufferInfo.BufferSize.X;
             int bufferHeight = bufferInfo.BufferSize.Y;
             WORD attribute = ConsoleControl.ColorToWORD(fill.ForegroundColor, fill.BackgroundColor);
-            Coordinates origin = new Coordinates(0, 0);
+            var origin = new Coordinates(0, 0);
             uint codePage;
 
             // region == {-1, -1, -1, -1} is a special case meaning "the whole screen buffer"
@@ -993,12 +993,12 @@ namespace Microsoft.PowerShell
 
             if (ConsoleControl.IsCJKOutputCodePage(out codePage))
             {
-                Rectangle existingRegion = new Rectangle(0, 0, 1, lastRow - firstRow);
+                var existingRegion = new Rectangle(0, 0, 1, lastRow - firstRow);
                 int charLength = LengthInBufferCells(fill.Character);
                 // Check left edge
                 if (origin.X > 0)
                 {
-                    BufferCell[,] leftExisting = new BufferCell[existingRegion.Bottom + 1, 2];
+                    var leftExisting = new BufferCell[existingRegion.Bottom + 1, 2];
                     ConsoleControl.ReadConsoleOutputCJK(handle, codePage,
                         new Coordinates(origin.X - 1, origin.Y), existingRegion, ref leftExisting);
                     for (int r = 0; r <= existingRegion.Bottom; r++)
@@ -1021,7 +1021,7 @@ namespace Microsoft.PowerShell
                 {
                     // use ReadConsoleOutputCJK because checking the left and right edges of the existing output
                     // is NOT needed
-                    BufferCell[,] rightExisting = new BufferCell[existingRegion.Bottom + 1, 2];
+                    var rightExisting = new BufferCell[existingRegion.Bottom + 1, 2];
                     ConsoleControl.ReadConsoleOutputCJK(handle, codePage,
                         new Coordinates(lineEnd, origin.Y), existingRegion, ref rightExisting);
                     if (lineLength % 2 == 0)
@@ -1120,17 +1120,17 @@ namespace Microsoft.PowerShell
             int colEnd = Math.Min(bufferWidth - 1, region.Right);
             int rowStart = Math.Max(0, region.Top);
             int rowEnd = Math.Min(bufferHeight - 1, region.Bottom);
-            Coordinates origin = new Coordinates(colStart, rowStart);
+            var origin = new Coordinates(colStart, rowStart);
 
             // contentsRegion indicates the area in contents (declared below) in which
             // the data read from ReadConsoleOutput is stored.
-            Rectangle contentsRegion = new Rectangle();
+            var contentsRegion = new Rectangle();
             contentsRegion.Left = Math.Max(0, 0 - region.Left);
             contentsRegion.Top = Math.Max(0, 0 - region.Top);
             contentsRegion.Right = contentsRegion.Left + (colEnd - colStart);
             contentsRegion.Bottom = contentsRegion.Top + (rowEnd - rowStart);
 
-            BufferCell[,] contents = new BufferCell[region.Bottom - region.Top + 1,
+            var contents = new BufferCell[region.Bottom - region.Top + 1,
                                                     region.Right - region.Left + 1];
 
             ConsoleControl.ReadConsoleOutput(handle, origin, contentsRegion, ref contents);

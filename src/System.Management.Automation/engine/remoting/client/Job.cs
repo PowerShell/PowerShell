@@ -750,11 +750,11 @@ namespace System.Management.Automation
 
         private static Exception GetExceptionFromErrorRecord(ErrorRecord errorRecord)
         {
-            RuntimeException runtimeException = errorRecord.Exception as RuntimeException;
+            var runtimeException = errorRecord.Exception as RuntimeException;
             if (runtimeException == null)
                 return null;
 
-            RemoteException remoteException = runtimeException as RemoteException;
+            var remoteException = runtimeException as RemoteException;
             if (remoteException == null)
                 return null;
 
@@ -876,7 +876,7 @@ namespace System.Management.Automation
             out ShouldProcessReason shouldProcessReason,
             out Exception exceptionThrownOnCmdletThread)
         {
-            ShouldProcessReason closureSafeShouldProcessReason = ShouldProcessReason.None;
+            var closureSafeShouldProcessReason = ShouldProcessReason.None;
 
             bool methodResult = InvokeCmdletMethodAndWaitForResults(
                 cmdlet => cmdlet.ShouldProcess(
@@ -892,8 +892,8 @@ namespace System.Management.Automation
 
         private void InvokeCmdletMethodAndIgnoreResults(Action<Cmdlet> invokeCmdletMethod)
         {
-            object resultsLock = new object();
-            CmdletMethodInvoker<object> methodInvoker = new CmdletMethodInvoker<object>
+            var resultsLock = new object();
+            var methodInvoker = new CmdletMethodInvoker<object>
             {
                 Action = delegate (Cmdlet cmdlet) { invokeCmdletMethod(cmdlet); return null; },
                 Finished = null,
@@ -906,9 +906,9 @@ namespace System.Management.Automation
         {
             Dbg.Assert(invokeCmdletMethodAndReturnResult != null, "Caller should verify invokeCmdletMethodAndReturnResult != null");
 
-            T methodResult = default(T);
+            var methodResult = default(T);
             Exception closureSafeExceptionThrownOnCmdletThread = null;
-            object resultsLock = new object();
+            var resultsLock = new object();
             using (var gotResultEvent = new ManualResetEventSlim(false))
             {
                 EventHandler<JobStateEventArgs> stateChangedEventHandler =
@@ -935,13 +935,13 @@ namespace System.Management.Automation
                         this.SetJobState(JobState.Blocked);
 
                         // addition to results column happens here
-                        CmdletMethodInvoker<T> methodInvoker = new CmdletMethodInvoker<T>
+                        var methodInvoker = new CmdletMethodInvoker<T>
                         {
                             Action = invokeCmdletMethodAndReturnResult,
                             Finished = gotResultEvent,
                             SyncObject = resultsLock
                         };
-                        PSStreamObjectType objectType = PSStreamObjectType.ShouldMethod;
+                        var objectType = PSStreamObjectType.ShouldMethod;
 
                         if (typeof(T) == typeof(object))
                             objectType = PSStreamObjectType.BlockingError;
@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
         /// <returns>Collection of jobs.</returns>
         internal List<Job> GetJobsForLocation(string location)
         {
-            List<Job> returnJobList = new List<Job>();
+            var returnJobList = new List<Job>();
 
             foreach (Job job in ChildJobs)
             {
@@ -1786,7 +1786,7 @@ namespace System.Management.Automation
             foreach (ExecutionCmdletHelperComputerName helper in computerNameHelpers)
             {
                 // Create Child Job and Register for its StateChanged Event
-                PSRemotingChildJob childJob = new PSRemotingChildJob(remoteCommand,
+                var childJob = new PSRemotingChildJob(remoteCommand,
                                             helper, _throttleManager);
                 childJob.StateChanged += HandleChildJobStateChanged;
                 childJob.JobUnblocked += HandleJobUnblocked;
@@ -1818,10 +1818,10 @@ namespace System.Management.Automation
             // Create child jobs for each object in the list
             for (int i = 0; i < remoteRunspaceInfos.Length; i++)
             {
-                ExecutionCmdletHelperRunspace helper = (ExecutionCmdletHelperRunspace)runspaceHelpers[i];
+                var helper = (ExecutionCmdletHelperRunspace)runspaceHelpers[i];
 
                 // Create Child Job object and Register for its state changed event
-                PSRemotingChildJob job = new PSRemotingChildJob(remoteCommand,
+                var job = new PSRemotingChildJob(remoteCommand,
                                 helper, _throttleManager);
                 job.StateChanged += HandleChildJobStateChanged;
                 job.JobUnblocked += HandleJobUnblocked;
@@ -1852,7 +1852,7 @@ namespace System.Management.Automation
             // ExecutionCmdletHelperRunspace object and ThrottleManager.
             foreach (ExecutionCmdletHelper helper in helpers)
             {
-                PSRemotingChildJob job = new PSRemotingChildJob(helper, _throttleManager, aggregateResults);
+                var job = new PSRemotingChildJob(helper, _throttleManager, aggregateResults);
                 job.StateChanged += HandleChildJobStateChanged;
                 job.JobUnblocked += HandleJobUnblocked;
 
@@ -1906,11 +1906,11 @@ namespace System.Management.Automation
         /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForComputer(string computerName)
         {
-            List<Job> returnJobList = new List<Job>();
+            var returnJobList = new List<Job>();
 
             foreach (Job j in ChildJobs)
             {
-                PSRemotingChildJob child = j as PSRemotingChildJob;
+                var child = j as PSRemotingChildJob;
                 if (child == null) continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
@@ -1930,11 +1930,11 @@ namespace System.Management.Automation
         /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForRunspace(PSSession runspace)
         {
-            List<Job> returnJobList = new List<Job>();
+            var returnJobList = new List<Job>();
 
             foreach (Job j in ChildJobs)
             {
-                PSRemotingChildJob child = j as PSRemotingChildJob;
+                var child = j as PSRemotingChildJob;
                 if (child == null) continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
@@ -1953,12 +1953,12 @@ namespace System.Management.Automation
         /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForOperation(IThrottleOperation operation)
         {
-            List<Job> returnJobList = new List<Job>();
-            ExecutionCmdletHelper helper = operation as ExecutionCmdletHelper;
+            var returnJobList = new List<Job>();
+            var helper = operation as ExecutionCmdletHelper;
 
             foreach (Job j in ChildJobs)
             {
-                PSRemotingChildJob child = j as PSRemotingChildJob;
+                var child = j as PSRemotingChildJob;
                 if (child == null) continue;
                 if (child.Helper.Equals(helper))
                 {
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation
         internal void ConnectJobs()
         {
             // Create connect operation objects for each child job object to connect.
-            List<IThrottleOperation> connectJobOperations = new List<IThrottleOperation>();
+            var connectJobOperations = new List<IThrottleOperation>();
             foreach (PSRemotingChildJob childJob in ChildJobs)
             {
                 if (childJob.JobStateInfo.State == JobState.Disconnected)
@@ -2004,7 +2004,7 @@ namespace System.Management.Automation
         /// <param name="runspaceInstanceId">Runspace instance id for child job.</param>
         internal void ConnectJob(Guid runspaceInstanceId)
         {
-            List<IThrottleOperation> connectJobOperations = new List<IThrottleOperation>();
+            var connectJobOperations = new List<IThrottleOperation>();
             PSRemotingChildJob childJob = FindDisconnectedChildJob(runspaceInstanceId);
             if (childJob != null)
             {
@@ -2023,9 +2023,9 @@ namespace System.Management.Automation
 
         private void SubmitAndWaitForConnect(List<IThrottleOperation> connectJobOperations)
         {
-            using (ThrottleManager connectThrottleManager = new ThrottleManager())
+            using (var connectThrottleManager = new ThrottleManager())
             {
-                using (ManualResetEvent connectResult = new ManualResetEvent(false))
+                using (var connectResult = new ManualResetEvent(false))
                 {
                     EventHandler<EventArgs> throttleCompleteEventHandler =
                             delegate (object sender, EventArgs eventArgs)
@@ -2077,7 +2077,7 @@ namespace System.Management.Automation
 
                     string msg = StringUtil.Format(RemotingErrorIdStrings.JobConnectFailed, _psRemoteChildJob.Name);
                     Exception reason = new RuntimeException(msg, e);
-                    ErrorRecord errorRecord = new ErrorRecord(reason, "PSJobConnectFailed", ErrorCategory.InvalidOperation, _psRemoteChildJob);
+                    var errorRecord = new ErrorRecord(reason, "PSJobConnectFailed", ErrorCategory.InvalidOperation, _psRemoteChildJob);
                     _psRemoteChildJob.WriteError(errorRecord);
                 }
 
@@ -2093,7 +2093,7 @@ namespace System.Management.Automation
                 RemoveEventCallback();
 
                 // Cannot stop a connect attempt.
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+                var operationStateEventArgs = new OperationStateEventArgs();
                 operationStateEventArgs.OperationState = OperationState.StopComplete;
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
@@ -2113,7 +2113,7 @@ namespace System.Management.Automation
 
             private void SendStartComplete()
             {
-                OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+                var operationStateEventArgs = new OperationStateEventArgs();
                 operationStateEventArgs.OperationState = OperationState.StartComplete;
                 OperationComplete.SafeInvoke(this, operationStateEventArgs);
             }
@@ -2263,7 +2263,7 @@ namespace System.Management.Automation
                 {
                     string msg = StringUtil.Format(RemotingErrorIdStrings.StopJobNotConnected, this.Name);
                     Exception reason = new RuntimeException(msg);
-                    ErrorRecord errorRecord = new ErrorRecord(reason, "StopJobCannotConnectToServer",
+                    var errorRecord = new ErrorRecord(reason, "StopJobCannotConnectToServer",
                         ErrorCategory.InvalidOperation, this);
                     WriteError(errorRecord);
 
@@ -2301,7 +2301,7 @@ namespace System.Management.Automation
                 _hideComputerName = value;
                 foreach (Job job in this.ChildJobs)
                 {
-                    PSRemotingChildJob rJob = job as PSRemotingChildJob;
+                    var rJob = job as PSRemotingChildJob;
                     if (rJob != null)
                     {
                         rJob.HideComputerName = value;
@@ -2579,7 +2579,7 @@ namespace System.Management.Automation
 
         private string ConstructLocation()
         {
-            StringBuilder location = new StringBuilder();
+            var location = new StringBuilder();
 
             if (ChildJobs.Count > 0)
             {
@@ -2628,7 +2628,7 @@ namespace System.Management.Automation
         /// <returns>IEnumerable of RemoteRunspaces.</returns>
         internal override IEnumerable<RemoteRunspace> GetRunspaces()
         {
-            List<RemoteRunspace> runspaces = new List<RemoteRunspace>();
+            var runspaces = new List<RemoteRunspace>();
             foreach (PSRemotingChildJob job in ChildJobs)
             {
                 runspaces.Add(job.Runspace as RemoteRunspace);
@@ -2734,7 +2734,7 @@ namespace System.Management.Automation
 
         private void SendStopComplete(EventArgs eventArgs = null)
         {
-            OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
+            var operationStateEventArgs = new OperationStateEventArgs();
             operationStateEventArgs.BaseEvent = eventArgs;
             operationStateEventArgs.OperationState = OperationState.StopComplete;
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
@@ -2774,7 +2774,7 @@ namespace System.Management.Automation
             _remotePipeline = helper.Pipeline as RemotePipeline;
             _throttleManager = throttleManager;
 
-            RemoteRunspace remoteRS = Runspace as RemoteRunspace;
+            var remoteRS = Runspace as RemoteRunspace;
             if ((remoteRS != null) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
             {
                 remoteRS.URIRedirectionReported += HandleURIDirectionReported;
@@ -2821,7 +2821,7 @@ namespace System.Management.Automation
 
             Runspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
 
-            IThrottleOperation operation = helper as IThrottleOperation;
+            var operation = helper as IThrottleOperation;
             operation.OperationComplete += HandleOperationComplete;
 
             SetJobState(JobState.Disconnected, null);
@@ -2950,7 +2950,7 @@ namespace System.Management.Automation
                 _hideComputerName = value;
                 foreach (Job job in this.ChildJobs)
                 {
-                    PSRemotingChildJob rJob = job as PSRemotingChildJob;
+                    var rJob = job as PSRemotingChildJob;
                     if (rJob != null)
                     {
                         rJob.HideComputerName = value;
@@ -2976,7 +2976,7 @@ namespace System.Management.Automation
         {
             get
             {
-                RemoteRunspace remoteRS = Runspace as RemoteRunspace;
+                var remoteRS = Runspace as RemoteRunspace;
                 return (remoteRS != null) ? remoteRS.CanDisconnect : false;
             }
         }
@@ -3032,7 +3032,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">Information describing the ready event.</param>
         private void HandleOutputReady(object sender, EventArgs eventArgs)
         {
-            PSDataCollectionPipelineReader<PSObject, PSObject> reader =
+            var reader =
                     sender as PSDataCollectionPipelineReader<PSObject, PSObject>;
 
             Collection<PSObject> output = reader.NonBlockingRead();
@@ -3064,7 +3064,7 @@ namespace System.Management.Automation
                     // Ex: Invoke-Command localhost,blah { gps } | select PSComputerName should work.
                     if (dataObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] == null)
                     {
-                        PSNoteProperty showComputerNameNP = new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, !_hideComputerName);
+                        var showComputerNameNP = new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, !_hideComputerName);
                         dataObject.Properties.Add(showComputerNameNP);
                     }
                 }
@@ -3083,19 +3083,19 @@ namespace System.Management.Automation
         /// <param name="eventArgs">Information describing the ready event.</param>
         private void HandleErrorReady(object sender, EventArgs eventArgs)
         {
-            PSDataCollectionPipelineReader<ErrorRecord, object> reader =
+            var reader =
                 sender as PSDataCollectionPipelineReader<ErrorRecord, object>;
 
             Collection<object> error = reader.NonBlockingRead();
 
             foreach (object errorData in error)
             {
-                ErrorRecord er = errorData as ErrorRecord;
+                var er = errorData as ErrorRecord;
                 if (er != null)
                 {
-                    OriginInfo originInfo = new OriginInfo(reader.ComputerName, reader.RunspaceId);
+                    var originInfo = new OriginInfo(reader.ComputerName, reader.RunspaceId);
 
-                    RemotingErrorRecord errorRecord =
+                    var errorRecord =
                         new RemotingErrorRecord(er, originInfo);
                     errorRecord.PreserveInvocationInfoOnce = true;
 
@@ -3125,7 +3125,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">The event args.</param>
         private void HandleHostCalls(object sender, EventArgs eventArgs)
         {
-            ObjectStream hostCallsStream = sender as ObjectStream;
+            var hostCallsStream = sender as ObjectStream;
 
             if (hostCallsStream != null)
             {
@@ -3227,7 +3227,7 @@ namespace System.Management.Automation
             // We can wait for throttle complete, but it is raised only when all the
             // operations are completed and this means that status of job is not updated
             // untill Operation Complete.
-            ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
+            var helper = sender as ExecutionCmdletHelper;
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
             DeterminedAndSetJobState(helper);
@@ -3295,10 +3295,10 @@ namespace System.Management.Automation
 
             Dbg.Assert(helper != null, "helper is null");
 
-            RemotePipeline pipeline = helper.Pipeline as RemotePipeline;
+            var pipeline = helper.Pipeline as RemotePipeline;
             Dbg.Assert(pipeline != null, "pipeline is null");
 
-            RemoteRunspace runspace = pipeline.GetRunspace() as RemoteRunspace;
+            var runspace = pipeline.GetRunspace() as RemoteRunspace;
             Dbg.Assert(runspace != null, "runspace is null");
 
             failureException = null;
@@ -3334,7 +3334,7 @@ namespace System.Management.Automation
                 // set the transport message in the error detail so that
                 // the user can directly get to see the message without
                 // having to mine through the error record details
-                PSRemotingTransportException transException =
+                var transException =
                             failureException as PSRemotingTransportException;
 
                 string fullyQualifiedErrorId =
@@ -3392,7 +3392,7 @@ namespace System.Management.Automation
                 failureException = pipeline.PipelineStateInfo.Reason;
                 if (failureException != null)
                 {
-                    RemoteException rException = failureException as RemoteException;
+                    var rException = failureException as RemoteException;
 
                     ErrorRecord errorRecord = null;
                     if (rException != null)
@@ -3424,7 +3424,7 @@ namespace System.Management.Automation
                     string computerName = ((RemoteRunspace)pipeline.GetRunspace()).ConnectionInfo.ComputerName;
                     Guid runspaceId = pipeline.GetRunspace().InstanceId;
 
-                    OriginInfo originInfo = new OriginInfo(computerName, runspaceId);
+                    var originInfo = new OriginInfo(computerName, runspaceId);
 
                     failureErrorRecord = new RemotingErrorRecord(errorRecord, originInfo);
                 }
@@ -3493,7 +3493,7 @@ namespace System.Management.Automation
 
             StopAggregateResultsFromHelper(Helper);
             Runspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
-            IThrottleOperation operation = Helper as IThrottleOperation;
+            var operation = Helper as IThrottleOperation;
             operation.OperationComplete -= HandleOperationComplete;
             UnregisterThrottleComplete(_throttleManager);
             _throttleManager = null;
@@ -3515,7 +3515,7 @@ namespace System.Management.Automation
 
             // Register handler for method executor object stream.
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
-            RemotePipeline remotePipeline = pipeline as RemotePipeline;
+            var remotePipeline = pipeline as RemotePipeline;
             remotePipeline.MethodExecutorStream.DataReady += HandleHostCalls;
             remotePipeline.PowerShell.Streams.Progress.DataAdded += HandleProgressAdded;
             remotePipeline.PowerShell.Streams.Warning.DataAdded += HandleWarningAdded;
@@ -3527,7 +3527,7 @@ namespace System.Management.Automation
             // on it instead of being executed asynchronously when they arrive.
             remotePipeline.IsMethodExecutorStreamEnabled = true;
 
-            IThrottleOperation operation = helper as IThrottleOperation;
+            var operation = helper as IThrottleOperation;
             operation.OperationComplete += HandleOperationComplete;
         }
 
@@ -3680,7 +3680,7 @@ namespace System.Management.Automation
 
             // Remove old data aggregation and host calls.
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
-            RemotePipeline remotePipeline = pipeline as RemotePipeline;
+            var remotePipeline = pipeline as RemotePipeline;
             remotePipeline.MethodExecutorStream.DataReady -= HandleHostCalls;
             if (remotePipeline.PowerShell != null)
             {
@@ -4078,7 +4078,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {
-            RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
+            var remoteDebugger = _wrappedDebugger as RemoteDebugger;
             if (remoteDebugger != null)
             {
                 remoteDebugger.CheckStateAndRaiseStopEvent();
@@ -4148,7 +4148,7 @@ namespace System.Management.Automation
             // Nested debugged runspace prompt should look like:
             // [DBG]: [JobName]: PS C:\>>
             string promptScript = "'[DBG]: '" + " + " + "'[" + CodeGeneration.EscapeSingleQuotedStringContent(_jobName) + "]: '" + " + " + @"""PS $($executionContext.SessionState.Path.CurrentLocation)>> """;
-            PSCommand promptCommand = new PSCommand();
+            var promptCommand = new PSCommand();
             promptCommand.AddScript(promptScript);
             _wrappedDebugger.ProcessCommand(promptCommand, output);
 
@@ -4199,9 +4199,9 @@ namespace System.Management.Automation
 
             foreach (IThrottleOperation operation in operations)
             {
-                ExecutionCmdletHelper helper = operation as ExecutionCmdletHelper;
+                var helper = operation as ExecutionCmdletHelper;
 
-                RemoteRunspace remoteRS = helper.Pipeline.Runspace as RemoteRunspace;
+                var remoteRS = helper.Pipeline.Runspace as RemoteRunspace;
                 if (remoteRS != null)
                 {
                     remoteRS.StateChanged += HandleRunspaceStateChanged;
@@ -4216,7 +4216,7 @@ namespace System.Management.Automation
                 AggregateResultsFromHelper(helper);
 
                 Dbg.Assert(helper.Pipeline is RemotePipeline, "Only remote pipeline can be used in InvokeExpressionSyncJob");
-                RemotePipeline pipeline = helper.Pipeline as RemotePipeline;
+                var pipeline = helper.Pipeline as RemotePipeline;
                 _powershells.Add(pipeline.PowerShell.InstanceId, pipeline.PowerShell);
             }
         }
@@ -4250,7 +4250,7 @@ namespace System.Management.Automation
             foreach (ExecutionCmdletHelper helper in _helpers)
             {
                 // cleanup remote runspace related handlers
-                RemoteRunspace remoteRS = helper.PipelineRunspace as RemoteRunspace;
+                var remoteRS = helper.PipelineRunspace as RemoteRunspace;
                 if (remoteRS != null)
                 {
                     remoteRS.StateChanged -= HandleRunspaceStateChanged;
@@ -4283,7 +4283,7 @@ namespace System.Management.Automation
         /// <param name="stateEventArgs">Arguments describing this event, unused.</param>
         protected override void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
-            ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
+            var helper = sender as ExecutionCmdletHelper;
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
             Exception failureException;
@@ -4426,7 +4426,7 @@ namespace System.Management.Automation
         /// <param name="e"></param>
         private void HandleRunspaceStateChanged(object sender, RunspaceStateEventArgs e)
         {
-            RemoteRunspace remoteRS = sender as RemoteRunspace;
+            var remoteRS = sender as RemoteRunspace;
             // remote runspace must be connected (or connection failed)
             // we dont need URI redirection any more..so clear it
             if (remoteRS != null)
@@ -4474,7 +4474,7 @@ namespace System.Management.Automation
         /// <returns>Collection of PowerShell objects.</returns>
         internal Collection<PowerShell> GetPowerShells()
         {
-            Collection<PowerShell> powershellsToReturn = new Collection<PowerShell>();
+            var powershellsToReturn = new Collection<PowerShell>();
             foreach (PowerShell ps in _powershells.Values)
             {
                 powershellsToReturn.Add(ps);
@@ -4490,7 +4490,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal PSRemotingJob CreateDisconnectedRemotingJob()
         {
-            List<IThrottleOperation> disconnectedJobHelpers = new List<IThrottleOperation>();
+            var disconnectedJobHelpers = new List<IThrottleOperation>();
             foreach (var helper in _helpers)
             {
                 if (helper.Pipeline.PipelineStateInfo.State == PipelineState.Disconnected)

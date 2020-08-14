@@ -240,7 +240,7 @@ namespace System.Management.Automation.Internal
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
-                string varName = arguments as string;
+                var varName = arguments as string;
                 if (varName != null)
                 {
                     if (varName.StartsWith('+'))
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Internal
                         varName = varName.Substring(1);
                     }
 
-                    VariablePath silp = new VariablePath(varName);
+                    var silp = new VariablePath(varName);
                     if (!silp.IsVariable)
                     {
                         throw new ValidationMetadataException(

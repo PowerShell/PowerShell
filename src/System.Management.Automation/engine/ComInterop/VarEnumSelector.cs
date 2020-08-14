@@ -142,7 +142,7 @@ namespace System.Management.Automation.ComInterop
 
         private static Dictionary<VarEnum, Type> CreateComToManagedPrimitiveTypes()
         {
-            Dictionary<VarEnum, Type> dict = new Dictionary<VarEnum, Type>()
+            var dict = new Dictionary<VarEnum, Type>()
             {
                 { VarEnum.VT_I1,        typeof(sbyte) },
                 { VarEnum.VT_I2,        typeof(Int16) },
@@ -177,7 +177,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         private static IList<IList<VarEnum>> CreateComPrimitiveTypeFamilies()
         {
-            VarEnum[][] typeFamilies = new VarEnum[][] {
+            var typeFamilies = new VarEnum[][] {
                 new VarEnum[] { VarEnum.VT_I8, VarEnum.VT_I4, VarEnum.VT_I2, VarEnum.VT_I1 },
                 new VarEnum[] { VarEnum.VT_UI8, VarEnum.VT_UI4, VarEnum.VT_UI2, VarEnum.VT_UI1 },
                 new VarEnum[] { VarEnum.VT_INT },
@@ -201,7 +201,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         private static List<VarEnum> GetConversionsToComPrimitiveTypeFamilies(Type argumentType)
         {
-            List<VarEnum> compatibleComTypes = new List<VarEnum>();
+            var compatibleComTypes = new List<VarEnum>();
 
             foreach (IList<VarEnum> typeFamily in s_comPrimitiveTypeFamilies)
             {

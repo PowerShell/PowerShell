@@ -113,7 +113,7 @@ namespace System.Management.Automation
                                       catalogVersion1.ToString("X"),
                                       catalogVersion2.ToString("X")));
 
-                ErrorRecord errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
@@ -144,7 +144,7 @@ namespace System.Management.Automation
                                       "1.0",
                                       "2.0"));
 
-                ErrorRecord errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         /// <returns>HashSet for the relative Path for files in Catalog.</returns>
         internal static string GenerateCDFFile(Collection<string> Path, string catalogFilePath, string cdfFilePath, int catalogVersion, string hashAlgorithm)
         {
-            HashSet<string> relativePaths = new HashSet<string>();
+            var relativePaths = new HashSet<string>();
 
             string cdfHeaderContent = string.Empty;
             string cdfFilesContent = string.Empty;
@@ -191,7 +191,7 @@ namespace System.Management.Automation
                 }
             }
 
-            using (System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(new FileStream(cdfFilePath, FileMode.Create)))
+            using (var fileWriter = new System.IO.StreamWriter(new FileStream(cdfFilePath, FileMode.Create)))
             {
                 fileWriter.WriteLine(cdfHeaderContent);
                 fileWriter.WriteLine();
@@ -243,7 +243,7 @@ namespace System.Management.Automation
             {
                 // If Files have same relative paths we can not distinguish them for
                 // Validation. So failing.
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFilesRelativePath, relativePath)), "FoundDuplicateFilesRelativePath", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFilesRelativePath, relativePath)), "FoundDuplicateFilesRelativePath", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
         }
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         internal static void GenerateCatalogFile(string cdfFilePath)
         {
             string pwszFilePath = cdfFilePath;
-            NativeMethods.CryptCATCDFOpenCallBack catOpenCallBack = new NativeMethods.CryptCATCDFOpenCallBack(ParseErrorCallback);
+            var catOpenCallBack = new NativeMethods.CryptCATCDFOpenCallBack(ParseErrorCallback);
 
             // Open CDF File
             IntPtr resultCDF = NativeMethods.CryptCATCDFOpen(pwszFilePath, catOpenCallBack);
@@ -280,7 +280,7 @@ namespace System.Management.Automation
                 try
                 {
                     IntPtr memberFile = IntPtr.Zero;
-                    NativeMethods.CryptCATCDFEnumMembersByCDFTagExErrorCallBack memberCallBack = new NativeMethods.CryptCATCDFEnumMembersByCDFTagExErrorCallBack(ParseErrorCallback);
+                    var memberCallBack = new NativeMethods.CryptCATCDFEnumMembersByCDFTagExErrorCallBack(ParseErrorCallback);
                     string fileName = string.Empty;
                     do
                     {
@@ -320,7 +320,7 @@ namespace System.Management.Automation
             else
             {
                 // If we are not able to open CDF file we can not continue generating catalog
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.UnableToOpenCatalogDefinitionFile), "UnableToOpenCatalogDefinitionFile", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.UnableToOpenCatalogDefinitionFile), "UnableToOpenCatalogDefinitionFile", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
         }
@@ -351,7 +351,7 @@ namespace System.Management.Automation
                     {
                         // If we are not able to generate catalog definition file we can not continue generating catalog
                         // throw PSTraceSource.NewInvalidOperationException("catalog", CatalogStrings.CatalogDefinitionFileNotGenerated);
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.CatalogDefinitionFileNotGenerated), "CatalogDefinitionFileNotGenerated", ErrorCategory.InvalidOperation, null);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.CatalogDefinitionFileNotGenerated), "CatalogDefinitionFileNotGenerated", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                     }
 
@@ -386,8 +386,8 @@ namespace System.Management.Automation
             if (currentMemberAttr.pwszReferenceTag.Equals("FilePath", StringComparison.OrdinalIgnoreCase))
             {
                 // find the size for the current attribute value and then allocate buffer and copy from byte array
-                int attrValueSize = (int)currentMemberAttr.cbValue;
-                byte[] attrValue = new byte[attrValueSize];
+                var attrValueSize = (int)currentMemberAttr.cbValue;
+                var attrValue = new byte[attrValueSize];
                 Marshal.Copy(currentMemberAttr.pbValue, attrValue, 0, attrValueSize);
                 relativePath = System.Text.Encoding.Unicode.GetString(attrValue);
                 relativePath = relativePath.TrimEnd('\0');
@@ -410,13 +410,13 @@ namespace System.Management.Automation
             // To get handle to the hash algorithm to be used to calculate hashes
             if (!NativeMethods.CryptCATAdminAcquireContext2(ref catAdmin, IntPtr.Zero, hashAlgorithm, IntPtr.Zero, 0))
             {
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToAcquireHashAlgorithmContext, hashAlgorithm)), "UnableToAcquireHashAlgorithmContext", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToAcquireHashAlgorithmContext, hashAlgorithm)), "UnableToAcquireHashAlgorithmContext", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
             DWORD GENERIC_READ = 0x80000000;
             DWORD OPEN_EXISTING = 3;
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+            var INVALID_HANDLE_VALUE = new IntPtr(-1);
 
             // Open the file that is to be hashed for reading and get its handle
             IntPtr fileHandle = NativeMethods.CreateFile(filePath, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, IntPtr.Zero);
@@ -430,22 +430,22 @@ namespace System.Management.Automation
                     // Call first time to get the size of expected buffer to hold new hash value
                     if (!NativeMethods.CryptCATAdminCalcHashFromFileHandle2(catAdmin, fileHandle, ref hashBufferSize, hashBuffer, 0))
                     {
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                     }
 
-                    int size = (int)hashBufferSize;
+                    var size = (int)hashBufferSize;
                     hashBuffer = Marshal.AllocHGlobal(size);
                     try
                     {
                         // Call second time to actually get the hash value
                         if (!NativeMethods.CryptCATAdminCalcHashFromFileHandle2(catAdmin, fileHandle, ref hashBufferSize, hashBuffer, 0))
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
+                            var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
                             _cmdlet.ThrowTerminatingError(errorRecord);
                         }
 
-                        byte[] hashBytes = new byte[size];
+                        var hashBytes = new byte[size];
                         Marshal.Copy(hashBuffer, hashBytes, 0, size);
                         hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
                     }
@@ -466,7 +466,7 @@ namespace System.Management.Automation
             else
             {
                 // If we are not able to open file that is to be hashed we can not continue with catalog validation
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToReadFileToHash, filePath)), "UnableToReadFileToHash", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToReadFileToHash, filePath)), "UnableToReadFileToHash", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
@@ -483,8 +483,8 @@ namespace System.Management.Automation
         internal static Dictionary<string, string> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns, out int catalogVersion)
         {
             IntPtr resultCatalog = NativeMethods.CryptCATOpen(catalogFilePath, 0, IntPtr.Zero, 1, 0);
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-            Dictionary<string, string> catalogHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            var INVALID_HANDLE_VALUE = new IntPtr(-1);
+            var catalogHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             catalogVersion = 0;
 
             if (resultCatalog != INVALID_HANDLE_VALUE)
@@ -548,7 +548,7 @@ namespace System.Management.Automation
                                 // always contains relative file Paths
                                 if (string.IsNullOrEmpty(relativePath))
                                 {
-                                    ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
+                                    var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
                                     _cmdlet.ThrowTerminatingError(errorRecord);
                                 }
 
@@ -564,7 +564,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
+                var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
@@ -637,7 +637,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFilesRelativePath, relativePath)), "FoundDuplicateFilesRelativePath", ErrorCategory.InvalidOperation, null);
+                    var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFilesRelativePath, relativePath)), "FoundDuplicateFilesRelativePath", ErrorCategory.InvalidOperation, null);
                     _cmdlet.ThrowTerminatingError(errorRecord);
                 }
             }
@@ -659,7 +659,7 @@ namespace System.Management.Automation
         internal static Dictionary<string, string> CalculateHashesFromPath(Collection<string> folderPaths, string catalogFilePath, string hashAlgorithm, WildcardPattern[] excludedPatterns)
         {
             // Create a HashTable of file Hashes
-            Dictionary<string, string> fileHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            var fileHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (string folderPath in folderPaths)
             {
@@ -710,10 +710,10 @@ namespace System.Management.Automation
 
             foreach (KeyValuePair<string, string> item in catalogItems)
             {
-                string catalogHashValue = (string)catalogItems[item.Key];
+                var catalogHashValue = (string)catalogItems[item.Key];
                 if (pathItems.ContainsKey(item.Key))
                 {
-                    string folderHashValue = (string)pathItems[item.Key];
+                    var folderHashValue = (string)pathItems[item.Key];
                     if (folderHashValue.Equals(catalogHashValue))
                     {
                         continue;
@@ -745,7 +745,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 Dictionary<string, string> fileHashes = CalculateHashesFromPath(catalogFolders, catalogFilePath, hashAlgorithm, excludedPatterns);
-                CatalogInformation catalog = new CatalogInformation();
+                var catalog = new CatalogInformation();
                 catalog.CatalogItems = catalogHashes;
                 catalog.PathItems = fileHashes;
                 bool status = CompareDictionaries(catalogHashes, fileHashes);
@@ -804,19 +804,19 @@ namespace System.Management.Automation
             {
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_FILE_PATH:
                     {
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileNameOrPathForCatalogMember, pwszLine)), "UnableToFindFileNameOrPathForCatalogMember", ErrorCategory.InvalidOperation, null);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileNameOrPathForCatalogMember, pwszLine)), "UnableToFindFileNameOrPathForCatalogMember", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA:
                     {
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, pwszLine)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, pwszLine)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND:
                     {
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileToHash, pwszLine)), "UnableToFindFileToHash", ErrorCategory.InvalidOperation, null);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileToHash, pwszLine)), "UnableToFindFileToHash", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
@@ -826,7 +826,7 @@ namespace System.Management.Automation
                 case NativeConstants.CRYPTCAT_E_CDF_UNSUPPORTED: break;
                 case NativeConstants.CRYPTCAT_E_CDF_DUPLICATE:
                     {
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFileMemberInCatalog, pwszLine)), "FoundDuplicateFileMemberInCatalog", ErrorCategory.InvalidOperation, null);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFileMemberInCatalog, pwszLine)), "FoundDuplicateFileMemberInCatalog", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }

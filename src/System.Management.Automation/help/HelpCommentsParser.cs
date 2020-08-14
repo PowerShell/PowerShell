@@ -33,7 +33,7 @@ namespace System.Management.Automation
 
         private HelpCommentsParser(CommandInfo commandInfo, List<string> parameterDescriptions)
         {
-            FunctionInfo fi = commandInfo as FunctionInfo;
+            var fi = commandInfo as FunctionInfo;
             if (fi != null)
             {
                 _scriptBlock = fi.ScriptBlock;
@@ -41,7 +41,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
+                var si = commandInfo as ExternalScriptInfo;
                 if (si != null)
                 {
                     _scriptBlock = si.ScriptBlock;
@@ -587,7 +587,7 @@ namespace System.Management.Automation
         {
             bool capturing = false;
             int countLeadingWS = 0;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             const char nbsp = (char)0xA0;
 
             for (i++; i < commentLines.Count; i++)
@@ -643,7 +643,7 @@ namespace System.Management.Automation
             }
 
             string helpFileToLoad = _sections.MamlHelpFile;
-            Collection<string> searchPaths = new Collection<string>();
+            var searchPaths = new Collection<string>();
             string scriptFile = ((IScriptCommandInfo)commandInfo).ScriptBlock.File;
             if (!string.IsNullOrEmpty(scriptFile))
             {
@@ -667,7 +667,7 @@ namespace System.Management.Automation
             }
 
             // get the PSSession object from the variable specified in the comments
-            IScriptCommandInfo scriptCommandInfo = (IScriptCommandInfo)commandInfo;
+            var scriptCommandInfo = (IScriptCommandInfo)commandInfo;
             SessionState sessionState = scriptCommandInfo.ScriptBlock.SessionState;
             object runspaceInfoAsObject = sessionState.PSVariable.GetValue(_sections.RemoteHelpRunspace);
             PSSession runspaceInfo;
@@ -700,7 +700,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            List<string> commentLines = new List<string>();
+            var commentLines = new List<string>();
             foreach (Token comment in comments)
             {
                 CollectCommentText(comment, commentLines);
@@ -824,7 +824,7 @@ namespace System.Management.Automation
 
         internal static CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
         {
-            HelpCommentsParser helpCommentsParser = new HelpCommentsParser(parameterDescriptions);
+            var helpCommentsParser = new HelpCommentsParser(parameterDescriptions);
             helpCommentsParser.AnalyzeCommentBlock(comments);
             return helpCommentsParser._sections;
         }
@@ -836,7 +836,7 @@ namespace System.Management.Automation
                                                     bool dontSearchOnRemoteComputer,
                                                     out string helpFile, out string helpUriFromDotLink)
         {
-            HelpCommentsParser helpCommentsParser = new HelpCommentsParser(commandInfo, parameterDescriptions);
+            var helpCommentsParser = new HelpCommentsParser(commandInfo, parameterDescriptions);
             helpCommentsParser.AnalyzeCommentBlock(comments);
 
             if (helpCommentsParser._sections.Links != null && helpCommentsParser._sections.Links.Count != 0)
@@ -940,7 +940,7 @@ namespace System.Management.Automation
             if ((commentBlock == null) || (commentBlock.Count == 0))
                 return false;
 
-            HelpCommentsParser generator = new HelpCommentsParser();
+            var generator = new HelpCommentsParser();
             return generator.AnalyzeCommentBlock(commentBlock);
         }
 

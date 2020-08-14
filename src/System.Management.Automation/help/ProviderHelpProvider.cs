@@ -81,7 +81,7 @@ namespace System.Management.Automation
                 //         he may mean to search for provider help.
                 if (this.HelpSystem.LastHelpCategory == HelpCategory.Provider)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e, "ProviderLoadError", ErrorCategory.ResourceUnavailable, null);
+                    var errorRecord = new ErrorRecord(e, "ProviderLoadError", ErrorCategory.ResourceUnavailable, null);
                     errorRecord.ErrorDetails = new ErrorDetails(typeof(ProviderHelpProvider).Assembly, "HelpErrors", "ProviderLoadError", helpRequest.Target, e.Message);
                     this.HelpSystem.LastErrors.Add(errorRecord);
                 }
@@ -169,7 +169,7 @@ namespace System.Management.Automation
             //    of the mshsnapin
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
-            Collection<string> searchPaths = new Collection<string>();
+            var searchPaths = new Collection<string>();
             if (mshSnapInInfo != null)
             {
                 Diagnostics.Assert(!string.IsNullOrEmpty(mshSnapInInfo.ApplicationBase),
@@ -359,7 +359,7 @@ namespace System.Management.Automation
 
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            ProviderCommandHelpInfo providerCommandHelpInfo = new ProviderCommandHelpInfo(
+            var providerCommandHelpInfo = new ProviderCommandHelpInfo(
                 helpInfo, helpRequest.ProviderContext);
             yield return providerCommandHelpInfo;
         }

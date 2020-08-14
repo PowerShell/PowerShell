@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e) // Catch-all OK. 3rd party callout
                         {
-                            ProviderInvocationException providerException =
+                            var providerException =
                                new ProviderInvocationException(
                                    "ProviderContentWriteError",
                                    SessionStateStrings.ProviderContentWriteError,
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Create the results array
 
-            List<ContentHolder> results = new List<ContentHolder>();
+            var results = new List<ContentHolder>();
 
             foreach (PathInfo pathInfo in pathInfos)
             {
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (writers.Count == 1 && writers[0] != null)
                     {
-                        ContentHolder holder =
+                        var holder =
                             new ContentHolder(pathInfo, null, writers[0]);
 
                         results.Add(holder);

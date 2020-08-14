@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// </summary>
         private ProviderHelpInfo(XmlNode xmlNode)
         {
-            MamlNode mamlNode = new MamlNode(xmlNode);
+            var mamlNode = new MamlNode(xmlNode);
             _fullHelpObject = mamlNode.PSObject;
             this.Errors = mamlNode.Errors;
 
@@ -95,7 +95,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                IList descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
+                var descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
                 if (descriptionItems == null || descriptionItems.Count == 0)
                 {
                     return string.Empty;
@@ -104,7 +104,7 @@ namespace System.Management.Automation
                 // I think every provider description should atleast have 400 characters...
                 // so starting with this assumption..I did an average of all the help content
                 // available at the time of writing this code and came up with this number.
-                Text.StringBuilder result = new Text.StringBuilder(400);
+                var result = new Text.StringBuilder(400);
                 foreach (object descriptionItem in descriptionItems)
                 {
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
@@ -349,7 +349,7 @@ namespace System.Management.Automation
         /// <returns>The providerHelpInfo object created.</returns>
         internal static ProviderHelpInfo Load(XmlNode xmlNode)
         {
-            ProviderHelpInfo providerHelpInfo = new ProviderHelpInfo(xmlNode);
+            var providerHelpInfo = new ProviderHelpInfo(xmlNode);
 
             if (string.IsNullOrEmpty(providerHelpInfo.Name))
                 return null;

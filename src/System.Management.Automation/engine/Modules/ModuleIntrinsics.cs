@@ -68,8 +68,8 @@ namespace System.Management.Automation
             if (++ModuleNestingDepth > MaxModuleNestingDepth)
             {
                 string message = StringUtil.Format(Modules.ModuleTooDeeplyNested, path, MaxModuleNestingDepth);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "Modules_ModuleTooDeeplyNested",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "Modules_ModuleTooDeeplyNested",
                     ErrorCategory.InvalidOperation, path);
                 // NOTE: this call will throw
                 cmdlet.ThrowTerminatingError(er);
@@ -157,7 +157,7 @@ namespace System.Management.Automation
 
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = _context.EngineSessionState;
-            PSModuleInfo module = new PSModuleInfo(name, path, _context, ss);
+            var module = new PSModuleInfo(name, path, _context, ss);
             ss.Internal.Module = module;
             module.PrivateData = privateData;
 
@@ -170,7 +170,7 @@ namespace System.Management.Automation
 
                 // Build the scriptblock at this point so the references to the module
                 // context are correct...
-                ExternalScriptInfo scriptInfo = moduleCode as ExternalScriptInfo;
+                var scriptInfo = moduleCode as ExternalScriptInfo;
                 if (scriptInfo != null)
                 {
                     sb = scriptInfo.ScriptBlock;
@@ -202,7 +202,7 @@ namespace System.Management.Automation
                 sb.SessionStateInternal = ss.Internal;
                 module.LanguageMode = sb.LanguageMode;
 
-                InvocationInfo invocationInfo = new InvocationInfo(scriptInfo, scriptPosition);
+                var invocationInfo = new InvocationInfo(scriptInfo, scriptPosition);
 
                 // Save the module string
                 module._definitionExtent = sb.Ast.Extent;
@@ -216,11 +216,11 @@ namespace System.Management.Automation
                 Diagnostics.Assert(_context.SessionState.Internal.CurrentScope.LocalsTuple == null,
                                     "No locals tuple should have been created yet.");
 
-                List<object> resultList = new List<object>();
+                var resultList = new List<object>();
 
                 try
                 {
-                    Pipe outputPipe = new Pipe(resultList);
+                    var outputPipe = new Pipe(resultList);
 
                     // And run the scriptblock...
                     sb.InvokeWithPipe(
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// <returns>A new scriptblock.</returns>
         internal ScriptBlock CreateBoundScriptBlock(ExecutionContext context, ScriptBlock sb, bool linkToGlobal)
         {
-            PSModuleInfo module = new PSModuleInfo(context, linkToGlobal);
+            var module = new PSModuleInfo(context, linkToGlobal);
             return module.NewBoundScriptBlock(sb, context);
         }
 
@@ -287,7 +287,7 @@ namespace System.Management.Automation
         private List<PSModuleInfo> GetModuleCore(string[] patterns, bool all, bool exactMatch)
         {
             string targetModuleName = null;
-            List<WildcardPattern> wcpList = new List<WildcardPattern>();
+            var wcpList = new List<WildcardPattern>();
 
             if (exactMatch)
             {
@@ -307,7 +307,7 @@ namespace System.Management.Automation
                 }
             }
 
-            List<PSModuleInfo> modulesMatched = new List<PSModuleInfo>();
+            var modulesMatched = new List<PSModuleInfo>();
 
             if (all)
             {
@@ -325,7 +325,7 @@ namespace System.Management.Automation
             {
                 // Create a joint list of local and global modules. Only report a module once.
                 // Local modules are reported before global modules...
-                Dictionary<string, bool> found = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                var found = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
                 foreach (var pair in _context.EngineSessionState.ModuleTable)
                 {
                     string path = pair.Key;
@@ -363,7 +363,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
         {
-            List<PSModuleInfo> modulesMatched = new List<PSModuleInfo>();
+            var modulesMatched = new List<PSModuleInfo>();
 
             if (all)
             {
@@ -385,7 +385,7 @@ namespace System.Management.Automation
                 {
                     // Create a joint list of local and global modules. Only report a module once.
                     // Local modules are reported before global modules...
-                    Dictionary<string, bool> found = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                    var found = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
                     foreach (var pair in _context.EngineSessionState.ModuleTable)
                     {
                         string path = pair.Key;
@@ -705,7 +705,7 @@ namespace System.Management.Automation
 #if UNIX
             StringComparison strcmp = StringComparison.Ordinal;
 #else
-            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+            var strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
             // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
@@ -873,12 +873,12 @@ namespace System.Management.Automation
                         var expFeatureList = new List<ExperimentalFeature>();
                         foreach (Hashtable feature in features)
                         {
-                            string featureName = feature["Name"] as string;
+                            var featureName = feature["Name"] as string;
                             if (string.IsNullOrEmpty(featureName)) { continue; }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
-                                string featureDescription = feature["Description"] as string;
+                                var featureDescription = feature["Description"] as string;
                                 expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, manifestPath,
                                                                            ExperimentalFeature.IsEnabled(featureName)));
                             }
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(basePath != null, "basePath should not be null according to contract of the function");
             Diagnostics.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
 
-            StringBuilder result = new StringBuilder(basePath);
+            var result = new StringBuilder(basePath);
 
             if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
             {
@@ -1332,7 +1332,7 @@ namespace System.Management.Automation
         {
             string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
 
-            HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             if (!string.IsNullOrWhiteSpace(modulePathString))
             {
@@ -1432,7 +1432,7 @@ namespace System.Management.Automation
             if ((input == null) || (input.Count == 0))
             { return; }
 
-            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
+            var output = new List<FunctionInfo>(input.Count);
             foreach (var fnInfo in input)
             {
                 if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation
 
             bool firstItem = true;
             string previousKey = null;
-            List<T> output = new List<T>(input.Count);
+            var output = new List<T>(input.Count);
             foreach (T item in input)
             {
                 string currentKey = keyGetter(item);
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation
                                 string message = StringUtil.Format(Modules.ExportingCmdlet, element.Name);
                                 cmdlet.WriteVerbose(message);
                                 // Copy the cmdlet info, changing the module association to be the current module...
-                                CmdletInfo exportedCmdlet = new CmdletInfo(element.Name, element.ImplementingType,
+                                var exportedCmdlet = new CmdletInfo(element.Name, element.ImplementingType,
                                     element.HelpFile, null, element.Context)
                                 { Module = sessionState.Module };
                                 Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting cmdlets");
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation
                             string message = StringUtil.Format(Modules.ExportingCmdlet, entry.Key);
                             cmdlet.WriteVerbose(message);
                             // Copy the cmdlet info, changing the module association to be the current module...
-                            CmdletInfo exportedCmdlet = new CmdletInfo(cmdletToImport.Name, cmdletToImport.ImplementingType,
+                            var exportedCmdlet = new CmdletInfo(cmdletToImport.Name, cmdletToImport.ImplementingType,
                                 cmdletToImport.HelpFile, null, cmdletToImport.Context)
                             { Module = sessionState.Module };
                             Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting cmdlets");

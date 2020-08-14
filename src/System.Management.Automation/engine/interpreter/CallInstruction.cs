@@ -221,7 +221,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         private static CallInstruction SlowCreate(MethodInfo info, ParameterInfo[] pis)
         {
-            List<Type> types = new List<Type>();
+            var types = new List<Type>();
             if (!info.IsStatic) types.Add(info.DeclaringType);
             foreach (ParameterInfo pi in pis)
             {
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Interpreter
 
         private static object[] GetNonStaticArgs(object[] args)
         {
-            object[] newArgs = new object[args.Length - 1];
+            var newArgs = new object[args.Length - 1];
             for (int i = 0; i < newArgs.Length; i++)
             {
                 newArgs[i] = args[i + 1];
@@ -341,7 +341,7 @@ namespace System.Management.Automation.Interpreter
         public sealed override int Run(InterpretedFrame frame)
         {
             int first = frame.StackIndex - _argumentCount;
-            object[] args = new object[_argumentCount];
+            var args = new object[_argumentCount];
             for (int i = 0; i < args.Length; i++)
             {
                 args[i] = frame.Data[first + i];

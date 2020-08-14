@@ -31,7 +31,7 @@ namespace System.Management.Automation
         {
             HelpCategory = helpCategory;
 
-            MamlNode mamlNode = new MamlNode(xmlNode);
+            var mamlNode = new MamlNode(xmlNode);
             _fullHelpObject = mamlNode.PSObject;
 
             this.Errors = mamlNode.Errors;
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         /// <returns>MamlCommandHelpInfo object created.</returns>
         internal static MamlClassHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
         {
-            MamlClassHelpInfo mamlClassHelpInfo = new MamlClassHelpInfo(xmlNode, helpCategory);
+            var mamlClassHelpInfo = new MamlClassHelpInfo(xmlNode, helpCategory);
 
             if (string.IsNullOrEmpty(mamlClassHelpInfo.Name))
                 return null;
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// <returns>MamlClassHelpInfo object.</returns>
         internal MamlClassHelpInfo Copy()
         {
-            MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), this.HelpCategory);
+            var result = new MamlClassHelpInfo(_fullHelpObject.Copy(), this.HelpCategory);
             return result;
         }
 
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         /// <returns>MamlClassHelpInfo.</returns>
         internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
         {
-            MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
+            var result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
             result.FullHelp.Properties["Category"].Value = newCategoryToUse;
             return result;
         }

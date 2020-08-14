@@ -522,7 +522,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal DComSessionOptions CreateDComSessionOptions()
         {
-            DComSessionOptions dcomoptions = new DComSessionOptions();
+            var dcomoptions = new DComSessionOptions();
             if (this.impersonationSet)
             {
                 dcomoptions.Impersonation = this.Impersonation;
@@ -562,7 +562,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal WSManSessionOptions CreateWSMANSessionOptions()
         {
-            WSManSessionOptions wsmanoptions = new WSManSessionOptions();
+            var wsmanoptions = new WSManSessionOptions();
             if (this.noEncryptionSet)
             {
                 wsmanoptions.NoEncryption = true;
@@ -638,7 +638,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (!string.IsNullOrWhiteSpace(this.ProxyCertificateThumbprint))
             {
-                CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.ProxyCertificateThumbprint);
+                var credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.ProxyCertificateThumbprint);
                 wsmanoptions.AddProxyCredentials(credentials);
             }
 

@@ -154,7 +154,7 @@ namespace System.Management.Automation.ComInterop
             _keywordArgNames = _callInfo.ArgumentNames.ToArray();
             _totalExplicitArgs = _args.Length;
 
-            Type[] marshalArgTypes = new Type[_args.Length];
+            var marshalArgTypes = new Type[_args.Length];
 
             // We already tested the instance, so no need to test it again
             for (int i = 0; i < _args.Length; i++)
@@ -178,7 +178,7 @@ namespace System.Management.Automation.ComInterop
 
         private Expression CreateScope(Expression expression)
         {
-            List<ParameterExpression> vars = new List<ParameterExpression>();
+            var vars = new List<ParameterExpression>();
             AddNotNull(vars, _dispatchObject);
             AddNotNull(vars, _dispatchPointer);
             AddNotNull(vars, _dispId);
@@ -200,7 +200,7 @@ namespace System.Management.Automation.ComInterop
             ParameterExpression argErr = Expression.Variable(typeof(uint), "argErr");
             ParameterExpression hresult = Expression.Variable(typeof(int), "hresult");
 
-            List<Expression> tryStatements = new List<Expression>();
+            var tryStatements = new List<Expression>();
 
             if (_keywordArgNames.Length > 0)
             {
@@ -301,7 +301,7 @@ namespace System.Management.Automation.ComInterop
 
             //
             // ComRuntimeHelpers.CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
-            List<Expression> args = new List<Expression>();
+            var args = new List<Expression>();
             foreach (Expression parameter in parameters)
             {
                 args.Add(Expression.TypeAs(parameter, typeof(object)));
@@ -346,7 +346,7 @@ namespace System.Management.Automation.ComInterop
 
         private Expression GenerateFinallyBlock()
         {
-            List<Expression> finallyStatements = new List<Expression>
+            var finallyStatements = new List<Expression>
             {
                 //
                 // UnsafeMethods.IUnknownRelease(dispatchPointer);
@@ -405,7 +405,7 @@ namespace System.Management.Automation.ComInterop
         {
             Debug.Assert(_varEnumSelector.VariantBuilders.Length == _totalExplicitArgs);
 
-            List<Expression> exprs = new List<Expression>
+            var exprs = new List<Expression>
             {
                 //
                 // _dispId = ((DispCallable)this).ComMethodDesc.DispId;

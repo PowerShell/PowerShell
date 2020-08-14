@@ -99,7 +99,7 @@ namespace System.Management.Automation
             {
                 if (entry.Key is string)
                 {
-                    string key = entry.Key as string;
+                    var key = entry.Key as string;
                     bool isAdd = key.Equals(AddKey, StringComparison.OrdinalIgnoreCase);
                     bool isRemove = key.Equals(RemoveKey, StringComparison.OrdinalIgnoreCase);
                     bool isReplace = key.Equals(ReplaceKey, StringComparison.OrdinalIgnoreCase);
@@ -219,7 +219,7 @@ namespace System.Management.Automation
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);
 
-            IList list = collectionToUpdate as IList;
+            var list = collectionToUpdate as IList;
             if (list == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
@@ -230,7 +230,7 @@ namespace System.Management.Automation
 
         internal Hashtable ToHashtable()
         {
-            Hashtable result = new Hashtable(2);
+            var result = new Hashtable(2);
 
             if (_itemsToAdd.Count > 0)
             {

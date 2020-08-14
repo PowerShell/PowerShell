@@ -224,7 +224,7 @@ namespace System.Management.Automation
 
             // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
-            Uri uri = new Uri(filePath);
+            var uri = new Uri(filePath);
             if (uri.IsUnc)
             {
                 if (uri.IsLoopback)
@@ -246,7 +246,7 @@ namespace System.Management.Automation
             }
 
             string root = Path.GetPathRoot(filePath);
-            DriveInfo drive = new DriveInfo(root);
+            var drive = new DriveInfo(root);
             switch (drive.DriveType)
             {
                 case DriveType.NoRootDirectory:
@@ -271,7 +271,7 @@ namespace System.Management.Automation
             }
 
             // If we successfully get the zone data stream, try to read the ZoneId information
-            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
+            using (var zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
             {
                 string line = null;
                 bool zoneTransferMatched = false;
@@ -335,7 +335,7 @@ namespace System.Management.Automation
             TimeZoneInfo curZone = TimeZoneInfo.Local;
             TimeSpan tickOffset = curZone.GetUtcOffset(date);
             long OffsetMins = (tickOffset.Ticks / TimeSpan.TicksPerMinute);
-            IFormatProvider frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(int));
+            var frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(int));
 
             // If the offset is more than that what can be specified in DMTF format, then
             // convert the date to UniversalTime
@@ -366,7 +366,7 @@ namespace System.Management.Automation
 
             // Construct a DateTime with with the precision to Second as same as the passed DateTime and so get
             // the ticks difference so that the microseconds can be calculated
-            DateTime dtTemp = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, 0);
+            var dtTemp = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, 0);
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;
 
             // fill the microseconds field

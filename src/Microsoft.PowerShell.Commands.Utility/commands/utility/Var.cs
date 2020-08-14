@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         {
             wasFiltered = false;
 
-            List<PSVariable> result = new List<PSVariable>();
+            var result = new List<PSVariable>();
 
             if (string.IsNullOrEmpty(name))
             {
@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!matchFound && !wasFiltered)
                 {
-                    ItemNotFoundException itemNotFound =
+                    var itemNotFound =
                         new ItemNotFoundException(
                             varName,
                             "VariableNotFound",
@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (varFound != null)
                 {
-                    SessionStateException sessionStateException =
+                    var sessionStateException =
                         new SessionStateException(
                             Name,
                             SessionStateCategory.Variable,
@@ -519,7 +519,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(target, action))
             {
-                PSVariable newVariable = new PSVariable(Name, Value, Option);
+                var newVariable = new PSVariable(Name, Value, Option);
 
                 if (_visibility != null)
                 {
@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // First look for existing variables to set.
 
-                List<PSVariable> matchingVariables = new List<PSVariable>();
+                var matchingVariables = new List<PSVariable>();
 
                 bool wasFiltered = false;
 
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        ScopedItemOptions newOptions = ScopedItemOptions.None;
+                        var newOptions = ScopedItemOptions.None;
 
                         if (!string.IsNullOrEmpty(Scope) &&
                             string.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
@@ -869,7 +869,7 @@ namespace Microsoft.PowerShell.Commands
                             newVarValue = null;
                         }
 
-                        PSVariable varToSet =
+                        var varToSet =
                             new PSVariable(
                                 varName,
                                 newVarValue,
@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands
                     // Since the variable wasn't found and no glob
                     // characters were specified, write an error.
 
-                    ItemNotFoundException itemNotFound =
+                    var itemNotFound =
                         new ItemNotFoundException(
                             varName,
                             "VariableNotFound",
@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell.Commands
                     // Since the variable wasn't found and no glob
                     // characters were specified, write an error.
 
-                    ItemNotFoundException itemNotFound =
+                    var itemNotFound =
                         new ItemNotFoundException(
                             varName,
                             "VariableNotFound",

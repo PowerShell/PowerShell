@@ -118,7 +118,7 @@ namespace System.Management.Automation.Configuration
                 throw new FileNotFoundException(value);
             }
 
-            FileInfo info = new FileInfo(value);
+            var info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
         }
@@ -476,8 +476,8 @@ namespace System.Management.Automation.Configuration
                 // UTF8, BOM detection, and bufferSize are the same as the basic stream constructor.
                 // The most important parameter here is the last one, which keeps underlying stream open after StreamReader is disposed
                 // so that it can be reused for the subsequent write operation.
-                using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
-                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                using (var streamRdr = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
+                using (var jsonReader = new JsonTextReader(streamRdr))
                 {
                     // Safely determines whether there is content to read from the file
                     bool isReadSuccess = jsonReader.Read();
@@ -530,8 +530,8 @@ namespace System.Management.Automation.Configuration
                 fs.Seek(0, SeekOrigin.Begin);
 
                 // Update the file with new content
-                using (StreamWriter streamWriter = new StreamWriter(fs))
-                using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
+                using (var streamWriter = new StreamWriter(fs))
+                using (var jsonWriter = new JsonTextWriter(streamWriter))
                 {
                     // The entire document exists within the root JObject.
                     // I just need to write that object to produce the document.

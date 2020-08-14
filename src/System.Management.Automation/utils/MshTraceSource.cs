@@ -206,7 +206,7 @@ namespace System.Management.Automation
                                     "{0,-16}",
                                     name);
             */
-            PSTraceSource result =
+            var result =
                 new PSTraceSource(
                     fullName,
                     name,

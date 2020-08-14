@@ -37,7 +37,7 @@ namespace System.Management.Automation.ComInterop
                     return (ComEventSinksContainer)data;
                 }
 
-                ComEventSinksContainer comEventSinks = new ComEventSinksContainer();
+                var comEventSinks = new ComEventSinksContainer();
                 if (!Marshal.SetComObjectData(rcw, s_comObjectEventSinksKey, comEventSinks))
                 {
                     throw Error.SetComObjectDataFailed();

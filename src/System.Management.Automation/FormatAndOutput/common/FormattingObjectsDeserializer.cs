@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
+            var classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
             if (classId == null)
             {
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return so;
             }
 
-            string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
+            var classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
             if (classId == null)
             {
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_ClassIdInvalid, classId);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                                             PSTraceSource.NewArgumentException(nameof(classId)),
                                             errorId,
                                             ErrorCategory.InvalidData,
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_RecursiveProperty, property);
 
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                                 PSTraceSource.NewArgumentException(nameof(property)),
                                 "FormatObjectDeserializerRecursiveProperty",
                                 ErrorCategory.InvalidData,
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidPropertyType, t.Name, property);
 
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                                 PSTraceSource.NewArgumentException(nameof(property)),
                                 "FormatObjectDeserializerInvalidPropertyType",
                                 ErrorCategory.InvalidData,
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>String out of the MsObject.</returns>
         internal string DeserializeStringMemberVariable(PSObject so, string property)
         {
-            string val = (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
+            var val = (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
 
             // expand TAB's
             if (string.IsNullOrEmpty(val))
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_NullDataMember, name);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                                             new ArgumentException(),
                                             "FormatObjectDeserializerNullDataMember",
                                             ErrorCategory.InvalidData,
@@ -396,12 +396,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // look for the property that defines the type of object
-            string classId = FormatObjectDeserializer.GetProperty(so, FormatInfoData.classidProperty) as string;
+            var classId = FormatObjectDeserializer.GetProperty(so, FormatInfoData.classidProperty) as string;
             if (classId == null)
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidClassidProperty);
 
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                                                 PSTraceSource.NewArgumentException("classid"),
                                                 "FormatObjectDeserializerInvalidClassidProperty",
                                                 ErrorCategory.InvalidData,
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidClassid, clsid);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                                             e,
                                             "FormatObjectDeserializerInvalidClassid",
                                             ErrorCategory.InvalidData,
@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (object obj in en)
             {
                 FormatInfoData fid = deserializer.DeserializeObject(PSObjectHelper.AsPSObject(obj));
-                T entry = fid as T;
+                var entry = fid as T;
                 deserializer.VerifyDataNotNull(entry, "entry");
                 lst.Add(entry);
             }

@@ -121,7 +121,7 @@ namespace System.Management.Automation.Runspaces
             Collection<PSSnapInTypeAndFormatErrors> PSSnapinFilesCollection,
             Category category)
         {
-            Collection<string> errors = new Collection<string>();
+            var errors = new Collection<string>();
             if (independentErrors != null)
             {
                 foreach (string error in independentErrors)
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            StringBuilder allErrors = new StringBuilder();
+            var allErrors = new StringBuilder();
 
             allErrors.Append('\n');
             foreach (string error in errors)
@@ -163,7 +163,7 @@ namespace System.Management.Automation.Runspaces
                 message = StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatLoadingErrors, allErrors.ToString());
             }
 
-            RuntimeException ex = new RuntimeException(message);
+            var ex = new RuntimeException(message);
             ex.SetErrorId(errorId);
             throw ex;
         }
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            StringBuilder allErrors = new StringBuilder();
+            var allErrors = new StringBuilder();
 
             allErrors.Append('\n');
             foreach (string error in errors)
@@ -198,7 +198,7 @@ namespace System.Management.Automation.Runspaces
                 message = StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatLoadingErrors, allErrors.ToString());
             }
 
-            RuntimeException ex = new RuntimeException(message);
+            var ex = new RuntimeException(message);
             ex.SetErrorId(errorId);
             throw ex;
         }

@@ -253,7 +253,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            WSManHelper helper = new WSManHelper(this);
+            var helper = new WSManHelper(this);
             if (connectionuri != null)
             {
                 try
@@ -345,7 +345,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            WSManHelper helper = new WSManHelper(this);
+            var helper = new WSManHelper(this);
             if (computername == null)
             {
                 computername = "localhost";

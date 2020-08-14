@@ -65,7 +65,7 @@ namespace System.Management.Automation.Remoting
 
         internal static string Unescape(string s)
         {
-            StringBuilder sb = new StringBuilder(s);
+            var sb = new StringBuilder(s);
             sb.Replace("&lt;", "<");
             sb.Replace("&gt;", ">");
             sb.Replace("&quot;", "\"");
@@ -76,13 +76,13 @@ namespace System.Management.Automation.Remoting
 
         internal static PSSessionConfigurationData Create(string configurationData)
         {
-            PSSessionConfigurationData configuration = new PSSessionConfigurationData();
+            var configuration = new PSSessionConfigurationData();
 
             if (string.IsNullOrEmpty(configurationData)) return configuration;
 
             configurationData = Unescape(configurationData);
 
-            XmlReaderSettings readerSettings = new XmlReaderSettings
+            var readerSettings = new XmlReaderSettings
             {
                 CheckCharacters = false,
                 IgnoreComments = true,

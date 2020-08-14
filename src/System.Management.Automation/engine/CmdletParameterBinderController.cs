@@ -402,7 +402,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    ScriptBlock scriptBlockArg = argumentValue as ScriptBlock;
+                    var scriptBlockArg = argumentValue as ScriptBlock;
                     if (scriptBlockArg != null)
                     {
                         // Get the current binding state, and pass it to the ScriptBlock as the argument
@@ -474,10 +474,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         private PSObject WrapBindingState()
         {
-            HashSet<string> boundParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var boundParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             HashSet<string> boundPositionalParameterNames =
                 this.DefaultParameterBinder.CommandLineParameters.CopyBoundPositionalParameters();
-            HashSet<string> boundDefaultParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var boundDefaultParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (string paramName in BoundParameters.Keys)
             {
@@ -489,7 +489,7 @@ namespace System.Management.Automation
                 boundDefaultParameterNames.Add(paramName);
             }
 
-            PSObject result = new PSObject();
+            var result = new PSObject();
             result.Properties.Add(new PSNoteProperty("BoundParameters", boundParameterNames));
             result.Properties.Add(new PSNoteProperty("BoundPositionalParameters", boundPositionalParameterNames));
             result.Properties.Add(new PSNoteProperty("BoundDefaultParameters", boundDefaultParameterNames));
@@ -513,7 +513,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            Dictionary<MergedCompiledCommandParameter, object> result = new Dictionary<MergedCompiledCommandParameter, object>();
+            var result = new Dictionary<MergedCompiledCommandParameter, object>();
 
             uint possibleParameterFlag = uint.MaxValue;
             foreach (var pair in availableParameterValuePairs)
@@ -626,7 +626,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in DefaultParameterValues)
             {
-                string key = entry.Key as string;
+                var key = entry.Key as string;
                 if (key == null)
                 {
                     continue;
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
             {
                 string parameterSetName = BindableParameters.GetParameterSetName(parameterSets);
 
-                ParameterBindingException bindingException =
+                var bindingException =
                     new ParameterBindingException(
                         ErrorCategory.InvalidArgument,
                         this.Command.MyInvocation,
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation
 
                     if (_commandRuntime.IsClosed && _commandRuntime.InputPipe.Empty)
                     {
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                     ErrorCategory.MetadataError,
                                     this.Command.MyInvocation,
@@ -1493,7 +1493,7 @@ namespace System.Management.Automation
                     {
                         if (varargsParameter != null)
                         {
-                            ParameterBindingException bindingException =
+                            var bindingException =
                                 new ParameterBindingException(
                                         ErrorCategory.MetadataError,
                                         this.Command.MyInvocation,
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation
                     {
                         // Accumulate the unbound arguments in to an list and then bind it to the parameter
 
-                        List<object> valueFromRemainingArguments = new List<object>();
+                        var valueFromRemainingArguments = new List<object>();
 
                         foreach (CommandParameterInternal argument in UnboundArguments)
                         {
@@ -1612,7 +1612,7 @@ namespace System.Management.Automation
                 {
                     s_tracer.WriteLine("The Cmdlet supports the dynamic parameter interface");
 
-                    IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
+                    var dynamicParameterCmdlet = this.Command as IDynamicParameters;
 
                     if (dynamicParameterCmdlet != null)
                     {
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation
                             {
                                 if (e is ProviderInvocationException) { throw; }
 
-                                ParameterBindingException bindingException =
+                                var bindingException =
                                     new ParameterBindingException(
                                         e,
                                         ErrorCategory.InvalidArgument,
@@ -1659,7 +1659,7 @@ namespace System.Management.Automation
 
                                 InternalParameterMetadata dynamicParameterMetadata;
 
-                                RuntimeDefinedParameterDictionary runtimeParamDictionary = dynamicParamBindableObject as RuntimeDefinedParameterDictionary;
+                                var runtimeParamDictionary = dynamicParamBindableObject as RuntimeDefinedParameterDictionary;
                                 if (runtimeParamDictionary != null)
                                 {
                                     // Generate the type metadata for the runtime-defined parameters
@@ -1763,12 +1763,12 @@ namespace System.Management.Automation
             int validParameterSetCount,
             bool isPipelineInputExpected)
         {
-            Collection<MergedCompiledCommandParameter> result = new Collection<MergedCompiledCommandParameter>();
+            var result = new Collection<MergedCompiledCommandParameter>();
 
             uint defaultParameterSet = _commandMetadata.DefaultParameterSetFlag;
             uint commandMandatorySets = 0;
 
-            Dictionary<uint, ParameterSetPromptingData> promptingData = new Dictionary<uint, ParameterSetPromptingData>();
+            var promptingData = new Dictionary<uint, ParameterSetPromptingData>();
 
             bool missingAMandatoryParameter = false;
             bool missingAMandatoryParameterInAllSet = false;
@@ -2702,7 +2702,7 @@ namespace System.Management.Automation
 
         private void ThrowAmbiguousParameterSetException(uint parameterSetFlags, MergedCommandParameterMetadata bindableParameters)
         {
-            ParameterBindingException bindingException =
+            var bindingException =
                 new ParameterBindingException(
                     ErrorCategory.InvalidArgument,
                     this.Command.MyInvocation,
@@ -2850,7 +2850,7 @@ namespace System.Management.Automation
 
                         string missingParameters = BuildMissingParamsString(missingMandatoryParameters);
 
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                 ErrorCategory.InvalidArgument,
                                 this.Command.MyInvocation,
@@ -2948,7 +2948,7 @@ namespace System.Management.Automation
 
                 string missingParameters = BuildMissingParamsString(missingMandatoryParameters);
 
-                ParameterBindingException bindingException =
+                var bindingException =
                     new ParameterBindingException(
                         ErrorCategory.InvalidArgument,
                         this.Command.MyInvocation,
@@ -2969,7 +2969,7 @@ namespace System.Management.Automation
 
                 string missingParameters = BuildMissingParamsString(missingMandatoryParameters);
 
-                ParameterBindingException bindingException =
+                var bindingException =
                     new ParameterBindingException(
                         ErrorCategory.InvalidArgument,
                         this.Command.MyInvocation,
@@ -2988,7 +2988,7 @@ namespace System.Management.Automation
 
         internal static string BuildMissingParamsString(Collection<MergedCompiledCommandParameter> missingMandatoryParameters)
         {
-            StringBuilder missingParameters = new StringBuilder();
+            var missingParameters = new StringBuilder();
 
             foreach (MergedCompiledCommandParameter missingParameter in missingMandatoryParameters)
             {
@@ -3001,8 +3001,8 @@ namespace System.Management.Automation
         private Collection<FieldDescription> CreatePromptDataStructures(
             Collection<MergedCompiledCommandParameter> missingMandatoryParameters)
         {
-            StringBuilder usedHotKeys = new StringBuilder();
-            Collection<FieldDescription> fieldDescriptionList = new Collection<FieldDescription>();
+            var usedHotKeys = new StringBuilder();
+            var fieldDescriptionList = new Collection<FieldDescription>();
 
             // See if any of the unbound parameters are mandatory
 
@@ -3011,7 +3011,7 @@ namespace System.Management.Automation
                 ParameterSetSpecificMetadata parameterSetMetadata =
                     parameter.Parameter.GetParameterSetData(_currentParameterSetFlag);
 
-                FieldDescription fDesc = new FieldDescription(parameter.Parameter.Name);
+                var fDesc = new FieldDescription(parameter.Parameter.Name);
 
                 string helpInfo = null;
 
@@ -3072,7 +3072,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(!string.IsNullOrEmpty(parameterName), "parameterName is not set");
             const char hotKeyPrefix = '&';
             bool built = false;
-            StringBuilder label = new StringBuilder(parameterName);
+            var label = new StringBuilder(parameterName);
             string usedHotKeysStr = usedHotKeys.ToString();
 
             for (int i = 0; i < parameterName.Length; i++)
@@ -3301,7 +3301,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < steps; i++)
             {
-                for (CurrentlyBinding currentlyBinding = CurrentlyBinding.ValueFromPipelineNoCoercion; currentlyBinding <= CurrentlyBinding.ValueFromPipelineByPropertyNameWithCoercion; ++currentlyBinding)
+                for (var currentlyBinding = CurrentlyBinding.ValueFromPipelineNoCoercion; currentlyBinding <= CurrentlyBinding.ValueFromPipelineByPropertyNameWithCoercion; ++currentlyBinding)
                 {
                     // The parameterBoundForCurrentlyBindingState will be true as long as there is one parameter gets bound, even if it belongs to AllSet
                     bool parameterBoundForCurrentlyBindingState =
@@ -3681,7 +3681,7 @@ namespace System.Management.Automation
                 CommandParameterInternal argument = delayedScriptBlock.Value._argument;
                 MergedCompiledCommandParameter parameter = delayedScriptBlock.Key;
 
-                ScriptBlock script = argument.ArgumentValue as ScriptBlock;
+                var script = argument.ArgumentValue as ScriptBlock;
 
                 Diagnostics.Assert(
                     script != null,
@@ -3713,7 +3713,7 @@ namespace System.Management.Automation
 
                 if (error != null)
                 {
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             error,
                             ErrorCategory.InvalidArgument,
@@ -3731,7 +3731,7 @@ namespace System.Management.Automation
 
                 if (output == null || output.Count == 0)
                 {
-                    ParameterBindingException bindingException =
+                    var bindingException =
                         new ParameterBindingException(
                             null,
                             ErrorCategory.InvalidArgument,
@@ -3856,7 +3856,7 @@ namespace System.Management.Automation
             }
             catch (GetValueException getValueException)
             {
-                ParameterBindingParameterDefaultValueException bindingError =
+                var bindingError =
                     new ParameterBindingParameterDefaultValueException(
                         getValueException,
                         ErrorCategory.ReadError,
@@ -3951,7 +3951,7 @@ namespace System.Management.Automation
                 if (_shouldProcessParameterBinder == null)
                 {
                     // Construct a new instance of the should process parameters object
-                    ShouldProcessParameters shouldProcessParameters = new ShouldProcessParameters(_commandRuntime);
+                    var shouldProcessParameters = new ShouldProcessParameters(_commandRuntime);
 
                     // Create reflection binder for this object
 
@@ -3978,7 +3978,7 @@ namespace System.Management.Automation
                 if (_pagingParameterBinder == null)
                 {
                     // Construct a new instance of the should process parameters object
-                    PagingParameters pagingParameters = new PagingParameters(_commandRuntime);
+                    var pagingParameters = new PagingParameters(_commandRuntime);
 
                     // Create reflection binder for this object
 
@@ -4005,7 +4005,7 @@ namespace System.Management.Automation
                 if (_transactionParameterBinder == null)
                 {
                     // Construct a new instance of the transactions parameters object
-                    TransactionParameters transactionParameters = new TransactionParameters(_commandRuntime);
+                    var transactionParameters = new TransactionParameters(_commandRuntime);
 
                     // Create reflection binder for this object
 
@@ -4032,7 +4032,7 @@ namespace System.Management.Automation
                 if (_commonParametersBinder == null)
                 {
                     // Construct a new instance of the user feedback parameters object
-                    CommonParameters commonParameters = new CommonParameters(_commandRuntime);
+                    var commonParameters = new CommonParameters(_commandRuntime);
 
                     // Create reflection binder for this object
 
@@ -4225,7 +4225,7 @@ namespace System.Management.Automation
                     if (error != null)
                     {
                         Type specifiedType = (argumentToBind.ArgumentValue == null) ? null : argumentToBind.ArgumentValue.GetType();
-                        ParameterBindingException bindingException =
+                        var bindingException =
                             new ParameterBindingException(
                                 error,
                                 ErrorCategory.WriteError,
@@ -4578,7 +4578,7 @@ namespace System.Management.Automation
                 index++;
             }
 
-            StringBuilder builder = new StringBuilder(string.Empty);
+            var builder = new StringBuilder(string.Empty);
             for (; index < key.Length; index++)
             {
                 if (quoteChar != '\0')

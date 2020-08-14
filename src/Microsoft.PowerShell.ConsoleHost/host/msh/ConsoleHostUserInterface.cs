@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell
                 result = ReadLineSafe(true, PrintToken);
             }
 
-            SecureString secureResult = result as SecureString;
+            var secureResult = result as SecureString;
             System.Management.Automation.Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
 
             return secureResult;
@@ -254,8 +254,8 @@ namespace Microsoft.PowerShell
             string printTokenString = printToken.HasValue ?
                 printToken.ToString() :
                 null;
-            SecureString secureResult = new SecureString();
-            StringBuilder result = new StringBuilder();
+            var secureResult = new SecureString();
+            var result = new StringBuilder();
 #if UNIX
             bool treatControlCAsInput = Console.TreatControlCAsInput;
 #else
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell
                     if (string.IsNullOrEmpty(key) || (char)3 == key[0])
 #endif
                     {
-                        PipelineStoppedException e = new PipelineStoppedException();
+                        var e = new PipelineStoppedException();
                         throw e;
                     }
 #if UNIX
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell
 
         internal List<string> WrapText(string text, int maxWidthInBufferCells)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             List<Word> words = ChopTextIntoWords(text, maxWidthInBufferCells);
             if (words.Count < 1)
@@ -875,7 +875,7 @@ namespace Microsoft.PowerShell
             IEnumerator<Word> e = words.GetEnumerator();
             bool valid = false;
             int cellCounter = 0;
-            StringBuilder line = new StringBuilder();
+            var line = new StringBuilder();
             string l = null;
 
             do
@@ -991,7 +991,7 @@ namespace Microsoft.PowerShell
 
         internal List<Word> ChopTextIntoWords(string text, int maxWidthInBufferCells)
         {
-            List<Word> result = new List<Word>();
+            var result = new List<Word>();
 
             if (string.IsNullOrEmpty(text))
             {
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell
 
                     // add a nl word
 
-                    Word w = new Word();
+                    var w = new Word();
                     w.Flags = WordFlags.IsNewline;
                     result.Add(w);
 
@@ -1109,7 +1109,7 @@ namespace Microsoft.PowerShell
             while (startIndex < endIndex)
             {
                 int i = Math.Min(endIndex, startIndex + maxWidthInBufferCells);
-                Word w = new Word();
+                var w = new Word();
                 if (isWhitespace)
                 {
                     w.Flags = WordFlags.IsWhitespace;
@@ -1142,7 +1142,7 @@ namespace Microsoft.PowerShell
 
         internal string WrapToCurrentWindowWidth(string text)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             // we leave a 1-cell margin on the end because if the very last character butts up against the
             // edge of the screen buffer, then the console will wrap the line.
@@ -1316,7 +1316,7 @@ namespace Microsoft.PowerShell
                 // We allow only one thread at a time to update the progress state.)
                 if (_parent.ErrorFormat == Serialization.DataFormat.XML)
                 {
-                    PSObject obj = new PSObject();
+                    var obj = new PSObject();
                     obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
                     obj.Properties.Add(new PSNoteProperty("Record", record));
                     _parent.ErrorSerializer.Serialize(obj, "progress");
@@ -1838,7 +1838,7 @@ namespace Microsoft.PowerShell
         /// <returns></returns>
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
-            Rectangle region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);
+            var region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);
             BufferCell[,] content = RawUI.GetBufferContents(region);
 
             for (int index = 0, column = 0; column <= cursorPosition.X; index++)
@@ -1872,7 +1872,7 @@ namespace Microsoft.PowerShell
                 return input;
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (char c in input)
             {
                 if (c != '\0')
@@ -1897,7 +1897,7 @@ namespace Microsoft.PowerShell
             string input = null;
             string lastInput = string.Empty;
 
-            ReadLineResult rlResult = ReadLineResult.endedOnEnter;
+            var rlResult = ReadLineResult.endedOnEnter;
 
 #if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();

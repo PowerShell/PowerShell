@@ -382,7 +382,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>DebugPreference.</returns>
         private static DebugPreference CreateDebugPreference(string[] AppDomainNames)
         {
-            DebugPreference DebugPreference = new DebugPreference();
+            var DebugPreference = new DebugPreference();
             DebugPreference.AppDomainNames = AppDomainNames;
             return DebugPreference;
         }
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Runspaces
             DebugPreference processDebugPreference = null;
             if (debugPreference != null)
             {
-                PSObject debugPreferencePsObject = debugPreference as PSObject;
+                var debugPreferencePsObject = debugPreference as PSObject;
                 if (debugPreferencePsObject != null)
                 {
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
@@ -601,7 +601,7 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 // Open runspace in another thread
-                Thread asyncThread = new Thread(new ThreadStart(this.OpenThreadProc));
+                var asyncThread = new Thread(new ThreadStart(this.OpenThreadProc));
 
                 asyncThread.Start();
             }
@@ -745,7 +745,7 @@ namespace System.Management.Automation.Runspaces
         {
             Dbg.Assert(exception != null, "Caller should validate the parameter");
 
-            LogContext logContext = new LogContext();
+            var logContext = new LogContext();
             logContext.EngineVersion = Version.ToString();
             logContext.HostId = Host.InstanceId.ToString();
             logContext.HostName = Host.Name;
@@ -788,7 +788,7 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 // Do close asynchronously
-                Thread asyncThread = new Thread(new ThreadStart(this.CloseThreadProc));
+                var asyncThread = new Thread(new ThreadStart(this.CloseThreadProc));
 
                 asyncThread.Start();
             }
@@ -875,7 +875,7 @@ namespace System.Management.Automation.Runspaces
             // runspace repository.
             CloseOrDisconnectAllRemoteRunspaces(() =>
                 {
-                    List<RemoteRunspace> runspaces = new List<RemoteRunspace>();
+                    var runspaces = new List<RemoteRunspace>();
                     foreach (PSSession psSession in this.RunspaceRepository.Runspaces)
                     {
                         runspaces.Add(psSession.Runspace as RemoteRunspace);
@@ -947,9 +947,9 @@ namespace System.Management.Automation.Runspaces
             if (runspaces.Count == 0) { return; }
 
             // whether the close of all remoterunspaces completed
-            using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
+            using (var remoteRunspaceCloseCompleted = new ManualResetEvent(false))
             {
-                ThrottleManager throttleManager = new ThrottleManager();
+                var throttleManager = new ThrottleManager();
                 throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
                 {
                     remoteRunspaceCloseCompleted.Set();
@@ -974,11 +974,11 @@ namespace System.Management.Automation.Runspaces
         {
             if (JobRepository.Jobs.Count == 0) { return; }
 
-            List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
+            var disconnectRunspaces = new List<RemoteRunspace>();
 
-            using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
+            using (var jobsStopCompleted = new ManualResetEvent(false))
             {
-                ThrottleManager throttleManager = new ThrottleManager();
+                var throttleManager = new ThrottleManager();
                 throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
                 {
                     jobsStopCompleted.Set();
@@ -1394,7 +1394,7 @@ namespace System.Management.Automation.Runspaces
         {
             _job.StateChanged -= HandleJobStateChanged;
 
-            OperationStateEventArgs operationStateArgs = new OperationStateEventArgs();
+            var operationStateArgs = new OperationStateEventArgs();
             operationStateArgs.OperationState = OperationState.StartComplete;
             operationStateArgs.BaseEvent = EventArgs.Empty;
 
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation.Runspaces
         {
             _remoteRunspace.StateChanged -= HandleRunspaceStateChanged;
 
-            OperationStateEventArgs operationStateEventArgs =
+            var operationStateEventArgs =
                     new OperationStateEventArgs();
             operationStateEventArgs.OperationState =
                     OperationState.StartComplete;

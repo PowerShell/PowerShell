@@ -162,7 +162,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            int result = (int)WSManPluginErrorCodes.NoError;
+            var result = (int)WSManPluginErrorCodes.NoError;
 
             // there should have been a receive request in place already
 
@@ -218,10 +218,10 @@ namespace System.Management.Automation.Remoting
                 _waitHandle.Dispose();
             }
 
-            int result = (int)WSManPluginErrorCodes.NoError;
+            var result = (int)WSManPluginErrorCodes.NoError;
             // at this point we have pending request from client. so it is safe
             // to send data to client using WSMan API.
-            using (WSManNativeApi.WSManData_ManToUn dataToBeSent = new WSManNativeApi.WSManData_ManToUn(data))
+            using (var dataToBeSent = new WSManNativeApi.WSManData_ManToUn(data))
             {
                 lock (_syncObject)
                 {
@@ -333,8 +333,8 @@ namespace System.Management.Automation.Remoting
                 if (Platform.IsWindows)
                 {
                     // Wrap the provided handle so it can be passed to the registration function
-                    SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
-                    EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+                    var safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
+                    var eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
                     eventWaitHandle.SafeWaitHandle = safeWaitHandle;
 
                     _registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(

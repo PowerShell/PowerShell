@@ -82,7 +82,7 @@ namespace System.Management.Automation
                 }
             }
 
-            List<Token> tokenList = new List<Token>();
+            var tokenList = new List<Token>();
 
             foreach (string orClause in expression)
             {
@@ -271,15 +271,15 @@ namespace System.Management.Automation
                 bool satisfy = false;
                 if (isUnsigned(underType))
                 {
-                    ulong valueToCheck = (ulong)LanguagePrimitives.ConvertTo(val, typeof(ulong), CultureInfo.InvariantCulture);
-                    ulong operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
+                    var valueToCheck = (ulong)LanguagePrimitives.ConvertTo(val, typeof(ulong), CultureInfo.InvariantCulture);
+                    var operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
                     satisfy = (operandValue == (valueToCheck & operandValue));
                 }
                 // allow for negative enum value input (though it's not recommended practice for flags attribute)
                 else
                 {
-                    long valueToCheck = (long)LanguagePrimitives.ConvertTo(val, typeof(long), CultureInfo.InvariantCulture);
-                    long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
+                    var valueToCheck = (long)LanguagePrimitives.ConvertTo(val, typeof(long), CultureInfo.InvariantCulture);
+                    var operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
                     satisfy = (operandValue == (valueToCheck & operandValue));
                 }
 
@@ -293,15 +293,15 @@ namespace System.Management.Automation
                 bool exist = false;
                 if (isUnsigned(underType))
                 {
-                    ulong valueToCheck = (ulong)LanguagePrimitives.ConvertTo(enumVal, typeof(ulong), CultureInfo.InvariantCulture);
-                    ulong operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
+                    var valueToCheck = (ulong)LanguagePrimitives.ConvertTo(enumVal, typeof(ulong), CultureInfo.InvariantCulture);
+                    var operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
                     exist = valueToCheck == (valueToCheck & operandValue);
                 }
                 // allow for negative enum value input (though it's not recommended practice for flags attribute)
                 else
                 {
-                    long valueToCheck = (long)LanguagePrimitives.ConvertTo(enumVal, typeof(long), CultureInfo.InvariantCulture);
-                    long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
+                    var valueToCheck = (long)LanguagePrimitives.ConvertTo(enumVal, typeof(long), CultureInfo.InvariantCulture);
+                    var operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
                     exist = valueToCheck == (valueToCheck & operandValue);
                 }
 
@@ -387,7 +387,7 @@ namespace System.Management.Automation
         /// </returns>
         private List<Token> TokenizeInput(string input)
         {
-            List<Token> tokenList = new List<Token>();
+            var tokenList = new List<Token>();
             int _offset = 0;
 
             while (_offset < input.Length)
@@ -440,7 +440,7 @@ namespace System.Management.Automation
         /// </returns>
         private Token GetNextToken(string input, ref int _offset)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             // bool singleQuoted = false;
             // bool doubleQuoted = false;
             bool readingIdentifier = false;
@@ -524,7 +524,7 @@ namespace System.Management.Automation
         private void CheckSyntaxError(List<Token> tokenList)
         {
             // Initialize, assuming preceded by OR
-            TokenKind previous = TokenKind.Or;
+            var previous = TokenKind.Or;
 
             for (int i = 0; i < tokenList.Count; i++)
             {
@@ -579,8 +579,8 @@ namespace System.Management.Automation
         private Node ConstructExpressionTree(List<Token> tokenList)
         {
             bool notFlag = false;
-            Queue<Node> andQueue = new Queue<Node>();
-            Queue<Node> orQueue = new Queue<Node>();
+            var andQueue = new Queue<Node>();
+            var orQueue = new Queue<Node>();
 
             for (int i = 0; i < tokenList.Count; i++)
             {

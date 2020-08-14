@@ -89,7 +89,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string ToString()
         {
-            Text.StringBuilder result = new Text.StringBuilder();
+            var result = new Text.StringBuilder();
 
             GenerateParametersInDisplayOrder(
                                  parameter => AppendFormatCommandParameterInfo(parameter, result),
@@ -127,9 +127,9 @@ namespace System.Management.Automation
         {
             // First figure out the positions
 
-            List<CommandParameterInfo> sortedPositionalParameters = new List<CommandParameterInfo>();
-            List<CommandParameterInfo> namedMandatoryParameters = new List<CommandParameterInfo>();
-            List<CommandParameterInfo> namedParameters = new List<CommandParameterInfo>();
+            var sortedPositionalParameters = new List<CommandParameterInfo>();
+            var namedMandatoryParameters = new List<CommandParameterInfo>();
+            var namedParameters = new List<CommandParameterInfo>();
 
             foreach (CommandParameterInfo parameter in Parameters)
             {
@@ -187,7 +187,7 @@ namespace System.Management.Automation
                 parameterAction(parameter);
             }
 
-            List<CommandParameterInfo> commonParameters = new List<CommandParameterInfo>();
+            var commonParameters = new List<CommandParameterInfo>();
 
             // Now convert the named parameters into a string
             foreach (CommandParameterInfo parameter in namedParameters)
@@ -317,7 +317,7 @@ namespace System.Management.Automation
                 parameterMetadata != null,
                 "The parameterMetadata should never be null");
 
-            Collection<CommandParameterInfo> processedParameters =
+            var processedParameters =
                 new Collection<CommandParameterInfo>();
 
             // Get the parameters in the parameter set

@@ -1000,7 +1000,7 @@ namespace System.Management.Automation
             {
                 if (_throttlingJob.IsThrottlingJobCompleted)
                 {
-                    List<PSDataCollection<PSStreamObject>> resultsToAggregate = new List<PSDataCollection<PSStreamObject>>();
+                    var resultsToAggregate = new List<PSDataCollection<PSStreamObject>>();
                     lock (_myLock)
                     {
                         foreach (Job registeredJob in _monitoredJobs)

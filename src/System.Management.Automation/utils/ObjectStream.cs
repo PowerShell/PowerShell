@@ -1132,7 +1132,7 @@ namespace System.Management.Automation.Internal
                 return new Collection<object>();
             }
 
-            Collection<object> results = new Collection<object>();
+            var results = new Collection<object>();
 
             bool raiseEvents = false;
             while ((count > 0) && WaitRead())
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation.Internal
 
             // We want to write the objects as one block, not individually
             // We do not want to hold the stream locked during the enumeration
-            List<object> a = new List<object>();
+            var a = new List<object>();
 
             IEnumerable enumerable = null;
             if (enumerateCollection)
@@ -1837,7 +1837,7 @@ namespace System.Management.Automation.Internal
 
             // We want to write the objects as one block, not individually
             // We do not want to hold the stream locked during the enumeration
-            Collection<T> objectsToAdd = new Collection<T>();
+            var objectsToAdd = new Collection<T>();
 
             IEnumerable enumerable = null;
             if (enumerateCollection)

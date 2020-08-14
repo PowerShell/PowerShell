@@ -359,7 +359,7 @@ namespace System.Management.Automation
         {
             if (parameters == null)
                 return null;
-            CommandParameterCollection paramCollection = new CommandParameterCollection();
+            var paramCollection = new CommandParameterCollection();
             foreach (CommandParameter paramItem in
                 parameters.Select(param => new CommandParameter(param.Key, param.Value)))
             {
@@ -411,11 +411,11 @@ namespace System.Management.Automation
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
             if (recurse && job.ChildJobs != null && job.ChildJobs.Count > 0)
             {
-                Hashtable duplicateDetector = new Hashtable();
+                var duplicateDetector = new Hashtable();
                 duplicateDetector.Add(job.InstanceId, job.InstanceId);
                 foreach (Job child in job.ChildJobs)
                 {
-                    Job2 childJob = child as Job2;
+                    var childJob = child as Job2;
                     if (childJob == null) continue;
                     StoreJobIdForReuseHelper(duplicateDetector, childJob, true);
                 }
@@ -432,7 +432,7 @@ namespace System.Management.Automation
             if (!recurse || job.ChildJobs == null) return;
             foreach (Job child in job.ChildJobs)
             {
-                Job2 childJob = child as Job2;
+                var childJob = child as Job2;
                 if (childJob == null) continue;
                 StoreJobIdForReuseHelper(duplicateDetector, childJob, recurse);
             }

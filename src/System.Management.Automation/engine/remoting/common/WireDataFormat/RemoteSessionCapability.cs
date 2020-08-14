@@ -104,12 +104,12 @@ namespace System.Management.Automation.Remoting
                 Exception e = null;
                 try
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    using (MemoryStream stream = new MemoryStream())
+                    var formatter = new BinaryFormatter();
+                    using (var stream = new MemoryStream())
                     {
                         formatter.Serialize(stream, TimeZoneInfo.Local);
                         stream.Seek(0, SeekOrigin.Begin);
-                        byte[] result = new byte[stream.Length];
+                        var result = new byte[stream.Length];
                         stream.Read(result, 0, (int)stream.Length);
                         _timeZoneInByteFormat = result;
                     }
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
                 return null;
             }
 
-            HostDefaultData hostDefaultData = new HostDefaultData();
+            var hostDefaultData = new HostDefaultData();
 
             // Try to get values from the host. Catch-all okay because of 3rd party call-out.
 

@@ -753,7 +753,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            CmdletActionEventArgs actionArgs = new CmdletActionEventArgs(action);
+            var actionArgs = new CmdletActionEventArgs(action);
             if (!PreNewActionEvent(actionArgs))
             {
                 return;
@@ -785,7 +785,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            OperationEventArgs args = new OperationEventArgs(
+            var args = new OperationEventArgs(
                 cancelOperation, operation, false);
             OperationEventHandler temp = this.OnOperationCreated;
             if (temp != null)
@@ -808,7 +808,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             this.WriteOperationCompleteMessage(this.operationName);
-            OperationEventArgs args = new OperationEventArgs(
+            var args = new OperationEventArgs(
                 null, operation, success);
             PreOperationDeleteEvent(args);
             OperationEventHandler temp = this.OnOperationDeleted;
@@ -838,7 +838,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("Channel = {0} message = {1}", 0, channel, message);
             try
             {
-                CimWriteMessage action = new CimWriteMessage(channel, message);
+                var action = new CimWriteMessage(channel, message);
                 this.FireNewActionEvent(action);
             }
             catch (Exception ex)
@@ -857,7 +857,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal void WriteOperationStartMessage(string operation, Hashtable parameterList)
         {
             DebugHelper.WriteLogEx();
-            StringBuilder parameters = new StringBuilder();
+            var parameters = new StringBuilder();
             if (parameterList != null)
             {
                 foreach (string key in parameterList.Keys)
@@ -914,7 +914,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             try
             {
-                CimWriteProgress action = new CimWriteProgress(
+                var action = new CimWriteProgress(
                     activity,
                     (int)this.operationID,
                     currentOperation,
@@ -941,7 +941,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("Error:{0}", 0, instance);
             try
             {
-                CimWriteError action = new CimWriteError(instance, this.invocationContextObject);
+                var action = new CimWriteError(instance, this.invocationContextObject);
                 this.FireNewActionEvent(action);
                 return action.GetResponse();
             }
@@ -963,7 +963,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("message:{0} prompt:{1}", 0, message, prompt);
             try
             {
-                CimPromptUser action = new CimPromptUser(message, prompt);
+                var action = new CimPromptUser(message, prompt);
                 this.FireNewActionEvent(action);
                 return action.GetResponse();
             }
@@ -995,17 +995,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         DebugHelper.WriteLog("ResultEventHandler::Completion", 4);
 
-                        AsyncResultCompleteEventArgs args = resultArgs as AsyncResultCompleteEventArgs;
+                        var args = resultArgs as AsyncResultCompleteEventArgs;
                         this.FireOperationDeletedEvent(args.observable, true);
                     }
 
                     break;
                 case AsyncResultType.Exception:
                     {
-                        AsyncResultErrorEventArgs args = resultArgs as AsyncResultErrorEventArgs;
+                        var args = resultArgs as AsyncResultErrorEventArgs;
                         DebugHelper.WriteLog("ResultEventHandler::Exception {0}", 4, args.error);
 
-                        using (CimWriteError action = new CimWriteError(args.error, this.invocationContextObject, args.context))
+                        using (var action = new CimWriteError(args.error, this.invocationContextObject, args.context))
                         {
                             this.FireNewActionEvent(action);
                         }
@@ -1016,7 +1016,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
                 case AsyncResultType.Result:
                     {
-                        AsyncResultObjectEventArgs args = resultArgs as AsyncResultObjectEventArgs;
+                        var args = resultArgs as AsyncResultObjectEventArgs;
                         DebugHelper.WriteLog("ResultEventHandler::Result {0}", 4, args.resultObject);
                         object resultObject = args.resultObject;
                         if (!this.isDefaultSession)
@@ -1031,7 +1031,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 #if DEBUG
                         resultObject = PostProcessCimInstance(resultObject);
 #endif
-                        CimWriteResultObject action = new CimWriteResultObject(resultObject, this.ContextObject);
+                        var action = new CimWriteResultObject(resultObject, this.ContextObject);
                         this.FireNewActionEvent(action);
                     }
 
@@ -1060,7 +1060,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            PSNoteProperty psShowComputerNameProperty = new PSNoteProperty(ConstValue.ShowComputerNameNoteProperty, true);
+            var psShowComputerNameProperty = new PSNoteProperty(ConstValue.ShowComputerNameNoteProperty, true);
             pso.Members.Add(psShowComputerNameProperty);
         }
 
@@ -1811,7 +1811,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected void ConsumeObjectAsync(IObservable<object> asyncResult,
             CimResultContext cimResultContext)
         {
-            CimResultObserver<object> observer = new CimResultObserver<object>(
+            var observer = new CimResultObserver<object>(
                 this.session, asyncResult, cimResultContext);
 
             observer.OnNewResult += this.ResultEventHandler;
@@ -1832,7 +1832,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected void ConsumeCimClassAsync(IObservable<CimClass> asyncResult,
             CimResultContext cimResultContext)
         {
-            CimResultObserver<CimClass> observer = new CimResultObserver<CimClass>(
+            var observer = new CimResultObserver<CimClass>(
                 this.session, asyncResult, cimResultContext);
 
             observer.OnNewResult += this.ResultEventHandler;
@@ -1853,7 +1853,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IObservable<CimSubscriptionResult> asyncResult,
             CimResultContext cimResultContext)
         {
-            CimSubscriptionResultObserver observer = new CimSubscriptionResultObserver(
+            var observer = new CimSubscriptionResultObserver(
                 this.session, asyncResult, cimResultContext);
             observer.OnNewResult += this.ResultEventHandler;
             this.operationID = Interlocked.Increment(ref gOperationCounter);
@@ -1877,7 +1877,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string methodName,
             CimResultContext cimResultContext)
         {
-            CimMethodResultObserver observer = new CimMethodResultObserver(this.session, asyncResult, cimResultContext)
+            var observer = new CimMethodResultObserver(this.session, asyncResult, cimResultContext)
             {
                 ClassName = className,
                 MethodName = methodName
@@ -2031,7 +2031,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (args.success)
             {
                 // test connection success, write session object to pipeline
-                CimWriteResultObject result = new CimWriteResultObject(this.CimSession, this.ContextObject);
+                var result = new CimWriteResultObject(this.CimSession, this.ContextObject);
                 this.FireNewActionEvent(result);
             }
         }
@@ -2092,8 +2092,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return true;
             }
 
-            CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimClass cimClass = writeResultObject.Result as CimClass;
+            var writeResultObject = args.Action as CimWriteResultObject;
+            var cimClass = writeResultObject.Result as CimClass;
             if (cimClass == null)
             {
                 return true;
@@ -2101,7 +2101,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             DebugHelper.WriteLog("class name = {0}", 1, cimClass.CimSystemProperties.ClassName);
 
-            CimGetCimClassContext context = this.ContextObject as CimGetCimClassContext;
+            var context = this.ContextObject as CimGetCimClassContext;
             Debug.Assert(context != null, "Caller should verify that CimGetCimClassContext != NULL.");
 
             WildcardPattern pattern;
@@ -2246,8 +2246,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return true;
             }
 
-            CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimInstance cimInstance = writeResultObject.Result as CimInstance;
+            var writeResultObject = args.Action as CimWriteResultObject;
+            var cimInstance = writeResultObject.Result as CimInstance;
             if (cimInstance == null)
             {
                 return true;

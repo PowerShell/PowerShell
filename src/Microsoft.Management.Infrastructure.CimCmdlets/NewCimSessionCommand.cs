@@ -268,7 +268,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             outputCredential = null;
             if (options != null)
             {
-                DComSessionOptions dcomOptions = (options as DComSessionOptions);
+                var dcomOptions = (options as DComSessionOptions);
                 if (dcomOptions != null)
                 {
                     bool conflict = false;
@@ -304,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (this.CertificateThumbprint != null)
                 {
-                    CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
+                    var credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
                     wsmanOptions.AddDestinationCredentials(credentials);
                 }
 

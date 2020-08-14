@@ -405,7 +405,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
-            InternalHostUserInterface ui = Host.UI as InternalHostUserInterface;
+            var ui = Host.UI as InternalHostUserInterface;
 
             ActionPreference preference = ProgressPreference;
             if (overrideInquire && preference == ActionPreference.Inquire)
@@ -780,7 +780,7 @@ namespace System.Management.Automation
                     if ((record.Tags.Contains("PSHOST") && (!record.Tags.Contains("FORWARDED")))
                         || (preference == ActionPreference.Continue))
                     {
-                        HostInformationMessage hostOutput = record.MessageData as HostInformationMessage;
+                        var hostOutput = record.MessageData as HostInformationMessage;
                         if (hostOutput != null)
                         {
                             string message = hostOutput.Message;
@@ -889,7 +889,7 @@ namespace System.Management.Automation
 
         private bool InitShouldLogPipelineExecutionDetail()
         {
-            CmdletInfo cmdletInfo = _commandInfo as CmdletInfo;
+            var cmdletInfo = _commandInfo as CmdletInfo;
 
             if (cmdletInfo != null)
             {
@@ -912,7 +912,7 @@ namespace System.Management.Automation
             }
 
             // Logging should be enabled for functions from modules also
-            FunctionInfo functionInfo = _commandInfo as FunctionInfo;
+            var functionInfo = _commandInfo as FunctionInfo;
             if (functionInfo != null && functionInfo.Module != null)
             {
                 return functionInfo.Module.LogPipelineExecutionDetails;
@@ -2085,7 +2085,7 @@ namespace System.Management.Automation
                 }
             }
 
-            CmdletInvocationException e =
+            var e =
                 new CmdletInvocationException(errorRecord);
 
             // If the error action preference is set to break, break immediately
@@ -2320,7 +2320,7 @@ namespace System.Management.Automation
             {
                 if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
-                MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
+                var mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
                 if (mcr == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
@@ -2564,7 +2564,7 @@ namespace System.Management.Automation
                 }
                 else if (varList.IsFixedSize)
                 {
-                    ArrayList varListNew = new ArrayList();
+                    var varListNew = new ArrayList();
                     varListNew.AddRange(varList);
                     varList = varListNew;
                 }
@@ -2643,7 +2643,7 @@ namespace System.Management.Automation
 
             ThrowIfStopping();
 
-            ArrayList convertedList = new ArrayList();
+            var convertedList = new ArrayList();
             foreach (object toConvert in enumerable)
             {
                 if (AutomationNull.Value == toConvert)
@@ -2762,7 +2762,7 @@ namespace System.Management.Automation
         /// </remarks>
         private void DoWriteError(object obj)
         {
-            KeyValuePair<ErrorRecord, ActionPreference> pair = (KeyValuePair<ErrorRecord, ActionPreference>)obj;
+            var pair = (KeyValuePair<ErrorRecord, ActionPreference>)obj;
             ErrorRecord errorRecord = pair.Key;
             ActionPreference preference = pair.Value;
             if (errorRecord == null)
@@ -2861,7 +2861,7 @@ namespace System.Management.Automation
                 switch (preference)
                 {
                     case ActionPreference.Stop:
-                        ActionPreferenceStopException e =
+                        var e =
                             new ActionPreferenceStopException(
                                 MyInvocation,
                                 errorRecord,
@@ -3493,7 +3493,7 @@ namespace System.Management.Automation
                     return ContinueStatus.Yes;
 
                 case ActionPreference.Stop:
-                    ActionPreferenceStopException e =
+                    var e =
                         new ActionPreferenceStopException(
                             MyInvocation,
                             StringUtil.Format(CommandBaseStrings.ErrorPreferenceStop, preferenceVariableName, message));
@@ -3504,7 +3504,7 @@ namespace System.Management.Automation
 
                 default:
                     Dbg.Assert(false, "Bad preference value" + preference);
-                    ActionPreferenceStopException apse =
+                    var apse =
                         new ActionPreferenceStopException(
                             MyInvocation,
                             StringUtil.Format(CommandBaseStrings.PreferenceInvalid, preferenceVariableName, preference));
@@ -3553,7 +3553,7 @@ namespace System.Management.Automation
             bool hasSecurityImpact
             )
         {
-            Collection<ChoiceDescription> choices =
+            var choices =
                 new Collection<ChoiceDescription>();
             int currentOption = 0;
 
@@ -3627,7 +3627,7 @@ namespace System.Management.Automation
                 CBhost.InternalUI.TranscribeResult(inquireCaption);
                 CBhost.InternalUI.TranscribeResult(inquireMessage);
 
-                Text.StringBuilder textChoices = new Text.StringBuilder();
+                var textChoices = new Text.StringBuilder();
                 foreach (ChoiceDescription choice in choices)
                 {
                     if (textChoices.Length > 0)
@@ -3664,7 +3664,7 @@ namespace System.Management.Automation
                     return ContinueStatus.YesToAll;
                 else if (haltOption == response)
                 {
-                    ActionPreferenceStopException e =
+                    var e =
                         new ActionPreferenceStopException(
                             MyInvocation,
                             CommandBaseStrings.InquireHalt);
@@ -3682,7 +3682,7 @@ namespace System.Management.Automation
                 }
                 else if (-1 == response)
                 {
-                    ActionPreferenceStopException e =
+                    var e =
                         new ActionPreferenceStopException(
                             MyInvocation,
                             CommandBaseStrings.InquireCtrlC);

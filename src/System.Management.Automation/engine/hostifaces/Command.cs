@@ -375,7 +375,7 @@ namespace System.Management.Automation.Runspaces
         {
             Dbg.Assert(commandProcessor != null, "caller should validate the parameter");
 
-            MshCommandRuntime mcr = commandProcessor.Command.commandRuntime as MshCommandRuntime;
+            var mcr = commandProcessor.Command.commandRuntime as MshCommandRuntime;
 
             if (_mergeUnclaimedPreviousCommandResults != PipelineResultTypes.None)
             {
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Runspaces
                 return mcr.OutputPipe;
             }
 
-            Pipe pipe = new Pipe();
+            var pipe = new Pipe();
             pipe.NullPipe = true;
             return pipe;
         }
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (scriptBlock.UsesCmdletBinding)
                 {
-                    FunctionInfo functionInfo = new FunctionInfo(string.Empty, scriptBlock, executionContext);
+                    var functionInfo = new FunctionInfo(string.Empty, scriptBlock, executionContext);
                     commandProcessorBase = new CommandProcessor(functionInfo, executionContext,
                                                                 _useLocalScope ?? false, fromScriptFile: false, sessionState: executionContext.EngineSessionState);
                 }
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Runspaces
             string commandText = RemotingDecoder.GetPropertyValue<string>(commandAsPSObject, RemoteDataNameStrings.CommandText);
             bool isScript = RemotingDecoder.GetPropertyValue<bool>(commandAsPSObject, RemoteDataNameStrings.IsScript);
             bool? useLocalScopeNullable = RemotingDecoder.GetPropertyValue<bool?>(commandAsPSObject, RemoteDataNameStrings.UseLocalScopeNullable);
-            Command command = new Command(commandText, isScript, useLocalScopeNullable);
+            var command = new Command(commandText, isScript, useLocalScopeNullable);
 
             // For V2 backwards compatibility.
             PipelineResultTypes mergeMyResult = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeMyResult);
@@ -721,7 +721,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            List<PSObject> parametersAsListOfPSObjects = new List<PSObject>(this.Parameters.Count);
+            var parametersAsListOfPSObjects = new List<PSObject>(this.Parameters.Count);
             foreach (CommandParameter parameter in this.Parameters)
             {
                 parametersAsListOfPSObjects.Add(parameter.ToPSObjectForRemoting());

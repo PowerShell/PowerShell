@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        Collection<string> resolvedPaths = new Collection<string>();
+                        var resolvedPaths = new Collection<string>();
                         try
                         {
                             // Resolve the file path
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
                             if (ForceWrite && System.IO.File.Exists(resolvedPath))
                             {
                                 // remove readonly attributes on the file
-                                System.IO.FileInfo fInfo = new System.IO.FileInfo(resolvedPath);
+                                var fInfo = new System.IO.FileInfo(resolvedPath);
                                 if (fInfo != null)
                                 {
                                     // Save some disk write time by checking whether file is readonly..
@@ -302,12 +302,12 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             // Trace commands always append..So there is no need to set overwrite with force..
-                            FileStream fileStream = new FileStream(resolvedPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                            var fileStream = new FileStream(resolvedPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                             FileStreams.Add(fileStream);
 
                             // Open the file stream
 
-                            TextWriterTraceListener fileListener =
+                            var fileListener =
                                     new TextWriterTraceListener(fileStream, resolvedPath);
 
                             fileListener.Name = FileListener;
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (fileOpenError != null)
                         {
-                            ErrorRecord errorRecord =
+                            var errorRecord =
                                 new ErrorRecord(
                                     fileOpenError,
                                     "FileListenerPathResolutionFailed",
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (error != null)
                     {
-                        ErrorRecord errorRecord =
+                        var errorRecord =
                             new ErrorRecord(
                                 error,
                                 "FileListenerPathResolutionFailed",
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Copy the listeners into a different collection
 
-                    Collection<TraceListener> listenerCollection = new Collection<TraceListener>();
+                    var listenerCollection = new Collection<TraceListener>();
                     foreach (TraceListener listener in source.Listeners)
                     {
                         listenerCollection.Add(listener);

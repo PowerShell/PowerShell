@@ -1280,7 +1280,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static ErrorRecord FromPSObjectForRemoting(PSObject serializedErrorRecord)
         {
-            ErrorRecord er = new ErrorRecord();
+            var er = new ErrorRecord();
             er.ConstructFromPSObjectForRemoting(serializedErrorRecord);
             return er;
         }
@@ -1301,7 +1301,7 @@ namespace System.Management.Automation
             string exceptionMessage = null;
             if (serializedException != null)
             {
-                PSPropertyInfo messageProperty = serializedException.Properties["Message"] as PSPropertyInfo;
+                var messageProperty = serializedException.Properties["Message"] as PSPropertyInfo;
                 if (messageProperty != null)
                 {
                     exceptionMessage = messageProperty.Value as string;
@@ -1329,16 +1329,16 @@ namespace System.Management.Automation
                 Microsoft.PowerShell.DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk);
 
             // Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
-            string errorDetails_Message =
+            var errorDetails_Message =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_Message") as string;
 
-            string errorDetails_RecommendedAction =
+            var errorDetails_RecommendedAction =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_RecommendedAction") as string;
 
-            string errorDetails_ScriptStackTrace =
+            var errorDetails_ScriptStackTrace =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_ScriptStackTrace") as string;
 
-            RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
+            var re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
             // Create ErrorRecord
             PopulateProperties(
@@ -1570,7 +1570,7 @@ namespace System.Management.Automation
             //
             if (invocationInfo != null && invocationInfo.PipelineIterationInfo != null)
             {
-                int[] snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
+                var snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
 
                 _pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
             }
@@ -1596,7 +1596,7 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 var callstack = context.Debugger.GetCallStack();
                 bool first = true;
                 foreach (var frame in callstack)
@@ -1662,13 +1662,13 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            IScriptCommandInfo scriptInfo = commandInfo as IScriptCommandInfo;
+            var scriptInfo = commandInfo as IScriptCommandInfo;
             if (scriptInfo != null)
             {
                 return commandInfo.Name;
             }
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
+            var cmdletInfo = commandInfo as CmdletInfo;
             if (cmdletInfo == null)
             {
                 return string.Empty;

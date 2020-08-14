@@ -654,13 +654,13 @@ namespace Microsoft.PowerShell.Commands
                             Context.LanguageMode));
             }
 
-            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
+            var connectionInfo = new NewProcessConnectionInfo(this.Credential);
             connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;
             connectionInfo.WorkingDirectory = this.WorkingDirectory;
 
-            RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
+            var remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());
 
             remoteRunspace.Events.ReceivedEvents.PSEventReceived += OnRunspacePSEventReceived;
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _firstProcessRecord = false;
 
-                PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
+                var job = new PSRemotingJob(ResolvedComputerNames, Operations,
                         ScriptBlock.ToString(), ThrottleLimit, _name);
 
                 job.PSJobTypeName = s_startJobType;
@@ -770,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelper helper = (ExecutionCmdletHelper)operation;
+                    var helper = (ExecutionCmdletHelper)operation;
                     helper.Pipeline.Input.Write(InputObject);
                 }
             }

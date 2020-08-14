@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         }
 
-                        X509Certificate2 cert = new X509Certificate2(certContext);
+                        var cert = new X509Certificate2(certContext);
                         if (string.Equals(
                                     cert.Thumbprint,
                                     Name,
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // create and cache CurrentUser store-location
                     //
-                    X509StoreLocation user =
+                    var user =
                         new X509StoreLocation(StoreLocation.CurrentUser);
                     s_storeLocations.Add(user);
                     AddItemToCache(nameof(StoreLocation.CurrentUser),
@@ -674,7 +674,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // create and cache LocalMachine store-location
                     //
-                    X509StoreLocation machine =
+                    var machine =
                         new X509StoreLocation(StoreLocation.LocalMachine);
                     s_storeLocations.Add(machine);
                     AddItemToCache(nameof(StoreLocation.LocalMachine),
@@ -729,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                ProviderRemoveItemDynamicParameters dp =
+                var dp =
                     DynamicParameters as ProviderRemoveItemDynamicParameters;
                 if (dp != null)
                 {
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
             else // certificate
             {
                 // do remove
-                X509Certificate2 certificate = outObj as X509Certificate2;
+                var certificate = outObj as X509Certificate2;
                 RemoveCertItem(certificate, fDeleteKey, !fUserContext, path);
                 return;
             }
@@ -891,8 +891,8 @@ namespace Microsoft.PowerShell.Commands
                 bool isDestContainer = false;
                 object store = GetItemAtPath(destination, false, out isDestContainer);
 
-                X509Certificate2 certificate = cert as X509Certificate2;
-                X509NativeStore certstore = store as X509NativeStore;
+                var certificate = cert as X509Certificate2;
+                var certstore = store as X509NativeStore;
 
                 if (certstore != null)
                 {
@@ -1000,7 +1000,7 @@ namespace Microsoft.PowerShell.Commands
                 fResult = Security.NativeMethods.CertCloseStore(hCertStore, 0);
             }
 
-            X509Store outStore = new X509Store(
+            var outStore = new X509Store(
                                  pathElements[1],
                                  StoreLocation.LocalMachine);
             WriteItemObject(outStore, path, true);
@@ -1019,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string providerDescription = CertificateProviderStrings.CertProvidername;
 
-            PSDriveInfo drive =
+            var drive =
                 new PSDriveInfo(
                     "Cert", // drive name
                     ProviderInfo,// provider name
@@ -1027,7 +1027,7 @@ namespace Microsoft.PowerShell.Commands
                     providerDescription,
                     null);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
             drives.Add(drive);
 
             return drives;
@@ -1075,14 +1075,14 @@ namespace Microsoft.PowerShell.Commands
 
             if ((item != null) && isContainer)
             {
-                X509StoreLocation storeLocation = item as X509StoreLocation;
+                var storeLocation = item as X509StoreLocation;
                 if (storeLocation != null)
                 {
                     result = storeLocation.StoreNames.Count > 0;
                 }
                 else
                 {
-                    X509NativeStore store = item as X509NativeStore;
+                    var store = item as X509NativeStore;
                     if (store != null)
                     {
                         store.Open(IncludeArchivedCerts());
@@ -1249,7 +1249,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // The filter is non null. If the certificate
                         // satisfies the filter, output it. Otherwise, don't.
-                        X509Certificate2 cert = item as X509Certificate2;
+                        var cert = item as X509Certificate2;
                         Dbg.Diagnostics.Assert(cert != null, "item should be a certificate");
 
                         if (MatchesFilter(cert, filter))
@@ -1266,18 +1266,18 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    X509StoreLocation storeLocation = item as X509StoreLocation;
+                    var storeLocation = item as X509StoreLocation;
                     if (storeLocation != null)  // store location
                     {
                         WriteItemObject(item, path, isContainer);
                     }
                     else // store
                     {
-                        X509NativeStore store = item as X509NativeStore;
+                        var store = item as X509NativeStore;
                         if (store != null)
                         {
                             // create X509Store
-                            X509Store outStore = new X509Store(
+                            var outStore = new X509Store(
                                                     store.StoreName,
                                                     store.Location.Location);
                             WriteItemObject(outStore, path, isContainer);
@@ -1352,7 +1352,7 @@ namespace Microsoft.PowerShell.Commands
                 new CmdletInfo(
                     "Import-Module",
                      typeof(Microsoft.PowerShell.Commands.ImportModuleCommand));
-            Runspaces.Command importModuleCommand = new Runspaces.Command(commandInfo);
+            var importModuleCommand = new Runspaces.Command(commandInfo);
 
             s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
 
@@ -1485,7 +1485,7 @@ namespace Microsoft.PowerShell.Commands
             message = string.Format(
                 System.Globalization.CultureInfo.CurrentCulture,
                 message, path);
-            ErrorDetails ed = new ErrorDetails(message);
+            var ed = new ErrorDetails(message);
 
             //
             // create appropriate exception type
@@ -1509,7 +1509,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(e,
                                 "CertProviderItemNotFound",
                                 ErrorCategory.ObjectNotFound,
@@ -1529,7 +1529,7 @@ namespace Microsoft.PowerShell.Commands
                 string message = CertificateProviderStrings.RemoteErrorMessage;
                 error += message;
 
-                Exception e2 = new Exception(error);
+                var e2 = new Exception(error);
                 ThrowTerminatingError(
                         new ErrorRecord(
                             e2,
@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ThrowInvalidOperation(string errorId, string message)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                             new InvalidOperationException(message),
                             errorId,
                             ErrorCategory.InvalidOperation,
@@ -1588,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
 
-            Stack<string> elts = new Stack<string>();
+            var elts = new Stack<string>();
 
             foreach (string e in allElts)
             {
@@ -1771,7 +1771,7 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr certContext = store.GetFirstCert();
                 while (IntPtr.Zero != certContext)
                 {
-                    X509Certificate2 cert = new X509Certificate2(certContext);
+                    var cert = new X509Certificate2(certContext);
                     string certPath = sourcePath + cert.Thumbprint;
                     RemoveCertItem(cert, fDeleteKey, true, certPath);
 
@@ -1992,7 +1992,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // get the output object
-            X509Certificate2 outObj = new X509Certificate2(outCert);
+            var outObj = new X509Certificate2(outCert);
             string certName = GetCertName(outObj);
             string certPath = MakePath(destination, certName);
             WriteItemObject((object)outObj, certPath, false);
@@ -2458,7 +2458,7 @@ namespace Microsoft.PowerShell.Commands
 
             while (IntPtr.Zero != certContext)
             {
-                X509Certificate2 cert = new X509Certificate2(certContext);
+                var cert = new X509Certificate2(certContext);
 
                 if (MatchesFilter(cert, filter))
                 {
@@ -2471,7 +2471,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        PSObject myPsObj = new PSObject(cert);
+                        var myPsObj = new PSObject(cert);
                         thingToReturn = (object)myPsObj;
                     }
 
@@ -2493,7 +2493,7 @@ namespace Microsoft.PowerShell.Commands
             // we store the only two possible store-location
             // objects during ctor.
             //
-            X509StoreLocation location =
+            var location =
                 GetCachedItem(path) as X509StoreLocation;
 
             if (location == null)
@@ -2601,7 +2601,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     X509NativeStore store = GetStore(storePath, name, location);
-                    X509Store ManagedStore = new X509Store(
+                    var ManagedStore = new X509Store(
                                                     store.StoreName,
                                                     store.Location.Location);
                     thingToReturn = ManagedStore;
@@ -2665,7 +2665,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                CertificateProviderDynamicParameters dp =
+                var dp =
                     DynamicParameters as CertificateProviderDynamicParameters;
                 if (dp != null)
                 {
@@ -2926,7 +2926,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // Load the help file from the current UI culture subfolder of the module's root folder
                 //
-                XmlDocument document = new XmlDocument();
+                var document = new XmlDocument();
 
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
 
@@ -2934,7 +2934,7 @@ namespace Microsoft.PowerShell.Commands
                     this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
                     this.ProviderInfo.HelpFile);
-                XmlReaderSettings settings = new XmlReaderSettings();
+                var settings = new XmlReaderSettings();
                 settings.XmlResolver = null;
                 using (XmlReader reader = XmlReader.Create(fullHelpPath, settings))
                 {
@@ -2942,7 +2942,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Add "msh" and "command" namespaces from the MAML schema
-                XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
+                var nsMgr = new XmlNamespaceManager(document.NameTable);
                 nsMgr.AddNamespace("msh", HelpCommentsParser.mshURI);
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
@@ -3204,7 +3204,7 @@ namespace Microsoft.PowerShell.Commands
             if (DownLevelHelper.TrustedIssuerSupported())
             {
                 IntPtr propertyPtr = IntPtr.Zero;
-                Security.NativeMethods.CRYPT_DATA_BLOB dataBlob = new Security.NativeMethods.CRYPT_DATA_BLOB();
+                var dataBlob = new Security.NativeMethods.CRYPT_DATA_BLOB();
                 dataBlob.cbData = 0;
                 dataBlob.pbData = IntPtr.Zero;
                 X509Certificate certFromStore = null;
@@ -3226,7 +3226,7 @@ namespace Microsoft.PowerShell.Commands
 
                         bool fUserContext = string.Equals(pathElements[1], "Certificate::CurrentUser", StringComparison.OrdinalIgnoreCase);
 
-                        X509StoreLocation storeLocation =
+                        var storeLocation =
                             new X509StoreLocation(fUserContext ? StoreLocation.CurrentUser : StoreLocation.LocalMachine);
 
                         // get certificate from the store pathElements[2]
@@ -3281,7 +3281,7 @@ namespace Microsoft.PowerShell.Commands
             string[] allElts = path.Split(s_separators);
             string[] result = null;
 
-            Stack<string> elts = new Stack<string>();
+            var elts = new Stack<string>();
 
             foreach (string e in allElts)
             {
@@ -3337,13 +3337,13 @@ namespace Microsoft.PowerShell.Commands
                 // Filter to the OID for EKU
                 if (extension.Oid.Value == "2.5.29.37")
                 {
-                    X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
+                    var ext = extension as X509EnhancedKeyUsageExtension;
                     if (ext != null)
                     {
                         OidCollection oids = ext.EnhancedKeyUsages;
                         foreach (Oid oid in oids)
                         {
-                            EnhancedKeyUsageRepresentation ekuString = new EnhancedKeyUsageRepresentation(oid.FriendlyName, oid.Value);
+                            var ekuString = new EnhancedKeyUsageRepresentation(oid.FriendlyName, oid.Value);
                             _ekuList.Add(ekuString);
                         }
                     }
@@ -3575,7 +3575,7 @@ namespace Microsoft.PowerShell.Commands
         [ArchitectureSensitive]
         internal static List<string> GetStoreNamesAtLocation(StoreLocation location)
         {
-            Security.NativeMethods.CertStoreFlags locationFlag =
+            var locationFlag =
                 Security.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
 
             switch (location)
@@ -3593,12 +3593,12 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            Security.NativeMethods.CertEnumSystemStoreCallBackProto callBack =
+            var callBack =
                 new Security.NativeMethods.CertEnumSystemStoreCallBackProto(CertEnumSystemStoreCallBack);
 
             // Return a new list to avoid synchronization issues.
 
-            List<string> names = new List<string>();
+            var names = new List<string>();
             lock (s_staticLock)
             {
                 storeNames.Clear();

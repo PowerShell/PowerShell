@@ -78,7 +78,7 @@ namespace System.Management.Automation
             // the most significant bit in times, then do one final Array.Copy to get the
             // remaining copies.
 
-            T[] result = new T[elements];
+            var result = new T[elements];
             int resultLength = array.Length;
             Array.Copy(array, 0, result, 0, resultLength);
             times >>= 1;

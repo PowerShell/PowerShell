@@ -36,7 +36,7 @@ namespace System.Management.Automation.ComInterop
                     return new ComTypeEnumDesc(typeInfo, null);
                 case TYPEKIND.TKIND_DISPATCH:
                 case TYPEKIND.TKIND_INTERFACE:
-                    ComTypeDesc typeDesc = new ComTypeDesc(typeInfo, null);
+                    var typeDesc = new ComTypeDesc(typeInfo, null);
                     return typeDesc;
                 default:
                     throw new InvalidOperationException("Attempting to wrap an unsupported enum type.");
@@ -45,7 +45,7 @@ namespace System.Management.Automation.ComInterop
 
         internal static ComTypeDesc CreateEmptyTypeDesc()
         {
-            ComTypeDesc typeDesc = new ComTypeDesc(null, null)
+            var typeDesc = new ComTypeDesc(null, null)
             {
                 Funcs = new Hashtable(),
                 Puts = new Hashtable(),
@@ -185,7 +185,7 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            string[] result = new string[names.Keys.Count];
+            var result = new string[names.Keys.Count];
             names.Keys.CopyTo(result, 0);
             return result;
         }

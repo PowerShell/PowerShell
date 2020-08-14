@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.</returns>
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
-            CimQuery query = baseQuery as CimQuery;
+            var query = baseQuery as CimQuery;
             if (query == null)
             {
                 throw new ArgumentNullException(nameof(baseQuery));
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                 cimSession.ComputerName,
                                 nameOfUnsupportedSwitch);
                             Exception exception = new NotSupportedException(errorMessage);
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            var errorRecord = new ErrorRecord(
                                 exception,
                                 "NoExtendedSemanticsSupportInRemoteDcomProtocol",
                                 ErrorCategory.NotImplemented,
@@ -396,10 +396,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (this.CmdletDefinitionContext.ExposeCimNamespaceParameter)
                 {
-                    Collection<Attribute> namespaceAttributes = new Collection<Attribute>();
+                    var namespaceAttributes = new Collection<Attribute>();
                     namespaceAttributes.Add(new ValidateNotNullOrEmptyAttribute());
                     namespaceAttributes.Add(new ParameterAttribute());
-                    RuntimeDefinedParameter namespaceRuntimeParameter = new RuntimeDefinedParameter(
+                    var namespaceRuntimeParameter = new RuntimeDefinedParameter(
                         CimNamespaceParameter,
                         typeof(string),
                         namespaceAttributes);

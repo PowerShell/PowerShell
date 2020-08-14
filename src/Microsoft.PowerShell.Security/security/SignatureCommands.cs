@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (string p in FilePath)
                 {
-                    Collection<string> paths = new Collection<string>();
+                    var paths = new Collection<string>();
 
                     // Expand wildcard characters
                     if (_isLiteralPath)
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // remove readonly attributes on the file
-                        FileInfo fInfo = new FileInfo(filePath);
+                        var fInfo = new FileInfo(filePath);
                         if (fInfo != null)
                         {
                             // Save some disk write time by checking whether file is readonly..
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
                     // These are the known exceptions for File.Load and StreamWriter.ctor
                     catch (ArgumentException e)
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        var er = new ErrorRecord(
                             e,
                             "ForceArgumentException",
                             ErrorCategory.WriteError,
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (IOException e)
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        var er = new ErrorRecord(
                             e,
                             "ForceIOException",
                             ErrorCategory.WriteError,
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (UnauthorizedAccessException e)
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        var er = new ErrorRecord(
                             e,
                             "ForceUnauthorizedAccessException",
                             ErrorCategory.PermissionDenied,
@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (NotSupportedException e)
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        var er = new ErrorRecord(
                             e,
                             "ForceNotSupportedException",
                             ErrorCategory.WriteError,
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (System.Security.SecurityException e)
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        var er = new ErrorRecord(
                             e,
                             "ForceSecurityException",
                             ErrorCategory.PermissionDenied,
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
                         System.Globalization.CultureInfo.CurrentCulture,
                         UtilsStrings.FileSmallerThan4Bytes, filePath);
 
-                    PSArgumentException e = new PSArgumentException(message, nameof(filePath));
+                    var e = new PSArgumentException(message, nameof(filePath));
                     ErrorRecord er = SecurityUtils.CreateInvalidArgumentErrorRecord(
                             e,
                             "SignatureCommandsBaseFileSmallerThan4Bytes"

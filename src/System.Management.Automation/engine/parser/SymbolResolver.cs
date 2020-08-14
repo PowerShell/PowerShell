@@ -258,7 +258,7 @@ namespace System.Management.Automation.Language
         {
             for (int i = _scopes.Count - 1; i >= 0; i--)
             {
-                TypeDefinitionAst ast = _scopes[i]._ast as TypeDefinitionAst;
+                var ast = _scopes[i]._ast as TypeDefinitionAst;
                 if (ast != null)
                 {
                     return ast;

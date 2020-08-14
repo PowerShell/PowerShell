@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         internal static void UpdateConfig(PSCmdlet cmdlet, string[] name, ConfigScope scope, bool enable)
         {
             IEnumerable<WildcardPattern> namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(name, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-            GetExperimentalFeatureCommand getExperimentalFeatureCommand = new GetExperimentalFeatureCommand();
+            var getExperimentalFeatureCommand = new GetExperimentalFeatureCommand();
             getExperimentalFeatureCommand.Context = cmdlet.Context;
             bool foundFeature = false;
             foreach (ExperimentalFeature feature in getExperimentalFeatureCommand.GetAvailableExperimentalFeatures(namePatterns))
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
                 .AddCommand(commandInfo)
                 .AddParameter("Name", wordToComplete + "*");
 
-            HashSet<string> names = new HashSet<string>();
+            var names = new HashSet<string>();
             var results = ps.Invoke<ExperimentalFeature>();
             foreach (var result in results)
             {

@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
             ScanEventQueue();
 
             // And wait for our event handler (or Control-C processor) to give us control
-            PSLocalEventManager eventManager = (PSLocalEventManager)Events;
+            var eventManager = (PSLocalEventManager)Events;
 
             while (!received)
             {

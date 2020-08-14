@@ -260,8 +260,8 @@ namespace System.Management.Automation.Remoting
                         registeredShutdownNotification = 1;
 
                         // Wrap the provided handle so it can be passed to the registration function
-                        SafeWaitHandle safeWaitHandle = new SafeWaitHandle(creationRequestDetails.shutdownNotificationHandle, false); // Owned by WinRM
-                        EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+                        var safeWaitHandle = new SafeWaitHandle(creationRequestDetails.shutdownNotificationHandle, false); // Owned by WinRM
+                        var eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
                         eventWaitHandle.SafeWaitHandle = safeWaitHandle;
 
                         // Register shutdown notification handle
@@ -362,7 +362,7 @@ namespace System.Management.Automation.Remoting
         internal void Close(Exception reasonForClose)
         {
             lastErrorReported = reasonForClose;
-            WSManPluginOperationShutdownContext context = new WSManPluginOperationShutdownContext(IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, false);
+            var context = new WSManPluginOperationShutdownContext(IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, false);
             CloseOperation(context, reasonForClose);
         }
 
@@ -512,13 +512,13 @@ namespace System.Management.Automation.Remoting
             try
             {
                 // inbound cmd information is already verified.. so no need to verify here.
-                WSManPluginCommandTransportManager serverCmdTransportMgr = new WSManPluginCommandTransportManager(transportMgr);
+                var serverCmdTransportMgr = new WSManPluginCommandTransportManager(transportMgr);
                 serverCmdTransportMgr.Initialize();
 
                 // Apply quota limits on the command transport manager
                 _remoteSession.ApplyQuotaOnCommandTransportManager(serverCmdTransportMgr);
 
-                WSManPluginCommandSession mgdCmdSession = new WSManPluginCommandSession(requestDetails, serverCmdTransportMgr, _remoteSession);
+                var mgdCmdSession = new WSManPluginCommandSession(requestDetails, serverCmdTransportMgr, _remoteSession);
                 AddToActiveCmdSessions(mgdCmdSession);
                 mgdCmdSession.SessionClosed += this.HandleCommandSessionClosed;
 
@@ -618,7 +618,7 @@ namespace System.Management.Automation.Remoting
         private void CloseAndClearCommandSessions(
             Exception reasonForClose)
         {
-            Collection<WSManPluginCommandSession> copyCmdSessions = new Collection<WSManPluginCommandSession>();
+            var copyCmdSessions = new Collection<WSManPluginCommandSession>();
             lock (shellSyncObject)
             {
                 Dictionary<IntPtr, WSManPluginCommandSession>.Enumerator cmdEnumerator = _activeCommandSessions.GetEnumerator();

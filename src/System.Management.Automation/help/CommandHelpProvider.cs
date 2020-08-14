@@ -88,8 +88,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
+            var cmdletInfo = commandInfo as CmdletInfo;
+            var scriptCommandInfo = commandInfo as IScriptCommandInfo;
 
             string cmdNameWithoutPrefix = null;
             bool testWithoutPrefix = false;
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
+            var cmdletInfo = commandInfo as CmdletInfo;
 
             if (cmdletInfo != null)
             {
@@ -151,8 +151,8 @@ namespace System.Management.Automation
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
             Dbg.Assert(helpFileToFind != null, "Caller should verify that helpFileToFind != null");
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
+            var cmdletInfo = commandInfo as CmdletInfo;
+            var scriptCommandInfo = commandInfo as IScriptCommandInfo;
 
             HelpInfo result = null;
 
@@ -195,9 +195,9 @@ namespace System.Management.Automation
             string helpUri = null;
             string helpUriFromDotLink = null;
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
-            FunctionInfo functionInfo = commandInfo as FunctionInfo;
+            var cmdletInfo = commandInfo as CmdletInfo;
+            var scriptCommandInfo = commandInfo as IScriptCommandInfo;
+            var functionInfo = commandInfo as FunctionInfo;
             bool isCmdlet = cmdletInfo != null;
             bool isScriptCommand = scriptCommandInfo != null;
             bool isFunction = functionInfo != null;
@@ -276,7 +276,7 @@ namespace System.Management.Automation
                     {
                         try
                         {
-                            Uri testUri = new Uri(helpUriFromDotLink);
+                            var testUri = new Uri(helpUriFromDotLink);
                             helpUri = helpUriFromDotLink;
                         }
                         catch (UriFormatException)
@@ -319,7 +319,7 @@ namespace System.Management.Automation
 
                 var userHomeHelpPath = HelpUtils.GetUserHomeHelpSearchPath();
 
-                Collection<string> searchPaths = new Collection<string>() { userHomeHelpPath };
+                var searchPaths = new Collection<string>() { userHomeHelpPath };
 
                 if (!string.IsNullOrEmpty(moduleDir))
                 {
@@ -503,7 +503,7 @@ namespace System.Management.Automation
             // 2. If PSSnapInInfo exists, then always look in the application base of the mshsnapin
             // Otherwise,
             //    Look in the default search path and cmdlet assembly path
-            Collection<string> searchPaths = new Collection<string>();
+            var searchPaths = new Collection<string>();
 
             if (!File.Exists(helpFileToLoad))
             {
@@ -765,7 +765,7 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
+            var commandHelpInfo = helpInfo as MamlCommandHelpInfo;
 
             if (commandHelpInfo == null)
                 return;
@@ -797,7 +797,7 @@ namespace System.Management.Automation
             // Win8: Win8:477680: When Function/Workflow Use External Help, Category Property is "Cmdlet"
             if ((result != null) && (result.HelpCategory != helpCategory))
             {
-                MamlCommandHelpInfo original = (MamlCommandHelpInfo)result;
+                var original = (MamlCommandHelpInfo)result;
                 result = original.Copy(helpCategory);
             }
 
@@ -897,7 +897,7 @@ namespace System.Management.Automation
             Dbg.Assert(cmdInfo != null, "cmdInfo cannot be null");
 
             MamlCommandHelpInfo result = null;
-            MamlCommandHelpInfo originalHelpInfo = GetFromCommandCache(helpIdentifier,
+            var originalHelpInfo = GetFromCommandCache(helpIdentifier,
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
@@ -1011,7 +1011,7 @@ namespace System.Management.Automation
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             string target = helpRequest.Target;
-            Collection<string> patternList = new Collection<string>();
+            var patternList = new Collection<string>();
             // this will be used only when searchOnlyContent == true
             WildcardPattern wildCardPattern = null;
             // Decorated Search means that original match target is a target without
@@ -1317,7 +1317,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal virtual CommandSearcher GetCommandSearcherForExactMatch(string commandName, ExecutionContext context)
         {
-            CommandSearcher searcher = new CommandSearcher(
+            var searcher = new CommandSearcher(
                 commandName,
                 SearchResolutionOptions.None,
                 CommandTypes.Cmdlet,
@@ -1334,7 +1334,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal virtual CommandSearcher GetCommandSearcherForSearch(string pattern, ExecutionContext context)
         {
-            CommandSearcher searcher =
+            var searcher =
                     new CommandSearcher(
                         pattern,
                         SearchResolutionOptions.CommandNameIsPattern,
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation
             if (dataNode == null)
                 return null;
 
-            UserDefinedHelpData userDefinedHelpData = new UserDefinedHelpData();
+            var userDefinedHelpData = new UserDefinedHelpData();
 
             for (int i = 0; i < dataNode.ChildNodes.Count; i++)
             {

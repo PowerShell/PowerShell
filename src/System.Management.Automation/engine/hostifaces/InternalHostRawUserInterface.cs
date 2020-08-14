@@ -27,7 +27,7 @@ namespace System.Management.Automation.Internal.Host
             // GetCallingMethodAndParameters here and display the name,
             // but I don't want to put that in mainline non-trace code.
             string message = HostInterfaceExceptionsStrings.HostFunctionNotImplemented;
-            HostException e = new HostException(
+            var e = new HostException(
                 message,
                 null,
                 "HostFunctionNotImplemented",
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Internal.Host
                 ThrowNotInteractive();
             }
 
-            KeyInfo result = new KeyInfo();
+            var result = new KeyInfo();
             try
             {
                 result = _externalRawUI.ReadKey(options);
@@ -367,7 +367,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 // PipelineStoppedException is thrown by host when it wants
                 // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parentHost.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                var lpl = (LocalPipeline)((RunspaceBase)_parentHost.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;

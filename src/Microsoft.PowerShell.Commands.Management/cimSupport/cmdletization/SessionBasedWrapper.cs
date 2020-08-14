@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             if (this.AsJob.IsPresent)
             {
-                MshCommandRuntime commandRuntime = (MshCommandRuntime)this.Cmdlet.CommandRuntime; // PSCmdlet.CommandRuntime is always MshCommandRuntime
+                var commandRuntime = (MshCommandRuntime)this.Cmdlet.CommandRuntime; // PSCmdlet.CommandRuntime is always MshCommandRuntime
                 string conflictingParameter = null;
                 if (commandRuntime.WhatIf.IsPresent)
                 {

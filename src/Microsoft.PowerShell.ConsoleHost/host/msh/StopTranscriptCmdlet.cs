@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
                 string outFilename = Host.UI.StopTranscribing();
                 if (outFilename != null)
                 {
-                    PSObject outputObject = new PSObject(
+                    var outputObject = new PSObject(
                         StringUtil.Format(TranscriptStrings.TranscriptionStopped, outFilename));
                     outputObject.Properties.Add(new PSNoteProperty("Path", outFilename));
                     WriteObject(outputObject);

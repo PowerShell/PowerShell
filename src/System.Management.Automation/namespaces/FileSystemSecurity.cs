@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
                                                         "SetSecurityDescriptor_FileNotFound"));
             }
 
-            FileSystemSecurity sd = securityDescriptor as FileSystemSecurity;
+            var sd = securityDescriptor as FileSystemSecurity;
 
             if (sd == null)
             {
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                     ObjectSecurity existingDescriptor = new FileInfo(path).GetAccessControl();
                     Type ntAccountType = typeof(System.Security.Principal.NTAccount);
 
-                    AccessControlSections sections = AccessControlSections.All;
+                    var sections = AccessControlSections.All;
 
                     // If they didn't modify any audit information, don't try to set
                     // the audit section.
@@ -226,14 +226,14 @@ namespace Microsoft.PowerShell.Commands
                 // WriteSecurityDescriptorObject.
                 if (Directory.Exists(path))
                 {
-                    DirectorySecurity newDescriptor = new DirectorySecurity();
+                    var newDescriptor = new DirectorySecurity();
                     newDescriptor.SetSecurityDescriptorBinaryForm(securityDescriptorBinary, sections);
                     new DirectoryInfo(path).SetAccessControl(newDescriptor);
                     WriteSecurityDescriptorObject(newDescriptor, path);
                 }
                 else
                 {
-                    FileSecurity newDescriptor = new FileSecurity();
+                    var newDescriptor = new FileSecurity();
                     newDescriptor.SetSecurityDescriptorBinaryForm(securityDescriptorBinary, sections);
                     new FileInfo(path).SetAccessControl(newDescriptor);
                     WriteSecurityDescriptorObject(newDescriptor, path);
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             string path,
             AccessControlSections sections)
         {
-            ItemType itemType = ItemType.Unknown;
+            var itemType = ItemType.Unknown;
 
             if (IsItemContainer(path))
             {
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
             string type,
             AccessControlSections sections)
         {
-            ItemType itemType = ItemType.Unknown;
+            var itemType = ItemType.Unknown;
 
             itemType = GetItemType(type);
             return NewSecurityDescriptor(itemType);
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
 
             message = StringUtil.Format(FileSystemProviderStrings.FileNotFound, path);
 
-            ErrorRecord er =
+            var er =
                 new ErrorRecord(new FileNotFoundException(message),
                                 errorId,
                                 ErrorCategory.ObjectNotFound,

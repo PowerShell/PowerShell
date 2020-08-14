@@ -649,8 +649,8 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, _path);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
                     ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
@@ -676,7 +676,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                StringBuilder result = new StringBuilder();
+                var result = new StringBuilder();
 
                 result.Append("@{");
                 result.Append(streamWriter.NewLine);
@@ -955,21 +955,21 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionNameToken))
                             {
-                                PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                     ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionNameToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionValueToken))
                             {
-                                PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                     ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionValueToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
-                                PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
+                                var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
@@ -980,7 +980,7 @@ namespace Microsoft.PowerShell.Commands
                                     !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
                                     !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
+                                    var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
@@ -989,7 +989,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
+                        var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
                             ConfigFileConstants.FunctionDefinitions, filePath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
@@ -1006,7 +1006,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string varString = _variableDefinitions as string;
+                    var varString = _variableDefinitions as string;
 
                     if (varString != null)
                     {
@@ -1026,14 +1026,14 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableNameToken))
                                 {
-                                    PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                    var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                         ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableNameToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
 
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableValueToken))
                                 {
-                                    PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                    var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                         ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableValueToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
@@ -1043,7 +1043,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
                                         !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
+                                        var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
                                         ThrowTerminatingError(e.ErrorRecord);
                                     }
@@ -1052,7 +1052,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
+                            var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
                                 ConfigFileConstants.VariableDefinitions, filePath));
                             ThrowTerminatingError(e.ErrorRecord);
                         }
@@ -1551,8 +1551,8 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellRoleCapabilityFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFilePath, _path);
-                InvalidOperationException ioe = new InvalidOperationException(message);
-                ErrorRecord er = new ErrorRecord(ioe, "InvalidRoleCapabilityFilePath",
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "InvalidRoleCapabilityFilePath",
                     ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
@@ -1578,7 +1578,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                StringBuilder result = new StringBuilder();
+                var result = new StringBuilder();
 
                 result.Append("@{");
                 result.Append(streamWriter.NewLine);
@@ -1702,21 +1702,21 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionNameToken))
                             {
-                                PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                     ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionNameToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionValueToken))
                             {
-                                PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                     ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionValueToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
-                                PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
+                                var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
@@ -1727,7 +1727,7 @@ namespace Microsoft.PowerShell.Commands
                                     !string.Equals(functionKey, ConfigFileConstants.FunctionValueToken, StringComparison.OrdinalIgnoreCase) &&
                                     !string.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
+                                    var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                         functionKey, ConfigFileConstants.FunctionDefinitions, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
@@ -1736,7 +1736,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
+                        var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
                             ConfigFileConstants.FunctionDefinitions, filePath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
@@ -1750,7 +1750,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string varString = _variableDefinitions as string;
+                    var varString = _variableDefinitions as string;
 
                     if (varString != null)
                     {
@@ -1770,14 +1770,14 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableNameToken))
                                 {
-                                    PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                    var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                         ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableNameToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
 
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableValueToken))
                                 {
-                                    PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
+                                    var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
                                         ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableValueToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
@@ -1787,7 +1787,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (!string.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
                                         !string.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
+                                        var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
                                             variableKey, ConfigFileConstants.VariableDefinitions, _path));
                                         ThrowTerminatingError(e.ErrorRecord);
                                     }
@@ -1796,7 +1796,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
+                            var e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtableArray,
                                 ConfigFileConstants.VariableDefinitions, filePath));
                             ThrowTerminatingError(e.ErrorRecord);
                         }
@@ -1940,7 +1940,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string CombineHashtable(IDictionary table, StreamWriter writer, int? indent = 0)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append("@{");
 
@@ -1957,7 +1957,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                IDictionary tableValue = table[key] as IDictionary;
+                var tableValue = table[key] as IDictionary;
                 if (tableValue != null)
                 {
                     sb.Append(CombineHashtable(tableValue, writer, indent + 1));
@@ -2002,17 +2002,17 @@ namespace Microsoft.PowerShell.Commands
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.RequiredGroupsHashMultipleKeys);
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             var keyEnumerator = table.Keys.GetEnumerator();
             keyEnumerator.MoveNext();
-            string key = keyEnumerator.Current as string;
+            var key = keyEnumerator.Current as string;
             object keyObject = table[key];
             sb.Append("@{ ");
             sb.Append(QuoteName(key));
             sb.Append(" = ");
 
-            object[] values = keyObject as object[];
+            var values = keyObject as object[];
             if (values != null)
             {
                 for (int i = 0; i < values.Length;)
@@ -2037,14 +2037,14 @@ namespace Microsoft.PowerShell.Commands
 
         private static void WriteRequiredGroup(object value, StringBuilder sb)
         {
-            string strValue = value as string;
+            var strValue = value as string;
             if (strValue != null)
             {
                 sb.Append(QuoteName(strValue));
             }
             else
             {
-                Hashtable subTable = value as Hashtable;
+                var subTable = value as Hashtable;
                 if (subTable != null)
                 {
                     sb.Append(CombineRequiredGroupsHash(subTable));
@@ -2061,7 +2061,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string CombineHashtableArray(IDictionary[] tables, StreamWriter writer, int? indent = 0)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < tables.Length; i++)
             {
@@ -2083,7 +2083,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>String block.</returns>
         internal static string CombineStringArray(string[] values)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -2106,22 +2106,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string CombineHashTableOrStringArray(object[] values, StreamWriter writer, PSCmdlet caller)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < values.Length; i++)
             {
-                string strVal = values[i] as string;
+                var strVal = values[i] as string;
                 if (!string.IsNullOrEmpty(strVal))
                 {
                     sb.Append(QuoteName(strVal));
                 }
                 else
                 {
-                    Hashtable hashVal = values[i] as Hashtable;
+                    var hashVal = values[i] as Hashtable;
                     if (hashVal == null)
                     {
                         string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                                                            ConfigFileConstants.ModulesToImport);
-                        PSArgumentException e = new PSArgumentException(message);
+                        var e = new PSArgumentException(message);
                         caller.ThrowTerminatingError(e.ErrorRecord);
                     }
 

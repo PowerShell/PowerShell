@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// <param name="args"></param>
         private void HandleStartEvent(object sender, PSEventArgs args)
         {
-            ServerSteppablePipelineDriverEventArg driverArg = (object)args.SourceEventArgs as ServerSteppablePipelineDriverEventArg;
+            var driverArg = (object)args.SourceEventArgs as ServerSteppablePipelineDriverEventArg;
             ServerSteppablePipelineDriver driver = driverArg.SteppableDriver;
 
             Exception exceptionOccurred = null;
@@ -115,7 +115,7 @@ namespace System.Management.Automation
         /// <param name="args"></param>
         private void HandleProcessRecord(object sender, PSEventArgs args)
         {
-            ServerSteppablePipelineDriverEventArg driverArg = (object)args.SourceEventArgs as ServerSteppablePipelineDriverEventArg;
+            var driverArg = (object)args.SourceEventArgs as ServerSteppablePipelineDriverEventArg;
             ServerSteppablePipelineDriver driver = driverArg.SteppableDriver;
 
             lock (driver.SyncObject)

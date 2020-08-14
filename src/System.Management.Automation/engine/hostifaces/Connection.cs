@@ -565,11 +565,11 @@ namespace System.Management.Automation.Runspaces
 
             get
             {
-                RunspaceBase runspace = Runspace.DefaultRunspace as RunspaceBase;
+                var runspace = Runspace.DefaultRunspace as RunspaceBase;
                 if (runspace != null)
                 {
                     Pipeline currentPipeline = runspace.GetCurrentlyRunningPipeline();
-                    LocalPipeline localPipeline = currentPipeline as LocalPipeline;
+                    var localPipeline = currentPipeline as LocalPipeline;
                     if ((localPipeline != null) && (localPipeline.NestedPipelineExecutionThread != null))
                     {
                         return
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                List<Runspace> runspaceList = new List<Runspace>();
+                var runspaceList = new List<Runspace>();
 
                 lock (s_syncObject)
                 {
@@ -953,7 +953,7 @@ namespace System.Management.Automation.Runspaces
                             }
                             else
                             {
-                                RemoteRunspace remoteRunspace = this as RemoteRunspace;
+                                var remoteRunspace = this as RemoteRunspace;
                                 RemoteDebugger remoteDebugger = (remoteRunspace != null) ? remoteRunspace.Debugger as RemoteDebugger : null;
                                 Internal.ConnectCommandInfo remoteCommand = (remoteRunspace != null) ? remoteRunspace.RemoteCommand : null;
                                 if (((pipelineState == PipelineState.Completed) || (pipelineState == PipelineState.Failed) ||
@@ -975,7 +975,7 @@ namespace System.Management.Automation.Runspaces
                                 }
 
                                 Pipeline currentPipeline = this.GetCurrentlyRunningPipeline();
-                                RemotePipeline remotePipeline = currentPipeline as RemotePipeline;
+                                var remotePipeline = currentPipeline as RemotePipeline;
                                 Guid? pipeLineCmdInstance = (remotePipeline != null && remotePipeline.PowerShell != null) ? remotePipeline.PowerShell.InstanceId : (Guid?)null;
                                 if (currentPipeline == null)
                                 {
@@ -1119,14 +1119,14 @@ namespace System.Management.Automation.Runspaces
         protected void UpdateRunspaceAvailability(RunspaceState runspaceState, bool raiseEvent)
         {
             RunspaceAvailability oldAvailability = this.RunspaceAvailability;
-            RemoteRunspace remoteRunspace = this as RemoteRunspace;
+            var remoteRunspace = this as RemoteRunspace;
             Internal.ConnectCommandInfo remoteCommand = null;
             bool remoteDebug = false;
 
             if (remoteRunspace != null)
             {
                 remoteCommand = remoteRunspace.RemoteCommand;
-                RemoteDebugger remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
+                var remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
                 remoteDebug = (remoteDebugger != null) && remoteDebugger.IsRemoteDebug;
             }
 

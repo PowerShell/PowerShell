@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string description = SessionStateStrings.EnvironmentDriveDescription;
 
-            PSDriveInfo envDrive =
+            var envDrive =
                 new PSDriveInfo(
                     DriveNames.EnvironmentDrive,
                     ProviderInfo,
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
                     description,
                     null);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
             drives.Add(envDrive);
             return drives;
         }
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
                     value = ((DictionaryEntry)value).Value;
                 }
 
-                string stringValue = value as string;
+                var stringValue = value as string;
                 if (stringValue == null)
                 {
                     // try using ETS to convert to a string.
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Environment.SetEnvironmentVariable(name, stringValue);
 
-                DictionaryEntry item = new DictionaryEntry(name, stringValue);
+                var item = new DictionaryEntry(name, stringValue);
 
                 if (writeItem)
                 {
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             Dictionary<string, DictionaryEntry> providerTable =
                 new Dictionary<string, DictionaryEntry>(StringComparer.Ordinal);
 #else
-            Dictionary<string, DictionaryEntry> providerTable =
+            var providerTable =
                 new Dictionary<string, DictionaryEntry>(StringComparer.OrdinalIgnoreCase);
 #endif
 

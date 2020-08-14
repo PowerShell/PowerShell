@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] arguments)
         {
-            FilterInfo copy = new FilterInfo(this);
+            var copy = new FilterInfo(this);
             copy.IsGetCommandCopy = true;
             copy.Arguments = arguments;
             return copy;

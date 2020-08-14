@@ -72,7 +72,7 @@ namespace System.Management.Automation.Internal
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
 
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
-            Queue<string> directoriesToCheck = new Queue<string>();
+            var directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
 
             bool firstSubDirs = true;
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Internal
 
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)
         {
-            HashSet<string> uniqueModuleFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var uniqueModuleFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (string directory in ModuleIntrinsics.GetModulePath(isForAutoDiscovery, context))
             {
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal static List<string> GetModuleFilesFromAbsolutePath(string directory)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
             string fileName = Path.GetFileName(directory);
 
             // If the given directory doesn't exist or it's the root folder, then return an empty list.
@@ -252,8 +252,8 @@ namespace System.Management.Automation.Internal
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
 
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
-            List<Version> versionDirectories = new List<Version>();
-            LinkedList<string> directoriesToCheck = new LinkedList<string>();
+            var versionDirectories = new List<Version>();
+            var directoriesToCheck = new LinkedList<string>();
             directoriesToCheck.AddLast(topDirectoryToCheck);
 
             while (directoriesToCheck.Count > 0)
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Internal
         internal static string AbbreviateName(string commandName)
         {
             // Use default size of 6 which represents expected average abbreviation length
-            StringBuilder abbreviation = new StringBuilder(6);
+            var abbreviation = new StringBuilder(6);
             foreach (char c in commandName)
             {
                 if (char.IsUpper(c) || c == '-')

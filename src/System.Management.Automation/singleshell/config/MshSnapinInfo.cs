@@ -398,7 +398,7 @@ namespace System.Management.Automation
 
         internal PSSnapInInfo Clone()
         {
-            PSSnapInInfo cloned = new PSSnapInInfo(
+            var cloned = new PSSnapInInfo(
                 Name,
                 IsDefault,
                 ApplicationBase,
@@ -476,7 +476,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static Collection<PSSnapInInfo> ReadAll()
         {
-            Collection<PSSnapInInfo> allMshSnapins = new Collection<PSSnapInInfo>();
+            var allMshSnapins = new Collection<PSSnapInInfo>();
             RegistryKey monadRootKey = GetMonadRootKey();
 
             string[] versions = monadRootKey.GetSubKeyNames();
@@ -487,7 +487,7 @@ namespace System.Management.Automation
 
             // PS V3 snapin information is stored under 1 registry key..
             // so no need to iterate over twice.
-            Collection<string> filteredVersions = new Collection<string>();
+            var filteredVersions = new Collection<string>();
             foreach (string version in versions)
             {
                 string temp = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(version);
@@ -602,7 +602,7 @@ namespace System.Management.Automation
             Dbg.Assert(monadRootKey != null, "caller should validate the information");
             Dbg.Assert(!string.IsNullOrEmpty(psVersion), "caller should validate the information");
 
-            Collection<PSSnapInInfo> mshsnapins = new Collection<PSSnapInInfo>();
+            var mshsnapins = new Collection<PSSnapInInfo>();
             RegistryKey versionRoot = GetVersionRootKey(monadRootKey, psVersion);
             RegistryKey mshsnapinRoot = GetMshSnapinRootKey(versionRoot, psVersion);
 
@@ -733,7 +733,7 @@ namespace System.Management.Automation
             Collection<string> formats = ReadMultiStringValue(mshsnapinKey, RegistryStrings.MshSnapin_BuiltInFormats, false);
 
             s_mshsnapinTracer.WriteLine("Successfully read registry values for mshsnapin {0}. Constructing PSSnapInInfo object.", mshsnapinId);
-            PSSnapInInfo mshSnapinInfo = new PSSnapInInfo(mshsnapinId, false, applicationBase, assemblyName, moduleName, monadVersion, version, types, formats, description, vendor);
+            var mshSnapinInfo = new PSSnapInInfo(mshsnapinId, false, applicationBase, assemblyName, moduleName, monadVersion, version, types, formats, description, vendor);
             mshSnapinInfo.LogPipelineExecutionDetails = logPipelineExecutionDetails;
 
             return mshSnapinInfo;
@@ -768,12 +768,12 @@ namespace System.Management.Automation
             }
 
             // value cannot be null here...
-            string[] msv = value as string[];
+            var msv = value as string[];
 
             if (msv == null)
             {
                 // Check if the value is in string format
-                string singleValue = value as string;
+                var singleValue = value as string;
                 if (singleValue != null)
                 {
                     msv = new string[1];
@@ -823,7 +823,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.MandatoryValueNotPresent, name, mshsnapinKey.Name);
             }
 
-            string s = value as string;
+            var s = value as string;
             if (string.IsNullOrEmpty(s) && mandatory)
             {
                 s_mshsnapinTracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
@@ -926,7 +926,7 @@ namespace System.Management.Automation
         internal static string ConvertByteArrayToString(byte[] tokens)
         {
             Dbg.Assert(tokens != null, "Input tokens should never be null");
-            StringBuilder tokenBuilder = new StringBuilder(tokens.Length * 2);
+            var tokenBuilder = new StringBuilder(tokens.Length * 2);
             foreach (byte b in tokens)
             {
                 tokenBuilder.Append(b.ToString("x2", CultureInfo.InvariantCulture));
@@ -952,8 +952,8 @@ namespace System.Management.Automation
             ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
 
             // System.Management.Automation formats & types files
-            Collection<string> types = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
-            Collection<string> formats = new Collection<string>(new string[]
+            var types = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
+            var formats = new Collection<string>(new string[]
                         {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
                          "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
@@ -963,7 +963,7 @@ namespace System.Management.Automation
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 
-            PSSnapInInfo coreMshSnapin = new PSSnapInInfo(
+            var coreMshSnapin = new PSSnapInInfo(
                 s_coreSnapin.PSSnapInName,
                 isDefault: true,
                 applicationBase,
@@ -1006,14 +1006,14 @@ namespace System.Management.Automation
             ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
 
             // System.Management.Automation formats & types files
-            Collection<string> smaFormats = new Collection<string>(new string[]
+            var smaFormats = new Collection<string>(new string[]
                         {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
                          "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
-            Collection<string> smaTypes = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
+            var smaTypes = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
 
             // create default mshsnapininfo objects..
-            Collection<PSSnapInInfo> engineMshSnapins = new Collection<PSSnapInInfo>();
+            var engineMshSnapins = new Collection<PSSnapInInfo>();
             string assemblyVersionString = assemblyVersion.ToString();
 
             for (int item = 0; item < DefaultMshSnapins.Count; item++)
@@ -1049,7 +1049,7 @@ namespace System.Management.Automation
 
                 string moduleName = Path.Combine(applicationBase, defaultMshSnapinInfo.AssemblyName + ".dll");
 
-                PSSnapInInfo defaultMshSnapin = new PSSnapInInfo(
+                var defaultMshSnapin = new PSSnapInInfo(
                     defaultMshSnapinInfo.PSSnapInName,
                     isDefault: true,
                     applicationBase,

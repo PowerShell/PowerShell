@@ -104,7 +104,7 @@ namespace System.Management.Automation
             {
                 if (_helpTracer.HelpSystem.VerboseHelpErrors && _errors.Count > 0)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("Help Load Error"), "HelpLoadError", ErrorCategory.SyntaxError, null);
+                    var errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("Help Load Error"), "HelpLoadError", ErrorCategory.SyntaxError, null);
                     errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpErrorTracer).Assembly, "HelpErrors", "HelpLoadError", _helpFile, _errors.Count);
                     _helpTracer.HelpSystem.LastErrors.Add(errorRecord);
 
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal IDisposable Trace(string helpFile)
         {
-            TraceFrame traceFrame = new TraceFrame(this, helpFile);
+            var traceFrame = new TraceFrame(this, helpFile);
 
             _traceFrames.Add(traceFrame);
 

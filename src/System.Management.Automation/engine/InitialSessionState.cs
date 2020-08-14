@@ -413,7 +413,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateAssemblyEntry entry = new SessionStateAssemblyEntry(Name, FileName);
+            var entry = new SessionStateAssemblyEntry(Name, FileName);
             entry.SetPSSnapIn(this.PSSnapIn);
             entry.SetModule(this.Module);
             return entry;
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateCmdletEntry entry = new SessionStateCmdletEntry(Name, ImplementingType, HelpFileName, Visibility);
+            var entry = new SessionStateCmdletEntry(Name, ImplementingType, HelpFileName, Visibility);
             entry.SetPSSnapIn(this.PSSnapIn);
             entry.SetModule(this.Module);
             return entry;
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateProviderEntry entry = new SessionStateProviderEntry(Name, ImplementingType, HelpFileName, this.Visibility);
+            var entry = new SessionStateProviderEntry(Name, ImplementingType, HelpFileName, this.Visibility);
             entry.SetPSSnapIn(this.PSSnapIn);
             entry.SetModule(this.Module);
             return entry;
@@ -555,7 +555,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateScriptEntry entry = new SessionStateScriptEntry(Path, Visibility);
+            var entry = new SessionStateScriptEntry(Path, Visibility);
             entry.SetModule(this.Module);
             return entry;
         }
@@ -633,7 +633,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateAliasEntry entry = new SessionStateAliasEntry(Name, Definition, Description, Options, Visibility);
+            var entry = new SessionStateAliasEntry(Name, Definition, Description, Options, Visibility);
             entry.SetModule(this.Module);
             return entry;
         }
@@ -689,7 +689,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateApplicationEntry entry = new SessionStateApplicationEntry(Path, Visibility);
+            var entry = new SessionStateApplicationEntry(Path, Visibility);
             entry.SetModule(this.Module);
             return entry;
         }
@@ -782,7 +782,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateFunctionEntry entry = new SessionStateFunctionEntry(Name, Definition, Options, Visibility, ScriptBlock, HelpFile);
+            var entry = new SessionStateFunctionEntry(Name, Definition, Options, Visibility, ScriptBlock, HelpFile);
             entry.SetModule(this.Module);
             return entry;
         }
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                Collection<T> result = new Collection<T>();
+                var result = new Collection<T>();
                 lock (_syncObject)
                 {
                     foreach (T element in _internalCollection)
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation.Runspaces
                 throw new PSArgumentNullException(nameof(name));
             }
 
-            Collection<T> result = new Collection<T>();
+            var result = new Collection<T>();
             WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
             lock (_syncObject)
             {
@@ -1267,7 +1267,7 @@ namespace System.Management.Automation.Runspaces
         private static void RemoveDisallowedEntries<T>(InitialSessionStateEntryCollection<T> list, List<string> allowedNames, Func<T, string> nameGetter)
             where T : InitialSessionStateEntry
         {
-            List<string> namesToRemove = new List<string>();
+            var namesToRemove = new List<string>();
             foreach (T entry in list)
             {
                 string entryName = nameGetter(entry);
@@ -1293,7 +1293,7 @@ namespace System.Management.Automation.Runspaces
                 string entryName = nameGetter(entry);
 
                 // Aliases to allowed commands are OK
-                SessionStateAliasEntry aliasEntry = entry as SessionStateAliasEntry;
+                var aliasEntry = entry as SessionStateAliasEntry;
                 if (aliasEntry != null)
                 {
                     if (allowedNames.Exists(allowedName => allowedName.Equals(aliasEntry.Definition, StringComparison.OrdinalIgnoreCase)))
@@ -1333,7 +1333,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path, Func<string, bool> roleVerifier)
         {
-            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier);
+            var discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier);
             return discConfiguration.GetInitialSessionState(null);
         }
 
@@ -1377,7 +1377,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // restrict what gets exposed
-            List<string> allowedCommands = new List<string>();
+            var allowedCommands = new List<string>();
 
             // required by implicit remoting and interactive remoting
             allowedCommands.Add("Get-Command");
@@ -1401,7 +1401,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that only PowerShell core formats are included in the restricted session.
             IncludePowerShellCoreFormats(iss);
 
-            List<string> allowedTypes = new List<string>();
+            var allowedTypes = new List<string>();
             allowedTypes.Add("types.ps1xml");
             allowedTypes.Add("typesV3.ps1xml");
             RemoveDisallowedEntries(
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static InitialSessionState Create()
         {
-            InitialSessionState iss = new InitialSessionState();
+            var iss = new InitialSessionState();
 
             // TODO: the following code is probably needed for the hosted constrained runspace
             // There are too many things that depend on the built-in variables. At the same time,
@@ -1501,7 +1501,7 @@ namespace System.Management.Automation.Runspaces
             Collection<PSSnapInInfo> defaultSnapins;
             PSSnapInException warning;
 
-            InitialSessionState ss = new InitialSessionState();
+            var ss = new InitialSessionState();
 
             ss.Variables.Add(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Remove duplicated assemblies
-            HashSet<string> assemblyList = new HashSet<string>();
+            var assemblyList = new HashSet<string>();
 
             for (int i = ss.Assemblies.Count - 1; i >= 0; i--)
             {
@@ -1568,7 +1568,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static InitialSessionState CreateDefault2()
         {
-            InitialSessionState ss = new InitialSessionState();
+            var ss = new InitialSessionState();
 
             ss.Variables.Add(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
@@ -1609,7 +1609,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public InitialSessionState Clone()
         {
-            InitialSessionState ss = new InitialSessionState();
+            var ss = new InitialSessionState();
 
             ss.Variables.Add(this.Variables.Clone());
             ss.EnvironmentVariables.Add(this.EnvironmentVariables.Clone());
@@ -2340,7 +2340,7 @@ namespace System.Management.Automation.Runspaces
                     RunspaceEventSource.Log.LoadCommandStart(cmd.Name);
                 }
 
-                SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
+                var ssce = cmd as SessionStateCmdletEntry;
                 if (ssce != null)
                 {
                     if (noClobber && ModuleCmdletBase.CommandFound(ssce.Name, ss))
@@ -2357,21 +2357,21 @@ namespace System.Management.Automation.Runspaces
 
                 cmd.SetModule(module);
 
-                SessionStateFunctionEntry ssfe = cmd as SessionStateFunctionEntry;
+                var ssfe = cmd as SessionStateFunctionEntry;
                 if (ssfe != null)
                 {
                     ss.AddSessionStateEntry(ssfe);
                     continue;
                 }
 
-                SessionStateAliasEntry ssae = cmd as SessionStateAliasEntry;
+                var ssae = cmd as SessionStateAliasEntry;
                 if (ssae != null)
                 {
                     ss.AddSessionStateEntry(ssae, StringLiterals.Local);
                     continue;
                 }
 
-                SessionStateApplicationEntry ssappe = cmd as SessionStateApplicationEntry;
+                var ssappe = cmd as SessionStateApplicationEntry;
                 if (ssappe != null)
                 {
                     if (ssappe.Visibility == SessionStateEntryVisibility.Public)
@@ -2382,7 +2382,7 @@ namespace System.Management.Automation.Runspaces
                     continue;
                 }
 
-                SessionStateScriptEntry ssse = cmd as SessionStateScriptEntry;
+                var ssse = cmd as SessionStateScriptEntry;
                 if (ssse != null)
                 {
                     if (ssse.Visibility == SessionStateEntryVisibility.Public)
@@ -2589,8 +2589,8 @@ namespace System.Management.Automation.Runspaces
 
         private string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
         {
-            Collection<string> modulesToImport = new Collection<string>();
-            HashSet<string> commandsToResolve = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var modulesToImport = new Collection<string>();
+            var commandsToResolve = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var unresolvedCommand in unresolvedCommands)
             {
                 string moduleName;
@@ -2663,7 +2663,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 // If we are wrapping a function, rename it.
-                FunctionInfo commandAsFunction = existingCommand as FunctionInfo;
+                var commandAsFunction = existingCommand as FunctionInfo;
                 if (commandAsFunction != null)
                 {
                     string newCommandName = commandAsFunction.Name + "_" + Guid.NewGuid().ToString("N");
@@ -2673,8 +2673,8 @@ namespace System.Management.Automation.Runspaces
                     existingCommand = initializedRunspace.SessionStateProxy.InvokeCommand.GetCommand(newCommandName, CommandTypes.Function);
                 }
 
-                CommandMetadata metadata = new CommandMetadata(existingCommand);
-                List<string> unprocessedCommandModifications = new List<string>();
+                var metadata = new CommandMetadata(existingCommand);
+                var unprocessedCommandModifications = new List<string>();
                 foreach (string commandModificationParameter in commandModification.Keys)
                 {
                     unprocessedCommandModifications.Add(commandModificationParameter);
@@ -2729,7 +2729,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Add validation attributes
-            Hashtable parameterValidations = (Hashtable)commandModification[parameterName];
+            var parameterValidations = (Hashtable)commandModification[parameterName];
             foreach (object parameterValidation in parameterValidations.Keys)
             {
                 string[] parameterValidationValues =
@@ -2738,13 +2738,13 @@ namespace System.Management.Automation.Runspaces
                 switch (parameterValidation.ToString())
                 {
                     case "ValidateSet":
-                        ValidateSetAttribute validateSet = new ValidateSetAttribute(parameterValidationValues);
+                        var validateSet = new ValidateSetAttribute(parameterValidationValues);
                         metadata.Parameters[parameterName].Attributes.Add(validateSet);
                         break;
 
                     case "ValidatePattern":
                         string pattern = "^(" + string.Join("|", parameterValidationValues) + ")$";
-                        ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
+                        var validatePattern = new ValidatePatternAttribute(pattern);
                         metadata.Parameters[parameterName].Attributes.Add(validatePattern);
                         break;
                 }
@@ -2758,7 +2758,7 @@ namespace System.Management.Automation.Runspaces
                 if (variable.ContainsKey("Name"))
                 {
                     string name = variable["Name"].ToString();
-                    ScriptBlock sb = variable["Value"] as ScriptBlock;
+                    var sb = variable["Value"] as ScriptBlock;
 
                     if (!string.IsNullOrEmpty(name) && (sb != null))
                     {
@@ -2915,17 +2915,17 @@ namespace System.Management.Automation.Runspaces
             {
                 // find out if there are any error records reported. If there is one, report the error..
                 // this will result in the runspace getting closed/broken.
-                ArrayList errorList = (ArrayList)initializedRunspace.GetExecutionContext.DollarErrorVariable;
+                var errorList = (ArrayList)initializedRunspace.GetExecutionContext.DollarErrorVariable;
                 if (errorList.Count > 0)
                 {
-                    ErrorRecord lastErrorRecord = errorList[0] as ErrorRecord;
+                    var lastErrorRecord = errorList[0] as ErrorRecord;
                     if (lastErrorRecord != null)
                     {
                         return new Exception(lastErrorRecord.ToString());
                     }
                     else
                     {
-                        Exception lastException = errorList[0] as Exception;
+                        var lastException = errorList[0] as Exception;
                         if (lastException != null)
                         {
                             return lastException;
@@ -2952,14 +2952,14 @@ namespace System.Management.Automation.Runspaces
 
             foreach (object module in moduleList)
             {
-                string moduleName = module as string;
+                var moduleName = module as string;
                 if (moduleName != null)
                 {
                     exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
                 }
                 else
                 {
-                    ModuleSpecification moduleSpecification = module as ModuleSpecification;
+                    var moduleSpecification = module as ModuleSpecification;
                     if (moduleSpecification != null)
                     {
                         if ((moduleSpecification.RequiredVersion == null) && (moduleSpecification.Version == null) && (moduleSpecification.MaximumVersion == null) && (moduleSpecification.Guid == null))
@@ -3002,7 +3002,7 @@ namespace System.Management.Automation.Runspaces
                                     moduleSpecification.Name,
                                     moduleSpecification.Guid,
                                     version);
-                                RunspaceOpenModuleLoadException rome = new RunspaceOpenModuleLoadException(message);
+                                var rome = new RunspaceOpenModuleLoadException(message);
                                 exceptionToReturn = ValidateAndReturnRunspaceOpenModuleLoadException(null, moduleSpecification.Name, rome);
                             }
                         }
@@ -3089,7 +3089,7 @@ namespace System.Management.Automation.Runspaces
             bool haveModuleName = !string.IsNullOrEmpty(moduleName);
 
             // Start with public search
-            CommandOrigin cmdOrigin = CommandOrigin.Runspace;
+            var cmdOrigin = CommandOrigin.Runspace;
             while (true)
             {
                 foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(commandPattern, CommandTypes.All, searchOptions, cmdOrigin))
@@ -3133,7 +3133,7 @@ namespace System.Management.Automation.Runspaces
             using (PowerShell pse = PowerShell.Create())
             {
                 CommandInfo c = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, initializedRunspace.ExecutionContext);
-                Command cmd = new Command(c);
+                var cmd = new Command(c);
                 if (moduleInfoToLoad != null)
                 {
                     cmd.Parameters.Add("ModuleInfo", moduleInfoToLoad);
@@ -3226,7 +3226,7 @@ namespace System.Management.Automation.Runspaces
                     ErrorRecord er;
                     Exception firstError;
                     // Merge errors from pse.Streams and errors
-                    PSDataCollection<ErrorRecord> mergedErrors = new PSDataCollection<ErrorRecord>();
+                    var mergedErrors = new PSDataCollection<ErrorRecord>();
                     er = pse.Streams.Error[0];
                     firstError = er.Exception;
                     foreach (var e in pse.Streams.Error)
@@ -3263,7 +3263,7 @@ namespace System.Management.Automation.Runspaces
                 // Add the built-in variables
                 foreach (SessionStateVariableEntry e in InitialSessionState.BuiltInVariables)
                 {
-                    PSVariable v = new PSVariable(
+                    var v = new PSVariable(
                         e.Name,
                         e.Value,
                         e.Options, e.Attributes,
@@ -3277,7 +3277,7 @@ namespace System.Management.Automation.Runspaces
                 // Then re-initialize it with variables to session state...
                 foreach (SessionStateVariableEntry e in Variables)
                 {
-                    PSVariable v = new PSVariable(
+                    var v = new PSVariable(
                         e.Name,
                         e.Value,
                         e.Options,
@@ -3346,7 +3346,7 @@ namespace System.Management.Automation.Runspaces
                             }
                             else
                             {
-                                ItemNotFoundException itemNotFound =
+                                var itemNotFound =
                                     new ItemNotFoundException(Directory.GetCurrentDirectory(), "PathNotFound", SessionStateStrings.PathNotFound);
 
                                 context.ReportEngineStartupError(itemNotFound);
@@ -3357,7 +3357,7 @@ namespace System.Management.Automation.Runspaces
 
                     if (proceedWithSetLocation && setLocation)
                     {
-                        CmdletProviderContext providerContext = new CmdletProviderContext(context);
+                        var providerContext = new CmdletProviderContext(context);
 
                         try
                         {
@@ -3382,7 +3382,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void CreateQuestionVariable(ExecutionContext context)
         {
-            QuestionMarkVariable qv = new QuestionMarkVariable(context);
+            var qv = new QuestionMarkVariable(context);
             context.EngineSessionState.SetVariableAtScope(qv, "global", true, CommandOrigin.Internal);
         }
 
@@ -3409,7 +3409,7 @@ namespace System.Management.Automation.Runspaces
                 // Remove all of the commands from the top-level session state.
                 foreach (SessionStateCommandEntry cmd in Commands)
                 {
-                    SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
+                    var ssce = cmd as SessionStateCmdletEntry;
                     if (ssce != null)
                     {
                         List<CmdletInfo> matches;
@@ -3469,13 +3469,13 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                List<string> formatFilesToRemove = new List<string>();
+                var formatFilesToRemove = new List<string>();
                 if (this.Formats != null)
                 {
                     formatFilesToRemove.AddRange(this.Formats.Select(f => f.FileName));
                 }
 
-                List<string> typeFilesToRemove = new List<string>();
+                var typeFilesToRemove = new List<string>();
                 if (this.Types != null)
                 {
                     typeFilesToRemove.AddRange(this.Types.Select(t => t.FileName));
@@ -3493,7 +3493,7 @@ namespace System.Management.Automation.Runspaces
             if (formatFilesToRemove != null && formatFilesToRemove.Count > 0)
             {
                 var newFormats = new InitialSessionStateEntryCollection<SessionStateFormatEntry>();
-                HashSet<string> formatFilesToRemoveSet = new HashSet<string>(formatFilesToRemove, StringComparer.OrdinalIgnoreCase);
+                var formatFilesToRemoveSet = new HashSet<string>(formatFilesToRemove, StringComparer.OrdinalIgnoreCase);
                 foreach (SessionStateFormatEntry entry in context.InitialSessionState.Formats)
                 {
                     if (!formatFilesToRemoveSet.Contains(entry.FileName))
@@ -3511,7 +3511,7 @@ namespace System.Management.Automation.Runspaces
             {
                 // The types table has the same issue as the format table - we need to rebuild the entire table.
                 var newTypes = new InitialSessionStateEntryCollection<SessionStateTypeEntry>();
-                List<string> resolvedTypeFilesToRemove = new List<string>();
+                var resolvedTypeFilesToRemove = new List<string>();
                 foreach (var typeFile in typeFilesToRemove)
                 {
                     resolvedTypeFilesToRemove.Add(ModuleCmdletBase.ResolveRootedFilePath(typeFile, context) ?? typeFile);
@@ -3581,10 +3581,10 @@ namespace System.Management.Automation.Runspaces
                 context.TypeTable.Clear();
             }
 
-            ConcurrentBag<string> errors = new ConcurrentBag<string>();
+            var errors = new ConcurrentBag<string>();
             // Use at most 3 locks (we don't expect contention on that many cores anyways,
             // and typically we'll be processing just 2 or 3 files anyway, hence capacity=3.
-            ConcurrentDictionary<string, string> filesProcessed = new ConcurrentDictionary<string, string>(
+            var filesProcessed = new ConcurrentDictionary<string, string>(
                     concurrencyLevel: 3,
                     capacity: 3,
                     StringComparer.OrdinalIgnoreCase);
@@ -3676,7 +3676,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            Collection<PSSnapInTypeAndFormatErrors> entries = new Collection<PSSnapInTypeAndFormatErrors>();
+            var entries = new Collection<PSSnapInTypeAndFormatErrors>();
             InitialSessionStateEntryCollection<SessionStateFormatEntry> formatsToLoad;
 
             // If we're just updating the current runspace, then we'll add our entries
@@ -3691,7 +3691,7 @@ namespace System.Management.Automation.Runspaces
                 formatsToLoad = this.Formats;
             }
 
-            HashSet<string> filesProcessed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var filesProcessed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (SessionStateFormatEntry ssfe in formatsToLoad)
             {
                 string name = ssfe.FileName;
@@ -3870,7 +3870,7 @@ namespace System.Management.Automation.Runspaces
 
             if (psSnapInInfo == null)
             {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
+                var e = new ArgumentNullException(nameof(psSnapInInfo));
                 throw e;
             }
 
@@ -3910,7 +3910,7 @@ namespace System.Management.Automation.Runspaces
                     path = file;
                 }
 
-                SessionStateTypeEntry typeEntry = new SessionStateTypeEntry(path);
+                var typeEntry = new SessionStateTypeEntry(path);
                 typeEntry.SetPSSnapIn(psSnapInInfo);
                 this.Types.Add(typeEntry);
             }
@@ -3925,12 +3925,12 @@ namespace System.Management.Automation.Runspaces
                     path = file;
                 }
 
-                SessionStateFormatEntry formatEntry = new SessionStateFormatEntry(path);
+                var formatEntry = new SessionStateFormatEntry(path);
                 formatEntry.SetPSSnapIn(psSnapInInfo);
                 this.Formats.Add(formatEntry);
             }
 
-            SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
+            var assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
 
             assemblyEntry.SetPSSnapIn(psSnapInInfo);
 
@@ -3947,7 +3947,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (SessionStateCmdletEntry cmdlet in cmdlets.Values)
                 {
-                    SessionStateCmdletEntry newEntry = (SessionStateCmdletEntry)cmdlet.Clone();
+                    var newEntry = (SessionStateCmdletEntry)cmdlet.Clone();
                     newEntry.Visibility = this.DefaultCommandVisibility;
 
                     this.Commands.Add(newEntry);
@@ -4046,7 +4046,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (assembly == null)
             {
-                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
+                var e = new ArgumentNullException(nameof(assembly));
                 throw e;
             }
 
@@ -4061,7 +4061,7 @@ namespace System.Management.Automation.Runspaces
             // since it can't be loaded by path or name
             if (!string.IsNullOrEmpty(assembly.Location))
             {
-                SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
+                var assemblyEntry = new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
                 this.Assemblies.Add(assemblyEntry);
             }
 
@@ -5233,7 +5233,7 @@ end {
                         throw new PSSnapInException(name, message);
                     }
 
-                    SessionStateCmdletEntry cmdlet = new SessionStateCmdletEntry(cmdletName, type, helpFile);
+                    var cmdlet = new SessionStateCmdletEntry(cmdletName, type, helpFile);
                     if (psSnapInInfo != null)
                     {
                         cmdlet.SetPSSnapIn(psSnapInInfo);
@@ -5291,7 +5291,7 @@ end {
                         throw new PSSnapInException(psSnapInInfo.Name, message);
                     }
 
-                    SessionStateProviderEntry provider = new SessionStateProviderEntry(providerName, type, helpFile);
+                    var provider = new SessionStateProviderEntry(providerName, type, helpFile);
                     if (psSnapInInfo != null)
                     {
                         provider.SetPSSnapIn(psSnapInInfo);

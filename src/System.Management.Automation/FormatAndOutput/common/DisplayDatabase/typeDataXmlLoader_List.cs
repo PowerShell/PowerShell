@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(controlNode))
             {
-                ListControlBody listBody = new ListControlBody();
+                var listBody = new ListControlBody();
 
                 bool listViewEntriesFound = false;
 
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool appliesToNodeFound = false;    // cardinality 0..1
                 bool bodyNodeFound = false;         // cardinality 1
 
-                ListControlEntryDefinition lved = new ListControlEntryDefinition();
+                var lved = new ListControlEntryDefinition();
 
                 foreach (XmlNode n in listViewEntryNode.ChildNodes)
                 {
@@ -204,8 +204,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             using (this.StackFrame(propertyEntryNode))
             {
                 // process Mshexpression, format string and text token
-                ViewEntryNodeMatch match = new ViewEntryNodeMatch(this);
-                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                var match = new ViewEntryNodeMatch(this);
+                var unprocessedNodes = new List<XmlNode>();
                 if (!match.ProcessExpressionDirectives(propertyEntryNode, unprocessedNodes))
                 {
                     return null; // fatal error
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // finally build the item to return
-                ListControlItemDefinition lvid = new ListControlItemDefinition();
+                var lvid = new ListControlItemDefinition();
 
                 // add the label
                 lvid.label = labelToken;
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    FieldPropertyToken fpt = new FieldPropertyToken();
+                    var fpt = new FieldPropertyToken();
                     fpt.expression = match.Expression;
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     lvid.formatTokenList.Add(fpt);
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 bool expressionNodeFound = false;     // cardinality 1
 
-                ExpressionNodeMatch expressionMatch = new ExpressionNodeMatch(this);
+                var expressionMatch = new ExpressionNodeMatch(this);
                 foreach (XmlNode n in itemNode.ChildNodes)
                 {
                     if (expressionMatch.MatchNode(n))

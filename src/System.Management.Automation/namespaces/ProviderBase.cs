@@ -259,7 +259,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
+            var propertyProvider = this as IPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -299,7 +299,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
+            var propertyProvider = this as IPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
+            var propertyProvider = this as IPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
+            var propertyProvider = this as IPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -404,7 +404,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
+            var propertyProvider = this as IPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -444,7 +444,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
+            var propertyProvider = this as IPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -537,7 +537,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -691,7 +691,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -780,7 +780,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -822,7 +822,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -869,7 +869,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
+            var propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -902,7 +902,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
+            var contentProvider = this as IContentCmdletProvider;
 
             if (contentProvider == null)
             {
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
+            var contentProvider = this as IContentCmdletProvider;
 
             if (contentProvider == null)
             {
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
+            var contentProvider = this as IContentCmdletProvider;
 
             if (contentProvider == null)
             {
@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
+            var contentProvider = this as IContentCmdletProvider;
 
             if (contentProvider == null)
             {
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
+            var contentProvider = this as IContentCmdletProvider;
 
             if (contentProvider == null)
             {
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
+            var contentProvider = this as IContentCmdletProvider;
 
             if (contentProvider == null)
             {
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation.Provider
                 //  the actual exception as a thrown exception.  So, we wrap
                 //  it in ProviderInvocationException.
 
-                ProviderInvocationException providerInvocationException =
+                var providerInvocationException =
                     new ProviderInvocationException(ProviderInfo, errorRecord);
 
                 // Log a provider health event
@@ -1804,7 +1804,7 @@ namespace System.Management.Automation.Provider
                 throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
-            PSObject result = new PSObject(item);
+            var result = new PSObject(item);
 
             Diagnostics.Assert(
                 ProviderInfo != null,
@@ -1813,7 +1813,7 @@ namespace System.Management.Automation.Provider
             // Move the TypeNames to the wrapping object if the wrapped object
             // was an PSObject
 
-            PSObject mshObj = item as PSObject;
+            var mshObj = item as PSObject;
             if (mshObj != null)
             {
                 result.InternalTypeNames = new ConsolidatedString(mshObj.InternalTypeNames);
@@ -1829,7 +1829,7 @@ namespace System.Management.Automation.Provider
 
             // Now get the parent path and child name
 
-            NavigationCmdletProvider navProvider = this as NavigationCmdletProvider;
+            var navProvider = this as NavigationCmdletProvider;
             if (navProvider != null && path != null)
             {
                 // Get the parent path

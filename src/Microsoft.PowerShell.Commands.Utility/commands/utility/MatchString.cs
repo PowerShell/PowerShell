@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Otherwise, render the full context.
-            List<string> lines = new List<string>(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
+            var lines = new List<string>(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
 
             int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
             foreach (string contextLine in Context.DisplayPreContext)
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
             string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
             string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
 
-            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
+            var chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
             int charsIndex = 0;
             for (int i = 0; i < _matchIndexes.Count; i++)
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Just do a shallow copy and then deep-copy the
             // fields that need it.
-            MatchInfo clone = (MatchInfo)this.MemberwiseClone();
+            var clone = (MatchInfo)this.MemberwiseClone();
 
             if (clone.Context != null)
             {
@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>The new array.</returns>
             public T[] ToArray()
             {
-                T[] result = new T[Count];
+                var result = new T[Count];
                 CopyTo(result, 0);
                 return result;
             }
@@ -851,14 +851,14 @@ namespace Microsoft.PowerShell.Commands
 
             public void TrackLine(string line)
             {
-                ContextEntry entry = new ContextEntry(line);
+                var entry = new ContextEntry(line);
                 _collectedContext.Add(entry);
                 UpdateQueue();
             }
 
             public void TrackMatch(MatchInfo match)
             {
-                ContextEntry entry = new ContextEntry(match);
+                var entry = new ContextEntry(match);
                 _collectedContext.Add(entry);
                 UpdateQueue();
             }
@@ -975,7 +975,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>String representation of the collected context at the specified range.</returns>
             private string[] CopyContext(int startIndex, int length)
             {
-                string[] result = new string[length];
+                var result = new string[length];
 
                 for (int i = 0; i < length; i++)
                 {
@@ -1422,8 +1422,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(Culture)) && !this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
             {
-                InvalidOperationException exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
+                var exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
+                var errorRecord = new ErrorRecord(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
 
@@ -1586,9 +1586,9 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (StreamReader sr = new StreamReader(fs, Encoding))
+                    using (var sr = new StreamReader(fs, Encoding))
                     {
                         string line;
                         int lineNo = 0;
@@ -1722,7 +1722,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool DoMatch(object operand, out MatchInfo matchResult, out string operandString)
         {
-            MatchInfo matchInfo = operand as MatchInfo;
+            var matchInfo = operand as MatchInfo;
             if (matchInfo != null)
             {
                 // We're operating in filter mode. Match
@@ -1926,7 +1926,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The resolved (absolute) paths.</returns>
         private List<string> ResolveFilePaths(string[] filePaths, bool isLiteralPath)
         {
-            List<string> allPaths = new List<string>();
+            var allPaths = new List<string>();
 
             foreach (string path in filePaths)
             {
@@ -1969,7 +1969,7 @@ namespace Microsoft.PowerShell.Commands
         private static ErrorRecord BuildErrorRecord(string messageId, object[] arguments, string errorId, Exception innerException)
         {
             string fmtedMsg = StringUtil.Format(messageId, arguments);
-            ArgumentException e = new ArgumentException(fmtedMsg, innerException);
+            var e = new ArgumentException(fmtedMsg, innerException);
             return new ErrorRecord(e, errorId, ErrorCategory.InvalidArgument, null);
         }
 
@@ -1998,7 +1998,7 @@ namespace Microsoft.PowerShell.Commands
                 // Handle an array of elements...
                 if (result is IList argList)
                 {
-                    object[] resultList = new object[argList.Count];
+                    var resultList = new object[argList.Count];
 
                     for (int i = 0; i < argList.Count; i++)
                     {

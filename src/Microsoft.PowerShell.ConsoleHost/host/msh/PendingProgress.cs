@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                ProgressNode newNode = new ProgressNode(sourceId, record);
+                var newNode = new ProgressNode(sourceId, record);
 
                 // If we're adding a node, and we have no more space, then we need to pick a node to evict.
 
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell
         RemoveNode(ArrayList nodes, int indexToRemove)
         {
 #if DEBUG || ASSERTIONS_TRACE
-            ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
+            var nodeToRemove = (ProgressNode)nodes[indexToRemove];
 
             Dbg.Assert(nodes != null, "can't remove nodes from a null list");
             Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell
         void
         RemoveNodeAndPromoteChildren(ArrayList nodes, int indexToRemove)
         {
-            ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
+            var nodeToRemove = (ProgressNode)nodes[indexToRemove];
 
             Dbg.Assert(nodes != null, "can't remove nodes from a null list");
             Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell
             listWhereFound = null;
             indexWhereFound = -1;
 
-            FindOldestNodeVisitor v = new FindOldestNodeVisitor();
+            var v = new FindOldestNodeVisitor();
             NodeVisitor.VisitNodes(treeToSearch, v);
 
             listWhereFound = v.ListWhereFound;
@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell
             listWhereFound = null;
             indexWhereFound = -1;
 
-            FindByIdNodeVisitor v = new FindByIdNodeVisitor(sourceId, activityId);
+            var v = new FindByIdNodeVisitor(sourceId, activityId);
             NodeVisitor.VisitNodes(_topLevelNodes, v);
 
             listWhereFound = v.ListWhereFound;
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell
             ProgressNode found = null;
             for (int i = 0; i < nodes.Count; ++i)
             {
-                ProgressNode node = (ProgressNode)nodes[i];
+                var node = (ProgressNode)nodes[i];
                 Dbg.Assert(node != null, "nodes should not contain null elements");
 
                 if (node.Age >= oldestSoFar && node.Style == style)
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell
         void
         AgeNodesAndResetStyle()
         {
-            AgeAndResetStyleVisitor arsv = new AgeAndResetStyleVisitor();
+            var arsv = new AgeAndResetStyleVisitor();
             NodeVisitor.VisitNodes(_topLevelNodes, arsv);
         }
 
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell
                 invisible = CompressToFit(rawUI, maxHeight, maxWidth);
             }
 
-            ArrayList result = new ArrayList();
+            var result = new ArrayList();
             string border = StringUtil.Padding(maxWidth);
 
             result.Add(border);
@@ -711,7 +711,7 @@ namespace Microsoft.PowerShell
 
         private int TallyHeight(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
         {
-            HeightTallyer ht = new HeightTallyer(rawUi, maxHeight, maxWidth);
+            var ht = new HeightTallyer(rawUi, maxHeight, maxWidth);
             NodeVisitor.VisitNodes(_topLevelNodes, ht);
             return ht.Tally;
         }
@@ -736,7 +736,7 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < nodes.Count; ++i)
             {
-                ProgressNode node = (ProgressNode)nodes[i];
+                var node = (ProgressNode)nodes[i];
                 Dbg.Assert(node != null, "nodes should not contain null elements");
 
                 if (node.Style != style)
@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell
         int
         CountNodes()
         {
-            CountingNodeVisitor cnv = new CountingNodeVisitor();
+            var cnv = new CountingNodeVisitor();
             NodeVisitor.VisitNodes(_topLevelNodes, cnv);
             return cnv.Count;
         }
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell
 
                 for (int i = 0; i < nodes.Count; ++i)
                 {
-                    ProgressNode node = (ProgressNode)nodes[i];
+                    var node = (ProgressNode)nodes[i];
                     Dbg.Assert(node != null, "nodes should not contain null elements");
 
                     if (!v.Visit(node, nodes, i))

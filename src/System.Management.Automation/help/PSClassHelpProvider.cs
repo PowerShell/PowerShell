@@ -69,7 +69,7 @@ namespace System.Management.Automation
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 
             string target = helpRequest.Target;
-            Collection<string> patternList = new Collection<string>();
+            var patternList = new Collection<string>();
 
             bool decoratedSearch = !WildcardPattern.ContainsWildcardCharacters(helpRequest.Target);
 
@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
             foreach (string pattern in patternList)
             {
-                PSClassSearcher searcher = new PSClassSearcher(pattern, useWildCards, _context);
+                var searcher = new PSClassSearcher(pattern, useWildCards, _context);
 
                 foreach (var helpInfo in GetHelpInfo(searcher))
                 {
@@ -111,7 +111,7 @@ namespace System.Management.Automation
             string target = helpRequest.Target;
             bool useWildCards = false;
 
-            PSClassSearcher searcher = new PSClassSearcher(target, useWildCards, _context);
+            var searcher = new PSClassSearcher(target, useWildCards, _context);
 
             foreach (var helpInfo in GetHelpInfo(searcher))
             {
@@ -142,14 +142,14 @@ namespace System.Management.Automation
 
                     string helpFileName = null;
 
-                    Collection<string> searchPaths = new Collection<string>();
+                    var searchPaths = new Collection<string>();
                     searchPaths.Add(moduleDir);
 
                     string externalHelpFile = current.HelpFile;
 
                     if (!string.IsNullOrEmpty(externalHelpFile))
                     {
-                        FileInfo helpFileInfo = new FileInfo(externalHelpFile);
+                        var helpFileInfo = new FileInfo(externalHelpFile);
                         DirectoryInfo dirToSearch = helpFileInfo.Directory;
 
                         if (dirToSearch.Exists)
@@ -244,7 +244,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                MamlClassHelpInfo original = (MamlClassHelpInfo)result;
+                var original = (MamlClassHelpInfo)result;
                 result = original.Copy(helpCategory);
             }
 

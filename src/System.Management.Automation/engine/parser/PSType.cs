@@ -482,8 +482,8 @@ namespace System.Management.Automation.Language
                 bool needStaticCtor = false;
                 bool needDefaultCtor = false;
                 bool hasAnyMethods = false;
-                List<FunctionMemberAst> staticCtors = new List<FunctionMemberAst>();
-                List<FunctionMemberAst> instanceCtors = new List<FunctionMemberAst>();
+                var staticCtors = new List<FunctionMemberAst>();
+                var instanceCtors = new List<FunctionMemberAst>();
 
                 foreach (var member in _typeDefinitionAst.Members)
                 {
@@ -505,7 +505,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        FunctionMemberAst method = member as FunctionMemberAst;
+                        var method = member as FunctionMemberAst;
                         Diagnostics.Assert(method != null, StringUtil.Format("Unexpected subtype of MemberAst '{0}'. Expect `{1}`",
                             member.GetType().Name, typeof(FunctionMemberAst).GetType().Name));
                         if (method.IsConstructor)
@@ -1360,7 +1360,7 @@ namespace System.Management.Automation.Language
                         runtimeTypeAssigned = true;
                         var helperType = helper._staticHelpersTypeBuilder.CreateType();
 
-                        SessionStateKeeper sessionStateKeeper = new SessionStateKeeper();
+                        var sessionStateKeeper = new SessionStateKeeper();
                         helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, sessionStateKeeper);
 
                         if (helper._fieldsToInitForMemberFunctions != null)

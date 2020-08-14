@@ -351,7 +351,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(this.Name);
             returnValue.Append(" = ");
             if (ConversionType != null)
@@ -439,7 +439,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSAliasProperty alias = new PSAliasProperty(name, ReferencedMemberName) { ConversionType = ConversionType };
+            var alias = new PSAliasProperty(name, ReferencedMemberName) { ConversionType = ConversionType };
             CloneBaseProperties(alias);
             return alias;
         }
@@ -614,7 +614,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
             returnValue.Append(" ");
             returnValue.Append(this.Name);
@@ -850,7 +850,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSCodeProperty property = new PSCodeProperty(name, GetterCodeReference, SetterCodeReference);
+            var property = new PSCodeProperty(name, GetterCodeReference, SetterCodeReference);
             CloneBaseProperties(property);
             return property;
         }
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation
         {
             if (this.isDeserialized)
             {
-                StringBuilder returnValue = new StringBuilder();
+                var returnValue = new StringBuilder();
                 returnValue.Append(this.TypeNameOfValue);
                 returnValue.Append(" {get;set;}");
                 return returnValue.ToString();
@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSProperty property = new PSProperty(this.name, this.adapter, this.baseObject, this.adapterData);
+            var property = new PSProperty(this.name, this.adapter, this.baseObject, this.adapterData);
             CloneBaseProperties(property);
             property.typeOfValue = this.typeOfValue;
             property.serializedValue = this.serializedValue;
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation
         /// </summary>
         public override PSMemberInfo Copy()
         {
-            PSAdaptedProperty property = new PSAdaptedProperty(this.name, this.adapter, this.baseObject, this.adapterData);
+            var property = new PSAdaptedProperty(this.name, this.adapter, this.baseObject, this.adapterData);
             CloneBaseProperties(property);
             property.typeOfValue = this.typeOfValue;
             property.serializedValue = this.serializedValue;
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
 
             returnValue.Append(GetDisplayTypeNameOfValue(this.Value));
             returnValue.Append(" ");
@@ -1309,7 +1309,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSNoteProperty property = new PSNoteProperty(this.name, this.noteValue);
+            var property = new PSNoteProperty(this.name, this.noteValue);
             CloneBaseProperties(property);
             return property;
         }
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(GetDisplayTypeNameOfValue(_variable.Value));
             returnValue.Append(" ");
             returnValue.Append(_variable.Name);
@@ -1539,7 +1539,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
             returnValue.Append(" ");
             returnValue.Append(this.Name);
@@ -2005,7 +2005,7 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             string separator = string.Empty;
             if (MethodTargetType != null)
             {
@@ -2101,7 +2101,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             foreach (string overload in OverloadDefinitions)
             {
                 returnValue.Append(overload);
@@ -2204,7 +2204,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSCodeMethod member = new PSCodeMethod(name, CodeReference);
+            var member = new PSCodeMethod(name, CodeReference);
             CloneBaseProperties(member);
             return member;
         }
@@ -2233,7 +2233,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(arguments));
             }
 
-            object[] newArguments = new object[arguments.Length + 1];
+            var newArguments = new object[arguments.Length + 1];
             newArguments[0] = this.instance;
             for (int i = 0; i < arguments.Length; i++)
             {
@@ -2281,7 +2281,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
             returnValue.Append(" ");
             returnValue.Append(this.Name);
@@ -2421,7 +2421,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<string> retValue = new Collection<string> { this.ToString() };
+                var retValue = new Collection<string> { this.ToString() };
                 return retValue;
             }
         }
@@ -2524,7 +2524,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSMethod member = new PSMethod(this.name, _adapter, this.baseObject, this.adapterData, this.IsSpecial, this.IsHidden);
+            var member = new PSMethod(this.name, _adapter, this.baseObject, this.adapterData, this.IsSpecial, this.IsHidden);
             CloneBaseProperties(member);
             return member;
         }
@@ -2990,7 +2990,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSParameterizedProperty property = new PSParameterizedProperty(this.name, this.adapter, this.baseObject, this.adapterData);
+            var property = new PSParameterizedProperty(this.name, this.adapter, this.baseObject, this.adapterData);
             CloneBaseProperties(property);
             return property;
         }
@@ -3023,7 +3023,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(" {");
 
             foreach (PSMemberInfo member in this.Members)
@@ -3132,7 +3132,7 @@ namespace System.Management.Automation
 
         private static Collection<CollectionEntry<PSMemberInfo>> GetTypeMemberCollection()
         {
-            Collection<CollectionEntry<PSMemberInfo>> returnValue = new Collection<CollectionEntry<PSMemberInfo>>();
+            var returnValue = new Collection<CollectionEntry<PSMemberInfo>>();
             returnValue.Add(new CollectionEntry<PSMemberInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMemberInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMemberInfo>,
@@ -3143,7 +3143,7 @@ namespace System.Management.Automation
 
         private static Collection<CollectionEntry<PSMethodInfo>> GetTypeMethodCollection()
         {
-            Collection<CollectionEntry<PSMethodInfo>> returnValue = new Collection<CollectionEntry<PSMethodInfo>>();
+            var returnValue = new Collection<CollectionEntry<PSMethodInfo>>();
             returnValue.Add(new CollectionEntry<PSMethodInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
@@ -3154,7 +3154,7 @@ namespace System.Management.Automation
 
         private static Collection<CollectionEntry<PSPropertyInfo>> GetTypePropertyCollection()
         {
-            Collection<CollectionEntry<PSPropertyInfo>> returnValue = new Collection<CollectionEntry<PSPropertyInfo>>();
+            var returnValue = new Collection<CollectionEntry<PSPropertyInfo>>();
             returnValue.Add(new CollectionEntry<PSPropertyInfo>(
                 PSObject.TypeTableGetMembersDelegate<PSPropertyInfo>,
                 PSObject.TypeTableGetMemberDelegate<PSPropertyInfo>,
@@ -3227,7 +3227,7 @@ namespace System.Management.Automation
         {
             if (_constructorPSObject == null)
             {
-                PSMemberSet memberSet = new PSMemberSet(name);
+                var memberSet = new PSMemberSet(name);
                 foreach (PSMemberInfo member in this.Members)
                 {
                     memberSet.Members.Add(member);
@@ -3375,7 +3375,7 @@ namespace System.Management.Automation
 
         private PSMemberInfoInternalCollection<PSMemberInfo> GetInternalMembersFromAdapted()
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> retVal = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            var retVal = new PSMemberInfoInternalCollection<PSMemberInfo>();
 
             if (_psObject.IsDeserialized)
             {
@@ -3427,7 +3427,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             returnValue.Append(this.Name);
             returnValue.Append(" {");
             if (ReferencedPropertyNames.Count != 0)
@@ -3507,7 +3507,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSPropertySet member = new PSPropertySet(name, ReferencedPropertyNames);
+            var member = new PSPropertySet(name, ReferencedPropertyNames);
             CloneBaseProperties(member);
             return member;
         }
@@ -3551,7 +3551,7 @@ namespace System.Management.Automation
         /// <returns>This property as a string.</returns>
         public override string ToString()
         {
-            StringBuilder eventDefinition = new StringBuilder();
+            var eventDefinition = new StringBuilder();
             eventDefinition.Append(this.baseEvent.ToString());
 
             eventDefinition.Append("(");
@@ -3593,7 +3593,7 @@ namespace System.Management.Automation
         /// <returns>A new PSMemberInfo that is a copy of this PSMemberInfo.</returns>
         public override PSMemberInfo Copy()
         {
-            PSEvent member = new PSEvent(this.baseEvent);
+            var member = new PSEvent(this.baseEvent);
             CloneBaseProperties(member);
             return member;
         }
@@ -3690,7 +3690,7 @@ namespace System.Management.Automation
         internal static PSMemberInfoInternalCollection<T> Match<T>(PSMemberInfoInternalCollection<T> memberList, string name, WildcardPattern nameMatch, PSMemberTypes memberTypes)
             where T : PSMemberInfo
         {
-            PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+            var returnValue = new PSMemberInfoInternalCollection<T>();
             if (memberList == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(memberList));
@@ -4213,7 +4213,7 @@ namespace System.Management.Automation
 
         private PSMemberInfoInternalCollection<T> GetInternalMembers(MshMemberMatchOptions matchOptions)
         {
-            PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+            var returnValue = new PSMemberInfoInternalCollection<T>();
 
             if (_members == null)
             {
@@ -4460,7 +4460,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            PSCodeProperty codeProperty = new PSCodeProperty(PSObject.PSTypeNames, CachedReflectionInfo.ReservedNameMembers_PSTypeNames)
+            var codeProperty = new PSCodeProperty(PSObject.PSTypeNames, CachedReflectionInfo.ReservedNameMembers_PSTypeNames)
             {
                 ShouldSerialize = false,
                 instance = mshOwner,
@@ -4835,7 +4835,7 @@ namespace System.Management.Automation
         {
             using (PSObject.MemberResolution.TraceScope("Generating the total list of members"))
             {
-                PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+                var returnValue = new PSMemberInfoInternalCollection<T>();
                 object delegateOwner;
                 if (_mshOwner != null)
                 {
@@ -4956,7 +4956,7 @@ namespace System.Management.Automation
 
                 WildcardPattern nameMatch = MemberMatch.GetNamePattern(name);
                 PSMemberInfoInternalCollection<T> allMembers = GetIntegratedMembers(matchOptions);
-                ReadOnlyPSMemberInfoCollection<T> returnValue = new ReadOnlyPSMemberInfoCollection<T>(MemberMatch.Match(allMembers, name, nameMatch, memberTypes));
+                var returnValue = new ReadOnlyPSMemberInfoCollection<T>(MemberMatch.Match(allMembers, name, nameMatch, memberTypes));
                 PSObject.MemberResolution.WriteLine("{0} total matches.", returnValue.Count);
                 return returnValue;
             }

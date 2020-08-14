@@ -121,7 +121,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] argumentList)
         {
-            ExternalScriptInfo copy = new ExternalScriptInfo(this) { IsGetCommandCopy = true, Arguments = argumentList };
+            var copy = new ExternalScriptInfo(this) { IsGetCommandCopy = true, Arguments = argumentList };
             return copy;
         }
 
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         {
             get
             {
-                StringBuilder synopsis = new StringBuilder();
+                var synopsis = new StringBuilder();
 
                 foreach (CommandParameterSetInfo parameterSet in ParameterSets)
                 {
@@ -275,7 +275,7 @@ namespace System.Management.Automation
             if (_scriptBlockAst == null)
             {
                 ParseError[] errors;
-                Parser parser = new Parser();
+                var parser = new Parser();
 
                 // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
                 // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
@@ -511,12 +511,12 @@ namespace System.Management.Automation
 
                 try
                 {
-                    using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
+                    using (var readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
                         Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
                         Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
-                        using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                        using (var scriptReader = new StreamReader(readerStream, defaultEncoding))
                         {
                             _scriptContents = scriptReader.ReadToEnd();
                             _originalEncoding = scriptReader.CurrentEncoding;
@@ -568,7 +568,7 @@ namespace System.Management.Automation
 
         private static void ThrowCommandNotFoundException(Exception innerException)
         {
-            CommandNotFoundException cmdE = new CommandNotFoundException(innerException.Message, innerException);
+            var cmdE = new CommandNotFoundException(innerException.Message, innerException);
             throw cmdE;
         }
     }

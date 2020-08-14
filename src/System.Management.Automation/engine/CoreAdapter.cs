@@ -206,7 +206,7 @@ namespace System.Management.Automation
         /// <returns>The string representation of the method in the object.</returns>
         protected virtual string MethodToString(PSMethod method)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             Collection<string> definitions = MethodDefinitions(method);
             for (int i = 0; i < definitions.Count; i++)
             {
@@ -343,7 +343,7 @@ namespace System.Management.Automation
             string resourceString,
             params object[] parameters)
         {
-            object[] newParameters = new object[parameters.Length + 1];
+            var newParameters = new object[parameters.Length + 1];
             for (int i = 0; i < parameters.Length; i++)
             {
                 newParameters[i + 1] = parameters[i];
@@ -839,7 +839,7 @@ namespace System.Management.Automation
         internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType, bool isByRef, bool allowCastingToByRefLikeType)
         {
             Type fromType = null;
-            ConversionRank rank = ConversionRank.None;
+            var rank = ConversionRank.None;
 
             if (allowCastingToByRefLikeType && parameterType.IsByRefLike)
             {
@@ -872,7 +872,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(parameters[parameters.Length - 1].isParamArray, "ExpandParameters shouldn't be called on non-param method");
 
-            ParameterInformation[] newParameters = new ParameterInformation[argCount];
+            var newParameters = new ParameterInformation[argCount];
             Array.Copy(parameters, newParameters, parameters.Length - 1);
             for (int i = parameters.Length - 1; i < argCount; ++i)
             {
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation
         {
             if (method.IsGenericMethod && !method.IsGenericMethodDefinition)
             {
-                MethodInfo methodInfo = method as MethodInfo;
+                var methodInfo = method as MethodInfo;
                 if (methodInfo != null)
                 {
                     return methodInfo.GetGenericMethodDefinition();
@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
             }
 
             Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
-            List<OverloadCandidate> candidates = new List<OverloadCandidate>();
+            var candidates = new List<OverloadCandidate>();
             for (int i = 0; i < methods.Length; i++)
             {
                 MethodInformation method = methods[i];
@@ -1417,7 +1417,7 @@ namespace System.Management.Automation
 
                 if (method.isGeneric)
                 {
-                    Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
+                    var argumentTypesForTypeInference = new Type[argumentTypes.Length];
                     Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
                     if (invocationConstraints != null && invocationConstraints.ParameterTypes != null)
                     {
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                OverloadCandidate candidate = new OverloadCandidate(method, arguments.Length);
+                var candidate = new OverloadCandidate(method, arguments.Length);
                 for (int j = 0; candidate != null && j < parameters.Length; j++)
                 {
                     ParameterInformation parameter = parameters[j];
@@ -1617,7 +1617,7 @@ namespace System.Management.Automation
             if (arg != null)
             {
                 arg = PSObject.Base(arg);
-                object[] argAsArray = arg as object[];
+                var argAsArray = arg as object[];
                 if (argAsArray != null && argAsArray.Length > 0 && PSObject.Base(argAsArray[0]) != null)
                 {
                     Type firstType = PSObject.Base(argAsArray[0]).GetType();
@@ -1654,11 +1654,11 @@ namespace System.Management.Automation
                 for (int i = 0; (i < originalArguments.Length) && (i < parameters.Length) && (i < arguments.Length); i++)
                 {
                     object originalArgument = originalArguments[i];
-                    PSReference originalArgumentReference = originalArgument as PSReference;
+                    var originalArgumentReference = originalArgument as PSReference;
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        PSObject originalArgumentObj = originalArgument as PSObject;
+                        var originalArgumentObj = originalArgument as PSObject;
                         if (originalArgumentObj == null)
                         {
                             continue;
@@ -1738,7 +1738,7 @@ namespace System.Management.Automation
                 return Array.Empty<object>();
             }
 
-            object[] retValue = new object[parametersLength];
+            var retValue = new object[parametersLength];
             for (int i = 0; i < parametersLength - 1; i++)
             {
                 ParameterInformation parameter = parameters[i];
@@ -1772,7 +1772,7 @@ namespace System.Management.Automation
             }
             else
             {
-                object[] remainingArguments = new object[remainingArgumentCount];
+                var remainingArguments = new object[remainingArgumentCount];
                 Type paramsElementType = lastParameter.parameterType.GetElementType();
                 for (int j = 0; j < remainingArgumentCount; j++)
                 {
@@ -1880,7 +1880,7 @@ namespace System.Management.Automation
         internal static object UnReference(object obj, out bool isArgumentByRef)
         {
             isArgumentByRef = false;
-            PSReference reference = obj as PSReference;
+            var reference = obj as PSReference;
             if (reference != null)
             {
                 PSObject.MemberResolution.WriteLine("Parameter was a reference.");
@@ -1888,7 +1888,7 @@ namespace System.Management.Automation
                 return reference.Value;
             }
 
-            PSObject mshObj = obj as PSObject;
+            var mshObj = obj as PSObject;
             if (mshObj != null)
             {
                 reference = mshObj.BaseObject as PSReference;
@@ -1914,7 +1914,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
-                PSObject mshObj = valueToConvert as PSObject;
+                var mshObj = valueToConvert as PSObject;
                 if (mshObj != null)
                 {
                     if (resultType == typeof(object))
@@ -2291,7 +2291,7 @@ namespace System.Management.Automation
             int cLocal = 0;
             int c;
 
-            DynamicMethod dynamicMethod = new DynamicMethod(method.Name, typeof(object),
+            var dynamicMethod = new DynamicMethod(method.Name, typeof(object),
                 new Type[] { typeof(object), typeof(object[]) }, typeof(Adapter).Module, true);
 
             ILGenerator emitter = dynamicMethod.GetILGenerator();
@@ -2698,8 +2698,8 @@ namespace System.Management.Automation
 
                     // Get the public getter
                     MethodInfo propertyGetter = property.GetGetMethod();
-                    StringBuilder definition = new StringBuilder();
-                    StringBuilder extraDefinition = new StringBuilder();
+                    var definition = new StringBuilder();
+                    var extraDefinition = new StringBuilder();
                     if (propertyGetter != null)
                     {
                         extraDefinition.Append("get;");
@@ -3878,7 +3878,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            PropertyCacheEntry entry = property.adapterData as PropertyCacheEntry;
+            var entry = property.adapterData as PropertyCacheEntry;
             if (entry == null)
             {
                 return false;
@@ -3957,7 +3957,7 @@ namespace System.Management.Automation
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
-            PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+            var returnValue = new PSMemberInfoInternalCollection<T>();
             AddAllProperties<T>(obj, returnValue, false);
             AddAllMethods<T>(obj, returnValue, false);
             AddAllEvents<T>(obj, returnValue, false);
@@ -3977,7 +3977,7 @@ namespace System.Management.Automation
         /// <returns>An array with the property attributes.</returns>
         protected override AttributeCollection PropertyAttributes(PSProperty property)
         {
-            PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
+            var adapterData = (PropertyCacheEntry)property.adapterData;
             return adapterData.Attributes;
         }
 
@@ -3988,7 +3988,7 @@ namespace System.Management.Automation
         /// <returns>The string representation of the property in the object.</returns>
         protected override string PropertyToString(PSProperty property)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             if (PropertyIsStatic(property))
             {
                 returnValue.Append("static ");
@@ -4019,7 +4019,7 @@ namespace System.Management.Automation
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
-            PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
+            var adapterData = (PropertyCacheEntry)property.adapterData;
 
             if (adapterData.propertyType.IsByRefLike)
             {
@@ -4031,7 +4031,7 @@ namespace System.Management.Automation
                     adapterData.propertyType);
             }
 
-            PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
+            var propertyInfo = adapterData.member as PropertyInfo;
             if (propertyInfo != null)
             {
                 if (adapterData.writeOnly)
@@ -4053,7 +4053,7 @@ namespace System.Management.Automation
                 }
             }
 
-            FieldInfo field = adapterData.member as FieldInfo;
+            var field = adapterData.member as FieldInfo;
             if (adapterData.useReflection)
             {
                 return field?.GetValue(property.baseObject);
@@ -4072,7 +4072,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
+            var adapterData = (PropertyCacheEntry)property.adapterData;
 
             if (adapterData.readOnly)
             {
@@ -4093,7 +4093,7 @@ namespace System.Management.Automation
                     adapterData.propertyType);
             }
 
-            PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
+            var propertyInfo = adapterData.member as PropertyInfo;
             if (propertyInfo != null)
             {
                 if (convertIfPossible)
@@ -4113,7 +4113,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            FieldInfo field = adapterData.member as FieldInfo;
+            var field = adapterData.member as FieldInfo;
             if (convertIfPossible)
             {
                 setValue = PropertySetAndMethodArgumentConvertTo(setValue, field.FieldType, CultureInfo.InvariantCulture);
@@ -4274,7 +4274,7 @@ namespace System.Management.Automation
 #pragma warning restore 56500
 
             SetReferences(arguments, methodInformation, originalArguments);
-            MethodInfo methodInfo = methodInformation.method as MethodInfo;
+            var methodInfo = methodInformation.method as MethodInfo;
             if (methodInfo != null && methodInfo.ReturnType != typeof(void))
                 return result;
             return AutomationNull.Value;
@@ -4288,7 +4288,7 @@ namespace System.Management.Automation
         internal static MethodInformation[] GetMethodInformationArray(MethodBase[] methods)
         {
             int methodCount = methods.Length;
-            MethodInformation[] returnValue = new MethodInformation[methodCount];
+            var returnValue = new MethodInformation[methodCount];
             for (int i = 0; i < methods.Length; i++)
             {
                 returnValue[i] = new MethodInformation(methods[i], 0);
@@ -4392,7 +4392,7 @@ namespace System.Management.Automation
             }
 
             // and we also have to rebuild the argument array to include the last parameter
-            object[] finalArguments = new object[newArguments.Length + 1];
+            var finalArguments = new object[newArguments.Length + 1];
             for (int i = 0; i < newArguments.Length; i++)
             {
                 finalArguments[i] = newArguments[i];
@@ -4405,13 +4405,13 @@ namespace System.Management.Automation
 
         internal static string GetMethodInfoOverloadDefinition(string memberName, MethodBase methodEntry, int parametersToIgnore)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             if (methodEntry.IsStatic)
             {
                 builder.Append("static ");
             }
 
-            MethodInfo method = methodEntry as MethodInfo;
+            var method = methodEntry as MethodInfo;
             if (method != null)
             {
                 builder.Append(ToStringCodeMethods.Type(method.ReturnType));
@@ -4419,7 +4419,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ConstructorInfo ctorInfo = methodEntry as ConstructorInfo;
+                var ctorInfo = methodEntry as ConstructorInfo;
                 if (ctorInfo != null)
                 {
                     builder.Append(ToStringCodeMethods.Type(ctorInfo.DeclaringType));
@@ -4515,7 +4515,7 @@ namespace System.Management.Automation
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, PSMethodInvocationConstraints invocationConstraints, object[] arguments)
         {
-            MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
+            var methodEntry = (MethodCacheEntry)method.adapterData;
             return DotNetAdapter.MethodInvokeDotNet(
                 method.Name,
                 method.baseObject,
@@ -4531,7 +4531,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
-            MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
+            var methodEntry = (MethodCacheEntry)method.adapterData;
             IList<string> uniqueValues = methodEntry
                 .methodInformationStructures
                 .Select(m => m.methodDefinition)
@@ -4623,7 +4623,7 @@ namespace System.Management.Automation
         /// <returns>The string representation of the property in the object.</returns>
         protected override string ParameterizedPropertyToString(PSParameterizedProperty property)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             Collection<string> definitions = ParameterizedPropertyDefinitions(property);
             for (int i = 0; i < definitions.Count; i++)
             {
@@ -4657,7 +4657,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
-            PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+            var returnValue = new PSMemberInfoInternalCollection<T>();
             AddAllProperties<T>(obj, returnValue, true);
             AddAllMethods<T>(obj, returnValue, true);
             AddAllEvents<T>(obj, returnValue, true);
@@ -4953,10 +4953,10 @@ namespace System.Management.Automation
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
             var returnValue = new PSMemberInfoInternalCollection<T>();
-            PSObject mshObj = (PSObject)obj;
+            var mshObj = (PSObject)obj;
             foreach (PSMemberInfo member in mshObj.Members)
             {
-                T memberAsT = member as T;
+                var memberAsT = member as T;
                 if (memberAsT != null)
                 {
                     returnValue.Add(memberAsT);
@@ -5031,7 +5031,7 @@ namespace System.Management.Automation
             var returnValue = new PSMemberInfoInternalCollection<T>();
             foreach (PSMemberInfo member in ((PSMemberSet)obj).Members)
             {
-                T memberAsT = member as T;
+                var memberAsT = member as T;
                 if (memberAsT != null)
                 {
                     returnValue.Add(memberAsT);
@@ -5238,7 +5238,7 @@ namespace System.Management.Automation
         /// <param name="obj">Object to get the TypeNameHierarchy from.</param>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
-            XmlNode node = (XmlNode)obj;
+            var node = (XmlNode)obj;
             string nodeNamespace = node.NamespaceURI;
             IEnumerable<string> baseTypeNames = GetDotNetTypeNameHierarchy(obj);
             if (string.IsNullOrEmpty(nodeNamespace))
@@ -5275,9 +5275,9 @@ namespace System.Management.Automation
         /// <param name="members">Collection where the members will be added.</param>
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
-            XmlNode node = (XmlNode)obj;
+            var node = (XmlNode)obj;
 
-            Dictionary<string, List<XmlNode>> nodeArrays = new Dictionary<string, List<XmlNode>>(StringComparer.OrdinalIgnoreCase);
+            var nodeArrays = new Dictionary<string, List<XmlNode>>(StringComparer.OrdinalIgnoreCase);
 
             if (node.Attributes != null)
             {
@@ -5352,7 +5352,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            XmlNode[] nodes = (XmlNode[])property.adapterData;
+            var nodes = (XmlNode[])property.adapterData;
             Diagnostics.Assert(nodes.Length != 0, "DoGetProperty would not return an empty array, it would return null instead");
             if (nodes.Length != 1)
             {
@@ -5402,7 +5402,7 @@ namespace System.Management.Automation
 
         private static object GetNodeObject(XmlNode node)
         {
-            XmlText text = node as XmlText;
+            var text = node as XmlText;
             if (text != null)
             {
                 return text.InnerText;
@@ -5429,7 +5429,7 @@ namespace System.Management.Automation
                 return node.InnerText;
             }
 
-            XmlAttribute attribute = node as XmlAttribute;
+            var attribute = node as XmlAttribute;
             if (attribute != null)
             {
                 return attribute.Value;
@@ -5445,14 +5445,14 @@ namespace System.Management.Automation
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
-            XmlNode[] nodes = (XmlNode[])property.adapterData;
+            var nodes = (XmlNode[])property.adapterData;
 
             if (nodes.Length == 1)
             {
                 return GetNodeObject(nodes[0]);
             }
 
-            object[] returnValue = new object[nodes.Length];
+            var returnValue = new object[nodes.Length];
             for (int i = 0; i < nodes.Length; i++)
             {
                 returnValue[i] = GetNodeObject(nodes[i]);
@@ -5470,7 +5470,7 @@ namespace System.Management.Automation
         {
             // XML is always a string so implicitly convert to string
             string valueString = LanguagePrimitives.ConvertTo<string>(setValue);
-            XmlNode[] nodes = (XmlNode[])property.adapterData;
+            var nodes = (XmlNode[])property.adapterData;
             Diagnostics.Assert(nodes.Length != 0, "DoGetProperty would not return an empty array, it would return null instead");
             if (nodes.Length > 1)
             {
@@ -5481,7 +5481,7 @@ namespace System.Management.Automation
             }
 
             XmlNode node = nodes[0];
-            XmlText text = node as XmlText;
+            var text = node as XmlText;
             if (text != null)
             {
                 text.InnerText = valueString;
@@ -5511,7 +5511,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            XmlAttribute attribute = node as XmlAttribute;
+            var attribute = node as XmlAttribute;
             if (attribute != null)
             {
                 attribute.Value = valueString;
@@ -5556,8 +5556,8 @@ namespace System.Management.Automation
         /// <returns>The corresponding XmlNode or null if not present.</returns>
         private static XmlNode[] FindNodes(object obj, string propertyName, StringComparison comparisonType)
         {
-            List<XmlNode> retValue = new List<XmlNode>();
-            XmlNode node = (XmlNode)obj;
+            var retValue = new List<XmlNode>();
+            var node = (XmlNode)obj;
 
             if (node.Attributes != null)
             {
@@ -5634,7 +5634,7 @@ namespace System.Management.Automation
         /// <param name="members">Collection where the members will be added.</param>
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
-            DataRow dataRow = (DataRow)obj;
+            var dataRow = (DataRow)obj;
             if (dataRow.Table == null || dataRow.Table.Columns == null)
             {
                 return;
@@ -5657,7 +5657,7 @@ namespace System.Management.Automation
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected override PSProperty DoGetProperty(object obj, string propertyName)
         {
-            DataRow dataRow = (DataRow)obj;
+            var dataRow = (DataRow)obj;
 
             if (!dataRow.Table.Columns.Contains(propertyName))
             {
@@ -5670,7 +5670,7 @@ namespace System.Management.Automation
 
         protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
-            DataRow dataRow = (DataRow)obj;
+            var dataRow = (DataRow)obj;
 
             foreach (DataColumn property in dataRow.Table.Columns)
             {
@@ -5691,8 +5691,8 @@ namespace System.Management.Automation
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
-            string columnName = (string)property.adapterData;
-            DataRow dataRow = (DataRow)property.baseObject;
+            var columnName = (string)property.adapterData;
+            var dataRow = (DataRow)property.baseObject;
             var dataType = dataRow.Table.Columns[columnName].DataType;
             return forDisplay ? ToStringCodeMethods.Type(dataType) : dataType.FullName;
         }
@@ -5704,8 +5704,8 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            string columnName = (string)property.adapterData;
-            DataRow dataRow = (DataRow)property.baseObject;
+            var columnName = (string)property.adapterData;
+            var dataRow = (DataRow)property.baseObject;
             return !dataRow.Table.Columns[columnName].ReadOnly;
         }
 
@@ -5726,7 +5726,7 @@ namespace System.Management.Automation
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
-            DataRow dataRow = (DataRow)property.baseObject;
+            var dataRow = (DataRow)property.baseObject;
             return dataRow[(string)property.adapterData];
         }
         /// <summary>
@@ -5737,7 +5737,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            DataRow dataRow = (DataRow)property.baseObject;
+            var dataRow = (DataRow)property.baseObject;
             dataRow[(string)property.adapterData] = setValue;
             return;
         }
@@ -5756,7 +5756,7 @@ namespace System.Management.Automation
         /// <param name="members">Collection where the members will be added.</param>
         protected override void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members)
         {
-            DataRowView dataRowView = (DataRowView)obj;
+            var dataRowView = (DataRowView)obj;
             if (dataRowView.Row == null || dataRowView.Row.Table == null || dataRowView.Row.Table.Columns == null)
             {
                 return;
@@ -5779,7 +5779,7 @@ namespace System.Management.Automation
         /// <returns>The PSProperty corresponding to propertyName from obj.</returns>
         protected override PSProperty DoGetProperty(object obj, string propertyName)
         {
-            DataRowView dataRowView = (DataRowView)obj;
+            var dataRowView = (DataRowView)obj;
 
             if (!dataRowView.Row.Table.Columns.Contains(propertyName))
             {
@@ -5792,7 +5792,7 @@ namespace System.Management.Automation
 
         protected override PSProperty DoGetFirstPropertyOrDefault(object obj, MemberNamePredicate predicate)
         {
-            DataRowView dataRowView = (DataRowView)obj;
+            var dataRowView = (DataRowView)obj;
 
             foreach (DataColumn column in dataRowView.Row.Table.Columns)
             {
@@ -5814,8 +5814,8 @@ namespace System.Management.Automation
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
-            string columnName = (string)property.adapterData;
-            DataRowView dataRowView = (DataRowView)property.baseObject;
+            var columnName = (string)property.adapterData;
+            var dataRowView = (DataRowView)property.baseObject;
             var dataType = dataRowView.Row.Table.Columns[columnName].DataType;
             return forDisplay ? ToStringCodeMethods.Type(dataType) : dataType.FullName;
         }
@@ -5827,8 +5827,8 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            string columnName = (string)property.adapterData;
-            DataRowView dataRowView = (DataRowView)property.baseObject;
+            var columnName = (string)property.adapterData;
+            var dataRowView = (DataRowView)property.baseObject;
             return !dataRowView.Row.Table.Columns[columnName].ReadOnly;
         }
 
@@ -5849,7 +5849,7 @@ namespace System.Management.Automation
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
-            DataRowView dataRowView = (DataRowView)property.baseObject;
+            var dataRowView = (DataRowView)property.baseObject;
             return dataRowView[(string)property.adapterData];
         }
         /// <summary>
@@ -5860,7 +5860,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            DataRowView dataRowView = (DataRowView)property.baseObject;
+            var dataRowView = (DataRowView)property.baseObject;
             dataRowView[(string)property.adapterData] = setValue;
             return;
         }
@@ -5880,7 +5880,7 @@ namespace System.Management.Automation
             // the cast is safe, because
             // 1) only ConstructorInfo and MethodInfo derive from MethodBase
             // 2) ConstructorInfo.IsGenericMethod is always false
-            MethodInfo originalMethod = (MethodInfo)genericMethod.method;
+            var originalMethod = (MethodInfo)genericMethod.method;
             MethodInfo inferredMethod = TypeInference.Infer(originalMethod, argumentTypes, genericMethod.hasVarArgs);
 
             if (inferredMethod != null)

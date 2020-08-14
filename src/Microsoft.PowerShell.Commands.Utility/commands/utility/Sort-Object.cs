@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            OrderByProperty orderByProperty = new OrderByProperty(
+            var orderByProperty = new OrderByProperty(
                 this, InputObjects, Property, !Descending, ConvertedCulture, CaseSensitive);
 
             var dataToProcess = orderByProperty.OrderMatrix;

@@ -368,8 +368,8 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // output DateTime object wrapped in an PSObject with DisplayHint attached
-                PSObject outputObj = new PSObject(dateToUse);
-                PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
+                var outputObj = new PSObject(dateToUse);
+                var note = new PSNoteProperty("DisplayHint", DisplayHint);
                 outputObj.Properties.Add(note);
 
                 WriteObject(outputObj);
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         private string UFormatDateString(DateTime dateTime)
         {
             int offset = 0;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             // folks may include the "+" as part of the format string
             if (UFormat[0] == '+')

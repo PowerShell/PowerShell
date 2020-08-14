@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // If there is a script, resolve its path
-            Collection<string> scripts = new Collection<string>();
+            var scripts = new Collection<string>();
 
             if (Script != null)
             {

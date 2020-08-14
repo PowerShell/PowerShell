@@ -87,7 +87,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] arguments)
         {
-            CmdletInfo copy = new CmdletInfo(this);
+            var copy = new CmdletInfo(this);
             copy.IsGetCommandCopy = true;
             copy.Arguments = arguments;
             return copy;
@@ -288,7 +288,7 @@ namespace System.Management.Automation
         {
             get
             {
-                StringBuilder synopsis = new StringBuilder();
+                var synopsis = new StringBuilder();
 
                 if (this.ImplementingType != null)
                 {
@@ -347,13 +347,13 @@ namespace System.Management.Automation
                     {
                         foreach (object o in ImplementingType.GetCustomAttributes(typeof(OutputTypeAttribute), false))
                         {
-                            OutputTypeAttribute attr = (OutputTypeAttribute)o;
+                            var attr = (OutputTypeAttribute)o;
                             _outputType.AddRange(attr.Type);
                         }
                     }
                 }
 
-                List<PSTypeName> providerTypes = new List<PSTypeName>();
+                var providerTypes = new List<PSTypeName>();
 
                 if (Context != null)
                 {
@@ -438,7 +438,7 @@ namespace System.Management.Automation
 
             if ((_options & ScopedItemOptions.ReadOnly) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Cmdlet,
@@ -486,7 +486,7 @@ namespace System.Management.Automation
             // If this is a high-fidelity object then extract full-name normally.
             if (psObject.BaseObject is CmdletInfo)
             {
-                CmdletInfo cmdletInfo = (CmdletInfo)psObject.BaseObject;
+                var cmdletInfo = (CmdletInfo)psObject.BaseObject;
                 return GetFullName(cmdletInfo);
             }
 

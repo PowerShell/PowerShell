@@ -62,8 +62,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="o">Object to process.</param>
         internal void Process(object o)
         {
-            PacketInfoData formatData = o as PacketInfoData;
-            FormatEntryData fed = formatData as FormatEntryData;
+            var formatData = o as PacketInfoData;
+            var fed = formatData as FormatEntryData;
             if (fed != null)
             {
                 OutputContext ctx = null;
@@ -102,8 +102,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    GroupEndData ged = formatData as GroupEndData;
-                    FormatEndData fEndd = formatData as FormatEndData;
+                    var ged = formatData as GroupEndData;
+                    var fEndd = formatData as FormatEndData;
                     if (ged != null || fEndd != null)
                     {
                         OutputContext oc = _stack.Peek();

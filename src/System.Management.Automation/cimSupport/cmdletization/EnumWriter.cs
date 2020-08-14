@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
         private static ModuleBuilder CreateModuleBuilder()
         {
-            AssemblyName aName = new AssemblyName(namespacePrefix);
+            var aName = new AssemblyName(namespacePrefix);
             AssemblyBuilder ab = AssemblyBuilder.DefineDynamicAssembly(aName, AssemblyBuilderAccess.Run);
             ModuleBuilder mb = ab.DefineDynamicModule(aName.Name);
             return mb;

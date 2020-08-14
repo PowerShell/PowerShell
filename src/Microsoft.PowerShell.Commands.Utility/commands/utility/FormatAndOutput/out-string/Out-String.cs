@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // set up the LineOutput interface
-            OutputManagerInner outInner = (OutputManagerInner)this.implementation;
+            var outInner = (OutputManagerInner)this.implementation;
 
             outInner.LineOutput = InstantiateLineOutputInterface();
 
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         private LineOutput InstantiateLineOutputInterface()
         {
             // set up the streaming text writer
-            StreamingTextWriter.WriteLineCallback callback = new StreamingTextWriter.WriteLineCallback(this.OnWriteLine);
+            var callback = new StreamingTextWriter.WriteLineCallback(this.OnWriteLine);
 
             _writer = new StreamingTextWriter(callback, Host.CurrentCulture);
 
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use it to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput(_writer, computedWidth);
+            var twlo = new TextWriterLineOutput(_writer, computedWidth);
 
             // finally have the LineOutput interface extracted
             return (LineOutput)twlo;

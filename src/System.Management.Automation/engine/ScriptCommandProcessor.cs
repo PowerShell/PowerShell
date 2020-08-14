@@ -99,7 +99,7 @@ namespace System.Management.Automation
             this._rethrowExitException = this.Context.ScriptCommandProcessorShouldRethrowExit;
             this._context.ScriptCommandProcessorShouldRethrowExit = false;
 
-            ScriptCommand scriptCommand = new ScriptCommand { CommandInfo = this.CommandInfo };
+            var scriptCommand = new ScriptCommand { CommandInfo = this.CommandInfo };
 
             this.Command = scriptCommand;
             // WinBlue: 219115
@@ -141,7 +141,7 @@ namespace System.Management.Automation
                     Dbg.Assert(parameter != null, "CommandProcessor.arguments shouldn't have any null arguments");
                     if (parameter.IsDashQuestion())
                     {
-                        Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
+                        var scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
                         string unused;
                         HelpInfo helpInfo = _scriptBlock.GetHelpInfo(context: Context, commandInfo: CommandInfo,
                             dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out unused, helpUriFromDotLink: out unused);
@@ -535,7 +535,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            IList list = inputToProcess as IList;
+                            var list = inputToProcess as IList;
                             inputToProcess = (list != null)
                                                  ? list.GetEnumerator()
                                                  : LanguagePrimitives.GetEnumerator(inputToProcess);
@@ -572,7 +572,7 @@ namespace System.Management.Automation
 
                 this._exitWasCalled = true;
 
-                int exitCode = (int)ee.Argument;
+                var exitCode = (int)ee.Argument;
                 this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, exitCode);
 
                 if (exitCode != 0)

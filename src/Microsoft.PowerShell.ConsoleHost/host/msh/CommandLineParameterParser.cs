@@ -846,7 +846,7 @@ namespace Microsoft.PowerShell
 
                     try
                     {
-                        ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
+                        var style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
                             args[i], typeof(ProcessWindowStyle), CultureInfo.InvariantCulture);
                         ConsoleControl.SetConsoleMode(style);
                     }
@@ -1003,7 +1003,7 @@ namespace Microsoft.PowerShell
 
         private void ParseFormat(string[] args, ref int i, ref Serialization.DataFormat format, string resourceStr)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string s in Enum.GetNames(typeof(Serialization.DataFormat)))
             {
                 sb.Append(s);
@@ -1113,7 +1113,7 @@ namespace Microsoft.PowerShell
                     if (args[i].StartsWith('-') && args[i].Length > 1)
                     {
                         string param = args[i].Substring(1, args[i].Length - 1).ToLower();
-                        StringBuilder possibleParameters = new StringBuilder();
+                        var possibleParameters = new StringBuilder();
                         foreach (string validParameter in s_validParameters)
                         {
                             if (validParameter.Contains(param))
@@ -1244,7 +1244,7 @@ namespace Microsoft.PowerShell
             {
                 // Collect the remaining parameters and combine them into a single command to be run.
 
-                StringBuilder cmdLineCmdSB = new StringBuilder();
+                var cmdLineCmdSB = new StringBuilder();
 
                 while (i < args.Length)
                 {

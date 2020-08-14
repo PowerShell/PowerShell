@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string p in FilePath)
             {
-                List<string> paths = new List<string>();
+                var paths = new List<string>();
 
                 // Expand wildcard characters
                 if (_isLiteralPath)
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (CryptographicException e)
                         {
-                            ErrorRecord er =
+                            var er =
                                 new ErrorRecord(e,
                                                 "GetPfxCertificateUnknownCryptoError",
                                                 ErrorCategory.NotSpecified,

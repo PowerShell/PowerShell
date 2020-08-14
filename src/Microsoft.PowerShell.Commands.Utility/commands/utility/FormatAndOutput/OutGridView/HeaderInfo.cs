@@ -18,13 +18,13 @@ namespace Microsoft.PowerShell.Commands
 
         internal PSObject AddColumnsToWindow(OutWindowProxy windowProxy, PSObject liveObject)
         {
-            PSObject staleObject = new PSObject();
+            var staleObject = new PSObject();
 
             // Initiate arrays to be of the same size.
             int count = _columns.Count;
-            string[] propertyNames = new string[count];
-            string[] displayNames = new string[count];
-            Type[] types = new Type[count];
+            var propertyNames = new string[count];
+            var displayNames = new string[count];
+            var types = new Type[count];
 
             count = 0; // Reuse this variable to count cycles.
             foreach (ColumnInfo column in _columns)
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal PSObject CreateStalePSObject(PSObject liveObject)
         {
-            PSObject staleObject = new PSObject();
+            var staleObject = new PSObject();
             foreach (ColumnInfo column in _columns)
             {
                 // Add a property to the stale PSObject.

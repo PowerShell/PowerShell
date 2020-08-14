@@ -129,7 +129,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static Collection<LogProvider> CreateLogProvider(string shellId)
         {
-            Collection<LogProvider> providers = new Collection<LogProvider>();
+            var providers = new Collection<LogProvider>();
             // Porting note: Linux does not support ETW
 
             try
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// <param name="shellId"></param>
         internal static void SetDummyLog(string shellId)
         {
-            Collection<LogProvider> providers = new Collection<LogProvider> { new DummyLogProvider() };
+            var providers = new Collection<LogProvider> { new DummyLogProvider() };
             s_logProviders.AddOrUpdate(shellId, providers, (key, value) => providers);
         }
 
@@ -216,7 +216,7 @@ namespace System.Management.Automation
             }
 
             InvocationInfo invocationInfo = null;
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
+            var icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
@@ -418,7 +418,7 @@ namespace System.Management.Automation
             }
 
             InvocationInfo invocationInfo = null;
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
+            var icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
@@ -609,7 +609,7 @@ namespace System.Management.Automation
             }
 
             InvocationInfo invocationInfo = null;
-            IContainsErrorRecord icer = exception as IContainsErrorRecord;
+            var icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
@@ -760,7 +760,7 @@ namespace System.Management.Automation
             if (executionContext == null)
                 return null;
 
-            LogContext logContext = new LogContext();
+            var logContext = new LogContext();
 
             string shellId = executionContext.ShellID;
 
@@ -808,7 +808,7 @@ namespace System.Management.Automation
                 logContext.User = Logging.UnknownUserName;
             }
 
-            System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
+            var psSenderInfo =
                     executionContext.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
             if (psSenderInfo != null)
             {

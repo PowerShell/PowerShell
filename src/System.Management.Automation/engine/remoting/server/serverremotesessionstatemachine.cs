@@ -545,10 +545,10 @@ namespace System.Management.Automation.Remoting
                             s_trace.WriteLine(@"Server received data for Runspace (id: {0}),
                                 but the Runspace cannot be found", clientRunspacePoolId);
 
-                            PSRemotingDataStructureException reasonOfFailure = new
+                            var reasonOfFailure = new
                                 PSRemotingDataStructureException(RemotingErrorIdStrings.RunspaceCannotBeFound,
                                     clientRunspacePoolId);
-                            RemoteSessionStateMachineEventArgs runspaceNotFoundArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure);
+                            var runspaceNotFoundArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure);
                             RaiseEvent(runspaceNotFoundArg);
                         }
 
@@ -564,8 +564,8 @@ namespace System.Management.Automation.Remoting
                     default:
                         s_trace.WriteLine("Server received data unknown targetInterface: {0}", targetInterface);
 
-                        PSRemotingDataStructureException reasonOfFailure2 = new PSRemotingDataStructureException(RemotingErrorIdStrings.ReceivedUnsupportedRemotingTargetInterfaceType, targetInterface);
-                        RemoteSessionStateMachineEventArgs unknownTargetArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure2);
+                        var reasonOfFailure2 = new PSRemotingDataStructureException(RemotingErrorIdStrings.ReceivedUnsupportedRemotingTargetInterfaceType, targetInterface);
+                        var unknownTargetArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure2);
                         RaiseEvent(unknownTargetArg);
                         break;
                 }
@@ -794,7 +794,7 @@ namespace System.Management.Automation.Remoting
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationFailed, "StateEvent must be NegotiationFailed");
 
-                RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
+                var closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
 
                 RaiseEventPrivate(closeArg);
             }
@@ -829,7 +829,7 @@ namespace System.Management.Automation.Remoting
                     return;
                 }
 
-                RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
+                var closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
 
                 RaiseEventPrivate(closeArg);
             }
@@ -858,7 +858,7 @@ namespace System.Management.Automation.Remoting
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.SendFailed, "StateEvent must be SendFailed");
 
-                RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
+                var closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
 
                 RaiseEventPrivate(closeArg);
             }
@@ -887,7 +887,7 @@ namespace System.Management.Automation.Remoting
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.ReceiveFailed, "StateEvent must be ReceivedFailed");
 
-                RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
+                var closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
 
                 RaiseEventPrivate(closeArg);
             }
@@ -992,7 +992,7 @@ namespace System.Management.Automation.Remoting
                 tmp.Dispose();
             }
 
-            PSRemotingDataStructureException exception =
+            var exception =
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));

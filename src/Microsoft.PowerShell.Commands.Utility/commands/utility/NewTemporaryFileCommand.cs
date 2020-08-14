@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    FileInfo file = new FileInfo(filePath);
+                    var file = new FileInfo(filePath);
                     WriteObject(file);
                 }
             }

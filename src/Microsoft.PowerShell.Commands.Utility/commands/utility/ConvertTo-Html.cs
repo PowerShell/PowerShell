@@ -342,8 +342,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<MshParameter> ProcessParameter(object[] properties)
         {
-            TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
-            ParameterProcessor processor =
+            var invocationContext = new TerminatingErrorContext(this);
+            var processor =
                 new ParameterProcessor(new ConvertHTMLExpressionParameterDefinition());
             if (properties == null)
             {
@@ -363,14 +363,14 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (MshParameter p in _propertyMshParameterList)
             {
-                string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
-                string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
+                var label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
+                var alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
 
                 // Accept the width both as a string and as an int.
                 string width;
-                int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
+                var widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
                 width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
-                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                var ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
             string alignment,
             string width)
         {
-            Hashtable ht = new Hashtable();
+            var ht = new Hashtable();
             if (label != null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, label);
@@ -446,8 +446,8 @@ namespace Microsoft.PowerShell.Commands
             // ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
             if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
             {
-                ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, "CSSUri");
+                var ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
+                var er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, "CSSUri");
                 ThrowTerminatingError(er);
             }
 
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_metaSpecified)
                 {
-                    List<string> useditems = new List<string>();
+                    var useditems = new List<string>();
                     foreach (string s in _meta.Keys)
                     {
                         if (!useditems.Contains(s))
@@ -503,10 +503,10 @@ namespace Microsoft.PowerShell.Commands
                                     WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
                                     break;
                                 default:
-                                    MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
+                                    var mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
                                     string Message = StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s, _meta[s]);
-                                    WarningRecord record = new WarningRecord(Message);
-                                    InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
+                                    var record = new WarningRecord(Message);
+                                    var invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
                                     if (invocationInfo != null)
                                     {
@@ -551,13 +551,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="mshParams"></param>
         private void WriteColumns(List<MshParameter> mshParams)
         {
-            StringBuilder COLTag = new StringBuilder();
+            var COLTag = new StringBuilder();
 
             COLTag.Append("<colgroup>");
             foreach (MshParameter p in mshParams)
             {
                 COLTag.Append("<col");
-                string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+                var width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
                 if (width != null)
                 {
                     COLTag.Append(" width = \"");
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands
                     COLTag.Append("\"");
                 }
 
-                string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
+                var alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
                 if (alignment != null)
                 {
                     COLTag.Append(" align = \"");
@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (MshParameter p in _resolvedNameMshParameters)
             {
-                StringBuilder Listtag = new StringBuilder();
+                var Listtag = new StringBuilder();
                 Listtag.Append("<tr><td>");
 
                 // for writing the property name
@@ -612,14 +612,14 @@ namespace Microsoft.PowerShell.Commands
         private void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
             // for writing the property name
-            string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
+            var label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
             if (label != null)
             {
                 Listtag.Append(label);
             }
             else
             {
-                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                var ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 Listtag.Append(ex.ToString());
             }
         }
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WritePropertyValue(StringBuilder Listtag, MshParameter p)
         {
-            PSPropertyExpression exValue = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            var exValue = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
             // get the value of the property
             List<PSPropertyExpressionResult> resultList = exValue.GetValues(_inputObject);
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteColumns(_resolvedNameMshParameters);
 
-                    StringBuilder THtag = new StringBuilder("<tr>");
+                    var THtag = new StringBuilder("<tr>");
 
                     // write the table header
                     WriteTableHeader(THtag, _resolvedNameMshParameters);
@@ -728,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
             // if the As parameter is Table, write the property values
             if (_as.Equals("Table", StringComparison.OrdinalIgnoreCase))
             {
-                StringBuilder TRtag = new StringBuilder("<tr>");
+                var TRtag = new StringBuilder("<tr>");
 
                 // write the table row
                 WriteTableRow(TRtag, _resolvedNameMshParameters);

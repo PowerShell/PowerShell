@@ -67,7 +67,7 @@ namespace Microsoft.WSMan.Management
         /// </returns>
         internal IWSManSession CreateWSManSession()
         {
-            IWSManEx wsmanObject = (IWSManEx)new WSManClass();
+            var wsmanObject = (IWSManEx)new WSManClass();
             IWSManSession m_SessionObj = null;
 
             try
@@ -77,7 +77,7 @@ namespace Microsoft.WSMan.Management
             }
             catch (COMException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "COMException", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "COMException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
 
@@ -111,7 +111,7 @@ namespace Microsoft.WSMan.Management
 
         private void DisableClientSideSettings()
         {
-            WSManHelper helper = new WSManHelper(this);
+            var helper = new WSManHelper(this);
             IWSManSession m_SessionObj = CreateWSManSession();
             if (m_SessionObj == null)
             {
@@ -121,10 +121,10 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
-                XmlDocument resultopxml = new XmlDocument();
+                var resultopxml = new XmlDocument();
                 string inputXml = null;
                 resultopxml.LoadXml(result);
-                XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
+                var nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
                 if (!(xNode == null))
@@ -133,8 +133,8 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    var ex = new InvalidOperationException();
+                    var er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -147,8 +147,8 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    ThreadStart start = new ThreadStart(this.DeleteUserDelegateSettings);
-                    Thread thread = new Thread(start);
+                    var start = new ThreadStart(this.DeleteUserDelegateSettings);
+                    var thread = new Thread(start);
                     thread.SetApartmentState(ApartmentState.STA);
                     thread.Start();
                     thread.Join();
@@ -161,7 +161,7 @@ namespace Microsoft.WSMan.Management
             }
             catch (System.Xml.XPath.XPathException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "XpathException", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "XpathException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
             finally
@@ -178,7 +178,7 @@ namespace Microsoft.WSMan.Management
 
         private void DisableServerSideSettings()
         {
-            WSManHelper helper = new WSManHelper(this);
+            var helper = new WSManHelper(this);
             IWSManSession m_SessionObj = CreateWSManSession();
             if (m_SessionObj == null)
             {
@@ -188,11 +188,11 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string result = m_SessionObj.Get(helper.Service_CredSSP_Uri, 0);
-                XmlDocument resultopxml = new XmlDocument();
+                var resultopxml = new XmlDocument();
                 string inputXml = null;
                 resultopxml.LoadXml(result);
 
-                XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
+                var nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.Service_CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
                 if (!(xNode == null))
@@ -203,8 +203,8 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex,
+                    var ex = new InvalidOperationException();
+                    var er = new ErrorRecord(ex,
                         helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"),
                         ErrorCategory.InvalidOperation, null);
                     WriteError(er);
@@ -230,7 +230,7 @@ namespace Microsoft.WSMan.Management
         private void DeleteUserDelegateSettings()
         {
             System.IntPtr KeyHandle = System.IntPtr.Zero;
-            IGroupPolicyObject GPO = (IGroupPolicyObject)new GPClass();
+            var GPO = (IGroupPolicyObject)new GPClass();
             GPO.OpenLocalMachineGPO(1);
             KeyHandle = GPO.GetRegistryKey(2);
             RegistryKey rootKey = Registry.CurrentUser;
@@ -250,7 +250,7 @@ namespace Microsoft.WSMan.Management
 
         private void DeleteDelegateSettings(string applicationname, RegistryKey rootKey, string Registry_Path, IGroupPolicyObject GPO)
         {
-            WSManHelper helper = new WSManHelper(this);
+            var helper = new WSManHelper(this);
             RegistryKey rKey;
             int i = 0;
             bool otherkeys = false;
@@ -263,7 +263,7 @@ namespace Microsoft.WSMan.Management
                     string[] valuenames = Allow_Fresh_Credential_Key.GetValueNames();
                     if (valuenames.Length > 0)
                     {
-                        Collection<string> KeyCollection = new Collection<string>();
+                        var KeyCollection = new Collection<string>();
                         foreach (string value in valuenames)
                         {
                             object keyvalue = Allow_Fresh_Credential_Key.GetValue(value);
@@ -315,22 +315,22 @@ namespace Microsoft.WSMan.Management
             }
             catch (InvalidOperationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperation", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "InvalidOperation", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
             catch (ArgumentException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidArgument", ErrorCategory.InvalidArgument, null);
+                var er = new ErrorRecord(ex, "InvalidArgument", ErrorCategory.InvalidArgument, null);
                 WriteError(er);
             }
             catch (SecurityException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SecurityException", ErrorCategory.SecurityError, null);
+                var er = new ErrorRecord(ex, "SecurityException", ErrorCategory.SecurityError, null);
                 WriteError(er);
             }
             catch (UnauthorizedAccessException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "UnauthorizedAccess", ErrorCategory.SecurityError, null);
+                var er = new ErrorRecord(ex, "UnauthorizedAccess", ErrorCategory.SecurityError, null);
                 WriteError(er);
             }
         }
@@ -509,8 +509,8 @@ namespace Microsoft.WSMan.Management
 
                 if (node == null)
                 {
-                    InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    var ex = new InvalidOperationException();
+                    var er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -518,7 +518,7 @@ namespace Microsoft.WSMan.Management
                 string newxmlcontent = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>";
                 try
                 {
-                    XmlDocument xmldoc = new XmlDocument();
+                    var xmldoc = new XmlDocument();
                     // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.CredSSP_RUri, newxmlcontent, 0));
 
@@ -529,8 +529,8 @@ namespace Microsoft.WSMan.Management
                     }
                     else
                     {
-                        ThreadStart start = new ThreadStart(this.UpdateCurrentUserRegistrySettings);
-                        Thread thread = new Thread(start);
+                        var start = new ThreadStart(this.UpdateCurrentUserRegistrySettings);
+                        var thread = new Thread(start);
                         thread.SetApartmentState(ApartmentState.STA);
                         thread.Start();
                         thread.Join();
@@ -589,15 +589,15 @@ namespace Microsoft.WSMan.Management
 
                 if (node == null)
                 {
-                    InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    var ex = new InvalidOperationException();
+                    var er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
 
                 try
                 {
-                    XmlDocument xmldoc = new XmlDocument();
+                    var xmldoc = new XmlDocument();
                     string newxmlcontent = string.Format(CultureInfo.InvariantCulture,
                         @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>",
                         helper.Service_CredSSP_XMLNmsp);
@@ -629,7 +629,7 @@ namespace Microsoft.WSMan.Management
         private void UpdateCurrentUserRegistrySettings()
         {
             System.IntPtr KeyHandle = System.IntPtr.Zero;
-            IGroupPolicyObject GPO = (IGroupPolicyObject)new GPClass();
+            var GPO = (IGroupPolicyObject)new GPClass();
             GPO.OpenLocalMachineGPO(1);
             KeyHandle = GPO.GetRegistryKey(2);
             RegistryKey rootKey = Registry.CurrentUser;
@@ -684,17 +684,17 @@ namespace Microsoft.WSMan.Management
             }
             catch (UnauthorizedAccessException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "UnauthorizedAccessException", ErrorCategory.PermissionDenied, null);
+                var er = new ErrorRecord(ex, "UnauthorizedAccessException", ErrorCategory.PermissionDenied, null);
                 WriteError(er);
             }
             catch (SecurityException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SecurityException", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "SecurityException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
             catch (ArgumentException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
         }
@@ -791,17 +791,17 @@ namespace Microsoft.WSMan.Management
             }
             catch (ArgumentException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.PermissionDenied, null);
+                var er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.PermissionDenied, null);
                 WriteError(er);
             }
             catch (SecurityException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SecurityException", ErrorCategory.PermissionDenied, null);
+                var er = new ErrorRecord(ex, "SecurityException", ErrorCategory.PermissionDenied, null);
                 WriteError(er);
             }
             catch (ObjectDisposedException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "ObjectDisposedException", ErrorCategory.PermissionDenied, null);
+                var er = new ErrorRecord(ex, "ObjectDisposedException", ErrorCategory.PermissionDenied, null);
                 WriteError(er);
             }
 
@@ -821,14 +821,14 @@ namespace Microsoft.WSMan.Management
             IWSManSession m_SessionObj = null;
             try
             {
-                IWSManEx wsmanObject = (IWSManEx)new WSManClass();
+                var wsmanObject = (IWSManEx)new WSManClass();
                 m_SessionObj = (IWSManSession)wsmanObject.CreateSession(null, 0, null);
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
                 XmlNode node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
                 if (node == null)
                 {
-                    InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    var ex = new InvalidOperationException();
+                    var er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -850,8 +850,8 @@ namespace Microsoft.WSMan.Management
                 node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.Service_CredSSP_XMLNmsp);
                 if (node == null)
                 {
-                    InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    var ex = new InvalidOperationException();
+                    var er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -867,22 +867,22 @@ namespace Microsoft.WSMan.Management
             }
             catch (UnauthorizedAccessException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "UnauthorizedAccess", ErrorCategory.PermissionDenied, null);
+                var er = new ErrorRecord(ex, "UnauthorizedAccess", ErrorCategory.PermissionDenied, null);
                 WriteError(er);
             }
             catch (SecurityException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SecurityException", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "SecurityException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
             catch (ArgumentException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidArgument", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "InvalidArgument", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
             catch (System.Xml.XPath.XPathException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "XPathException", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "XPathException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
             finally

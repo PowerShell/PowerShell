@@ -765,7 +765,7 @@ namespace System.Management.Automation
             out ProviderInfo provider,
             out PSDriveInfo drive)
         {
-            CmdletProviderContext context = new CmdletProviderContext(_sessionState.ExecutionContext);
+            var context = new CmdletProviderContext(_sessionState.ExecutionContext);
 
             // The parameters will be verified by the path resolver
 

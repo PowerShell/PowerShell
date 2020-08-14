@@ -235,14 +235,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool foundValidViews = false;
             string formatTypeName = null;
             string separator = ", ";
-            StringBuilder validViewFormats = new StringBuilder();
+            var validViewFormats = new StringBuilder();
 
             if (so != null && so.BaseObject != null &&
                 db != null && db.viewDefinitionsSection != null &&
                 db.viewDefinitionsSection.viewDefinitionList != null &&
                 db.viewDefinitionsSection.viewDefinitionList.Count > 0)
             {
-                StringBuilder validViews = new StringBuilder();
+                var validViews = new StringBuilder();
                 string currentObjectTypeName = so.BaseObject.GetType().ToString();
 
                 Type formatType = null;
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (!foundValidViews)
             {
-                StringBuilder unKnowViewFormatStringBuilder = new StringBuilder();
+                var unKnowViewFormatStringBuilder = new StringBuilder();
                 if (validViewFormats.Length > 0)
                 {
                     // unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 msg = unKnowViewFormatStringBuilder.ToString();
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            var errorRecord = new ErrorRecord(
                                             new PipelineStoppedException(),
                                             "FormatViewNotFound",
                                             ErrorCategory.ObjectNotFound,
@@ -538,10 +538,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static FormatEntryData GenerateOutOfBandObjectAsToString(PSObject so)
         {
-            FormatEntryData fed = new FormatEntryData();
+            var fed = new FormatEntryData();
             fed.outOfBand = true;
 
-            RawTextFormatEntry rawTextEntry = new RawTextFormatEntry();
+            var rawTextEntry = new RawTextFormatEntry();
             rawTextEntry.text = so.ToString();
             fed.formatEntryInfo = rawTextEntry;
 
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return;
-            PSPropertyExpressionError error = new PSPropertyExpressionError();
+            var error = new PSPropertyExpressionError();
             error.result = result;
             error.sourceObject = sourceObject;
             _formattingErrorList.Add(error);
@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return null;
 
-            List<ErrorRecord> retVal = new List<ErrorRecord>();
+            var retVal = new List<ErrorRecord>();
             foreach (FormattingError error in _formattingErrorList)
             {
                 ErrorRecord errorRecord = GenerateErrorRecord(error);
@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             ErrorRecord errorRecord = null;
             string msg = null;
-            PSPropertyExpressionError psPropertyExpressionError = error as PSPropertyExpressionError;
+            var psPropertyExpressionError = error as PSPropertyExpressionError;
             if (psPropertyExpressionError != null)
             {
                 errorRecord = new ErrorRecord(
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
 
-            StringFormatError formattingError = error as StringFormatError;
+            var formattingError = error as StringFormatError;
             if (formattingError != null)
             {
                 errorRecord = new ErrorRecord(

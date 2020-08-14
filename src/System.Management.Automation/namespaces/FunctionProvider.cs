@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string description = SessionStateStrings.FunctionDriveDescription;
 
-            PSDriveInfo functionDrive =
+            var functionDrive =
                 new PSDriveInfo(
                     DriveNames.FunctionDrive,
                     ProviderInfo,
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
                     description,
                     null);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            var drives = new Collection<PSDriveInfo>();
             drives.Add(functionDrive);
             return drives;
         }
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(name),
                 "The caller should verify this parameter");
 
-            FunctionProviderDynamicParameters dynamicParameters =
+            var dynamicParameters =
                 DynamicParameters as FunctionProviderDynamicParameters;
 
             CommandInfo modifiedItem = null;
@@ -185,13 +185,13 @@ namespace Microsoft.PowerShell.Commands
                 do // false loop
                 {
                     // Unwrap the PSObject before binding it as a scriptblock...
-                    PSObject pso = value as PSObject;
+                    var pso = value as PSObject;
                     if (pso != null)
                     {
                         value = pso.BaseObject;
                     }
 
-                    ScriptBlock scriptBlockValue = value as ScriptBlock;
+                    var scriptBlockValue = value as ScriptBlock;
                     if (scriptBlockValue != null)
                     {
                         if (dynamicParametersSpecified)
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    FunctionInfo function = value as FunctionInfo;
+                    var function = value as FunctionInfo;
                     if (function != null)
                     {
                         ScopedItemOptions options = function.Options;
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    string stringValue = value as string;
+                    var stringValue = value as string;
                     if (stringValue != null)
                     {
                         ScriptBlock scriptBlock = ScriptBlock.Create(Context.ExecutionContext, stringValue);
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
 
             object value = item;
 
-            FunctionInfo function = item as FunctionInfo;
+            var function = item as FunctionInfo;
             if (function != null)
             {
                 value = function.ScriptBlock;
@@ -326,13 +326,13 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = false;
 
-            FunctionInfo functionInfo = item as FunctionInfo;
+            var functionInfo = item as FunctionInfo;
             if (functionInfo != null)
             {
                 if ((functionInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     ((functionInfo.Options & ScopedItemOptions.ReadOnly) != 0 && !Force))
                 {
-                    SessionStateUnauthorizedAccessException e =
+                    var e =
                         new SessionStateUnauthorizedAccessException(
                             functionInfo.Name,
                             SessionStateCategory.Function,

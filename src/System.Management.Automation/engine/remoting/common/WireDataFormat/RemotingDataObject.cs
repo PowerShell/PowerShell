@@ -77,7 +77,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                int dt = (int)DataType;
+                var dt = (int)DataType;
 
                 // get the most used ones in the top.
                 if ((dt & PowerShellMask) == PowerShellMask)
@@ -141,15 +141,15 @@ namespace System.Management.Automation.Remoting
 
             if ((serializedDataStream.Length - serializedDataStream.Position) < headerLength)
             {
-                PSRemotingTransportException e =
+                var e =
                     new PSRemotingTransportException(PSRemotingErrorId.NotEnoughHeaderForRemoteDataObject,
                         RemotingErrorIdStrings.NotEnoughHeaderForRemoteDataObject,
                     headerLength + FragmentedRemoteObject.HeaderLength);
                 throw e;
             }
 
-            RemotingDestination destination = (RemotingDestination)DeserializeUInt(serializedDataStream);
-            RemotingDataType dataType = (RemotingDataType)DeserializeUInt(serializedDataStream);
+            var destination = (RemotingDestination)DeserializeUInt(serializedDataStream);
+            var dataType = (RemotingDataType)DeserializeUInt(serializedDataStream);
             Guid runspacePoolId = DeserializeGuid(serializedDataStream);
             Guid powerShellId = DeserializeGuid(serializedDataStream);
 
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Remoting
                 actualData = defragmentor.DeserializeToPSObject(serializedDataStream);
             }
 
-            T deserializedObject = (T)LanguagePrimitives.ConvertTo(actualData, typeof(T),
+            var deserializedObject = (T)LanguagePrimitives.ConvertTo(actualData, typeof(T),
                 System.Globalization.CultureInfo.CurrentCulture);
 
             return new RemoteDataObject<T>(destination, dataType, runspacePoolId, powerShellId, deserializedObject);
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
-            byte[] result = new byte[4]; // size of int
+            var result = new byte[4]; // size of int
 
             int idx = 0;
             result[idx++] = (byte)(data & 0xFF);
@@ -254,7 +254,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(serializedDataStream.Length >= 16, "Not enough data to get Guid.");
 
-            byte[] guidarray = new byte[16]; // Size of GUID.
+            var guidarray = new byte[16]; // Size of GUID.
 
             for (int idx = 0; idx < 16; idx++)
             {

@@ -103,7 +103,7 @@ namespace System.Management.Automation.Remoting
                 appDomainName = DefaultAppDomainName;
             }
 
-            System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder(MaxNamedPipeNameSize);
+            var pipeNameBuilder = new System.Text.StringBuilder(MaxNamedPipeNameSize);
             pipeNameBuilder.Append(NamedPipeNamePrefix)
                 // The starttime is there to prevent another process easily guessing the pipe name
                 // and squatting on it.
@@ -258,7 +258,7 @@ namespace System.Management.Automation.Remoting
 
         internal static SECURITY_ATTRIBUTES GetSecurityAttributes(GCHandle securityDescriptorPinnedHandle, bool inheritHandle = false)
         {
-            SECURITY_ATTRIBUTES securityAttributes = new NamedPipeNative.SECURITY_ATTRIBUTES();
+            var securityAttributes = new NamedPipeNative.SECURITY_ATTRIBUTES();
             securityAttributes.InheritHandle = inheritHandle;
             securityAttributes.NLength = (int)Marshal.SizeOf(securityAttributes);
             securityAttributes.LPSecurityDescriptor = securityDescriptorPinnedHandle.AddrOfPinnedObject();
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Remoting
             GCHandle? securityDescHandle = null;
             if (securityDesc != null)
             {
-                byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
+                var securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
                 securityDescHandle = GCHandle.Alloc(securityDescBuffer, GCHandleType.Pinned);
                 securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value);
@@ -694,7 +694,7 @@ namespace System.Management.Automation.Remoting
                 IsListenerRunning = true;
 
                 // Create listener thread.
-                Thread listenerThread = new Thread(ProcessListeningThread);
+                var listenerThread = new Thread(ProcessListeningThread);
                 listenerThread.Name = _threadName;
                 listenerThread.IsBackground = true;
                 listenerThread.Start(clientConnectCallback);
@@ -707,8 +707,8 @@ namespace System.Management.Automation.Remoting
             return null;
 #else
             // Built-in Admin SID
-            SecurityIdentifier adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
-            DiscretionaryAcl dacl = new DiscretionaryAcl(false, false, 1);
+            var adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+            var dacl = new DiscretionaryAcl(false, false, 1);
             dacl.AddAccess(
                 AccessControlType.Allow,
                 adminSID,
@@ -716,7 +716,7 @@ namespace System.Management.Automation.Remoting
                 InheritanceFlags.None,
                 PropagationFlags.None);
 
-            CommonSecurityDescriptor securityDesc = new CommonSecurityDescriptor(
+            var securityDesc = new CommonSecurityDescriptor(
                 false, false,
                 ControlFlags.DiscretionaryAclPresent | ControlFlags.OwnerDefaulted | ControlFlags.GroupDefaulted,
                 null, null, null, dacl);
@@ -819,7 +819,7 @@ namespace System.Management.Automation.Remoting
             ex = null;
             try
             {
-                Action<RemoteSessionNamedPipeServer> clientConnectCallback = state as Action<RemoteSessionNamedPipeServer>;
+                var clientConnectCallback = state as Action<RemoteSessionNamedPipeServer>;
                 Dbg.Assert(clientConnectCallback != null, "Client callback should never be null.");
 
                 // Handle a new client connect by making the callback.
@@ -906,7 +906,7 @@ namespace System.Management.Automation.Remoting
 
             IPCNamedPipeServer.ConfigurationName = configurationName;
 
-            ManualResetEventSlim clientConnectionEnded = new ManualResetEventSlim(false);
+            var clientConnectionEnded = new ManualResetEventSlim(false);
             IPCNamedPipeServer.ListenerEnded -= OnIPCNamedPipeServerEnded;
             IPCNamedPipeServer.ListenerEnded += (sender, e) =>
                 {
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation.Remoting
             int elapsedTime = 0;
             _connecting = true;
 
-            NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
+            var namedPipeClientStream = new NamedPipeClientStream(
                 serverName: ".",
                 pipeName: _pipeName,
                 direction: PipeDirection.InOut,

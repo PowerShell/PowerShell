@@ -356,7 +356,7 @@ namespace System.Management.Automation.Runspaces
                 string message =
                     PSRemotingErrorInvariants.FormatResourceString(
                         RemotingErrorIdStrings.PortIsOutOfRange, port);
-                ArgumentException e = new ArgumentException(message);
+                var e = new ArgumentException(message);
                 throw e;
             }
         }
@@ -1026,7 +1026,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public WSManConnectionInfo Copy()
         {
-            WSManConnectionInfo result = new WSManConnectionInfo();
+            var result = new WSManConnectionInfo();
             result._connectionUri = _connectionUri;
             result._computerName = _computerName;
             result._scheme = _scheme;
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Runspaces
         internal static T ExtractPropertyAsWsManConnectionInfo<T>(RunspaceConnectionInfo rsCI,
             string property, T defaultValue)
         {
-            WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
+            var wsCI = rsCI as WSManConnectionInfo;
             if (wsCI == null)
             {
                 return defaultValue;
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation.Runspaces
                 string message =
                     PSRemotingErrorInvariants.FormatResourceString(
                         RemotingErrorIdStrings.InvalidSchemeValue, _scheme);
-                ArgumentException e = new ArgumentException(message);
+                var e = new ArgumentException(message);
                 throw e;
             }
 
@@ -1223,7 +1223,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // construct Uri
-            UriBuilder uriBuilder = new UriBuilder(_scheme, _computerName,
+            var uriBuilder = new UriBuilder(_scheme, _computerName,
                                 PortSetting, _appName);
 
             _connectionUri = uriBuilder.Uri;
@@ -1593,7 +1593,7 @@ namespace System.Management.Automation.Runspaces
 
         public NewProcessConnectionInfo Copy()
         {
-            NewProcessConnectionInfo result = new NewProcessConnectionInfo(_credential);
+            var result = new NewProcessConnectionInfo(_credential);
             result.AuthenticationMechanism = this.AuthenticationMechanism;
             result.InitializationScript = this.InitializationScript;
             result.WorkingDirectory = this.WorkingDirectory;
@@ -1826,7 +1826,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>NamedPipeConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            NamedPipeConnectionInfo newCopy = new NamedPipeConnectionInfo();
+            var newCopy = new NamedPipeConnectionInfo();
             newCopy._authMechanism = this.AuthenticationMechanism;
             newCopy._credential = this.Credential;
             newCopy.ProcessId = this.ProcessId;
@@ -2011,7 +2011,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>NamedPipeConnectionInfo.</returns>
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            SSHConnectionInfo newCopy = new SSHConnectionInfo();
+            var newCopy = new SSHConnectionInfo();
             newCopy.ComputerName = this.ComputerName;
             newCopy.UserName = this.UserName;
             newCopy.KeyFilePath = this.KeyFilePath;
@@ -2082,7 +2082,7 @@ namespace System.Management.Automation.Runspaces
             //   linux|macos:
             //     Subsystem powershell /usr/local/bin/pwsh -SSHServerMode -NoLogo -NoProfile
 
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(filePath);
+            var startInfo = new System.Diagnostics.ProcessStartInfo(filePath);
 
             // pass "-i identity_file" command line argument to ssh if KeyFilePath is set
             // if KeyFilePath is not set, then ssh will use IdentityFile / IdentityAgent from ssh_config if defined else none by default
@@ -2544,8 +2544,8 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Create process
-            PlatformInvokes.STARTUPINFO lpStartupInfo = new PlatformInvokes.STARTUPINFO();
-            PlatformInvokes.PROCESS_INFORMATION lpProcessInformation = new PlatformInvokes.PROCESS_INFORMATION();
+            var lpStartupInfo = new PlatformInvokes.STARTUPINFO();
+            var lpProcessInformation = new PlatformInvokes.PROCESS_INFORMATION();
             int creationFlags = 0;
 
             try
@@ -2572,8 +2572,8 @@ namespace System.Management.Automation.Runspaces
                 // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
                 creationFlags |= CREATE_SUSPENDED;
 
-                PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
-                PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                var lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                var lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
                 bool success = PlatformInvokes.CreateProcess(
                     null,
                     cmdLine,
@@ -2630,7 +2630,7 @@ namespace System.Management.Automation.Runspaces
             uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
 
             // We want an inheritable handle.
-            PlatformInvokes.SECURITY_ATTRIBUTES securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+            var securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
 
             // Get handle to pipe.
             var fileHandle = PlatformInvokes.CreateFileW(
@@ -2660,7 +2660,7 @@ namespace System.Management.Automation.Runspaces
             GCHandle? securityDescHandle = null;
             if (securityDesc != null)
             {
-                byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
+                var securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
                 securityDescHandle = GCHandle.Alloc(securityDescBuffer, GCHandleType.Pinned);
                 securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true);
@@ -2784,7 +2784,7 @@ namespace System.Management.Automation.Runspaces
 
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            VMConnectionInfo result = new VMConnectionInfo(Credential, VMGuid, ComputerName, ConfigurationName);
+            var result = new VMConnectionInfo(Credential, VMGuid, ComputerName, ConfigurationName);
             return result;
         }
 
@@ -2914,7 +2914,7 @@ namespace System.Management.Automation.Runspaces
 
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            ContainerConnectionInfo newCopy = new ContainerConnectionInfo(ContainerProc);
+            var newCopy = new ContainerConnectionInfo(ContainerProc);
             return newCopy;
         }
 
@@ -2967,7 +2967,7 @@ namespace System.Management.Automation.Runspaces
             bool runAsAdmin,
             string configurationName)
         {
-            ContainerProcess containerProc = new ContainerProcess(containerId, null, 0, runAsAdmin, configurationName);
+            var containerProc = new ContainerProcess(containerId, null, 0, runAsAdmin, configurationName);
 
             return new ContainerConnectionInfo(containerProc);
         }
@@ -3295,7 +3295,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         cmd = GetContainerProcessCommand(executableToTry);
 
-                        HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
+                        var ProcessInformation = new HCS_PROCESS_INFORMATION();
                         IntPtr Process = IntPtr.Zero;
 
                         //
@@ -3483,7 +3483,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                Thread executionThread = new Thread(new ThreadStart(threadProc));
+                var executionThread = new Thread(new ThreadStart(threadProc));
 
                 executionThread.SetApartmentState(ApartmentState.MTA);
                 executionThread.Start();

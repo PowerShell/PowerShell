@@ -629,7 +629,7 @@ namespace System.Management.Automation.Security
                                        string moreInfoUrl,
                                        string hashAlgorithm)
         {
-            CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO siex =
+            var siex =
                 new CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO();
 
             siex.dwSize = (DWORD)Marshal.SizeOf(siex);
@@ -763,7 +763,7 @@ namespace System.Management.Automation.Security
                                string hashAlgorithm,
                                SigningOption option)
         {
-            CRYPTUI_WIZ_DIGITAL_SIGN_INFO si = new CRYPTUI_WIZ_DIGITAL_SIGN_INFO();
+            var si = new CRYPTUI_WIZ_DIGITAL_SIGN_INFO();
 
             si.dwSize = (DWORD)Marshal.SizeOf(si);
             si.dwSubjectChoice = (DWORD)SignInfoSubjectChoice.CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_FILE;
@@ -840,7 +840,7 @@ namespace System.Management.Automation.Security
         [ArchitectureSensitive]
         internal static WINTRUST_FILE_INFO InitWintrustFileInfoStruct(string fileName)
         {
-            WINTRUST_FILE_INFO fi = new WINTRUST_FILE_INFO();
+            var fi = new WINTRUST_FILE_INFO();
 
             fi.cbStruct = (DWORD)Marshal.SizeOf(fi);
             fi.pcwszFilePath = fileName;
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Security
         [ArchitectureSensitive]
         internal static WINTRUST_BLOB_INFO InitWintrustBlobInfoStruct(string fileName, string content)
         {
-            WINTRUST_BLOB_INFO bi = new WINTRUST_BLOB_INFO();
+            var bi = new WINTRUST_BLOB_INFO();
             byte[] contentBytes = System.Text.Encoding.Unicode.GetBytes(content);
 
             // The GUID of the PowerShell SIP
@@ -982,7 +982,7 @@ namespace System.Management.Automation.Security
         [ArchitectureSensitive]
         internal static WINTRUST_DATA InitWintrustDataStructFromFile(WINTRUST_FILE_INFO wfi)
         {
-            WINTRUST_DATA wtd = new WINTRUST_DATA();
+            var wtd = new WINTRUST_DATA();
 
             wtd.cbStruct = (DWORD)Marshal.SizeOf(wtd);
             wtd.pPolicyCallbackData = IntPtr.Zero;
@@ -1006,7 +1006,7 @@ namespace System.Management.Automation.Security
         [ArchitectureSensitive]
         internal static WINTRUST_DATA InitWintrustDataStructFromBlob(WINTRUST_BLOB_INFO wbi)
         {
-            WINTRUST_DATA wtd = new WINTRUST_DATA();
+            var wtd = new WINTRUST_DATA();
 
             wtd.cbStruct = (DWORD)Marshal.SizeOf(wbi);
             wtd.pPolicyCallbackData = IntPtr.Zero;
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation.Security
             IntPtr WINTRUST_ACTION_GENERIC_VERIFY_V2 = IntPtr.Zero;
             IntPtr wtdBuffer = IntPtr.Zero;
 
-            Guid actionVerify =
+            var actionVerify =
                 new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
 
             try
@@ -1072,7 +1072,7 @@ namespace System.Management.Automation.Security
             // verification that was done.
             if (wtd.dwUnionChoice == (DWORD)WintrustUnionChoice.WTD_CHOICE_BLOB)
             {
-                WINTRUST_BLOB_INFO originalBlob =
+                var originalBlob =
                     (WINTRUST_BLOB_INFO)Marshal.PtrToStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);
                 Marshal.FreeCoTaskMem(originalBlob.pbMemObject);
 
@@ -1158,12 +1158,12 @@ namespace System.Management.Automation.Security
 
         internal static void FreeWVTStateData(System.IntPtr phWVTStateData)
         {
-            WINTRUST_DATA wtd = new WINTRUST_DATA();
+            var wtd = new WINTRUST_DATA();
             DWORD dwResult = Win32Errors.E_FAIL;
             IntPtr WINTRUST_ACTION_GENERIC_VERIFY_V2 = IntPtr.Zero;
             IntPtr wtdBuffer = IntPtr.Zero;
 
-            Guid actionVerify =
+            var actionVerify =
                 new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
 
             try

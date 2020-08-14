@@ -453,8 +453,8 @@ namespace Microsoft.PowerShell.Commands
                         if (alreadyLoadedModule.ModuleType != ModuleType.Script)
                         {
                             string message = StringUtil.Format(Modules.CantUseAsCustomObjectWithBinaryModule, alreadyLoadedModule.Path);
-                            InvalidOperationException invalidOp = new InvalidOperationException(message);
-                            ErrorRecord er = new ErrorRecord(invalidOp, "Modules_CantUseAsCustomObjectWithBinaryModule",
+                            var invalidOp = new InvalidOperationException(message);
+                            var er = new ErrorRecord(invalidOp, "Modules_CantUseAsCustomObjectWithBinaryModule",
                                                              ErrorCategory.PermissionDenied, null);
                             WriteError(er);
                         }
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSInvalidOperationException e)
             {
-                ErrorRecord er = new ErrorRecord(e.ErrorRecord, e);
+                var er = new ErrorRecord(e.ErrorRecord, e);
                 WriteError(er);
             }
         }
@@ -672,8 +672,8 @@ namespace Microsoft.PowerShell.Commands
                                 if (module.ModuleType != ModuleType.Script)
                                 {
                                     string message = StringUtil.Format(Modules.CantUseAsCustomObjectWithBinaryModule, module.Path);
-                                    InvalidOperationException invalidOp = new InvalidOperationException(message);
-                                    ErrorRecord er = new ErrorRecord(invalidOp, "Modules_CantUseAsCustomObjectWithBinaryModule",
+                                    var invalidOp = new InvalidOperationException(message);
+                                    var er = new ErrorRecord(invalidOp, "Modules_CantUseAsCustomObjectWithBinaryModule",
                                                                      ErrorCategory.PermissionDenied, null);
                                     WriteError(er);
                                 }
@@ -815,14 +815,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if (BaseRequiredVersion != null || BaseMinimumVersion != null || BaseMaximumVersion != null)
                     {
-                        FileNotFoundException fnf = new FileNotFoundException(message);
+                        var fnf = new FileNotFoundException(message);
                         er = new ErrorRecord(fnf, "Modules_ModuleWithVersionNotFound",
                                              ErrorCategory.ResourceUnavailable, name);
                     }
                     else
                     {
                         message = StringUtil.Format(Modules.ModuleNotFound, name);
-                        FileNotFoundException fnf = new FileNotFoundException(message);
+                        var fnf = new FileNotFoundException(message);
                         er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
                                              ErrorCategory.ResourceUnavailable, name);
                     }
@@ -834,7 +834,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSInvalidOperationException e)
             {
-                ErrorRecord er = new ErrorRecord(e.ErrorRecord, e);
+                var er = new ErrorRecord(e.ErrorRecord, e);
                 WriteError(er);
             }
 
@@ -962,13 +962,13 @@ namespace Microsoft.PowerShell.Commands
                     errorMessageTemplate).ToList();
             }
 
-            List<PSModuleInfo> result = new List<PSModuleInfo>();
+            var result = new List<PSModuleInfo>();
             foreach (PSObject remotelyImportedModule in remotelyImportedModules)
             {
                 PSPropertyInfo nameProperty = remotelyImportedModule.Properties["Name"];
                 if (nameProperty != null)
                 {
-                    string remoteModuleName = (string)LanguagePrimitives.ConvertTo(
+                    var remoteModuleName = (string)LanguagePrimitives.ConvertTo(
                         nameProperty.Value,
                         typeof(string),
                         CultureInfo.InvariantCulture);
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
                     CultureInfo.InvariantCulture,
                     Modules.PsModuleOverCimSessionError,
                     psrpModuleName);
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     new ArgumentException(errorMessage),
                     "PsModuleOverCimSessionError",
                     ErrorCategory.InvalidArgument,
@@ -1313,8 +1313,8 @@ namespace Microsoft.PowerShell.Commands
                 if (!requestedModuleWasFound)
                 {
                     string message = StringUtil.Format(Modules.ModuleNotFound, requestedModuleName);
-                    FileNotFoundException fnf = new FileNotFoundException(message);
-                    ErrorRecord er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
+                    var fnf = new FileNotFoundException(message);
+                    var er = new ErrorRecord(fnf, "Modules_ModuleNotFound",
                         ErrorCategory.ResourceUnavailable, requestedModuleName);
                     WriteError(er);
                 }
@@ -1417,7 +1417,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            List<string> relativePathsToCreatedFiles = new List<string>();
+            var relativePathsToCreatedFiles = new List<string>();
             foreach (RemoteDiscoveryHelper.CimModuleFile file in remoteCimModule.ModuleFiles)
             {
                 if (!filesFilter(file))
@@ -1459,7 +1459,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.InvariantCulture,
                         Modules.EmptyModuleManifest,
                         remoteCimModule.ModuleName + ".psd1");
-                    ArgumentException argumentException = new ArgumentException(errorMessage);
+                    var argumentException = new ArgumentException(errorMessage);
                     throw argumentException;
                 }
 
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
                         throw new ParseException(parseErrors);
                     }
 
-                    ScriptBlock scriptBlock = new ScriptBlock(scriptBlockAst, isFilter: false);
+                    var scriptBlock = new ScriptBlock(scriptBlockAst, isFilter: false);
                     data = LoadModuleManifestData(
                         temporaryModuleManifestPath,
                         scriptBlock,
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
                                 CultureInfo.InvariantCulture,
                                 CmdletizationCoreResources.ImportModule_UnsupportedCmdletAdapter,
                                 cmdletAdapter.FullName);
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            var errorRecord = new ErrorRecord(
                                 new InvalidOperationException(errorMessage),
                                 "UnsupportedCmdletAdapter",
                                 ErrorCategory.InvalidData,
@@ -1772,8 +1772,8 @@ namespace Microsoft.PowerShell.Commands
             // Make sure that only one of (Global | Scope) is specified
             if (Global.IsPresent && _isScopeSpecified)
             {
-                InvalidOperationException ioe = new InvalidOperationException(Modules.GlobalAndScopeParameterCannotBeSpecifiedTogether);
-                ErrorRecord er = new ErrorRecord(ioe, "Modules_GlobalAndScopeParameterCannotBeSpecifiedTogether",
+                var ioe = new InvalidOperationException(Modules.GlobalAndScopeParameterCannotBeSpecifiedTogether);
+                var er = new ErrorRecord(ioe, "Modules_GlobalAndScopeParameterCannotBeSpecifiedTogether",
                                                  ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
@@ -1807,7 +1807,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new PSArgumentOutOfRangeException(message);
             }
 
-            ImportModuleOptions importModuleOptions = new ImportModuleOptions();
+            var importModuleOptions = new ImportModuleOptions();
             importModuleOptions.NoClobber = NoClobber;
             if (!string.IsNullOrEmpty(Scope) && Scope.Equals(StringLiterals.Local, StringComparison.OrdinalIgnoreCase))
             {
@@ -1914,8 +1914,8 @@ namespace Microsoft.PowerShell.Commands
                 if (match)
                 {
                     string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatModuleInDenyList, exactModuleName);
-                    InvalidOperationException exception = new InvalidOperationException(errorMessage);
-                    ErrorRecord er = new ErrorRecord(exception, "Modules_ModuleInWinCompatDenyList", ErrorCategory.ResourceUnavailable, exactModuleName);
+                    var exception = new InvalidOperationException(errorMessage);
+                    var er = new ErrorRecord(exception, "Modules_ModuleInWinCompatDenyList", ErrorCategory.ResourceUnavailable, exactModuleName);
                     WriteError(er);
                     break;
                 }
@@ -1979,7 +1979,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    ModuleSpecification tmpModuleSpec = new ModuleSpecification()
+                    var tmpModuleSpec = new ModuleSpecification()
                     {
                         Guid = moduleSpec.Guid,
                         MaximumVersion = moduleSpec.MaximumVersion,

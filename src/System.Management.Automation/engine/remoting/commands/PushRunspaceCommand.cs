@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // Push the remote runspace on the local host.
-            IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
+            var host = this.Host as IHostSupportsInteractiveSession;
             if (host == null)
             {
                 WriteError(
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
             // for the console host and Graphical PowerShell host
             // we want to skip pushing into the the runspace if
             // the host is in a nested prompt
-            System.Management.Automation.Internal.Host.InternalHost chost =
+            var chost =
                 this.Host as System.Management.Automation.Internal.Host.InternalHost;
 
             if (!IsParameterSetForVM() &&
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            IHostSupportsInteractiveSession host = this.Host as IHostSupportsInteractiveSession;
+            var host = this.Host as IHostSupportsInteractiveSession;
             if (host == null)
             {
                 WriteError(
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
             // Create and open the runspace.
             int rsId;
             string rsName = PSSession.GenerateRunspaceName(out rsId);
-            RemoteRunspace remoteRunspace = new RemoteRunspace(
+            var remoteRunspace = new RemoteRunspace(
                 Utils.GetTypeTableFromExecutionContextTLS(),
                 connectionInfo,
                 host,
@@ -604,7 +604,7 @@ namespace Microsoft.PowerShell.Commands
             // set the transport message in the error detail so that
             // the user can directly get to see the message without
             // having to mine through the error record details
-            PSRemotingTransportException transException =
+            var transException =
                         exception as PSRemotingTransportException;
             string errorDetails = null;
             if ((transException != null) &&
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                 errorDetails = message;
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(exception, argument,
+            var errorRecord = new ErrorRecord(exception, argument,
                 "CreateRemoteRunspaceFailed",
                 ErrorCategory.InvalidArgument,
                 null, null, null, null, null, errorDetails, null);
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
             RemoteRunspace remoteRunspace = null;
             try
             {
-                WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+                var connectionInfo = new WSManConnectionInfo();
                 connectionInfo.ConnectionUri = ConnectionUri;
                 connectionInfo.ShellUri = ConfigurationName;
                 if (CertificateThumbprint != null)
@@ -798,8 +798,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 return info.InstanceId == remoteRunspaceId;
             };
-            PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
-            PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId;
+            var tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
+            var tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId;
             string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
             string tooManyResourceString = RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId;
             return GetRunspaceMatchingCondition(condition, tooFew, tooMany, tooFewResourceString, tooManyResourceString, remoteRunspaceId);
@@ -814,8 +814,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 return info.Id == sessionId;
             };
-            PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedSessionId;
-            PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId;
+            var tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedSessionId;
+            var tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId;
             string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedSessionId;
             string tooManyResourceString = RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId;
             return GetRunspaceMatchingCondition(condition, tooFew, tooMany, tooFewResourceString, tooManyResourceString, sessionId);
@@ -831,8 +831,8 @@ namespace Microsoft.PowerShell.Commands
                 // doing case-insensitive match for session name
                 return info.Name.Equals(name, StringComparison.OrdinalIgnoreCase);
             };
-            PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedName;
-            PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedName;
+            var tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedName;
+            var tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedName;
             string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedName;
             string tooManyResourceString = RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedName;
             return GetRunspaceMatchingCondition(condition, tooFew, tooMany, tooFewResourceString, tooManyResourceString, name);
@@ -844,7 +844,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (Job childJob in repJob.ChildJobs)
                 {
-                    PSRemotingChildJob remotingChildJob = childJob as PSRemotingChildJob;
+                    var remotingChildJob = childJob as PSRemotingChildJob;
 
                     if (remotingChildJob != null &&
                         remotingChildJob.Runspace != null &&
@@ -1036,7 +1036,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(e,
+                var errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForVMFailed",
                     ErrorCategory.InvalidOperation,
                     null);
@@ -1045,7 +1045,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(e,
+                var errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForVMFailed",
                     ErrorCategory.InvalidArgument,
                     null);
@@ -1079,7 +1079,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(e,
+                var errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForVMFailed",
                     ErrorCategory.InvalidOperation,
                     null);
@@ -1097,7 +1097,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Create and open the runspace.
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();
-            RemoteRunspace remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, host, typeTable) as RemoteRunspace;
+            var remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, host, typeTable) as RemoteRunspace;
             remoteRunspace.Name = "PowerShellDirectAttach";
 
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
@@ -1212,7 +1212,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(e,
+                var errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForContainerFailed",
                     ErrorCategory.InvalidOperation,
                     null);
@@ -1221,7 +1221,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(e,
+                var errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForContainerFailed",
                     ErrorCategory.InvalidArgument,
                     null);
@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                ErrorRecord errorRecord = new ErrorRecord(e,
+                var errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForContainerFailed",
                     ErrorCategory.InvalidOperation,
                     null);
@@ -1312,7 +1312,7 @@ namespace Microsoft.PowerShell.Commands
             if (cmd != null &&
                 cmd.PipelineStateInfo.State == PipelineState.Disconnected)
             {
-                using (ManualResetEvent connected = new ManualResetEvent(false))
+                using (var connected = new ManualResetEvent(false))
                 {
                     cmd.StateChanged += (sender, args) =>
                     {
@@ -1336,25 +1336,25 @@ namespace Microsoft.PowerShell.Commands
 
         internal static void ContinueCommand(RemoteRunspace remoteRunspace, Pipeline cmd, PSHost host, bool inDebugMode, System.Management.Automation.ExecutionContext context)
         {
-            RemotePipeline remotePipeline = cmd as RemotePipeline;
+            var remotePipeline = cmd as RemotePipeline;
 
             if (remotePipeline != null)
             {
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
-                    PSInvocationSettings settings = new PSInvocationSettings()
+                    var settings = new PSInvocationSettings()
                     {
                         Host = host
                     };
 
-                    PSDataCollection<PSObject> input = new PSDataCollection<PSObject>();
+                    var input = new PSDataCollection<PSObject>();
 
                     CommandInfo commandInfo = new CmdletInfo("Out-Default", typeof(OutDefaultCommand), null, null, context);
-                    Command outDefaultCommand = new Command(commandInfo);
+                    var outDefaultCommand = new Command(commandInfo);
                     ps.AddCommand(outDefaultCommand);
                     IAsyncResult async = ps.BeginInvoke<PSObject>(input, settings, null, null);
 
-                    RemoteDebugger remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
+                    var remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
                     if (remoteDebugger != null)
                     {
                         // Update client with breakpoint information from pushed runspace.

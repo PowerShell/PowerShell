@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal Collection<string> MethodDefinitions()
         {
-            Collection<string> result = new Collection<string>();
+            var result = new Collection<string>();
 
             foreach (int index in _methods)
             {

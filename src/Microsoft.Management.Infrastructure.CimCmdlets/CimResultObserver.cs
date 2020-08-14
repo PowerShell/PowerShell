@@ -269,7 +269,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // OnNext, OnError
             try
             {
-                AsyncResultCompleteEventArgs completeArgs = new AsyncResultCompleteEventArgs(
+                var completeArgs = new AsyncResultCompleteEventArgs(
                     this.session, this.observable);
                 this.OnNewResult(this, completeArgs);
             }
@@ -290,7 +290,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             try
             {
-                AsyncResultErrorEventArgs errorArgs = new AsyncResultErrorEventArgs(
+                var errorArgs = new AsyncResultErrorEventArgs(
                     this.session, this.observable, error, this.context);
                 this.OnNewResult(this, errorArgs);
             }
@@ -310,7 +310,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("value = {0}.", 1, value);
             try
             {
-                AsyncResultObjectEventArgs resultArgs = new AsyncResultObjectEventArgs(
+                var resultArgs = new AsyncResultObjectEventArgs(
                     this.session, this.observable, value);
                 this.OnNewResult(this, resultArgs);
             }
@@ -447,7 +447,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string resultObjectPSType = null;
             PSObject resultObject = null;
-            CimMethodResult methodResult = value as CimMethodResult;
+            var methodResult = value as CimMethodResult;
             if (methodResult != null)
             {
                 resultObjectPSType = PSTypeCimMethodResult;
@@ -459,7 +459,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                CimMethodStreamedResult methodStreamedResult = value as CimMethodStreamedResult;
+                var methodStreamedResult = value as CimMethodStreamedResult;
                 if (methodStreamedResult != null)
                 {
                     resultObjectPSType = PSTypeCimMethodStreamedResult;

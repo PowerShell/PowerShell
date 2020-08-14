@@ -209,7 +209,7 @@ namespace System.Management.Automation.Remoting
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
-            ServerRemoteSession result = new ServerRemoteSession(
+            var result = new ServerRemoteSession(
                 senderInfo,
                 configurationProviderId,
                 initializationParameters,
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Remoting
             };
 
             // start state machine.
-            RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
+            var startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
             result.SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);
 
             return result;
@@ -428,7 +428,7 @@ namespace System.Management.Automation.Remoting
                 // send using data structure handler
                 SessionDataStructureHandler.SendRequestForPublicKey();
 
-                RemoteSessionStateMachineEventArgs eventArgs =
+                var eventArgs =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyRequested);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(eventArgs);
             }
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Remoting
         internal void ExecuteConnect(byte[] connectData, out byte[] connectResponseData)
         {
             connectResponseData = null;
-            Fragmentor fragmentor = new Fragmentor(int.MaxValue, null);
+            var fragmentor = new Fragmentor(int.MaxValue, null);
             Fragmentor defragmentor = fragmentor;
 
             int totalDataLen = connectData.Length;
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // process first message
-            MemoryStream serializedStream = new MemoryStream();
+            var serializedStream = new MemoryStream();
             serializedStream.Write(connectData, FragmentedRemoteObject.HeaderLength, blobLength);
 
             serializedStream.Seek(0, SeekOrigin.Begin);
@@ -581,7 +581,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnInputValidation);
             }
 
-            byte[] secondFragment = new byte[secondFragmentLength];
+            var secondFragment = new byte[secondFragmentLength];
             Array.Copy(connectData, FragmentedRemoteObject.HeaderLength + blobLength, secondFragment, 0, secondFragmentLength);
 
             fragmentId = FragmentedRemoteObject.GetFragmentId(secondFragment, 0);
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Remoting
             // as this is executed only when connecting from a new client that does not have any previous fragments context.
             // no problem even if fragment Ids in this response and the sessiontransport stream clash (interfere) and its guaranteed
             // that the fragments in connect response are always complete (enclose a complete object).
-            SerializedDataStream stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
+            var stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
             stream.Enter();
             capability.Serialize(stream, fragmentor);
             stream.Exit();
@@ -714,7 +714,7 @@ namespace System.Management.Automation.Remoting
             ThreadPool.QueueUserWorkItem(new WaitCallback(
                 delegate (object state)
                 {
-                    RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
+                    var startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
                     SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);
                 }));
 
@@ -778,7 +778,7 @@ namespace System.Management.Automation.Remoting
             }
             else
             {
-                System.Security.Principal.WindowsPrincipal windowsPrincipal = new System.Security.Principal.WindowsPrincipal(_senderInfo.UserInfo.WindowsIdentity);
+                var windowsPrincipal = new System.Security.Principal.WindowsPrincipal(_senderInfo.UserInfo.WindowsIdentity);
 
                 Func<string, bool> validator = (role) => windowsPrincipal.IsInRole(role);
 
@@ -883,7 +883,7 @@ namespace System.Management.Automation.Remoting
             bool isAdministrator = false;
 #endif
 
-            ServerRunspacePoolDriver tmpDriver = new ServerRunspacePoolDriver(
+            var tmpDriver = new ServerRunspacePoolDriver(
                 clientRunspacePoolId,
                 minRunspaces,
                 maxRunspaces,
@@ -931,11 +931,11 @@ namespace System.Management.Automation.Remoting
                 RunServerNegotiationAlgorithm(negotiationEventArg.RemoteSessionCapability, false);
 
                 // Send server's capability to client.
-                RemoteSessionStateMachineEventArgs sendingNegotiationArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
+                var sendingNegotiationArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
 
                 // if negotiation succeeded change the state to neg. completed.
-                RemoteSessionStateMachineEventArgs negotiationCompletedArg =
+                var negotiationCompletedArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationCompleted);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(negotiationCompletedArg);
             }
@@ -943,11 +943,11 @@ namespace System.Management.Automation.Remoting
             {
                 // Before setting to negotiation failed..send servers capability...that
                 // way client can communicate differently if it wants to.
-                RemoteSessionStateMachineEventArgs sendingNegotiationArg =
+                var sendingNegotiationArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
 
-                RemoteSessionStateMachineEventArgs negotiationFailedArg =
+                var negotiationFailedArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationFailed,
                         dse);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(negotiationFailedArg);
@@ -983,7 +983,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="args"></param>
         private void HandleResourceClosing(object sender, EventArgs args)
         {
-            RemoteSessionStateMachineEventArgs closeSessionArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
+            var closeSessionArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
             closeSessionArgs.RemoteData = null;
             SessionDataStructureHandler.StateMachine.RaiseEvent(closeSessionArgs);
         }
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // Throw for protocol versions 2.x that don't support disconnect/reconnect.
                     // Protocol: < 2.2
-                    PSRemotingDataStructureException reasonOfFailure =
+                    var reasonOfFailure =
                         new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnNegotiation,
                             RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
                             clientProtocolVersion,
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Remoting
                 if (!((clientProtocolVersion.Major == serverProtocolVersion.Major) &&
                       (clientProtocolVersion.Minor >= serverProtocolVersion.Minor)))
                 {
-                    PSRemotingDataStructureException reasonOfFailure =
+                    var reasonOfFailure =
                         new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNegotiationFailed,
                             RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
                             clientProtocolVersion,
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation.Remoting
             if (!((clientPSVersion.Major == serverPSVersion.Major) &&
                   (clientPSVersion.Minor >= serverPSVersion.Minor)))
             {
-                PSRemotingDataStructureException reasonOfFailure =
+                var reasonOfFailure =
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNegotiationFailed,
                         RemoteDataNameStrings.PSVersion,
                         clientPSVersion,
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation.Remoting
             if (!((clientSerVersion.Major == serverSerVersion.Major) &&
                   (clientSerVersion.Minor >= serverSerVersion.Minor)))
             {
-                PSRemotingDataStructureException reasonOfFailure =
+                var reasonOfFailure =
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNegotiationFailed,
                         RemoteDataNameStrings.SerializationVersion,
                         clientSerVersion,

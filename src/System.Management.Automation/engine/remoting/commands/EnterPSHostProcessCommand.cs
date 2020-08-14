@@ -224,20 +224,20 @@ namespace Microsoft.PowerShell.Commands
 
         private Runspace CreateNamedPipeRunspace(string customPipeName)
         {
-            NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(customPipeName);
+            var connectionInfo = new NamedPipeConnectionInfo(customPipeName);
             return CreateNamedPipeRunspace(connectionInfo);
         }
 
         private Runspace CreateNamedPipeRunspace(int procId, string appDomainName)
         {
-            NamedPipeConnectionInfo connectionInfo = new NamedPipeConnectionInfo(procId, appDomainName);
+            var connectionInfo = new NamedPipeConnectionInfo(procId, appDomainName);
             return CreateNamedPipeRunspace(connectionInfo);
         }
 
         private Runspace CreateNamedPipeRunspace(NamedPipeConnectionInfo connectionInfo)
         {
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();
-            RemoteRunspace remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, this.Host, typeTable) as RemoteRunspace;
+            var remoteRunspace = RunspaceFactory.CreateRunspace(connectionInfo, this.Host, typeTable) as RemoteRunspace;
             remoteRunspace.Name = NamedPipeRunspaceName;
             remoteRunspace.ShouldCloseOnPop = true;
             _connectingRemoteRunspace = remoteRunspace;
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell.Commands
 
         private int[] GetProcIdsFromProcs(Process[] processes)
         {
-            List<int> returnIds = new List<int>();
+            var returnIds = new List<int>();
             foreach (Process process in processes)
             {
                 returnIds.Add(process.Id);
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            List<int> returnIds = new List<int>();
+            var returnIds = new List<int>();
             System.Diagnostics.Process[] processes = System.Diagnostics.Process.GetProcesses();
             foreach (string name in names)
             {
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
             var procAppDomainInfo = new List<PSHostProcessInfo>();
 
             // Get all named pipe 'files' on local machine.
-            List<string> namedPipes = new List<string>();
+            var namedPipes = new List<string>();
             var namedPipeDirectory = new DirectoryInfo(NamedPipePath);
             foreach (var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
             {

@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(controlNode))
             {
-                ComplexControlBody complexBody = new ComplexControlBody();
+                var complexBody = new ComplexControlBody();
 
                 bool entriesFound = false;
 
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool appliesToNodeFound = false;    // cardinality 0..1
                 bool bodyNodeFound = false;         // cardinality 1
 
-                ComplexControlEntryDefinition cced = new ComplexControlEntryDefinition();
+                var cced = new ComplexControlEntryDefinition();
 
                 foreach (XmlNode n in complexControlEntryNode.ChildNodes)
                 {
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(bodyNode))
             {
-                List<FormatToken> formatTokenList = new List<FormatToken>();
+                var formatTokenList = new List<FormatToken>();
 
                 int compoundPropertyIndex = 0;
                 int newLineIndex = 0;
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool LoadPropertyBaseHelper(XmlNode propertyBaseNode, PropertyTokenBase ptb, List<XmlNode> unprocessedNodes)
         {
-            ExpressionNodeMatch expressionMatch = new ExpressionNodeMatch(this);
+            var expressionMatch = new ExpressionNodeMatch(this);
 
             bool expressionNodeFound = false;     // cardinality 0..1
             bool collectionNodeFound = false;       // cardinality 0..1
@@ -345,8 +345,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(compoundPropertyNode, index))
             {
-                CompoundPropertyToken cpt = new CompoundPropertyToken();
-                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                var cpt = new CompoundPropertyToken();
+                var unprocessedNodes = new List<XmlNode>();
                 bool success = LoadPropertyBaseHelper(compoundPropertyNode, cpt, unprocessedNodes);
 
                 if (!success)
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool complexControlFound = false;  // cardinality 0..1
                 bool fieldControlFound = false;  // cardinality 0..1
 
-                ComplexControlMatch controlMatch = new ComplexControlMatch(this);
+                var controlMatch = new ComplexControlMatch(this);
                 FieldControlBody fieldControlBody = null;
 
                 foreach (XmlNode n in unprocessedNodes)
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return null;
                 }
 
-                NewLineToken nlt = new NewLineToken();
+                var nlt = new NewLineToken();
 
                 return nlt;
             }
@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 bool success; // scratch variable
 
-                FrameToken frame = new FrameToken();
+                var frame = new FrameToken();
                 foreach (XmlNode n in frameNode.ChildNodes)
                 {
                     if (MatchNodeName(n, XmlTags.LeftIndentNode))

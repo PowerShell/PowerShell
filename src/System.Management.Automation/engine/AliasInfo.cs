@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
                 if ((_definition != null) && (Context != null))
                 {
-                    CommandSearcher commandSearcher =
+                    var commandSearcher =
                         new CommandSearcher(
                             _definition,
                             SearchResolutionOptions.None,
@@ -142,7 +142,7 @@ namespace System.Management.Automation
 
                 if (_definition != null)
                 {
-                    List<string> cyclePrevention = new List<string>();
+                    var cyclePrevention = new List<string>();
                     cyclePrevention.Add(Name);
 
                     string commandNameToResolve = _definition;
@@ -214,7 +214,7 @@ namespace System.Management.Automation
             if ((_options & ScopedItemOptions.Constant) != 0 ||
                 (!force && (_options & ScopedItemOptions.ReadOnly) != 0))
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Alias,
@@ -263,7 +263,7 @@ namespace System.Management.Automation
 
             if ((_options & ScopedItemOptions.Constant) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Alias,
@@ -278,7 +278,7 @@ namespace System.Management.Automation
 
             if (!force && (_options & ScopedItemOptions.ReadOnly) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Alias,
@@ -297,7 +297,7 @@ namespace System.Management.Automation
                 // user is trying to set the variable to constant after
                 // creating the variable. Do not allow this (as per spec).
 
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             Name,
                             SessionStateCategory.Alias,
@@ -313,7 +313,7 @@ namespace System.Management.Automation
                 // user is trying to remove the AllScope option from the alias.
                 // Do not allow this (as per spec).
 
-                SessionStateUnauthorizedAccessException e =
+                var e =
                     new SessionStateUnauthorizedAccessException(
                             this.Name,
                             SessionStateCategory.Alias,

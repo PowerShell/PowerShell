@@ -49,17 +49,17 @@ namespace PSTests.Parallel
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-            AutomationEngine engine = new AutomationEngine(hostInterface, iss);
-            ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
+            var engine = new AutomationEngine(hostInterface, iss);
+            var executionContext = new ExecutionContext(engine, hostInterface, iss);
             return executionContext;
         }
 
         private ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
-            SessionStateInternal sessionState = new SessionStateInternal(executionContext);
+            var sessionState = new SessionStateInternal(executionContext);
 
-            SessionStateProviderEntry providerEntry = new SessionStateProviderEntry("FileSystem", typeof(FileSystemProvider), null);
+            var providerEntry = new SessionStateProviderEntry("FileSystem", typeof(FileSystemProvider), null);
             sessionState.AddSessionStateEntry(providerEntry);
             ProviderInfo matchingProvider = sessionState.ProviderList.ToList()[0];
 
@@ -82,7 +82,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestGetHelpMaml()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             Assert.Equal(fileSystemProvider.GetHelpMaml(string.Empty, string.Empty), string.Empty);
             Assert.Equal(fileSystemProvider.GetHelpMaml("helpItemName", string.Empty), string.Empty);
             Assert.Equal(fileSystemProvider.GetHelpMaml(string.Empty, "path"), string.Empty);
@@ -117,15 +117,15 @@ namespace PSTests.Parallel
         [Fact]
         public void TestGetProperty()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-            PSObject pso = new PSObject();
+            var pso = new PSObject();
             pso.AddOrSetProperty("IsReadOnly", false);
             fileSystemProvider.SetProperty(testPath, pso);
             fileSystemProvider.GetProperty(testPath, new Collection<string>() { "IsReadOnly" });
-            FileInfo fileSystemObject1 = new FileInfo(testPath);
+            var fileSystemObject1 = new FileInfo(testPath);
             PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
             PSPropertyInfo property = psobject1.Properties["IsReadOnly"];
             Assert.False((bool)property.Value);
@@ -134,12 +134,12 @@ namespace PSTests.Parallel
         [Fact]
         public void TestSetProperty()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
             fileSystemProvider.GetProperty(testPath, new Collection<string>() { "Name" });
-            FileInfo fileSystemObject1 = new FileInfo(testPath);
+            var fileSystemObject1 = new FileInfo(testPath);
             PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
             PSPropertyInfo property = psobject1.Properties["FullName"];
 
@@ -149,7 +149,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestClearProperty()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
@@ -159,7 +159,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestGetContentReader()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
@@ -172,7 +172,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestGetContentWriter()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
@@ -186,7 +186,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestClearContent()
         {
-            FileSystemProvider fileSystemProvider = new FileSystemProvider();
+            var fileSystemProvider = new FileSystemProvider();
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());

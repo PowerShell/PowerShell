@@ -237,12 +237,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (temp != null)
             {
                 // raise the event
-                CimSubscriptionResultEventArgs resultArgs = args as CimSubscriptionResultEventArgs;
+                var resultArgs = args as CimSubscriptionResultEventArgs;
                 if (resultArgs != null)
                     temp(this, new CimIndicationEventInstanceEventArgs(resultArgs.Result));
                 else
                 {
-                    CimSubscriptionExceptionEventArgs exceptionArgs = args as CimSubscriptionExceptionEventArgs;
+                    var exceptionArgs = args as CimSubscriptionExceptionEventArgs;
                     if (exceptionArgs != null)
                         temp(this, new CimIndicationEventExceptionEventArgs(exceptionArgs.Exception));
                 }

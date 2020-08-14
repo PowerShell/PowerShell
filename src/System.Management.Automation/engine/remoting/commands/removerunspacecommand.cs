@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PSSession remoteRunspaceInfo in toRemove)
             {
-                RemoteRunspace remoteRunspace = (RemoteRunspace)remoteRunspaceInfo.Runspace;
+                var remoteRunspace = (RemoteRunspace)remoteRunspaceInfo.Runspace;
 
                 if (ShouldProcess(remoteRunspace.ConnectionInfo.ComputerName, "Remove"))
                 {
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
                             string msg = System.Management.Automation.Internal.StringUtil.Format(
                                 RemotingErrorIdStrings.RemoveRunspaceNotConnected, remoteRunspace.PSSessionName);
                             Exception reason = new RuntimeException(msg);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, "RemoveSessionCannotConnectToServer",
+                            var errorRecord = new ErrorRecord(reason, "RemoveSessionCannotConnectToServer",
                                 ErrorCategory.InvalidOperation, remoteRunspace);
                             WriteError(errorRecord);
 

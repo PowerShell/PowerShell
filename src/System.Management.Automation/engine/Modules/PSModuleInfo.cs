@@ -164,7 +164,7 @@ namespace System.Management.Automation
                 scriptBlock = scriptBlock.Clone();
                 scriptBlock.SessionState = SessionState;
 
-                Pipe outputPipe = new Pipe { NullPipe = true };
+                var outputPipe = new Pipe { NullPipe = true };
                 // And run the scriptblock...
                 scriptBlock.InvokeWithPipe(
                     useLocalScope: false,
@@ -538,7 +538,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, FunctionInfo> exports = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
+                var exports = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
                 // If the module is not binary, it may also have functions...
                 if (DeclaredFunctionExports != null)
@@ -547,7 +547,7 @@ namespace System.Management.Automation
 
                     foreach (string fn in DeclaredFunctionExports)
                     {
-                        FunctionInfo tempFunction = new FunctionInfo(fn, ScriptBlock.EmptyScriptBlock, null) { Module = this };
+                        var tempFunction = new FunctionInfo(fn, ScriptBlock.EmptyScriptBlock, null) { Module = this };
                         exports[fn] = tempFunction;
                     }
                 }
@@ -572,7 +572,7 @@ namespace System.Management.Automation
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
-                            FunctionInfo tempFunction = new FunctionInfo(detectedExport, ScriptBlock.EmptyScriptBlock, null) { Module = this };
+                            var tempFunction = new FunctionInfo(detectedExport, ScriptBlock.EmptyScriptBlock, null) { Module = this };
                             exports[detectedExport] = tempFunction;
                         }
                     }
@@ -701,7 +701,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, CmdletInfo> exports = new Dictionary<string, CmdletInfo>(StringComparer.OrdinalIgnoreCase);
+                var exports = new Dictionary<string, CmdletInfo>(StringComparer.OrdinalIgnoreCase);
 
                 if (DeclaredCmdletExports != null)
                 {
@@ -709,7 +709,7 @@ namespace System.Management.Automation
 
                     foreach (string fn in DeclaredCmdletExports)
                     {
-                        CmdletInfo tempCmdlet = new CmdletInfo(fn, null, null, null, null) { Module = this };
+                        var tempCmdlet = new CmdletInfo(fn, null, null, null, null) { Module = this };
                         exports[fn] = tempCmdlet;
                     }
                 }
@@ -726,7 +726,7 @@ namespace System.Management.Automation
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
-                            CmdletInfo tempCmdlet = new CmdletInfo(detectedExport, null, null, null, null) { Module = this };
+                            var tempCmdlet = new CmdletInfo(detectedExport, null, null, null, null) { Module = this };
                             exports[detectedExport] = tempCmdlet;
                         }
                     }
@@ -760,7 +760,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, CommandInfo> exports = new Dictionary<string, CommandInfo>(StringComparer.OrdinalIgnoreCase);
+                var exports = new Dictionary<string, CommandInfo>(StringComparer.OrdinalIgnoreCase);
                 Dictionary<string, CmdletInfo> cmdlets = this.ExportedCmdlets;
                 if (cmdlets != null)
                 {
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, PSVariable> exportedVariables = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
+                var exportedVariables = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
 
                 if ((DeclaredVariableExports != null) && (DeclaredVariableExports.Count > 0))
                 {
@@ -1139,13 +1139,13 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, AliasInfo> exportedAliases = new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
+                var exportedAliases = new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
 
                 if ((DeclaredAliasExports != null) && (DeclaredAliasExports.Count > 0))
                 {
                     foreach (string fn in DeclaredAliasExports)
                     {
-                        AliasInfo tempAlias = new AliasInfo(fn, null, null) { Module = this };
+                        var tempAlias = new AliasInfo(fn, null, null) { Module = this };
                         exportedAliases[fn] = tempAlias;
                     }
                 }
@@ -1169,7 +1169,7 @@ namespace System.Management.Automation
                                 string detectedExport = pair.Key;
                                 if (!exportedAliases.ContainsKey(detectedExport))
                                 {
-                                    AliasInfo tempAlias = new AliasInfo(detectedExport, pair.Value, null) { Module = this };
+                                    var tempAlias = new AliasInfo(detectedExport, pair.Value, null) { Module = this };
                                     exportedAliases[detectedExport] = tempAlias;
                                 }
                             }
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation
                     // Only copy simple mutable variables...
                     if (v.Options == ScopedItemOptions.None && !(v is NullVariable))
                     {
-                        PSVariable newVar = new PSVariable(v.Name, v.Value, v.Options, v.Description);
+                        var newVar = new PSVariable(v.Name, v.Value, v.Options, v.Description);
                         // The variable is already defined/set in the scope, and that means the attributes
                         // have already been checked if it was needed, so we don't do it again.
                         newVar.AddParameterAttributesNoChecks(v.Attributes);
@@ -1386,14 +1386,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }
 
-            PSObject obj = new PSObject();
+            var obj = new PSObject();
 
             foreach (KeyValuePair<string, FunctionInfo> entry in this.ExportedFunctions)
             {
                 FunctionInfo func = entry.Value;
                 if (func != null)
                 {
-                    PSScriptMethod sm = new PSScriptMethod(func.Name, func.ScriptBlock);
+                    var sm = new PSScriptMethod(func.Name, func.ScriptBlock);
                     obj.Members.Add(sm);
                 }
             }
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
                 PSVariable var = entry.Value;
                 if (var != null)
                 {
-                    PSVariableProperty sm = new PSVariableProperty(var);
+                    var sm = new PSVariableProperty(var);
                     obj.Members.Add(sm);
                 }
             }
@@ -1442,7 +1442,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSModuleInfo Clone()
         {
-            PSModuleInfo clone = (PSModuleInfo)this.MemberwiseClone();
+            var clone = (PSModuleInfo)this.MemberwiseClone();
 
             clone._fileList = new List<string>(this.FileList);
             clone._moduleList = new Collection<object>(_moduleList);

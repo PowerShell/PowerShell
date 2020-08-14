@@ -84,7 +84,7 @@ namespace System.Management.Automation.Internal
 
         private static byte[] CreateReverseByteArray(byte[] data)
         {
-            byte[] reverseData = new byte[data.Length];
+            var reverseData = new byte[data.Length];
             Array.Copy(data, reverseData, data.Length);
             Array.Reverse(reverseData);
             return reverseData;
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Internal
                 int bitLen = ToInt32LE(blob, offset + 12);
 
                 // DWORD public exponent
-                RSAParameters rsap = new RSAParameters();
+                var rsap = new RSAParameters();
                 rsap.Exponent = new byte[3];
                 rsap.Exponent[0] = blob[offset + 18];
                 rsap.Exponent[1] = blob[offset + 17];
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Internal
 
             RSAParameters p = rsa.ExportParameters(false);
             int keyLength = p.Modulus.Length;   // in bytes
-            byte[] blob = new byte[PUBLICKEYBLOB_HEADER_LEN + keyLength];
+            var blob = new byte[PUBLICKEYBLOB_HEADER_LEN + keyLength];
 
             blob[0] = (byte)PUBLICKEYBLOB;      // Type - PUBLICKEYBLOB (0x06)
             blob[1] = (byte)CUR_BLOB_VERSION;   // Version - Always CUR_BLOB_VERSION (0x02)
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Internal
             }
 
             // formulate the PUBLICKEYSTRUCT
-            byte[] blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];
+            var blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];
 
             blob[0] = (byte)SIMPLEBLOB;         // Type - SIMPLEBLOB (0x01)
             blob[1] = (byte)CUR_BLOB_VERSION;   // Version - Always CUR_BLOB_VERSION (0x02)
@@ -512,10 +512,10 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(_canEncrypt, "Remote key has not been imported to encrypt");
 
             using (ICryptoTransform encryptor = _aes.CreateEncryptor())
-            using (MemoryStream targetStream = new MemoryStream())
-            using (MemoryStream sourceStream = new MemoryStream(data))
+            using (var targetStream = new MemoryStream())
+            using (var sourceStream = new MemoryStream(data))
             {
-                using (CryptoStream cryptoStream = new CryptoStream(targetStream, encryptor, CryptoStreamMode.Write))
+                using (var cryptoStream = new CryptoStream(targetStream, encryptor, CryptoStreamMode.Write))
                 {
                     sourceStream.CopyTo(cryptoStream);
                 }
@@ -532,10 +532,10 @@ namespace System.Management.Automation.Internal
         internal byte[] DecryptWithSessionKey(byte[] data)
         {
             using (ICryptoTransform decryptor = _aes.CreateDecryptor())
-            using (MemoryStream sourceStream = new MemoryStream(data))
-            using (MemoryStream targetStream = new MemoryStream())
+            using (var sourceStream = new MemoryStream(data))
+            using (var targetStream = new MemoryStream())
             {
-                using (CryptoStream csDecrypt = new CryptoStream(sourceStream, decryptor, CryptoStreamMode.Read))
+                using (var csDecrypt = new CryptoStream(sourceStream, decryptor, CryptoStreamMode.Read))
                 {
                     csDecrypt.CopyTo(targetStream);
                 }
@@ -723,7 +723,7 @@ namespace System.Management.Automation.Internal
 
                 if (ptr != IntPtr.Zero)
                 {
-                    byte[] data = new byte[secureString.Length * 2];
+                    var data = new byte[secureString.Length * 2];
                     for (int i = 0; i < data.Length; i++)
                     {
                         data[i] = Marshal.ReadByte(ptr, i);
@@ -918,7 +918,7 @@ namespace System.Management.Automation.Internal
 
         internal override string EncryptSecureString(SecureString secureString)
         {
-            ServerRemoteSession session = Session as ServerRemoteSession;
+            var session = Session as ServerRemoteSession;
 
             // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
             // for newer clients, server will never initiate key exchange.
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>To be used only for testing</remarks>
         internal static PSRemotingCryptoHelperServer GetTestRemotingCryptHelperServer()
         {
-            PSRemotingCryptoHelperServer helper = new PSRemotingCryptoHelperServer();
+            var helper = new PSRemotingCryptoHelperServer();
             helper.Session = new TestHelperSession();
 
             return helper;
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>To be used only for testing</remarks>
         internal static PSRemotingCryptoHelperClient GetTestRemotingCryptHelperClient()
         {
-            PSRemotingCryptoHelperClient helper = new PSRemotingCryptoHelperClient();
+            var helper = new PSRemotingCryptoHelperClient();
             helper.Session = new TestHelperSession();
 
             return helper;

@@ -397,7 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimNewCimInstance CreateOperationAgent()
         {
-            CimNewCimInstance cimNewCimInstance = new CimNewCimInstance();
+            var cimNewCimInstance = new CimNewCimInstance();
             this.AsyncOperation = cimNewCimInstance;
             return cimNewCimInstance;
         }

@@ -128,7 +128,7 @@ namespace System.Management.Automation.Help
                 return StringUtil.Format(HelpDisplayStrings.None);
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < UpdatableHelpItems.Length; i++)
             {

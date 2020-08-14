@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder content = new StringBuilder();
+            var content = new StringBuilder();
             if (append)
             {
                 content.AppendLine(Clipboard.GetText());

@@ -80,7 +80,7 @@ namespace System.Management.Automation
         private IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
             string dotnetBaseType, bool shouldIncludeNamespace)
         {
-            StringBuilder type = new StringBuilder(200);
+            var type = new StringBuilder(200);
             // give the typename based on NameSpace and Class
             type.Append(dotnetBaseType);
             type.Append("#");
@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 Dbg.Assert(derivationData.IsArray, "__Derivation must be a string array as per MSDN documentation");
 
                 // give the typenames based on NameSpace + __Derivation
-                string[] typeHierarchy = PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) as string[];
+                var typeHierarchy = PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) as string[];
                 if (typeHierarchy != null)
                 {
                     foreach (string t in typeHierarchy)
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// </remarks>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
-            ManagementBaseObject managementObj = obj as ManagementBaseObject;
+            var managementObj = obj as ManagementBaseObject;
 
             bool isLoopStarted = false;
             foreach (string baseType in GetDotNetTypeNameHierarchy(obj))
@@ -172,7 +172,7 @@ namespace System.Management.Automation
         {
             tracer.WriteLine("Getting member with name {0}", memberName);
 
-            ManagementBaseObject mgmtObject = obj as ManagementBaseObject;
+            var mgmtObject = obj as ManagementBaseObject;
 
             if (mgmtObject == null)
             {
@@ -228,8 +228,8 @@ namespace System.Management.Automation
             // obj should never be null
             Diagnostics.Assert(obj != null, "Input object is null");
 
-            ManagementBaseObject wmiObject = (ManagementBaseObject)obj;
-            PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+            var wmiObject = (ManagementBaseObject)obj;
+            var returnValue = new PSMemberInfoInternalCollection<T>();
             AddAllProperties<T>(wmiObject, returnValue);
             AddAllMethods<T>(wmiObject, returnValue);
             return returnValue;
@@ -244,11 +244,11 @@ namespace System.Management.Automation
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
-            ManagementObject mgmtObject = method.baseObject as ManagementObject;
+            var mgmtObject = method.baseObject as ManagementObject;
             Diagnostics.Assert(mgmtObject != null,
                 "Object is not of ManagementObject type");
 
-            WMIMethodCacheEntry methodEntry = (WMIMethodCacheEntry)method.adapterData;
+            var methodEntry = (WMIMethodCacheEntry)method.adapterData;
 
             return AuxillaryInvokeMethod(mgmtObject, methodEntry, arguments);
         }
@@ -260,8 +260,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
-            WMIMethodCacheEntry methodEntry = (WMIMethodCacheEntry)method.adapterData;
-            Collection<string> returnValue = new Collection<string>();
+            var methodEntry = (WMIMethodCacheEntry)method.adapterData;
+            var returnValue = new Collection<string>();
             returnValue.Add(methodEntry.MethodDefinition);
 
             return returnValue;
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
+            var mObj = property.baseObject as ManagementBaseObject;
             try
             {
                 ManagementClass objClass = CreateClassFrmObject(mObj);
@@ -321,7 +321,7 @@ namespace System.Management.Automation
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
-            PropertyData pd = property.adapterData as PropertyData;
+            var pd = property.adapterData as PropertyData;
             // GetDotNetType will never return null
             Type dotNetType = GetDotNetType(pd);
             string typeName;
@@ -353,7 +353,7 @@ namespace System.Management.Automation
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
-            PropertyData pd = property.adapterData as PropertyData;
+            var pd = property.adapterData as PropertyData;
             return pd.Value;
         }
         /// <summary>
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
+            var mObj = property.baseObject as ManagementBaseObject;
             if (mObj == null)
             {
                 throw new SetValueInvocationException("CannotSetNonManagementObjectMsg",
@@ -384,7 +384,7 @@ namespace System.Management.Automation
                         property.Name);
             }
 
-            PropertyData pd = property.adapterData as PropertyData;
+            var pd = property.adapterData as PropertyData;
 
             if ((convertIfPossible) && (setValue != null))
             {
@@ -405,7 +405,7 @@ namespace System.Management.Automation
         /// <returns>The string representation of the property in the object.</returns>
         protected override string PropertyToString(PSProperty property)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             // if (PropertyIsStatic(property))
             // {
             //    returnValue.Append("static ");
@@ -520,7 +520,7 @@ namespace System.Management.Automation
                         // a method is added depending on
                         // whether staticBinding is requested or not.
                         string methodName = mdata.Name;
-                        WMIMethodCacheEntry mCache = new WMIMethodCacheEntry(methodName, classPath.Path, mdata);
+                        var mCache = new WMIMethodCacheEntry(methodName, classPath.Path, mdata);
                         methodTable.Add(methodName, mCache);
                     }
                 }
@@ -537,7 +537,7 @@ namespace System.Management.Automation
         private static ManagementClass CreateClassFrmObject(ManagementBaseObject mgmtBaseObject)
         {
             // Construct a ManagementClass object for this object to get the member metadata
-            ManagementClass mgmtClass = mgmtBaseObject as ManagementClass;
+            var mgmtClass = mgmtBaseObject as ManagementClass;
 
             // try to use the actual object sent to this method..otherwise construct one
             if (mgmtClass == null)
@@ -545,7 +545,7 @@ namespace System.Management.Automation
                 mgmtClass = new ManagementClass(mgmtBaseObject.ClassPath);
 
                 // inherit ManagementObject properties
-                ManagementObject mgmtObject = mgmtBaseObject as ManagementObject;
+                var mgmtObject = mgmtBaseObject as ManagementObject;
                 if (mgmtObject != null)
                 {
                     mgmtClass.Scope = mgmtObject.Scope;
@@ -579,7 +579,7 @@ namespace System.Management.Automation
 
             try
             {
-                string cimType = (string)pData.Qualifiers["cimtype"].Value;
+                var cimType = (string)pData.Qualifiers["cimtype"].Value;
                 result = string.Format(CultureInfo.InvariantCulture, "{0}#{1}",
                     typeof(ManagementObject).FullName, cimType.Replace("object:", string.Empty));
             }
@@ -707,7 +707,7 @@ namespace System.Management.Automation
             // Evaluate method and arguments
             object[] verifiedArguments;
 
-            MethodInformation[] methods = new MethodInformation[1];
+            var methods = new MethodInformation[1];
             methods[0] = mdata.MethodInfoStructure;
 
             // This will convert Null Strings to Empty Strings
@@ -735,7 +735,7 @@ namespace System.Management.Automation
             for (int i = 0; i < parameterList.Length; i++)
             {
                 // this cast should always succeed
-                WMIParameterInformation pInfo = (WMIParameterInformation)parameterList[i];
+                var pInfo = (WMIParameterInformation)parameterList[i];
 
                 // Should not convert null input arguments
                 // GetBestMethodAndArguments converts null strings to empty strings
@@ -773,7 +773,7 @@ namespace System.Management.Automation
             {
                 // parameter position..
                 int location = -1;
-                WMIParameterInformation pInfo = new WMIParameterInformation(data.Name, GetDotNetType(data));
+                var pInfo = new WMIParameterInformation(data.Name, GetDotNetType(data));
 
                 try
                 {
@@ -816,13 +816,13 @@ namespace System.Management.Automation
             UpdateParameters(mData.InParameters, parameters);
 
             // parameters is never null
-            WMIParameterInformation[] pInfos = new WMIParameterInformation[parameters.Count];
+            var pInfos = new WMIParameterInformation[parameters.Count];
             if (parameters.Count > 0)
             {
                 parameters.Values.CopyTo(pInfos, 0);
             }
 
-            MethodInformation returnValue = new MethodInformation(false, true, pInfos);
+            var returnValue = new MethodInformation(false, true, pInfos);
 
             return returnValue;
         }
@@ -835,7 +835,7 @@ namespace System.Management.Automation
             var parameters = new SortedList<int, WMIParameterInformation>();
             UpdateParameters(mData.InParameters, parameters);
 
-            StringBuilder inParameterString = new StringBuilder();
+            var inParameterString = new StringBuilder();
 
             if (parameters.Count > 0)
             {
@@ -868,7 +868,7 @@ namespace System.Management.Automation
             }
 
             tracer.WriteLine("Constructing method definition for method {0}", mData.Name);
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             builder.Append("System.Management.ManagementBaseObject ");
             builder.Append(mData.Name);
@@ -998,7 +998,7 @@ namespace System.Management.Automation
         {
             tracer.WriteLine("Invoking class method: {0}", methodName);
 
-            ManagementClass mClass = wmiObject as ManagementClass;
+            var mClass = wmiObject as ManagementClass;
 
             try
             {
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
             }
 
             CacheTable typeTable = GetInstanceMethodTable(wmiObject, true);
-            WMIMethodCacheEntry method = (WMIMethodCacheEntry)typeTable[methodName];
+            var method = (WMIMethodCacheEntry)typeTable[methodName];
 
             if (method == null)
             {
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 // TODO: Bug 251457. This is a workaround to unblock partners and find out the root cause.
-                Tracing.PSEtwLogProvider provider = new Tracing.PSEtwLogProvider();
+                var provider = new Tracing.PSEtwLogProvider();
 
                 provider.WriteEvent(PSEventId.Engine_Health,
                                     PSChannel.Analytic,

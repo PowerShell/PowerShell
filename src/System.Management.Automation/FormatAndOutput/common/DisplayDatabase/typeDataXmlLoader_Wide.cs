@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             using (this.StackFrame(controlNode))
             {
-                WideControlBody wideBody = new WideControlBody();
+                var wideBody = new WideControlBody();
 
                 bool wideViewEntriesFound = false;
 
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 bool appliesToNodeFound = false;     // cardinality 0..1
                 bool propertyEntryNodeFound = false; // cardinality 1
 
-                WideControlEntryDefinition wved = new WideControlEntryDefinition();
+                var wved = new WideControlEntryDefinition();
 
                 foreach (XmlNode n in wideControlEntryNode.ChildNodes)
                 {
@@ -211,8 +211,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             using (this.StackFrame(propertyEntryNode))
             {
                 // process Mshexpression, format string and text token
-                ViewEntryNodeMatch match = new ViewEntryNodeMatch(this);
-                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                var match = new ViewEntryNodeMatch(this);
+                var unprocessedNodes = new List<XmlNode>();
                 if (!match.ProcessExpressionDirectives(propertyEntryNode, unprocessedNodes))
                 {
                     return null; // fatal error
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // finally build the item to return
-                List<FormatToken> formatTokenList = new List<FormatToken>();
+                var formatTokenList = new List<FormatToken>();
 
                 // add either the text token or the PSPropertyExpression with optional format string
                 if (match.TextToken != null)
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    FieldPropertyToken fpt = new FieldPropertyToken();
+                    var fpt = new FieldPropertyToken();
                     fpt.expression = match.Expression;
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     formatTokenList.Add(fpt);

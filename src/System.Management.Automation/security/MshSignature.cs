@@ -282,7 +282,7 @@ namespace System.Management.Automation
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
         {
-            SignatureStatus isc = SignatureStatus.UnknownError;
+            var isc = SignatureStatus.UnknownError;
 
             switch (error)
             {
@@ -331,7 +331,7 @@ namespace System.Management.Automation
 
                 case SignatureStatus.UnknownError:
                     int intError = SecuritySupport.GetIntFromDWORD(error);
-                    Win32Exception e = new Win32Exception(intError);
+                    var e = new Win32Exception(intError);
                     message = e.Message;
                     break;
 

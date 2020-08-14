@@ -107,7 +107,7 @@ namespace System.Management.Automation
                         //    windbg  -k com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect
                         // The parser produced an array of strings but marked the parameter so we
                         // can properly reconstruct the correct command line.
-                        StringConstantType stringConstantType = StringConstantType.BareWord;
+                        var stringConstantType = StringConstantType.BareWord;
                         ArrayLiteralAst arrayLiteralAst = null;
                         switch (parameter?.ArgumentAst)
                         {
@@ -397,7 +397,7 @@ namespace System.Management.Automation
 
                 if (path.Contains(':'))
                 {
-                    LocationGlobber globber = new LocationGlobber(context.SessionState);
+                    var globber = new LocationGlobber(context.SessionState);
                     try
                     {
                         ProviderInfo providerInfo;

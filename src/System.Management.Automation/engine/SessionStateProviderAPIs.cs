@@ -300,7 +300,7 @@ namespace System.Management.Automation
         {
             string possibleMatches = GetPossibleMatches(matchingProviders);
 
-            ProviderNameAmbiguousException e =
+            var e =
                 new ProviderNameAmbiguousException(
                     name,
                     "ProviderNameAmbiguous",
@@ -313,7 +313,7 @@ namespace System.Management.Automation
 
         private static string GetPossibleMatches(Collection<ProviderInfo> matchingProviders)
         {
-            StringBuilder possibleMatches = new StringBuilder();
+            var possibleMatches = new StringBuilder();
 
             foreach (ProviderInfo matchingProvider in matchingProviders)
             {
@@ -350,7 +350,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            DriveCmdletProvider driveCmdletProvider =
+            var driveCmdletProvider =
                 GetProviderInstance(providerId) as DriveCmdletProvider;
 
             if (driveCmdletProvider == null)
@@ -385,7 +385,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            DriveCmdletProvider driveCmdletProvider =
+            var driveCmdletProvider =
                 GetProviderInstance(provider) as DriveCmdletProvider;
 
             if (driveCmdletProvider == null)
@@ -420,7 +420,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            DriveCmdletProvider driveCmdletProvider =
+            var driveCmdletProvider =
                 providerInstance as DriveCmdletProvider;
 
             if (driveCmdletProvider == null)
@@ -458,7 +458,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            ItemCmdletProvider itemCmdletProvider =
+            var itemCmdletProvider =
                 GetProviderInstance(providerId) as ItemCmdletProvider;
 
             if (itemCmdletProvider == null)
@@ -493,7 +493,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            ItemCmdletProvider itemCmdletProvider =
+            var itemCmdletProvider =
                 GetProviderInstance(provider) as ItemCmdletProvider;
 
             if (itemCmdletProvider == null)
@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            ItemCmdletProvider itemCmdletProvider =
+            var itemCmdletProvider =
                 providerInstance as ItemCmdletProvider;
 
             if (itemCmdletProvider == null)
@@ -566,7 +566,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            ContainerCmdletProvider containerCmdletProvider =
+            var containerCmdletProvider =
                 GetProviderInstance(providerId) as ContainerCmdletProvider;
 
             if (containerCmdletProvider == null)
@@ -601,7 +601,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            ContainerCmdletProvider containerCmdletProvider =
+            var containerCmdletProvider =
                 GetProviderInstance(provider) as ContainerCmdletProvider;
 
             if (containerCmdletProvider == null)
@@ -636,7 +636,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            ContainerCmdletProvider containerCmdletProvider =
+            var containerCmdletProvider =
                 providerInstance as ContainerCmdletProvider;
 
             if (containerCmdletProvider == null)
@@ -671,7 +671,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            NavigationCmdletProvider navigationCmdletProvider =
+            var navigationCmdletProvider =
                 GetProviderInstance(provider) as NavigationCmdletProvider;
 
             if (navigationCmdletProvider == null)
@@ -710,7 +710,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            NavigationCmdletProvider navigationCmdletProvider =
+            var navigationCmdletProvider =
                 providerInstance as NavigationCmdletProvider;
 
             if ((navigationCmdletProvider == null) && (!acceptNonContainerProviders))
@@ -787,7 +787,7 @@ namespace System.Management.Automation
 
             if (providerName == null)
             {
-                ProviderNotFoundException e =
+                var e =
                  new ProviderNotFoundException(
                      name,
                      SessionStateCategory.CmdletProvider,
@@ -826,7 +826,7 @@ namespace System.Management.Automation
             {
                 if (matchingProviders.Count == 0)
                 {
-                    ProviderNotFoundException e =
+                    var e =
                         new ProviderNotFoundException(
                             name,
                             SessionStateCategory.CmdletProvider,
@@ -846,11 +846,11 @@ namespace System.Management.Automation
 
         internal Collection<ProviderInfo> GetProvider(PSSnapinQualifiedName providerName)
         {
-            Collection<ProviderInfo> result = new Collection<ProviderInfo>();
+            var result = new Collection<ProviderInfo>();
 
             if (providerName == null)
             {
-                ProviderNotFoundException e =
+                var e =
                     new ProviderNotFoundException(
                         "null",
                         SessionStateCategory.CmdletProvider,
@@ -871,7 +871,7 @@ namespace System.Management.Automation
 
                 if (!Providers.TryGetValue(providerName.ShortName, out matchingProviders))
                 {
-                    ProviderNotFoundException e =
+                    var e =
                         new ProviderNotFoundException(
                             providerName.ToString(),
                             SessionStateCategory.CmdletProvider,
@@ -919,7 +919,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<ProviderInfo> result = new Collection<ProviderInfo>();
+                var result = new Collection<ProviderInfo>();
 
                 foreach (List<ProviderInfo> providerValues in Providers.Values)
                 {
@@ -998,7 +998,7 @@ namespace System.Management.Automation
             // Initialize the provider so that it can add any drives
             // that it needs.
 
-            List<PSDriveInfo> newDrives = new List<PSDriveInfo>();
+            var newDrives = new List<PSDriveInfo>();
             DriveCmdletProvider driveProvider =
                 GetDriveProviderInstance(providerInstance);
 
@@ -1119,7 +1119,7 @@ namespace System.Management.Automation
                 if (existingProvider.ImplementingType == provider.ImplementingType)
                     return existingProvider;
 
-                SessionStateException sessionStateException =
+                var sessionStateException =
                     new SessionStateException(
                         provider.Name,
                         SessionStateCategory.CmdletProvider,
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
             Provider.CmdletProvider providerInstance = provider.CreateInstance();
 
             // Now call start to let the provider initialize itself
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             ProviderInfo newProviderInfo = null;
 
             try
@@ -1209,7 +1209,7 @@ namespace System.Management.Automation
             }
             catch (ArgumentException)
             {
-                SessionStateException sessionStateException =
+                var sessionStateException =
                     new SessionStateException(
                         provider.Name,
                         SessionStateCategory.CmdletProvider,
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation
 
                 if (providerBase == null)
                 {
-                    ProviderNotFoundException e = new ProviderNotFoundException(
+                    var e = new ProviderNotFoundException(
                         providerName,
                         SessionStateCategory.CmdletProvider,
                         "ProviderNotFound",
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation
                             // Since there are still drives associated with the provider
                             // the provider cannot be removed
 
-                            SessionStateException e = new SessionStateException(
+                            var e = new SessionStateException(
                                 providerName,
                                 SessionStateCategory.CmdletProvider,
                                 "RemoveDrivesBeforeRemovingProvider",

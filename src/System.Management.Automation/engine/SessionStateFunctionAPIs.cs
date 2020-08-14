@@ -41,10 +41,10 @@ namespace System.Management.Automation
         /// </returns>
         internal IDictionary<string, FunctionInfo> GetFunctionTable()
         {
-            SessionStateScopeEnumerator scopeEnumerator =
+            var scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
-            Dictionary<string, FunctionInfo> result =
+            var result =
                 new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
             foreach (SessionStateScope scope in scopeEnumerator)
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// </exception>
         internal IDictionary<string, FunctionInfo> GetFunctionTableAtScope(string scopeID)
         {
-            Dictionary<string, FunctionInfo> result =
+            var result =
                 new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
             SessionStateScope scope = GetScopeByID(scopeID);
@@ -159,9 +159,9 @@ namespace System.Management.Automation
 
             FunctionInfo result = null;
 
-            FunctionLookupPath lookupPath = new FunctionLookupPath(name);
+            var lookupPath = new FunctionLookupPath(name);
 
-            FunctionScopeItemSearcher searcher =
+            var searcher =
                 new FunctionScopeItemSearcher(this, lookupPath, origin);
 
             if (searcher.MoveNext())
@@ -279,12 +279,12 @@ namespace System.Management.Automation
 
             string originalName = name;
 
-            FunctionLookupPath path = new FunctionLookupPath(name);
+            var path = new FunctionLookupPath(name);
             name = path.UnqualifiedPath;
 
             if (string.IsNullOrEmpty(name))
             {
-                SessionStateException exception =
+                var exception =
                     new SessionStateException(
                         originalName,
                         SessionStateCategory.Function,
@@ -295,13 +295,13 @@ namespace System.Management.Automation
                 throw exception;
             }
 
-            ScopedItemOptions options = ScopedItemOptions.None;
+            var options = ScopedItemOptions.None;
             if (path.IsPrivate)
             {
                 options |= ScopedItemOptions.Private;
             }
 
-            FunctionScopeItemSearcher searcher =
+            var searcher =
                 new FunctionScopeItemSearcher(
                     this,
                     path,
@@ -514,12 +514,12 @@ namespace System.Management.Automation
 
             string originalName = name;
 
-            FunctionLookupPath path = new FunctionLookupPath(name);
+            var path = new FunctionLookupPath(name);
             name = path.UnqualifiedPath;
 
             if (string.IsNullOrEmpty(name))
             {
-                SessionStateException exception =
+                var exception =
                     new SessionStateException(
                         originalName,
                         SessionStateCategory.Function,
@@ -535,7 +535,7 @@ namespace System.Management.Automation
                 options |= ScopedItemOptions.Private;
             }
 
-            FunctionScopeItemSearcher searcher =
+            var searcher =
                 new FunctionScopeItemSearcher(
                     this,
                     path,
@@ -593,12 +593,12 @@ namespace System.Management.Automation
 
             string originalName = name;
 
-            FunctionLookupPath path = new FunctionLookupPath(name);
+            var path = new FunctionLookupPath(name);
             name = path.UnqualifiedPath;
 
             if (string.IsNullOrEmpty(name))
             {
-                SessionStateException exception =
+                var exception =
                     new SessionStateException(
                         originalName,
                         SessionStateCategory.Function,
@@ -609,13 +609,13 @@ namespace System.Management.Automation
                 throw exception;
             }
 
-            ScopedItemOptions options = ScopedItemOptions.None;
+            var options = ScopedItemOptions.None;
             if (path.IsPrivate)
             {
                 options |= ScopedItemOptions.Private;
             }
 
-            FunctionScopeItemSearcher searcher =
+            var searcher =
                 new FunctionScopeItemSearcher(
                     this,
                     path,
@@ -718,9 +718,9 @@ namespace System.Management.Automation
 
             SessionStateScope scope = _currentScope;
 
-            FunctionLookupPath path = new FunctionLookupPath(name);
+            var path = new FunctionLookupPath(name);
 
-            FunctionScopeItemSearcher searcher =
+            var searcher =
                 new FunctionScopeItemSearcher(
                     this,
                     path,
@@ -773,7 +773,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(module != null, "Caller should verify that module parameter is not null");
 
-            FunctionInfo func = GetFunction(name) as FunctionInfo;
+            var func = GetFunction(name) as FunctionInfo;
             if (func != null && func.ScriptBlock != null
                 && func.ScriptBlock.File != null
                 && func.ScriptBlock.File.Equals(module.Path, StringComparison.OrdinalIgnoreCase))

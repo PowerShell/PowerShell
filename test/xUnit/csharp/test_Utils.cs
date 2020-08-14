@@ -82,7 +82,7 @@ namespace PSTests.Parallel
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
             string expected = "{\"name\":\"req\",\"type\":\"http\"}";
-            OrderedDictionary hash = new OrderedDictionary {
+            var hash = new OrderedDictionary {
                 {"name", "req"},
                 {"type", "http"}
             };
@@ -100,7 +100,7 @@ namespace PSTests.Parallel
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: false, compressOutput: true);
             string expected = "{\"type\":1}";
-            Hashtable hash = new Hashtable {
+            var hash = new Hashtable {
                 {"type", CommandTypes.Alias}
             };
             string json = JsonObject.ConvertToJson(hash, in context);
@@ -119,7 +119,7 @@ namespace PSTests.Parallel
             string expected = @"{
   ""type"": ""Alias""
 }";
-            Hashtable hash = new Hashtable {
+            var hash = new Hashtable {
                 {"type", CommandTypes.Alias}
             };
             string json = JsonObject.ConvertToJson(hash, in context);
@@ -139,7 +139,7 @@ namespace PSTests.Parallel
                 targetCmdlet: null);
 
             source.Cancel();
-            Hashtable hash = new Hashtable {
+            var hash = new Hashtable {
                 {"type", CommandTypes.Alias}
             };
 

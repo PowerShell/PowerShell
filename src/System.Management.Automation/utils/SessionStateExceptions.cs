@@ -67,7 +67,7 @@ namespace System.Management.Automation
             _message = base.Message;
             _providerInfo = provider;
 
-            IContainsErrorRecord icer = innerException as IContainsErrorRecord;
+            var icer = innerException as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
@@ -203,7 +203,7 @@ namespace System.Management.Automation
                 errorRecordException = new ParentContainsErrorRecordException(this);
             }
 
-            IContainsErrorRecord icer = innerException as IContainsErrorRecord;
+            var icer = innerException as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, errorRecordException);

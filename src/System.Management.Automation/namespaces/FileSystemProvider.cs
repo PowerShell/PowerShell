@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
         internal override bool IsFilterSet()
         {
             bool attributeFilterSet = false;
-            GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+            var fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
             if (fspDynamicParam != null)
             {
                 attributeFilterSet = (
@@ -362,20 +362,20 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Load the help file from the current UI culture subfolder
-                XmlDocument document = new XmlDocument();
+                var document = new XmlDocument();
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
                 string fullHelpPath = Path.Combine(
                     string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? string.Empty : this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
                     string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? string.Empty : this.ProviderInfo.HelpFile);
 
-                XmlReaderSettings settings = new XmlReaderSettings();
+                var settings = new XmlReaderSettings();
                 settings.XmlResolver = null;
                 reader = XmlReader.Create(fullHelpPath, settings);
                 document.Load(reader);
 
                 // Add "msh" and "command" namespaces from the MAML schema
-                XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
+                var nsMgr = new XmlNamespaceManager(document.NameTable);
                 nsMgr.AddNamespace("msh", HelpCommentsParser.mshURI);
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
@@ -475,7 +475,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // The placeholder mode management APIs Rtl(Set|Query)(Process|Thread)PlaceholderCompatibilityMode
             // are only supported starting with Windows 10 version 1803 (build 17134)
-            Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
+            var minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
             if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
             // -Persist switch parameter is supported only for Network paths.
             if (drive.Persist && !PathIsNetworkPath(drive.Root))
             {
-                ErrorRecord er = new ErrorRecord(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, drive);
+                var er = new ErrorRecord(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, drive);
                 ThrowTerminatingError(er);
             }
 
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // See if the drive is a fixed drive.
                 string pathRoot = Path.GetPathRoot(drive.Root);
-                DriveInfo driveInfo = new DriveInfo(pathRoot);
+                var driveInfo = new DriveInfo(pathRoot);
 
                 if (driveInfo.DriveType != DriveType.Fixed)
                 {
@@ -637,7 +637,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // error.
-                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.InvalidDriveName), "DriveNameNotSupportedForPersistence", ErrorCategory.InvalidOperation, drive);
+                        var er = new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.InvalidDriveName), "DriveNameNotSupportedForPersistence", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -652,7 +652,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    NetResource resource = new NetResource();
+                    var resource = new NetResource();
                     resource.Comment = null;
                     resource.DisplayType = RESOURCEDISPLAYTYPE_GENERIC;
                     resource.LocalName = driveName;
@@ -678,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (code != 0)
                     {
-                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                        var er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
 
@@ -773,7 +773,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (code != 0)
                 {
-                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                    var er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
                     ThrowTerminatingError(er);
                 }
             }
@@ -835,7 +835,7 @@ namespace Microsoft.PowerShell.Commands
                 bufferSize = 3;
 #endif
 
-                StringBuilder uncBuffer = new StringBuilder(bufferSize);
+                var uncBuffer = new StringBuilder(bufferSize);
                 driveName += ':';
 
                 // Call the windows API
@@ -1009,7 +1009,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
-            Collection<PSDriveInfo> results = new Collection<PSDriveInfo>();
+            var results = new Collection<PSDriveInfo>();
 
             DriveInfo[] logicalDrives = DriveInfo.GetDrives();
             if (logicalDrives != null)
@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Create a new VirtualDrive for each logical drive
-                        PSDriveInfo newPSDriveInfo =
+                        var newPSDriveInfo =
                             new PSDriveInfo(
                                 newDriveName,
                                 ProviderInfo,
@@ -1223,7 +1223,7 @@ namespace Microsoft.PowerShell.Commands
             // let us check if we _could_ open the file.
             try
             {
-                FileInfo testFile = new FileInfo(path);
+                var testFile = new FileInfo(path);
             }
             catch (Exception e)
             {
@@ -1364,7 +1364,7 @@ namespace Microsoft.PowerShell.Commands
             catch (IOException ioError)
             {
                 // IOException contains specific message about the error occured and so no need for errordetails.
-                ErrorRecord er = new ErrorRecord(ioError, "GetItemIOError", ErrorCategory.ReadError, path);
+                var er = new ErrorRecord(ioError, "GetItemIOError", ErrorCategory.ReadError, path);
                 WriteError(er);
             }
             catch (UnauthorizedAccessException accessException)
@@ -1376,7 +1376,7 @@ namespace Microsoft.PowerShell.Commands
         private FileSystemInfo GetFileSystemItem(string path, ref bool isContainer, bool showHidden)
         {
             path = NormalizePath(path);
-            FileInfo result = new FileInfo(path);
+            var result = new FileInfo(path);
 
             // FileInfo.Exists is always false for a directory path, so we check the attribute for existence.
             var attributes = result.Attributes;
@@ -1387,7 +1387,7 @@ namespace Microsoft.PowerShell.Commands
 
             FlagsExpression<FileAttributes> evaluator = null;
             FlagsExpression<FileAttributes> switchEvaluator = null;
-            GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+            var fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
             if (fspDynamicParam != null)
             {
                 evaluator = fspDynamicParam.Attributes;
@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (recurse)
                     {
-                        GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+                        var fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
                         if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
                         {
                             tracker = new InodeTracker(fsinfo.FullName);
@@ -1664,7 +1664,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     FlagsExpression<FileAttributes> evaluator = null;
                     FlagsExpression<FileAttributes> switchEvaluator = null;
-                    GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+                    var fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
                     if (fspDynamicParam != null)
                     {
                         evaluator = fspDynamicParam.Attributes;
@@ -1730,7 +1730,7 @@ namespace Microsoft.PowerShell.Commands
             ReturnContainers returnContainers,
             InodeTracker tracker)   // tracker will be non-null only if the user invoked the -FollowSymLinks and -Recurse switch parameters.
         {
-            List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
+            var target = new List<IEnumerable<FileSystemInfo>>();
 
             try
             {
@@ -1775,7 +1775,7 @@ namespace Microsoft.PowerShell.Commands
                 FlagsExpression<FileAttributes> evaluator = null;
                 FlagsExpression<FileAttributes> switchEvaluator = null;
 
-                GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+                var fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
                 if (fspDynamicParam != null)
                 {
                     evaluator = fspDynamicParam.Attributes;
@@ -1958,7 +1958,7 @@ namespace Microsoft.PowerShell.Commands
         private FlagsExpression<FileAttributes> FormatAttributeSwitchParameters()
         {
             FlagsExpression<FileAttributes> switchParamEvaluator = null;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (((GetChildDynamicParameters)DynamicParameters).Directory)
             {
@@ -2166,7 +2166,7 @@ namespace Microsoft.PowerShell.Commands
                 if (isContainer)
                 {
                     // Get the DirectoryInfo
-                    DirectoryInfo dir = new DirectoryInfo(path);
+                    var dir = new DirectoryInfo(path);
 
                     // Generate the new path which the directory will
                     // be renamed to.
@@ -2190,7 +2190,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Get the FileInfo
-                    FileInfo file = new FileInfo(path);
+                    var file = new FileInfo(path);
 
                     // Generate the new path which the file will be renamed to.
                     string parentDirectory = file.DirectoryName;
@@ -2257,7 +2257,7 @@ namespace Microsoft.PowerShell.Commands
             string type,
             object value)
         {
-            ItemType itemType = ItemType.Unknown;
+            var itemType = ItemType.Unknown;
 
             // Verify parameters
             if (string.IsNullOrEmpty(path))
@@ -2290,7 +2290,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    FileMode fileMode = FileMode.CreateNew;
+                    var fileMode = FileMode.CreateNew;
 
                     if (Force)
                     {
@@ -2307,7 +2307,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Create the file with read/write access and
                         // not allowing sharing.
-                        using (FileStream newFile =
+                        using (var newFile =
                             new FileStream(
                                 path,
                                 fileMode,
@@ -2316,14 +2316,14 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (value != null)
                             {
-                                StreamWriter streamWriter = new StreamWriter(newFile);
+                                var streamWriter = new StreamWriter(newFile);
                                 streamWriter.Write(value.ToString());
                                 streamWriter.Flush();
                                 streamWriter.Dispose();
                             }
                         }
 
-                        FileInfo fileInfo = new FileInfo(path);
+                        var fileInfo = new FileInfo(path);
                         WriteItemObject(fileInfo, path, false);
                     }
                 }
@@ -2492,7 +2492,7 @@ namespace Microsoft.PowerShell.Commands
                         // Porting note: The Win32Exception will report the correct error on Linux
                         int errorCode = Marshal.GetLastWin32Error();
 
-                        Win32Exception w32Exception = new Win32Exception((int)errorCode);
+                        var w32Exception = new Win32Exception((int)errorCode);
 
 #if UNIX
                         if (Platform.Unix.GetErrorCategory(errorCode) == ErrorCategory.PermissionDenied)
@@ -2527,12 +2527,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (isDirectory)
                         {
-                            DirectoryInfo dirInfo = new DirectoryInfo(path);
+                            var dirInfo = new DirectoryInfo(path);
                             WriteItemObject(dirInfo, path, true);
                         }
                         else
                         {
-                            FileInfo fileInfo = new FileInfo(path);
+                            var fileInfo = new FileInfo(path);
                             WriteItemObject(fileInfo, path, false);
                         }
                     }
@@ -2691,7 +2691,7 @@ namespace Microsoft.PowerShell.Commands
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
 
-            Version minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
+            var minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
             if (Environment.OSVersion.Version >= minBuildOfDeveloperMode)
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
@@ -2725,7 +2725,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static ItemType GetItemType(string input)
         {
-            ItemType itemType = ItemType.Unknown;
+            var itemType = ItemType.Unknown;
 
             WildcardPattern typeEvaluator =
                 WildcardPattern.Get(input + "*",
@@ -2848,7 +2848,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Push the paths of the missing directories onto a stack such that the highest missing
                 // parent in the tree is at the top of the stack.
-                Stack<string> missingDirectories = new Stack<string>();
+                var missingDirectories = new Stack<string>();
 
                 string previousParent = path;
 
@@ -3244,13 +3244,13 @@ namespace Microsoft.PowerShell.Commands
                 string error = StringUtil.Format(FileSystemProviderStrings.PermissionError);
                 Exception e = new IOException(error);
 
-                ErrorDetails errorDetails =
+                var errorDetails =
                     new ErrorDetails(this, "FileSystemProviderStrings",
                         "CannotRemoveItem",
                         fileSystemInfo.FullName,
                         e.Message);
 
-                ErrorRecord errorRecord = new ErrorRecord(e, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo);
+                var errorRecord = new ErrorRecord(e, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo);
                 errorRecord.ErrorDetails = errorDetails;
 
                 WriteError(errorRecord);
@@ -3280,7 +3280,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception fsException)
             {
-                ErrorDetails errorDetails =
+                var errorDetails =
                     new ErrorDetails(this, "FileSystemProviderStrings",
                         "CannotRemoveItem",
                         fileSystemInfo.FullName,
@@ -3289,14 +3289,14 @@ namespace Microsoft.PowerShell.Commands
                 if ((fsException is System.Security.SecurityException) ||
                     (fsException is UnauthorizedAccessException))
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo);
+                    var errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, fileSystemInfo);
                     errorRecord.ErrorDetails = errorDetails;
 
                     WriteError(errorRecord);
                 }
                 else if (fsException is ArgumentException)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemArgumentError", ErrorCategory.InvalidArgument, fileSystemInfo);
+                    var errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemArgumentError", ErrorCategory.InvalidArgument, fileSystemInfo);
                     errorRecord.ErrorDetails = errorDetails;
 
                     WriteError(errorRecord);
@@ -3305,7 +3305,7 @@ namespace Microsoft.PowerShell.Commands
                     (fsException is FileNotFoundException) ||
                     (fsException is DirectoryNotFoundException))
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemIOError", ErrorCategory.WriteError, fileSystemInfo);
+                    var errorRecord = new ErrorRecord(fsException, "RemoveFileSystemItemIOError", ErrorCategory.WriteError, fileSystemInfo);
                     errorRecord.ErrorDetails = errorDetails;
 
                     WriteError(errorRecord);
@@ -3334,13 +3334,13 @@ namespace Microsoft.PowerShell.Commands
                             (attributeException is System.IO.FileNotFoundException) ||
                             (attributeException is System.IO.IOException))
                         {
-                            ErrorDetails attributeDetails = new ErrorDetails(
+                            var attributeDetails = new ErrorDetails(
                                 this, "FileSystemProviderStrings",
                                     "CannotRestoreAttributes",
                                     fileSystemInfo.FullName,
                                     attributeException.Message);
 
-                            ErrorRecord errorRecord = new ErrorRecord(attributeException, "RemoveFileSystemItemCannotRestoreAttributes", ErrorCategory.PermissionDenied, fileSystemInfo);
+                            var errorRecord = new ErrorRecord(attributeException, "RemoveFileSystemItemCannotRestoreAttributes", ErrorCategory.PermissionDenied, fileSystemInfo);
                             errorRecord.ErrorDetails = attributeDetails;
 
                             WriteError(errorRecord);
@@ -3416,7 +3416,7 @@ namespace Microsoft.PowerShell.Commands
                 var fsinfo = GetFileSystemInfo(path, out bool _);
                 result = fsinfo != null;
 
-                FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
+                var itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
 
                 // If the items see if we need to check the age of the file...
@@ -3513,7 +3513,7 @@ namespace Microsoft.PowerShell.Commands
             // First check to see if it is a directory
             try
             {
-                DirectoryInfo directory = new DirectoryInfo(path);
+                var directory = new DirectoryInfo(path);
 
                 // If the above didn't throw an exception, check to
                 // see if we should proceed and if it contains any children
@@ -3621,7 +3621,7 @@ namespace Microsoft.PowerShell.Commands
             PSSession fromSession = null;
             PSSession toSession = null;
 
-            CopyItemDynamicParameters copyDynamicParameter = DynamicParameters as CopyItemDynamicParameters;
+            var copyDynamicParameter = DynamicParameters as CopyItemDynamicParameters;
 
             if (copyDynamicParameter != null)
             {
@@ -3694,7 +3694,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    bool exists = (bool)(op["Exists"]);
+                    var exists = (bool)(op["Exists"]);
                     if (!exists)
                     {
                         throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, path);
@@ -3702,14 +3702,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Items"] != null)
                     {
-                        PSObject obj = (PSObject)op["Items"];
-                        ArrayList itemsList = (ArrayList)obj.BaseObject;
+                        var obj = (PSObject)op["Items"];
+                        var itemsList = (ArrayList)obj.BaseObject;
                         foreach (PSObject item in itemsList)
                         {
-                            Hashtable ItemInfo = (Hashtable)item.BaseObject;
-                            string itemName = (string)ItemInfo["Name"];
-                            string itemFullName = (string)ItemInfo["FullName"];
-                            bool isContainer = (bool)ItemInfo["IsDirectory"];
+                            var ItemInfo = (Hashtable)item.BaseObject;
+                            var itemName = (string)ItemInfo["Name"];
+                            var itemFullName = (string)ItemInfo["FullName"];
+                            var isContainer = (bool)ItemInfo["IsDirectory"];
 
                             if (isContainer)
                             {
@@ -3737,7 +3737,7 @@ namespace Microsoft.PowerShell.Commands
                                 bool excludeFile = SessionStateUtilities.MatchesAnyWildcardPattern(itemName, _excludeMatcher, false);
                                 if (!excludeFile)
                                 {
-                                    long itemSize = (long)ItemInfo["FileSize"];
+                                    var itemSize = (long)ItemInfo["FileSize"];
                                     CopyFileFromRemoteSession(itemName, itemFullName, destinationPath, force, ps, itemSize);
                                 }
                             }
@@ -3762,7 +3762,7 @@ namespace Microsoft.PowerShell.Commands
                 if (isContainer)
                 {
                     // Get the directory info
-                    DirectoryInfo dir = new DirectoryInfo(path);
+                    var dir = new DirectoryInfo(path);
 
                     // Now copy the directory to the destination
                     CopyDirectoryInfoItem(dir, destinationPath, recurse, Force, ps);
@@ -3770,7 +3770,7 @@ namespace Microsoft.PowerShell.Commands
                 else // !isContainer
                 {
                     // Get the file info
-                    FileInfo file = new FileInfo(path);
+                    var file = new FileInfo(path);
 
                     CopyFileInfoItem(file, destinationPath, Force, ps);
                 }
@@ -3978,7 +3978,7 @@ namespace Microsoft.PowerShell.Commands
                             // the copy even if the destination already exists.
                             file.CopyTo(destinationPath, true);
 
-                            FileInfo result = new FileInfo(destinationPath);
+                            var result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
                         }
                         else
@@ -3997,7 +3997,7 @@ namespace Microsoft.PowerShell.Commands
                                     // If the destination exists and force is specified,
                                     // mask of the readonly and hidden attributes and
                                     // try again
-                                    FileInfo destinationItem = new FileInfo(destinationPath);
+                                    var destinationItem = new FileInfo(destinationPath);
 
                                     destinationItem.Attributes =
                                         destinationItem.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
@@ -4026,7 +4026,7 @@ namespace Microsoft.PowerShell.Commands
 
                             file.CopyTo(destinationPath, true);
 
-                            FileInfo result = new FileInfo(destinationPath);
+                            var result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
                         }
                         else
@@ -4094,15 +4094,15 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Files"] != null)
                     {
-                        PSObject obj = (PSObject)op["Files"];
-                        ArrayList filesList = (ArrayList)obj.BaseObject;
+                        var obj = (PSObject)op["Files"];
+                        var filesList = (ArrayList)obj.BaseObject;
 
                         foreach (PSObject fileObject in filesList)
                         {
-                            Hashtable file = (Hashtable)fileObject.BaseObject;
-                            string fileName = (string)file["FileName"];
-                            string filePath = (string)file["FilePath"];
-                            long fileSize = (long)file["FileSize"];
+                            var file = (Hashtable)fileObject.BaseObject;
+                            var fileName = (string)file["FileName"];
+                            var filePath = (string)file["FilePath"];
+                            var fileSize = (long)file["FileSize"];
 
                             // Making sure to obey the StopProcessing.
                             if (Stopping)
@@ -4127,14 +4127,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Directories"] != null)
                     {
-                        PSObject obj = (PSObject)op["Directories"];
-                        ArrayList directories = (ArrayList)obj.BaseObject;
+                        var obj = (PSObject)op["Directories"];
+                        var directories = (ArrayList)obj.BaseObject;
 
                         foreach (PSObject dirObject in directories)
                         {
-                            Hashtable dir = (Hashtable)dirObject.BaseObject;
-                            string dirName = (string)dir["Name"];
-                            string dirFullName = (string)dir["FullName"];
+                            var dir = (Hashtable)dirObject.BaseObject;
+                            var dirName = (string)dir["Name"];
+                            var dirFullName = (string)dir["FullName"];
 
                             // Making sure to obey the StopProcessing.
                             if (Stopping)
@@ -4171,7 +4171,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (supportsAlternateStreams)
             {
-                PSObject obj = (PSObject)op["Streams"];
+                var obj = (PSObject)op["Streams"];
                 streams = (ArrayList)obj.BaseObject;
             }
 
@@ -4251,7 +4251,7 @@ namespace Microsoft.PowerShell.Commands
                 // Attributes
                 if (metadata["Attributes"] != null)
                 {
-                    PSObject obj = (PSObject)metadata["Attributes"];
+                    var obj = (PSObject)metadata["Attributes"];
                     foreach (string value in (ArrayList)obj.BaseObject)
                     {
                         if (string.Equals(value, "ReadOnly", StringComparison.OrdinalIgnoreCase))
@@ -4298,7 +4298,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            FileInfo destinationFile = new FileInfo(destinationPath);
+            var destinationFile = new FileInfo(destinationPath);
 
             string action = FileSystemProviderStrings.CopyItemActionFile;
             string resource = StringUtil.Format(FileSystemProviderStrings.CopyItemResourceFileTemplate, sourceFileFullName, destinationPath);
@@ -4346,7 +4346,7 @@ namespace Microsoft.PowerShell.Commands
                                                         ps.Runspace.ConnectionInfo.ComputerName,
                                                         "localhost");
 
-            ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
+            var progress = new ProgressRecord(0, activity, statusDescription);
             progress.PercentComplete = 0;
             progress.RecordType = ProgressRecordType.Processing;
             WriteProgress(progress);
@@ -4412,7 +4412,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["ExceptionThrown"] != null)
                     {
-                        bool failedToReadFile = (bool)(op["ExceptionThrown"]);
+                        var failedToReadFile = (bool)(op["ExceptionThrown"]);
                         if (failedToReadFile)
                         {
                             // The error is written to the error array via SafeInvokeCommand
@@ -4428,7 +4428,7 @@ namespace Microsoft.PowerShell.Commands
                         content = (string)op["b64Fragment"];
                     }
 
-                    bool more = (bool)op["moreAvailable"];
+                    var more = (bool)op["moreAvailable"];
                     currentIndex += fragmentSize;
                     byte[] bytes = System.Convert.FromBase64String(content);
                     wStream.Write(bytes, 0, bytes.Length);
@@ -4436,7 +4436,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (wStream.Length > 0)
                     {
-                        int percentage = (int)(copiedSoFar * 100 / wStream.Length);
+                        var percentage = (int)(copiedSoFar * 100 / wStream.Length);
                         progress.PercentComplete = percentage;
                         WriteProgress(progress);
                     }
@@ -4619,7 +4619,7 @@ namespace Microsoft.PowerShell.Commands
                                                      "localhost",
                                                      ps.Runspace.ConnectionInfo.ComputerName);
 
-            ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
+            var progress = new ProgressRecord(0, activity, statusDescription);
             progress.PercentComplete = 0;
             progress.RecordType = ProgressRecordType.Processing;
             WriteProgress(progress);
@@ -4729,7 +4729,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (fStream.Length > 0)
                     {
-                        int percentage = (int)((fStream.Length - remainingFileSize) * 100 / fStream.Length);
+                        var percentage = (int)((fStream.Length - remainingFileSize) * 100 / fStream.Length);
                         progress.PercentComplete = percentage;
                         WriteProgress(progress);
                     }
@@ -4771,7 +4771,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private Hashtable GetFileMetadata(FileInfo file)
         {
-            Hashtable metadata = new Hashtable();
+            var metadata = new Hashtable();
 
             // LastWriteTime
             metadata.Add("LastWriteTime", file.LastWriteTime);
@@ -4884,7 +4884,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            string path = (string)(op["DirectoryPath"]);
+            var path = (string)(op["DirectoryPath"]);
 
             if ((!force) && (bool)op["PathExists"])
             {
@@ -5484,7 +5484,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private Stack<string> TokenizePathToStack(string path, string basePath)
         {
-            Stack<string> tokenizedPathStack = new Stack<string>();
+            var tokenizedPathStack = new Stack<string>();
 
             string tempPath = path;
             string previousParent = path;
@@ -5548,7 +5548,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private Stack<string> NormalizeThePath(string basepath, Stack<string> tokenizedPathStack)
         {
-            Stack<string> normalizedPathStack = new Stack<string>();
+            var normalizedPathStack = new Stack<string>();
             string currentPath = basepath;
 
             while (tokenizedPathStack.Count > 0)
@@ -5802,7 +5802,7 @@ namespace Microsoft.PowerShell.Commands
                 if (isContainer)
                 {
                     // Get the DirectoryInfo
-                    DirectoryInfo dir = new DirectoryInfo(path);
+                    var dir = new DirectoryInfo(path);
 
                     if (ItemExists(destination) &&
                         IsItemContainer(destination))
@@ -5825,7 +5825,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Get the FileInfo
-                    FileInfo file = new FileInfo(path);
+                    var file = new FileInfo(path);
 
                     Dbg.Diagnostics.Assert(
                         file != null,
@@ -5944,7 +5944,7 @@ namespace Microsoft.PowerShell.Commands
                 // check if destination file exists. if force is specified then we should delete the destination before moving
                 if (force && File.Exists(destination))
                 {
-                    FileInfo destfile = new FileInfo(destination);
+                    var destfile = new FileInfo(destination);
                     if (destfile != null)
                     {
                         try
@@ -6142,8 +6142,8 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private bool IsSameWindowsVolume(string source, string destination)
         {
-            FileInfo src = new FileInfo(source);
-            FileInfo dest = new FileInfo(destination);
+            var src = new FileInfo(source);
+            var dest = new FileInfo(destination);
 
             return (src.Directory.Root.Name == dest.Directory.Root.Name);
         }
@@ -6312,7 +6312,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            PSObject results = new PSObject();
+            var results = new PSObject();
 
             var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
 
@@ -6526,7 +6526,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldProcess(resource, action))
                 {
                     fileSystemInfo.Attributes = FileAttributes.Normal;
-                    PSObject result = new PSObject();
+                    var result = new PSObject();
                     result.Properties.Add(new PSNoteProperty(propertiesToClear[0], fileSystemInfo.Attributes));
 
                     // Now write out the attribute that was cleared.
@@ -6611,7 +6611,7 @@ namespace Microsoft.PowerShell.Commands
             // They override the defaults specified above.
             if (DynamicParameters != null)
             {
-                FileSystemContentReaderDynamicParameters dynParams =
+                var dynParams =
                     DynamicParameters as FileSystemContentReaderDynamicParameters;
 
                 if (dynParams != null)
@@ -6669,7 +6669,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Directory.Exists(path))
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
+                    var error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
                     WriteError(error);
                     return stream;
                 }
@@ -6774,14 +6774,14 @@ namespace Microsoft.PowerShell.Commands
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
             Encoding encoding = ClrFacade.GetDefaultEncoding();
-            FileMode filemode = FileMode.OpenOrCreate;
+            var filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
 
             // Get the dynamic parameters
             if (DynamicParameters != null)
             {
-                FileSystemContentWriterDynamicParameters dynParams =
+                var dynParams =
                     DynamicParameters as FileSystemContentWriterDynamicParameters;
 
                 if (dynParams != null)
@@ -6824,7 +6824,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Directory.Exists(path))
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.WriteContainerContentException, path);
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "WriteContainerContentException", ErrorCategory.InvalidOperation, null);
+                    var error = new ErrorRecord(new InvalidOperationException(errMsg), "WriteContainerContentException", ErrorCategory.InvalidOperation, null);
                     WriteError(error);
                     return stream;
                 }
@@ -6989,7 +6989,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!ShouldProcess(resource, action))
                         return;
 
-                    FileStream fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
+                    var fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
                     fileStream.Dispose();
                 }
 
@@ -7017,7 +7017,7 @@ namespace Microsoft.PowerShell.Commands
                         // Since a security exception was thrown, try to mask off
                         // the hidden and readonly bits and then retry.
                         File.SetAttributes(path, (File.GetAttributes(path) & ~(FileAttributes.Hidden | FileAttributes.ReadOnly)));
-                        FileStream fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
+                        var fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
                         fileStream.Dispose();
 
                         // For filesystem once content is cleared
@@ -7219,7 +7219,7 @@ namespace Microsoft.PowerShell.Commands
                     string driveName = (char)('A' + driveId) + ":";
 
                     int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
-                    StringBuilder uncBuffer = new StringBuilder(bufferSize);
+                    var uncBuffer = new StringBuilder(bufferSize);
                     int errorCode = -1;
                     try
                     {
@@ -8081,7 +8081,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The link type of the reparse point. SymbolicLink for symbolic links.</returns>
         public static string GetLinkType(PSObject instance)
         {
-            FileSystemInfo fileSysInfo = instance.BaseObject as FileSystemInfo;
+            var fileSysInfo = instance.BaseObject as FileSystemInfo;
 
             if (fileSysInfo != null)
             {
@@ -8249,7 +8249,7 @@ namespace Microsoft.PowerShell.Commands
                     InternalSymbolicLinkLinkCodeMethods.FileAttributes.Normal,
                     IntPtr.Zero);
 
-                using (SafeFileHandle handle = new SafeFileHandle(nativeHandle, true))
+                using (var handle = new SafeFileHandle(nativeHandle, true))
                 {
                     bool success = false;
 
@@ -8465,7 +8465,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
 
-                        REPARSE_DATA_BUFFER_MOUNTPOINT mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
+                        var mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
                         mountPoint.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
                         mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null endo
                         mountPoint.SubstituteNameOffset = 0;
@@ -8542,7 +8542,7 @@ namespace Microsoft.PowerShell.Commands
             if (lastError != 0)
                 throw new Win32Exception(lastError);
 
-            SafeFileHandle reparsePointHandle = new SafeFileHandle(nativeHandle, true);
+            var reparsePointHandle = new SafeFileHandle(nativeHandle, true);
 
             return reparsePointHandle;
         }
@@ -8593,9 +8593,9 @@ namespace System.Management.Automation.Internal
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
 
-            List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
+            var alternateStreams = new List<AlternateStreamData>();
 
-            AlternateStreamNativeData findStreamData = new AlternateStreamNativeData();
+            var findStreamData = new AlternateStreamNativeData();
 
             SafeFindHandle handle = NativeMethods.FindFirstStreamW(
                 path, NativeMethods.StreamInfoLevels.FindStreamInfoStandard,
@@ -8616,7 +8616,7 @@ namespace System.Management.Automation.Internal
                         findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }
 
-                    AlternateStreamData data = new AlternateStreamData();
+                    var data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
                     data.FileName = path.Replace(data.Stream, string.Empty);

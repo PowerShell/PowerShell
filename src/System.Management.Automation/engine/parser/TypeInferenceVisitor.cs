@@ -171,7 +171,7 @@ namespace System.Management.Automation
 
         internal IList<object> GetMembersByInferredType(PSTypeName typename, bool isStatic, Func<object, bool> filter)
         {
-            List<object> results = new List<object>();
+            var results = new List<object>();
 
             Func<object, bool> filterToCall = filter;
             if (typename is PSSyntheticTypeName synthetic)
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation
                     if (parent.Parent is CommandAst commandAst)
                     {
                         // We found a command, see if there is a previous command in the pipeline.
-                        PipelineAst pipelineAst = (PipelineAst)commandAst.Parent;
+                        var pipelineAst = (PipelineAst)commandAst.Parent;
                         var previousCommandIndex = pipelineAst.PipelineElements.IndexOf(commandAst) - 1;
                         if (previousCommandIndex < 0)
                         {

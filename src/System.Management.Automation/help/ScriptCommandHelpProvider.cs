@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override CommandSearcher GetCommandSearcherForExactMatch(string commandName, ExecutionContext context)
         {
-            CommandSearcher searcher = new CommandSearcher(
+            var searcher = new CommandSearcher(
                 commandName,
                 SearchResolutionOptions.None,
                 CommandTypes.Filter | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Configuration,
@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override CommandSearcher GetCommandSearcherForSearch(string pattern, ExecutionContext context)
         {
-            CommandSearcher searcher =
+            var searcher =
                     new CommandSearcher(
                         pattern,
                         SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveFunctionPatterns,

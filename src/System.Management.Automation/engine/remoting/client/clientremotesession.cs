@@ -235,7 +235,7 @@ namespace System.Management.Automation.Remoting
         public override void CreateAsync()
         {
             // Raise a CreateSession event in StateMachine. This start the process of connection and negotiation to a new remote session
-            RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
+            var startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startArg);
         }
 
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Remoting
         public override void ConnectAsync()
         {
             // Raise the connectsession event in statemachine. This start the process of connection and negotiation to an existing remote session
-            RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
+            var startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startArg);
         }
 
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         public override void CloseAsync()
         {
-            RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
+            var closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
             SessionDataStructureHandler.StateMachine.RaiseEvent(closeArg);
         }
 
@@ -266,7 +266,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void DisconnectAsync()
         {
-            RemoteSessionStateMachineEventArgs startDisconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectStart);
+            var startDisconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectStart);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startDisconnectArg);
         }
 
@@ -275,7 +275,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void ReconnectAsync()
         {
-            RemoteSessionStateMachineEventArgs startReconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ReconnectStart);
+            var startReconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ReconnectStart);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startReconnectArg);
         }
 
@@ -422,7 +422,7 @@ namespace System.Management.Automation.Remoting
         {
             if (SessionDataStructureHandler.StateMachine.State == RemoteSessionState.Established)
             {
-                RemoteSessionStateMachineEventArgs args =
+                var args =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyRequested);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(args);
 
@@ -467,12 +467,12 @@ namespace System.Management.Automation.Remoting
                     // This will throw if there is an error running the algorithm
                     RunClientNegotiationAlgorithm(Context.ServerCapability);
 
-                    RemoteSessionStateMachineEventArgs negotiationCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationCompleted);
+                    var negotiationCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationCompleted);
                     SessionDataStructureHandler.StateMachine.RaiseEvent(negotiationCompletedArg);
                 }
                 catch (PSRemotingDataStructureException dse)
                 {
-                    RemoteSessionStateMachineEventArgs negotiationFailedArg =
+                    var negotiationFailedArg =
                         new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationFailed,
                             dse);
                     SessionDataStructureHandler.StateMachine.RaiseEvent(negotiationFailedArg);
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Remoting
             }
             else
             {
-                PSRemotingDataStructureException reasonOfFailure =
+                var reasonOfFailure =
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientNegotiationFailed,
                         RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
                         serverProtocolVersion,
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Remoting
             Version clientPSVersion = Context.ClientCapability.PSVersion;
             if (!clientPSVersion.Equals(serverPSVersion))
             {
-                PSRemotingDataStructureException reasonOfFailure =
+                var reasonOfFailure =
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientNegotiationFailed,
                         RemoteDataNameStrings.PSVersion,
                         serverPSVersion.ToString(),
@@ -552,7 +552,7 @@ namespace System.Management.Automation.Remoting
             Version clientSerVersion = Context.ClientCapability.SerializationVersion;
             if (!clientSerVersion.Equals(serverSerVersion))
             {
-                PSRemotingDataStructureException reasonOfFailure =
+                var reasonOfFailure =
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientNegotiationFailed,
                         RemoteDataNameStrings.SerializationVersion,
                         serverSerVersion.ToString(),

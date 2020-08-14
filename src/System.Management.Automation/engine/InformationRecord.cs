@@ -178,7 +178,7 @@ namespace System.Management.Automation
 
         internal static InformationRecord FromPSObjectForRemoting(PSObject inputObject)
         {
-            InformationRecord informationRecord = new InformationRecord();
+            var informationRecord = new InformationRecord();
 
             informationRecord.MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, "MessageData");
             informationRecord.Source = RemotingDecoder.GetPropertyValue<string>(inputObject, "Source");

@@ -132,7 +132,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                T adaptedMember = msjObj.AdaptedMembers[name] as T;
+                var adaptedMember = msjObj.AdaptedMembers[name] as T;
                 PSObject.MemberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
@@ -172,7 +172,7 @@ namespace System.Management.Automation
                 return source as PSMemberInfoInternalCollection<U>;
             }
 
-            PSMemberInfoInternalCollection<U> returnValue = new PSMemberInfoInternalCollection<U>();
+            var returnValue = new PSMemberInfoInternalCollection<U>();
             foreach (T member in source)
             {
                 if (member is U tAsU)
@@ -262,7 +262,7 @@ namespace System.Management.Automation
             PSMemberViewTypes viewType,
             TypeTable backupTypeTable)
         {
-            Collection<CollectionEntry<PSMemberInfo>> returnValue = new Collection<CollectionEntry<PSMemberInfo>>();
+            var returnValue = new Collection<CollectionEntry<PSMemberInfo>>();
             if ((viewType & PSMemberViewTypes.Extended) == PSMemberViewTypes.Extended)
             {
                 if (backupTypeTable == null)
@@ -310,7 +310,7 @@ namespace System.Management.Automation
 
         private static Collection<CollectionEntry<PSMethodInfo>> GetMethodCollection()
         {
-            Collection<CollectionEntry<PSMethodInfo>> returnValue = new Collection<CollectionEntry<PSMethodInfo>>
+            var returnValue = new Collection<CollectionEntry<PSMethodInfo>>
             {
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
@@ -366,7 +366,7 @@ namespace System.Management.Automation
             PSMemberViewTypes viewType,
             TypeTable backupTypeTable)
         {
-            Collection<CollectionEntry<PSPropertyInfo>> returnValue = new Collection<CollectionEntry<PSPropertyInfo>>();
+            var returnValue = new Collection<CollectionEntry<PSPropertyInfo>>();
             if ((viewType & PSMemberViewTypes.Extended) == PSMemberViewTypes.Extended)
             {
                 if (backupTypeTable == null)
@@ -588,7 +588,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            string serializedData = info.GetValue("CliXml", typeof(string)) as string;
+            var serializedData = info.GetValue("CliXml", typeof(string)) as string;
 
             if (serializedData == null)
             {
@@ -815,7 +815,7 @@ namespace System.Management.Automation
             get
             {
                 object returnValue;
-                PSObject mshObj = this;
+                var mshObj = this;
                 do
                 {
                     returnValue = mshObj._immediateBaseObject;
@@ -988,7 +988,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object Base(object obj)
         {
-            PSObject mshObj = obj as PSObject;
+            var mshObj = obj as PSObject;
             if (mshObj == null)
             {
                 return obj;
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
 
         internal static string ToStringEnumerator(ExecutionContext context, IEnumerator enumerator, string separator, string format, IFormatProvider formatProvider)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             string separatorToUse = GetSeparator(context, separator);
             while (enumerator.MoveNext())
             {
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
 
         internal static string ToStringEnumerable(ExecutionContext context, IEnumerable enumerable, string separator, string format, IFormatProvider formatProvider)
         {
-            StringBuilder returnValue = new StringBuilder();
+            var returnValue = new StringBuilder();
             string separatorToUse = GetSeparator(context, separator);
             foreach (object obj in enumerable)
             {
@@ -1164,7 +1164,7 @@ namespace System.Management.Automation
 
         private static string ToStringEmptyBaseObject(ExecutionContext context, PSObject mshObj, string separator, string format, IFormatProvider formatProvider)
         {
-            StringBuilder returnValue = new StringBuilder("@{");
+            var returnValue = new StringBuilder("@{");
             bool isFirst = true;
             foreach (PSPropertyInfo property in mshObj.Properties)
             {
@@ -1306,7 +1306,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            PSObject mshObj = obj as PSObject;
+            var mshObj = obj as PSObject;
 
             #region plain object
             if (mshObj == null)
@@ -1357,12 +1357,12 @@ namespace System.Management.Automation
 
                 #region object ToString
 
-                IFormattable objFormattable = obj as IFormattable;
+                var objFormattable = obj as IFormattable;
                 try
                 {
                     if (objFormattable == null)
                     {
-                        Type type = obj as Type;
+                        var type = obj as Type;
                         if (type != null)
                         {
                             return Microsoft.PowerShell.ToStringCodeMethods.Type(type);
@@ -1499,7 +1499,7 @@ namespace System.Management.Automation
                 return baseObjString;
             }
 
-            IFormattable msjObjFormattable = baseObject as IFormattable;
+            var msjObjFormattable = baseObject as IFormattable;
             try
             {
                 var result = msjObjFormattable == null ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
@@ -1582,7 +1582,7 @@ namespace System.Management.Automation
         /// <returns>A copy of this object.</returns>
         public virtual PSObject Copy()
         {
-            PSObject returnValue = (PSObject)this.MemberwiseClone();
+            var returnValue = (PSObject)this.MemberwiseClone();
 
             if (this.BaseObject is PSCustomObject)
             {
@@ -1823,7 +1823,7 @@ namespace System.Management.Automation
             string serializedContent;
             if (this.ImmediateBaseObjectIsEmpty)
             {
-                PSObject serializeTarget = new PSObject(this);
+                var serializeTarget = new PSObject(this);
                 serializedContent = PSSerializer.Serialize(serializeTarget);
             }
             else
@@ -1861,7 +1861,7 @@ namespace System.Management.Automation
                 settings.ReplicateInstance(ownerObject);
             }
 
-            PSNoteProperty note = settings.Members[noteName] as PSNoteProperty;
+            var note = settings.Members[noteName] as PSNoteProperty;
             if (note == null)
             {
                 return defaultValue;
@@ -1958,7 +1958,7 @@ namespace System.Management.Automation
                 if (standardMemberSet != null)
                 {
                     standardMemberSet.ReplicateInstance(this);
-                    PSMemberInfoIntegratingCollection<PSMemberInfo> members =
+                    var members =
                         new PSMemberInfoIntegratingCollection<PSMemberInfo>(
                             standardMemberSet,
                             GetMemberCollection(PSMemberViewTypes.All, backupTypeTable));
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation
                 return serializedMembers;
             }
 
-            PSMemberInfoInternalCollection<PSPropertyInfo> returnValue = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+            var returnValue = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
             foreach (PSPropertyInfo member in particularAdapter.BaseGetMembers<PSPropertyInfo>(_immediateBaseObject))
             {
@@ -2157,7 +2157,7 @@ namespace System.Management.Automation
             {
                 Diagnostics.Assert(MustDeferIDMOP(), "Defer only works for idmop wrapped PSObjects");
 
-                Expression[] exprs = new Expression[args.Length + 1];
+                var exprs = new Expression[args.Length + 1];
                 BindingRestrictions restrictions = this.Restrictions == BindingRestrictions.Empty ? this.PSGetTypeRestriction() : this.Restrictions;
 
                 exprs[0] = Expression.Call(CachedReflectionInfo.PSObject_Base, this.Expression.Cast(typeof(object)));
@@ -2617,7 +2617,7 @@ namespace Microsoft.PowerShell
         /// <param name="instance">Instance of PSObject wrapping an XmlNode.</param>
         public static string XmlNode(PSObject instance)
         {
-            XmlNode node = (XmlNode)instance?.BaseObject;
+            var node = (XmlNode)instance?.BaseObject;
             if (node == null)
             {
                 return string.Empty;
@@ -2632,7 +2632,7 @@ namespace Microsoft.PowerShell
         /// <param name="instance">Instance of PSObject wrapping an XmlNodeList.</param>
         public static string XmlNodeList(PSObject instance)
         {
-            XmlNodeList nodes = (XmlNodeList)instance?.BaseObject;
+            var nodes = (XmlNodeList)instance?.BaseObject;
             if (nodes == null)
             {
                 return string.Empty;

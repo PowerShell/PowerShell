@@ -78,12 +78,12 @@ namespace System.Management.Automation.ComInterop
                 typeLib.GetTypeInfo(i, out ComTypes.ITypeInfo typeInfo);
                 if (typeKind == ComTypes.TYPEKIND.TKIND_COCLASS)
                 {
-                    ComTypeClassDesc classDesc = new ComTypeClassDesc(typeInfo, typeLibDesc);
+                    var classDesc = new ComTypeClassDesc(typeInfo, typeLibDesc);
                     typeLibDesc._classes.AddLast(classDesc);
                 }
                 else if (typeKind == ComTypes.TYPEKIND.TKIND_ENUM)
                 {
-                    ComTypeEnumDesc enumDesc = new ComTypeEnumDesc(typeInfo, typeLibDesc);
+                    var enumDesc = new ComTypeEnumDesc(typeInfo, typeLibDesc);
                     typeLibDesc._enums.Add(enumDesc.TypeName, enumDesc);
                 }
                 else if (typeKind == ComTypes.TYPEKIND.TKIND_ALIAS)
@@ -100,7 +100,7 @@ namespace System.Management.Automation.ComInterop
 
                         if (referencedTypeKind == ComTypes.TYPEKIND.TKIND_ENUM)
                         {
-                            ComTypeEnumDesc enumDesc = new ComTypeEnumDesc(referencedTypeInfo, typeLibDesc);
+                            var enumDesc = new ComTypeEnumDesc(referencedTypeInfo, typeLibDesc);
                             typeLibDesc._enums.Add(aliasName, enumDesc);
                         }
                     }
@@ -134,7 +134,7 @@ namespace System.Management.Automation.ComInterop
 
         public string[] GetMemberNames()
         {
-            string[] retval = new string[_enums.Count + _classes.Count];
+            var retval = new string[_enums.Count + _classes.Count];
             int i = 0;
             foreach (ComTypeClassDesc coclass in _classes)
             {

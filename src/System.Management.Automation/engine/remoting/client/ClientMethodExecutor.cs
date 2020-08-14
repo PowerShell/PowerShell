@@ -78,7 +78,7 @@ namespace System.Management.Automation.Remoting
             Guid clientPowerShellId,
             RemoteHostCall remoteHostCall)
         {
-            ClientMethodExecutor methodExecutor =
+            var methodExecutor =
                 new ClientMethodExecutor(transportManager, clientHost, runspacePool.InstanceId,
                     clientPowerShellId, remoteHostCall);
 
@@ -94,10 +94,10 @@ namespace System.Management.Automation.Remoting
             bool hostAllowSetShouldExit = false;
             if (clientHost != null)
             {
-                PSObject hostPrivateData = clientHost.PrivateData as PSObject;
+                var hostPrivateData = clientHost.PrivateData as PSObject;
                 if (hostPrivateData != null)
                 {
-                    PSNoteProperty allowSetShouldExit = hostPrivateData.Properties["AllowSetShouldExitFromRemote"] as PSNoteProperty;
+                    var allowSetShouldExit = hostPrivateData.Properties["AllowSetShouldExitFromRemote"] as PSNoteProperty;
                     hostAllowSetShouldExit = (allowSetShouldExit != null && allowSetShouldExit.Value is bool) ?
                         (bool)allowSetShouldExit.Value : false;
                 }
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private bool IsRunspacePushed(PSHost host)
         {
-            IHostSupportsInteractiveSession host2 = host as IHostSupportsInteractiveSession;
+            var host2 = host as IHostSupportsInteractiveSession;
             if (host2 == null) { return false; }
 
             // IsRunspacePushed can throw (not implemented exception)
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // Create an error record and write it to the stream.
-                ErrorRecord errorRecord = new ErrorRecord(
+                var errorRecord = new ErrorRecord(
                     exception,
                     nameof(PSRemotingErrorId.RemoteHostCallFailed),
                     ErrorCategory.InvalidArgument,

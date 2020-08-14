@@ -199,7 +199,7 @@ namespace System.Management.Automation
         /// <exception cref="PSInvalidCastException">When no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
-            string sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
+            var sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
             return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
         }
 
@@ -492,7 +492,7 @@ namespace System.Management.Automation
 
         private static IEnumerable TypicalEnumerable(object obj)
         {
-            IEnumerable e = (IEnumerable)obj;
+            var e = (IEnumerable)obj;
             try
             {
                 // Some IEnumerable implementations just return null.  Others
@@ -567,7 +567,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static PSDataCollection<PSObject> GetPSDataCollection(object inputValue)
         {
-            PSDataCollection<PSObject> result = new PSDataCollection<PSObject>();
+            var result = new PSDataCollection<PSObject>();
             if (inputValue != null)
             {
                 IEnumerator e = GetEnumerator(inputValue);
@@ -656,7 +656,7 @@ namespace System.Management.Automation
                 return false; // first is not null
             }
 
-            string firstString = first as string;
+            var firstString = first as string;
             string secondString;
             if (firstString != null)
             {
@@ -806,7 +806,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                string secondString = second as string;
+                var secondString = second as string;
                 if (secondString == null)
                 {
                     try
@@ -1016,7 +1016,7 @@ namespace System.Management.Automation
             if (objType == typeof(SwitchParameter))
                 return ((SwitchParameter)obj).ToBool();
 
-            IList objectArray = obj as IList;
+            var objectArray = obj as IList;
             if (objectArray != null)
             {
                 return IsTrue(objectArray);
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    IList firstElement = PSObject.Base(objectArray[0]) as IList;
+                    var firstElement = PSObject.Base(objectArray[0]) as IList;
 
                     if (firstElement == null)
                     {
@@ -1139,8 +1139,8 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    double wasDecimal = (double)Convert.ChangeType(decimalNumber, typeof(System.Double), CultureInfo.InvariantCulture);
-                    double otherDouble = (double)Convert.ChangeType(otherNumber, typeof(System.Double), CultureInfo.InvariantCulture);
+                    var wasDecimal = (double)Convert.ChangeType(decimalNumber, typeof(System.Double), CultureInfo.InvariantCulture);
+                    var otherDouble = (double)Convert.ChangeType(otherNumber, typeof(System.Double), CultureInfo.InvariantCulture);
                     return ((IComparable)wasDecimal).CompareTo(otherDouble);
                 }
                 catch (Exception) // We need to catch the generic exception because ChangeType throws unadvertised exceptions
@@ -1196,10 +1196,10 @@ namespace System.Management.Automation
         /// <returns>An object of the specified type, if the conversion was successful.  Returns null otherwise.</returns>
         internal static T FromObjectAs<T>(object castObject)
         {
-            T returnType = default(T);
+            var returnType = default(T);
 
             // First, see if we can cast the direct type
-            PSObject wrapperObject = castObject as PSObject;
+            var wrapperObject = castObject as PSObject;
             if (wrapperObject == null)
             {
                 try
@@ -1533,7 +1533,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                TargetInvocationException inner = e as TargetInvocationException;
+                var inner = e as TargetInvocationException;
                 string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
                 typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
                 return null;
@@ -1753,7 +1753,7 @@ namespace System.Management.Automation
             if (valueToConvert != null)
             {
                 ConstructorInfo toConstructor = resultType.GetConstructor(Type.EmptyTypes);
-                ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
+                var noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
                 return noArgumentConstructorConverter.Convert(PSObject.Base(valueToConvert), resultType, recursion, (PSObject)valueToConvert, formatProvider, null, ignoreUnknownMembers);
             }
 
@@ -2095,7 +2095,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                string sourceValueString = sourceValue as string;
+                var sourceValueString = sourceValue as string;
                 if (sourceValueString == null)
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
@@ -2318,7 +2318,7 @@ namespace System.Management.Automation
 
             try
             {
-                ManagementObject wmiObject = new ManagementObject(valueToConvertString);
+                var wmiObject = new ManagementObject(valueToConvertString);
 
                 // ManagementObject will not throw if path does not contain valid key
                 if (wmiObject.SystemProperties["__CLASS"] == null)
@@ -2361,7 +2361,7 @@ namespace System.Management.Automation
 
             try
             {
-                ManagementObjectSearcher objectSearcher = new ManagementObjectSearcher(valueToConvertString);
+                var objectSearcher = new ManagementObjectSearcher(valueToConvertString);
                 return objectSearcher;
             }
             catch (Exception objectSearcherException)
@@ -2397,7 +2397,7 @@ namespace System.Management.Automation
 
             try
             {
-                ManagementClass wmiClass = new System.Management.ManagementClass(valueToConvertString);
+                var wmiClass = new System.Management.ManagementClass(valueToConvertString);
 
                 // ManagementClass will not throw if the path specified is not
                 // a valid class.
@@ -2442,7 +2442,7 @@ namespace System.Management.Automation
 
             try
             {
-                DirectoryEntry entry = new DirectoryEntry(valueToConvertString);
+                var entry = new DirectoryEntry(valueToConvertString);
                 return entry;
             }
             catch (Exception adsiClassException)
@@ -2545,7 +2545,7 @@ namespace System.Management.Automation
                         settings.IgnoreComments = false;
 
                         XmlReader xmlReader = XmlReader.Create(textReader, settings);
-                        XmlDocument xmlDocument = new XmlDocument();
+                        var xmlDocument = new XmlDocument();
                         xmlDocument.PreserveWhitespace = false;
                         xmlDocument.Load(xmlReader);
                         return xmlDocument;
@@ -2587,7 +2587,7 @@ namespace System.Management.Automation
 
                 if ((valueConverter != null))
                 {
-                    TypeConverter valueTypeConverter = valueConverter as TypeConverter;
+                    var valueTypeConverter = valueConverter as TypeConverter;
                     if (valueTypeConverter != null)
                     {
                         typeConversion.WriteLine("Original type's converter is TypeConverter.");
@@ -2613,7 +2613,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
+                    var valuePSTypeConverter = valueConverter as PSTypeConverter;
                     if (valuePSTypeConverter != null)
                     {
                         typeConversion.WriteLine("Original type's converter is PSTypeConverter.");
@@ -2647,7 +2647,7 @@ namespace System.Management.Automation
                 valueConverter = GetConverter(resultType, backupTypeTable);
                 if (valueConverter != null)
                 {
-                    TypeConverter valueTypeConverter = valueConverter as TypeConverter;
+                    var valueTypeConverter = valueConverter as TypeConverter;
                     if (valueTypeConverter != null)
                     {
                         typeConversion.WriteLine("Destination type's converter is TypeConverter that can convert from originalType.");
@@ -2673,7 +2673,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
+                    var valuePSTypeConverter = valueConverter as PSTypeConverter;
                     if (valuePSTypeConverter != null)
                     {
                         typeConversion.WriteLine("Destination type's converter is PSTypeConverter.");
@@ -3294,7 +3294,7 @@ namespace System.Management.Automation
                                               TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting char to boolean.");
-            char c = (char)valueToConvert;
+            var c = (char)valueToConvert;
             return c != '\0';
         }
 
@@ -3478,7 +3478,7 @@ namespace System.Management.Automation
                                                      IFormatProvider formatProvider,
                                                      TypeTable backupTable)
         {
-            Array valueAsArray = valueToConvert as Array;
+            var valueAsArray = valueToConvert as Array;
             Type resultElementType = resultType.GetElementType();
             Array resultArray = Array.CreateInstance(resultElementType, valueAsArray.Length);
 
@@ -3500,7 +3500,7 @@ namespace System.Management.Automation
         {
             try
             {
-                ArrayList result = new ArrayList();
+                var result = new ArrayList();
                 Type resultElementType = resultType == typeof(Array) ? typeof(object) : resultType.GetElementType();
                 typeConversion.WriteLine("Converting elements in the value to convert to the result's element type.");
                 foreach (object obj in LanguagePrimitives.GetEnumerable(valueToConvert))
@@ -3537,7 +3537,7 @@ namespace System.Management.Automation
             try
             {
                 Type resultElementType = resultType == typeof(Array) ? typeof(object) : resultType.GetElementType();
-                ArrayList result = new ArrayList();
+                var result = new ArrayList();
                 // false means no further recursions and therefore no cycles
                 result.Add(ConvertTo(valueToConvert, resultElementType, false, formatProvider, backupTable));
                 return result.ToArray(resultElementType);
@@ -3586,7 +3586,7 @@ namespace System.Management.Automation
                                                   IFormatProvider formatProvider,
                                                   TypeTable backupTable)
         {
-            string valueAsString = valueToConvert as string;
+            var valueAsString = valueToConvert as string;
             object result = null;
 
             typeConversion.WriteLine("Calling case sensitive Enum.Parse");
@@ -3656,7 +3656,7 @@ namespace System.Management.Automation
                                                       TypeTable backupTable)
         {
             IEnumerator e = LanguagePrimitives.GetEnumerator(valueToConvert);
-            StringBuilder sbResult = new StringBuilder();
+            var sbResult = new StringBuilder();
             bool notFirst = false;
             while (ParserOps.MoveNext(null, null, e))
             {
@@ -3664,7 +3664,7 @@ namespace System.Management.Automation
                     sbResult.Append(',');
                 else
                     notFirst = true;
-                string current = e.Current as string;
+                var current = e.Current as string;
                 if (current == null)
                 {
                     // If the object wasn't a string, then we'll try and convert it into an enum value,
@@ -4002,7 +4002,7 @@ namespace System.Management.Automation
                         {
                             // Use provided property dictionary to perform conversion.
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
-                            IDictionary properties = valueToConvert as IDictionary;
+                            var properties = valueToConvert as IDictionary;
                             SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
                         }
 
@@ -4127,7 +4127,7 @@ namespace System.Management.Automation
             else
             {
                 // Convert the source object to a string...
-                string s = (string)LanguagePrimitives.ConvertTo(valueToConvert,
+                var s = (string)LanguagePrimitives.ConvertTo(valueToConvert,
                     typeof(string), recursion, formatProvider, backupTable);
                 // And try and convert that string to the target type...
                 return LanguagePrimitives.ConvertTo(s,
@@ -4396,7 +4396,7 @@ namespace System.Management.Automation
 
         private static IConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
-            ConversionTypePair pair = new ConversionTypePair(fromType, toType);
+            var pair = new ConversionTypePair(fromType, toType);
             IConversionData data = null;
             lock (s_converterCache)
             {
@@ -4589,7 +4589,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    Dictionary<string, object> properties = new Dictionary<string, object>();
+                    var properties = new Dictionary<string, object>();
                     foreach (var item in psObject.Properties)
                     {
                         if (item is PSProperty)
@@ -4618,10 +4618,10 @@ namespace System.Management.Automation
                 else
                 {
                     // Support PSObject to Strong type conversion.
-                    PSObject psBaseObject = baseObj as PSObject;
+                    var psBaseObject = baseObj as PSObject;
                     if (psBaseObject != null)
                     {
-                        Dictionary<string, object> properties = new Dictionary<string, object>();
+                        var properties = new Dictionary<string, object>();
                         foreach (var item in psBaseObject.Properties)
                         {
                             properties.Add(item.Name, item.Value);
@@ -4680,7 +4680,7 @@ namespace System.Management.Automation
 
                                         try
                                         {
-                                            PSObject propertyValue = prop.Value as PSObject;
+                                            var propertyValue = prop.Value as PSObject;
                                             if (propertyValue != null)
                                             {
                                                 propValue = LanguagePrimitives.ConvertPSObjectToType(propertyValue, propType, recursion, formatProvider, ignoreUnknownMembers);
@@ -4740,7 +4740,7 @@ namespace System.Management.Automation
 
         private static string GetAvailableProperties(PSObject pso)
         {
-            StringBuilder availableProperties = new StringBuilder();
+            var availableProperties = new StringBuilder();
             bool first = true;
 
             if (pso != null && pso.Properties != null)
@@ -5260,7 +5260,7 @@ namespace System.Management.Automation
 
                 if (parse != null)
                 {
-                    ConvertViaParseMethod converter = new ConvertViaParseMethod();
+                    var converter = new ConvertViaParseMethod();
                     converter.parse = parse;
                     return converter.ConvertWithCulture;
                 }
@@ -5280,7 +5280,7 @@ namespace System.Management.Automation
 
                 if (parse != null)
                 {
-                    ConvertViaParseMethod converter = new ConvertViaParseMethod();
+                    var converter = new ConvertViaParseMethod();
                     converter.parse = parse;
                     return converter.ConvertWithoutCulture;
                 }
@@ -5517,7 +5517,7 @@ namespace System.Management.Automation
 
             try
             {
-                ConvertViaNoArgumentConstructor noArgumentConstructorConverter =
+                var noArgumentConstructorConverter =
                     new ConvertViaNoArgumentConstructor(toConstructor, toType);
                 rank = ConversionRank.Constructor;
                 return noArgumentConstructorConverter.Convert;
@@ -5552,7 +5552,7 @@ namespace System.Management.Automation
             {
                 rank = castOperator.Name.Equals("op_Implicit", StringComparison.OrdinalIgnoreCase)
                     ? ConversionRank.ImplicitCast : ConversionRank.ExplicitCast;
-                ConvertViaCast converter = new ConvertViaCast();
+                var converter = new ConvertViaCast();
                 converter.cast = castOperator;
                 return converter.Convert;
             }
@@ -5634,7 +5634,7 @@ namespace System.Management.Automation
             }
 
             PSConverter<object> converter = null;
-            ConversionRank rank = ConversionRank.None;
+            var rank = ConversionRank.None;
 
             // If we've ever used ConstrainedLanguage, check if the target type is allowed
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
@@ -5664,7 +5664,7 @@ namespace System.Management.Automation
             }
 
             PSConverter<object> valueDependentConversion = null;
-            ConversionRank valueDependentRank = ConversionRank.None;
+            var valueDependentRank = ConversionRank.None;
             IConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
             if (conversionData != null)
             {
@@ -5716,7 +5716,7 @@ namespace System.Management.Automation
 
                                 if (resultConstructor != null || (toType.IsValueType && !toType.IsPrimitive))
                                 {
-                                    ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(resultConstructor, toType);
+                                    var noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(resultConstructor, toType);
                                     converter = noArgumentConstructorConverter.Convert;
                                     rank = ConversionRank.Constructor;
                                 }
@@ -5756,7 +5756,7 @@ namespace System.Management.Automation
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
                 || (converter != null && valueDependentConversion != null))
             {
-                ConvertCheckingForCustomConverter customConverter = new ConvertCheckingForCustomConverter();
+                var customConverter = new ConvertCheckingForCustomConverter();
                 customConverter.tryfirstConverter = valueDependentConversion;
                 customConverter.fallbackConverter = converter;
                 converter = customConverter.Convert;

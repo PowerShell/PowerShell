@@ -438,7 +438,7 @@ namespace System.Management.Automation
             }
             catch (InvalidRunspacePoolStateException)
             {
-                InvalidRunspaceStateException e =
+                var e =
                     new InvalidRunspaceStateException
                     (
                         StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline, _runspace.RunspaceStateInfo.State.ToString()),
@@ -472,7 +472,7 @@ namespace System.Management.Automation
             }
             catch (InvalidRunspacePoolStateException)
             {
-                InvalidRunspaceStateException e =
+                var e =
                     new InvalidRunspaceStateException
                     (
                         StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipelineConnect, _runspace.RunspaceStateInfo.State.ToString()),
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             }
             catch (InvalidRunspacePoolStateException)
             {
-                InvalidRunspaceStateException e =
+                var e =
                     new InvalidRunspaceStateException
                     (
                         StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipelineConnect, _runspace.RunspaceStateInfo.State.ToString()),
@@ -697,7 +697,7 @@ namespace System.Management.Automation
             }
             catch (InvalidRunspacePoolStateException)
             {
-                InvalidRunspaceStateException e =
+                var e =
                     new InvalidRunspaceStateException
                     (
                         StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline, _runspace.RunspaceStateInfo.State.ToString()),
@@ -874,7 +874,7 @@ namespace System.Management.Automation
 
             if (_pipelineStateInfo.State != PipelineState.NotStarted)
             {
-                InvalidPipelineStateException e =
+                var e =
                     new InvalidPipelineStateException
                     (
                         StringUtil.Format(RunspaceStrings.PipelineReInvokeNotAllowed),
@@ -886,7 +886,7 @@ namespace System.Management.Automation
 
             ((RemoteRunspace)_runspace).DoConcurrentCheckAndAddToRunningPipelines(this, syncCall);
 
-            PSInvocationSettings settings = new PSInvocationSettings();
+            var settings = new PSInvocationSettings();
             settings.AddToHistory = _addToHistory;
             settings.InvokeAndDisconnect = invokeAndDisconnect;
 
@@ -914,7 +914,7 @@ namespace System.Management.Automation
             // (connect reconstruction case) and new state is created.
 
             // Check to see if this pipeline already exists in the runspace.
-            RemotePipeline currentPipeline = (RemotePipeline)((RemoteRunspace)_runspace).GetCurrentlyRunningPipeline();
+            var currentPipeline = (RemotePipeline)((RemoteRunspace)_runspace).GetCurrentlyRunningPipeline();
             if (!ReferenceEquals(currentPipeline, this))
             {
                 ((RemoteRunspace)_runspace).DoConcurrentCheckAndAddToRunningPipelines(this, syncCall);
@@ -923,7 +923,7 @@ namespace System.Management.Automation
             // Initialize the PowerShell object if it hasn't been initialized before.
             if ((_powershell.RemotePowerShell) == null || !_powershell.RemotePowerShell.Initialized)
             {
-                PSInvocationSettings settings = new PSInvocationSettings();
+                var settings = new PSInvocationSettings();
                 settings.AddToHistory = _addToHistory;
 
                 _powershell.InitForRemotePipelineConnect(_inputStream, _outputStream, _errorStream, settings, RedirectShellErrorOutputPipe);
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void DoConcurrentCheck(bool syncCall)
         {
-            RemotePipeline currentPipeline =
+            var currentPipeline =
                 (RemotePipeline)((RemoteRunspace)_runspace).GetCurrentlyRunningPipeline();
 
             if (_isNested == false)

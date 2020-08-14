@@ -437,7 +437,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
+            var validateAttr = attribute as ValidateArgumentsAttribute;
             if (validateAttr != null)
             {
                 if (validationAttributes == null)
@@ -451,7 +451,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            AliasAttribute aliasAttr = attribute as AliasAttribute;
+            var aliasAttr = attribute as AliasAttribute;
             if (aliasAttr != null)
             {
                 if (aliases == null)
@@ -470,7 +470,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
+            var argumentAttr = attribute as ArgumentTransformationAttribute;
             if (argumentAttr != null)
             {
                 if (argTransformationAttributes == null)
@@ -479,35 +479,35 @@ namespace System.Management.Automation
                 return;
             }
 
-            AllowNullAttribute allowNullAttribute = attribute as AllowNullAttribute;
+            var allowNullAttribute = attribute as AllowNullAttribute;
             if (allowNullAttribute != null)
             {
                 this.AllowsNullArgument = true;
                 return;
             }
 
-            AllowEmptyStringAttribute allowEmptyStringAttribute = attribute as AllowEmptyStringAttribute;
+            var allowEmptyStringAttribute = attribute as AllowEmptyStringAttribute;
             if (allowEmptyStringAttribute != null)
             {
                 this.AllowsEmptyStringArgument = true;
                 return;
             }
 
-            AllowEmptyCollectionAttribute allowEmptyCollectionAttribute = attribute as AllowEmptyCollectionAttribute;
+            var allowEmptyCollectionAttribute = attribute as AllowEmptyCollectionAttribute;
             if (allowEmptyCollectionAttribute != null)
             {
                 this.AllowsEmptyCollectionArgument = true;
                 return;
             }
 
-            ObsoleteAttribute obsoleteAttr = attribute as ObsoleteAttribute;
+            var obsoleteAttr = attribute as ObsoleteAttribute;
             if (obsoleteAttr != null)
             {
                 ObsoleteAttribute = obsoleteAttr;
                 return;
             }
 
-            PSTypeNameAttribute psTypeNameAttribute = attribute as PSTypeNameAttribute;
+            var psTypeNameAttribute = attribute as PSTypeNameAttribute;
             if (psTypeNameAttribute != null)
             {
                 this.PSTypeName = psTypeNameAttribute.PSTypeName;
@@ -535,7 +535,7 @@ namespace System.Management.Automation
 
             if (ParameterSetData.ContainsKey(parameter.ParameterSetName))
             {
-                MetadataException e =
+                var e =
                     new MetadataException(
                         "ParameterDeclaredInParameterSetMultipleTimes",
                         null,
@@ -557,7 +557,7 @@ namespace System.Management.Automation
             }
 
             // Construct an instance of the parameter set specific data
-            ParameterSetSpecificMetadata parameterSetSpecificData = new ParameterSetSpecificMetadata(parameter);
+            var parameterSetSpecificData = new ParameterSetSpecificMetadata(parameter);
             ParameterSetData.Add(parameter.ParameterSetName, parameterSetSpecificData);
         }
 

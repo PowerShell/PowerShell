@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            StringCollection pathsToParse = new StringCollection();
+            var pathsToParse = new StringCollection();
 
             if (Resolve)
             {
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (separatorIndex < 0)
                         {
-                            FormatException e =
+                            var e =
                                 new FormatException(
                                     StringUtil.Format(NavigationResources.ParsePathFormatError, pathsToParse[index]));
                             WriteError(

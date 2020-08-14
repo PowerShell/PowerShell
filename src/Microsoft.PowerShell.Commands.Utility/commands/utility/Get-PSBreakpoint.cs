@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
                     Command,
                     delegate (Breakpoint breakpoint, string command)
                     {
-                        CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
+                        var commandBreakpoint = breakpoint as CommandBreakpoint;
 
                         if (commandBreakpoint == null)
                         {
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
                     Variable,
                     delegate (Breakpoint breakpoint, string variable)
                     {
-                        VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
+                        var variableBreakpoint = breakpoint as VariableBreakpoint;
 
                         if (variableBreakpoint == null)
                         {
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
         {
-            List<Breakpoint> output = new List<Breakpoint>();
+            var output = new List<Breakpoint>();
 
             for (int i = 0; i < input.Count; i++)
             {

@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override Hashtable CreateHashtableFromSingleType(object val)
         {
-            Hashtable hash = new Hashtable();
+            var hash = new Hashtable();
 
             hash.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, val);
             return hash;
@@ -176,14 +176,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // need to check the type:
             // it can be a string or a script block
-            ScriptBlock sb = val as ScriptBlock;
+            var sb = val as ScriptBlock;
             if (sb != null)
             {
-                PSPropertyExpression ex = new PSPropertyExpression(sb);
+                var ex = new PSPropertyExpression(sb);
                 return ex;
             }
 
-            string s = val as string;
+            var s = val as string;
             if (s != null)
             {
                 if (string.IsNullOrEmpty(s))
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ProcessEmptyStringError(originalParameterWasHashTable, invocationContext);
                 }
 
-                PSPropertyExpression ex = new PSPropertyExpression(s);
+                var ex = new PSPropertyExpression(s);
                 if (_noGlobbing)
                 {
                     if (ex.HasWildCardCharacters)
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // it is a string, need to check for partial match in a case insensitive way
             // and normalize
-            string s = val as string;
+            var s = val as string;
 
             if (!string.IsNullOrEmpty(s))
             {
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
-            string s = val as string;
+            var s = val as string;
             if (string.IsNullOrEmpty(s))
             {
                 string msg = StringUtil.Format(FormatAndOut_MshParameter.EmptyFormatStringValueError,
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we expect a string and we build a field formatting directive
-            FieldFormattingDirective directive = new FieldFormattingDirective();
+            var directive = new FieldFormattingDirective();
             directive.formatString = s;
             return directive;
         }

@@ -51,7 +51,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             string result = GetParentPath(path, root, context);
 
@@ -128,7 +128,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext getProviderPathContext =
+            var getProviderPathContext =
                 new CmdletProviderContext(context);
 
             try
@@ -472,7 +472,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             string result = NormalizeRelativePath(path, basePath, context);
 
@@ -520,7 +520,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext getProviderPathContext =
+            var getProviderPathContext =
                 new CmdletProviderContext(context);
 
             try
@@ -696,7 +696,7 @@ namespace System.Management.Automation
 
             Provider.CmdletProvider providerInstance = GetProviderInstance(provider);
 
-            NavigationCmdletProvider navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
+            var navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
             if (navigationCmdletProvider != null)
             {
                 try
@@ -772,7 +772,7 @@ namespace System.Management.Automation
             string parent,
             string child)
         {
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             return MakePath(parent, child, context);
         }
@@ -971,7 +971,7 @@ namespace System.Management.Automation
 
             string result = null;
 
-            NavigationCmdletProvider navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
+            var navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
 
             if (navigationCmdletProvider != null)
             {
@@ -1049,7 +1049,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
 
             string result = GetChildName(path, context);
 
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            var context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -1461,7 +1461,7 @@ namespace System.Management.Automation
                         PSDriveInfo unusedPSDriveInfo = null;
                         ProviderInfo destinationProvider = null;
 
-                        CmdletProviderContext destinationContext = new CmdletProviderContext(this.ExecutionContext);
+                        var destinationContext = new CmdletProviderContext(this.ExecutionContext);
 
                         string destinationProviderInternalPath = null;
 
@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            CmdletProviderContext newContext =
+            var newContext =
                 new CmdletProviderContext(context);
             newContext.SetFilters(
                 new Collection<string>(),

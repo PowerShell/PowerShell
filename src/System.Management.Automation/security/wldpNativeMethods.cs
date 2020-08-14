@@ -129,7 +129,7 @@ namespace System.Management.Automation.Security
 
             try
             {
-                WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();
+                var hostInformation = new WLDP_HOST_INFORMATION();
                 hostInformation.dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION;
                 hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
 
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Security
 
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
-            SaferPolicy result = SaferPolicy.Disallowed;
+            var result = SaferPolicy.Disallowed;
 
             // If path is NULL, we're looking for the system-wide lockdown policy.
             // Since there is no way to get that from AppLocker, we will test the policy
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Security
 
                             // Try again with the AppData\LocalLow\Temp path using known folder id:
                             // https://msdn.microsoft.com/library/dd378457.aspx
-                            Guid AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
+                            var AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
                             tempPath = GetKnownFolderPath(AppDatalocalLowFolderId) + @"\Temp";
                         }
 
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Security
 
                             if (exclusionPathsKey != null)
                             {
-                                string[] exclusionPaths = (string[])exclusionPathsKey;
+                                var exclusionPaths = (string[])exclusionPathsKey;
                                 foreach (string exclusionPath in exclusionPaths)
                                 {
                                     if (path.IndexOf(exclusionPath, StringComparison.OrdinalIgnoreCase) >= 0)
@@ -411,7 +411,7 @@ namespace System.Management.Automation.Security
         {
             try
             {
-                WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();
+                var hostInformation = new WLDP_HOST_INFORMATION();
                 hostInformation.dwRevision = WldpNativeConstants.WLDP_HOST_INFORMATION_REVISION;
                 hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
 

@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_hexBytes == string.Empty)
                 {
-                    StringBuilder line = new StringBuilder(BytesPerLine * 3);
+                    var line = new StringBuilder(BytesPerLine * 3);
 
                     foreach (var currentByte in Bytes)
                     {
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_ascii == string.Empty)
                 {
-                    StringBuilder ascii = new StringBuilder(BytesPerLine);
+                    var ascii = new StringBuilder(BytesPerLine);
 
                     foreach (var currentByte in Bytes)
                     {
@@ -305,11 +305,11 @@ namespace Microsoft.PowerShell.Commands
 
             // '16 + 3' comes from format "{0:X16}   ".
             // '16' comes from '[Uint64]::MaxValue.ToString("X").Length'.
-            StringBuilder nextLine = new StringBuilder(16 + 3 + (BytesPerLine * 3));
-            StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
+            var nextLine = new StringBuilder(16 + 3 + (BytesPerLine * 3));
+            var asciiEnd = new StringBuilder(BytesPerLine);
 
             // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
-            StringBuilder result = new StringBuilder(nextLine.Capacity + asciiEnd.Capacity + 1);
+            var result = new StringBuilder(nextLine.Capacity + asciiEnd.Capacity + 1);
 
             if (Bytes.Length > 0)
             {

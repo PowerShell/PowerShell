@@ -90,7 +90,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                object[] synopsisItems = (object[])LanguagePrimitives.ConvertTo(
+                var synopsisItems = (object[])LanguagePrimitives.ConvertTo(
                     commandDetails.Properties["Description"].Value,
                     typeof(object[]),
                     CultureInfo.InvariantCulture);
@@ -168,7 +168,7 @@ namespace System.Management.Automation
 
         internal Uri LookupUriFromCommandInfo()
         {
-            CommandTypes cmdTypesToLookFor = CommandTypes.Cmdlet;
+            var cmdTypesToLookFor = CommandTypes.Cmdlet;
             switch (this.HelpCategory)
             {
                 case Automation.HelpCategory.Cmdlet:
@@ -203,7 +203,7 @@ namespace System.Management.Automation
             string moduleName = string.Empty;
             if (this.FullHelp.Properties["ModuleName"] != null)
             {
-                PSNoteProperty moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
+                var moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
                 if (moduleNameNP != null)
                 {
                     LanguagePrimitives.TryConvertTo<string>(moduleNameNP.Value, CultureInfo.InvariantCulture,
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            object[] navigationLinks = (object[])LanguagePrimitives.ConvertTo(
+            var navigationLinks = (object[])LanguagePrimitives.ConvertTo(
                 relatedLinks.Properties["navigationLink"].Value,
                 typeof(object[]),
                 CultureInfo.InvariantCulture);
@@ -305,7 +305,7 @@ namespace System.Management.Automation
                 }
 
                 PSObject navigationLink = PSObject.AsPSObject(navigationLinkAsObject);
-                PSNoteProperty uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
+                var uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
                 if (uriNP != null)
                 {
                     string uriString = string.Empty;
@@ -397,14 +397,14 @@ namespace System.Management.Automation
             // by transforming them into the objects themselves. To ensure the consistency
             // of the help command result we change it back into an array.
             var param = prmts.Properties["parameter"].Value;
-            PSObject[] paramAsPSObjArray = new PSObject[1];
+            var paramAsPSObjArray = new PSObject[1];
 
             if (param is PSObject paramPSObj)
             {
                 paramAsPSObjArray[0] = paramPSObj;
             }
 
-            PSObject[] prmtArray = (PSObject[])LanguagePrimitives.ConvertTo(
+            var prmtArray = (PSObject[])LanguagePrimitives.ConvertTo(
                 paramAsPSObjArray[0] != null ? paramAsPSObjArray : param,
                 typeof(PSObject[]),
                 CultureInfo.InvariantCulture);
@@ -414,7 +414,7 @@ namespace System.Management.Automation
                 return prmtArray;
             }
 
-            List<PSObject> returnList = new List<PSObject>();
+            var returnList = new List<PSObject>();
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
             foreach (PSObject prmtr in prmtArray)
             {
@@ -453,7 +453,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                object[] descriptionItems = (object[])LanguagePrimitives.ConvertTo(
+                var descriptionItems = (object[])LanguagePrimitives.ConvertTo(
                     this.FullHelp.Properties["Description"].Value,
                     typeof(object[]),
                     CultureInfo.InvariantCulture);
@@ -466,7 +466,7 @@ namespace System.Management.Automation
                 // so starting with this assumption..I did an average of all the cmdlet
                 // help content available at the time of writing this code and came up
                 // with this number.
-                StringBuilder result = new StringBuilder(400);
+                var result = new StringBuilder(400);
                 foreach (object descriptionItem in descriptionItems)
                 {
                     if (descriptionItem == null)

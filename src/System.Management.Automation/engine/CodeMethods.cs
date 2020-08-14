@@ -70,18 +70,18 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentException(nameof(largeIntegerInstance));
             }
 
-            object largeIntObject = (object)largeIntegerInstance.BaseObject;
+            var largeIntObject = (object)largeIntegerInstance.BaseObject;
             Type largeIntType = largeIntObject.GetType();
 
             // the following code might throw exceptions,
             // engine will catch these exceptions
-            int highPart = (int)largeIntType.InvokeMember("HighPart",
+            var highPart = (int)largeIntType.InvokeMember("HighPart",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 largeIntObject,
                 null,
                 CultureInfo.InvariantCulture);
-            int lowPart = (int)largeIntType.InvokeMember("LowPart",
+            var lowPart = (int)largeIntType.InvokeMember("LowPart",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 largeIntObject,
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell
             // surprises.
 
             // (long)highPart << 32 | (uint)lowPart
-            byte[] data = new byte[8];
+            var data = new byte[8];
             BitConverter.GetBytes(lowPart).CopyTo(data, 0);
             BitConverter.GetBytes(highPart).CopyTo(data, 4);
 
@@ -114,12 +114,12 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentException(nameof(dnWithBinaryInstance));
             }
 
-            object dnWithBinaryObject = (object)dnWithBinaryInstance.BaseObject;
+            var dnWithBinaryObject = (object)dnWithBinaryInstance.BaseObject;
             Type dnWithBinaryType = dnWithBinaryObject.GetType();
 
             // the following code might throw exceptions,
             // engine will catch these exceptions
-            string dnString = (string)dnWithBinaryType.InvokeMember("DNString",
+            var dnString = (string)dnWithBinaryType.InvokeMember("DNString",
                 BindingFlags.GetProperty | BindingFlags.Public,
                 null,
                 dnWithBinaryObject,

@@ -40,7 +40,7 @@ namespace System.Management.Automation.Language
     {
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
-            IsSafeValueVisitor visitor = new IsSafeValueVisitor(safeValueContext);
+            var visitor = new IsSafeValueVisitor(safeValueContext);
             return visitor.IsAstSafe(ast);
         }
 
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Language
 
         public object VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst)
         {
-            object[] safeValues = new object[expandableStringExpressionAst.NestedExpressions.Count];
+            var safeValues = new object[expandableStringExpressionAst.NestedExpressions.Count];
             // retrieve OFS, and if it doesn't exist set it to space
             string ofs = null;
             if (t_context != null)
@@ -580,13 +580,13 @@ namespace System.Management.Automation.Language
                 // arbitrary script at this stage would be opening ourselves up to an attack
                 if (resultArray != null)
                 {
-                    object[] subExpressionResult = new object[resultArray.Length];
+                    var subExpressionResult = new object[resultArray.Length];
                     for (int subExpressionOffset = 0;
                         subExpressionOffset < subExpressionResult.Length;
                         subExpressionOffset++)
                     {
                         // check to see if there is an array in our array,
-                        object[] subResult = resultArray[subExpressionOffset] as object[];
+                        var subResult = resultArray[subExpressionOffset] as object[];
                         if (subResult != null)
                         {
                             subExpressionResult[subExpressionOffset] = string.Join(ofs, subResult);
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Language
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            ArrayList statementList = new ArrayList();
+            var statementList = new ArrayList();
             foreach (var statement in statementBlockAst.Statements)
             {
                 if (statement != null)
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Language
         public object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
             // An array literal is safe
-            ArrayList arrayElements = new ArrayList();
+            var arrayElements = new ArrayList();
             foreach (var element in arrayLiteralAst.Elements)
             {
                 arrayElements.Add(element.Accept(this));
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Language
 
         public object VisitHashtable(HashtableAst hashtableAst)
         {
-            Hashtable hashtable = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            var hashtable = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
             foreach (var pair in hashtableAst.KeyValuePairs)
             {
                 var key = pair.Item1.Accept(this);

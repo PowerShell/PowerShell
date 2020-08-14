@@ -291,7 +291,7 @@ namespace System.Diagnostics.Eventing
         {
             dataDescriptor->Reserved = 0;
 
-            string sRet = data as string;
+            var sRet = data as string;
             if (sRet != null)
             {
                 dataDescriptor->Size = (uint)((sRet.Length + 1) * 2);
@@ -306,105 +306,105 @@ namespace System.Diagnostics.Eventing
             else if (data is IntPtr)
             {
                 dataDescriptor->Size = (uint)sizeof(IntPtr);
-                IntPtr* intptrPtr = (IntPtr*)dataBuffer;
+                var intptrPtr = (IntPtr*)dataBuffer;
                 *intptrPtr = (IntPtr)data;
                 dataDescriptor->DataPointer = (ulong)intptrPtr;
             }
             else if (data is int)
             {
                 dataDescriptor->Size = (uint)sizeof(int);
-                int* intptrPtr = (int*)dataBuffer;
+                var intptrPtr = (int*)dataBuffer;
                 *intptrPtr = (int)data;
                 dataDescriptor->DataPointer = (ulong)intptrPtr;
             }
             else if (data is long)
             {
                 dataDescriptor->Size = (uint)sizeof(long);
-                long* longptr = (long*)dataBuffer;
+                var longptr = (long*)dataBuffer;
                 *longptr = (long)data;
                 dataDescriptor->DataPointer = (ulong)longptr;
             }
             else if (data is uint)
             {
                 dataDescriptor->Size = (uint)sizeof(uint);
-                uint* uintptr = (uint*)dataBuffer;
+                var uintptr = (uint*)dataBuffer;
                 *uintptr = (uint)data;
                 dataDescriptor->DataPointer = (ulong)uintptr;
             }
             else if (data is UInt64)
             {
                 dataDescriptor->Size = (uint)sizeof(ulong);
-                UInt64* ulongptr = (ulong*)dataBuffer;
+                var ulongptr = (ulong*)dataBuffer;
                 *ulongptr = (ulong)data;
                 dataDescriptor->DataPointer = (ulong)ulongptr;
             }
             else if (data is char)
             {
                 dataDescriptor->Size = (uint)sizeof(char);
-                char* charptr = (char*)dataBuffer;
+                var charptr = (char*)dataBuffer;
                 *charptr = (char)data;
                 dataDescriptor->DataPointer = (ulong)charptr;
             }
             else if (data is byte)
             {
                 dataDescriptor->Size = (uint)sizeof(byte);
-                byte* byteptr = (byte*)dataBuffer;
+                var byteptr = (byte*)dataBuffer;
                 *byteptr = (byte)data;
                 dataDescriptor->DataPointer = (ulong)byteptr;
             }
             else if (data is short)
             {
                 dataDescriptor->Size = (uint)sizeof(short);
-                short* shortptr = (short*)dataBuffer;
+                var shortptr = (short*)dataBuffer;
                 *shortptr = (short)data;
                 dataDescriptor->DataPointer = (ulong)shortptr;
             }
             else if (data is sbyte)
             {
                 dataDescriptor->Size = (uint)sizeof(sbyte);
-                sbyte* sbyteptr = (sbyte*)dataBuffer;
+                var sbyteptr = (sbyte*)dataBuffer;
                 *sbyteptr = (sbyte)data;
                 dataDescriptor->DataPointer = (ulong)sbyteptr;
             }
             else if (data is ushort)
             {
                 dataDescriptor->Size = (uint)sizeof(ushort);
-                ushort* ushortptr = (ushort*)dataBuffer;
+                var ushortptr = (ushort*)dataBuffer;
                 *ushortptr = (ushort)data;
                 dataDescriptor->DataPointer = (ulong)ushortptr;
             }
             else if (data is float)
             {
                 dataDescriptor->Size = (uint)sizeof(float);
-                float* floatptr = (float*)dataBuffer;
+                var floatptr = (float*)dataBuffer;
                 *floatptr = (float)data;
                 dataDescriptor->DataPointer = (ulong)floatptr;
             }
             else if (data is double)
             {
                 dataDescriptor->Size = (uint)sizeof(double);
-                double* doubleptr = (double*)dataBuffer;
+                var doubleptr = (double*)dataBuffer;
                 *doubleptr = (double)data;
                 dataDescriptor->DataPointer = (ulong)doubleptr;
             }
             else if (data is bool)
             {
                 dataDescriptor->Size = (uint)sizeof(bool);
-                bool* boolptr = (bool*)dataBuffer;
+                var boolptr = (bool*)dataBuffer;
                 *boolptr = (bool)data;
                 dataDescriptor->DataPointer = (ulong)boolptr;
             }
             else if (data is Guid)
             {
                 dataDescriptor->Size = (uint)sizeof(Guid);
-                Guid* guidptr = (Guid*)dataBuffer;
+                var guidptr = (Guid*)dataBuffer;
                 *guidptr = (Guid)data;
                 dataDescriptor->DataPointer = (ulong)guidptr;
             }
             else if (data is decimal)
             {
                 dataDescriptor->Size = (uint)sizeof(decimal);
-                decimal* decimalptr = (decimal*)dataBuffer;
+                var decimalptr = (decimal*)dataBuffer;
                 *decimalptr = (decimal)data;
                 dataDescriptor->DataPointer = (ulong)decimalptr;
             }
@@ -630,8 +630,8 @@ namespace System.Diagnostics.Eventing
                         uint totalEventSize = 0;
                         int index;
                         int stringIndex = 0;
-                        int[] stringPosition = new int[s_etwAPIMaxStringCount]; // used to keep the position of strings in the eventPayload parameter
-                        string[] dataString = new string[s_etwAPIMaxStringCount]; // string arrays from the eventPayload parameter
+                        var stringPosition = new int[s_etwAPIMaxStringCount]; // used to keep the position of strings in the eventPayload parameter
+                        var dataString = new string[s_etwAPIMaxStringCount]; // string arrays from the eventPayload parameter
                         EventData* userData = stackalloc EventData[argCount];             // allocation for the data descriptors
                         userDataPtr = (EventData*)userData;
                         byte* dataBuffer = stackalloc byte[s_basicTypeAllocationBufferSize * argCount]; // 16 byte for unboxing non-string argument
@@ -779,7 +779,7 @@ namespace System.Diagnostics.Eventing
         [System.Security.SecurityCritical]
         public static Guid CreateActivityId()
         {
-            Guid newId = new Guid();
+            var newId = new Guid();
             UnsafeNativeMethods.EventActivityIdControl((int)ActivityControl.EVENT_ACTIVITY_CTRL_CREATE_ID, ref newId);
             return newId;
         }

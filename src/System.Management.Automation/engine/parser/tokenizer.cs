@@ -229,7 +229,7 @@ namespace System.Management.Automation.Language
         /// <returns>A copy of the DynamicKeyword.</returns>
         public DynamicKeyword Copy()
         {
-            DynamicKeyword keyword = new DynamicKeyword()
+            var keyword = new DynamicKeyword()
             {
                 ImplementingModule = this.ImplementingModule,
                 ImplementingModuleVersion = this.ImplementingModuleVersion,
@@ -759,7 +759,7 @@ namespace System.Management.Automation.Language
             this.RequiresTokens = null;
             _beginSignatureExtent = null;
 
-            List<int> lineStartMap = new List<int>(100) { 0 };
+            var lineStartMap = new List<int>(100) { 0 };
             for (int i = 0; i < input.Length; ++i)
             {
                 char c = input[i];
@@ -788,7 +788,7 @@ namespace System.Management.Automation.Language
 
         internal TokenizerState StartNestedScan(UnscannedSubExprToken nestedText)
         {
-            TokenizerState ts = new TokenizerState
+            var ts = new TokenizerState
             {
                 CurrentIndex = _currentIndex,
                 NestedTokensAdjustment = _nestedTokensAdjustment,
@@ -2323,7 +2323,7 @@ namespace System.Management.Automation.Language
         private TokenFlags ScanStringLiteral(StringBuilder sb)
         {
             int errorIndex = _currentIndex - 1;
-            TokenFlags flags = TokenFlags.None;
+            var flags = TokenFlags.None;
 
             char c = GetChar();
             while (c != '\0' || !AtEof())
@@ -2372,9 +2372,9 @@ namespace System.Management.Automation.Language
             var sb = GetStringBuilder();
             sb.Append("$(");
             int parenCount = 1;
-            TokenFlags flags = TokenFlags.None;
+            var flags = TokenFlags.None;
             bool scanning = true;
-            List<int> skippedCharOffsets = new List<int>();
+            var skippedCharOffsets = new List<int>();
             while (scanning)
             {
                 char c = GetChar();
@@ -2454,7 +2454,7 @@ namespace System.Management.Automation.Language
 
         private TokenFlags ScanStringExpandable(StringBuilder sb, StringBuilder formatSb, List<Token> nestedTokens)
         {
-            TokenFlags flags = TokenFlags.None;
+            var flags = TokenFlags.None;
             int errorIndex = _currentIndex - 1;
 
             char c = GetChar();
@@ -2575,7 +2575,7 @@ namespace System.Management.Automation.Language
         {
             var sb = GetStringBuilder();
             var formatSb = GetStringBuilder();
-            List<Token> nestedTokens = new List<Token>();
+            var nestedTokens = new List<Token>();
 
             TokenFlags flags = ScanStringExpandable(sb, formatSb, nestedTokens);
             return NewStringExpandableToken(GetStringAndRelease(sb), GetStringAndRelease(formatSb), TokenKind.StringExpandable, nestedTokens, flags);
@@ -2700,7 +2700,7 @@ namespace System.Management.Automation.Language
                 return NewStringLiteralToken(string.Empty, TokenKind.HereStringLiteral, TokenFlags.TokenInError);
             }
 
-            TokenFlags flags = TokenFlags.None;
+            var flags = TokenFlags.None;
             var sb = GetStringBuilder();
             Action<char> appendChar = c => sb.Append(c);
             if (!ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar, ref falseFooterOffset))
@@ -2769,8 +2769,8 @@ namespace System.Management.Automation.Language
                 return NewStringExpandableToken(string.Empty, string.Empty, TokenKind.HereStringExpandable, null, TokenFlags.TokenInError);
             }
 
-            TokenFlags flags = TokenFlags.None;
-            List<Token> nestedTokens = new List<Token>();
+            var flags = TokenFlags.None;
+            var nestedTokens = new List<Token>();
             int falseFooterOffset = -1;
             var sb = GetStringBuilder();
             var formatSb = GetStringBuilder();
@@ -3411,7 +3411,7 @@ namespace System.Management.Automation.Language
             // Make sure our token does not start with any of these characters.
             // Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
 
-            List<Token> nestedTokens = new List<Token>();
+            var nestedTokens = new List<Token>();
             var formatSb = GetStringBuilder();
             formatSb.Append(sb);
 

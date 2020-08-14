@@ -181,7 +181,7 @@ namespace System.Management.Automation.Remoting.Client
                 Marshal.StructureToPtr(obj, ptr, false);
 
                 // Now create the MarshalledObject and return.
-                MarshalledObject result = new MarshalledObject();
+                var result = new MarshalledObject();
                 result._dataPtr = ptr;
 
                 return result;
@@ -418,7 +418,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="thumbPrint"></param>
             internal WSManCertificateThumbprintCredentials(string thumbPrint)
             {
-                WSManThumbprintStruct cred = new WSManThumbprintStruct();
+                var cred = new WSManThumbprintStruct();
                 cred.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_CLIENT_CERTIFICATE;
                 cred.certificateThumbprint = thumbPrint;
                 cred.reserved = IntPtr.Zero;
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             internal static WSManData_UnToMan UnMarshal(WSManDataStruct dataStruct)
             {
-                WSManData_UnToMan newData = new WSManData_UnToMan();
+                var newData = new WSManData_UnToMan();
 
                 newData._type = dataStruct.type;
                 newData._bufferLength = dataStruct.binaryOrTextData.bufferLength;
@@ -843,7 +843,7 @@ namespace System.Management.Automation.Remoting.Client
                         if (dataStruct.binaryOrTextData.bufferLength > 0)
                         {
                             // copy data from unmanaged heap to managed heap.
-                            byte[] dataRecvd = new byte[dataStruct.binaryOrTextData.bufferLength];
+                            var dataRecvd = new byte[dataStruct.binaryOrTextData.bufferLength];
                             Marshal.Copy(
                                 dataStruct.binaryOrTextData.data,
                                 dataRecvd,
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (resultInternal.streamIDsCount > 0)
                     {
                         idsArray = new string[resultInternal.streamIDsCount];
-                        IntPtr[] ptrs = new IntPtr[resultInternal.streamIDsCount];
+                        var ptrs = new IntPtr[resultInternal.streamIDsCount];
                         Marshal.Copy(resultInternal.streamIDs, ptrs, 0, resultInternal.streamIDsCount); // Marshal the array of string pointers
                         for (int i = 0; i < resultInternal.streamIDsCount; i++)
                         {
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
                 }
 
-                WSManOptionSet result = new WSManOptionSet();
+                var result = new WSManOptionSet();
                 result.optionsCount = resultInternal.optionsCount;
                 result.options = tempOptions;
                 result.optionsMustUnderstand = resultInternal.optionsMustUnderstand;
@@ -1300,7 +1300,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             internal static WSManCommandArgSet UnMarshal(IntPtr unmanagedData)
             {
-                WSManCommandArgSet result = new WSManCommandArgSet();
+                var result = new WSManCommandArgSet();
 
                 if (IntPtr.Zero != unmanagedData)
                 {
@@ -1310,7 +1310,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (resultInternal.argsCount > 0)
                     {
                         tempArgs = new string[resultInternal.argsCount];
-                        IntPtr[] ptrs = new IntPtr[resultInternal.argsCount];
+                        var ptrs = new IntPtr[resultInternal.argsCount];
                         Marshal.Copy(resultInternal.args, ptrs, 0, resultInternal.argsCount); // Marshal the array of string pointers
                         for (int i = 0; i < resultInternal.argsCount; i++)
                         {
@@ -1587,7 +1587,7 @@ namespace System.Management.Automation.Remoting.Client
             internal WSManProxyInfo(ProxyAccessType proxyAccessType,
                 WSManUserNameAuthenticationCredentials authCredentials)
             {
-                WSManProxyInfoInternal internalInfo = new WSManProxyInfoInternal();
+                var internalInfo = new WSManProxyInfoInternal();
                 internalInfo.proxyAccessType = (int)proxyAccessType;
                 internalInfo.proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct();
                 internalInfo.proxyAuthCredentialsStruct.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
@@ -1839,7 +1839,7 @@ namespace System.Management.Automation.Remoting.Client
 
             internal static WSManCreateShellDataResult UnMarshal(IntPtr unmanagedData)
             {
-                WSManCreateShellDataResult result = new WSManCreateShellDataResult();
+                var result = new WSManCreateShellDataResult();
 
                 if (IntPtr.Zero != unmanagedData)
                 {
@@ -1894,7 +1894,7 @@ namespace System.Management.Automation.Remoting.Client
                     connectData = Marshal.PtrToStringUni(resultInternal.data.textData.text, resultInternal.data.textData.textLength);
                 }
 
-                WSManConnectDataResult result = new WSManConnectDataResult();
+                var result = new WSManConnectDataResult();
                 result.data = connectData;
 
                 return result;
@@ -1962,7 +1962,7 @@ namespace System.Management.Automation.Remoting.Client
                     "ReceiveDataResult can receive only binary data");
 #endif
 
-                WSManReceiveDataResult result = new WSManReceiveDataResult();
+                var result = new WSManReceiveDataResult();
                 result.data = dataRecvd;
                 result.stream = result1.streamId;
 
@@ -2298,7 +2298,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
                 }
 
-                WSManSelectorSet result = new WSManSelectorSet();
+                var result = new WSManSelectorSet();
                 result.numberKeys = resultInternal.numberKeys;
                 result.keys = tempKeys;
 
@@ -2476,7 +2476,7 @@ namespace System.Management.Automation.Remoting.Client
             // does not copy the entire string if there are delimiters ('\0')
             // in the middle of a string.
             int bufferSizeInBytes = bufferSize * 2;
-            byte[] msgBufferPtr = new byte[bufferSizeInBytes];
+            var msgBufferPtr = new byte[bufferSizeInBytes];
 
             // Now get the actual value
             int messageLength;
@@ -2826,7 +2826,7 @@ namespace System.Management.Automation.Remoting.Client
             // does not copy the entire string if there are delimiters ('\0')
             // in the middle of a string.
             int bufferSizeInBytes = bufferSize * 2;
-            byte[] msgBufferPtr = new byte[bufferSizeInBytes];
+            var msgBufferPtr = new byte[bufferSizeInBytes];
 
             // Now get the actual value
             int messageLength;

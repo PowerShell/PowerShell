@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Create the alias info
 
-            AliasInfo aliasToSet =
+            var aliasToSet =
                 new AliasInfo(
                     Name,
                     Value,

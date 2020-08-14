@@ -481,7 +481,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (PipelineState != PipelineState.NotStarted)
                 {
-                    InvalidPipelineStateException e =
+                    var e =
                         new InvalidPipelineStateException
                         (
                             StringUtil.Format(RunspaceStrings.PipelineReInvokeNotAllowed),
@@ -614,7 +614,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal void DoConcurrentCheck(bool syncCall, object syncObject, bool isInLock)
         {
-            PipelineBase currentPipeline = (PipelineBase)RunspaceBase.GetCurrentlyRunningPipeline();
+            var currentPipeline = (PipelineBase)RunspaceBase.GetCurrentlyRunningPipeline();
 
             if (IsNested == false)
             {

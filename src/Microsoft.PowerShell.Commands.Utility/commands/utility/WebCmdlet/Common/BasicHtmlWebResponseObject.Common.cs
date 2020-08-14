@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     EnsureHtmlParser();
 
-                    List<PSObject> parsedFields = new List<PSObject>();
+                    var parsedFields = new List<PSObject>();
                     MatchCollection fieldMatch = s_inputFieldRegex.Matches(Content);
                     foreach (Match field in fieldMatch)
                     {
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     EnsureHtmlParser();
 
-                    List<PSObject> parsedLinks = new List<PSObject>();
+                    var parsedLinks = new List<PSObject>();
                     MatchCollection linkMatch = s_linkRegex.Matches(Content);
                     foreach (Match link in linkMatch)
                     {
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     EnsureHtmlParser();
 
-                    List<PSObject> parsedImages = new List<PSObject>();
+                    var parsedImages = new List<PSObject>();
                     MatchCollection imageMatch = s_imageRegex.Matches(Content);
                     foreach (Match image in imageMatch)
                     {
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
 
         private PSObject CreateHtmlObject(string html, string tagName)
         {
-            PSObject elementObject = new PSObject();
+            var elementObject = new PSObject();
 
             elementObject.Properties.Add(new PSNoteProperty("outerHTML", html));
             elementObject.Properties.Add(new PSNoteProperty("tagName", tagName));

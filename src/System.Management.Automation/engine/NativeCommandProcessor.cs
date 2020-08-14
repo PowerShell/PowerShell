@@ -68,7 +68,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(stream != null, "caller should validate the parameter");
 
-            MinishellStream ms = MinishellStream.Unknown;
+            var ms = MinishellStream.Unknown;
             if (OutputStream.Equals(stream, StringComparison.OrdinalIgnoreCase))
             {
                 ms = MinishellStream.Output;
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         {
             get
             {
-                NativeCommand command = this.Command as NativeCommand;
+                var command = this.Command as NativeCommand;
                 Diagnostics.Assert(command != null, "this.Command is created in the constructor.");
                 return command;
             }
@@ -541,7 +541,7 @@ namespace System.Management.Automation
                     // If input is redirected, start input to process.
                     if (startInfo.RedirectStandardInput)
                     {
-                        NativeCommandIOFormat inputFormat = NativeCommandIOFormat.Text;
+                        var inputFormat = NativeCommandIOFormat.Text;
                         if (_isMiniShell)
                         {
                             inputFormat = ((MinishellParameterBinderController)NativeParameterBinderController).InputFormat;
@@ -589,7 +589,7 @@ namespace System.Management.Automation
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
                     this.NativeCommandName, exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+                var appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -701,8 +701,8 @@ namespace System.Management.Automation
                         Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
                             new Host.Rectangle(_startPosition, endPosition));
 
-                        StringBuilder lineContents = new StringBuilder();
-                        StringBuilder bufferText = new StringBuilder();
+                        var lineContents = new StringBuilder();
+                        var bufferText = new StringBuilder();
 
                         for (int row = 0; row < bufferContents.GetLength(0); row++)
                         {
@@ -755,7 +755,7 @@ namespace System.Management.Automation
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
                     this.NativeCommandName, exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+                var appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -840,7 +840,7 @@ namespace System.Management.Automation
 
             public static ProcessWithParentId[] Construct(Process[] originalProcCollection)
             {
-                ProcessWithParentId[] result = new ProcessWithParentId[originalProcCollection.Length];
+                var result = new ProcessWithParentId[originalProcCollection.Length];
                 for (int index = 0; index < originalProcCollection.Length; index++)
                 {
                     result[index] = new ProcessWithParentId(originalProcCollection[index]);
@@ -950,7 +950,7 @@ namespace System.Management.Automation
         {
             if (!Platform.IsWindowsDesktop) { return false; }
 
-            SHFILEINFO shinfo = new SHFILEINFO();
+            var shinfo = new SHFILEINFO();
             IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
 
             switch ((int)type)
@@ -1031,7 +1031,7 @@ namespace System.Management.Automation
 
             if (outputValue.Stream == MinishellStream.Error)
             {
-                ErrorRecord record = outputValue.Data as ErrorRecord;
+                var record = outputValue.Data as ErrorRecord;
                 Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
                 record.SetInvocationInfo(this.Command.MyInvocation);
                 this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
@@ -1042,25 +1042,25 @@ namespace System.Management.Automation
             }
             else if (outputValue.Stream == MinishellStream.Debug)
             {
-                string temp = outputValue.Data as string;
+                var temp = outputValue.Data as string;
                 Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
                 this.Command.PSHostInternal.UI.WriteDebugLine(temp);
             }
             else if (outputValue.Stream == MinishellStream.Verbose)
             {
-                string temp = outputValue.Data as string;
+                var temp = outputValue.Data as string;
                 Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
                 this.Command.PSHostInternal.UI.WriteVerboseLine(temp);
             }
             else if (outputValue.Stream == MinishellStream.Warning)
             {
-                string temp = outputValue.Data as string;
+                var temp = outputValue.Data as string;
                 Dbg.Assert(temp != null, "ProcessReader should ensure that data is string");
                 this.Command.PSHostInternal.UI.WriteWarningLine(temp);
             }
             else if (outputValue.Stream == MinishellStream.Progress)
             {
-                PSObject temp = outputValue.Data as PSObject;
+                var temp = outputValue.Data as PSObject;
                 if (temp != null)
                 {
                     long sourceId = 0;
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation
             }
             else if (outputValue.Stream == MinishellStream.Information)
             {
-                InformationRecord record = outputValue.Data as InformationRecord;
+                var record = outputValue.Data as InformationRecord;
                 Dbg.Assert(record != null, "ProcessReader should ensure that data is InformationRecord");
                 this.commandRuntime.WriteInformation(record);
             }
@@ -1101,7 +1101,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            var startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
 
             if (IsExecutable(this.Path))
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
             // So we delay the parameter binding. Do parameter binding for minishell now.
             if (_isMiniShell)
             {
-                MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
+                var mpc = (MinishellParameterBinderController)NativeParameterBinderController;
                 mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
@@ -1364,8 +1364,8 @@ namespace System.Management.Automation
         private static string FindExecutable(string filename)
         {
             // Preallocate a
-            StringBuilder objResultBuffer = new StringBuilder(MaxExecutablePath);
-            IntPtr resultCode = (IntPtr)0;
+            var objResultBuffer = new StringBuilder(MaxExecutablePath);
+            var resultCode = (IntPtr)0;
 
             try
             {
@@ -1590,14 +1590,14 @@ namespace System.Management.Automation
                 using (var streamReader = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
                 {
                     XmlReader xmlReader = XmlReader.Create(streamReader, InternalDeserializer.XmlReaderSettingsForCliXml);
-                    Deserializer des = new Deserializer(xmlReader);
+                    var des = new Deserializer(xmlReader);
                     while (!des.Done())
                     {
                         string streamName;
                         object obj = des.Deserialize(out streamName);
 
                         // Decide the stream to which data belongs
-                        MinishellStream stream = MinishellStream.Unknown;
+                        var stream = MinishellStream.Unknown;
                         if (streamName != null)
                         {
                             stream = StringToMinishellStreamConverter.ToMinishellStream(streamName);
@@ -1685,11 +1685,11 @@ namespace System.Management.Automation
                     isOutput ? MinishellStream.Output : MinishellStream.Error,
                     _processFileName,
                     originalException.Message);
-                XmlException newException = new XmlException(
+                var newException = new XmlException(
                     message,
                     originalException);
 
-                ErrorRecord error = new ErrorRecord(
+                var error = new ErrorRecord(
                     newException,
                     "ProcessStreamReader_CliXmlError",
                     ErrorCategory.SyntaxError,

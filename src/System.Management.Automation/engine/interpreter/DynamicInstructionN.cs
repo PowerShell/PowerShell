@@ -49,7 +49,7 @@ namespace System.Management.Automation.Interpreter
         public override int Run(InterpretedFrame frame)
         {
             int first = frame.StackIndex - _argumentCount;
-            object[] args = new object[1 + _argumentCount];
+            var args = new object[1 + _argumentCount];
             args[0] = _site;
             for (int i = 0; i < _argumentCount; i++)
             {

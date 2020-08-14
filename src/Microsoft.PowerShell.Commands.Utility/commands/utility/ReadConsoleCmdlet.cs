@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
                 IEnumerator e = LanguagePrimitives.GetEnumerator(_prompt);
                 if (e != null)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    var sb = new StringBuilder();
 
                     while (e.MoveNext())
                     {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
                         // If it is, then the PSObject ToString() will take care of it.  We could go on unwrapping collections
                         // forever, but it's a pretty common use case to see a varags confused with an array.
 
-                        string element = (string)LanguagePrimitives.ConvertTo(e.Current, typeof(string), CultureInfo.InvariantCulture);
+                        var element = (string)LanguagePrimitives.ConvertTo(e.Current, typeof(string), CultureInfo.InvariantCulture);
 
                         if (!string.IsNullOrEmpty(element))
                         {
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
                     promptString = (string)LanguagePrimitives.ConvertTo(_prompt, typeof(string), CultureInfo.InvariantCulture);
                 }
 
-                FieldDescription fd = new FieldDescription(promptString);
+                var fd = new FieldDescription(promptString);
                 if (AsSecureString || MaskInput)
                 {
                     fd.SetParameterType(typeof(SecureString));
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
                     fd.SetParameterType(typeof(string));
                 }
 
-                Collection<FieldDescription> fdc = new Collection<FieldDescription>();
+                var fdc = new Collection<FieldDescription>();
                 fdc.Add(fd);
 
                 Dictionary<string, PSObject> result = Host.UI.Prompt(string.Empty, string.Empty, fdc);

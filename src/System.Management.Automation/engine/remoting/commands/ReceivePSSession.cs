@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
                     QueryRunspaces.ExtractMessage(e.InnerException, out errorCode));
                 string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "ReceivePSSessionQueryForSessionFailed");
                 Exception reason = new RuntimeException(msg, e.InnerException);
-                ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
+                var errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
                 WriteError(errorRecord);
                 return;
             }
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
                 if (shellUri != null)
                 {
                     // Compare with returned shell Uri in connection info.
-                    WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
+                    var wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
                     if (wsmanConnectionInfo != null &&
                         !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
                     {
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
                         // Otherwise create a new session from the queried runspace object.
                         // This will be a *reconstruct* operation.
                         // Create and connect session.
-                        PSSession newSession = new PSSession(runspace as RemoteRunspace);
+                        var newSession = new PSSession(runspace as RemoteRunspace);
                         connectedSession = ConnectSession(newSession, out ex);
                         if (connectedSession != null)
                         {
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
 
         private WSManConnectionInfo GetConnectionObject()
         {
-            WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
+            var connectionInfo = new WSManConnectionInfo();
 
             if (ParameterSetName == ReceivePSSessionCommand.ComputerSessionNameParameterSet ||
                 ParameterSetName == ReceivePSSessionCommand.ComputerInstanceIdParameterSet)
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Commands
                 string msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceCannotBeReceivedForVMContainerSession,
                     session.Name, session.ComputerName, session.ComputerType);
                 Exception reason = new PSNotSupportedException(msg);
-                ErrorRecord errorRecord = new ErrorRecord(reason, "CannotReceiveVMContainerSession", ErrorCategory.InvalidOperation, session);
+                var errorRecord = new ErrorRecord(reason, "CannotReceiveVMContainerSession", ErrorCategory.InvalidOperation, session);
                 WriteError(errorRecord);
                 return;
             }
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool CheckForDebugMode(PSSession session, bool monitorAvailabilityChange)
         {
-            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
+            var remoteRunspace = session.Runspace as RemoteRunspace;
             if (remoteRunspace.RunspaceAvailability == RunspaceAvailability.RemoteDebug)
             {
                 DisconnectAndStopRunningCmds(remoteRunspace);
@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if ((e.RunspaceAvailability == RunspaceAvailability.RemoteDebug))
             {
-                RemoteRunspace remoteRunspace = sender as RemoteRunspace;
+                var remoteRunspace = sender as RemoteRunspace;
                 remoteRunspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
 
                 DisconnectAndStopRunningCmds(remoteRunspace);
@@ -833,7 +833,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="job">Job object associated with session.</param>
         private void ConnectSessionToHost(PSSession session, PSRemotingJob job = null)
         {
-            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
+            var remoteRunspace = session.Runspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "PS sessions can only contain RemoteRunspace type.");
 
             if (job != null)
@@ -903,7 +903,7 @@ namespace Microsoft.PowerShell.Commands
                 using (_remotePipeline)
                 {
                     // Connect to remote running command.
-                    ManualResetEvent pipelineConnectedEvent = new ManualResetEvent(false);
+                    var pipelineConnectedEvent = new ManualResetEvent(false);
                     using (pipelineConnectedEvent)
                     {
                         _remotePipeline.StateChanged += (sender, args) =>
@@ -962,7 +962,7 @@ namespace Microsoft.PowerShell.Commands
                             object errorObj = _remotePipeline.Error.Read();
                             if (errorObj is Collection<ErrorRecord>)
                             {
-                                Collection<ErrorRecord> errorCollection = (Collection<ErrorRecord>)errorObj;
+                                var errorCollection = (Collection<ErrorRecord>)errorObj;
                                 foreach (ErrorRecord errorRecord in errorCollection)
                                 {
                                     WriteError(errorRecord);
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell.Commands
                             msg = RemotingErrorIdStrings.PipelineFailedWithoutReason;
                         }
 
-                        ErrorRecord errorRecord = new ErrorRecord(new RuntimeException(msg, reason),
+                        var errorRecord = new ErrorRecord(new RuntimeException(msg, reason),
                                                             "ReceivePSSessionPipelineFailed",
                                                             ErrorCategory.OperationStopped,
                                                             _remotePipeline
@@ -1072,7 +1072,7 @@ namespace Microsoft.PowerShell.Commands
             if (job == null)
             {
                 // The PSRemoting job object uses helper objects to track remote command execution.
-                List<IThrottleOperation> helpers = new List<IThrottleOperation>();
+                var helpers = new List<IThrottleOperation>();
 
                 // Create the remote pipeline object that will represent the running command
                 // on the server machine.  This object will be in the disconnected state.
@@ -1158,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
-            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
+            var remoteRunspace = session.Runspace as RemoteRunspace;
             if (remoteRunspace == null)
             {
                 return null;
@@ -1194,7 +1194,7 @@ namespace Microsoft.PowerShell.Commands
         private PSRemotingJob FindJobForSession(PSSession session)
         {
             PSRemotingJob job = null;
-            RemoteRunspace remoteSessionRunspace = session.Runspace as RemoteRunspace;
+            var remoteSessionRunspace = session.Runspace as RemoteRunspace;
 
             if (remoteSessionRunspace == null ||
                 remoteSessionRunspace.RemoteCommand != null)

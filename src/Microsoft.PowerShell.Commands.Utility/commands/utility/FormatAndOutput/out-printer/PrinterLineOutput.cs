@@ -89,8 +89,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _printerName = printerName;
 
             // instantiate the helper to do the line processing when LineOutput.WriteXXX() is called
-            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
-            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback(this.OnWrite);
+            var wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
+            var w = new WriteLineHelper.WriteCallback(this.OnWrite);
 
             _writeLineHelper = new WriteLineHelper(true, wl, w, this.DisplayCells);
         }
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             try
             {
                 // create a new print document object and set the printer name, if available
-                PrintDocument pd = new PrintDocument();
+                var pd = new PrintDocument();
 
                 if (!string.IsNullOrEmpty(_printerName))
                 {

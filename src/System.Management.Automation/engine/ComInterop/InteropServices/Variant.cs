@@ -121,7 +121,7 @@ namespace System.Management.Automation.InteropServices
 
         public unsafe void CopyFromIndirect(object value)
         {
-            VarEnum vt = (VarEnum)(((int)this.VariantType) & ~((int)VarEnum.VT_BYREF));
+            var vt = (VarEnum)(((int)this.VariantType) & ~((int)VarEnum.VT_BYREF));
 
             if (value == null)
             {
@@ -582,7 +582,7 @@ namespace System.Management.Automation.InteropServices
             {
                 Debug.Assert(VariantType == VarEnum.VT_DECIMAL);
                 // The first byte of Decimal is unused, but usually set to 0
-                Variant v = this;
+                var v = this;
                 v._typeUnion._vt = 0;
                 return v._decimal;
             }

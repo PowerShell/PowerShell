@@ -295,16 +295,16 @@ namespace System.Management.Automation.Language
             // Scan up the AST's parents, looking for a script block that is either
             // a workflow, or has a job definition attribute.
             // Stop scanning when we encounter a FunctionDefinitionAst
-            Ast current = this;
+            var current = this;
             bool stopScanning = false;
 
             while (current != null && !stopScanning)
             {
-                ScriptBlockAst scriptBlock = current as ScriptBlockAst;
+                var scriptBlock = current as ScriptBlockAst;
                 if (scriptBlock != null)
                 {
                     // See if this uses the workflow keyword
-                    FunctionDefinitionAst functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
+                    var functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
                     if ((functionDefinition != null))
                     {
                         stopScanning = true;
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                CommandAst commandAst = current as CommandAst;
+                var commandAst = current as CommandAst;
                 if (commandAst != null &&
                     string.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
                     this != commandAst)
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public CommentHelpInfo GetHelpContent()
         {
-            Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
+            var scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
             {
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation.Language
         {
             if (!PostParseChecksPerformed)
             {
-                Parser parser = new Parser();
+                var parser = new Parser();
                 // we call PerformPostParseChecks on root ScriptBlockAst, to obey contract of SymbolResolver.
                 // It needs to be run from the top of the tree.
                 // It's ok to report an error from a different part of AST in this case.
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation.Language
 
         private ScriptBlockAst GetRootScriptBlockAst()
         {
-            ScriptBlockAst rootScriptBlockAst = this;
+            var rootScriptBlockAst = this;
             ScriptBlockAst parent;
             while ((parent = Ast.GetAncestorAst<ScriptBlockAst>(rootScriptBlockAst.Parent)) != null)
             {
@@ -3674,7 +3674,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public CommentHelpInfo GetHelpContent()
         {
-            Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
+            var scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
             {
@@ -5451,7 +5451,7 @@ namespace System.Management.Automation.Language
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
-            AstVisitAction action = AstVisitAction.Continue;
+            var action = AstVisitAction.Continue;
 
             // Can only visit new AST type if using AstVisitor2
             if (visitor is AstVisitor2 visitor2)
@@ -5608,7 +5608,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            CommandExpressionAst expr = PipelineElements[0] as CommandExpressionAst;
+            var expr = PipelineElements[0] as CommandExpressionAst;
             if (expr != null && expr.Redirections.Count == 0)
             {
                 return expr.Expression;
@@ -7002,7 +7002,7 @@ namespace System.Management.Automation.Language
             }
 
             ExpressionAst expr = BodyExpression;
-            HashtableAst hashtable = expr as HashtableAst;
+            var hashtable = expr as HashtableAst;
             if (Keyword.DirectCall)
             {
                 // If this keyword takes a name, then add it as the parameter -InstanceName
@@ -8088,7 +8088,7 @@ namespace System.Management.Automation.Language
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
-            AstVisitAction action = AstVisitAction.Continue;
+            var action = AstVisitAction.Continue;
             var visitor2 = visitor as AstVisitor2;
             if (visitor2 != null)
             {
@@ -8485,7 +8485,7 @@ namespace System.Management.Automation.Language
             {
                 if (_cachedFullName == null)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    var sb = new StringBuilder();
                     sb.Append(TypeName.Name);
                     sb.Append('[');
                     bool first = true;
@@ -8523,7 +8523,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.Append(TypeName.Name);
                 sb.Append('[');
                 bool first = true;
@@ -8770,7 +8770,7 @@ namespace System.Management.Automation.Language
 
         private string GetName(bool includeAssemblyName)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             try
             {

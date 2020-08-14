@@ -89,7 +89,7 @@ namespace System.Management.Automation.Runspaces
 
         private bool? ReadIsHiddenAttribute()
         {
-            bool? isHidden = default(bool?);
+            var isHidden = default(bool?);
 
             while (_reader.MoveToNextAttribute())
             {
@@ -699,7 +699,7 @@ namespace System.Management.Automation.Runspaces
 
             string name = null;
             Collection<TypeMemberData> members = null;
-            bool? inheritMembers = default(bool?);
+            var inheritMembers = default(bool?);
 
             bool? isHidden = ReadIsHiddenAttribute();
             _reader.MoveToElement();
@@ -1994,7 +1994,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    NotePropertyData note = new NotePropertyData(TypeTable.SerializationMethodNode, _serializationMethod);
+                    var note = new NotePropertyData(TypeTable.SerializationMethodNode, _serializationMethod);
                     StandardMembers.Add(TypeTable.SerializationMethodNode, note);
                 }
             }
@@ -2026,7 +2026,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    NotePropertyData note = new NotePropertyData(TypeTable.TargetTypeForDeserialization, _targetTypeForDeserialization);
+                    var note = new NotePropertyData(TypeTable.TargetTypeForDeserialization, _targetTypeForDeserialization);
                     StandardMembers.Add(TypeTable.TargetTypeForDeserialization, note);
                 }
             }
@@ -2053,7 +2053,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    NotePropertyData note = new NotePropertyData(TypeTable.SerializationDepth, _serializationDepth);
+                    var note = new NotePropertyData(TypeTable.SerializationDepth, _serializationDepth);
                     StandardMembers.Add(TypeTable.SerializationDepth, note);
                 }
             }
@@ -2085,7 +2085,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    NotePropertyData note = new NotePropertyData(TypeTable.DefaultDisplayProperty, _defaultDisplayProperty);
+                    var note = new NotePropertyData(TypeTable.DefaultDisplayProperty, _defaultDisplayProperty);
                     StandardMembers.Add(TypeTable.DefaultDisplayProperty, note);
                 }
             }
@@ -2111,7 +2111,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    NotePropertyData note = new NotePropertyData(TypeTable.InheritPropertySerializationSet, _inheritPropertySerializationSet);
+                    var note = new NotePropertyData(TypeTable.InheritPropertySerializationSet, _inheritPropertySerializationSet);
                     StandardMembers.Add(TypeTable.InheritPropertySerializationSet, note);
                 }
             }
@@ -2158,7 +2158,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    AliasPropertyData alias = new AliasPropertyData(TypeTable.StringSerializationSource, _stringSerializationSource);
+                    var alias = new AliasPropertyData(TypeTable.StringSerializationSource, _stringSerializationSource);
                     StandardMembers.Add(TypeTable.StringSerializationSource, alias);
                 }
             }
@@ -2294,7 +2294,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public TypeData Copy()
         {
-            TypeData newTypeData = new TypeData(this.TypeName);
+            var newTypeData = new TypeData(this.TypeName);
 
             foreach (KeyValuePair<string, TypeMemberData> entry in this.Members)
             {
@@ -2424,7 +2424,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            NotePropertyData newNote = new NotePropertyData(this.Name, this.Value) { IsHidden = this.IsHidden };
+            var newNote = new NotePropertyData(this.Name, this.Value) { IsHidden = this.IsHidden };
             return newNote;
         }
 
@@ -2486,7 +2486,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            AliasPropertyData newAlias = new AliasPropertyData(this.Name, this.ReferencedMemberName, this.MemberType)
+            var newAlias = new AliasPropertyData(this.Name, this.ReferencedMemberName, this.MemberType)
             {
                 IsHidden = this.IsHidden
             };
@@ -2550,7 +2550,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            ScriptPropertyData newScriptProperty = new ScriptPropertyData(this.Name, this.GetScriptBlock, this.SetScriptBlock)
+            var newScriptProperty = new ScriptPropertyData(this.Name, this.GetScriptBlock, this.SetScriptBlock)
             {
                 IsHidden = this.IsHidden
             };
@@ -2613,7 +2613,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            CodePropertyData newCodeProperty = new CodePropertyData(this.Name, this.GetCodeReference, this.SetCodeReference)
+            var newCodeProperty = new CodePropertyData(this.Name, this.GetCodeReference, this.SetCodeReference)
             {
                 IsHidden = this.IsHidden
             };
@@ -2654,7 +2654,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            ScriptMethodData newScriptMethod = new ScriptMethodData(this.Name, this.Script);
+            var newScriptMethod = new ScriptMethodData(this.Name, this.Script);
             return newScriptMethod;
         }
 
@@ -2692,7 +2692,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            CodeMethodData newCodeMethod = new CodeMethodData(this.Name, this.CodeReference);
+            var newCodeMethod = new CodeMethodData(this.Name, this.CodeReference);
             return newCodeMethod;
         }
 
@@ -2792,7 +2792,7 @@ namespace System.Management.Automation.Runspaces
 
         internal override TypeMemberData Copy()
         {
-            MemberSetData newMemberSetData = new MemberSetData(Name, Members)
+            var newMemberSetData = new MemberSetData(Name, Members)
             {
                 IsHidden = this.IsHidden,
                 InheritMembers = this.InheritMembers
@@ -2969,7 +2969,7 @@ namespace System.Management.Automation.Runspaces
             object sourceValue = note.Value;
             if (noteType.GetTypeCode().Equals(TypeCode.Boolean))
             {
-                string sourceValueAsString = sourceValue as string;
+                var sourceValueAsString = sourceValue as string;
                 if (sourceValueAsString != null)
                 {
                     if (sourceValueAsString.Length == 0)
@@ -3058,7 +3058,7 @@ namespace System.Management.Automation.Runspaces
         private static bool CheckStandardMembers(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> members)
         {
             #region Remove all non standard members
-            List<string> membersToBeIgnored = new List<string>();
+            var membersToBeIgnored = new List<string>();
             for (int i = 0; i < members.Count; i++)
             {
                 bool found = false;
@@ -3095,7 +3095,7 @@ namespace System.Management.Automation.Runspaces
                     break;
                 }
 
-                SerializationMethod serializationMethod = SerializationMethod.AllPublicProperties;
+                var serializationMethod = SerializationMethod.AllPublicProperties;
                 if (serializationMethodNote != null)
                 {
                     serializationMethod = (SerializationMethod)serializationMethodNote.Value;
@@ -3302,7 +3302,7 @@ namespace System.Management.Automation.Runspaces
         internal static void ProcessNoteData(ConcurrentBag<string> errors, string typeName, NotePropertyData nodeData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             // value could be null
-            PSNoteProperty note = new PSNoteProperty(nodeData.Name, nodeData.Value) { IsHidden = nodeData.IsHidden };
+            var note = new PSNoteProperty(nodeData.Name, nodeData.Value) { IsHidden = nodeData.IsHidden };
             AddMember(errors, typeName, note, membersCollection, isOverride);
         }
 
@@ -3315,7 +3315,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            PSAliasProperty alias = new PSAliasProperty(aliasData.Name, aliasData.ReferencedMemberName, aliasData.MemberType)
+            var alias = new PSAliasProperty(aliasData.Name, aliasData.ReferencedMemberName, aliasData.MemberType)
             {
                 IsHidden = aliasData.IsHidden
             };
@@ -3333,7 +3333,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            PSScriptProperty scriptProperty = new PSScriptProperty(scriptPropertyData.Name, getter, setter, true)
+            var scriptProperty = new PSScriptProperty(scriptPropertyData.Name, getter, setter, true)
             {
                 IsHidden = scriptPropertyData.IsHidden
             };
@@ -3371,7 +3371,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            PSScriptMethod scriptMethod = new PSScriptMethod(scriptMethodData.Name, scriptMethodData.Script, true);
+            var scriptMethod = new PSScriptMethod(scriptMethodData.Name, scriptMethodData.Script, true);
             AddMember(errors, typeName, scriptMethod, membersCollection, isOverride);
         }
 
@@ -3468,7 +3468,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 CheckStandardMembers(errors, typeName, memberSetMembers);
-                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, memberSetMembers)
+                var standardMemberSet = new PSMemberSet(PSStandardMembers, memberSetMembers)
                 {
                     inheritMembers = true,
                     IsHidden = true,
@@ -3501,7 +3501,7 @@ namespace System.Management.Automation.Runspaces
             if (CheckStandardMembers(errors, typeName, existingMembers))
             {
                 // No conflict in serialization settings, replace the old StandardMembers with the new one
-                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, existingMembers)
+                var standardMemberSet = new PSMemberSet(PSStandardMembers, existingMembers)
                 {
                     inheritMembers = true,
                     IsHidden = true,
@@ -3521,7 +3521,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, oldMembersCopy)
+                var standardMemberSet = new PSMemberSet(PSStandardMembers, oldMembersCopy)
                 {
                     inheritMembers = true,
                     IsHidden = true,
@@ -3542,7 +3542,7 @@ namespace System.Management.Automation.Runspaces
             if (typeMemberCollection[PSStandardMembers] == null)
             {
                 CheckStandardMembers(errors, typeName, memberSetMembers);
-                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, memberSetMembers)
+                var standardMemberSet = new PSMemberSet(PSStandardMembers, memberSetMembers)
                 {
                     inheritMembers = true,
                     IsHidden = true,
@@ -3574,7 +3574,7 @@ namespace System.Management.Automation.Runspaces
             if (CheckStandardMembers(errors, typeName, existingMembers))
             {
                 // No conflict in serialization settings, replace the old StandardMembers with the new one
-                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, existingMembers)
+                var standardMemberSet = new PSMemberSet(PSStandardMembers, existingMembers)
                 {
                     inheritMembers = true,
                     IsHidden = true,
@@ -3594,7 +3594,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                PSMemberSet standardMemberSet = new PSMemberSet(PSStandardMembers, oldMembersCopy)
+                var standardMemberSet = new PSMemberSet(PSStandardMembers, oldMembersCopy)
                 {
                     inheritMembers = true,
                     IsHidden = true,
@@ -3644,7 +3644,7 @@ namespace System.Management.Automation.Runspaces
             PSObject.AdapterSet adapterSet = null;
             if (CreateInstance(errors, typeName, adapterType, TypesXmlStrings.UnableToInstantiateTypeAdapter, out object instance))
             {
-                PSPropertyAdapter psPropertyAdapter = instance as PSPropertyAdapter;
+                var psPropertyAdapter = instance as PSPropertyAdapter;
 
                 if (psPropertyAdapter == null)
                 {
@@ -3925,7 +3925,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException(nameof(typeFiles));
             }
 
-            ConcurrentBag<string> errors = new ConcurrentBag<string>();
+            var errors = new ConcurrentBag<string>();
             foreach (string typefile in typeFiles)
             {
                 if (string.IsNullOrEmpty(typefile) || (!Path.IsPathRooted(typefile)))
@@ -3970,8 +3970,8 @@ namespace System.Management.Automation.Runspaces
                         continue;
                     }
 
-                    PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
-                    PSPropertySet typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
+                    var settings = typeMembers[PSStandardMembers] as PSMemberSet;
+                    var typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
                     if (typeProperties == null)
                     {
                         continue;
@@ -3982,7 +3982,7 @@ namespace System.Management.Automation.Runspaces
                         retValueTable.Add(reference);
                     }
 
-                    bool inherit = (bool)PSObject.GetNoteSettingValue(
+                    var inherit = (bool)PSObject.GetNoteSettingValue(
                         settings,
                         InheritPropertySerializationSet,
                         DefaultInheritPropertySerializationSet,
@@ -4054,8 +4054,8 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     // There was a currentMember with the same name as typeMember
-                    PSMemberSet currentMemberAsMemberSet = currentMember as PSMemberSet;
-                    PSMemberSet typeMemberAsMemberSet = typeMember as PSMemberSet;
+                    var currentMemberAsMemberSet = currentMember as PSMemberSet;
+                    var typeMemberAsMemberSet = typeMember as PSMemberSet;
 
                     // if we are not in a memberset inherit members situation we just replace
                     // the current member with the new more specific member
@@ -4317,7 +4317,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal Dictionary<string, TypeData> GetAllTypeData()
         {
-            Dictionary<string, TypeData> allTypes = new Dictionary<string, TypeData>();
+            var allTypes = new Dictionary<string, TypeData>();
             foreach (string typeName in _extendedMembers.Keys)
             {
                 if (allTypes.ContainsKey(typeName))
@@ -4325,7 +4325,7 @@ namespace System.Management.Automation.Runspaces
                     continue;
                 }
 
-                TypeData typeData = new TypeData(typeName);
+                var typeData = new TypeData(typeName);
                 bool isTypeDataLoaded = false;
 
                 isTypeDataLoaded |= RetrieveMembersToTypeData(typeData);
@@ -4345,7 +4345,7 @@ namespace System.Management.Automation.Runspaces
                     continue;
                 }
 
-                TypeData typeData = new TypeData(typeName);
+                var typeData = new TypeData(typeName);
                 bool isTypeDataLoaded = false;
 
                 isTypeDataLoaded |= RetrieveConverterToTypeData(typeData);
@@ -4364,7 +4364,7 @@ namespace System.Management.Automation.Runspaces
                     continue;
                 }
 
-                TypeData typeData = new TypeData(typeName);
+                var typeData = new TypeData(typeName);
 
                 if (RetrieveAdapterToTypeData(typeData))
                 {
@@ -4644,13 +4644,13 @@ namespace System.Management.Automation.Runspaces
             bool isProductCode,
             ConcurrentBag<string> errors)
         {
-            LoadContext loadContext = new LoadContext(moduleName, fileToLoad, errors)
+            var loadContext = new LoadContext(moduleName, fileToLoad, errors)
             {
                 IsFullyTrusted = isFullyTrusted,
                 IsProductCode = isProductCode,
             };
 
-            using (StringReader xmlStream = new StringReader(fileContents))
+            using (var xmlStream = new StringReader(fileContents))
             {
                 XmlReader reader = new XmlTextReader(xmlStream) { WhitespaceHandling = WhitespaceHandling.Significant };
                 loadContext.reader = reader;
@@ -4672,7 +4672,7 @@ namespace System.Management.Automation.Runspaces
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");
 
-            ConcurrentBag<string> errors = new ConcurrentBag<string>();
+            var errors = new ConcurrentBag<string>();
 
             // Always clear the consolidate members - they need to be recalculated
             // anytime the types are updated...
@@ -4700,8 +4700,8 @@ namespace System.Management.Automation.Runspaces
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");
 
-            TypeData typeData = new TypeData(typeName);
-            ConcurrentBag<string> errors = new ConcurrentBag<string>();
+            var typeData = new TypeData(typeName);
+            var errors = new ConcurrentBag<string>();
 
             // Always clear the consolidate members - they need to be recalculated
             // anytime the types are updated...

@@ -732,7 +732,7 @@ namespace System.Management.Automation
         /// <returns>Array of Runspace objects each in the Disconnected state.</returns>
         internal static Runspace[] GetRemoteRunspaces(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            List<Runspace> runspaces = new List<Runspace>();
+            var runspaces = new List<Runspace>();
             RunspacePool[] runspacePools = RemoteRunspacePoolInternal.GetRemoteRunspacePools(connectionInfo, host, typeTable);
 
             // We don't yet know how many runspaces there are in these runspace pool objects.  This information isn't updated
@@ -939,7 +939,7 @@ namespace System.Management.Automation
         /// <returns>RunspaceCapability.</returns>
         public override RunspaceCapability GetCapabilities()
         {
-            RunspaceCapability returnCaps = RunspaceCapability.Default;
+            var returnCaps = RunspaceCapability.Default;
 
             if (CanDisconnect)
             {
@@ -960,7 +960,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
+                var containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
 
                 if ((containerConnectionInfo != null) &&
                     (containerConnectionInfo.ContainerProc.RuntimeId == Guid.Empty))
@@ -978,8 +978,8 @@ namespace System.Management.Automation
         /// </summary>
         private void UpdatePoolDisconnectOptions()
         {
-            WSManConnectionInfo runspaceWSManConnectionInfo = RunspacePool.ConnectionInfo as WSManConnectionInfo;
-            WSManConnectionInfo wsManConnectionInfo = ConnectionInfo as WSManConnectionInfo;
+            var runspaceWSManConnectionInfo = RunspacePool.ConnectionInfo as WSManConnectionInfo;
+            var wsManConnectionInfo = ConnectionInfo as WSManConnectionInfo;
 
             Dbg.Assert(runspaceWSManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
             Dbg.Assert(wsManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
                     _runspaceStateInfo.State != RunspaceState.Opened &&
                     _runspaceStateInfo.State != RunspaceState.Disconnected) // Disconnected runspaces can have running pipelines.
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline,
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
 
         private void HandleRunspacePoolStateChanged(object sender, RunspacePoolStateChangedEventArgs e)
         {
-            RunspaceState newState = (RunspaceState)e.RunspacePoolStateInfo.State;
+            var newState = (RunspaceState)e.RunspacePoolStateInfo.State;
 
             RunspaceState prevState = SetRunspaceState(newState, e.RunspacePoolStateInfo.Reason);
 
@@ -1265,10 +1265,10 @@ namespace System.Management.Automation
             if (!serverSupportsDebugging) { return; }
 
             // Set server side initial debug mode based on interactive host.
-            DebugModes hostDebugMode = DebugModes.Default;
+            var hostDebugMode = DebugModes.Default;
             try
             {
-                IHostSupportsInteractiveSession interactiveHost =
+                var interactiveHost =
                     RunspacePool.RemoteRunspacePoolInternal.Host as IHostSupportsInteractiveSession;
                 if (interactiveHost != null &&
                     interactiveHost.Runspace != null &&
@@ -1297,7 +1297,7 @@ namespace System.Management.Automation
             bool inDebugger = false;
             int breakpointCount = 0;
             bool breakAll = false;
-            UnhandledBreakpointProcessingMode unhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
+            var unhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
 
             if (psApplicationPrivateData != null)
             {
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation
                 // Call fails if RunspaceState is not BeforeOpen.
                 if (_runspaceStateInfo.State != RunspaceState.BeforeOpen)
                 {
-                    InvalidRunspaceStateException e =
+                    var e =
                         new InvalidRunspaceStateException
                         (
                             StringUtil.Format(RunspaceStrings.CannotOpenAgain,
@@ -1515,7 +1515,7 @@ namespace System.Management.Automation
 
             if (runningPipelines.Length > 0)
             {
-                WaitHandle[] waitHandles = new WaitHandle[runningPipelines.Length];
+                var waitHandles = new WaitHandle[runningPipelines.Length];
 
                 for (int i = 0; i < runningPipelines.Length; i++)
                 {
@@ -1576,7 +1576,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs"></param>
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
-            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 // change the runspace's uri to the new URI.
@@ -1618,7 +1618,7 @@ namespace System.Management.Automation
             {
                 _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
                 _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
-                WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
+                var wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
                 if (wsmanConnectionInfo != null)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UpdateDisconnectExpiresOn()
         {
-            WSManConnectionInfo wsmanConnectionInfo = RunspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
+            var wsmanConnectionInfo = RunspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 this.DisconnectedOn = wsmanConnectionInfo.DisconnectedOn;
@@ -1728,7 +1728,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void AbortOpen()
         {
-            System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
+            var transportManager =
                 RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
 
             if (transportManager != null)
@@ -1900,14 +1900,14 @@ namespace System.Management.Automation
                     _psDebuggerCommand.AddCommand(cmd);
                 }
 
-                PSDataCollection<PSObject> internalOutput = new PSDataCollection<PSObject>();
+                var internalOutput = new PSDataCollection<PSObject>();
                 internalOutput.DataAdded += (sender, args) =>
                     {
                         foreach (var item in internalOutput.ReadAll())
                         {
                             if (item == null) { return; }
 
-                            DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
+                            var dbgCmd = item.BaseObject as DebuggerCommand;
                             if (dbgCmd != null)
                             {
                                 bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
@@ -1931,7 +1931,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     executionError = true;
-                    RemoteException re = e as RemoteException;
+                    var re = e as RemoteException;
                     if ((re != null) && (re.ErrorRecord != null))
                     {
                         // Allow the IncompleteParseException to throw so that the console
@@ -2559,7 +2559,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            PSDataCollection<PSObject> breakpoints = new PSDataCollection<PSObject>();
+            var breakpoints = new PSDataCollection<PSObject>();
 
             // Get breakpoint information by running "Get-PSBreakpoint" PowerShell command.
             using (PowerShell ps = GetNestedPowerShell())
@@ -2577,7 +2577,7 @@ namespace System.Management.Automation
             // Raise BreakpointUpdated event to client for each breakpoint.
             foreach (PSObject obj in breakpoints)
             {
-                Breakpoint breakpoint = obj.BaseObject as Breakpoint;
+                var breakpoint = obj.BaseObject as Breakpoint;
                 if (breakpoint != null)
                 {
                     RaiseBreakpointUpdatedEvent(
@@ -2700,7 +2700,7 @@ namespace System.Management.Automation
                 SetRemoteDebug(true, RunspaceAvailability.RemoteDebug);
 
                 // Raise event and wait for response.
-                DebuggerStopEventArgs args = state as DebuggerStopEventArgs;
+                var args = state as DebuggerStopEventArgs;
                 if (args != null)
                 {
                     if (IsDebuggerStopEventSubscribed())
@@ -2761,7 +2761,7 @@ namespace System.Management.Automation
         private void HandleForwardedDebuggerBreakpointUpdatedEvent(object sender, PSEventArgs e)
         {
             Dbg.Assert(e.SourceArgs.Length == 1, "Forwarded debugger breakpoint event args must always contain one SourceArgs item.");
-            BreakpointUpdatedEventArgs bpArgs = e.SourceArgs[0] as BreakpointUpdatedEventArgs;
+            var bpArgs = e.SourceArgs[0] as BreakpointUpdatedEventArgs;
 
             if (bpArgs != null)
             {
@@ -2978,7 +2978,7 @@ namespace System.Management.Automation
             // Since these are implemented as pipelines, we don't need to do our own
             // locking of sessionStateCallInProgress like we do with local runspaces.
             Pipeline remotePipeline = _runspace.CreatePipeline();
-            Command command = new Command("Microsoft.PowerShell.Utility\\Set-Variable");
+            var command = new Command("Microsoft.PowerShell.Utility\\Set-Variable");
             command.Parameters.Add("Name", name);
             command.Parameters.Add("Value", value);
             remotePipeline.Commands.Add(command);
@@ -3000,7 +3000,7 @@ namespace System.Management.Automation
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
-                ErrorRecord error = (ErrorRecord)remotePipeline.Error.Read();
+                var error = (ErrorRecord)remotePipeline.Error.Read();
                 throw new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, error.Exception);
             }
         }
@@ -3038,7 +3038,7 @@ namespace System.Management.Automation
             // Since these are implemented as pipelines, we don't need to do our own
             // locking of sessionStateCallInProgress like we do with local runspaces.
             Pipeline remotePipeline = _runspace.CreatePipeline();
-            Command command = new Command("Microsoft.PowerShell.Utility\\Get-Variable");
+            var command = new Command("Microsoft.PowerShell.Utility\\Get-Variable");
             command.Parameters.Add("Name", name);
             remotePipeline.Commands.Add(command);
             System.Collections.ObjectModel.Collection<PSObject> result = null;
@@ -3060,7 +3060,7 @@ namespace System.Management.Automation
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
-                ErrorRecord error = (ErrorRecord)remotePipeline.Error.Read();
+                var error = (ErrorRecord)remotePipeline.Error.Read();
                 if (string.Equals("CommandNotFoundException", error.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, error.Exception);
@@ -3100,7 +3100,7 @@ namespace System.Management.Automation
                 Pipeline remotePipeline = _runspace.CreatePipeline();
                 remotePipeline.Commands.AddScript("$executionContext.SessionState.Applications");
 
-                List<string> result = new List<string>();
+                var result = new List<string>();
                 try
                 {
                     foreach (PSObject application in remotePipeline.Invoke())
@@ -3145,7 +3145,7 @@ namespace System.Management.Automation
                 Pipeline remotePipeline = _runspace.CreatePipeline();
                 remotePipeline.Commands.AddScript("$executionContext.SessionState.Scripts");
 
-                List<string> result = new List<string>();
+                var result = new List<string>();
                 try
                 {
                     foreach (PSObject application in remotePipeline.Invoke())

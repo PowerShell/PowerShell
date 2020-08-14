@@ -395,11 +395,11 @@ namespace System.Management.Automation.Remoting
                 mgdShellSession.registeredShutdownNotification = 1;
 
                 // Wrap the provided handle so it can be passed to the registration function
-                EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+                var eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
 
                 if (Platform.IsWindows)
                 {
-                    SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
+                    var safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
                     eventWaitHandle.SafeWaitHandle = safeWaitHandle;
                 }
                 else
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Remoting
                 DeleteFromActiveShellSessions(context.shellContext);
             }
 
-            System.Exception reasonForClose = new System.Exception(RemotingErrorIdStrings.WSManPluginOperationClose);
+            var reasonForClose = new System.Exception(RemotingErrorIdStrings.WSManPluginOperationClose);
             mgdShellSession.CloseOperation(context, reasonForClose);
 
             PSEtwLog.LogAnalyticInformational(
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            WSManPluginOperationShutdownContext ctxtToReport = new WSManPluginOperationShutdownContext(pluginContext, shellContext, IntPtr.Zero, true);
+            var ctxtToReport = new WSManPluginOperationShutdownContext(pluginContext, shellContext, IntPtr.Zero, true);
             if (ctxtToReport == null)
             {
                 ReportOperationComplete(requestDetails, WSManPluginErrorCodes.OutOfMemory);
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Construct PSPrincipal
-            PSIdentity psIdentity = new PSIdentity(senderDetails.authenticationMechanism, true, senderDetails.senderName, psCertDetails);
+            var psIdentity = new PSIdentity(senderDetails.authenticationMechanism, true, senderDetails.senderName, psCertDetails);
 
             // For Virtual and RunAs accounts WSMan specifies the client token via an environment variable and
             // senderDetails.clientToken should not be used.
@@ -1156,8 +1156,8 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            PSPrincipal userPrincipal = new PSPrincipal(psIdentity, windowsIdentity);
-            PSSenderInfo result = new PSSenderInfo(userPrincipal, senderDetails.httpUrl);
+            var userPrincipal = new PSPrincipal(psIdentity, windowsIdentity);
+            var result = new PSSenderInfo(userPrincipal, senderDetails.httpUrl);
             return result;
         }
 
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation.Remoting
                     if (pluginToUse == null)
                     {
                         // create a new plugin
-                        WSManPluginInstance mgdPlugin = new WSManPluginInstance();
+                        var mgdPlugin = new WSManPluginInstance();
                         AddToActivePlugins(pluginContext, mgdPlugin);
                         pluginToUse = mgdPlugin;
                     }
@@ -1580,7 +1580,7 @@ namespace System.Management.Automation.Remoting
                 if (!string.Equals(code, WSManPluginConstants.CtrlCSignal, StringComparison.Ordinal))
                 {
                     // Close operations associated with this command..
-                    WSManPluginOperationShutdownContext cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);
+                    var cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);
                     if (cmdCtxt != null)
                     {
                         PerformCloseOperation(cmdCtxt);
@@ -1726,7 +1726,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
-            WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
+            var error = WSManPluginErrorCodes.NoError;
             string errorMessage = string.Empty;
             string stackTrace = string.Empty;
 
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null");
 
             // IntPtr nativeLocaleData = IntPtr.Zero;
-            WSManNativeApi.WSManDataStruct outputStruct = new WSManNativeApi.WSManDataStruct();
+            var outputStruct = new WSManNativeApi.WSManDataStruct();
             int hResult = wsmanPinvokeStatic.WSManPluginGetOperationParameters(
                 requestDetails.unmanagedHandle,
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
@@ -1801,7 +1801,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (retrievingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
                 {
-                    CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
+                    var uiCultureToUse = new CultureInfo(localeData.Text);
                     Thread.CurrentThread.CurrentUICulture = uiCultureToUse;
                 }
             }
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (retrievingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
                 {
-                    CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
+                    var cultureToUse = new CultureInfo(dataLocaleData.Text);
                     Thread.CurrentThread.CurrentCulture = cultureToUse;
                 }
             }

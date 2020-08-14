@@ -354,7 +354,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimSetCimInstance CreateOperationAgent()
         {
-            CimSetCimInstance cimSetCimInstance = new CimSetCimInstance();
+            var cimSetCimInstance = new CimSetCimInstance();
             this.AsyncOperation = cimSetCimInstance;
             return cimSetCimInstance;
         }

@@ -113,7 +113,7 @@ namespace System.Management.Automation
             bool allowNonexistingPaths,
             out CmdletProvider providerInstance)
         {
-            CmdletProviderContext context =
+            var context =
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedMonadPathsFromMonadPath(path, allowNonexistingPaths, context, out providerInstance);
@@ -232,7 +232,7 @@ namespace System.Management.Automation
                     // Since we are not globbing, throw an exception since
                     // the path doesn't exist
 
-                    ItemNotFoundException pathNotFound =
+                    var pathNotFound =
                         new ItemNotFoundException(
                             path,
                             "PathNotFound",
@@ -257,10 +257,10 @@ namespace System.Management.Automation
         {
             // Check the provider capabilities before globbing
             providerInstance = _sessionState.Internal.GetProviderInstance(providerId);
-            ContainerCmdletProvider containerCmdletProvider = providerInstance as ContainerCmdletProvider;
-            ItemCmdletProvider itemProvider = providerInstance as ItemCmdletProvider;
+            var containerCmdletProvider = providerInstance as ContainerCmdletProvider;
+            var itemProvider = providerInstance as ItemCmdletProvider;
 
-            Collection<string> stringResult = new Collection<string>();
+            var stringResult = new Collection<string>();
 
             if (!context.SuppressWildcardExpansion)
             {
@@ -330,7 +330,7 @@ namespace System.Management.Automation
                 (context.Include == null || context.Include.Count == 0) &&
                 (context.Exclude == null || context.Exclude.Count == 0))
             {
-                ItemNotFoundException pathNotFound =
+                var pathNotFound =
                     new ItemNotFoundException(
                         providerPath,
                         "PathNotFound",
@@ -351,7 +351,7 @@ namespace System.Management.Automation
             bool isProviderQualifiedPath,
             out CmdletProvider providerInstance)
         {
-            Collection<PathInfo> result = new Collection<PathInfo>();
+            var result = new Collection<PathInfo>();
 
             providerInstance = null;
             string providerId = null;
@@ -431,7 +431,7 @@ namespace System.Management.Automation
             providerInstance = null;
             PSDriveInfo drive = null;
 
-            Collection<PathInfo> result = new Collection<PathInfo>();
+            var result = new Collection<PathInfo>();
 
             s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
@@ -460,8 +460,8 @@ namespace System.Management.Automation
 
             context.Drive = drive;
             providerInstance = _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
-            ContainerCmdletProvider containerCmdletProvider = providerInstance as ContainerCmdletProvider;
-            ItemCmdletProvider itemProvider = providerInstance as ItemCmdletProvider;
+            var containerCmdletProvider = providerInstance as ContainerCmdletProvider;
+            var itemProvider = providerInstance as ItemCmdletProvider;
 
             ProviderInfo provider = providerInstance.ProviderInfo;
 
@@ -481,7 +481,7 @@ namespace System.Management.Automation
 
             s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
 
-            Collection<string> stringResult = new Collection<string>();
+            var stringResult = new Collection<string>();
 
             if (!context.SuppressWildcardExpansion)
             {
@@ -545,7 +545,7 @@ namespace System.Management.Automation
                 (context.Include == null || context.Include.Count == 0) &&
                 (context.Exclude == null || context.Exclude.Count == 0))
             {
-                ItemNotFoundException pathNotFound =
+                var pathNotFound =
                     new ItemNotFoundException(
                         path,
                         "PathNotFound",
@@ -666,7 +666,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context =
+            var context =
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, context, out provider, out providerInstance);
@@ -773,7 +773,7 @@ namespace System.Management.Automation
                     context.Drive = drive;
                 }
 
-                Collection<string> paths = new Collection<string>();
+                var paths = new Collection<string>();
 
                 foreach (PathInfo currentPath in
                     GetGlobbedMonadPathsFromMonadPath(
@@ -852,7 +852,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context =
+            var context =
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             Collection<string> results =
@@ -1060,7 +1060,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            CmdletProviderContext context =
+            var context =
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             PSDriveInfo drive = null;
@@ -1907,7 +1907,7 @@ namespace System.Management.Automation
 
             if (workingDriveForPath == null)
             {
-                ItemNotFoundException pathNotFound =
+                var pathNotFound =
                     new ItemNotFoundException(
                         path,
                         "PathNotFound",
@@ -1959,7 +1959,7 @@ namespace System.Management.Automation
 
             CmdletProvider providerInstance =
                 _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
-            NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
+            var navigationProvider = providerInstance as NavigationCmdletProvider;
 
             // Normalize the paths
             providerPath = providerPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
@@ -2248,7 +2248,7 @@ namespace System.Management.Automation
                         context);
             }
 
-            NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
+            var navigationProvider = providerInstance as NavigationCmdletProvider;
             if (navigationProvider != null)
             {
                 string rootedPath = _sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
@@ -2649,9 +2649,9 @@ namespace System.Management.Automation
 
             s_tracer.WriteLine("path = {0}", path);
 
-            NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
+            var navigationProvider = provider as NavigationCmdletProvider;
 
-            Collection<string> result = new Collection<string>();
+            var result = new Collection<string>();
 
             using (s_pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
             {
@@ -2662,12 +2662,12 @@ namespace System.Management.Automation
                     // many directories in this collection which will have to be iterated over
                     // every time there is a child being added
 
-                    List<string> dirs = new List<string>();
+                    var dirs = new List<string>();
 
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<string> leafElements = new Stack<string>();
+                    var leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -2935,7 +2935,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        ItemNotFoundException pathNotFound =
+                        var pathNotFound =
                             new ItemNotFoundException(
                                 resolvedPath,
                                 "PathNotFound",
@@ -3350,9 +3350,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
+            var navigationProvider = provider as NavigationCmdletProvider;
 
-            List<string> newDirs = new List<string>();
+            var newDirs = new List<string>();
 
             // Only loop through the child names if the leafElement contains a glob character
 
@@ -3605,11 +3605,11 @@ namespace System.Management.Automation
                 originalFilter = context.Filter;
             }
 
-            NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
+            var navigationProvider = provider as NavigationCmdletProvider;
 
             s_tracer.WriteLine("path = {0}", path);
 
-            Collection<string> result = new Collection<string>();
+            var result = new Collection<string>();
 
             using (s_pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
             {
@@ -3620,12 +3620,12 @@ namespace System.Management.Automation
                     // many directories in this collection which will have to be iterated over
                     // every time there is a child being added
 
-                    List<string> dirs = new List<string>();
+                    var dirs = new List<string>();
 
                     // Each leaf element that is pulled off the path is pushed on the stack in
                     // order such that we can generate the path again.
 
-                    Stack<string> leafElements = new Stack<string>();
+                    var leafElements = new Stack<string>();
 
                     using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
@@ -3864,7 +3864,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        ItemNotFoundException pathNotFound =
+                        var pathNotFound =
                             new ItemNotFoundException(
                                 path,
                                 "PathNotFound",
@@ -3956,9 +3956,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
+            var navigationProvider = provider as NavigationCmdletProvider;
 
-            List<string> newDirs = new List<string>();
+            var newDirs = new List<string>();
 
             // Only loop through the child names if the leafElement contains a glob character
 
@@ -4192,13 +4192,13 @@ namespace System.Management.Automation
                 context.Filter = convertedFilter;
             }
 
-            ReturnContainers returnContainers = ReturnContainers.ReturnAllContainers;
+            var returnContainers = ReturnContainers.ReturnAllContainers;
             if (!getAllContainers)
             {
                 returnContainers = ReturnContainers.ReturnMatchingContainers;
             }
 
-            CmdletProviderContext getChildNamesContext =
+            var getChildNamesContext =
                 new CmdletProviderContext(context);
 
             // Remove the include/exclude filters from the new context
@@ -4437,7 +4437,7 @@ namespace System.Management.Automation
 
             ReadOnlySpan<char> workerArray = path;
 
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
 
             for (int index = 0; index < workerArray.Length; ++index)
             {
@@ -4656,7 +4656,7 @@ namespace System.Management.Automation
                     if (provider.Home != null &&
                         provider.Home.Length > 0)
                     {
-                        CmdletProviderContext context =
+                        var context =
                             new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
                         s_pathResolutionTracer.WriteLine("Getting home path for provider: {0}", provider.Name);
@@ -4701,7 +4701,7 @@ namespace System.Management.Automation
                 if (context.Include != null)
                 {
                     // Trace the include filters
-                    StringBuilder includeString = new StringBuilder();
+                    var includeString = new StringBuilder();
                     foreach (string includeFilter in context.Include)
                     {
                         includeString.AppendFormat("{0} ", includeFilter);
@@ -4713,7 +4713,7 @@ namespace System.Management.Automation
                 if (context.Exclude != null)
                 {
                     // Trace the exclude filters
-                    StringBuilder excludeString = new StringBuilder();
+                    var excludeString = new StringBuilder();
                     foreach (string excludeFilter in context.Exclude)
                     {
                         excludeString.AppendFormat("{0} ", excludeFilter);

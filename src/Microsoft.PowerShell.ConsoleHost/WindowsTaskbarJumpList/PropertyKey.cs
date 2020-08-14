@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell
             if (obj is not PropertyKey)
                 return false;
 
-            PropertyKey other = (PropertyKey)obj;
+            var other = (PropertyKey)obj;
             return other.FormatId.Equals(FormatId) && (other.PropertyId == PropertyId);
         }
 

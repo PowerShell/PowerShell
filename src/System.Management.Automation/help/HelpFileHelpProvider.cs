@@ -103,13 +103,13 @@ namespace System.Management.Automation
 
         private Collection<string> FilterToLatestModuleVersion(Collection<string> filesMatched)
         {
-            Collection<string> matchedFilesToRemove = new Collection<string>();
+            var matchedFilesToRemove = new Collection<string>();
 
             if (filesMatched.Count > 1)
             {
                 // Dictionary<<ModuleName,fileName>, <Version, helpFileFullName>>
-                Dictionary<Tuple<string, string>, Tuple<string, Version>> modulesAndVersion = new Dictionary<Tuple<string, string>, Tuple<string, Version>>();
-                HashSet<string> filesProcessed = new HashSet<string>();
+                var modulesAndVersion = new Dictionary<Tuple<string, string>, Tuple<string, Version>>();
+                var filesProcessed = new HashSet<string>();
 
                 var allPSModulePaths = ModuleIntrinsics.GetModulePath(false, this.HelpSystem.ExecutionContext);
 
@@ -129,7 +129,7 @@ namespace System.Management.Automation
                         if (moduleVersionFromPath != null && moduleName != null)
                         {
                             Tuple<string, Version> moduleVersion = null;
-                            Tuple<string, string> key = new Tuple<string, string>(moduleName, fileName);
+                            var key = new Tuple<string, string>(moduleName, fileName);
                             if (modulesAndVersion.TryGetValue(key, out moduleVersion))
                             {
                                 // Consider for further processing only if the help file name is same.
@@ -164,7 +164,7 @@ namespace System.Management.Automation
 
             // Deduplicate by filename to compensate for two sources, currentuser scope and allusers scope.
             // This is done after the version check filtering to ensure we do not remove later version files.
-            HashSet<string> fileNameHash = new HashSet<string>();
+            var fileNameHash = new HashSet<string>();
 
             foreach (var file in filesMatched)
             {
@@ -247,7 +247,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                HelpFileHelpInfo helpInfo = GetCache(file) as HelpFileHelpInfo;
+                var helpInfo = GetCache(file) as HelpFileHelpInfo;
 
                 if (helpInfo != null)
                 {

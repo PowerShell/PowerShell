@@ -81,7 +81,7 @@ namespace System.Management.Automation.Remoting.Server
                 Thread.CurrentThread.CurrentUICulture = Microsoft.PowerShell.NativeCultureResolver.UICulture;
                 Thread.CurrentThread.CurrentCulture = Microsoft.PowerShell.NativeCultureResolver.Culture;
 #endif
-                string data = state as string;
+                var data = state as string;
                 OutOfProcessUtils.ProcessData(data, callbacks);
             }
             catch (Exception e)
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Remoting.Server
             PSSenderInfo senderInfo;
 #if !UNIX
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-            PSPrincipal userPrincipal = new PSPrincipal(
+            var userPrincipal = new PSPrincipal(
                 new PSIdentity(string.Empty, true, currentIdentity.Name, null),
                 currentIdentity);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Remoting.Server
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
 
-            OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
+            var tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
             ServerRemoteSession.CreateServerRemoteSession(
                 senderInfo,
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Remoting.Server
         internal static void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
             // args can never be null.
-            Exception exception = (Exception)args.ExceptionObject;
+            var exception = (Exception)args.ExceptionObject;
             // log the exception to crimson event logs
             PSEtwLog.LogOperationalError(PSEventId.AppDomainUnhandledException,
                 PSOpcode.Close, PSTask.None,

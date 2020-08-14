@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Module != null && FullyQualifiedModule != null)
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                    var error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                     ThrowTerminatingError(error);
                 }
 
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                ProgressRecord progress = new ProgressRecord(activityId, HelpDisplayStrings.SaveProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling);
+                var progress = new ProgressRecord(activityId, HelpDisplayStrings.SaveProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling);
 
                 progress.PercentComplete = 100;
                 progress.RecordType = ProgressRecordType.Completed;
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
-            Collection<string> resolvedPaths = new Collection<string>();
+            var resolvedPaths = new Collection<string>();
 
             // Search for the HelpInfo XML
             foreach (string path in _path)
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (string.IsNullOrEmpty(path))
                     {
-                        PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
+                        var e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.PathNullOrEmpty));
                         WriteError(e.ErrorRecord);
                         return false;
                     }
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
         private bool TryConvertFromDeserializedModuleInfo(object inputData, out PSModuleInfo moduleInfo)
         {
             moduleInfo = null;
-            PSObject pso = inputData as PSObject;
+            var pso = inputData as PSObject;
             if (Deserializer.IsDeserializedInstanceOfType(pso, typeof(PSModuleInfo)))
             {
                 string moduleName;

@@ -314,7 +314,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal string GetProxyParameterData()
         {
-            Text.StringBuilder result = new System.Text.StringBuilder();
+            var result = new System.Text.StringBuilder();
             string prefix = string.Empty;
 
             if (_isMandatory)
@@ -628,7 +628,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
-            CommandMetadata cmdMetaData = new CommandMetadata(type);
+            var cmdMetaData = new CommandMetadata(type);
             Dictionary<string, ParameterMetadata> result = cmdMetaData.Parameters;
             // early GC.
             cmdMetaData = null;
@@ -680,13 +680,13 @@ namespace System.Management.Automation
         {
             Dbg.Assert(cmdParameterMetadata != null, "cmdParameterMetadata cannot be null");
 
-            Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
+            var result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var keyValuePair in cmdParameterMetadata.BindableParameters)
             {
                 var key = keyValuePair.Key;
                 var mergedCompiledPMD = keyValuePair.Value;
-                ParameterMetadata parameterMetaData = new ParameterMetadata(mergedCompiledPMD.Parameter);
+                var parameterMetaData = new ParameterMetadata(mergedCompiledPMD.Parameter);
                 result.Add(key, parameterMetaData);
             }
 
@@ -790,7 +790,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal string GetProxyParameterData(string prefix, string paramNameOverride, bool isProxyForCmdlet)
         {
-            Text.StringBuilder result = new System.Text.StringBuilder();
+            var result = new System.Text.StringBuilder();
 
             if (_parameterSets != null && isProxyForCmdlet)
             {
@@ -826,7 +826,7 @@ namespace System.Management.Automation
 
             if ((_aliases != null) && (_aliases.Count > 0))
             {
-                Text.StringBuilder aliasesData = new System.Text.StringBuilder();
+                var aliasesData = new System.Text.StringBuilder();
                 string comma = string.Empty; // comma is not need for the first element
 
                 foreach (string alias in _aliases)
@@ -899,7 +899,7 @@ namespace System.Management.Automation
         {
             string result;
 
-            ValidateLengthAttribute validLengthAttrib = attrib as ValidateLengthAttribute;
+            var validLengthAttrib = attrib as ValidateLengthAttribute;
             if (validLengthAttrib != null)
             {
                 result = string.Format(
@@ -910,7 +910,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateRangeAttribute validRangeAttrib = attrib as ValidateRangeAttribute;
+            var validRangeAttrib = attrib as ValidateRangeAttribute;
             if (validRangeAttrib != null)
             {
                 if (validRangeAttrib.RangeKind.HasValue)
@@ -946,7 +946,7 @@ namespace System.Management.Automation
                 }
             }
 
-            AllowNullAttribute allowNullAttrib = attrib as AllowNullAttribute;
+            var allowNullAttrib = attrib as AllowNullAttribute;
             if (allowNullAttrib != null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
@@ -954,7 +954,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            AllowEmptyStringAttribute allowEmptyStringAttrib = attrib as AllowEmptyStringAttribute;
+            var allowEmptyStringAttrib = attrib as AllowEmptyStringAttribute;
             if (allowEmptyStringAttrib != null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
@@ -962,7 +962,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            AllowEmptyCollectionAttribute allowEmptyColAttrib = attrib as AllowEmptyCollectionAttribute;
+            var allowEmptyColAttrib = attrib as AllowEmptyCollectionAttribute;
             if (allowEmptyColAttrib != null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
@@ -970,7 +970,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidatePatternAttribute patternAttrib = attrib as ValidatePatternAttribute;
+            var patternAttrib = attrib as ValidatePatternAttribute;
             if (patternAttrib != null)
             {
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
@@ -1001,7 +1001,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateCountAttribute countAttrib = attrib as ValidateCountAttribute;
+            var countAttrib = attrib as ValidateCountAttribute;
             if (countAttrib != null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateNotNullAttribute notNullAttrib = attrib as ValidateNotNullAttribute;
+            var notNullAttrib = attrib as ValidateNotNullAttribute;
             if (notNullAttrib != null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
@@ -1017,7 +1017,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateNotNullOrEmptyAttribute notNullEmptyAttrib = attrib as ValidateNotNullOrEmptyAttribute;
+            var notNullEmptyAttrib = attrib as ValidateNotNullOrEmptyAttribute;
             if (notNullEmptyAttrib != null)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
@@ -1025,10 +1025,10 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateSetAttribute setAttrib = attrib as ValidateSetAttribute;
+            var setAttrib = attrib as ValidateSetAttribute;
             if (setAttrib != null)
             {
-                Text.StringBuilder values = new System.Text.StringBuilder();
+                var values = new System.Text.StringBuilder();
                 string comma = string.Empty;
                 foreach (string validValue in setAttrib.ValidValues)
                 {
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateScriptAttribute scriptAttrib = attrib as ValidateScriptAttribute;
+            var scriptAttrib = attrib as ValidateScriptAttribute;
             if (scriptAttrib != null)
             {
                 // Talked with others and I think it is okay to use *unescaped* value from sb.ToString()
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            PSTypeNameAttribute psTypeNameAttrib = attrib as PSTypeNameAttribute;
+            var psTypeNameAttrib = attrib as PSTypeNameAttribute;
             if (psTypeNameAttrib != null)
             {
                 result = string.Format(
@@ -1068,7 +1068,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ObsoleteAttribute obsoleteAttrib = attrib as ObsoleteAttribute;
+            var obsoleteAttrib = attrib as ObsoleteAttribute;
             if (obsoleteAttrib != null)
             {
                 string parameters = string.Empty;
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation
                     if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
                 }
 
-                CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
+                var parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
                 AddParameter(parameter, checkNames);
             }
         }
@@ -1441,7 +1441,7 @@ namespace System.Management.Automation
 
             if (!useExisting)
             {
-                CompiledCommandParameter parameter = new CompiledCommandParameter(member, processingDynamicParameters);
+                var parameter = new CompiledCommandParameter(member, processingDynamicParameters);
                 AddParameter(parameter, true);
             }
         }

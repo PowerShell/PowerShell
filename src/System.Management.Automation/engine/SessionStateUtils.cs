@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<T> ConvertArrayToCollection<T>(T[] array)
         {
-            Collection<T> result = new Collection<T>();
+            var result = new Collection<T>();
             if (array != null)
             {
                 foreach (T element in array)
@@ -199,7 +199,7 @@ namespace System.Management.Automation
             IEnumerable<string> globPatterns,
             WildcardOptions options)
         {
-            Collection<WildcardPattern> result = new Collection<WildcardPattern>();
+            var result = new Collection<WildcardPattern>();
 
             if (globPatterns != null)
             {
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static FileMode GetFileModeFromOpenMode(OpenMode openMode)
         {
-            FileMode result = FileMode.Create;
+            var result = FileMode.Create;
 
             switch (openMode)
             {

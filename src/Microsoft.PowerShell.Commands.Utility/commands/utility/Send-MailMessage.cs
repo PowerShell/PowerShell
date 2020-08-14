@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="param"></param>
         private void AddAddressesToMailMessage(object address, string param)
         {
-            string[] objEmailAddresses = address as string[];
+            var objEmailAddresses = address as string[];
             foreach (string strEmailAddress in objEmailAddresses)
             {
                 try
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (FormatException e)
                 {
-                    ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, null);
+                    var er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, null);
                     WriteError(er);
                     continue;
                 }
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (FormatException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, From);
+                var er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, From);
                 ThrowTerminatingError(er);
             }
 
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(SmtpServer))
             {
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
+                var er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
                 this.ThrowTerminatingError(er);
             }
 
@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                         PathUtils.ReportFileOpenFailure(this, filepath, e);
                     }
 
-                    Attachment mailAttachment = new Attachment(filepath);
+                    var mailAttachment = new Attachment(filepath);
                     _mMailMessage.Attachments.Add(mailAttachment);
                 }
             }
@@ -348,30 +348,30 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (SmtpFailedRecipientsException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                var er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (SmtpException ex)
             {
                 if (ex.InnerException != null)
                 {
-                    ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                    var er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
                 else
                 {
-                    ErrorRecord er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                    var er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
             }
             catch (InvalidOperationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                var er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (System.Security.Authentication.AuthenticationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                var er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             finally

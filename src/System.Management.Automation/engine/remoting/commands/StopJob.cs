@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                                                                    job.Command, job.Id);
                 if (ShouldProcess(targetString, VerbsLifecycle.Stop))
                 {
-                    Job2 job2 = job as Job2;
+                    var job2 = job as Job2;
                     // if it is a Job2, then async is supported
                     // stop the job asynchronously
                     if (job2 != null)
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandleStopJobCompleted(object sender, AsyncCompletedEventArgs eventArgs)
         {
-            Job job = sender as Job;
+            var job = sender as Job;
 
             if (eventArgs.Error != null)
             {

@@ -177,7 +177,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         // Start execution of pipeline in another thread,
                         // and support impersonation flow as needed (Windows only).
-                        Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
+                        var invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
 
                         ApartmentState apartmentState;
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         if (needToAddOutDefault)
                         {
-                            Command outDefaultCommand = new Command(outDefaultCommandInfo);
+                            var outDefaultCommand = new Command(outDefaultCommandInfo);
                             outDefaultCommand.Parameters.Add(new CommandParameter("Transcript", true));
                             outDefaultCommand.Parameters.Add(new CommandParameter("OutVariable", null));
 
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Runspaces
                         }
                     }
 
-                    PSLocalEventManager eventManager = LocalRunspace.Events as PSLocalEventManager;
+                    var eventManager = LocalRunspace.Events as PSLocalEventManager;
                     if (eventManager != null)
                     {
                         eventManager.ProcessPendingActions();
@@ -565,7 +565,7 @@ namespace System.Management.Automation.Runspaces
                 // Set up pipeline internal host if it is available.
                 if (InvocationSettings != null && InvocationSettings.Host != null)
                 {
-                    InternalHost internalHost = InvocationSettings.Host as InternalHost;
+                    var internalHost = InvocationSettings.Host as InternalHost;
 
                     if (internalHost != null) // if we are given an internal host, use the external host
                     {
@@ -747,7 +747,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                Thread stopThread = new Thread(new ThreadStart(this.StopThreadProc));
+                var stopThread = new Thread(new ThreadStart(this.StopThreadProc));
                 stopThread.Start();
             }
         }
@@ -830,7 +830,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoCommandInPipeline);
             }
 
-            PipelineProcessor pipelineProcessor = new PipelineProcessor();
+            var pipelineProcessor = new PipelineProcessor();
             pipelineProcessor.TopLevel = true;
 
             bool failed = false;
@@ -938,20 +938,20 @@ namespace System.Management.Automation.Runspaces
                 commandInfo = ((AliasInfo)commandInfo).ReferencedCommand;
             }
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
+            var cmdletInfo = commandInfo as CmdletInfo;
             if (cmdletInfo != null)
             {
                 return new CommandProcessor(cmdletInfo, LocalRunspace.ExecutionContext);
             }
 
-            IScriptCommandInfo functionInfo = commandInfo as IScriptCommandInfo;
+            var functionInfo = commandInfo as IScriptCommandInfo;
             if (functionInfo != null)
             {
                 return new CommandProcessor(functionInfo, LocalRunspace.ExecutionContext,
                     useLocalScope: false, fromScriptFile: false, sessionState: LocalRunspace.ExecutionContext.EngineSessionState);
             }
 
-            ApplicationInfo applicationInfo = commandInfo as ApplicationInfo;
+            var applicationInfo = commandInfo as ApplicationInfo;
             if (applicationInfo != null)
             {
                 return new NativeCommandProcessor(applicationInfo, LocalRunspace.ExecutionContext);
@@ -1324,7 +1324,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (_stopping)
                 {
-                    PipelineStoppedException e = new PipelineStoppedException();
+                    var e = new PipelineStoppedException();
                     throw e;
                 }
 

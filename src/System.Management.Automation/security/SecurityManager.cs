@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            FileInfo fi = new FileInfo(path);
+            var fi = new FileInfo(path);
 
             // Return false if the file does not exist, so that
             // we don't introduce a race condition
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell
             // SAFER APIs are not on CSS or OneCore
             if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce)
             {
-                SaferPolicy saferPolicy = SaferPolicy.Disallowed;
+                var saferPolicy = SaferPolicy.Disallowed;
                 int saferAttempt = 0;
                 bool gotSaferPolicy = false;
 
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell
                     // because it's remote.
                     if (!policyCheckPassed)
                     {
-                        RunPromptDecision decision = RunPromptDecision.DoNotRun;
+                        var decision = RunPromptDecision.DoNotRun;
 
                         // Get their remote prompt answer, allowing them to
                         // enter nested prompts, if wanted.
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell
                 bool reasonSet = false;
                 if (string.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
                 {
-                    string[] trustedDirectories = new string[]
+                    var trustedDirectories = new string[]
                         { Platform.GetFolderPath(Environment.SpecialFolder.System),
                           Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
                         };
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell
             string thumbprint = signerCertificate.Thumbprint;
 
             // See if it matches any in the list of trusted publishers
-            X509Store trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
+            var trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
             trustedPublishers.Open(OpenFlags.ReadOnly);
 
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell
             string thumbprint = signerCertificate.Thumbprint;
 
             // See if it matches any in the list of trusted publishers
-            X509Store trustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
+            var trustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
             trustedPublishers.Open(OpenFlags.ReadOnly);
 
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell
         {
             // Get the certificate of the signer
             X509Certificate2 signerCertificate = signature.SignerCertificate;
-            X509Store trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
+            var trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
 
             try
             {
@@ -485,8 +485,8 @@ namespace Microsoft.PowerShell
         {
             // Get the certificate of the signer
             X509Certificate2 signerCertificate = signature.SignerCertificate;
-            X509Store untrustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
-            X509Store trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
+            var untrustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
+            var trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
 
             // Remove it from the list of trusted publishers
             try
@@ -610,7 +610,7 @@ namespace Microsoft.PowerShell
                     break;
 
                 case CommandTypes.ExternalScript:
-                    ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
+                    var si = commandInfo as ExternalScriptInfo;
                     if (si == null)
                     {
                         reason = PSTraceSource.NewArgumentException("scriptInfo");
@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell
                 return RunPromptDecision.DoNotRun;
             }
 
-            RunPromptDecision decision = RunPromptDecision.DoNotRun;
+            var decision = RunPromptDecision.DoNotRun;
 
             if (signature == null)
             {
@@ -741,7 +741,7 @@ namespace Microsoft.PowerShell
 
         private Collection<ChoiceDescription> GetAuthenticodePromptChoices()
         {
-            Collection<ChoiceDescription> choices = new Collection<ChoiceDescription>();
+            var choices = new Collection<ChoiceDescription>();
 
             string neverRun = Authenticode.Choice_NeverRun;
             string neverRunHelp = Authenticode.Choice_NeverRun_Help;
@@ -762,7 +762,7 @@ namespace Microsoft.PowerShell
 
         private Collection<ChoiceDescription> GetRemoteFilePromptChoices()
         {
-            Collection<ChoiceDescription> choices = new Collection<ChoiceDescription>();
+            var choices = new Collection<ChoiceDescription>();
 
             string doNotRun = Authenticode.Choice_DoNotRun;
             string doNotRunHelp = Authenticode.Choice_DoNotRun_Help;

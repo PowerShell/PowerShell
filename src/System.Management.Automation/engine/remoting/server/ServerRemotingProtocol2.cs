@@ -47,7 +47,7 @@ namespace System.Management.Automation
                 PSPrimitiveDictionary.CloneAndAddPSVersionTable(applicationPrivateData);
 
             // override the hardcoded version numbers with the stuff that was reported to the client during negotiation
-            PSPrimitiveDictionary versionTable = (PSPrimitiveDictionary)applicationPrivateDataWithVersionTable[PSVersionInfo.PSVersionTableName];
+            var versionTable = (PSPrimitiveDictionary)applicationPrivateDataWithVersionTable[PSVersionInfo.PSVersionTableName];
             versionTable[PSVersionInfo.PSRemotingProtocolVersionName] = serverCapability.ProtocolVersion;
             versionTable[PSVersionInfo.SerializationVersionName] = serverCapability.SerializationVersion;
 
@@ -216,7 +216,7 @@ namespace System.Management.Automation
                 Dbg.Assert(cmdTransportManager.TypeTable != null, "This should be already set in managed C++ code");
             }
 
-            ServerPowerShellDataStructureHandler dsHandler =
+            var dsHandler =
                 new ServerPowerShellDataStructureHandler(instanceId, runspacePoolId, remoteStreamOptions, cmdTransportManager, localPowerShell);
 
             lock (_associationSyncObject)
@@ -243,7 +243,7 @@ namespace System.Management.Automation
                 {
                     foreach (object o in _associatedShells.Values)
                     {
-                        ServerPowerShellDataStructureHandler result = o as ServerPowerShellDataStructureHandler;
+                        var result = o as ServerPowerShellDataStructureHandler;
                         if (result != null)
                         {
                             return result;
@@ -394,7 +394,7 @@ namespace System.Management.Automation
             Dbg.Assert(sender is ServerPowerShellDataStructureHandler, @"sender of the event
                 must be ServerPowerShellDataStructureHandler");
 
-            ServerPowerShellDataStructureHandler dsHandler = sender as ServerPowerShellDataStructureHandler;
+            var dsHandler = sender as ServerPowerShellDataStructureHandler;
 
             lock (_associationSyncObject)
             {

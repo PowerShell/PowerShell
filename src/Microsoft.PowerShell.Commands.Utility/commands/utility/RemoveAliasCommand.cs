@@ -62,8 +62,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", aliasName));
-                    ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException", ErrorCategory.ObjectNotFound, aliasName);
+                    var notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", aliasName));
+                    var error = new ErrorRecord(notAliasFound, "ItemNotFoundException", ErrorCategory.ObjectNotFound, aliasName);
                     WriteError(error);
                 }
             }

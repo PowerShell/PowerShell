@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void InitializeFormatErrorManager()
         {
-            FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
+            var formatErrorPolicy = new FormatErrorPolicy();
             if (parameters != null && parameters.showErrorsAsMessages.HasValue)
             {
                 formatErrorPolicy.ShowErrorsAsMessages = parameters.showErrorsAsMessages.Value;
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (parameters != null && parameters.groupByParameter != null)
             {
                 // get the expression to use
-                PSPropertyExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                var groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
                 // set the label
                 string label = null;
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if we have a view with autosize checked
             if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
             {
-                ControlBody controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
+                var controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
                 if (controlBody != null && controlBody.autosize.HasValue)
                 {
                     _autosize = controlBody.autosize.Value;
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal virtual FormatStartData GenerateStartData(PSObject so)
         {
-            FormatStartData startFormat = new FormatStartData();
+            var startFormat = new FormatStartData();
 
             if (_autosize)
             {
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal GroupStartData GenerateGroupStartData(PSObject firstObjectInGroup, int enumerationLimit)
         {
-            GroupStartData startGroup = new GroupStartData();
+            var startGroup = new GroupStartData();
             if (_groupingManager == null)
                 return startGroup;
 
@@ -228,10 +228,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                FormatEntry fe = new FormatEntry();
+                var fe = new FormatEntry();
                 startGroup.groupingEntry.formatValueList.Add(fe);
 
-                FormatTextField ftf = new FormatTextField();
+                var ftf = new FormatTextField();
 
                 // determine what the label should be. If we have a label from the
                 // database, let's use it, else fall back to the string provided
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 fe.formatValueList.Add(ftf);
 
-                FormatPropertyField fpf = new FormatPropertyField();
+                var fpf = new FormatPropertyField();
 
                 fpf.propertyValue = currentGroupingValueDisplay;
                 fe.formatValueList.Add(fpf);
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // NOTE: we set a max depth to protect ourselves from infinite loops
                 const int maxTreeDepth = 50;
-                ComplexControlGenerator controlGenerator =
+                var controlGenerator =
                                 new ComplexControlGenerator(this.dataBaseInfo.db,
                                         this.dataBaseInfo.view.loadingInfo,
                                         this.expressionFactory,
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (typeNames.Count == 0)
                 return false;
 
-            TypeMatch match = new TypeMatch(expressionFactory, dataBaseInfo.db, typeNames);
+            var match = new TypeMatch(expressionFactory, dataBaseInfo.db, typeNames);
             if (match.PerfectMatch(new TypeMatchItem(this, dataBaseInfo.applicableTypes)))
             {
                 return true;
@@ -435,11 +435,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit, out PSPropertyExpressionResult result)
         {
             result = null;
-            FormatPropertyField fpf = new FormatPropertyField();
+            var fpf = new FormatPropertyField();
             if (formatTokenList.Count != 0)
             {
                 FormatToken token = formatTokenList[0];
-                FieldPropertyToken fpt = token as FieldPropertyToken;
+                var fpt = token as FieldPropertyToken;
                 if (fpt != null)
                 {
                     PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    TextToken tt = token as TextToken;
+                    var tt = token as TextToken;
                     if (tt != null)
                         fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                 }

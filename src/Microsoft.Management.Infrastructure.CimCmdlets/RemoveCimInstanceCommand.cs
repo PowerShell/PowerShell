@@ -297,7 +297,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimRemoveCimInstance CreateOperationAgent()
         {
-            CimRemoveCimInstance cimRemoveInstance = new CimRemoveCimInstance();
+            var cimRemoveInstance = new CimRemoveCimInstance();
             this.AsyncOperation = cimRemoveInstance;
             return cimRemoveInstance;
         }

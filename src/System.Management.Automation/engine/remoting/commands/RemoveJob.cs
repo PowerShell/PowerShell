@@ -58,8 +58,8 @@ namespace Microsoft.PowerShell.Commands
             bool writeErrorOnNoMatch,
             bool checkIfJobCanBeRemoved)
         {
-            List<Job> matches = new List<Job>();
-            Hashtable duplicateDetector = new Hashtable();
+            var matches = new List<Job>();
+            var duplicateDetector = new Hashtable();
 
             if (_names == null) return matches;
 
@@ -187,9 +187,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingByInstanceId(bool recurse, bool writeobject, bool writeErrorOnNoMatch, bool checkIfJobCanBeRemoved)
         {
-            List<Job> matches = new List<Job>();
+            var matches = new List<Job>();
 
-            Hashtable duplicateDetector = new Hashtable();
+            var duplicateDetector = new Hashtable();
 
             if (_instanceIds == null) return matches;
 
@@ -304,11 +304,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>List of matching jobs.</returns>
         internal List<Job> FindJobsMatchingBySessionId(bool recurse, bool writeobject, bool writeErrorOnNoMatch, bool checkIfJobCanBeRemoved)
         {
-            List<Job> matches = new List<Job>();
+            var matches = new List<Job>();
 
             if (_sessionIds == null) return matches;
 
-            Hashtable duplicateDetector = new Hashtable();
+            var duplicateDetector = new Hashtable();
 
             foreach (int id in _sessionIds)
             {
@@ -406,11 +406,11 @@ namespace Microsoft.PowerShell.Commands
         internal List<Job> FindJobsMatchingByCommand(
             bool writeobject)
         {
-            List<Job> matches = new List<Job>();
+            var matches = new List<Job>();
 
             if (_commands == null) return matches;
 
-            List<Job> jobs = new List<Job>();
+            var jobs = new List<Job>();
 
             jobs.AddRange(JobRepository.Jobs);
 
@@ -459,8 +459,8 @@ namespace Microsoft.PowerShell.Commands
         internal List<Job> FindJobsMatchingByState(
             bool writeobject)
         {
-            List<Job> matches = new List<Job>();
-            List<Job> jobs = new List<Job>();
+            var matches = new List<Job>();
+            var jobs = new List<Job>();
 
             jobs.AddRange(JobRepository.Jobs);
 
@@ -498,8 +498,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal List<Job> FindJobsMatchingByFilter(bool writeobject)
         {
-            List<Job> matches = new List<Job>();
-            List<Job> jobs = new List<Job>();
+            var matches = new List<Job>();
+            var jobs = new List<Job>();
 
             // add Jobs from JobRepository -- only job property based filters are supported.
             FindJobsMatchingByFilterHelper(jobs, JobRepository.Jobs);
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal List<Job> CopyJobsToList(Job[] jobs, bool writeobject, bool checkIfJobCanBeRemoved)
         {
-            List<Job> matches = new List<Job>();
+            var matches = new List<Job>();
             if (jobs == null) return matches;
 
             foreach (Job job in jobs)
@@ -895,7 +895,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!ShouldProcess(message, VerbsCommon.Remove)) continue;
 
-                Job2 job2 = job as Job2;
+                var job2 = job as Job2;
                 if (!job.IsFinishedState(job.JobStateInfo.State))
                 {
                     // if it is a Job2, then async is supported
@@ -980,14 +980,14 @@ namespace Microsoft.PowerShell.Commands
                 string message = PSRemotingErrorInvariants.FormatResourceString(
                                         RemotingErrorIdStrings.CannotRemoveJob);
 
-                ArgumentException ex2 = new ArgumentException(message, ex);
+                var ex2 = new ArgumentException(message, ex);
                 WriteError(new ErrorRecord(ex2, "CannotRemoveJob", ErrorCategory.InvalidOperation, job));
             }
         }
 
         private void HandleStopJobCompleted(object sender, AsyncCompletedEventArgs eventArgs)
         {
-            Job job = sender as Job;
+            var job = sender as Job;
             RemoveJobAndDispose(job, true);
 
             bool releaseWait = false;

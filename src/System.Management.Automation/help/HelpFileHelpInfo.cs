@@ -94,7 +94,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(name))
                 return null;
 
-            HelpFileHelpInfo helpfileHelpInfo = new HelpFileHelpInfo(name, text, filename);
+            var helpfileHelpInfo = new HelpFileHelpInfo(name, text, filename);
 
             if (string.IsNullOrEmpty(helpfileHelpInfo.Name))
                 return null;
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// <returns>The part of string in text that is in specified line.</returns>
         private static string GetLine(string text, int line)
         {
-            StringReader reader = new StringReader(text);
+            var reader = new StringReader(text);
 
             string result = null;
 

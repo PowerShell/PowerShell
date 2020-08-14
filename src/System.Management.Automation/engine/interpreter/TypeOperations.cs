@@ -71,7 +71,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            object[] args = new object[_argCount];
+            var args = new object[_argCount];
             for (int i = _argCount - 1; i >= 0; i--)
             {
                 args[i] = frame.Pop();

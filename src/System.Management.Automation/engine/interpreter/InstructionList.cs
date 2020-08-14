@@ -367,7 +367,7 @@ namespace System.Management.Automation.Interpreter
 
                 if (value is int)
                 {
-                    int i = (int)value;
+                    var i = (int)value;
                     if (i >= PushIntMinCachedValue && i <= PushIntMaxCachedValue)
                     {
                         if (s_ints == null)
@@ -393,7 +393,7 @@ namespace System.Management.Automation.Interpreter
 
             if (_objects.Count < s_loadObjectCached.Length)
             {
-                uint index = (uint)_objects.Count;
+                var index = (uint)_objects.Count;
                 _objects.Add(value);
                 Emit(s_loadObjectCached[index] ?? (s_loadObjectCached[index] = new LoadCachedObjectInstruction(index)));
             }

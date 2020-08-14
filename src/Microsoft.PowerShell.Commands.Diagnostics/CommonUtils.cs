@@ -58,14 +58,14 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             try
             {
                 uint dwFormatFlags = FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE;
-                uint LANGID = (uint)GetUserDefaultLangID();
-                uint langError = (uint)Marshal.GetLastWin32Error();
+                var LANGID = (uint)GetUserDefaultLangID();
+                var langError = (uint)Marshal.GetLastWin32Error();
                 if (langError != 0)
                 {
                     LANGID = 0; // neutral
                 }
 
-                StringBuilder outStringBuilder = new StringBuilder(1024);
+                var outStringBuilder = new StringBuilder(1024);
                 uint nChars = FormatMessage(dwFormatFlags,
                     moduleHandle,
                     lastError,

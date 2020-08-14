@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return false;
             }
 
-            WsManErrorCode wsManErrorCode = (WsManErrorCode)(UInt32)(errorCodeProperty.Value);
+            var wsManErrorCode = (WsManErrorCode)(UInt32)(errorCodeProperty.Value);
             switch (wsManErrorCode) // error codes that should result in sleep-and-retry are based on an email from Ryan
             {
                 case WsManErrorCode.ERROR_WSMAN_QUOTA_MAX_SHELLS:
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else
             {
-                CimJobException cje = exception as CimJobException;
+                var cje = exception as CimJobException;
                 if ((cje != null) && (cje.IsTerminatingError))
                 {
                     terminatingErrorTracker.MarkSessionAsTerminated(this.JobContext.Session, out sessionWasAlreadyTerminated);
@@ -959,7 +959,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             message = this.JobContext.PrependComputerNameToMessage(message);
 
             Exception exceptionThrownOnCmdletThread = null;
-            CimResponseType result = CimResponseType.No;
+            var result = CimResponseType.No;
 
             _userWasPromptedForContinuationOfProcessing = true;
             switch (promptType)
@@ -1010,7 +1010,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static bool IsShowComputerNameMarkerPresent(CimInstance cimInstance)
         {
             PSObject pso = PSObject.AsPSObject(cimInstance);
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
+            var psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
             if (psShowComputerNameProperty == null)
             {
                 return false;
@@ -1021,7 +1021,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static void AddShowComputerNameMarker(PSObject pso)
         {
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
+            var psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
             if (psShowComputerNameProperty != null)
             {
                 psShowComputerNameProperty.Value = true;

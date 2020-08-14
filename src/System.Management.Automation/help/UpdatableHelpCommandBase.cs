@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             string activity = (e.CommandType == UpdatableHelpCommandType.UpdateHelpCommand) ?
                 HelpDisplayStrings.UpdateProgressActivityForModule : HelpDisplayStrings.SaveProgressActivityForModule;
 
-            ProgressRecord progress = new ProgressRecord(activityId, StringUtil.Format(activity, e.ModuleName), e.ProgressStatus);
+            var progress = new ProgressRecord(activityId, StringUtil.Format(activity, e.ModuleName), e.ProgressStatus);
 
             progress.PercentComplete = e.ProgressPercent;
 
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
             _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
             _helpSystem.OnProgressChanged += HandleProgressChanged;
 
-            Random rand = new Random();
+            var rand = new Random();
 
             activityId = rand.Next();
         }
@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.ModuleNameNullOrEmpty));
+                var e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.ModuleNameNullOrEmpty));
                 WriteError(e.ErrorRecord);
                 return;
             }
@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
                 var errorMessage = fullyQualifiedName != null ? StringUtil.Format(HelpDisplayStrings.ModuleNotFoundWithFullyQualifiedName, fullyQualifiedName)
                                                               : StringUtil.Format(HelpDisplayStrings.CannotMatchModulePattern, pattern);
 
-                ErrorRecord errorRecord = new ErrorRecord(new Exception(errorMessage),
+                var errorRecord = new ErrorRecord(new Exception(errorMessage),
                     "ModuleNotFound", ErrorCategory.InvalidArgument, pattern);
 
                 WriteError(errorRecord);
@@ -722,7 +722,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A list of directories.</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
         {
-            List<string> resolvedPaths = new List<string>();
+            var resolvedPaths = new List<string>();
 
             if (isLiteralPath)
             {
@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Win8: 566738
-                    CmdletProviderContext context = new CmdletProviderContext(this.Context);
+                    var context = new CmdletProviderContext(this.Context);
                     // resolvedPath is already resolved..so no need to expand wildcards anymore
                     context.SuppressWildcardExpansion = true;
                     if (isLiteralPath || InvokeProvider.Item.IsContainer(resolvedPath, context))
@@ -823,7 +823,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="message">Message to log.</param>
         internal void LogMessage(string message)
         {
-            List<string> details = new List<string>() { message };
+            var details = new List<string>() { message };
             PSEtwLog.LogPipelineExecutionDetailEvent(MshLog.GetLogContext(Context, Context.CurrentCommandProcessor.Command.MyInvocation), details);
         }
 

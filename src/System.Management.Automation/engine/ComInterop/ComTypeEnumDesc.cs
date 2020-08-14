@@ -24,8 +24,8 @@ namespace System.Management.Automation.ComInterop
             base(typeInfo, typeLibDesc)
         {
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
-            string[] memberNames = new string[typeAttr.cVars];
-            object[] memberValues = new object[typeAttr.cVars];
+            var memberNames = new string[typeAttr.cVars];
+            var memberValues = new object[typeAttr.cVars];
 
             IntPtr p;
 

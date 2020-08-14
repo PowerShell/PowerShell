@@ -29,7 +29,7 @@ namespace System.Management.Automation
 
         internal static string GetComTypeName(string clsid)
         {
-            StringBuilder firstType = new StringBuilder("System.__ComObject");
+            var firstType = new StringBuilder("System.__ComObject");
             firstType.Append("#{");
             firstType.Append(clsid);
             firstType.Append("}");
@@ -78,7 +78,7 @@ namespace System.Management.Automation
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)) &&
                 (_comTypeInfo != null) && (_comTypeInfo.Methods.TryGetValue(memberName, out method)))
             {
-                PSMethod mshMethod = new PSMethod(method.Name, this, obj, method);
+                var mshMethod = new PSMethod(method.Name, this, obj, method);
                 return mshMethod as T;
             }
 
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
         {
-            PSMemberInfoInternalCollection<T> collection = new PSMemberInfoInternalCollection<T>();
+            var collection = new PSMemberInfoInternalCollection<T>();
 
             bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
             bool lookingForParameterizedProperties = typeof(T).IsAssignableFrom(typeof(PSParameterizedProperty));
@@ -171,7 +171,7 @@ namespace System.Management.Automation
                 {
                     if (collection[method.Name] == null)
                     {
-                        PSMethod mshmethod = new PSMethod(method.Name, this, obj, method);
+                        var mshmethod = new PSMethod(method.Name, this, obj, method);
                         collection.Add(mshmethod as T);
                     }
                 }
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// <returns>The value of the property.</returns>
         protected override object PropertyGet(PSProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.GetValue(property.baseObject);
         }
 
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         ///  <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             prop.SetValue(property.baseObject, setValue);
         }
 
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.IsSettable;
         }
 
@@ -231,7 +231,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is gettable.</returns>
         protected override bool PropertyIsGettable(PSProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.IsGettable;
         }
 
@@ -243,7 +243,7 @@ namespace System.Management.Automation
         /// <returns>The name of the type corresponding to the property.</returns>
         protected override string PropertyType(PSProperty property, bool forDisplay)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return forDisplay ? ToStringCodeMethods.Type(prop.Type) : prop.Type.FullName;
         }
 
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         /// <returns>String representing the signature of the property.</returns>
         protected override string PropertyToString(PSProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.ToString();
         }
 
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         /// <returns>The return value for the method.</returns>
         protected override object MethodInvoke(PSMethod method, object[] arguments)
         {
-            ComMethod commethod = (ComMethod)method.adapterData;
+            var commethod = (ComMethod)method.adapterData;
             return commethod.InvokeMethod(method, arguments);
         }
 
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
-            ComMethod commethod = (ComMethod)method.adapterData;
+            var commethod = (ComMethod)method.adapterData;
             return commethod.MethodDefinitions();
         }
         #endregion
@@ -294,7 +294,7 @@ namespace System.Management.Automation
         /// <returns>The name of the type corresponding to the member.</returns>
         protected override string ParameterizedPropertyType(PSParameterizedProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.Type.FullName;
         }
 
@@ -305,7 +305,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool ParameterizedPropertyIsSettable(PSParameterizedProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.IsSettable;
         }
 
@@ -316,7 +316,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is gettable.</returns>
         protected override bool ParameterizedPropertyIsGettable(PSParameterizedProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.IsGettable;
         }
 
@@ -328,7 +328,7 @@ namespace System.Management.Automation
         /// <returns>The return value for the property.</returns>
         protected override object ParameterizedPropertyGet(PSParameterizedProperty property, object[] arguments)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.GetValue(property.baseObject, arguments);
         }
 
@@ -340,7 +340,7 @@ namespace System.Management.Automation
         /// <param name="arguments">The arguments to use.</param>
         protected override void ParameterizedPropertySet(PSParameterizedProperty property, object setValue, object[] arguments)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             prop.SetValue(property.baseObject, setValue, arguments);
         }
 
@@ -351,7 +351,7 @@ namespace System.Management.Automation
         /// <returns>The string representation of the property in the object.</returns>
         protected override string ParameterizedPropertyToString(PSParameterizedProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
+            var prop = (ComProperty)property.adapterData;
             return prop.ToString();
         }
 
@@ -361,8 +361,8 @@ namespace System.Management.Automation
         /// <param name="property">The return of GetMember.</param>
         protected override Collection<string> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
         {
-            ComProperty prop = (ComProperty)property.adapterData;
-            Collection<string> returnValue = new Collection<string> { prop.GetDefinition() };
+            var prop = (ComProperty)property.adapterData;
+            var returnValue = new Collection<string> { prop.GetDefinition() };
             return returnValue;
         }
 

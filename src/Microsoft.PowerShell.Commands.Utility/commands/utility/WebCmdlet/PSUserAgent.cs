@@ -131,9 +131,9 @@ namespace Microsoft.PowerShell.Commands
                     if (s_windowsUserAgent == null)
                     {
                         // find the version in the windows operating system description
-                        Regex pattern = new Regex(@"\d+(\.\d+)+");
+                        var pattern = new Regex(@"\d+(\.\d+)+");
                         string versionText = pattern.Match(OS).Value;
-                        Version windowsPlatformversion = new Version(versionText);
+                        var windowsPlatformversion = new Version(versionText);
                         s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
                     }
 

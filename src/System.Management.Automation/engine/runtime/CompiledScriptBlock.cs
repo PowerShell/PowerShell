@@ -179,7 +179,7 @@ namespace System.Management.Automation
 
             PerformSecurityChecks();
 
-            Compiler compiler = new Compiler();
+            var compiler = new Compiler();
             compiler.Compile(this, optimize);
 
 #if LEGACYTELEMETRY
@@ -263,13 +263,13 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
+                var pipelineAst = endBlock.Statements[0] as PipelineAst;
                 if (pipelineAst == null)
                 {
                     return false;
                 }
 
-                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
+                var hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
                 if (hashtableAst == null)
                 {
                     return false;
@@ -475,7 +475,7 @@ namespace System.Management.Automation
                 {
                     if (_parameterMetadata == null)
                     {
-                        CommandMetadata metadata = new CommandMetadata(
+                        var metadata = new CommandMetadata(
                             scriptBlock,
                             string.Empty,
                             LocalPipeline.GetExecutionContextFromTLS());
@@ -877,7 +877,7 @@ namespace System.Management.Automation
             IEnumerable<string> allowedVariables,
             bool allowEnvironmentVariables)
         {
-            Parser parser = new Parser();
+            var parser = new Parser();
 
             var ast = AstInternal;
             if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock != null)
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
                 return Array.Empty<object>();
             }
 
-            object[] result = new object[leftOverArgs];
+            var result = new object[leftOverArgs];
             Array.Copy(args, parameters.Length, result, 0, result.Length);
             return result;
         }
@@ -1647,7 +1647,7 @@ namespace System.Management.Automation
                     }
 
                     // Resolve the certificate to a recipient
-                    CmsMessageRecipient recipient = new CmsMessageRecipient(fullCertificateContent);
+                    var recipient = new CmsMessageRecipient(fullCertificateContent);
                     recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
                     s_hasProcessedCertificate = true;
 
@@ -2365,7 +2365,7 @@ namespace System.Management.Automation
 
                 _exitWasCalled = true;
 
-                int exitCode = (int)ee.Argument;
+                var exitCode = (int)ee.Argument;
                 this.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, exitCode);
 
                 if (exitCode != 0)

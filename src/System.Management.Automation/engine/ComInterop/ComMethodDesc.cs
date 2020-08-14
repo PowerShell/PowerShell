@@ -34,7 +34,7 @@ namespace System.Management.Automation.ComInterop
 
             InvokeKind = funcDesc.invkind;
 
-            string[] rgNames = new string[1 + funcDesc.cParams];
+            var rgNames = new string[1 + funcDesc.cParams];
             typeInfo.GetNames(DispId, rgNames, rgNames.Length, out int cNames);
 
             bool skipLast = false;

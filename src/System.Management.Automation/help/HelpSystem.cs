@@ -333,7 +333,7 @@ namespace System.Management.Automation
                         if (!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target) && this.LastErrors.Count == 0)
                         {
                             Exception e = new HelpNotFoundException(helpRequest.Target);
-                            ErrorRecord errorRecord = new ErrorRecord(e, "HelpNotFound", ErrorCategory.ResourceUnavailable, null);
+                            var errorRecord = new ErrorRecord(e, "HelpNotFound", ErrorCategory.ResourceUnavailable, null);
                             this.LastErrors.Add(errorRecord);
                             yield break;
                         }
@@ -356,7 +356,7 @@ namespace System.Management.Automation
             bool isHelpInfoFound = false;
             for (int i = 0; i < this.HelpProviders.Count; i++)
             {
-                HelpProvider helpProvider = (HelpProvider)this.HelpProviders[i];
+                var helpProvider = (HelpProvider)this.HelpProviders[i];
                 if ((helpProvider.HelpCategory & helpRequest.HelpCategory) > 0)
                 {
                     foreach (HelpInfo helpInfo in helpProvider.ExactMatchHelp(helpRequest))
@@ -407,7 +407,7 @@ namespace System.Management.Automation
                 bool isHelpInfoProcessed = false;
                 for (int i = 0; i < this.HelpProviders.Count; i++)
                 {
-                    HelpProvider helpProvider = (HelpProvider)this.HelpProviders[i];
+                    var helpProvider = (HelpProvider)this.HelpProviders[i];
                     if ((helpProvider.HelpCategory & forwardHelpCategory) != HelpCategory.None)
                     {
                         isHelpInfoProcessed = true;
@@ -442,7 +442,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private HelpInfo GetDefaultHelp()
         {
-            HelpRequest helpRequest = new HelpRequest("default", HelpCategory.DefaultHelp);
+            var helpRequest = new HelpRequest("default", HelpCategory.DefaultHelp);
             foreach (HelpInfo helpInfo in ExactMatchHelp(helpRequest))
             {
                 // return just the first helpInfo object
@@ -463,7 +463,7 @@ namespace System.Management.Automation
             bool searchInHelpContent = false;
             bool shouldBreak = false;
 
-            HelpProgressInfo progress = new HelpProgressInfo();
+            var progress = new HelpProgressInfo();
 
             progress.Activity = StringUtil.Format(HelpDisplayStrings.SearchingForHelpContent, helpRequest.Target);
             progress.Completed = false;
@@ -488,7 +488,7 @@ namespace System.Management.Automation
 
                     for (int i = 0; i < this.HelpProviders.Count; i++)
                     {
-                        HelpProvider helpProvider = (HelpProvider)this.HelpProviders[i];
+                        var helpProvider = (HelpProvider)this.HelpProviders[i];
                         if ((helpProvider.HelpCategory & helpRequest.HelpCategory) > 0)
                         {
                             foreach (HelpInfo helpInfo in helpProvider.SearchHelp(helpRequest, searchInHelpContent))
@@ -769,7 +769,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < _helpProviders.Count; i++)
             {
-                HelpProvider helpProvider = (HelpProvider)_helpProviders[i];
+                var helpProvider = (HelpProvider)_helpProviders[i];
 
                 helpProvider.Reset();
             }

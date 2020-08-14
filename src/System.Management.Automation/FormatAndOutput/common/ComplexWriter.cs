@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (object obj in fe.formatValueList)
             {
-                FormatEntry feChild = obj as FormatEntry;
+                var feChild = obj as FormatEntry;
                 if (feChild != null)
                 {
                     if (currentDepth < maxRecursionDepth)
@@ -98,14 +98,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FormatTextField ftf = obj as FormatTextField;
+                var ftf = obj as FormatTextField;
                 if (ftf != null)
                 {
                     this.AddToBuffer(ftf.text);
                     continue;
                 }
 
-                FormatPropertyField fpf = obj as FormatPropertyField;
+                var fpf = obj as FormatPropertyField;
                 if (fpf != null)
                 {
                     this.AddToBuffer(fpf.propertyValue);
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal IDisposable StackFrame(FrameInfo frameInfo)
         {
-            IndentationStackFrame frame = new IndentationStackFrame(this);
+            var frame = new IndentationStackFrame(this);
             _frameInfoStack.Push(frameInfo);
             return frame;
         }
@@ -352,8 +352,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>A collection of words.</returns>
         private static IEnumerable<GetWordsResult> GetWords(string s)
         {
-            StringBuilder sb = new StringBuilder();
-            GetWordsResult result = new GetWordsResult();
+            var sb = new StringBuilder();
+            var result = new GetWordsResult();
 
             for (int i = 0; i < s.Length; i++)
             {
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static StringCollection GenerateLinesWithoutWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            StringCollection retVal = new StringCollection();
+            var retVal = new StringCollection();
 
             if (string.IsNullOrEmpty(val))
             {
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // a (potentially) different length (indentation or hanging)
 
                 // for each line, start a new state
-                SplitLinesAccumulator accumulator = new SplitLinesAccumulator(retVal, firstLineLen, followingLinesLen);
+                var accumulator = new SplitLinesAccumulator(retVal, firstLineLen, followingLinesLen);
 
                 int offset = 0; // offset into the line we are splitting
 
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static StringCollection GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            StringCollection retVal = new StringCollection();
+            var retVal = new StringCollection();
 
             if (string.IsNullOrEmpty(val))
             {
@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int spacesLeft = firstLineLen;
                 int lineWidth = firstLineLen;
                 bool firstLine = true;
-                StringBuilder singleLine = new StringBuilder();
+                var singleLine = new StringBuilder();
 
                 foreach (GetWordsResult word in GetWords(lines[k]))
                 {
@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (string.IsNullOrEmpty(s))
                 return new string[1] { s };
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             foreach (char c in s)
             {

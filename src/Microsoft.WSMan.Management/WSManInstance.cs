@@ -500,14 +500,14 @@ namespace Microsoft.WSMan.Management
                 }
                 while (!obj.AtEndOfStream)
                 {
-                    XmlDocument xmldoc = new XmlDocument();
+                    var xmldoc = new XmlDocument();
                     xmldoc.LoadXml(obj.ReadItem());
                     WriteObject(xmldoc.FirstChild);
                 }
             }
             catch (Exception ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "Exception", ErrorCategory.InvalidOperation, null);
+                var er = new ErrorRecord(ex, "Exception", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
             }
         }
@@ -519,7 +519,7 @@ namespace Microsoft.WSMan.Management
         protected override void ProcessRecord()
         {
             IWSManSession m_session = null;
-            IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+            var m_wsmanObject = (IWSManEx)new WSManClass();
             helper = new WSManHelper(this);
             helper.WSManOp = "Get";
             string connectionStr = null;
@@ -546,7 +546,7 @@ namespace Microsoft.WSMan.Management
 
                 if (!enumerate)
                 {
-                    XmlDocument xmldoc = new XmlDocument();
+                    var xmldoc = new XmlDocument();
                     try
                     {
                         xmldoc.LoadXml(m_session.Get(m_resource, 0));
@@ -885,7 +885,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-            IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+            var m_wsmanObject = (IWSManEx)new WSManClass();
             helper = new WSManHelper(this);
             helper.WSManOp = "set";
             IWSManSession m_session = null;
@@ -924,7 +924,7 @@ namespace Microsoft.WSMan.Management
                 string rootNode = helper.GetRootNodeName(helper.WSManOp, m_resource.ResourceUri, null);
                 string input = helper.ProcessInput(m_wsmanObject, filepath, helper.WSManOp, rootNode, valueset, m_resource, m_session);
 
-                XmlDocument xmldoc = new XmlDocument();
+                var xmldoc = new XmlDocument();
                 try
                 {
                     xmldoc.LoadXml(m_session.Put(m_resource, input, 0));
@@ -1190,8 +1190,8 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-            WSManHelper helper = new WSManHelper(this);
-            IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+            var helper = new WSManHelper(this);
+            var m_wsmanObject = (IWSManEx)new WSManClass();
             helper.WSManOp = "remove";
             IWSManSession m_session = null;
             try
@@ -1519,7 +1519,7 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     string resultXml = m_session.Create(m_resource, input, 0);
-                    XmlDocument xmldoc = new XmlDocument();
+                    var xmldoc = new XmlDocument();
                     xmldoc.LoadXml(resultXml);
                     WriteObject(xmldoc.DocumentElement);
                 }

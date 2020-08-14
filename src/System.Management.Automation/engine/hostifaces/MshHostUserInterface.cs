@@ -246,7 +246,7 @@ namespace System.Management.Automation.Host
             {
                 // If we have access to a runspace, use the transcription data for that runspace.
                 // This is important when you have multiple runspaces within a host.
-                LocalRunspace localRunspace = Runspace.DefaultRunspace as LocalRunspace;
+                var localRunspace = Runspace.DefaultRunspace as LocalRunspace;
                 if (localRunspace != null)
                 {
                     _volatileTranscriptionData = localRunspace.TranscriptionData;
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Host
                     return _volatileTranscriptionData;
                 }
 
-                TranscriptionData temporaryTranscriptionData = new TranscriptionData();
+                var temporaryTranscriptionData = new TranscriptionData();
                 return temporaryTranscriptionData;
             }
         }
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Host
                 commandName = invocation.InvocationName;
 
                 // Do not transcribe Out-Default
-                CmdletInfo invocationCmdlet = invocation.MyCommand as CmdletInfo;
+                var invocationCmdlet = invocation.MyCommand as CmdletInfo;
                 if (invocationCmdlet != null)
                 {
                     if (invocationCmdlet.ImplementingType == typeof(Microsoft.PowerShell.Commands.OutDefaultCommand))
@@ -450,7 +450,7 @@ namespace System.Management.Automation.Host
 
         internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader)
         {
-            TranscriptionOption transcript = new TranscriptionOption();
+            var transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
             TranscriptionData.Transcripts.Add(transcript);
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Host
                 }
 
                 // Add bits from PSVersionTable
-                StringBuilder versionInfoFooter = new StringBuilder();
+                var versionInfoFooter = new StringBuilder();
                 Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
                 foreach (string versionKey in versionInfo.Keys)
                 {
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation.Host
             // bytes of randomness (2^48 = 2.8e14) would take an attacker about 891 years to guess
             // a filename (assuming they knew the time the transcript was started).
             // (5 bytes = 3 years, 4 bytes = about a month)
-            byte[] randomBytes = new byte[6];
+            var randomBytes = new byte[6];
             System.Security.Cryptography.RandomNumberGenerator.Create().GetBytes(randomBytes);
             string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Host
                 int andPos = choices[i].Label.IndexOf('&');
                 if (andPos >= 0)
                 {
-                    Text.StringBuilder splitLabel = new Text.StringBuilder(choices[i].Label.Substring(0, andPos), choices[i].Label.Length);
+                    var splitLabel = new Text.StringBuilder(choices[i].Label.Substring(0, andPos), choices[i].Label.Length);
                     if (andPos + 1 < choices[i].Label.Length)
                     {
                         splitLabel.Append(choices[i].Label.Substring(andPos + 1));

@@ -621,7 +621,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
+            var rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
-            RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
+            var rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
@@ -719,7 +719,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             AssertPoolIsOpen();
             // Get the runspace asynchronously.
-            GetRunspaceAsyncResult asyncResult = (GetRunspaceAsyncResult)BeginGetRunspace(null, null);
+            var asyncResult = (GetRunspaceAsyncResult)BeginGetRunspace(null, null);
             // Wait for async operation to complete.
             asyncResult.AsyncWaitHandle.WaitOne();
 
@@ -875,7 +875,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             AssertPoolIsOpen();
 
-            GetRunspaceAsyncResult asyncResult = new GetRunspaceAsyncResult(this.InstanceId,
+            var asyncResult = new GetRunspaceAsyncResult(this.InstanceId,
                 callback, state);
 
             // Enqueue and start servicing thread in one go..saving multiple locks.
@@ -896,7 +896,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
-            GetRunspaceAsyncResult grsAsyncResult =
+            var grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
             if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
@@ -935,7 +935,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
-            GetRunspaceAsyncResult grsAsyncResult =
+            var grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
             if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (shouldRaiseEvents)
             {
-                RunspacePoolStateInfo stateInfo = new RunspacePoolStateInfo(this.stateInfo.State,
+                var stateInfo = new RunspacePoolStateInfo(this.stateInfo.State,
                     reason);
                 RaiseStateChangeEvent(stateInfo);
             }
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Runspaces.Internal
             Dbg.Assert(o is AsyncResult, "OpenThreadProc expects AsyncResult");
             // Since this is an internal method, we can safely cast the
             // object to AsyncResult object.
-            AsyncResult asyncObject = (AsyncResult)o;
+            var asyncObject = (AsyncResult)o;
             // variable to keep track of exceptions.
             Exception exception = null;
 
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     if (isAsync)
                     {
-                        RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
+                        var asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
                         asyncResult.SetAsCompleted(null);
                         return asyncResult;
                     }
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (isAsync)
             {
-                RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
+                var asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
                 // Open pool in another thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(CloseThreadProc), asyncResult);
                 return asyncResult;
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation.Runspaces.Internal
             Dbg.Assert(o is AsyncResult, "CloseThreadProc expects AsyncResult");
             // Since this is an internal method, we can safely cast the
             // object to AsyncResult object.
-            AsyncResult asyncObject = (AsyncResult)o;
+            var asyncObject = (AsyncResult)o;
             // variable to keep track of exceptions.
             Exception exception = null;
 
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
 
             // close all the runspaces
-            List<Runspace> runspaceListCopy = new List<Runspace>();
+            var runspaceListCopy = new List<Runspace>();
 
             lock (runspaceList)
             {
@@ -1505,7 +1505,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         this.stateInfo.State != RunspacePoolState.Connecting),
                        "Local RunspacePool cannot be in disconnect/connect states");
 
-            bool useCallingThread = (bool)useCallingThreadState;
+            var useCallingThread = (bool)useCallingThreadState;
             GetRunspaceAsyncResult runspaceRequester = null;
 
             try
@@ -1622,7 +1622,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (stateInfo.State != RunspacePoolState.BeforeOpen)
             {
                 // Call fails if RunspacePoolState is not BeforeOpen.
-                InvalidRunspacePoolStateException e =
+                var e =
                     new InvalidRunspacePoolStateException
                     (
                         StringUtil.Format(RunspacePoolStrings.CannotOpenAgain,
