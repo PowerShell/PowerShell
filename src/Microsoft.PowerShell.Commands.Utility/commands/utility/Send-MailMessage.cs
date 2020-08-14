@@ -69,6 +69,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _encoding;
             }
+
             set
             {
                 EncodingConversion.WarnIfObsolete(this, value);

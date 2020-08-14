@@ -64,7 +64,7 @@ namespace System.Management.Automation
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
                 // Write a warning if using utf7 as it is obsolete in .NET5
-                if ( String.Compare(encoding, Utf7, StringComparison.OrdinalIgnoreCase) ==  0 )
+                if (string.Compare(encoding, Utf7, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }
@@ -89,8 +89,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Warn if the encoding has been designated as obsolete
+        /// Warn if the encoding has been designated as obsolete.
         /// </summary>
+        /// <param name="cmdlet">A cmdlet instance which is used to emit the warning.</param>
+        /// <param name="encoding">The encoding to check for obsolescence.</param>
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
             if (encoding == System.Text.Encoding.UTF7)
@@ -99,7 +101,6 @@ namespace System.Management.Automation
             }
         }
     }
-
 
     /// <summary>
     /// To make it easier to specify -Encoding parameter, we add an ArgumentTransformationAttribute here.
