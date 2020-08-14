@@ -22,9 +22,9 @@ namespace System.Management.Automation.Interpreter
         // Perf: EqualityComparer<T> but is 3/2 to 2 times slower.
         private static Instruction s_reference, s_boolean, s_SByte, s_int16, s_char, s_int32, s_int64, s_byte, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         private EqualInstruction()
         {
@@ -32,7 +32,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualBoolean : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((bool)frame.Pop()) == ((bool)frame.Pop()));
                 return +1;
@@ -41,7 +41,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualSByte : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((sbyte)frame.Pop()) == ((sbyte)frame.Pop()));
                 return +1;
@@ -50,7 +50,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualInt16 : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((Int16)frame.Pop()) == ((Int16)frame.Pop()));
                 return +1;
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualChar : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((char)frame.Pop()) == ((char)frame.Pop()));
                 return +1;
@@ -68,7 +68,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualInt32 : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((Int32)frame.Pop()) == ((Int32)frame.Pop()));
                 return +1;
@@ -77,7 +77,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualInt64 : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((Int64)frame.Pop()) == ((Int64)frame.Pop()));
                 return +1;
@@ -86,7 +86,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualByte : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((byte)frame.Pop()) == ((byte)frame.Pop()));
                 return +1;
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualUInt16 : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((UInt16)frame.Pop()) == ((UInt16)frame.Pop()));
                 return +1;
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualUInt32 : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((UInt32)frame.Pop()) == ((UInt32)frame.Pop()));
                 return +1;
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualUInt64 : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((UInt64)frame.Pop()) == ((UInt64)frame.Pop()));
                 return +1;
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualSingle : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((Single)frame.Pop()) == ((Single)frame.Pop()));
                 return +1;
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualDouble : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(((double)frame.Pop()) == ((double)frame.Pop()));
                 return +1;
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class EqualReference : EqualInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(frame.Pop() == frame.Pop());
                 return +1;

@@ -40,7 +40,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// cmdlet wrapper object, to which write result.
         /// <see cref="CmdletOperationBase"/> for details.
         /// </param>
-        public override void Execute(CmdletOperationBase cmdlet)
+        internal override void Execute(CmdletOperationBase cmdlet)
         {
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
 

@@ -194,7 +194,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// The connection associated with this runspace pool.
         /// </summary>
-        public override RunspaceConnectionInfo ConnectionInfo
+        internal override RunspaceConnectionInfo ConnectionInfo
         {
             get
             {
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Returns runspace pool availability.
         /// </summary>
-        public override RunspacePoolAvailability RunspacePoolAvailability
+        internal override RunspacePoolAvailability RunspacePoolAvailability
         {
             get
             {
@@ -879,7 +879,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Synchronous open.
         /// </summary>
-        public override void Open()
+        internal override void Open()
         {
             IAsyncResult asyncResult = BeginOpen(null, null);
 
@@ -897,7 +897,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Cannot close the RunspacePool because RunspacePool is
         /// in Closing state.
         /// </exception>
-        public override void Close()
+        internal override void Close()
         {
             // close and wait
             IAsyncResult asyncResult = BeginClose(null, null);
@@ -919,7 +919,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// An AsyncResult object to monitor the state of the async
         /// operation
         /// </returns>
-        public override IAsyncResult BeginClose(AsyncCallback callback, object asyncState)
+        internal override IAsyncResult BeginClose(AsyncCallback callback, object asyncState)
         {
             bool raiseEvents = false;
             bool skipClosing = false;
@@ -991,7 +991,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Synchronous disconnect.
         /// </summary>
-        public override void Disconnect()
+        internal override void Disconnect()
         {
             IAsyncResult asyncResult = BeginDisconnect(null, null);
 
@@ -1004,7 +1004,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="callback">AsyncCallback object.</param>
         /// <param name="state">State object.</param>
         /// <returns>IAsyncResult.</returns>
-        public override IAsyncResult BeginDisconnect(AsyncCallback callback, object state)
+        internal override IAsyncResult BeginDisconnect(AsyncCallback callback, object state)
         {
             if (!CanDisconnect)
             {
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Waits for BeginDisconnect operation to complete.
         /// </summary>
         /// <param name="asyncResult">IAsyncResult object.</param>
-        public override void EndDisconnect(IAsyncResult asyncResult)
+        internal override void EndDisconnect(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
             {
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Synchronous connect.
         /// </summary>
-        public override void Connect()
+        internal override void Connect()
         {
             IAsyncResult asyncResult = BeginConnect(null, null);
 
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="callback">ASyncCallback object.</param>
         /// <param name="state">State Object.</param>
         /// <returns>IAsyncResult.</returns>
-        public override IAsyncResult BeginConnect(AsyncCallback callback, object state)
+        internal override IAsyncResult BeginConnect(AsyncCallback callback, object state)
         {
             if (!AvailableForConnection)
             {
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Waits for BeginConnect to complete.
         /// </summary>
         /// <param name="asyncResult">IAsyncResult object.</param>
-        public override void EndConnect(IAsyncResult asyncResult)
+        internal override void EndConnect(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
             {
@@ -1194,7 +1194,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// all currently disconnected running commands associated with this runspace pool.
         /// </summary>
         /// <returns>Array of PowerShell objects.</returns>
-        public override Collection<PowerShell> CreateDisconnectedPowerShells(RunspacePool runspacePool)
+        internal override Collection<PowerShell> CreateDisconnectedPowerShells(RunspacePool runspacePool)
         {
             Collection<PowerShell> psCollection = new Collection<PowerShell>();
 
@@ -1219,7 +1219,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Returns RunspacePool capabilities.
         /// </summary>
         /// <returns>RunspacePoolCapability.</returns>
-        public override RunspacePoolCapability GetCapabilities()
+        internal override RunspacePoolCapability GetCapabilities()
         {
             RunspacePoolCapability returnCaps = RunspacePoolCapability.Default;
 
@@ -1918,7 +1918,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
-        public override void Dispose(bool disposing)
+        internal override void Dispose(bool disposing)
         {
             // dispose the base class before disposing dataStructure handler.
             base.Dispose(disposing);

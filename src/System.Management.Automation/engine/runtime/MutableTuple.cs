@@ -610,7 +610,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -659,7 +659,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -721,7 +721,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -809,7 +809,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -949,7 +949,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {
@@ -2513,7 +2513,7 @@ namespace System.Management.Automation
             }
         }
 
-        public override int Capacity
+        internal override int Capacity
         {
             get
             {

@@ -700,7 +700,7 @@ namespace System.Management.Automation
                     RawFileDataCore = rawFileData;
                 }
 
-                public override string FileName { get; }
+                internal override string FileName { get; }
 
                 internal override byte[] RawFileDataCore { get; }
             }
@@ -719,7 +719,7 @@ namespace System.Management.Automation
                     _baseObject = baseObject;
                 }
 
-                public override string FileName
+                internal override string FileName
                 {
                     get
                     {

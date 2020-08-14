@@ -26,7 +26,7 @@ namespace System.Management.Automation.Interpreter
             _sequencePoint = sequencePoint;
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var functionContext = frame.FunctionContext;
             var context = frame.ExecutionContext;

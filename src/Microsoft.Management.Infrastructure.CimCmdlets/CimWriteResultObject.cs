@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>
-        public override void Execute(CmdletOperationBase cmdlet)
+        internal override void Execute(CmdletOperationBase cmdlet)
         {
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
             cmdlet.WriteObject(result, this.Context);

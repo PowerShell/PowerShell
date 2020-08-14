@@ -27,9 +27,9 @@ namespace System.Management.Automation.Interpreter
             _value = value;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Data[frame.StackIndex++] = _value;
             return +1;
@@ -50,15 +50,15 @@ namespace System.Management.Automation.Interpreter
             _index = index;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Data[frame.StackIndex++] = frame.Interpreter._objects[_index];
             return +1;
         }
 
-        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
+        internal override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
             return string.Format(CultureInfo.InvariantCulture, "LoadCached({0}: {1})", _index, objects[(int)_index]);
         }
@@ -75,9 +75,9 @@ namespace System.Management.Automation.Interpreter
 
         private PopInstruction() { }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Pop();
             return +1;
@@ -95,11 +95,11 @@ namespace System.Management.Automation.Interpreter
 
         private DupInstruction() { }
 
-        public override int ConsumedStack { get { return 0; } }
+        internal override int ConsumedStack { get { return 0; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Data[frame.StackIndex++] = frame.Peek();
             return +1;

@@ -364,7 +364,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Marshalled Data.
             /// </summary>
             /// <returns></returns>
-            public override MarshalledObject GetMarshalledObject()
+            internal override MarshalledObject GetMarshalledObject()
             {
                 return _data;
             }
@@ -430,7 +430,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Marshalled Data.
             /// </summary>
             /// <returns></returns>
-            public override MarshalledObject GetMarshalledObject()
+            internal override MarshalledObject GetMarshalledObject()
             {
                 return _data;
             }

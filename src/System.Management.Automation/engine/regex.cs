@@ -1104,7 +1104,7 @@ namespace System.Management.Automation
 
         private class QuestionMarkElement : PatternElement
         {
-            public override void ProcessStringCharacter(
+            internal override void ProcessStringCharacter(
                             char currentStringCharacter,
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForCurrentStringPosition,
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
                 patternPositionsForNextStringPosition.Add(currentPatternPosition + 1);
             }
 
-            public override void ProcessEndOfString(
+            internal override void ProcessEndOfString(
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition)
             {
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
                 _literalCharacter = literalCharacter;
             }
 
-            public override void ProcessStringCharacter(
+            internal override void ProcessStringCharacter(
                             char currentStringCharacter,
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForCurrentStringPosition,
@@ -1158,7 +1158,7 @@ namespace System.Management.Automation
                 _regex = regex;
             }
 
-            public override void ProcessStringCharacter(
+            internal override void ProcessStringCharacter(
                             char currentStringCharacter,
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForCurrentStringPosition,
@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
 
         private class AsterixElement : PatternElement
         {
-            public override void ProcessStringCharacter(
+            internal override void ProcessStringCharacter(
                             char currentStringCharacter,
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForCurrentStringPosition,
@@ -1188,7 +1188,7 @@ namespace System.Management.Automation
                 patternPositionsForNextStringPosition.Add(currentPatternPosition);
             }
 
-            public override void ProcessEndOfString(
+            internal override void ProcessEndOfString(
                             int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition)
             {

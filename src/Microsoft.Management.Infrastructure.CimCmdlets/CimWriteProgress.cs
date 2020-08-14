@@ -65,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>
-        public override void Execute(CmdletOperationBase cmdlet)
+        internal override void Execute(CmdletOperationBase cmdlet)
         {
             DebugHelper.WriteLog(
                 "...Activity {0}: id={1}, remain seconds ={2}, percentage completed = {3}",

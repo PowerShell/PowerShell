@@ -1215,7 +1215,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Abort connection attempt.
         /// </summary>
-        public override void AbortConnect()
+        internal override void AbortConnect()
         {
             _connecting = false;
         }

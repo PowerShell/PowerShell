@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "033ecb2bc07a4d43b5ef94ed5a35d280";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
         /// Optional.
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "cf522b78d86c486691226b40aa69e95c";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "9e210fe47d09416682b841769c78b8a3";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "4ec4f0187cb04f4cb6973460dfe252df";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "27c87ef9bbda4f709f6b4002fa4af63c";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
         /// Mandatory, but depending on the shape we send in
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "b2e2775d33d544c794d0081f27021b5c";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
         /// Desired number of columns on the screen.
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             tableColumnInfoList = new List<TableColumnInfo>();
         }
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal bool hideHeader;
         internal bool repeatHeader;
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "7572aa4155ec4558817a615acf7dd92e";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
         /// Width of the column:
@@ -213,14 +213,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "830bdcb24c1642258724e441512233a4";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     internal sealed class ComplexViewHeaderInfo : ShapeInfo
     {
         internal const string CLSID = "5197dd85ca6f4cce9ae9e6fd6ded9d76";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     #endregion
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "29ED81BA914544d4BC430F027EE053E9";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal string text = null;
     }
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "cf58f450baa848ef8eb3504008be6978";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal List<ListViewField> listViewFieldList = new List<ListViewField>();
     }
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "b761477330ce4fb2a665999879324d73";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal string label = null;
         internal string propertyName = null;
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "0e59526e2dd441aa91e7fc952caf4a36";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal List<FormatPropertyField> formatPropertyFieldList = new List<FormatPropertyField>();
         internal bool multiLine = false;
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "59bf79de63354a7b9e4d1697940ff188";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal FormatPropertyField formatPropertyField = new FormatPropertyField();
     }
@@ -288,35 +288,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "22e7ef3c896449d4a6f2dedea05dd737";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     internal sealed class GroupingEntry : FreeFormatEntry
     {
         internal const string CLSID = "919820b7eadb48be8e202c5afa5c2716";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     internal sealed class PageHeaderEntry : FreeFormatEntry
     {
         internal const string CLSID = "dd1290a5950b4b27aa76d9f06199c3b3";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     internal sealed class PageFooterEntry : FreeFormatEntry
     {
         internal const string CLSID = "93565e84730645c79d4af091123eecbc";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     internal sealed partial class AutosizeInfo : FormatInfoData
     {
         internal const string CLSID = "a27f094f0eec4d64845801a4c06a32ae";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         /// <summary>
         /// Number of objects to compute the best fit.
@@ -338,14 +338,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "de7e8b96fbd84db5a43aa82eb34580ec";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
 
     internal sealed partial class FormatTextField : FormatValue
     {
         internal const string CLSID = "b8d9e369024a43a580b9e0c9279e3354";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal string text;
     }
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "78b102e894f742aca8c1d6737b6ff86a";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal string propertyValue = null;
         internal int alignment = TextAlignment.Undefined;
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             formatValueList = new List<FormatValue>();
         }
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal List<FormatValue> formatValueList;
 
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "091C9E762E33499eBE318901B6EFB733";
 
-        public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
+        internal override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         internal int leftIndentation = 0;
         internal int rightIndentation = 0;

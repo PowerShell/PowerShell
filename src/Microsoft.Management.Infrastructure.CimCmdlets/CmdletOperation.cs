@@ -161,7 +161,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
-        public override void WriteObject(object sendToPipeline, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, XOperationContextBase context)
         {
             if (sendToPipeline is CimInstance)
             {
@@ -174,7 +174,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        public override void WriteObject(object sendToPipeline, bool enumerateCollection, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, bool enumerateCollection, XOperationContextBase context)
         {
             if (sendToPipeline is CimInstance)
             {
@@ -225,7 +225,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
-        public override void WriteObject(object sendToPipeline, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, XOperationContextBase context)
         {
             DebugHelper.WriteLogEx();
 
@@ -254,7 +254,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             base.WriteObject(sendToPipeline, context);
         }
 
-        public override void WriteObject(object sendToPipeline, bool enumerateCollection, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, bool enumerateCollection, XOperationContextBase context)
         {
             if (sendToPipeline is CimInstance)
             {
@@ -303,7 +303,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
-        public override void WriteObject(object sendToPipeline, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, XOperationContextBase context)
         {
             DebugHelper.WriteLogEx();
 
@@ -317,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        public override void WriteObject(object sendToPipeline, bool enumerateCollection, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, bool enumerateCollection, XOperationContextBase context)
         {
             if (sendToPipeline is CimInstance)
             {
@@ -368,7 +368,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
-        public override void WriteObject(object sendToPipeline, XOperationContextBase context)
+        internal override void WriteObject(object sendToPipeline, XOperationContextBase context)
         {
             DebugHelper.WriteLogEx();
 

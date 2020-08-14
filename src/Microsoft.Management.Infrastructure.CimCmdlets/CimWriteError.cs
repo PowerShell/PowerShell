@@ -343,7 +343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>
-        public override void Execute(CmdletOperationBase cmdlet)
+        internal override void Execute(CmdletOperationBase cmdlet)
         {
             Debug.Assert(cmdlet != null, "Caller should verify that cmdlet != null");
             try

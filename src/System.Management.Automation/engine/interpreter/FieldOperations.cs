@@ -28,9 +28,9 @@ namespace System.Management.Automation.Interpreter
             _field = field;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Push(_field.GetValue(null));
             return +1;
@@ -47,11 +47,11 @@ namespace System.Management.Automation.Interpreter
             _field = field;
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Push(_field.GetValue(frame.Pop()));
             return +1;
@@ -68,11 +68,11 @@ namespace System.Management.Automation.Interpreter
             _field = field;
         }
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 0; } }
+        internal override int ProducedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             object value = frame.Pop();
             object self = frame.Pop();
@@ -91,11 +91,11 @@ namespace System.Management.Automation.Interpreter
             _field = field;
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 0; } }
+        internal override int ProducedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             object value = frame.Pop();
             _field.SetValue(null, value);

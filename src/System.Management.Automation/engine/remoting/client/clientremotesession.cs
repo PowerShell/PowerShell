@@ -232,7 +232,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a Remote Session Asynchronously.
         /// </summary>
-        public override void CreateAsync()
+        internal override void CreateAsync()
         {
             // Raise a CreateSession event in StateMachine. This start the process of connection and negotiation to a new remote session
             RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Connects to a existing Remote Session Asynchronously by executing a Connect negotiation algorithm.
         /// </summary>
-        public override void ConnectAsync()
+        internal override void ConnectAsync()
         {
             // Raise the connectsession event in statemachine. This start the process of connection and negotiation to an existing remote session
             RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
@@ -255,7 +255,7 @@ namespace System.Management.Automation.Remoting
         /// <remarks>
         /// Caller should register for ConnectionClosed event to get notified
         /// </remarks>
-        public override void CloseAsync()
+        internal override void CloseAsync()
         {
             RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
             SessionDataStructureHandler.StateMachine.RaiseEvent(closeArg);
@@ -264,7 +264,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Temporarily suspends connection to a connected remote session.
         /// </summary>
-        public override void DisconnectAsync()
+        internal override void DisconnectAsync()
         {
             RemoteSessionStateMachineEventArgs startDisconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectStart);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startDisconnectArg);
@@ -273,7 +273,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Restores connection to a disconnected remote session. Negotiation has already been performed before.
         /// </summary>
-        public override void ReconnectAsync()
+        internal override void ReconnectAsync()
         {
             RemoteSessionStateMachineEventArgs startReconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ReconnectStart);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startReconnectArg);
@@ -282,7 +282,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// This event handler is raised when the state of session changes.
         /// </summary>
-        public override event EventHandler<RemoteSessionStateEventArgs> StateChanged;
+        internal override event EventHandler<RemoteSessionStateEventArgs> StateChanged;
 
         /// <summary>
         /// Handles changes in data structure handler state.

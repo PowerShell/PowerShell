@@ -21,9 +21,9 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         private MulInstruction()
         {
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulInt32 : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -43,7 +43,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulInt16 : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -55,7 +55,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulInt64 : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulUInt16 : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulUInt32 : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulUInt64 : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulSingle : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulDouble : MulInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -154,9 +154,9 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         private MulOvfInstruction()
         {
@@ -164,7 +164,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfInt32 : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfInt16 : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -188,7 +188,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfInt64 : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfUInt16 : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -212,7 +212,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfUInt32 : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfUInt64 : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfSingle : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class MulOvfDouble : MulOvfInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];

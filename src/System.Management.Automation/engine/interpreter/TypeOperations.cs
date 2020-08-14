@@ -27,11 +27,11 @@ namespace System.Management.Automation.Interpreter
             _creator = delegateCreator;
         }
 
-        public override int ConsumedStack { get { return _creator.Interpreter.ClosureSize; } }
+        internal override int ConsumedStack { get { return _creator.Interpreter.ClosureSize; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             StrongBox<object>[] closure;
             if (ConsumedStack > 0)
@@ -65,11 +65,11 @@ namespace System.Management.Automation.Interpreter
             _argCount = constructor.GetParameters().Length;
         }
 
-        public override int ConsumedStack { get { return _argCount; } }
+        internal override int ConsumedStack { get { return _argCount; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             object[] args = new object[_argCount];
             for (int i = _argCount - 1; i >= 0; i--)
@@ -102,11 +102,11 @@ namespace System.Management.Automation.Interpreter
     {
         internal DefaultValueInstruction() { }
 
-        public override int ConsumedStack { get { return 0; } }
+        internal override int ConsumedStack { get { return 0; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Push(default(T));
             return +1;
@@ -122,11 +122,11 @@ namespace System.Management.Automation.Interpreter
     {
         internal TypeIsInstruction() { }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             // unfortunately Type.IsInstanceOfType() is 35-times slower than "is T" so we use generic code:
             frame.Push(ScriptingRuntimeHelpers.BooleanToObject(frame.Pop() is T));
@@ -143,11 +143,11 @@ namespace System.Management.Automation.Interpreter
     {
         internal TypeAsInstruction() { }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             // can't use as w/o generic constraint
             object value = frame.Pop();
@@ -173,15 +173,15 @@ namespace System.Management.Automation.Interpreter
     {
         internal static readonly TypeEqualsInstruction Instance = new TypeEqualsInstruction();
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         private TypeEqualsInstruction()
         {
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             object type = frame.Pop();
             object obj = frame.Pop();
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Interpreter
             return +1;
         }
 
-        public override string InstructionName
+        internal override string InstructionName
         {
             get { return "TypeEquals()"; }
         }

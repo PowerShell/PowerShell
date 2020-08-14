@@ -52,7 +52,7 @@ namespace System.Management.Automation.Interpreter
             return this;
         }
 
-        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
+        internal override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
             return ToString() + (_offset != Unknown ? " -> " + (instructionIndex + _offset) : string.Empty);
         }
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction[] s_cache;
 
-        public override Instruction[] Cache
+        internal override Instruction[] Cache
         {
             get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
@@ -76,9 +76,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             Debug.Assert(_offset != Unknown);
 
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction[] s_cache;
 
-        public override Instruction[] Cache
+        internal override Instruction[] Cache
         {
             get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
@@ -104,9 +104,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             Debug.Assert(_offset != Unknown);
 
@@ -123,7 +123,7 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction[] s_cache;
 
-        public override Instruction[] Cache
+        internal override Instruction[] Cache
         {
             get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
@@ -132,11 +132,11 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             Debug.Assert(_offset != Unknown);
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction[][][] s_caches;
 
-        public override Instruction[] Cache
+        internal override Instruction[] Cache
         {
             get
             {
@@ -180,17 +180,17 @@ namespace System.Management.Automation.Interpreter
             _hasValue = hasValue;
         }
 
-        public override int ConsumedStack
+        internal override int ConsumedStack
         {
             get { return _hasValue ? 1 : 0; }
         }
 
-        public override int ProducedStack
+        internal override int ProducedStack
         {
             get { return _hasResult ? 1 : 0; }
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             Debug.Assert(_offset != Unknown);
 
@@ -215,7 +215,7 @@ namespace System.Management.Automation.Interpreter
             return frame.Interpreter._labels[_labelIndex];
         }
 
-        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
+        internal override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
             Debug.Assert(_labelIndex != UnknownInstrIndex);
             int targetIndex = labelIndexer(_labelIndex);
@@ -266,16 +266,16 @@ namespace System.Management.Automation.Interpreter
         // and at meantime produce a new _pendingContinuation. However, in case of forward gotos, we don't not know that is the
         // case until the label is emitted. By then the consumed and produced stack information is useless.
         // The important thing here is that the stack balance is 0.
-        public override int ConsumedContinuations { get { return 0; } }
+        internal override int ConsumedContinuations { get { return 0; } }
 
-        public override int ProducedContinuations { get { return 0; } }
+        internal override int ProducedContinuations { get { return 0; } }
 
-        public override int ConsumedStack
+        internal override int ConsumedStack
         {
             get { return _hasValue ? 1 : 0; }
         }
 
-        public override int ProducedStack
+        internal override int ProducedStack
         {
             get { return _hasResult ? 1 : 0; }
         }
@@ -298,7 +298,7 @@ namespace System.Management.Automation.Interpreter
             return new GotoInstruction(labelIndex, hasResult, hasValue);
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             // goto the target label or the current finally continuation:
             return frame.Goto(_labelIndex, _hasValue ? frame.Pop() : Interpreter.NoValue, gotoExceptionHandler: false);
@@ -316,7 +316,7 @@ namespace System.Management.Automation.Interpreter
             _tryHandler = tryHandler;
         }
 
-        public override int ProducedContinuations { get { return _hasFinally ? 1 : 0; } }
+        internal override int ProducedContinuations { get { return _hasFinally ? 1 : 0; } }
 
         private EnterTryCatchFinallyInstruction(int targetIndex, bool hasFinally)
             : base(targetIndex)
@@ -334,7 +334,7 @@ namespace System.Management.Automation.Interpreter
             return new EnterTryCatchFinallyInstruction(UnknownInstrIndex, false);
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             Debug.Assert(_tryHandler != null, "the tryHandler must be set already");
 
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Interpreter
             return frame.InstructionIndex - prevInstrIndex;
         }
 
-        public override string InstructionName
+        internal override string InstructionName
         {
             get { return _hasFinally ? "EnterTryFinally" : "EnterTryCatch"; }
         }
@@ -456,9 +456,9 @@ namespace System.Management.Automation.Interpreter
     {
         private static readonly EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
 
-        public override int ProducedStack { get { return 2; } }
+        internal override int ProducedStack { get { return 2; } }
 
-        public override int ConsumedContinuations { get { return 1; } }
+        internal override int ConsumedContinuations { get { return 1; } }
 
         private EnterFinallyInstruction(int labelIndex)
             : base(labelIndex)
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Interpreter
             return new EnterFinallyInstruction(labelIndex);
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             // If _pendingContinuation == -1 then we were getting into the finally block because an exception was thrown
             //      in this case we need to set the stack depth
@@ -498,13 +498,13 @@ namespace System.Management.Automation.Interpreter
     {
         internal static readonly Instruction Instance = new LeaveFinallyInstruction();
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
         private LeaveFinallyInstruction()
         {
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.PopPendingContinuation();
 
@@ -535,14 +535,14 @@ namespace System.Management.Automation.Interpreter
         // However, while emitting instructions try block falls thru the catch block with a value on stack.
         // We need to declare it consumed so that the stack state upon entry to the handler corresponds to the real
         // stack depth after throw jumped to this catch block.
-        public override int ConsumedStack { get { return _hasValue ? 1 : 0; } }
+        internal override int ConsumedStack { get { return _hasValue ? 1 : 0; } }
 
         // A variable storing the current exception is pushed to the stack by exception handling.
         // Catch handlers: The value is immediately popped and stored into a local.
         // Fault handlers: The value is kept on stack during fault handler evaluation.
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             // nop (the exception value is pushed by the interpreter in HandleCatch)
             return 1;
@@ -559,12 +559,12 @@ namespace System.Management.Automation.Interpreter
         private readonly bool _hasValue;
 
         // The catch block yields a value if the body is non-void. This value is left on the stack.
-        public override int ConsumedStack
+        internal override int ConsumedStack
         {
             get { return _hasValue ? 1 : 0; }
         }
 
-        public override int ProducedStack
+        internal override int ProducedStack
         {
             get { return _hasValue ? 1 : 0; }
         }
@@ -586,7 +586,7 @@ namespace System.Management.Automation.Interpreter
             return new LeaveExceptionHandlerInstruction(labelIndex, hasValue);
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             return GetLabel(frame).Index - frame.InstructionIndex;
         }
@@ -606,13 +606,13 @@ namespace System.Management.Automation.Interpreter
         // We compile the body of a fault block as void.
         // However, we keep the exception object that was pushed upon entering the fault block on the stack during execution of the block
         // and pop it at the end.
-        public override int ConsumedStack
+        internal override int ConsumedStack
         {
             get { return 1; }
         }
 
         // While emitting instructions a non-void try-fault expression is expected to produce a value.
-        public override int ProducedStack
+        internal override int ProducedStack
         {
             get { return _hasValue ? 1 : 0; }
         }
@@ -622,7 +622,7 @@ namespace System.Management.Automation.Interpreter
             _hasValue = hasValue;
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             object exception = frame.Pop();
             throw new RethrowException();
@@ -644,12 +644,12 @@ namespace System.Management.Automation.Interpreter
             _rethrow = isRethrow;
         }
 
-        public override int ProducedStack
+        internal override int ProducedStack
         {
             get { return _hasResult ? 1 : 0; }
         }
 
-        public override int ConsumedStack
+        internal override int ConsumedStack
         {
             get
             {
@@ -657,7 +657,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var ex = (Exception)frame.Pop();
             if (_rethrow)
@@ -681,11 +681,11 @@ namespace System.Management.Automation.Interpreter
             _cases = cases;
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 0; } }
+        internal override int ProducedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             int target;
             return _cases.TryGetValue((int)frame.Pop(), out target) ? target : 1;
@@ -715,7 +715,7 @@ namespace System.Management.Automation.Interpreter
             _loopEnd = loopEnd;
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             // Don't lock here, it's a frequently hit path.
             //
@@ -790,7 +790,7 @@ namespace System.Management.Automation.Interpreter
             _compiledLoop = compiledLoop;
         }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             return _compiledLoop(frame.Data, frame.Closure, frame);
         }

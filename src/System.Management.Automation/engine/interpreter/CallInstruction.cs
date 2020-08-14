@@ -242,11 +242,11 @@ namespace System.Management.Automation.Interpreter
 
         #region Instruction
 
-        public sealed override int ProducedStack { get { return Info.ReturnType == typeof(void) ? 0 : 1; } }
+        internal sealed override int ProducedStack { get { return Info.ReturnType == typeof(void) ? 0 : 1; } }
 
-        public sealed override int ConsumedStack { get { return ArgumentCount; } }
+        internal sealed override int ConsumedStack { get { return ArgumentCount; } }
 
-        public sealed override string InstructionName
+        internal sealed override string InstructionName
         {
             get { return "Call"; }
         }
@@ -264,9 +264,9 @@ namespace System.Management.Automation.Interpreter
         private readonly MethodInfo _target;
         private readonly int _argumentCount;
 
-        public override MethodInfo Info { get { return _target; } }
+        internal override MethodInfo Info { get { return _target; } }
 
-        public override int ArgumentCount { get { return _argumentCount; } }
+        internal override int ArgumentCount { get { return _argumentCount; } }
 
         internal MethodInfoCallInstruction(MethodInfo target, int argumentCount)
         {
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Interpreter
             return newArgs;
         }
 
-        public sealed override int Run(InterpretedFrame frame)
+        internal sealed override int Run(InterpretedFrame frame)
         {
             int first = frame.StackIndex - _argumentCount;
             object[] args = new object[_argumentCount];

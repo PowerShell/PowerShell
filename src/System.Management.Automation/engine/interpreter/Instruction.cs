@@ -73,11 +73,11 @@ namespace System.Management.Automation.Interpreter
 
         private NotInstruction() { }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Push((bool)frame.Pop() ? ScriptingRuntimeHelpers.False : ScriptingRuntimeHelpers.True);
             return +1;

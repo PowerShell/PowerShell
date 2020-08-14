@@ -24,11 +24,11 @@ namespace System.Management.Automation.Interpreter
             _elementCount = elementCount;
         }
 
-        public override int ConsumedStack { get { return _elementCount; } }
+        internal override int ConsumedStack { get { return _elementCount; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             TElement[] array = new TElement[_elementCount];
             for (int i = _elementCount - 1; i >= 0; i--)
@@ -45,11 +45,11 @@ namespace System.Management.Automation.Interpreter
     {
         internal NewArrayInstruction() { }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             int length = (int)frame.Pop();
             frame.Push(new TElement[length]);
@@ -68,11 +68,11 @@ namespace System.Management.Automation.Interpreter
             _rank = rank;
         }
 
-        public override int ConsumedStack { get { return _rank; } }
+        internal override int ConsumedStack { get { return _rank; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var lengths = new int[_rank];
             for (int i = _rank - 1; i >= 0; i--)
@@ -90,11 +90,11 @@ namespace System.Management.Automation.Interpreter
     {
         internal GetArrayItemInstruction() { }
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             int index = (int)frame.Pop();
             TElement[] array = (TElement[])frame.Pop();
@@ -102,7 +102,7 @@ namespace System.Management.Automation.Interpreter
             return +1;
         }
 
-        public override string InstructionName
+        internal override string InstructionName
         {
             get { return "GetArrayItem"; }
         }
@@ -112,11 +112,11 @@ namespace System.Management.Automation.Interpreter
     {
         internal SetArrayItemInstruction() { }
 
-        public override int ConsumedStack { get { return 3; } }
+        internal override int ConsumedStack { get { return 3; } }
 
-        public override int ProducedStack { get { return 0; } }
+        internal override int ProducedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             TElement value = (TElement)frame.Pop();
             int index = (int)frame.Pop();
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Interpreter
             return +1;
         }
 
-        public override string InstructionName
+        internal override string InstructionName
         {
             get { return "SetArrayItem"; }
         }

@@ -107,11 +107,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 0; } }
+        internal override int ConsumedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 0] = _site.Target(_site);
             frame.StackIndex -= -1;
             return 1;
@@ -133,11 +133,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 1] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 1]);
             return 1;
         }
@@ -158,11 +158,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 2] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 2], (T1)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 1;
             return 1;
@@ -184,11 +184,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 3; } }
+        internal override int ConsumedStack { get { return 3; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 3] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 3], (T1)frame.Data[frame.StackIndex - 2], (T2)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 2;
             return 1;
@@ -210,11 +210,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 4; } }
+        internal override int ConsumedStack { get { return 4; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 4] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 4], (T1)frame.Data[frame.StackIndex - 3], (T2)frame.Data[frame.StackIndex - 2], (T3)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 3;
             return 1;
@@ -236,11 +236,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 5; } }
+        internal override int ConsumedStack { get { return 5; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 5] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 5], (T1)frame.Data[frame.StackIndex - 4], (T2)frame.Data[frame.StackIndex - 3], (T3)frame.Data[frame.StackIndex - 2], (T4)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 4;
             return 1;
@@ -262,11 +262,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 6; } }
+        internal override int ConsumedStack { get { return 6; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 6] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 6], (T1)frame.Data[frame.StackIndex - 5], (T2)frame.Data[frame.StackIndex - 4], (T3)frame.Data[frame.StackIndex - 3], (T4)frame.Data[frame.StackIndex - 2], (T5)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 5;
             return 1;
@@ -288,11 +288,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 7; } }
+        internal override int ConsumedStack { get { return 7; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 7] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 7], (T1)frame.Data[frame.StackIndex - 6], (T2)frame.Data[frame.StackIndex - 5], (T3)frame.Data[frame.StackIndex - 4], (T4)frame.Data[frame.StackIndex - 3], (T5)frame.Data[frame.StackIndex - 2], (T6)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 6;
             return 1;
@@ -314,11 +314,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 8; } }
+        internal override int ConsumedStack { get { return 8; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 8] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 8], (T1)frame.Data[frame.StackIndex - 7], (T2)frame.Data[frame.StackIndex - 6], (T3)frame.Data[frame.StackIndex - 5], (T4)frame.Data[frame.StackIndex - 4], (T5)frame.Data[frame.StackIndex - 3], (T6)frame.Data[frame.StackIndex - 2], (T7)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 7;
             return 1;
@@ -340,11 +340,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 9; } }
+        internal override int ConsumedStack { get { return 9; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 9] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 9], (T1)frame.Data[frame.StackIndex - 8], (T2)frame.Data[frame.StackIndex - 7], (T3)frame.Data[frame.StackIndex - 6], (T4)frame.Data[frame.StackIndex - 5], (T5)frame.Data[frame.StackIndex - 4], (T6)frame.Data[frame.StackIndex - 3], (T7)frame.Data[frame.StackIndex - 2], (T8)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 8;
             return 1;
@@ -366,11 +366,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 10; } }
+        internal override int ConsumedStack { get { return 10; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 10] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 10], (T1)frame.Data[frame.StackIndex - 9], (T2)frame.Data[frame.StackIndex - 8], (T3)frame.Data[frame.StackIndex - 7], (T4)frame.Data[frame.StackIndex - 6], (T5)frame.Data[frame.StackIndex - 5], (T6)frame.Data[frame.StackIndex - 4], (T7)frame.Data[frame.StackIndex - 3], (T8)frame.Data[frame.StackIndex - 2], (T9)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 9;
             return 1;
@@ -392,11 +392,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 11; } }
+        internal override int ConsumedStack { get { return 11; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 11] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 11], (T1)frame.Data[frame.StackIndex - 10], (T2)frame.Data[frame.StackIndex - 9], (T3)frame.Data[frame.StackIndex - 8], (T4)frame.Data[frame.StackIndex - 7], (T5)frame.Data[frame.StackIndex - 6], (T6)frame.Data[frame.StackIndex - 5], (T7)frame.Data[frame.StackIndex - 4], (T8)frame.Data[frame.StackIndex - 3], (T9)frame.Data[frame.StackIndex - 2], (T10)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 10;
             return 1;
@@ -418,11 +418,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 12; } }
+        internal override int ConsumedStack { get { return 12; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 12] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 12], (T1)frame.Data[frame.StackIndex - 11], (T2)frame.Data[frame.StackIndex - 10], (T3)frame.Data[frame.StackIndex - 9], (T4)frame.Data[frame.StackIndex - 8], (T5)frame.Data[frame.StackIndex - 7], (T6)frame.Data[frame.StackIndex - 6], (T7)frame.Data[frame.StackIndex - 5], (T8)frame.Data[frame.StackIndex - 4], (T9)frame.Data[frame.StackIndex - 3], (T10)frame.Data[frame.StackIndex - 2], (T11)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 11;
             return 1;
@@ -444,11 +444,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 13; } }
+        internal override int ConsumedStack { get { return 13; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 13] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 13], (T1)frame.Data[frame.StackIndex - 12], (T2)frame.Data[frame.StackIndex - 11], (T3)frame.Data[frame.StackIndex - 10], (T4)frame.Data[frame.StackIndex - 9], (T5)frame.Data[frame.StackIndex - 8], (T6)frame.Data[frame.StackIndex - 7], (T7)frame.Data[frame.StackIndex - 6], (T8)frame.Data[frame.StackIndex - 5], (T9)frame.Data[frame.StackIndex - 4], (T10)frame.Data[frame.StackIndex - 3], (T11)frame.Data[frame.StackIndex - 2], (T12)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 12;
             return 1;
@@ -470,11 +470,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 14; } }
+        internal override int ConsumedStack { get { return 14; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 14] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 14], (T1)frame.Data[frame.StackIndex - 13], (T2)frame.Data[frame.StackIndex - 12], (T3)frame.Data[frame.StackIndex - 11], (T4)frame.Data[frame.StackIndex - 10], (T5)frame.Data[frame.StackIndex - 9], (T6)frame.Data[frame.StackIndex - 8], (T7)frame.Data[frame.StackIndex - 7], (T8)frame.Data[frame.StackIndex - 6], (T9)frame.Data[frame.StackIndex - 5], (T10)frame.Data[frame.StackIndex - 4], (T11)frame.Data[frame.StackIndex - 3], (T12)frame.Data[frame.StackIndex - 2], (T13)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 13;
             return 1;
@@ -496,11 +496,11 @@ namespace System.Management.Automation.Interpreter {
             _site = site;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return 15; } }
+        internal override int ConsumedStack { get { return 15; } }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 15] = _site.Target(_site, (T0)frame.Data[frame.StackIndex - 15], (T1)frame.Data[frame.StackIndex - 14], (T2)frame.Data[frame.StackIndex - 13], (T3)frame.Data[frame.StackIndex - 12], (T4)frame.Data[frame.StackIndex - 11], (T5)frame.Data[frame.StackIndex - 10], (T6)frame.Data[frame.StackIndex - 9], (T7)frame.Data[frame.StackIndex - 8], (T8)frame.Data[frame.StackIndex - 7], (T9)frame.Data[frame.StackIndex - 6], (T10)frame.Data[frame.StackIndex - 5], (T11)frame.Data[frame.StackIndex - 4], (T12)frame.Data[frame.StackIndex - 3], (T13)frame.Data[frame.StackIndex - 2], (T14)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 14;
             return 1;

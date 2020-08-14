@@ -25,9 +25,9 @@ namespace System.Management.Automation.Interpreter
             _to = to;
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         public override string ToString()
         {
@@ -37,14 +37,14 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         internal sealed class Unchecked : NumericConvertInstruction
         {
-            public override string InstructionName { get { return "UncheckedConvert"; } }
+            internal override string InstructionName { get { return "UncheckedConvert"; } }
 
             internal Unchecked(TypeCode from, TypeCode to)
                 : base(from, to)
             {
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(Convert(frame.Pop()));
                 return +1;
@@ -161,14 +161,14 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         internal sealed class Checked : NumericConvertInstruction
         {
-            public override string InstructionName { get { return "CheckedConvert"; } }
+            internal override string InstructionName { get { return "CheckedConvert"; } }
 
             internal Checked(TypeCode from, TypeCode to)
                 : base(from, to)
             {
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Push(Convert(frame.Pop()));
                 return +1;

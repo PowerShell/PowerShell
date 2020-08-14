@@ -31,11 +31,11 @@ namespace System.Management.Automation.Interpreter
             _argumentCount = argumentCount;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return _argumentCount; } }
+        internal override int ConsumedStack { get { return _argumentCount; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             int first = frame.StackIndex - _argumentCount;
             object ret = _site.Target(_site, new ArgumentArray(frame.Data, first, _argumentCount));

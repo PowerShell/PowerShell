@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public override bool ShouldReportErrorOnNoMatches_IfMultipleFilters()
+            internal override bool ShouldReportErrorOnNoMatches_IfMultipleFilters()
             {
                 switch (this.BehaviorOnNoMatch)
                 {
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public override IEnumerable<NotFoundError> GetNotFoundErrors_IfThisIsTheOnlyFilter()
+            internal override IEnumerable<NotFoundError> GetNotFoundErrors_IfThisIsTheOnlyFilter()
             {
                 foreach (PropertyValueFilter propertyValueFilter in this.PropertyValueFilters)
                 {

@@ -21,9 +21,9 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction s_int16, s_int32, s_int64, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         private DivInstruction()
         {
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivInt32 : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -43,7 +43,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivInt16 : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -55,7 +55,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivInt64 : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivUInt16 : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivUInt32 : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivUInt64 : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivSingle : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class DivDouble : DivInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];

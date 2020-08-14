@@ -42,11 +42,11 @@ namespace System.Management.Automation.Interpreter
             _isVoid = isVoid;
         }
 
-        public override int ProducedStack { get { return _isVoid ? 0 : 1; } }
+        internal override int ProducedStack { get { return _isVoid ? 0 : 1; } }
 
-        public override int ConsumedStack { get { return _argumentCount; } }
+        internal override int ConsumedStack { get { return _argumentCount; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             int first = frame.StackIndex - _argumentCount;
             object[] args = new object[1 + _argumentCount];

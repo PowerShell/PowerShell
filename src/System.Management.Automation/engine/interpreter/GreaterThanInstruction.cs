@@ -21,9 +21,9 @@ namespace System.Management.Automation.Interpreter
     {
         private static Instruction s_SByte, s_int16, s_char, s_int32, s_int64, s_byte, s_UInt16, s_UInt32, s_UInt64, s_single, s_double;
 
-        public override int ConsumedStack { get { return 2; } }
+        internal override int ConsumedStack { get { return 2; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
         private GreaterThanInstruction()
         {
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanSByte : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 sbyte right = (sbyte)frame.Pop();
                 frame.Push(((sbyte)frame.Pop()) > right);
@@ -41,7 +41,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanInt16 : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 Int16 right = (Int16)frame.Pop();
                 frame.Push(((Int16)frame.Pop()) > right);
@@ -51,7 +51,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanChar : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 char right = (char)frame.Pop();
                 frame.Push(((char)frame.Pop()) > right);
@@ -61,7 +61,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanInt32 : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 Int32 right = (Int32)frame.Pop();
                 frame.Push(((Int32)frame.Pop()) > right);
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanInt64 : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 Int64 right = (Int64)frame.Pop();
                 frame.Push(((Int64)frame.Pop()) > right);
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanByte : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 byte right = (byte)frame.Pop();
                 frame.Push(((byte)frame.Pop()) > right);
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanUInt16 : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 UInt16 right = (UInt16)frame.Pop();
                 frame.Push(((UInt16)frame.Pop()) > right);
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanUInt32 : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 UInt32 right = (UInt32)frame.Pop();
                 frame.Push(((UInt32)frame.Pop()) > right);
@@ -111,7 +111,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanUInt64 : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 UInt64 right = (UInt64)frame.Pop();
                 frame.Push(((UInt64)frame.Pop()) > right);
@@ -121,7 +121,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanSingle : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 Single right = (Single)frame.Pop();
                 frame.Push(((Single)frame.Pop()) > right);
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Interpreter
 
         internal sealed class GreaterThanDouble : GreaterThanInstruction
         {
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 double right = (double)frame.Pop();
                 frame.Push(((double)frame.Pop()) > right);

@@ -431,9 +431,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction : CallInstruction {
         private readonly Action _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 0; } }
+        internal override int ArgumentCount { get { return 0; } }
 
         public ActionCallInstruction(Action target) {
             _target = target;
@@ -448,7 +448,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target();
             frame.StackIndex -= 0;
             return 1;
@@ -457,9 +457,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0> : CallInstruction {
         private readonly Action<T0> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 1; } }
+        internal override int ArgumentCount { get { return 1; } }
 
         public ActionCallInstruction(Action<T0> target) {
             _target = target;
@@ -474,7 +474,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 1;
             return 1;
@@ -483,9 +483,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1> : CallInstruction {
         private readonly Action<T0, T1> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 2; } }
+        internal override int ArgumentCount { get { return 2; } }
 
         public ActionCallInstruction(Action<T0, T1> target) {
             _target = target;
@@ -500,7 +500,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 2], (T1)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 2;
             return 1;
@@ -509,9 +509,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2> : CallInstruction {
         private readonly Action<T0, T1, T2> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 3; } }
+        internal override int ArgumentCount { get { return 3; } }
 
         public ActionCallInstruction(Action<T0, T1, T2> target) {
             _target = target;
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 3], (T1)frame.Data[frame.StackIndex - 2], (T2)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 3;
             return 1;
@@ -535,9 +535,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2, T3> : CallInstruction {
         private readonly Action<T0, T1, T2, T3> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 4; } }
+        internal override int ArgumentCount { get { return 4; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3> target) {
             _target = target;
@@ -552,7 +552,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 4], (T1)frame.Data[frame.StackIndex - 3], (T2)frame.Data[frame.StackIndex - 2], (T3)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 4;
             return 1;
@@ -561,9 +561,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 5; } }
+        internal override int ArgumentCount { get { return 5; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4> target) {
             _target = target;
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 5], (T1)frame.Data[frame.StackIndex - 4], (T2)frame.Data[frame.StackIndex - 3], (T3)frame.Data[frame.StackIndex - 2], (T4)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 5;
             return 1;
@@ -587,9 +587,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 6; } }
+        internal override int ArgumentCount { get { return 6; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5> target) {
             _target = target;
@@ -604,7 +604,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 6], (T1)frame.Data[frame.StackIndex - 5], (T2)frame.Data[frame.StackIndex - 4], (T3)frame.Data[frame.StackIndex - 3], (T4)frame.Data[frame.StackIndex - 2], (T5)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 6;
             return 1;
@@ -613,9 +613,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5, T6> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 7; } }
+        internal override int ArgumentCount { get { return 7; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5, T6> target) {
             _target = target;
@@ -630,7 +630,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 7], (T1)frame.Data[frame.StackIndex - 6], (T2)frame.Data[frame.StackIndex - 5], (T3)frame.Data[frame.StackIndex - 4], (T4)frame.Data[frame.StackIndex - 3], (T5)frame.Data[frame.StackIndex - 2], (T6)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 7;
             return 1;
@@ -639,9 +639,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5, T6, T7> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 8; } }
+        internal override int ArgumentCount { get { return 8; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5, T6, T7> target) {
             _target = target;
@@ -656,7 +656,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 8], (T1)frame.Data[frame.StackIndex - 7], (T2)frame.Data[frame.StackIndex - 6], (T3)frame.Data[frame.StackIndex - 5], (T4)frame.Data[frame.StackIndex - 4], (T5)frame.Data[frame.StackIndex - 3], (T6)frame.Data[frame.StackIndex - 2], (T7)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 8;
             return 1;
@@ -665,9 +665,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8> : CallInstruction {
         private readonly Action<T0, T1, T2, T3, T4, T5, T6, T7, T8> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 9; } }
+        internal override int ArgumentCount { get { return 9; } }
 
         public ActionCallInstruction(Action<T0, T1, T2, T3, T4, T5, T6, T7, T8> target) {
             _target = target;
@@ -682,7 +682,7 @@ namespace System.Management.Automation.Interpreter {
             return null;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             _target((T0)frame.Data[frame.StackIndex - 9], (T1)frame.Data[frame.StackIndex - 8], (T2)frame.Data[frame.StackIndex - 7], (T3)frame.Data[frame.StackIndex - 6], (T4)frame.Data[frame.StackIndex - 5], (T5)frame.Data[frame.StackIndex - 4], (T6)frame.Data[frame.StackIndex - 3], (T7)frame.Data[frame.StackIndex - 2], (T8)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 9;
             return 1;
@@ -691,9 +691,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<TRet> : CallInstruction {
         private readonly Func<TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 0; } }
+        internal override int ArgumentCount { get { return 0; } }
 
         public FuncCallInstruction(Func<TRet> target) {
             _target = target;
@@ -707,7 +707,7 @@ namespace System.Management.Automation.Interpreter {
             return _target();
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 0] = _target();
             frame.StackIndex -= -1;
             return 1;
@@ -716,9 +716,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, TRet> : CallInstruction {
         private readonly Func<T0, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 1; } }
+        internal override int ArgumentCount { get { return 1; } }
 
         public FuncCallInstruction(Func<T0, TRet> target) {
             _target = target;
@@ -732,7 +732,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 1] = _target((T0)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 0;
             return 1;
@@ -741,9 +741,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, TRet> : CallInstruction {
         private readonly Func<T0, T1, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 2; } }
+        internal override int ArgumentCount { get { return 2; } }
 
         public FuncCallInstruction(Func<T0, T1, TRet> target) {
             _target = target;
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 2] = _target((T0)frame.Data[frame.StackIndex - 2], (T1)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 1;
             return 1;
@@ -766,9 +766,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 3; } }
+        internal override int ArgumentCount { get { return 3; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, TRet> target) {
             _target = target;
@@ -782,7 +782,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 3] = _target((T0)frame.Data[frame.StackIndex - 3], (T1)frame.Data[frame.StackIndex - 2], (T2)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 2;
             return 1;
@@ -791,9 +791,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 4; } }
+        internal override int ArgumentCount { get { return 4; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, TRet> target) {
             _target = target;
@@ -807,7 +807,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2), arg3 != null ? (T3)arg3 : default(T3));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 4] = _target((T0)frame.Data[frame.StackIndex - 4], (T1)frame.Data[frame.StackIndex - 3], (T2)frame.Data[frame.StackIndex - 2], (T3)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 3;
             return 1;
@@ -816,9 +816,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 5; } }
+        internal override int ArgumentCount { get { return 5; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, TRet> target) {
             _target = target;
@@ -832,7 +832,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2), arg3 != null ? (T3)arg3 : default(T3), arg4 != null ? (T4)arg4 : default(T4));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 5] = _target((T0)frame.Data[frame.StackIndex - 5], (T1)frame.Data[frame.StackIndex - 4], (T2)frame.Data[frame.StackIndex - 3], (T3)frame.Data[frame.StackIndex - 2], (T4)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 4;
             return 1;
@@ -841,9 +841,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 6; } }
+        internal override int ArgumentCount { get { return 6; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, TRet> target) {
             _target = target;
@@ -857,7 +857,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2), arg3 != null ? (T3)arg3 : default(T3), arg4 != null ? (T4)arg4 : default(T4), arg5 != null ? (T5)arg5 : default(T5));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 6] = _target((T0)frame.Data[frame.StackIndex - 6], (T1)frame.Data[frame.StackIndex - 5], (T2)frame.Data[frame.StackIndex - 4], (T3)frame.Data[frame.StackIndex - 3], (T4)frame.Data[frame.StackIndex - 2], (T5)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 5;
             return 1;
@@ -866,9 +866,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, T6, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 7; } }
+        internal override int ArgumentCount { get { return 7; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, T6, TRet> target) {
             _target = target;
@@ -882,7 +882,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2), arg3 != null ? (T3)arg3 : default(T3), arg4 != null ? (T4)arg4 : default(T4), arg5 != null ? (T5)arg5 : default(T5), arg6 != null ? (T6)arg6 : default(T6));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 7] = _target((T0)frame.Data[frame.StackIndex - 7], (T1)frame.Data[frame.StackIndex - 6], (T2)frame.Data[frame.StackIndex - 5], (T3)frame.Data[frame.StackIndex - 4], (T4)frame.Data[frame.StackIndex - 3], (T5)frame.Data[frame.StackIndex - 2], (T6)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 6;
             return 1;
@@ -891,9 +891,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, T6, T7, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 8; } }
+        internal override int ArgumentCount { get { return 8; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, T6, T7, TRet> target) {
             _target = target;
@@ -907,7 +907,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2), arg3 != null ? (T3)arg3 : default(T3), arg4 != null ? (T4)arg4 : default(T4), arg5 != null ? (T5)arg5 : default(T5), arg6 != null ? (T6)arg6 : default(T6), arg7 != null ? (T7)arg7 : default(T7));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 8] = _target((T0)frame.Data[frame.StackIndex - 8], (T1)frame.Data[frame.StackIndex - 7], (T2)frame.Data[frame.StackIndex - 6], (T3)frame.Data[frame.StackIndex - 5], (T4)frame.Data[frame.StackIndex - 4], (T5)frame.Data[frame.StackIndex - 3], (T6)frame.Data[frame.StackIndex - 2], (T7)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 7;
             return 1;
@@ -916,9 +916,9 @@ namespace System.Management.Automation.Interpreter {
 
     internal sealed class FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> : CallInstruction {
         private readonly Func<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> _target;
-        public override MethodInfo Info { get { return _target.GetMethodInfo(); } }
+        internal override MethodInfo Info { get { return _target.GetMethodInfo(); } }
 
-        public override int ArgumentCount { get { return 9; } }
+        internal override int ArgumentCount { get { return 9; } }
 
         public FuncCallInstruction(Func<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> target) {
             _target = target;
@@ -932,7 +932,7 @@ namespace System.Management.Automation.Interpreter {
             return _target(arg0 != null ? (T0)arg0 : default(T0), arg1 != null ? (T1)arg1 : default(T1), arg2 != null ? (T2)arg2 : default(T2), arg3 != null ? (T3)arg3 : default(T3), arg4 != null ? (T4)arg4 : default(T4), arg5 != null ? (T5)arg5 : default(T5), arg6 != null ? (T6)arg6 : default(T6), arg7 != null ? (T7)arg7 : default(T7), arg8 != null ? (T8)arg8 : default(T8));
         }
 
-        public override int Run(InterpretedFrame frame) {
+        internal override int Run(InterpretedFrame frame) {
             frame.Data[frame.StackIndex - 9] = _target((T0)frame.Data[frame.StackIndex - 9], (T1)frame.Data[frame.StackIndex - 8], (T2)frame.Data[frame.StackIndex - 7], (T3)frame.Data[frame.StackIndex - 6], (T4)frame.Data[frame.StackIndex - 5], (T5)frame.Data[frame.StackIndex - 4], (T6)frame.Data[frame.StackIndex - 3], (T7)frame.Data[frame.StackIndex - 2], (T8)frame.Data[frame.StackIndex - 1]);
             frame.StackIndex -= 8;
             return 1;

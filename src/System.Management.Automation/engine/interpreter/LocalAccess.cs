@@ -37,7 +37,7 @@ namespace System.Management.Automation.Interpreter
             _index = index;
         }
 
-        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
+        internal override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
             return cookie == null ?
                 InstructionName + "(" + _index + ")" :
@@ -54,9 +54,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Data[frame.StackIndex++] = frame.Data[_index];
             // frame.Push(frame.Data[_index]);
@@ -76,9 +76,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var box = (StrongBox<object>)frame.Data[_index];
             frame.Data[frame.StackIndex++] = box.Value;
@@ -93,9 +93,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var box = frame.Closure[_index];
             frame.Data[frame.StackIndex++] = box.Value;
@@ -110,9 +110,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var box = frame.Closure[_index];
             frame.Data[frame.StackIndex++] = box;
@@ -131,11 +131,11 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Data[_index] = frame.Peek();
             return +1;
@@ -154,9 +154,9 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             frame.Data[_index] = frame.Data[--frame.StackIndex];
             // frame.Data[_index] = frame.Pop();
@@ -176,11 +176,11 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var box = (StrongBox<object>)frame.Data[_index];
             box.Value = frame.Peek();
@@ -195,11 +195,11 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 0; } }
+        internal override int ProducedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var box = (StrongBox<object>)frame.Data[_index];
             box.Value = frame.Data[--frame.StackIndex];
@@ -214,11 +214,11 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public override int ConsumedStack { get { return 1; } }
+        internal override int ConsumedStack { get { return 1; } }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var box = frame.Closure[_index];
             box.Value = frame.Peek();
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Interpreter
             {
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Data[_index] = null;
                 return 1;
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Interpreter
                 return (index == _index) ? InstructionList.InitImmutableRefBox(index) : null;
             }
 
-            public override string InstructionName
+            internal override string InstructionName
             {
                 get { return "InitRef"; }
             }
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Interpreter
                 _defaultValue = defaultValue;
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Data[_index] = _defaultValue;
                 return 1;
@@ -283,7 +283,7 @@ namespace System.Management.Automation.Interpreter
                 return (index == _index) ? new ImmutableBox(index, _defaultValue) : null;
             }
 
-            public override string InstructionName
+            internal override string InstructionName
             {
                 get { return "InitImmutableValue"; }
             }
@@ -300,13 +300,13 @@ namespace System.Management.Automation.Interpreter
                 _defaultValue = defaultValue;
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Data[_index] = new StrongBox<object>(_defaultValue);
                 return 1;
             }
 
-            public override string InstructionName
+            internal override string InstructionName
             {
                 get { return "InitImmutableBox"; }
             }
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Interpreter
             {
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Data[_index] = new StrongBox<object>(frame.Data[_index]);
                 return 1;
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Interpreter
             {
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 // nop
                 return 1;
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Interpreter
                 return null;
             }
 
-            public override string InstructionName
+            internal override string InstructionName
             {
                 get { return "InitParameter"; }
             }
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Interpreter
                 _type = type;
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 try
                 {
@@ -385,7 +385,7 @@ namespace System.Management.Automation.Interpreter
                 return (index == _index) ? new MutableBox(index, _type) : null;
             }
 
-            public override string InstructionName
+            internal override string InstructionName
             {
                 get { return "InitMutableValue"; }
             }
@@ -401,13 +401,13 @@ namespace System.Management.Automation.Interpreter
                 _type = type;
             }
 
-            public override int Run(InterpretedFrame frame)
+            internal override int Run(InterpretedFrame frame)
             {
                 frame.Data[_index] = new StrongBox<object>(Activator.CreateInstance(_type));
                 return 1;
             }
 
-            public override string InstructionName
+            internal override string InstructionName
             {
                 get { return "InitMutableBox"; }
             }
@@ -427,11 +427,11 @@ namespace System.Management.Automation.Interpreter
             _count = count;
         }
 
-        public override int ProducedStack { get { return 1; } }
+        internal override int ProducedStack { get { return 1; } }
 
-        public override int ConsumedStack { get { return _count; } }
+        internal override int ConsumedStack { get { return _count; } }
 
-        public override int Run(InterpretedFrame frame)
+        internal override int Run(InterpretedFrame frame)
         {
             var ret = new IStrongBox[_count];
             for (int i = ret.Length - 1; i >= 0; i--)
