@@ -243,6 +243,9 @@ function Invoke-CITest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$PWD\TestsResultsNonAdmin-$TagSet.xml"
     $testResultsAdminFile = "$PWD\TestsResultsAdmin-$TagSet.xml"
+    $testResultsNonAdminPwshwFile = "$PWD\TestsResultsNonAdmin-pwshw-$TagSet.xml"
+    $testResultsAdminPwshwFile = "$PWD\TestsResultsAdmin-pwshw-$TagSet.xml"
+
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
