@@ -7,14 +7,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:version="1.0 (4035a4f, 2020-05-01)"
-   sodipodi:docname="ps_fluent_design.svg"
-   id="svg995"
-   version="1.1"
+   width="328.55804"
+   height="239.99974"
+   viewBox="0 0 328.55804 239.99974"
    fill="none"
-   viewBox="0 0 384 240"
-   height="240"
-   width="384">
+   version="1.1"
+   id="svg995"
+   sodipodi:docname="ps_fluent_design.svg"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)">
   <metadata
      id="metadata999">
     <rdf:RDF>
@@ -23,248 +23,254 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <sodipodi:namedview
-     inkscape:current-layer="g934"
-     inkscape:window-maximized="0"
-     inkscape:window-y="311"
-     inkscape:window-x="625"
-     inkscape:cy="120"
-     inkscape:cx="192"
-     inkscape:zoom="2.7339021"
-     showgrid="false"
-     id="namedview997"
-     inkscape:window-height="1439"
-     inkscape:window-width="2510"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0"
-     guidetolerance="10"
-     gridtolerance="10"
-     objecttolerance="10"
-     borderopacity="1"
+     inkscape:document-rotation="0"
+     pagecolor="#ffffff"
      bordercolor="#666666"
-     pagecolor="#ffffff" />
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2510"
+     inkscape:window-height="1439"
+     id="namedview997"
+     showgrid="false"
+     inkscape:zoom="2.7339021"
+     inkscape:cx="203.03071"
+     inkscape:cy="118.90267"
+     inkscape:window-x="625"
+     inkscape:window-y="289"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g934" />
   <g
-     mask="url(#mask0)"
-     id="g934">
+     transform="translate(11.030705,-1.0973327)"
+     id="g934"
+     mask="url(#mask0)">
     <rect
-       width="307.77988"
-       height="241.30206"
-       rx="21.667742"
-       transform="matrix(1,0,-0.1037546,0.99460293,0,0)"
-       fill="url(#paint0_linear)"
-       id="rect920"
-       style="fill:url(#paint0_linear);stroke-width:0.930144"
+       y="1.1032872"
        x="11.990955"
-       y="1.1032872" />
+       style="fill:url(#paint0_linear);stroke-width:0.930144"
+       id="rect920"
+       fill="url(#paint0_linear)"
+       transform="matrix(1,0,-0.1037546,0.99460293,0,0)"
+       rx="21.667742"
+       height="241.30206"
+       width="307.77988" />
     <g
-       filter="url(#filter0_d)"
-       id="g924">
+       id="g924"
+       filter="url(#filter0_d)">
       <rect
-         style="stroke-width:0.99642"
-         width="37.780464"
-         height="127.12212"
-         rx="14.094032"
-         transform="matrix(-0.67742926,-0.73558792,0.75489594,-0.65584459,0,0)"
-         fill="#e9e9e9"
-         id="rect922"
+         y="-88.126953"
          x="-197.93506"
-         y="-88.126953" />
+         id="rect922"
+         fill="#e9e9e9"
+         transform="matrix(-0.67742926,-0.73558792,0.75489594,-0.65584459,0,0)"
+         rx="14.094032"
+         height="127.12212"
+         width="37.780464"
+         style="stroke-width:0.99642" />
     </g>
     <g
-       filter="url(#filter1_d)"
-       id="g928">
+       id="g928"
+       filter="url(#filter1_d)">
       <rect
-         style="stroke-width:0.996419"
-         width="42.243156"
-         height="113.05936"
-         rx="15.850219"
-         transform="matrix(0.75312398,-0.65787861,0.67543069,0.73742348,0,0)"
-         fill="#efefef"
-         id="rect926"
+         y="84.657089"
          x="-2.361069"
-         y="84.657089" />
+         id="rect926"
+         fill="#efefef"
+         transform="matrix(0.75312398,-0.65787861,0.67543069,0.73742348,0,0)"
+         rx="15.850219"
+         height="113.05936"
+         width="42.243156"
+         style="stroke-width:0.996419" />
     </g>
     <g
-       filter="url(#filter2_d)"
-       id="g932">
+       id="g932"
+       filter="url(#filter2_d)">
       <rect
-         style="stroke-width:0.999825"
-         width="39.572136"
-         height="121.952"
-         rx="9.9964981"
-         transform="matrix(0.11660984,-0.9931778,1,-4.22614e-8,0,0)"
-         fill="#efefef"
-         id="rect930"
+         y="161.66559"
          x="-200.11938"
-         y="161.66559" />
+         id="rect930"
+         fill="#efefef"
+         transform="matrix(0.11660984,-0.9931778,1,-4.22614e-8,0,0)"
+         rx="9.9964981"
+         height="121.952"
+         width="39.572136"
+         style="stroke-width:0.999825" />
     </g>
   </g>
   <defs
      id="defs993">
     <filter
-       color-interpolation-filters="sRGB"
-       filterUnits="userSpaceOnUse"
-       height="299.001"
-       width="309.149"
+       id="filter0_d"
+       x="-40.123798"
        y="13.6796"
-       x="-40.1238"
-       id="filter0_d">
+       width="309.14899"
+       height="299.00101"
+       filterUnits="userSpaceOnUse"
+       color-interpolation-filters="sRGB">
       <feFlood
-         id="feFlood938"
+         flood-opacity="0"
          result="BackgroundImageFix"
-         flood-opacity="0" />
+         id="feFlood938" />
       <feColorMatrix
-         id="feColorMatrix940"
-         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         in="SourceAlpha"
          type="matrix"
-         in="SourceAlpha" />
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         id="feColorMatrix940" />
       <feOffset
-         id="feOffset942"
-         dy="15" />
+         dy="15"
+         id="feOffset942" />
       <feGaussianBlur
-         id="feGaussianBlur944"
-         stdDeviation="50" />
+         stdDeviation="50"
+         id="feGaussianBlur944" />
       <feColorMatrix
-         id="feColorMatrix946"
+         type="matrix"
          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"
-         type="matrix" />
+         id="feColorMatrix946" />
       <feBlend
-         id="feBlend948"
-         result="effect1_dropShadow"
+         mode="normal"
          in2="BackgroundImageFix"
-         mode="normal" />
+         result="effect1_dropShadow"
+         id="feBlend948" />
       <feBlend
-         id="feBlend950"
-         result="shape"
-         in2="effect1_dropShadow"
+         mode="normal"
          in="SourceGraphic"
-         mode="normal" />
+         in2="effect1_dropShadow"
+         result="shape"
+         id="feBlend950" />
     </filter>
     <filter
-       color-interpolation-filters="sRGB"
-       filterUnits="userSpaceOnUse"
-       height="298.967"
-       width="295.802"
-       y="-42.3455"
+       id="filter1_d"
        x="-26.7054"
-       id="filter1_d">
+       y="-42.345501"
+       width="295.802"
+       height="298.96701"
+       filterUnits="userSpaceOnUse"
+       color-interpolation-filters="sRGB">
       <feFlood
-         id="feFlood953"
+         flood-opacity="0"
          result="BackgroundImageFix"
-         flood-opacity="0" />
+         id="feFlood953" />
       <feColorMatrix
-         id="feColorMatrix955"
-         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         in="SourceAlpha"
          type="matrix"
-         in="SourceAlpha" />
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         id="feColorMatrix955" />
       <feOffset
-         id="feOffset957"
-         dy="15" />
+         dy="15"
+         id="feOffset957" />
       <feGaussianBlur
-         id="feGaussianBlur959"
-         stdDeviation="50" />
+         stdDeviation="50"
+         id="feGaussianBlur959" />
       <feColorMatrix
-         id="feColorMatrix961"
+         type="matrix"
          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.75 0"
-         type="matrix" />
+         id="feColorMatrix961" />
       <feBlend
-         id="feBlend963"
-         result="effect1_dropShadow"
+         mode="normal"
          in2="BackgroundImageFix"
-         mode="normal" />
+         result="effect1_dropShadow"
+         id="feBlend963" />
       <feBlend
-         id="feBlend965"
-         result="shape"
-         in2="effect1_dropShadow"
+         mode="normal"
          in="SourceGraphic"
-         mode="normal" />
+         in2="effect1_dropShadow"
+         result="shape"
+         id="feBlend965" />
     </filter>
     <filter
-       color-interpolation-filters="sRGB"
-       filterUnits="userSpaceOnUse"
-       height="239.302"
-       width="324.372"
+       id="filter2_d"
+       x="93.196098"
        y="76.2808"
-       x="93.1961"
-       id="filter2_d">
+       width="324.37201"
+       height="239.302"
+       filterUnits="userSpaceOnUse"
+       color-interpolation-filters="sRGB">
       <feFlood
-         id="feFlood968"
+         flood-opacity="0"
          result="BackgroundImageFix"
-         flood-opacity="0" />
+         id="feFlood968" />
       <feColorMatrix
-         id="feColorMatrix970"
-         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         in="SourceAlpha"
          type="matrix"
-         in="SourceAlpha" />
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         id="feColorMatrix970" />
       <feOffset
-         id="feOffset972"
-         dy="15" />
+         dy="15"
+         id="feOffset972" />
       <feGaussianBlur
-         id="feGaussianBlur974"
-         stdDeviation="50" />
+         stdDeviation="50"
+         id="feGaussianBlur974" />
       <feColorMatrix
-         id="feColorMatrix976"
+         type="matrix"
          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
-         type="matrix" />
+         id="feColorMatrix976" />
       <feBlend
-         id="feBlend978"
-         result="effect1_dropShadow"
+         mode="normal"
          in2="BackgroundImageFix"
-         mode="normal" />
+         result="effect1_dropShadow"
+         id="feBlend978" />
       <feBlend
-         id="feBlend980"
-         result="shape"
-         in2="effect1_dropShadow"
+         mode="normal"
          in="SourceGraphic"
-         mode="normal" />
+         in2="effect1_dropShadow"
+         result="shape"
+         id="feBlend980" />
     </filter>
     <linearGradient
-       gradientTransform="matrix(0.86670966,0,0,0.99822147,11.990956,1.1032872)"
-       gradientUnits="userSpaceOnUse"
-       y2="274.653"
-       x2="327.506"
-       y1="0"
+       id="paint0_linear"
        x1="0"
-       id="paint0_linear">
+       y1="0"
+       x2="327.50601"
+       y2="274.65302"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.86670966,0,0,0.99822147,11.990956,1.1032872)">
       <stop
-         id="stop983"
-         stop-color="#2E466A" />
+         stop-color="#2E466A"
+         id="stop983" />
       <stop
-         id="stop985"
+         offset="0.53125"
          stop-color="#1C2C40"
-         offset="0.53125" />
+         id="stop985" />
       <stop
-         id="stop987"
+         offset="1"
          stop-color="#00040A"
-         offset="1" />
+         id="stop987" />
     </linearGradient>
     <clipPath
        id="clip0">
       <rect
-         id="rect990"
-         fill="white"
+         y="0"
+         x="0"
+         width="384"
          height="240"
-         width="384" />
+         fill="#ffffff"
+         id="rect990" />
     </clipPath>
     <mask
-       id="mask0"
-       mask-type="alpha"
-       maskUnits="userSpaceOnUse"
-       x="2"
-       y="0"
+       height="240"
        width="380"
-       height="240">
+       y="0"
+       x="2"
+       maskUnits="userSpaceOnUse"
+       mask-type="alpha"
+       id="mask0">
       <rect
-         width="355.113"
-         height="241.732"
+         y="0"
+         x="0"
+         id="rect917"
+         fill="#ffffff"
+         transform="matrix(1,0,-0.119498,0.992834,28.8866,0)"
          rx="25"
-         transform="matrix(1 0 -0.119498 0.992834 28.8866 0)"
-         fill="white"
-         id="rect917" />
+         height="241.73199"
+         width="355.11301" />
     </mask>
   </defs>
 </svg>
