@@ -616,7 +616,7 @@ namespace System.Management.Automation.Runspaces
         {
             PipelineBase currentPipeline = (PipelineBase)RunspaceBase.GetCurrentlyRunningPipeline();
 
-            if (!IsNested)
+            if (IsNested == false)
             {
                 if (currentPipeline == null)
                 {
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (_performNestedCheck)
                 {
-                    if (!syncCall)
+                    if (syncCall == false)
                     {
                         throw PSTraceSource.NewInvalidOperationException(
                                 RunspaceStrings.NestedPipelineInvokeAsync);
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Runspaces
                     Dbg.Assert(currentPipeline.NestedPipelineExecutionThread != null, "Current pipeline should always have NestedPipelineExecutionThread set");
                     Thread th = Thread.CurrentThread;
 
-                    if (!currentPipeline.NestedPipelineExecutionThread.Equals(th))
+                    if (currentPipeline.NestedPipelineExecutionThread.Equals(th) == false)
                     {
                         throw PSTraceSource.NewInvalidOperationException(
                                 RunspaceStrings.NestedPipelineNoParentPipeline);
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation.Runspaces
         {
             try
             {
-                if (!_disposed)
+                if (_disposed == false)
                 {
                     _disposed = true;
                     if (disposing)

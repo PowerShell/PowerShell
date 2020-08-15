@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
             RemotePipeline currentPipeline =
                 (RemotePipeline)((RemoteRunspace)_runspace).GetCurrentlyRunningPipeline();
 
-            if (!_isNested)
+            if (_isNested == false)
             {
                 if (currentPipeline == null &&
                     ((RemoteRunspace)_runspace).RunspaceAvailability != RunspaceAvailability.Busy &&
@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (!syncCall)
+                    if (syncCall == false)
                     {
                         throw PSTraceSource.NewInvalidOperationException(
                                 RunspaceStrings.NestedPipelineInvokeAsync);

@@ -643,7 +643,7 @@ namespace System.Management.Automation
 
         private string GetAdapterName(JobSourceAdapter sourceAdapter)
         {
-            return (!string.IsNullOrEmpty(sourceAdapter.Name) ?
+            return (string.IsNullOrEmpty(sourceAdapter.Name) == false ?
                 sourceAdapter.Name :
                 sourceAdapter.GetType().ToString());
         }

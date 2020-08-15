@@ -503,7 +503,7 @@ namespace System.Management.Automation
                         // we will try launching one last time using ShellExecute...
                         if (notDone)
                         {
-                            if (soloCommand && !startInfo.UseShellExecute)
+                            if (soloCommand && startInfo.UseShellExecute == false)
                             {
                                 startInfo.UseShellExecute = true;
                                 startInfo.RedirectStandardInput = false;
@@ -530,7 +530,7 @@ namespace System.Management.Automation
                 else
                 {
                     _isRunningInBackground = true;
-                    if (!startInfo.UseShellExecute)
+                    if (startInfo.UseShellExecute == false)
                     {
                         _isRunningInBackground = IsWindowsApplication(_nativeProcess.StartInfo.FileName);
                     }
@@ -562,7 +562,7 @@ namespace System.Management.Automation
                     throw;
                 }
 
-                if (!_isRunningInBackground)
+                if (_isRunningInBackground == false)
                 {
                     InitOutputQueue();
                 }
@@ -653,7 +653,7 @@ namespace System.Management.Automation
         /// </summary>
         private void ConsumeAvailableNativeProcessOutput(bool blocking)
         {
-            if (!_isRunningInBackground)
+            if (_isRunningInBackground == false)
             {
                 if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
                 {
@@ -677,7 +677,7 @@ namespace System.Management.Automation
             Exception exceptionToRethrow = null;
             try
             {
-                if (!_isRunningInBackground)
+                if (_isRunningInBackground == false)
                 {
                     // Wait for input writer to finish.
                     _inputWriter.Done();
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
 
             // In minishell scenario, if output is redirected
             // then error should also be redirected.
-            if (!redirectError && redirectOutput && _isMiniShell)
+            if (redirectError == false && redirectOutput && _isMiniShell)
             {
                 redirectError = true;
             }

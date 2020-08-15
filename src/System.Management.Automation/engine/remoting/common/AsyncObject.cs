@@ -32,7 +32,7 @@ namespace System.Management.Automation.Remoting
             get
             {
                 bool result = _valueWasSet.WaitOne();
-                if (!result)
+                if (result == false)
                 {
                     _value = null;
                 }

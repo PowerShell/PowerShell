@@ -1131,7 +1131,7 @@ namespace System.Management.Automation.Runspaces
         {
             try
             {
-                if (!_disposed)
+                if (_disposed == false)
                 {
                     _disposed = true;
                     if (disposing)

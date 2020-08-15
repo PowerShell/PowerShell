@@ -3192,7 +3192,7 @@ namespace System.Management.Automation.Runspaces
             }
             while (false);
 
-            if (!serializationSettingsOk)
+            if (serializationSettingsOk == false)
             {
                 AddError(errors, typeName, TypesXmlStrings.SerializationSettingsIgnored);
                 members.Remove(InheritPropertySerializationSet);

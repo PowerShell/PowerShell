@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
 
             lock (_syncRoot)
             {
-                if (!_bypassRunspaceStateCheck &&
+                if (_bypassRunspaceStateCheck == false &&
                     _runspaceStateInfo.State != RunspaceState.Opened &&
                     _runspaceStateInfo.State != RunspaceState.Disconnected) // Disconnected runspaces can have running pipelines.
                 {

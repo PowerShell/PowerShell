@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
                     // NestedModules = 'test2' ---> test2 is a directory under current module directory (e.g - Test1)
                     // We also need to look for Test1\Test2\Test2.(psd1/psm1/dll)
                     // With the call above, we are only looking at Test1\Test2.(psd1/psm1/dll)
-                    if (!found && !moduleFileFound)
+                    if (found == false && moduleFileFound == false)
                     {
                         string newRootedPath = Path.Combine(rootedPath, moduleSpecification.Name);
                         string newModuleBase = Path.Combine(moduleBase, moduleSpecification.Name);
@@ -764,7 +764,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Win8: 262157 - Import-Module is giving errors while loading Nested Modules. (This is a V2 bug)
                     // Only look for the file if the file was not found with the previous search
-                    if (!found && !moduleFileFound)
+                    if (found == false && moduleFileFound == false)
                     {
                         string newRootedPath = Path.Combine(rootedPath, moduleSpecification.Name);
                         string newModuleBase = Path.Combine(moduleBase, moduleSpecification.Name);
@@ -786,10 +786,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The rooted files wasn't found, so don't search anymore...
-                if (!found && wasRooted)
+                if (found == false && wasRooted)
                     return null;
 
-                if (searchModulePath && !found && !moduleFileFound)
+                if (searchModulePath && found == false && moduleFileFound == false)
                 {
                     if (VerifyIfNestedModuleIsAvailable(moduleSpecification, null, null, out tempModuleInfoFromVerification))
                     {
@@ -846,7 +846,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // At this point, we haven't found an actual module, so try loading it as a
                 // PSSnapIn and then finally as an assembly in the GAC...
-                if ((!found) && (moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.RequiredVersion == null) && (moduleSpecification.MaximumVersion == null))
+                if ((found == false) && (moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.RequiredVersion == null) && (moduleSpecification.MaximumVersion == null))
                 {
                     // If we are in module analysis and the parent module declares non-wildcarded ExportedCmdlets, then we don't need to
                     // actually process the binary module.
@@ -4956,7 +4956,7 @@ namespace Microsoft.PowerShell.Commands
                             args: new object[] { module });
                     }
 
-                    if (module.ImplementingAssembly != null && !module.ImplementingAssembly.IsDynamic)
+                    if (module.ImplementingAssembly != null && module.ImplementingAssembly.IsDynamic == false)
                     {
                         var exportedTypes = PSSnapInHelpers.GetAssemblyTypes(module.ImplementingAssembly, module.Name);
                         foreach (var type in exportedTypes)
@@ -6666,7 +6666,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!importSuccessful)
+                if (importSuccessful == false)
                 {
                     if (importingModule)
                     {
@@ -7087,7 +7087,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var privateDataHashTable = module.PrivateData as Hashtable;
-            if (!context.Modules.IsImplicitRemotingModuleLoaded &&
+            if (context.Modules.IsImplicitRemotingModuleLoaded == false &&
                 privateDataHashTable != null && privateDataHashTable.ContainsKey("ImplicitRemoting"))
             {
                 context.Modules.IsImplicitRemotingModuleLoaded = true;

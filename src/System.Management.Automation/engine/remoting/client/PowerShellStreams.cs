@@ -238,11 +238,11 @@ namespace System.Management.Automation
         /// </summary>
         public void CloseAll()
         {
-            if (!_disposed)
+            if (_disposed == false)
             {
                 lock (_syncLock)
                 {
-                    if (!_disposed)
+                    if (_disposed == false)
                     {
                         _outputStream.Complete();
                         _errorStream.Complete();

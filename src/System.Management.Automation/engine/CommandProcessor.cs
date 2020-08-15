@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 try
                 {
                     // Process the input pipeline object
-                    if (!ProcessInputPipelineObject(inputObject))
+                    if (false == ProcessInputPipelineObject(inputObject))
                     {
                         // The input object was not bound to any parameters of the cmdlet.
                         // Write a non-terminating error and continue with the next input

@@ -3674,7 +3674,7 @@ namespace System.Management.Automation
 
                 if ((psAsyncResult == null) ||
                     (psAsyncResult.OwnerId != InstanceId) ||
-                    (!psAsyncResult.IsAssociatedWithAsyncInvoke))
+                    (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
                     throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                         PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginInvoke");

@@ -926,7 +926,7 @@ end
                     separator = ", ";
                 }
 
-                if (!PositionalBinding)
+                if (PositionalBinding == false)
                 {
                     decl.Append(separator);
                     decl.Append("PositionalBinding=$false");

@@ -4747,7 +4747,7 @@ namespace System.Management.Automation
             {
                 foreach (PSPropertyInfo p in pso.Properties)
                 {
-                    if (!first)
+                    if (first == false)
                     {
                         availableProperties.Append(" , ");
                     }

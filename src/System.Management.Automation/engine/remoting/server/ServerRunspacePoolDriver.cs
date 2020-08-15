@@ -831,7 +831,7 @@ namespace System.Management.Automation
                 {
                     if (_driverNestedInvoker != null && _driverNestedInvoker.IsActive)
                     {
-                        if (!_driverNestedInvoker.IsAvailable)
+                        if (_driverNestedInvoker.IsAvailable == false)
                         {
                             // A nested command is already running.
                             throw new PSInvalidOperationException(

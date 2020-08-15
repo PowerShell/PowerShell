@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSModuleInfo module = null;
 
-                if (!Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out module))
+                if (Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out module) == false)
                 {
                     Dbg.Assert(false, "ModuleTableKeys should be in sync with ModuleTable");
                 }
