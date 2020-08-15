@@ -700,6 +700,14 @@ namespace Microsoft.PowerShell
                 throw new InvalidOperationException("This instance has already been used. Create a new instance.");
             }
 
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is null)
+                {
+                    throw new ArgumentNullException("The 'args' array contains a null element.");
+                }
+            }
+
             // Indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
             _dirty = true;

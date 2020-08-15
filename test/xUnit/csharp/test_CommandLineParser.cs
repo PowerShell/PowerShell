@@ -66,6 +66,15 @@ namespace PSTests.Parallel
         }
 
         [Theory]
+        [InlineData("arg1", null, "arg3")]
+        public static void Test_ARGS_With_Null(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            Assert.Throws<System.ArgumentNullException>(() => cpp.Parse(commandLine));
+        }
+
+        [Theory]
         [InlineData("noexistfilename")]
         public static void TestDefaultParameterIsFileName_Not_Exist(params string[] commandLine)
         {
