@@ -2325,47 +2325,63 @@ function CleanupGeneratedSourceCode
         '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
         '[System.Runtime.CompilerServices.NullableContextAttribute('
         '[System.Runtime.CompilerServices.NullableAttribute((byte)0)]'
+        '[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1, (byte)1})]'
         '[System.Runtime.CompilerServices.AsyncStateMachineAttribute'
         )
 
     $patternsToReplace = @(
         @{
-            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
             Pattern = "[System.Runtime.CompilerServices.IsReadOnlyAttribute]ref Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
             Replacement = "in Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
         },
         @{
-            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
             Pattern = "public partial struct ConvertToJsonContext"
             Replacement = "public readonly struct ConvertToJsonContext"
         },
         @{
-            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
             Pattern = "Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
         },
         @{
-            ApplyTo = "System.Management.Automation"
+            ApplyTo = @("System.Management.Automation")
             Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
         },
         @{
-            ApplyTo = "System.Management.Automation"
+            ApplyTo = @("System.Management.Automation")
             Pattern = "Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
         },
         @{
-            ApplyTo = "System.Management.Automation"
+            ApplyTo = @("System.Management.Automation")
             Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
         },
         @{
-            ApplyTo = "Microsoft.PowerShell.ConsoleHost"
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)1, (byte)2, (byte)1})]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)1, (byte)2, (byte)1})] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1})]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1})] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
             Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)2)]"
             Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)2)] */"
         },
         @{
-            ApplyTo = "Microsoft.PowerShell.ConsoleHost"
+            ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
             Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)1)]"
             Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)1)] */"
         }
@@ -2379,7 +2395,7 @@ function CleanupGeneratedSourceCode
         $lineWasProcessed = $false
         foreach ($patternToReplace in $patternsToReplace)
         {
-            if ($assemblyName -eq $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
+            if ($assemblyName -in $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
                 $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
                 $lineWasProcessed = $true
                 break
