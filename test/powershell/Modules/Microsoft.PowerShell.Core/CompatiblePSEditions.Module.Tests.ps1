@@ -346,7 +346,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
                 (Invoke-Command -Session $s {Get-Location}).Path | Should -BeExactly $PWD.Path
 
                 # after WinCompat cleanup local $PWD changes should not cause errors
-                Remove-module $ModuleName -Force
+                Remove-Module $ModuleName -Force
 
                 Pop-Location
             }
@@ -502,7 +502,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
             '{"DisableImplicitWinCompat" : "True","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
-            $LogPath | Should -FileContentMatch 'not recognized as the name of a cmdlet'
+            $LogPath | Should -FileContentMatch 'not recognized as a name of a cmdlet'
         }
 
         It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {

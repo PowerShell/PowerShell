@@ -71,7 +71,6 @@ Describe "Validate start of console host" -Tag CI {
                 'System.Management.dll'
                 'System.Security.Claims.dll'
                 'System.Security.Cryptography.Primitives.dll'
-                'System.Security.Principal.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
@@ -106,8 +105,8 @@ Describe "Validate start of console host" -Tag CI {
         $diffs = Compare-Object -ReferenceObject $allowedAssemblies -DifferenceObject $loadedAssemblies
 
         if ($null -ne $diffs) {
-            $assembliesAllowedButNotLoaded = $diffs | Where-Object SideIndicator -eq "<=" | ForEach-Object InputObject
-            $assembliesLoadedButNotAllowed = $diffs | Where-Object SideIndicator -eq "=>" | ForEach-Object InputObject
+            $assembliesAllowedButNotLoaded = $diffs | Where-Object SideIndicator -EQ "<=" | ForEach-Object InputObject
+            $assembliesLoadedButNotAllowed = $diffs | Where-Object SideIndicator -EQ "=>" | ForEach-Object InputObject
 
             if ($assembliesAllowedButNotLoaded) {
                 Write-Host ("Assemblies that are expected but not loaded: {0}" -f ($assembliesAllowedButNotLoaded -join ", "))

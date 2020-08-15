@@ -3,6 +3,8 @@ parameters:
 
 jobs:
 - job: json
+  variables:
+    runCodesignValidationInjection: false
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -20,7 +22,7 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
 
-  - task: AzureFileCopy@3
+  - task: AzureFileCopy@4
     displayName: 'upload daily-build-info JSON file to Azure - ${{ parameters.architecture }}'
     inputs:
       SourcePath: '$(BuildInfoPath)'

@@ -49,7 +49,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Remote errors show up correctly" {
-            Start-Job -ScriptBlock { get-item (new-guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
+            Start-Job -ScriptBlock { Get-Item (New-Guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
             ($e | Out-String).Trim().Count | Should -Be 1
         }
 
@@ -59,7 +59,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Function shows up correctly" {
-            function test-myerror { [cmdletbinding()] param() write-error 'myError' }
+            function test-myerror { [cmdletbinding()] param() Write-Error 'myError' }
 
             $e = & "$PSHOME/pwsh" -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
@@ -102,8 +102,14 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Position message does not contain line information" {
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
             $e | Should -Not -BeLike "*At line*"
+        }
+
+        It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
+            $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
     }
 

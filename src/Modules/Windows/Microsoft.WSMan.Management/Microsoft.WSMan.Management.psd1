@@ -11,5 +11,5 @@ CmdletsToExport="Disable-WSManCredSSP", "Enable-WSManCredSSP", "Get-WSManCredSSP
 AliasesToExport = @()
 NestedModules="Microsoft.WSMan.Management.dll"
 FormatsToProcess="WSMan.format.ps1xml"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113537'
+HelpInfoURI = 'https://aka.ms/powershell71-help'
 }

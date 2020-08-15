@@ -679,7 +679,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"Description")
                         .AddItemProperty(@"Capabilities")
                         .AddItemProperty(@"ImplementingType")
-                        .AddItemProperty(@"AssemblyInfo")
                     .EndEntry()
                 .EndList());
         }
@@ -693,7 +692,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"CommandType")
                         .AddItemProperty(@"Definition")
                         .AddItemProperty(@"Path")
-                        .AddItemProperty(@"AssemblyInfo")
                         .AddItemProperty(@"DLL")
                         .AddItemProperty(@"HelpFile")
                         .AddItemProperty(@"ParameterSets")
@@ -766,14 +764,14 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
-                            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                            if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                 $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                     [System.Management.Automation.VTUtility+VT]::Reset
                                 )
                             }
 
                             function Get-VT100Color([ConsoleColor] $color) {
-                                if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                     return ''
                                 }
 
@@ -1013,14 +1011,14 @@ namespace System.Management.Automation.Runspaces
                                     function Get-ConciseViewPositionMessage {
 
                                         $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                        if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                             $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                                 [System.Management.Automation.VTUtility+VT]::Reset
                                             )
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
-                                            if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                            if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                                 return ''
                                             }
 
@@ -1646,6 +1644,14 @@ namespace System.Management.Automation.Runspaces
                 .EndTable());
         }
 
+        private const string PreReleaseStringScriptBlock = @"
+                            if ($_.PrivateData -and 
+                                $_.PrivateData.ContainsKey('PSData') -and 
+                                $_.PrivateData.PSData.ContainsKey('PreRelease'))
+                            {
+                                    $_.PrivateData.PSData.PreRelease
+                            }";
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_ModuleInfoGrouping(CustomControl[] sharedControls)
         {
             yield return new FormatViewDefinition("Module",
@@ -1660,11 +1666,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
-                        .AddScriptBlockColumn(@"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }")
+                        .AddScriptBlockColumn(PreReleaseStringScriptBlock)
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn(@"
                             $result = [System.Collections.ArrayList]::new()
@@ -1697,11 +1699,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
-                        .AddScriptBlockColumn(@"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }")
+                        .AddScriptBlockColumn(PreReleaseStringScriptBlock)
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
@@ -1721,11 +1719,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"ModuleType")
                         .AddItemProperty(@"Version")
                         .AddItemScriptBlock(
-                            @"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }",
+                            PreReleaseStringScriptBlock,
                             label: "PreRelease")
                         .AddItemProperty(@"NestedModules")
                         .AddItemScriptBlock(@"$_.ExportedFunctions.Keys", label: "ExportedFunctions")

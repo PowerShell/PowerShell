@@ -872,7 +872,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             string operationStartMessage = string.Format(CultureInfo.CurrentUICulture,
-                Strings.CimOperationStart,
+                CimCmdletStrings.CimOperationStart,
                 operation,
                 (parameters.Length == 0) ? "null" : parameters.ToString());
             WriteMessage((UInt32)CimWriteMessageChannel.Verbose, operationStartMessage);
@@ -888,7 +888,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             string operationCompleteMessage = string.Format(CultureInfo.CurrentUICulture,
-                Strings.CimOperationCompleted,
+                CimCmdletStrings.CimOperationCompleted,
                 operation);
             WriteMessage((UInt32)CimWriteMessageChannel.Verbose, operationCompleteMessage);
         }
@@ -1055,7 +1055,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             PSObject pso = PSObject.AsPSObject(o);
-            if (!(pso.BaseObject is CimInstance))
+            if (pso.BaseObject is not CimInstance)
             {
                 return;
             }
@@ -1066,6 +1066,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
 #if DEBUG
         private static bool isCliXmlTestabilityHookActive = GetIsCliXmlTestabilityHookActive();
+
         private static bool GetIsCliXmlTestabilityHookActive()
         {
             return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CDXML_CLIXML_TEST"));
@@ -1103,7 +1104,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("EnableMethodResultStreaming = {0}", 0, this.options.EnableMethodResultStreaming);
             this.CheckAvailability();
             this.targetCimInstance = instance;
-            this.operationName = Strings.CimOperationNameCreateInstance;
+            this.operationName = CimCmdletStrings.CimOperationNameCreateInstance;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"instance", instance);
@@ -1123,7 +1124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("namespace = {0}; classname = {1};", 0, namespaceName, instance.CimSystemProperties.ClassName);
             this.CheckAvailability();
             this.targetCimInstance = instance;
-            this.operationName = Strings.CimOperationNameDeleteInstance;
+            this.operationName = CimCmdletStrings.CimOperationNameDeleteInstance;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"instance", instance);
@@ -1143,7 +1144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("namespace = {0}; classname = {1}; keyonly = {2}", 0, namespaceName, instance.CimSystemProperties.ClassName, this.options.KeysOnly);
             this.CheckAvailability();
             this.targetCimInstance = instance;
-            this.operationName = Strings.CimOperationNameGetInstance;
+            this.operationName = CimCmdletStrings.CimOperationNameGetInstance;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"instance", instance);
@@ -1163,7 +1164,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("namespace = {0}; classname = {1}", 0, namespaceName, instance.CimSystemProperties.ClassName);
             this.CheckAvailability();
             this.targetCimInstance = instance;
-            this.operationName = Strings.CimOperationNameModifyInstance;
+            this.operationName = CimCmdletStrings.CimOperationNameModifyInstance;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"instance", instance);
@@ -1194,7 +1195,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("Instance class {0}, association class {1}", 0, sourceInstance.CimSystemProperties.ClassName, associationClassName);
             this.CheckAvailability();
             this.targetCimInstance = sourceInstance;
-            this.operationName = Strings.CimOperationNameEnumerateAssociatedInstances;
+            this.operationName = CimCmdletStrings.CimOperationNameEnumerateAssociatedInstances;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"sourceInstance", sourceInstance);
@@ -1217,7 +1218,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("KeyOnly {0}", 0, this.options.KeysOnly);
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameEnumerateInstances;
+            this.operationName = CimCmdletStrings.CimOperationNameEnumerateInstances;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"className", className);
@@ -1262,7 +1263,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("KeyOnly = {0}", 0, this.options.KeysOnly);
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameQueryInstances;
+            this.operationName = CimCmdletStrings.CimOperationNameQueryInstances;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"queryDialect", queryDialect);
@@ -1282,7 +1283,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("namespace {0}", 0, namespaceName);
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameEnumerateClasses;
+            this.operationName = CimCmdletStrings.CimOperationNameEnumerateClasses;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
@@ -1299,7 +1300,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameEnumerateClasses;
+            this.operationName = CimCmdletStrings.CimOperationNameEnumerateClasses;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"className", className);
@@ -1319,7 +1320,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("namespace = {0}, className = {1}", 0, namespaceName, className);
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameGetClass;
+            this.operationName = CimCmdletStrings.CimOperationNameGetClass;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"className", className);
@@ -1346,7 +1347,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("EnableMethodResultStreaming = {0}", 0, this.options.EnableMethodResultStreaming);
             this.CheckAvailability();
             this.targetCimInstance = instance;
-            this.operationName = Strings.CimOperationNameInvokeMethod;
+            this.operationName = CimCmdletStrings.CimOperationNameInvokeMethod;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"instance", instance);
@@ -1372,7 +1373,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("EnableMethodResultStreaming = {0}", 0, this.options.EnableMethodResultStreaming);
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameInvokeMethod;
+            this.operationName = CimCmdletStrings.CimOperationNameInvokeMethod;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"className", className);
@@ -1399,7 +1400,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("QueryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
             this.CheckAvailability();
             this.targetCimInstance = null;
-            this.operationName = Strings.CimOperationNameSubscribeIndication;
+            this.operationName = CimCmdletStrings.CimOperationNameSubscribeIndication;
             this.operationParameters.Clear();
             this.operationParameters.Add(@"namespaceName", namespaceName);
             this.operationParameters.Add(@"queryDialect", queryDialect);
@@ -1514,6 +1515,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Flag controls whether session object should be closed or not.
         /// </summary>
         private bool isTemporaryCimSession;
+
         internal bool IsTemporaryCimSession
         {
             get
@@ -1902,7 +1904,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 if (!this.Completed)
                 {
-                    throw new InvalidOperationException(Strings.OperationInProgress);
+                    throw new InvalidOperationException(CimCmdletStrings.OperationInProgress);
                 }
             }
 
@@ -2084,7 +2086,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (!(args.Action is CimWriteResultObject))
+            if (args.Action is not CimWriteResultObject)
             {
                 // allow all other actions
                 return true;
@@ -2238,7 +2240,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (!(args.Action is CimWriteResultObject))
+            if (args.Action is not CimWriteResultObject)
             {
                 // allow all other actions
                 return true;
@@ -2260,6 +2262,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         private CimNewCimInstance newCimInstance = null;
+
         internal CimNewCimInstance NewCimInstanceOperation
         {
             get

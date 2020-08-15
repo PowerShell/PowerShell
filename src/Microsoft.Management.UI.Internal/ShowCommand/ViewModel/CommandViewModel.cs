@@ -168,13 +168,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     if (this.selectedParameterSet != null)
                     {
-                        this.selectedParameterSet.PropertyChanged -= new PropertyChangedEventHandler(this.SelectedParameterSet_PropertyChanged);
+                        this.selectedParameterSet.PropertyChanged -= this.SelectedParameterSet_PropertyChanged;
                     }
 
                     this.selectedParameterSet = value;
                     if (this.selectedParameterSet != null)
                     {
-                        this.selectedParameterSet.PropertyChanged += new PropertyChangedEventHandler(this.SelectedParameterSet_PropertyChanged);
+                        this.selectedParameterSet.PropertyChanged += this.SelectedParameterSet_PropertyChanged;
                         this.SelectedParameterSetAllMandatoryParametersHaveValues = this.SelectedParameterSet.AllMandatoryParametersHaveValues;
                     }
                     else
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 }
             }
 
-            return string.Compare(source.Name, target.Name, StringComparison.Ordinal);
+            return string.CompareOrdinal(source.Name, target.Name);
         }
 
         /// <summary>

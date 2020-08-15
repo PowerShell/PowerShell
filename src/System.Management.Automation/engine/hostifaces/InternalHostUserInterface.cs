@@ -27,7 +27,7 @@ namespace System.Management.Automation.Internal.Host
             Dbg.Assert(parentHost != null, "parent may not be null");
             if (parentHost == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parentHost");
+                throw PSTraceSource.NewArgumentNullException(nameof(parentHost));
             }
 
             _parent = parentHost;
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
-        ///     implemented by the external host
+        /// implemented by the external host.
         /// </exception>
         public override
         string
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
-        ///     implemented by the external host
+        /// implemented by the external host.
         /// </exception>
 
         public override
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Internal.Host
                     throw ense;
                 default:
                     Dbg.Assert(false, "all preferences should be checked");
-                    throw PSTraceSource.NewArgumentException("preference",
+                    throw PSTraceSource.NewArgumentException(nameof(preference),
                         InternalHostUserInterfaceStrings.UnsupportedPreferenceError, preference);
                     // break;
             }
@@ -546,7 +546,7 @@ namespace System.Management.Automation.Internal.Host
         {
             if (record == null)
             {
-                throw PSTraceSource.NewArgumentNullException("record");
+                throw PSTraceSource.NewArgumentNullException(nameof(record));
             }
 
             // Write to Information Buffers
@@ -732,12 +732,12 @@ namespace System.Management.Automation.Internal.Host
         {
             if (descriptions == null)
             {
-                throw PSTraceSource.NewArgumentNullException("descriptions");
+                throw PSTraceSource.NewArgumentNullException(nameof(descriptions));
             }
 
             if (descriptions.Count < 1)
             {
-                throw PSTraceSource.NewArgumentException("descriptions", InternalHostUserInterfaceStrings.PromptEmptyDescriptionsError, "descriptions");
+                throw PSTraceSource.NewArgumentException(nameof(descriptions), InternalHostUserInterfaceStrings.PromptEmptyDescriptionsError, "descriptions");
             }
 
             if (_externalUI == null)
@@ -898,12 +898,12 @@ namespace System.Management.Automation.Internal.Host
 
             if (choices == null)
             {
-                throw PSTraceSource.NewArgumentNullException("choices");
+                throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }
 
             if (choices.Count == 0)
             {
-                throw PSTraceSource.NewArgumentException("choices",
+                throw PSTraceSource.NewArgumentException(nameof(choices),
                     InternalHostUserInterfaceStrings.EmptyChoicesError, "choices");
             }
 
@@ -993,7 +993,7 @@ namespace System.Management.Automation.Internal.Host
             // read choices from the user
             Collection<int> result = new Collection<int>();
             int choicesSelected = 0;
-            do
+            while (true)
             {
                 string choiceMsg = StringUtil.Format(InternalHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                 messageToBeDisplayed += choiceMsg;
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation.Internal.Host
                 }
                 // reset messageToBeDisplayed
                 messageToBeDisplayed = string.Empty;
-            } while (true);
+            }
 
             return result;
         }

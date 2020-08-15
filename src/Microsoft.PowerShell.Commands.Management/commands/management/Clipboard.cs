@@ -197,6 +197,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private const uint CF_TEXT = 1;
         private const uint CF_UNICODETEXT = 13;
+
         private static uint s_CF_RTF;
 
         private static bool GetTextImpl(out string text)

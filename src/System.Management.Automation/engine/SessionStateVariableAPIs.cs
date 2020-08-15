@@ -54,7 +54,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -287,7 +287,7 @@ namespace System.Management.Automation
 
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             Dbg.Diagnostics.Assert(
@@ -542,7 +542,7 @@ namespace System.Management.Automation
 
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             Dbg.Diagnostics.Assert(variablePath.IsVariable, "Can't get variable w/ non-variable path");
@@ -621,7 +621,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -685,7 +685,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -956,7 +956,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             VariablePath variablePath = new VariablePath(variable.Name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation
             object result = null;
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             CmdletProviderContext context = null;
@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             SessionStateScope lookupScope = GetScopeByID(scopeID);
@@ -1441,7 +1441,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             return
@@ -1485,7 +1485,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             // The lookup scope from above is ignored and the scope is retrieved by
@@ -1564,7 +1564,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation
         {
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             VariablePath variablePath = new VariablePath(variable.Name);
@@ -1698,7 +1698,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -1780,7 +1780,7 @@ namespace System.Management.Automation
         {
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             VariablePath variablePath = new VariablePath(variable.Name);

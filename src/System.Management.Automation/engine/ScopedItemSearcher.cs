@@ -35,12 +35,12 @@ namespace System.Management.Automation
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             if (lookupPath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("lookupPath");
+                throw PSTraceSource.NewArgumentNullException(nameof(lookupPath));
             }
 
             this.sessionState = sessionState;

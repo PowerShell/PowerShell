@@ -120,7 +120,7 @@ namespace System.Management.Automation
                     foreach (var defn in findFunctionsVisitor.FunctionDefinitions)
                     {
                         if (commandNamePattern.IsMatch(defn.Name)
-                            && !commandResults.Where(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)).Any())
+                            && !commandResults.Any(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)))
                         {
                             // Results found in the current script are prepended to show up at the top of the list.
                             commandResults.Insert(0, GetCommandNameCompletionResult(defn.Name, defn, addAmpersandIfNecessary, quote));
@@ -207,7 +207,8 @@ namespace System.Management.Automation
         }
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
-            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.InlineScript.ToString(), TokenKind.Configuration.ToString() };
+            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { nameof(TokenKind.InlineScript), nameof(TokenKind.Configuration) };
+
         internal static CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
         {
             string syntax = name, listItem = name;
@@ -1602,7 +1603,7 @@ namespace System.Management.Automation
                         if (parameterSetData.ParameterSetFlag == defaultParameterSetFlag)
                         {
                             ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                            isProcessedAsPositional = result.Any();
+                            isProcessedAsPositional = result.Count > 0;
                             break;
                         }
                         else
@@ -1894,7 +1895,7 @@ namespace System.Management.Automation
                             yield return new PSTypeName(pso.TypeNames[0]);
                         }
 
-                        if (!(pso.BaseObject is PSCustomObject))
+                        if (pso.BaseObject is not PSCustomObject)
                         {
                             yield return new PSTypeName(pso.BaseObject.GetType());
                         }
@@ -2457,7 +2458,7 @@ namespace System.Management.Automation
             {
             }
 
-            if (customResults == null || !customResults.Any())
+            if (customResults == null || customResults.Count == 0)
             {
                 return false;
             }
@@ -4505,6 +4506,7 @@ namespace System.Management.Automation
         private const int ERROR_MORE_DATA = 234;
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
+
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
@@ -4580,6 +4582,7 @@ namespace System.Management.Automation
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
+
         private static readonly char[] s_charactersRequiringQuotes = new char[] {
             '-', '`', '&', '@', '\'', '"', '#', '{', '}', '(', ')', '$', ',', ';', '|', '<', '>', ' ', '.', '\\', '/', '\t', '^',
         };
@@ -5406,7 +5409,7 @@ namespace System.Management.Automation
 
             var memberInfo = member as MemberInfo;
             if (memberInfo != null)
-                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Length > 0;
 
             var propertyMemberAst = member as PropertyMemberAst;
             if (propertyMemberAst != null)
@@ -5720,6 +5723,7 @@ namespace System.Management.Automation
         }
 
         private static TypeCompletionMapping[][] s_typeCache;
+
         private static TypeCompletionMapping[][] InitializeTypeCache()
         {
             #region Process_TypeAccelerators
@@ -7136,7 +7140,7 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            if (!(commandAst.Parent is PipelineAst pipelineAst))
+            if (commandAst.Parent is not PipelineAst pipelineAst)
             {
                 return null;
             }

@@ -158,6 +158,7 @@ namespace System.Management.Automation
         }
 
         private readonly bool _forCompletion;
+
         internal List<string> DiscoveredExports { get; set; }
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
         internal Dictionary<string, FunctionDefinitionAst> DiscoveredFunctions { get; set; }

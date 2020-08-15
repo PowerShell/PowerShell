@@ -13,7 +13,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
         }
 
         AfterAll {
-            $PSDefaultParameterValues = $defaultParamValues
+            $global:PSDefaultParameterValues = $defaultParamValues
         }
 
         It 'Get-Clipboard returns what is in Set-Clipboard' {

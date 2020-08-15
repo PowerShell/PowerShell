@@ -75,16 +75,16 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
 
         # now load the cdxml module
         if ( Get-Module CimTest ) {
-            Remove-Module -force CimTest
+            Remove-Module -Force CimTest
         }
-        Import-Module -force ${script:ModuleDir}
+        Import-Module -Force ${script:ModuleDir}
     }
 
     AfterAll {
         if ( $skipNotWindows ) {
             return
         }
-        if ( get-module CimTest ) {
+        if ( Get-Module CimTest ) {
             Remove-Module CimTest -Force
         }
         $null = MofComp.exe $deleteMof
@@ -108,7 +108,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         It "The CimTest module should have the proper cmdlets" @ItSkipOrPending {
             $result = Get-Command -Module CimTest
             $result.Count | Should -Be 4
-            ($result.Name | sort-object ) -join "," | Should -Be "Get-CimTest,New-CimTest,Remove-CimTest,Set-CimTest"
+            ($result.Name | Sort-Object ) -join "," | Should -Be "Get-CimTest,New-CimTest,Remove-CimTest,Set-CimTest"
         }
     }
 
@@ -116,7 +116,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         It "The Get-CimTest cmdlet should return 4 objects" @ItSkipOrPending {
             $result = Get-CimTest
             $result.Count | Should -Be 4
-            ($result.id |sort-object) -join ","  | Should -Be "1,2,3,4"
+            ($result.id |Sort-Object) -join ","  | Should -Be "1,2,3,4"
         }
 
         It "The Get-CimTest cmdlet should retrieve an object via id" @ItSkipOrPending {
@@ -126,9 +126,9 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         }
 
         It "The Get-CimTest cmdlet should retrieve an object by piped id" @ItSkipOrPending {
-            $result = 1,2,4 | foreach-object { [pscustomobject]@{ id = $_ } } | Get-CimTest
+            $result = 1,2,4 | ForEach-Object { [pscustomobject]@{ id = $_ } } | Get-CimTest
             @($result).Count | Should -Be 3
-            ( $result.id | sort-object ) -join "," | Should -Be "1,2,4"
+            ( $result.id | Sort-Object ) -join "," | Should -Be "1,2,4"
         }
 
         It "The Get-CimTest cmdlet should retrieve an object by datetime" @ItSkipOrPending {
@@ -148,20 +148,20 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 # wait up to 10 seconds, then the test will fail
                 # we need to wait long enough, but not too long
                 # the time can be adjusted
-                $null = Wait-Job -Job $job -timeout 10
+                $null = Wait-Job -Job $job -Timeout 10
                 $result = $job | Receive-Job
                 $result.Count | Should -Be 4
-                ( $result.id | sort-object ) -join "," | Should -Be "1,2,3,4"
+                ( $result.id | Sort-Object ) -join "," | Should -Be "1,2,3,4"
             }
             finally {
                 if ( $job ) {
-                    $job | Remove-Job -force
+                    $job | Remove-Job -Force
                 }
             }
         }
 
         It "Should be possible to invoke a method on an object returned by Get-CimTest" @ItSkipOrPending {
-            $result = Get-CimTest | Select-Object -first 1
+            $result = Get-CimTest | Select-Object -First 1
             $result.GetCimSessionInstanceId() | Should -BeOfType guid
         }
     }
@@ -169,7 +169,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     Context "Remove-CimTest cmdlet" {
         BeforeEach {
             Get-CimTest | Remove-CimTest
-            1..4 | Foreach-Object { New-CimInstance -namespace root/default -class PSCore_Test1 -property @{
+            1..4 | ForEach-Object { New-CimInstance -Namespace root/default -class PSCore_Test1 -Property @{
                 id = "$_"
                 field1 = "field $_"
                 field2 = 10 * $_
@@ -181,14 +181,14 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             Remove-CimTest -id 1
             $result = Get-CimTest
             $result.Count | Should -Be 3
-            ($result.id |sort-object) -join ","  | Should -Be "2,3,4"
+            ($result.id |Sort-Object) -join ","  | Should -Be "2,3,4"
         }
 
         It "The Remove-CimTest cmdlet should remove piped objects" @ItSkipOrPending {
             Get-CimTest -id 2 | Remove-CimTest
             $result  = Get-CimTest
             @($result).Count | Should -Be 3
-            ($result.id |sort-object) -join ","  | Should -Be "1,3,4"
+            ($result.id |Sort-Object) -join ","  | Should -Be "1,3,4"
         }
 
         It "The Remove-CimTest cmdlet should work as a job" @ItSkipOrPending {
@@ -201,11 +201,11 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 $null = Wait-Job -Job $job -Timeout 10
                 $result  = Get-CimTest
                 @($result).Count | Should -Be 3
-                ($result.id |sort-object) -join ","  | Should -Be "1,2,4"
+                ($result.id |Sort-Object) -join ","  | Should -Be "1,2,4"
             }
             finally {
                 if ( $job ) {
-                    $job | Remove-Job -force
+                    $job | Remove-Job -Force
                 }
             }
         }
@@ -219,7 +219,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 field2 = 0
             }
             New-CimTest @instanceArgs
-            $result = Get-CimInstance -namespace root/default -class PSCore_Test1 | Where-Object {$_.id -eq "telephone"}
+            $result = Get-CimInstance -Namespace root/default -class PSCore_Test1 | Where-Object {$_.id -eq "telephone"}
             $result.field2 | Should -Be 0
             $result.field1 | Should -Be $instanceArgs.field1
         }

@@ -42,7 +42,7 @@ namespace System.Management.Automation.Internal
             string result;
             int i = Math.Min(toTruncate.Length, maxWidthInBufferCells);
 
-            do
+            while (true)
             {
                 result = toTruncate.Substring(0, i);
                 int cellCount = rawUI.LengthInBufferCells(result);
@@ -59,14 +59,16 @@ namespace System.Management.Automation.Internal
                     // be characters taking more 2 buffer cells
                     --i;
                 }
-            } while (true);
+            }
 
             return result;
         }
 
         // Typical padding is at most a screen's width, any more than that and we won't bother caching.
         private const int IndentCacheMax = 120;
+
         private static readonly string[] IndentCache = new string[IndentCacheMax];
+
         internal static string Padding(int countOfSpaces)
         {
             if (countOfSpaces >= IndentCacheMax)
@@ -84,7 +86,9 @@ namespace System.Management.Automation.Internal
         }
 
         private const int DashCacheMax = 120;
+
         private static readonly string[] DashCache = new string[DashCacheMax];
+
         internal static string DashPadding(int count)
         {
             if (count >= DashCacheMax)

@@ -130,7 +130,7 @@ namespace System.Management.Automation
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentException("scriptBlock");
+                throw PSTraceSource.NewArgumentException(nameof(scriptBlock));
             }
 
             // Get the ExecutionContext from the thread.
@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
             moduleList.Add(module);
         }
 
-        internal static string[] _builtinVariables = new string[] { "_", "this", "input", "args", "true", "false", "null",
+        internal static readonly string[] _builtinVariables = new string[] { "_", "this", "input", "args", "true", "false", "null",
             "PSDefaultParameterValues", "Error", "PSScriptRoot", "PSCommandPath", "MyInvocation", "ExecutionContext", "StackTrace" };
 
         /// <summary>
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(variableName))
             {
-                throw new ArgumentNullException("variableName");
+                throw new ArgumentNullException(nameof(variableName));
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -1606,7 +1606,7 @@ namespace System.Management.Automation
             if (object.ReferenceEquals(x, y)) return true;
 
             // Check whether any of the compared objects is null.
-            if (object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
 
             bool result = string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase) &&

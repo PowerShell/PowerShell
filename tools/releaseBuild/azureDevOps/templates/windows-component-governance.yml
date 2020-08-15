@@ -1,6 +1,8 @@
 
 jobs:
 - job: ComponentRegistrationJob
+  variables:
+    runCodesignValidationInjection: false
   displayName: Component Registration
   condition: succeeded()
 

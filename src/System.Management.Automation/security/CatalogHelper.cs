@@ -749,7 +749,7 @@ namespace System.Management.Automation
                 catalog.CatalogItems = catalogHashes;
                 catalog.PathItems = fileHashes;
                 bool status = CompareDictionaries(catalogHashes, fileHashes);
-                if (status == true)
+                if (status)
                 {
                     catalog.Status = CatalogValidationStatus.Valid;
                 }

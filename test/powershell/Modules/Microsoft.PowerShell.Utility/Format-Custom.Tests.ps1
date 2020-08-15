@@ -14,7 +14,7 @@ Describe "Format-Custom" -Tags "CI" {
     Context "Check specific flags on Format-Custom" {
 
         It "Should be able to specify the depth in output" {
-            $getprocesspester =  Get-FormatData | Format-Custom -depth 1
+            $getprocesspester =  Get-FormatData | Format-Custom -Depth 1
             ($getprocesspester).Count | Should -BeGreaterThan 0
         }
 
@@ -297,7 +297,16 @@ class MyLeaf2
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should -Be $expectedResult
 	}
-}
+
+    It "Format-Custom should not lost data" {
+      # See https://github.com/PowerShell/PowerShell/pull/11342 for more information
+      $data = (Get-Help Out-Null).Examples
+      $formattedData = $data | Format-Custom | Out-String
+      $formattedData | Should -BeLike "*$($data.Example.title)*"
+      $formattedData | Should -BeLike "*$($data.Example.code)*"
+      $formattedData | Should -BeLike "*$($data.Example.remarks.Text)*"
+    }
+  }
 
 Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl" -Tags "CI" {
     BeforeAll {
@@ -397,7 +406,6 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
 
-
 Entry selected by property
 
 Name
@@ -423,7 +431,6 @@ testing
         $null = $ps.AddScript($script).AddCommand('Out-String')
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
-
 
 Entry selected by ScriptBlock
 

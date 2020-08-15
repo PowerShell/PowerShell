@@ -181,8 +181,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
             _operationsComplete.Reset();
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete +=
-                new EventHandler<EventArgs>(HandleThrottleComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleComplete;
 
             if (string.IsNullOrEmpty(ConfigurationName))
             {
@@ -286,8 +285,7 @@ namespace Microsoft.PowerShell.Commands
                 OpenRunspaceOperation operation = new OpenRunspaceOperation(remoteRunspace);
                 // HandleRunspaceStateChanged callback is added before ThrottleManager complete
                 // callback handlers so HandleRunspaceStateChanged will always be called first.
-                operation.OperationComplete +=
-                    new EventHandler<OperationStateEventArgs>(HandleRunspaceStateChanged);
+                operation.OperationComplete += HandleRunspaceStateChanged;
                 remoteRunspace.URIRedirectionReported += HandleURIDirectionReported;
                 operations.Add(operation);
             }
@@ -416,12 +414,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (sender == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sender");
+                throw PSTraceSource.NewArgumentNullException(nameof(sender));
             }
 
             if (stateEventArgs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("stateEventArgs");
+                throw PSTraceSource.NewArgumentNullException(nameof(stateEventArgs));
             }
 
             RunspaceStateEventArgs runspaceStateEventArgs =
@@ -909,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                            PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                            nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                             ErrorCategory.NotInstalled,
                             null));
 
@@ -927,7 +925,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMIdNotSingle,
                                                                  this.VMId[index].ToString(null))),
-                                PSRemotingErrorId.InvalidVMIdNotSingle.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMIdNotSingle),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -941,7 +939,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMNameNotSingle,
                                                                  this.VMName[index])),
-                                PSRemotingErrorId.InvalidVMNameNotSingle.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMNameNotSingle),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -962,7 +960,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState,
                                                                  this.VMName[index])),
-                                PSRemotingErrorId.InvalidVMState.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMState),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -1212,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                 _throttleManager = null;
 
                 foreach (RemoteRunspace remoteRunspace in _toDispose)
@@ -1321,8 +1319,7 @@ namespace Microsoft.PowerShell.Commands
             _startComplete = true;
             _stopComplete = true;
             OperatedRunspace = runspace;
-            OperatedRunspace.StateChanged +=
-                new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            OperatedRunspace.StateChanged += HandleRunspaceStateChanged;
         }
 
         /// <summary>
@@ -1379,6 +1376,7 @@ namespace Microsoft.PowerShell.Commands
         //     any exceptions thrown on this thread. (ThrottleManager will not respond if it doesn't
         //     get a start/stop complete callback).
         private List<EventHandler<OperationStateEventArgs>> _internalCallbacks = new List<EventHandler<OperationStateEventArgs>>();
+
         internal override event EventHandler<OperationStateEventArgs> OperationComplete
         {
             add

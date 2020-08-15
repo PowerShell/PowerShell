@@ -1169,7 +1169,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
             Command cmd = new Command(commandInfo);
@@ -1267,6 +1267,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Adds a <see cref="CommandParameter"/> instance to the last added command.
+        /// </summary>
+        internal PowerShell AddParameter(CommandParameter parameter)
+        {
+            lock (_syncObject)
+            {
+                if (_psCommand.Commands.Count == 0)
+                {
+                    throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
+                }
+
+                AssertChangesAreAccepted();
+                _psCommand.AddParameter(parameter);
+                return this;
+            }
+        }
+
+        /// <summary>
         /// Adds a set of parameters to the last added command.
         /// </summary>
         /// <param name="parameters">
@@ -1292,7 +1310,7 @@ namespace System.Management.Automation
             {
                 if (parameters == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("parameters");
+                    throw PSTraceSource.NewArgumentNullException(nameof(parameters));
                 }
 
                 if (_psCommand.Commands.Count == 0)
@@ -1340,7 +1358,7 @@ namespace System.Management.Automation
             {
                 if (parameters == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("parameters");
+                    throw PSTraceSource.NewArgumentNullException(nameof(parameters));
                 }
 
                 if (_psCommand.Commands.Count == 0)
@@ -1356,7 +1374,7 @@ namespace System.Management.Automation
 
                     if (parameterName == null)
                     {
-                        throw PSTraceSource.NewArgumentException("parameters", PowerShellStrings.KeyMustBeString);
+                        throw PSTraceSource.NewArgumentException(nameof(parameters), PowerShellStrings.KeyMustBeString);
                     }
 
                     _psCommand.AddParameter(parameterName, entry.Value);
@@ -2727,7 +2745,7 @@ namespace System.Management.Automation
         {
             if (output == null)
             {
-                throw PSTraceSource.NewArgumentNullException("output");
+                throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
             // use the above collection as the data store.
             PSDataCollection<T> listToWriteTo = new PSDataCollection<T>(output);
@@ -2798,7 +2816,7 @@ namespace System.Management.Automation
         {
             if (output == null)
             {
-                throw PSTraceSource.NewArgumentNullException("output");
+                throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
 
             CoreInvoke<TInput, TOutput>(input, output, settings);
@@ -3034,7 +3052,7 @@ namespace System.Management.Automation
         {
             if (output == null)
             {
-                throw PSTraceSource.NewArgumentNullException("output");
+                throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
 
             DetermineIsBatching();
@@ -3649,7 +3667,7 @@ namespace System.Management.Automation
 
                 if (asyncResult == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("asyncResult");
+                    throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
                 }
 
                 PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
@@ -3658,7 +3676,7 @@ namespace System.Management.Automation
                     (psAsyncResult.OwnerId != InstanceId) ||
                     (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
-                    throw PSTraceSource.NewArgumentException("asyncResult",
+                    throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                         PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginInvoke");
                 }
 
@@ -3752,16 +3770,16 @@ namespace System.Management.Automation
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
             if ((psAsyncResult == null) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
-                (psAsyncResult.IsAssociatedWithAsyncInvoke != false))
+                (psAsyncResult.IsAssociatedWithAsyncInvoke))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                     PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginStop");
             }
 
@@ -3940,7 +3958,7 @@ namespace System.Management.Automation
                             (
                                 Runspace.DefaultRunspace.ExecutionContext,
                                 false,
-                                IsNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
+                                IsNested ? CommandOrigin.Internal : CommandOrigin.Runspace
                             );
 
                     commandProcessorBase.RedirectShellErrorOutputPipe = RedirectShellErrorOutputPipe;
@@ -5720,7 +5738,7 @@ namespace System.Management.Automation
         {
             if (powerShellAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powerShellAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(powerShellAsPSObject));
             }
 
             Collection<PSCommand> extraCommands = null;
@@ -6153,12 +6171,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             if (powerShell == null)
             {
-                throw new ArgumentNullException("powerShell");
+                throw new ArgumentNullException(nameof(powerShell));
             }
 
             _powerShell = powerShell;

@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
             else
             {
@@ -205,13 +205,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             // Get owner
@@ -245,13 +245,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             // Get Group
@@ -284,13 +284,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                PSTraceSource.NewArgumentException("instance");
+                PSTraceSource.NewArgumentException(nameof(instance));
             }
 
             // Get DACL
@@ -323,13 +323,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                PSTraceSource.NewArgumentException("instance");
+                PSTraceSource.NewArgumentException(nameof(instance));
             }
 
             AuthorizationRuleCollection sacl;
@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Extract the first CAPID from the SACL that does not have INHERIT_ONLY_ACE flag set.
                 IntPtr pAce = pSacl + Marshal.SizeOf(new NativeMethods.ACL());
-                for (uint aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
+                for (ushort aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
                 {
                     NativeMethods.ACE_HEADER ace = new NativeMethods.ACE_HEADER();
                     ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
@@ -585,13 +585,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             string sddl = sd.GetSecurityDescriptorSddlForm(AccessControlSections.All);
@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         customDescriptor = PSObject.Base(methodInfo.Invoke());
 
-                        if (!(customDescriptor is FileSystemSecurity))
+                        if (customDescriptor is not FileSystemSecurity)
                         {
                             customDescriptor = new CommonSecurityDescriptor(false, false, customDescriptor.ToString());
                         }
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_isLiteralPath)
                         {
-                            pathsToProcess.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
+                            pathsToProcess.Add(p);
                         }
                         else
                         {

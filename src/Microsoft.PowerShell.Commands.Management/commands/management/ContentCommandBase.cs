@@ -150,13 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
-                 (
-                    string.Compare(
+                    string.Equals(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
-                        StringComparison.OrdinalIgnoreCase) == 0)
-                    )
-                )
+                        StringComparison.OrdinalIgnoreCase)))
             {
                 result = _currentContentItem.AttachNotes(result);
             }
@@ -348,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (pathInfo == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("pathInfo");
+                    throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
                 }
 
                 PathInfo = pathInfo;
@@ -370,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (contentHolders == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contentHolders");
+                throw PSTraceSource.NewArgumentNullException(nameof(contentHolders));
             }
 
             foreach (ContentHolder holder in contentHolders)

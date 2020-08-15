@@ -60,7 +60,7 @@ Describe "Using Namespace" -Tags "CI" {
         New-Object CompilerGeneratedAttribute | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
     }
 
-    It "Attributes w/ using namespace" -pending {
+    It "Attributes w/ using namespace" -Pending {
         function foo
         {
             [DebuggerStepThrough()]

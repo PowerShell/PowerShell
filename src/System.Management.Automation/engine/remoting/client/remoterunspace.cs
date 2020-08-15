@@ -203,17 +203,11 @@ namespace System.Management.Automation
 
             _eventManager = new PSRemoteEventManager(_connectionInfo.ComputerName, this.InstanceId);
 
-            RunspacePool.StateChanged +=
-                new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported +=
-                new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-            RunspacePool.ForwardEvent +=
-                new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-
-            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted +=
-                new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+            RunspacePool.StateChanged += HandleRunspacePoolStateChanged;
+            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived += HandleHostCallReceived;
+            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported += HandleURIDirectionReported;
+            RunspacePool.ForwardEvent += HandleRunspacePoolForwardEvent;
+            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted += HandleSessionCreateCompleted;
         }
 
         #endregion Constructors
@@ -656,17 +650,11 @@ namespace System.Management.Automation
 
                     try
                     {
-                        RunspacePool.StateChanged -=
-                                        new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -=
-                            new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -=
-                            new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-                        RunspacePool.ForwardEvent -=
-                            new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-
-                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -=
-                            new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+                        RunspacePool.StateChanged -= HandleRunspacePoolStateChanged;
+                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -= HandleHostCallReceived;
+                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -= HandleURIDirectionReported;
+                        RunspacePool.ForwardEvent -= HandleRunspacePoolForwardEvent;
+                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -= HandleSessionCreateCompleted;
 
                         _eventManager = null;
 
@@ -1041,7 +1029,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, false, false);
@@ -1062,7 +1050,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, false);
@@ -1097,7 +1085,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, true);
@@ -1190,7 +1178,7 @@ namespace System.Management.Automation
             // Concurrency check should be done under runspace lock
             lock (_syncRoot)
             {
-                if (_bSessionStateProxyCallInProgress == true)
+                if (_bSessionStateProxyCallInProgress)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoPipelineWhenSessionStateProxyInProgress);
                 }
@@ -1853,7 +1841,7 @@ namespace System.Management.Automation
         {
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             _runspace = runspace;
@@ -1882,12 +1870,12 @@ namespace System.Management.Automation
 
             if (command == null)
             {
-                throw new PSArgumentNullException("command");
+                throw new PSArgumentNullException(nameof(command));
             }
 
             if (output == null)
             {
-                throw new PSArgumentNullException("output");
+                throw new PSArgumentNullException(nameof(output));
             }
 
             if (!DebuggerStopped)
@@ -2946,6 +2934,7 @@ namespace System.Management.Automation
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
         private RemoteRunspace _runspace;
+
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");
@@ -2978,7 +2967,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             // Verify the runspace has the Set-Variable command. For performance, throw if we got an error
@@ -3038,7 +3027,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             // Verify the runspace has the Get-Variable command. For performance, throw if we got an error

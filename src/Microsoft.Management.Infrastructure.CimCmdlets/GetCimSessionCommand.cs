@@ -14,7 +14,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// The command returns zero, one or more CimSession objects that represent
     /// connections with remote computers established from the current PS Session.
     /// </summary>
-
+    [Alias("gcms")]
     [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227966")]
     [OutputType(typeof(CimSession))]
     public sealed class GetCimSessionCommand : CimBaseCommand
@@ -173,7 +173,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
@@ -200,7 +200,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.ComputerNameSet, new ParameterSetEntry(0, true)     },
             {   CimBaseCommand.SessionIdSet, new ParameterSetEntry(1)     },

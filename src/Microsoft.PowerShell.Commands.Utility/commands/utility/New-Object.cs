@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
             Type type = null;
             PSArgumentException mshArgE = null;
 
-            if (string.Compare(ParameterSetName, netSetName, StringComparison.Ordinal) == 0)
+            if (string.Equals(ParameterSetName, netSetName, StringComparison.Ordinal))
             {
                 object _newObject = null;
                 try
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
                                 targetObject: null));
                     }
 
-                    throw e;
+                    throw;
                 }
 
                 Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
 
                     thread.Join();
 
-                    if (createInfo.success == true)
+                    if (createInfo.success)
                     {
                         return createInfo.objectCreated;
                     }

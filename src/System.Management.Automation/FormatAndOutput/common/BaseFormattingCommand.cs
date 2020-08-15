@@ -262,6 +262,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else if (transition == GroupTransition.startNew)
             {
+                // Add newline before each group except first
+                WriteNewLineObject();
+
                 // double transition
                 PopGroup(); // exit the current one
                 PushGroup(so); // start a sibling group
@@ -271,6 +274,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 this.WritePayloadObject(so);
             }
+        }
+
+        private void WriteNewLineObject()
+        {
+            FormatEntryData fed = new FormatEntryData();
+            fed.outOfBand = true;
+
+            ComplexViewEntry cve = new ComplexViewEntry();
+            FormatEntry fe = new FormatEntry();
+            cve.formatValueList.Add(fe);
+
+            // Formating system writes newline before each object
+            // so no need to add newline here like:
+            //     fe.formatValueList.Add(new FormatNewLine());
+            fed.formatEntryInfo = cve;
+
+            this.WriteObject(fed);
         }
 
         private bool ShouldProcessOutOfBand

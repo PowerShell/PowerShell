@@ -190,7 +190,7 @@ namespace System.Management.Automation.Remoting
                             "State can be set to NegotiationReceived only when RemoteSessionCapability is not null");
                         if (eventArgs.RemoteSessionCapability == null)
                         {
-                            throw PSTraceSource.NewArgumentException("eventArgs");
+                            throw PSTraceSource.NewArgumentException(nameof(eventArgs));
                         }
 
                         SetState(RemoteSessionState.NegotiationReceived, null);
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Remoting
         {
             if (arg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("arg");
+                throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];

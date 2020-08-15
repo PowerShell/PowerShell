@@ -506,6 +506,7 @@ namespace System.Management.Automation.Runspaces
 
         private RunspacePoolInternal _internalPool;
         private object _syncObject = new object();
+
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
@@ -637,7 +638,7 @@ namespace System.Management.Automation.Runspaces
             TypeTable typeTable)
         {
             // Disconnect-Connect semantics are currently only supported in WSMan transport.
-            if (!(connectionInfo is WSManConnectionInfo))
+            if (connectionInfo is not WSManConnectionInfo)
             {
                 throw new NotSupportedException();
             }
@@ -747,8 +748,7 @@ namespace System.Management.Automation.Runspaces
                         // call any event handlers on this object, replacing the
                         // internalPool sender with 'this' since receivers
                         // are expecting a RunspacePool.
-                        _internalPool.StateChanged +=
-                            new EventHandler<RunspacePoolStateChangedEventArgs>(OnStateChanged);
+                        _internalPool.StateChanged += OnStateChanged;
                     }
                 }
             }
@@ -760,8 +760,7 @@ namespace System.Management.Automation.Runspaces
                     InternalStateChanged -= value;
                     if (InternalStateChanged == null)
                     {
-                        _internalPool.StateChanged -=
-                            new EventHandler<RunspacePoolStateChangedEventArgs>(OnStateChanged);
+                        _internalPool.StateChanged -= OnStateChanged;
                     }
                 }
             }

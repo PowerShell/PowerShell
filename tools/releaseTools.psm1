@@ -37,6 +37,7 @@ $Script:powershell_team = @(
     "Travis Plunk"
     "dependabot-preview[bot]"
     "Joey Aiello"
+    "Tyler James Leonhardt"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -361,7 +362,7 @@ function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
         if ($Compress) {
             $items = $clSection.ChangeLogMessage -join "`n"
             $thankYou = "We thank the following contributors!`n`n"
-            $thankYou += ($clSection.ThankYouMessage | Where-Object { if($_) { return $true} return $false}) -join ", "
+            $thankYou += ($clSection.ThankYouMessage | Select-Object -Unique | Where-Object { if($_) { return $true} return $false}) -join ", "
 
             "<details>`n"
             "<summary>`n"
@@ -412,7 +413,7 @@ function Get-NewOfficalPackage
 {
     param(
         [String]
-        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..\src'),
+        $Path = (Join-Path -Path $PSScriptRoot -ChildPath '..\src'),
         [Switch]
         $IncludeAll
     )
@@ -424,7 +425,7 @@ function Get-NewOfficalPackage
         $file = $_
 
         # parse the csproj
-        [xml] $csprojXml = (Get-content -Raw -Path $_)
+        [xml] $csprojXml = (Get-Content -Raw -Path $_)
 
         # get the package references
         $packages=$csprojXml.Project.ItemGroup.PackageReference
@@ -438,7 +439,7 @@ function Get-NewOfficalPackage
             if ($name)
             {
                 # Get the current package from nuget
-                $versions = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue -AllVersions |
+                $versions = Find-Package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue -AllVersions |
                     Add-Member -Type ScriptProperty -Name Published -Value { $this.Metadata['published']} -PassThru |
                         Where-Object { Test-IncludePackageVersion -NewVersion $_.Version -Version $package.version}
 
@@ -602,25 +603,25 @@ function Update-PsVersionInCode
         $NextReleaseTag,
 
         [String]
-        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+        $Path = (Join-Path -Path $PSScriptRoot -ChildPath '..')
     )
 
     $metaDataPath = (Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json')
-    $metaData = Get-Content -Path $metaDataPath | convertfrom-json
+    $metaData = Get-Content -Path $metaDataPath | ConvertFrom-Json
     $currentTag = $metaData.StableReleaseTag
 
     $currentVersion = $currentTag -replace '^v'
     $newVersion = $NewReleaseTag -replace '^v'
     $metaData.NextReleaseTag = $NextReleaseTag
-    Set-Content -path $metaDataPath -Encoding ascii -Force -Value ($metaData | convertto-json)
+    Set-Content -Path $metaDataPath -Encoding ascii -Force -Value ($metaData | ConvertTo-Json)
 
     Get-ChildItem -Path $Path -Recurse -File |
         Where-Object {$_.Extension -notin '.icns','.svg' -and $_.NAME -ne 'CHANGELOG.md' -and $_.DirectoryName -notmatch '[\\/]docs|demos[\\/]'} |
             Where-Object {$_ | Select-String -SimpleMatch $currentVersion -List} |
-                Foreach-Object {
+                ForEach-Object {
                     $content = Get-Content -Path $_.FullName -Raw -ReadCount 0
                     $newContent = $content.Replace($currentVersion,$newVersion)
-                    Set-Content -path $_.FullName -Encoding ascii -Force -Value $newContent -NoNewline
+                    Set-Content -Path $_.FullName -Encoding ascii -Force -Value $newContent -NoNewline
                 }
 }
 

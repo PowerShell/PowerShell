@@ -112,9 +112,9 @@ namespace Microsoft.PowerShell.Commands
 
             // During remoting, remain compatible with v5.0- clients by default.
             // Passing a -PowerShellVersion argument allows overriding the client version.
-            bool writeOldWay = 
+            bool writeOldWay =
                 (remotingClientInfo != null && clientVersion == null)  // To be safe: Remoting client version could unexpectedly not be determined.
-                || 
+                ||
                 (clientVersion != null
                     &&
                     (clientVersion.Major < 5

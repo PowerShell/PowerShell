@@ -3,11 +3,13 @@ parameters:
 
 jobs:
 - job: compliance
+  variables:
+    runCodesignValidationInjection: false
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: Package ES CodeHub Lab E
+    name: Package ES Standard Build
 
   # APIScan can take a long time
   timeoutInMinutes: 180
@@ -99,7 +101,7 @@ jobs:
 
   # PreFASt is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
     displayName: 'Run APIScan'
     inputs:
       softwareFolder: '$(CompliancePath)'

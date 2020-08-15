@@ -170,6 +170,7 @@ namespace System.Management.Automation.Remoting
 
         // Holds the delegate pointers in a structure that has identical layout to the native structure.
         private WSManPluginEntryDelegatesInternal _unmanagedStruct = new WSManPluginEntryDelegatesInternal();
+
         internal WSManPluginEntryDelegatesInternal UnmanagedStruct
         {
             get { return _unmanagedStruct; }
@@ -317,7 +318,7 @@ namespace System.Management.Automation.Remoting
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (_pluginShellGCHandle != null)
+            if (_pluginShellGCHandle.IsAllocated)
             {
                 _pluginShellGCHandle.Free();
                 _pluginReleaseShellContextGCHandle.Free();
@@ -418,7 +419,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Immutable container that holds the delegates and their unmanaged pointers.
         /// </summary>
-        internal static WSManPluginEntryDelegates workerPtrs = new WSManPluginEntryDelegates();
+        internal static readonly WSManPluginEntryDelegates workerPtrs = new WSManPluginEntryDelegates();
 
         #region Managed Entry Points
 

@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation.Internal;
 
@@ -242,9 +245,9 @@ namespace System.Management.Automation
             return false;
         }
 
-        private CommandInfo SearchForAliases()
+        private CommandInfo? SearchForAliases()
         {
-            CommandInfo currentMatch = null;
+            CommandInfo? currentMatch = null;
 
             if (_context.EngineSessionState != null &&
                 (_commandTypes & CommandTypes.Alias) != 0)
@@ -255,9 +258,9 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-        private CommandInfo SearchForFunctions()
+        private CommandInfo? SearchForFunctions()
         {
-            CommandInfo currentMatch = null;
+            CommandInfo? currentMatch = null;
 
             if (_context.EngineSessionState != null &&
                 (_commandTypes & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
@@ -268,9 +271,9 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-        private CommandInfo SearchForCmdlets()
+        private CommandInfo? SearchForCmdlets()
         {
-            CommandInfo currentMatch = null;
+            CommandInfo? currentMatch = null;
 
             if ((_commandTypes & CommandTypes.Cmdlet) != 0)
             {
@@ -280,9 +283,9 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-        private CommandInfo ProcessBuiltinScriptState()
+        private CommandInfo? ProcessBuiltinScriptState()
         {
-            CommandInfo currentMatch = null;
+            CommandInfo? currentMatch = null;
 
             // Check to see if the path is qualified
 
@@ -296,9 +299,9 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-        private CommandInfo ProcessPathResolutionState()
+        private CommandInfo? ProcessPathResolutionState()
         {
-            CommandInfo currentMatch = null;
+            CommandInfo? currentMatch = null;
 
             try
             {
@@ -338,7 +341,7 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-        private CommandInfo ProcessQualifiedFileSystemState()
+        private CommandInfo? ProcessQualifiedFileSystemState()
         {
             try
             {
@@ -355,13 +358,14 @@ namespace System.Management.Automation
                 throw;
             }
 
-            CommandInfo currentMatch = null;
+            CommandInfo? currentMatch = null;
             _currentState = SearchState.PathSearch;
             if (_canDoPathLookup)
             {
                 try
                 {
-                    while (currentMatch == null && _pathSearcher.MoveNext())
+                    // the previous call to setupPathSearcher ensures _pathSearcher != null
+                    while (currentMatch == null && _pathSearcher!.MoveNext())
                     {
                         currentMatch = GetInfoFromPath(((IEnumerator<string>)_pathSearcher).Current);
                     }
@@ -375,10 +379,10 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-        private CommandInfo ProcessPathSearchState()
+        private CommandInfo? ProcessPathSearchState()
         {
-            CommandInfo currentMatch = null;
-            string path = DoPowerShellRelativePathLookup();
+            CommandInfo? currentMatch = null;
+            string? path = DoPowerShellRelativePathLookup();
 
             if (!string.IsNullOrEmpty(path))
             {
@@ -443,9 +447,9 @@ namespace System.Management.Automation
         /// <returns>
         /// A CommandInfo for the next command if it exists as a path, or null otherwise.
         /// </returns>
-        private CommandInfo GetNextFromPath()
+        private CommandInfo? GetNextFromPath()
         {
-            CommandInfo result = null;
+            CommandInfo? result = null;
 
             do // false loop
             {
@@ -478,7 +482,7 @@ namespace System.Management.Automation
                 if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns) &&
                     resolvedPaths.Count == 0)
                 {
-                    string path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
+                    string? path = GetNextLiteralPathThatExistsAndHandleExceptions(_commandName, out _);
 
                     if (path != null)
                     {
@@ -520,7 +524,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A collection of full paths to the commands which were found.
         /// </returns>
-        private Collection<string> GetNextFromPathUsingWildcards(string command, out ProviderInfo provider)
+        private Collection<string> GetNextFromPathUsingWildcards(string? command, out ProviderInfo? provider)
         {
             try
             {
@@ -594,9 +598,9 @@ namespace System.Management.Automation
         /// If <paramref name="path"/> refers to a cmdlet file that
         /// contains invalid metadata.
         /// </exception>
-        private CommandInfo GetInfoFromPath(string path)
+        private CommandInfo? GetInfoFromPath(string path)
         {
-            CommandInfo result = null;
+            CommandInfo? result = null;
 
             do // false loop
             {
@@ -607,7 +611,7 @@ namespace System.Management.Automation
                 }
 
                 // Now create the appropriate CommandInfo using the extension
-                string extension = null;
+                string? extension = null;
 
                 try
                 {
@@ -681,9 +685,9 @@ namespace System.Management.Automation
         /// <returns>
         /// A CommandInfo representing the next matching alias if found, otherwise null.
         /// </returns>
-        private CommandInfo GetNextAlias()
+        private CommandInfo? GetNextAlias()
         {
-            CommandInfo result = null;
+            CommandInfo? result = null;
 
             if ((_commandResolutionOptions & SearchResolutionOptions.ResolveAliasPatterns) != 0)
             {
@@ -709,7 +713,7 @@ namespace System.Management.Automation
                     }
 
                     // Process alias from modules
-                    AliasInfo c = GetAliasFromModules(_commandName);
+                    AliasInfo? c = GetAliasFromModules(_commandName);
                     if (c != null)
                     {
                         matchingAliases.Add(c);
@@ -762,15 +766,15 @@ namespace System.Management.Automation
         /// <returns>
         /// A CommandInfo representing the next matching function if found, otherwise null.
         /// </returns>
-        private CommandInfo GetNextFunction()
+        private CommandInfo? GetNextFunction()
         {
-            CommandInfo result = null;
+            CommandInfo? result = null;
 
             if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveFunctionPatterns))
             {
                 if (_matchingFunctionEnumerator == null)
                 {
-                    Collection<CommandInfo> matchingFunction = new Collection<CommandInfo>();
+                    Collection<CommandInfo?> matchingFunction = new Collection<CommandInfo?>();
 
                     // Generate the enumerator of matching function names
                     WildcardPattern functionMatcher =
@@ -778,25 +782,25 @@ namespace System.Management.Automation
                             _commandName,
                             WildcardOptions.IgnoreCase);
 
-                    foreach (DictionaryEntry functionEntry in _context.EngineSessionState.GetFunctionTable())
+                    foreach ((string functionName, FunctionInfo functionInfo) in _context.EngineSessionState.GetFunctionTable())
                     {
-                        if (functionMatcher.IsMatch((string)functionEntry.Key) ||
+                        if (functionMatcher.IsMatch(functionName) ||
                             (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                            FuzzyMatcher.IsFuzzyMatch(functionEntry.Key.ToString(), _commandName)))
+                            FuzzyMatcher.IsFuzzyMatch(functionName, _commandName)))
                         {
-                            matchingFunction.Add((CommandInfo)functionEntry.Value);
+                            matchingFunction.Add(functionInfo);
                         }
                         else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                         {
-                            if (_commandName.Equals(ModuleUtils.AbbreviateName((string)functionEntry.Key), StringComparison.OrdinalIgnoreCase))
+                            if (_commandName.Equals(ModuleUtils.AbbreviateName(functionName), StringComparison.OrdinalIgnoreCase))
                             {
-                                matchingFunction.Add((CommandInfo)functionEntry.Value);
+                                matchingFunction.Add(functionInfo);
                             }
                         }
                     }
 
                     // Process functions from modules
-                    CommandInfo cmdInfo = GetFunctionFromModules(_commandName);
+                    CommandInfo? cmdInfo = GetFunctionFromModules(_commandName);
                     if (cmdInfo != null)
                     {
                         matchingFunction.Add(cmdInfo);
@@ -838,7 +842,7 @@ namespace System.Management.Automation
         // Don't return commands to the user if that might result in:
         //     - Trusted commands calling untrusted functions that the user has overridden
         //     - Debug prompts calling internal functions that are likely to have code injection
-        private bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo result, ExecutionContext executionContext)
+        private bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo? result, ExecutionContext executionContext)
         {
             if (result == null)
             {
@@ -870,60 +874,54 @@ namespace System.Management.Automation
             return false;
         }
 
-        private AliasInfo GetAliasFromModules(string command)
+        private AliasInfo? GetAliasFromModules(string command)
         {
-            AliasInfo result = null;
+            AliasInfo? result = null;
 
             if (command.IndexOf('\\') > 0)
             {
                 // See if it's a module qualified alias...
-                PSSnapinQualifiedName qualifiedName = PSSnapinQualifiedName.GetInstance(command);
+                PSSnapinQualifiedName? qualifiedName = PSSnapinQualifiedName.GetInstance(command);
                 if (qualifiedName != null && !string.IsNullOrEmpty(qualifiedName.PSSnapInName))
                 {
-                    PSModuleInfo module = GetImportedModuleByName(qualifiedName.PSSnapInName);
+                    PSModuleInfo? module = GetImportedModuleByName(qualifiedName.PSSnapInName);
 
-                    if (module != null)
-                    {
-                        module.ExportedAliases.TryGetValue(qualifiedName.ShortName, out result);
-                    }
+                    module?.ExportedAliases.TryGetValue(qualifiedName.ShortName, out result);
                 }
             }
 
             return result;
         }
 
-        private CommandInfo GetFunctionFromModules(string command)
+        private CommandInfo? GetFunctionFromModules(string command)
         {
-            FunctionInfo result = null;
+            FunctionInfo? result = null;
 
             if (command.IndexOf('\\') > 0)
             {
                 // See if it's a module qualified function call...
-                PSSnapinQualifiedName qualifiedName = PSSnapinQualifiedName.GetInstance(command);
+                PSSnapinQualifiedName? qualifiedName = PSSnapinQualifiedName.GetInstance(command);
                 if (qualifiedName != null && !string.IsNullOrEmpty(qualifiedName.PSSnapInName))
                 {
-                    PSModuleInfo module = GetImportedModuleByName(qualifiedName.PSSnapInName);
+                    PSModuleInfo? module = GetImportedModuleByName(qualifiedName.PSSnapInName);
 
-                    if (module != null)
-                    {
-                        module.ExportedFunctions.TryGetValue(qualifiedName.ShortName, out result);
-                    }
+                    module?.ExportedFunctions.TryGetValue(qualifiedName.ShortName, out result);
                 }
             }
 
             return result;
         }
 
-        private PSModuleInfo GetImportedModuleByName(string moduleName)
+        private PSModuleInfo? GetImportedModuleByName(string moduleName)
         {
-            PSModuleInfo module = null;
+            PSModuleInfo? module = null;
             List<PSModuleInfo> modules = _context.Modules.GetModules(new string[] { moduleName }, false);
 
             if (modules != null && modules.Count > 0)
             {
                 foreach (PSModuleInfo m in modules)
                 {
-                    if (_context.previousModuleImported.ContainsKey(m.Name) && ((string)_context.previousModuleImported[m.Name] == m.Path))
+                    if (_context.previousModuleImported.ContainsKey(m.Name) && ((string?)_context.previousModuleImported[m.Name] == m.Path))
                     {
                         module = m;
                         break;
@@ -949,9 +947,9 @@ namespace System.Management.Automation
         /// A FunctionInfo if the function name exists and is a function, a FilterInfo if
         /// the filter name exists and is a filter, or null otherwise.
         /// </returns>
-        private CommandInfo GetFunction(string function)
+        private CommandInfo? GetFunction(string function)
         {
-            CommandInfo result = _context.EngineSessionState.GetFunction(function);
+            CommandInfo? result = _context.EngineSessionState.GetFunction(function);
 
             if (result != null)
             {
@@ -991,9 +989,9 @@ namespace System.Management.Automation
         /// A CmdletInfo for the next matching Cmdlet or null if there are
         /// no more matches.
         /// </returns>
-        private CmdletInfo GetNextCmdlet()
+        private CmdletInfo? GetNextCmdlet()
         {
-            CmdletInfo result = null;
+            CmdletInfo? result = null;
             bool useAbbreviationExpansion = _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion);
 
             if (_matchingCmdlet == null)
@@ -1002,7 +1000,7 @@ namespace System.Management.Automation
                 {
                     Collection<CmdletInfo> matchingCmdletInfo = new Collection<CmdletInfo>();
 
-                    PSSnapinQualifiedName PSSnapinQualifiedCommandName =
+                    PSSnapinQualifiedName? PSSnapinQualifiedCommandName =
                         PSSnapinQualifiedName.GetInstance(_commandName);
 
                     if (!useAbbreviationExpansion && PSSnapinQualifiedCommandName == null)
@@ -1010,10 +1008,12 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    WildcardPattern cmdletMatcher =
-                        WildcardPattern.Get(
-                            PSSnapinQualifiedCommandName.ShortName,
-                            WildcardOptions.IgnoreCase);
+                    string? moduleName = PSSnapinQualifiedCommandName?.PSSnapInName;
+
+                    var cmdletShortName = PSSnapinQualifiedCommandName?.ShortName;
+                    WildcardPattern? cmdletMatcher = cmdletShortName != null
+                        ? WildcardPattern.Get(cmdletShortName, WildcardOptions.IgnoreCase)
+                        : null;
 
                     SessionStateInternal ss = _context.EngineSessionState;
 
@@ -1021,13 +1021,12 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletMatcher.IsMatch(cmdlet.Name) ||
+                            if (cmdletMatcher != null &&
+                                cmdletMatcher.IsMatch(cmdlet.Name) ||
                                 (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                                FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
+                                 FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
-                                if (string.IsNullOrEmpty(PSSnapinQualifiedCommandName.PSSnapInName) ||
-                                    (PSSnapinQualifiedCommandName.PSSnapInName.Equals(
-                                        cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase)))
+                                if (string.IsNullOrEmpty(moduleName) || moduleName.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // If PSSnapin is specified, make sure they match
                                     matchingCmdletInfo.Add(cmdlet);
@@ -1067,9 +1066,10 @@ namespace System.Management.Automation
             return traceResult(result);
         }
 
-        private IEnumerator<CmdletInfo> _matchingCmdlet;
+        private IEnumerator<CmdletInfo>? _matchingCmdlet;
 
-        private static CmdletInfo traceResult(CmdletInfo result)
+        [return: NotNullIfNotNull("result")]
+        private static CmdletInfo? traceResult(CmdletInfo? result)
         {
             if (result != null)
             {
@@ -1082,9 +1082,9 @@ namespace System.Management.Automation
             return result;
         }
 
-        private string DoPowerShellRelativePathLookup()
+        private string? DoPowerShellRelativePathLookup()
         {
-            string result = null;
+            string? result = null;
 
             if (_context.EngineSessionState != null &&
                 _context.EngineSessionState.ProviderCount > 0)
@@ -1124,14 +1124,14 @@ namespace System.Management.Automation
         /// The path that was resolved. Null if the path couldn't be resolved or was
         /// not resolved by the FileSystemProvider.
         /// </returns>
-        private string ResolvePSPath(string path)
+        private string? ResolvePSPath(string? path)
         {
-            string result = null;
+            string? result = null;
 
             try
             {
-                ProviderInfo provider = null;
-                string resolvedPath = null;
+                ProviderInfo? provider = null;
+                string? resolvedPath = null;
 
                 // Try literal path resolution if it is set to run first
                 if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveLiteralThenPathPatterns))
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
         /// <returns>
         /// Full path to the command.
         /// </returns>
-        private string GetNextLiteralPathThatExistsAndHandleExceptions(string command, out ProviderInfo provider)
+        private string? GetNextLiteralPathThatExistsAndHandleExceptions(string command, out ProviderInfo? provider)
         {
             try
             {
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation
         /// <returns>
         /// Full path to the command.
         /// </returns>
-        private string GetNextLiteralPathThatExists(string command, out ProviderInfo provider)
+        private string? GetNextLiteralPathThatExists(string? command, out ProviderInfo? provider)
         {
             string resolvedPath = _context.LocationGlobber.GetProviderPath(command, out provider);
 
@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines which command types will be globbed.
         /// </summary>
-        private SearchResolutionOptions _commandResolutionOptions;
+        private readonly SearchResolutionOptions _commandResolutionOptions;
 
         /// <summary>
         /// Determines which types of commands to look for.
@@ -1494,12 +1494,12 @@ namespace System.Management.Automation
         /// The enumerator that uses the Path to
         /// search for commands.
         /// </summary>
-        private CommandPathSearch _pathSearcher;
+        private CommandPathSearch? _pathSearcher;
 
         /// <summary>
         /// The execution context instance for the current engine...
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// A routine to initialize the path searcher...
@@ -1555,7 +1555,7 @@ namespace System.Management.Automation
                 {
                     _canDoPathLookup = true;
 
-                    string directory = Path.GetDirectoryName(_commandName);
+                    string? directory = Path.GetDirectoryName(_commandName);
                     var directoryCollection = new LookupPathCollection { directory };
 
                     CommandDiscovery.discoveryTracer.WriteLine(
@@ -1587,7 +1587,7 @@ namespace System.Management.Automation
                     // We must try to resolve the path as an PSPath or else we can't do
                     // path lookup for relative paths.
 
-                    string directory = Path.GetDirectoryName(_commandName);
+                    string? directory = Path.GetDirectoryName(_commandName);
                     directory = ResolvePSPath(directory);
 
                     CommandDiscovery.discoveryTracer.WriteLine(
@@ -1640,10 +1640,7 @@ namespace System.Management.Automation
                     _commandTypes &= ~CommandTypes.ExternalScript;
             }
 
-            if (_pathSearcher != null)
-            {
-                _pathSearcher.Reset();
-            }
+            _pathSearcher?.Reset();
 
             _currentMatch = null;
             _currentState = SearchState.SearchingAliases;
@@ -1663,17 +1660,17 @@ namespace System.Management.Automation
         /// <summary>
         /// An enumerator of the matching aliases.
         /// </summary>
-        private IEnumerator<AliasInfo> _matchingAlias;
+        private IEnumerator<AliasInfo>? _matchingAlias;
 
         /// <summary>
         /// An enumerator of the matching functions.
         /// </summary>
-        private IEnumerator<CommandInfo> _matchingFunctionEnumerator;
+        private IEnumerator<CommandInfo?>? _matchingFunctionEnumerator;
 
         /// <summary>
         /// The CommandInfo that references the command that matches the pattern.
         /// </summary>
-        private CommandInfo _currentMatch;
+        private CommandInfo? _currentMatch;
 
         private bool _canDoPathLookup;
         private CanDoPathLookupResult _canDoPathLookupResult = CanDoPathLookupResult.Yes;

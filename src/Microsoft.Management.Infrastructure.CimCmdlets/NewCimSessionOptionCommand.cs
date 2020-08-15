@@ -18,8 +18,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public enum ProtocolType
     {
         Default,
+
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Dcom,
+
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Wsman
     };
@@ -35,6 +37,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// DComSessionOptions or WSManSessionOptions, which derive from
     /// CimSessionOptions.
     /// </summary>
+    [Alias("ncso")]
     [Cmdlet(VerbsCommon.New, "CimSessionOption", DefaultParameterSetName = ProtocolNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227969")]
     [OutputType(typeof(CimSessionOptions))]
     public sealed class NewCimSessionOptionCommand : CimBaseCommand
@@ -654,7 +657,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch (Exception ex)
                     {
                         DebugHelper.WriteLogEx(ex.ToString(), 1);
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -709,7 +712,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameNoEncryption, new HashSet<ParameterDefinitionEntry> {
@@ -810,7 +813,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.ProtocolNameParameterSet, new ParameterSetEntry(1, true)     },
             {   CimBaseCommand.DcomParameterSet, new ParameterSetEntry(0)     },

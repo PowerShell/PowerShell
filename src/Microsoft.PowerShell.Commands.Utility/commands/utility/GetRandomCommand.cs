@@ -29,6 +29,7 @@ namespace Microsoft.PowerShell.Commands
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
         private const string ShuffleParameterSet = "ShuffleParameterSet";
+
         private static readonly object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet
@@ -644,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (maxValue < 0)
             {
-                throw new ArgumentOutOfRangeException("maxValue", GetRandomCommandStrings.MaxMustBeGreaterThanZeroApi);
+                throw new ArgumentOutOfRangeException(nameof(maxValue), GetRandomCommandStrings.MaxMustBeGreaterThanZeroApi);
             }
 
             return Next(0, maxValue);
@@ -660,7 +661,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (minValue > maxValue)
             {
-                throw new ArgumentOutOfRangeException("minValue", GetRandomCommandStrings.MinGreaterThanOrEqualMaxApi);
+                throw new ArgumentOutOfRangeException(nameof(minValue), GetRandomCommandStrings.MinGreaterThanOrEqualMaxApi);
             }
 
             int randomNumber = 0;

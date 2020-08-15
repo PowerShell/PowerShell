@@ -6,7 +6,7 @@ Describe "CliXml test" -Tags "CI" {
         $testFilePath = Join-Path "testdrive:\" "testCliXml"
         $subFilePath = Join-Path $testFilePath ".test"
 
-        if(test-path $testFilePath)
+        if(Test-Path $testFilePath)
         {
             Remove-Item $testFilePath -Force -Recurse
         }
@@ -207,7 +207,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         }
     }
 
-    It "Verifies that importing the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
+    It "Verifies that importing the corrupted Cim class does not launch calc.exe" -Skip:$skipNotWindows {
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
 

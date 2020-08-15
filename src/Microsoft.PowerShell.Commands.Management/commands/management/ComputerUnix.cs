@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            _process.Dispose();
+            _process?.Dispose();
         }
 
 #endregion "IDisposable Members"

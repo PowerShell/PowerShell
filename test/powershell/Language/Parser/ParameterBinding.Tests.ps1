@@ -79,23 +79,23 @@ Describe 'Argument transformation attribute on optional argument with explicit $
     It "Script function takes uint64" {
         Invoke-ScriptFunctionTakesUInt64 | Should -Be 42
     }
-    it "csharp cmdlet takes object" {
+    It "csharp cmdlet takes object" {
         Invoke-CSharpCmdletTakesObject | Should -Be "passed in null"
     }
-    it "csharp cmdlet takes uint64" {
+    It "csharp cmdlet takes uint64" {
         Invoke-CSharpCmdletTakesUInt64 | Should -Be 0
     }
 
-    it "script function takes object when parameter is null" {
+    It "script function takes object when parameter is null" {
         Invoke-ScriptFunctionTakesObject -Address $null | Should -Be 42
     }
-    it "script function takes unit64 when parameter is null" {
+    It "script function takes unit64 when parameter is null" {
         Invoke-ScriptFunctionTakesUInt64 -Address $null | Should -Be 42
     }
-    it "script csharp cmdlet takes object when parameter is null" {
+    It "script csharp cmdlet takes object when parameter is null" {
         Invoke-CSharpCmdletTakesObject -Address $null | Should -Be 42
     }
-    it "script csharp cmdlet takes uint64 when parameter is null" {
+    It "script csharp cmdlet takes uint64 when parameter is null" {
         Invoke-CSharpCmdletTakesUInt64 -Address $null | Should -Be 42
     }
 }
@@ -423,5 +423,46 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
         finally {
             $ps.Dispose()
         }
+    }
+}
+
+Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to [string] Parameters' -Tags CI {
+
+    BeforeAll {
+        $TestValues = @(
+            @{ Argument = "34uy" }
+            @{ Argument = "48y" }
+            @{ Argument = "8s" }
+            @{ Argument = "49us" }
+            @{ Argument = "26" }
+            @{ Argument = "28u" }
+            @{ Argument = "24l" }
+            @{ Argument = "32ul" }
+            @{ Argument = "20d" }
+            @{ Argument = "6n" }
+        )
+
+        function Test-SimpleStringValue([string] $Value) { $Value }
+        function Test-AdvancedStringValue {
+            [CmdletBinding()]
+            param(
+                [string]
+                $Value
+            )
+
+            $Value
+        }
+    }
+
+    It 'should correctly convert <Argument> back to string in simple functions' -TestCases $TestValues {
+        param($Argument)
+
+        Invoke-Expression "Test-SimpleStringValue -Value $Argument" | Should -BeExactly $Argument
+    }
+
+    It 'should correctly convert <Argument> back to string in advanced functions' -TestCases $TestValues {
+        param($Argument)
+
+        Invoke-Expression "Test-AdvancedStringValue -Value $Argument" | Should -BeExactly $Argument
     }
 }

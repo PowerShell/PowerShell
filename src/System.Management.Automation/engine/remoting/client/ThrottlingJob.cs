@@ -201,6 +201,7 @@ namespace System.Management.Automation
 
         private bool _ownerWontSubmitNewChildJobs = false;
         private readonly HashSet<Guid> _setOfChildJobsThatCanAddMoreChildJobs = new HashSet<Guid>();
+
         private bool IsEndOfChildJobs
         {
             get
@@ -232,6 +233,7 @@ namespace System.Management.Automation
         private int _countOfFailedChildJobs;
         private int _countOfStoppedChildJobs;
         private int _countOfSuccessfullyCompletedChildJobs;
+
         private int CountOfFinishedChildJobs
         {
             get
@@ -296,7 +298,7 @@ namespace System.Management.Automation
         {
             using (var jobGotEnqueued = new ManualResetEventSlim(initialState: false))
             {
-                if (childJob == null) throw new ArgumentNullException("childJob");
+                if (childJob == null) throw new ArgumentNullException(nameof(childJob));
 
                 this.AddChildJobWithoutBlocking(childJob, flags, jobGotEnqueued.Set);
                 jobGotEnqueued.Wait();
@@ -310,7 +312,7 @@ namespace System.Management.Automation
         {
             using (var forwardingCancellation = new CancellationTokenSource())
             {
-                if (childJob == null) throw new ArgumentNullException("childJob");
+                if (childJob == null) throw new ArgumentNullException(nameof(childJob));
 
                 this.AddChildJobWithoutBlocking(childJob, flags, forwardingCancellation.Cancel);
                 this.ForwardAllResultsToCmdlet(cmdlet, forwardingCancellation.Token);
@@ -318,6 +320,7 @@ namespace System.Management.Automation
         }
 
         private bool _alreadyDisabledFlowControlForPendingJobsQueue = false;
+
         internal void DisableFlowControlForPendingJobsQueue()
         {
             if (!_cmdletMode || _alreadyDisabledFlowControlForPendingJobsQueue)
@@ -343,6 +346,7 @@ namespace System.Management.Automation
         }
 
         private bool _alreadyDisabledFlowControlForPendingCmdletActionsQueue = false;
+
         internal void DisableFlowControlForPendingCmdletActionsQueue()
         {
             if (!_cmdletMode || _alreadyDisabledFlowControlForPendingCmdletActionsQueue)
@@ -371,8 +375,8 @@ namespace System.Management.Automation
         /// </exception>
         internal void AddChildJobWithoutBlocking(StartableJob childJob, ChildJobFlags flags, Action jobEnqueuedAction = null)
         {
-            if (childJob == null) throw new ArgumentNullException("childJob");
-            if (childJob.JobStateInfo.State != JobState.NotStarted) throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, "childJob");
+            if (childJob == null) throw new ArgumentNullException(nameof(childJob));
+            if (childJob.JobStateInfo.State != JobState.NotStarted) throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, nameof(childJob));
             this.AssertNotDisposed();
 
             JobStateInfo newJobStateInfo = null;
@@ -420,7 +424,7 @@ namespace System.Management.Automation
             childJob.StateChanged += this.childJob_StateChanged;
             if (_cmdletMode)
             {
-                childJob.Results.DataAdded += new EventHandler<DataAddedEventArgs>(childJob_ResultsAdded);
+                childJob.Results.DataAdded += childJob_ResultsAdded;
             }
 
             this.EnqueueReadyToRunChildJob(childJob);
@@ -448,6 +452,7 @@ namespace System.Management.Automation
 
         private readonly object _alreadyWroteFlowControlBuffersHighMemoryUsageWarningLock = new object();
         private bool _alreadyWroteFlowControlBuffersHighMemoryUsageWarning;
+
         private const long FlowControlBuffersHighMemoryUsageThreshold = 30000;
 
         private void WriteWarningAboutHighUsageOfFlowControlBuffers(long currentCount)
@@ -1153,6 +1158,7 @@ namespace System.Management.Automation
             }
 
             private bool _stoppedMonitoringAllJobs;
+
             private void StopMonitoringAllJobs()
             {
                 _cancellationTokenSource.Cancel();

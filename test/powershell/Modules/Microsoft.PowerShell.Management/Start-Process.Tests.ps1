@@ -15,6 +15,8 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
         $pingDirectory = Split-Path $pingCommand -Parent
         $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
+        $tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
+        New-Item $tempDirectory -ItemType Directory  -Force
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
@@ -69,6 +71,15 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should -Be "ping"
     }
+	
+    It "Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" {
+        Push-Location -LiteralPath $tempDirectory
+	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+	    $process.Length      | Should -Be 1
+	    $process.Id          | Should -BeGreaterThan 1
+	    # $process.ProcessName | Should -Be "ping"
+        Pop-Location
+    }
 
     It "Should handle stderr redirection without error" {
         $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
@@ -80,14 +91,14 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     It "Should handle stdout redirection without error" {
         $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
-        $dirEntry = get-childitem $tempFile
+        $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 
     # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
     It "Should handle stdin redirection without error" -Pending {
         $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
-        $dirEntry = get-childitem $tempFile
+        $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 

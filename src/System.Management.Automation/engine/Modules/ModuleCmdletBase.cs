@@ -237,10 +237,10 @@ namespace Microsoft.PowerShell.Commands
         private List<WildcardPattern> _matchAll;
 
         // The list of commands permitted in a module manifest
-        internal static string[] PermittedCmdlets = new string[] {
+        internal static readonly string[] PermittedCmdlets = new string[] {
             "Import-LocalizedData", "ConvertFrom-StringData", "Write-Host", "Out-Host", "Join-Path" };
 
-        internal static string[] ModuleManifestMembers = new string[] {
+        internal static readonly string[] ModuleManifestMembers = new string[] {
             "ModuleToProcess",
             "NestedModules",
             "GUID",
@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
-        internal static object s_WindowsPowerShellCompatSyncObject = new object();
+        internal static readonly object s_WindowsPowerShellCompatSyncObject = new object();
 
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
@@ -786,7 +786,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The rooted files wasn't found, so don't search anymore...
-                if (found == false && wasRooted == true)
+                if (found == false && wasRooted)
                     return null;
 
                 if (searchModulePath && found == false && moduleFileFound == false)
@@ -3162,7 +3162,6 @@ namespace Microsoft.PowerShell.Commands
 
                 newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
 
-
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
                 {
@@ -4380,7 +4379,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        string fixedFileName = FixupFileName(moduleBase, s, extension, importingModule);
+                        string fixedFileName = FixupFileName(moduleBase, s, extension, importingModule, skipLoading: true);
                         var dir = Path.GetDirectoryName(fixedFileName);
 
                         if (string.Equals(psHome, dir, StringComparison.OrdinalIgnoreCase) ||
@@ -4538,9 +4537,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
-        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule)
+        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, bool skipLoading = false)
         {
-            return FixupFileName(moduleBase, name, extension, isImportingModule, pathIsResolved: out _);
+            return FixupFileName(moduleBase, name, extension, isImportingModule, pathIsResolved: out _, skipLoading);
         }
 
         /// <summary>
@@ -4555,10 +4554,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="extension">The extension to use in case the given name has no extension.</param>
         /// <param name="isImportingModule">Indicate if we are loading a module.</param>
         /// <param name="pathIsResolved">Indicate if the returned path is fully resolved.</param>
+        /// <param name="skipLoading">Indicate if the resolved module should be loaded.</param>
         /// <returns>
         /// The resolved file path. Or, the combined path of <paramref name="moduleBase"/> and <paramref name="name"/> when the file path cannot be resolved.
         /// </returns>
-        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, out bool pathIsResolved)
+        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, out bool pathIsResolved, bool skipLoading = false)
         {
             pathIsResolved = false;
             string originalName = name;
@@ -4586,7 +4586,7 @@ namespace Microsoft.PowerShell.Commands
             // Return the path if successfully resolved.
             if (resolvedPath != null)
             {
-                if (isImportingModule && resolvedPath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                if (isImportingModule && resolvedPath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !skipLoading)
                 {
                     // If we are fixing up an assembly file path and we are actually loading the module, then we load the resolved assembly file here.
                     // This is because we process type/format ps1xml files before 'RootModule' and 'NestedModules' entries during the module loading.
@@ -5074,29 +5074,29 @@ namespace Microsoft.PowerShell.Commands
                         // Remove the imported functions from SessionState...
                         // (can't just go through module.SessionState.Internal.ExportedFunctions,
                         //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (DictionaryEntry entry in ss.GetFunctionTable())
+                        foreach ((var _, FunctionInfo functionInfo) in ss.GetFunctionTable())
                         {
-                            FunctionInfo func = (FunctionInfo)entry.Value;
-                            if (func.Module == null)
+                            if (functionInfo.Module == null)
                             {
                                 continue;
                             }
 
-                            if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                            if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
+                                string functionName = functionInfo.Name;
                                 try
                                 {
-                                    ss.RemoveFunction(func.Name, true);
+                                    ss.RemoveFunction(functionName, true);
 
-                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, func.Name);
+                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, functionName);
                                     WriteVerbose(memberMessage);
                                 }
                                 catch (SessionStateUnauthorizedAccessException e)
                                 {
-                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
+                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, functionName, module.Name, e.Message);
                                     InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
                                     ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
-                                                                     ErrorCategory.PermissionDenied, func.Name);
+                                                                     ErrorCategory.PermissionDenied, functionName);
                                     WriteError(er);
                                 }
                             }
@@ -7148,7 +7148,7 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (sourceModule == null)
-                throw PSTraceSource.NewArgumentNullException("sourceModule");
+                throw PSTraceSource.NewArgumentNullException(nameof(sourceModule));
 
             bool isImportModulePrivate = cmdlet.CommandInfo.Visibility == SessionStateEntryVisibility.Private ||
                 targetSessionState.DefaultCommandVisibility == SessionStateEntryVisibility.Private;

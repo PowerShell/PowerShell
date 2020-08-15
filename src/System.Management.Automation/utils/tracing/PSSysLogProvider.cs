@@ -42,19 +42,19 @@ namespace System.Management.Automation.Tracing
         /// property to ensure correct thread initialization; otherwise, a null reference can occur.
         /// </remarks>
         [ThreadStatic]
-        private static StringBuilder _payloadBuilder;
+        private static StringBuilder t_payloadBuilder;
 
         private static StringBuilder PayloadBuilder
         {
             get
             {
-                if (_payloadBuilder == null)
+                if (t_payloadBuilder == null)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    _payloadBuilder = new StringBuilder(200);
+                    t_payloadBuilder = new StringBuilder(200);
                 }
 
-                return _payloadBuilder;
+                return t_payloadBuilder;
             }
         }
 

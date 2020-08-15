@@ -222,7 +222,7 @@ try {
 
         It "Errors on adding nonexistent user to group" {
             $sb = {
-                Add-LocalGroupMember -name TestGroup1 -Member TestNonexistentUser1
+                Add-LocalGroupMember -Name TestGroup1 -Member TestNonexistentUser1
             }
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
         }

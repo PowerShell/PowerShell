@@ -388,7 +388,7 @@ namespace System.Management.Automation
                     SearchResolutionOptions.None,
                     CommandTypes.Cmdlet,
                     context);
-            do
+            while (true)
             {
                 try
                 {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
                 }
 
                 current = ((IEnumerator)searcher).Current as CmdletInfo;
-            } while (true);
+            }
 
             return current;
         }
@@ -435,7 +435,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(cmdletTypeName))
             {
-                throw PSTraceSource.NewArgumentNullException("cmdletTypeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdletTypeName));
             }
 
             Exception e = null;
@@ -486,7 +486,7 @@ namespace System.Management.Automation
         public List<CmdletInfo> GetCmdlets(string pattern)
         {
             if (pattern == null)
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
 
             List<CmdletInfo> cmdlets = new List<CmdletInfo>();
 
@@ -497,7 +497,7 @@ namespace System.Management.Automation
                     SearchResolutionOptions.CommandNameIsPattern,
                     CommandTypes.Cmdlet,
                     _context);
-            do
+            while (true)
             {
                 try
                 {
@@ -530,7 +530,7 @@ namespace System.Management.Automation
                 current = ((IEnumerator)searcher).Current as CmdletInfo;
                 if (current != null)
                     cmdlets.Add(current);
-            } while (true);
+            }
 
             return cmdlets;
         }
@@ -548,7 +548,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             List<string> commands = new List<string>();
@@ -608,7 +608,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             SearchResolutionOptions options = nameIsPattern ?
@@ -631,7 +631,7 @@ namespace System.Management.Automation
                 searcher.CommandOrigin = commandOrigin.Value;
             }
 
-            do
+            while (true)
             {
                 try
                 {
@@ -666,7 +666,7 @@ namespace System.Management.Automation
                 {
                     yield return commandInfo;
                 }
-            } while (true);
+            }
         }
 
         /// <summary>
@@ -707,12 +707,12 @@ namespace System.Management.Automation
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             SessionStateInternal _oldSessionState = _context.EngineSessionState;
@@ -745,7 +745,7 @@ namespace System.Management.Automation
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             // Force the current runspace onto the callers thread - this is needed
@@ -784,7 +784,7 @@ namespace System.Management.Automation
             PipelineResultTypes writeToPipeline, IList input, params object[] args)
         {
             if (script == null)
-                throw new ArgumentNullException("script");
+                throw new ArgumentNullException(nameof(script));
 
             // Compile the script text into an executable script block.
             ScriptBlock sb = ScriptBlock.Create(_context, script);

@@ -15,6 +15,6 @@ $excludeList = "CoreMshSnapinResources.resx",
     "ConvertStringResources.resx",
     "FlashExtractStrings.resx",
     "ImmutableStrings.resx"
-import-module Microsoft.Powershell.Utility
+Import-Module Microsoft.Powershell.Utility
 # run the tests
 Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList

@@ -153,7 +153,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Language
         {
             if (keywordToAdd == null)
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("keywordToAdd");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(keywordToAdd));
                 throw e;
             }
 
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -391,7 +391,7 @@ namespace System.Management.Automation.Language
         internal static IEnumerable<DynamicKeyword> GetAllowedKeywords(this DynamicKeyword keyword, IEnumerable<DynamicKeyword> allowedKeywords)
         {
             string keywordName = keyword.Keyword;
-            if (string.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Equals(keywordName, @"Node", StringComparison.OrdinalIgnoreCase))
             {
                 List<string> excludeKeywords;
                 if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
@@ -590,6 +590,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
@@ -628,7 +629,7 @@ namespace System.Management.Automation.Language
         /*A*/    "configuration",           "public",           "private",          "static",                     /*A*/
         /*B*/    "interface",               "enum",             "namespace",        "module",                     /*B*/
         /*C*/    "type",                    "assembly",         "command",          "hidden",                     /*C*/
-        /*D*/    "base",                                                                                          /*D*/
+        /*D*/    "base",                    "default",                                                            /*D*/
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
@@ -644,7 +645,7 @@ namespace System.Management.Automation.Language
         /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,  TokenKind.Static,             /*A*/
         /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace,TokenKind.Module,             /*B*/
         /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,  TokenKind.Hidden,             /*C*/
-        /*D*/    TokenKind.Base,                                                                                  /*D*/
+        /*D*/    TokenKind.Base,            TokenKind.Default,                                                    /*D*/
         };
 
         internal static readonly string[] _operatorText = new string[] {
@@ -724,6 +725,7 @@ namespace System.Management.Automation.Language
 
         // TODO: use auto-properties when making 'ternary operator' an official feature.
         private bool _forceEndNumberOnTernaryOpChars;
+
         internal bool ForceEndNumberOnTernaryOpChars
         {
             get { return _forceEndNumberOnTernaryOpChars; }
@@ -2054,7 +2056,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (!(argumentValue is string))
+                if (argumentValue is not string)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2067,7 +2069,7 @@ namespace System.Management.Automation.Language
             }
             else if (PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (!(argumentValue is string))
+                if (argumentValue is not string)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2217,7 +2219,7 @@ namespace System.Management.Automation.Language
 
         private List<string> HandleRequiresAssemblyArgument(Ast argumentAst, object arg, List<string> requiredAssemblies)
         {
-            if (!(arg is string))
+            if (arg is not string)
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2240,7 +2242,7 @@ namespace System.Management.Automation.Language
 
         private List<string> HandleRequiresPSEditionArgument(Ast argumentAst, object arg, ref List<string> requiredEditions)
         {
-            if (!(arg is string))
+            if (arg is not string)
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2616,7 +2618,7 @@ namespace System.Management.Automation.Language
                     nameof(ParserStrings.UnexpectedCharactersAfterHereStringHeader),
                     ParserStrings.UnexpectedCharactersAfterHereStringHeader);
 
-                do
+                while (true)
                 {
                     c = GetChar();
                     if (c == header[1] && (PeekChar() == '@'))
@@ -2630,7 +2632,7 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         break;
                     }
-                } while (true);
+                }
 
                 return false;
             }
@@ -4240,7 +4242,6 @@ namespace System.Management.Automation.Language
                 SkipChar();
                 return NewToken(TokenKind.LBracket);
             }
-
 
             if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
             {

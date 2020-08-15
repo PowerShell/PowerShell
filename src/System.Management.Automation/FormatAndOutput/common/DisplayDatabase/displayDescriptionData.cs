@@ -376,22 +376,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (control is TableControlBody)
             {
-                return FormatShape.Table.ToString();
+                return nameof(FormatShape.Table);
             }
 
             if (control is ListControlBody)
             {
-                return FormatShape.List.ToString();
+                return nameof(FormatShape.List);
             }
 
             if (control is WideControlBody)
             {
-                return FormatShape.Wide.ToString();
+                return nameof(FormatShape.Wide);
             }
 
             if (control is ComplexControlBody)
             {
-                return FormatShape.Complex.ToString();
+                return nameof(FormatShape.Complex);
             }
 
             return string.Empty;
@@ -635,9 +635,9 @@ namespace System.Management.Automation
         public ExtendedTypeDefinition(string typeName, IEnumerable<FormatViewDefinition> viewDefinitions) : this()
         {
             if (string.IsNullOrEmpty(typeName))
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             if (viewDefinitions == null)
-                throw PSTraceSource.NewArgumentNullException("viewDefinitions");
+                throw PSTraceSource.NewArgumentNullException(nameof(viewDefinitions));
 
             TypeNames.Add(typeName);
             foreach (FormatViewDefinition definition in viewDefinitions)
@@ -653,7 +653,7 @@ namespace System.Management.Automation
         public ExtendedTypeDefinition(string typeName) : this()
         {
             if (string.IsNullOrEmpty(typeName))
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
 
             TypeNames.Add(typeName);
         }
@@ -691,9 +691,9 @@ namespace System.Management.Automation
         public FormatViewDefinition(string name, PSControl control)
         {
             if (string.IsNullOrEmpty(name))
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             if (control == null)
-                throw PSTraceSource.NewArgumentNullException("control");
+                throw PSTraceSource.NewArgumentNullException(nameof(control));
 
             Name = name;
             Control = control;
@@ -800,7 +800,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(value))
                 if (value == null || type == DisplayEntryValueType.Property)
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException(nameof(value));
 
             Value = value;
             ValueType = type;

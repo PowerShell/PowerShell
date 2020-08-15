@@ -18,15 +18,18 @@ namespace System.Management.Automation.Language
     internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
         };
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgForClassVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
             CheckingClassAttributeArguments = true
         };
+
         private readonly Stack<MemberAst> _memberScopeStack;
         private readonly Stack<ScriptBlockAst> _scopeStack;
 
@@ -758,7 +761,7 @@ namespace System.Management.Automation.Language
                         CheckAssignmentTarget(expr, simpleAssignment, reportError);
                     }
                 }
-                else if (!(ast is ISupportsAssignment))
+                else if (ast is not ISupportsAssignment)
                 {
                     errorAst = ast;
                 }
@@ -904,7 +907,7 @@ namespace System.Management.Automation.Language
         {
             if (convertExpressionAst.Type.TypeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
             {
-                if (!(convertExpressionAst.Child is HashtableAst))
+                if (convertExpressionAst.Child is not HashtableAst)
                 {
                     // We allow the ordered attribute only on hashliteral node.
                     // This check covers the following scenario
@@ -1179,7 +1182,7 @@ namespace System.Management.Automation.Language
         private void CheckMemberAccess(MemberExpressionAst ast)
         {
             // If the member access is not constant, it may be considered suspicious
-            if (!(ast.Member is ConstantExpressionAst))
+            if (ast.Member is not ConstantExpressionAst)
             {
                 MarkAstParentsAsSuspicious(ast);
             }
@@ -1808,7 +1811,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var rlc = new RestrictedLanguageChecker(parser, allowedCommands, null, false);
             dataStatementAst.Body.InternalVisit(rlc);
-            if (parser.ErrorList.Any())
+            if (parser.ErrorList.Count > 0)
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }

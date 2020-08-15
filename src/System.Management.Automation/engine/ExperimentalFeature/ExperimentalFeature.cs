@@ -123,6 +123,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNativePSPathResolution",
                     description: "Convert PSPath to filesystem path, if possible, for native commands"),
+                new ExperimentalFeature(
+                    name: "PSNotApplyErrorActionToStderr",
+                    description: "Don't have $ErrorActionPreference affect stderr output"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -349,7 +352,7 @@ namespace System.Management.Automation
             if (experimentAction == ExperimentAction.None)
             {
                 string paramName = nameof(experimentAction);
-                string invalidMember = ExperimentAction.None.ToString();
+                string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }

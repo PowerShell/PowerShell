@@ -218,12 +218,12 @@ namespace System.Management.Automation
         {
             if (writer == null)
             {
-                throw PSTraceSource.NewArgumentException("writer");
+                throw PSTraceSource.NewArgumentException(nameof(writer));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentException("context");
+                throw PSTraceSource.NewArgumentException(nameof(context));
             }
 
             _serializer = new InternalSerializer(writer, context);
@@ -355,7 +355,7 @@ namespace System.Management.Automation
         internal readonly DeserializationOptions options;
         internal readonly PSRemotingCryptoHelper cryptoHelper;
 
-        internal static int MaxItemsInCimClassCache = 100;
+        internal static readonly int MaxItemsInCimClassCache = 100;
         internal readonly CimClassDeserializationCache<CimClassSerializationId> cimClassSerializationIdCache = new CimClassDeserializationCache<CimClassSerializationId>();
     }
 
@@ -484,7 +484,7 @@ namespace System.Management.Automation
         {
             if (reader == null)
             {
-                throw PSTraceSource.NewArgumentNullException("reader");
+                throw PSTraceSource.NewArgumentNullException(nameof(reader));
             }
 
             _reader = reader;
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             if (o == null)
@@ -687,7 +687,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             if (o == null)
@@ -1888,6 +1888,7 @@ namespace System.Management.Automation
         }
 
         private Collection<CollectionEntry<PSMemberInfo>> _extendedMembersCollection;
+
         private Collection<CollectionEntry<PSMemberInfo>> ExtendedMembersCollection
         {
             get
@@ -1899,6 +1900,7 @@ namespace System.Management.Automation
         }
 
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
+
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
             get
@@ -3110,7 +3112,7 @@ namespace System.Management.Automation
             if (_reader.NodeType != XmlNodeType.Element)
             {
                 throw NewXmlException(Serialization.InvalidNodeType, null,
-                                       _reader.NodeType.ToString(), XmlNodeType.Element.ToString());
+                                       _reader.NodeType.ToString(), nameof(XmlNodeType.Element));
             }
 
             s_trace.WriteLine("Processing start node {0}", _reader.LocalName);
@@ -3370,7 +3372,7 @@ namespace System.Management.Automation
                     hashCodeObject = ((PSObject)hashCodeObject).BaseObject;
                 }
 
-                if (!(hashCodeObject is int))
+                if (hashCodeObject is not int)
                 {
                     return null;
                 }
@@ -3424,7 +3426,7 @@ namespace System.Management.Automation
 
         private PSObject RehydrateCimInstance(PSObject deserializedObject)
         {
-            if (!(deserializedObject.BaseObject is PSCustomObject))
+            if (deserializedObject.BaseObject is not PSCustomObject)
             {
                 return deserializedObject;
             }
@@ -4017,7 +4019,7 @@ namespace System.Management.Automation
                     }
 
                     string name = ReadNameAttribute();
-                    if (string.Compare(name, SerializationStrings.DictionaryKey, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (!string.Equals(name, SerializationStrings.DictionaryKey, StringComparison.OrdinalIgnoreCase))
                     {
                         throw NewXmlException(Serialization.InvalidDictionaryKeyName, null);
                     }
@@ -4035,7 +4037,7 @@ namespace System.Management.Automation
                     }
 
                     name = ReadNameAttribute();
-                    if (string.Compare(name, SerializationStrings.DictionaryValue, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (!string.Equals(name, SerializationStrings.DictionaryValue, StringComparison.OrdinalIgnoreCase))
                     {
                         throw NewXmlException(Serialization.InvalidDictionaryValueName, null);
                     }
@@ -5905,7 +5907,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             foreach (DictionaryEntry entry in other)
@@ -6691,14 +6693,14 @@ namespace Microsoft.PowerShell
         {
             if (destinationType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("destinationType");
+                throw PSTraceSource.NewArgumentNullException(nameof(destinationType));
             }
 
             if (sourceValue == null)
             {
                 throw new PSInvalidCastException(
                     "InvalidCastWhenRehydratingFromNull",
-                    PSTraceSource.NewArgumentNullException("sourceValue"),
+                    PSTraceSource.NewArgumentNullException(nameof(sourceValue)),
                     ExtendedTypeSystem.InvalidCastFromNull,
                     destinationType.ToString());
             }
@@ -7274,13 +7276,13 @@ namespace Microsoft.PowerShell
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
             if (parameterSetMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             return (UInt32)(parameterSetMetadata.Flags);
@@ -7296,13 +7298,13 @@ namespace Microsoft.PowerShell
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
             if (dbgStopEventArgs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             if (dbgStopEventArgs.InvocationInfo == null)
@@ -7474,7 +7476,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                throw PSTraceSource.NewArgumentException("deserializedItem");
+                throw PSTraceSource.NewArgumentException(nameof(deserializedItem));
             }
 
             return result;
@@ -7556,13 +7558,13 @@ namespace Microsoft.PowerShell
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
             if (formatViewDefinition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             return formatViewDefinition.InstanceId;

@@ -22,7 +22,7 @@ namespace mvc.Controllers
 
                 using (var compressedStream = new DeflateStream(responseStream, CompressionLevel.Fastest))
                 {
-                    httpContext.Response.Headers.Add("Content-Encoding", new [] { "deflate" });
+                    httpContext.Response.Headers.Add("Content-Encoding", new[] { "deflate" });
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     await memoryStream.CopyToAsync(compressedStream);
                 }

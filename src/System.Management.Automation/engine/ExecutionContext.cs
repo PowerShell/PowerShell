@@ -492,7 +492,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<string> ModulesWithJobSourceAdapters = new List<string>
+        internal static readonly List<string> ModulesWithJobSourceAdapters = new List<string>
             {
                 Utils.ScheduledJobModuleName,
             };

@@ -245,9 +245,9 @@ namespace Microsoft.WSMan.Management
         private Uri resourceuri;
 
         private WSManHelper helper;
-        IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-        IWSManSession m_session = null;
-        string connectionStr = string.Empty;
+        private IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+        private IWSManSession m_session = null;
+        private string connectionStr = string.Empty;
 
         /// <summary>
         /// BeginProcessing method.

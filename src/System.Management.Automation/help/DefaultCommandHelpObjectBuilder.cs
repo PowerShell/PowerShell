@@ -42,7 +42,7 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class DefaultCommandHelpObjectBuilder
     {
-        internal static string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
+        internal static readonly string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
         /// <summary>
         /// Generates a HelpInfo PSObject from a CmdletInfo object.
         /// </summary>
@@ -423,6 +423,7 @@ namespace System.Management.Automation.Help
                 obj.Properties.Add(new PSNoteProperty("description", string.Empty));
                 obj.Properties.Add(new PSNoteProperty("position", string.Empty));
                 obj.Properties.Add(new PSNoteProperty("aliases", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("globbing", string.Empty));
             }
             else
             {
@@ -442,6 +443,7 @@ namespace System.Management.Automation.Help
                 obj.Properties.Add(new PSNoteProperty("required", CultureInfo.CurrentCulture.TextInfo.ToLower(paramAttribute.Mandatory.ToString())));
                 obj.Properties.Add(new PSNoteProperty("pipelineInput", GetPipelineInputString(paramAttribute)));
                 obj.Properties.Add(new PSNoteProperty("isDynamic", CultureInfo.CurrentCulture.TextInfo.ToLower(dynamic.ToString())));
+                AddParameterGlobbingProperties(obj, attributes);
 
                 if (paramAttribute.ParameterSetName.Equals(ParameterAttribute.AllParameterSets, StringComparison.OrdinalIgnoreCase))
                 {
@@ -515,6 +517,27 @@ namespace System.Management.Automation.Help
                     obj.Properties.Add(new PSNoteProperty("aliases", sb.ToString()));
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds the globbing properties.
+        /// </summary>
+        /// <param name="obj">HelpInfo object.</param>
+        /// <param name="attributes">The attributes of the parameter (needed to look for PSTypeName).</param>
+        private static void AddParameterGlobbingProperties(PSObject obj, IEnumerable<Attribute> attributes)
+        {
+            bool globbing = false;
+
+            foreach (var attrib in attributes)
+            {
+                if (attrib is SupportsWildcardsAttribute)
+                {
+                    globbing = true;
+                    break;
+                }
+            }
+
+            obj.Properties.Add(new PSNoteProperty("globbing", CultureInfo.CurrentCulture.TextInfo.ToLower(globbing.ToString())));
         }
 
         /// <summary>

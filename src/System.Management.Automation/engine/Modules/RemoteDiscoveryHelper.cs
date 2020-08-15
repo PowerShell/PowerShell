@@ -82,7 +82,7 @@ namespace System.Management.Automation
             moduleInfo.DeclaredVariableExports = RehydrateHashtableKeys(deserializedModuleInfo, "ExportedVariables");
 
             var compatiblePSEditions = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "CompatiblePSEditions", rehydrationFlags);
-            if (compatiblePSEditions != null && compatiblePSEditions.Any())
+            if (compatiblePSEditions != null && compatiblePSEditions.Length > 0)
             {
                 foreach (var edition in compatiblePSEditions)
                 {
@@ -92,7 +92,7 @@ namespace System.Management.Automation
 
             // PowerShellGet related properties
             var tags = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "Tags", rehydrationFlags);
-            if (tags != null && tags.Any())
+            if (tags != null && tags.Length > 0)
             {
                 foreach (var tag in tags)
                 {
@@ -841,12 +841,14 @@ namespace System.Management.Automation
             "Description",
             "HelpInfoURI",
         };
+
         private static readonly string[] s_manifestEntriesToKeepAsStringArray = new[] {
             "FunctionsToExport",
             "VariablesToExport",
             "AliasesToExport",
             "CmdletsToExport",
         };
+
         internal static Hashtable RewriteManifest(
             Hashtable originalManifest,
             IEnumerable<string> nestedModules,
@@ -970,7 +972,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized authentication mechanism [ValidateSet should prevent that from happening]");
-            throw new ArgumentOutOfRangeException("authentication");
+            throw new ArgumentOutOfRangeException(nameof(authentication));
         }
 
         internal static CimSession CreateCimSession(

@@ -21,7 +21,7 @@ namespace System.Management.Automation
         public DefaultCommandRuntime(List<object> outputList)
         {
             if (outputList == null)
-                throw new System.ArgumentNullException("outputList");
+                throw new System.ArgumentNullException(nameof(outputList));
 
             _output = outputList;
         }
@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// Implementation of WriteDebug - just discards the input.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteDebug(string text) {; }
+        public void WriteDebug(string text) { }
 
         /// <summary>
         /// Default implementation of WriteError - if the error record contains
@@ -97,38 +97,38 @@ namespace System.Management.Automation
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="progressRecord">Progress record to write.</param>
-        public void WriteProgress(ProgressRecord progressRecord) {; }
+        public void WriteProgress(ProgressRecord progressRecord) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="sourceId">Source ID to write for.</param>
         /// <param name="progressRecord">Record to write.</param>
-        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) {; }
+        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteVerbose(string text) {; }
+        public void WriteVerbose(string text) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteWarning(string text) {; }
+        public void WriteWarning(string text) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteCommandDetail(string text) {; }
+        public void WriteCommandDetail(string text) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="informationRecord">Record to write.</param>
-        public void WriteInformation(InformationRecord informationRecord) {; }
+        public void WriteInformation(InformationRecord informationRecord) { }
 
         #endregion Write
 

@@ -543,8 +543,8 @@ namespace Microsoft.Management.UI.Internal
                 if (header != null)
                 {
                     // header Click
-                    header.Click += new RoutedEventHandler(this.Header_Click);
-                    header.PreviewKeyDown += new KeyEventHandler(this.Header_KeyDown);
+                    header.Click += this.Header_Click;
+                    header.PreviewKeyDown += this.Header_KeyDown;
                 }
 
                 // If it is a GridViewColumnHeader we will not have the same nice sorting and grouping
@@ -695,7 +695,7 @@ namespace Microsoft.Management.UI.Internal
             MenuItem columnPicker = new MenuItem();
             AutomationProperties.SetAutomationId(columnPicker, "ChooseColumns");
             columnPicker.Header = UICultureResources.ColumnPicker;
-            columnPicker.Click += new RoutedEventHandler(this.innerGrid.OnColumnPicker);
+            columnPicker.Click += this.innerGrid.OnColumnPicker;
 
             this.contextMenu.Items.Add(columnPicker);
 

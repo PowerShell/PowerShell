@@ -126,7 +126,7 @@ jobs:
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - powershell: |
+  - pwsh: |
        New-Item -ItemType Directory -Path $(System.ArtifactsDirectory)\signed -Force
     displayName: 'Create empty signed folder'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
@@ -134,14 +134,52 @@ jobs:
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
-
       $signedFilesPath = '$(System.ArtifactsDirectory)\signed\'
+      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+
+      Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+      $dlls = Get-ChildItem $BuildPath\*.dll -Recurse
+      $signatures = $dlls | Get-AuthenticodeSignature
+      $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned'}| select-object -ExpandProperty Path
+      tools/releaseBuild/generatePackgeSigning.ps1 -ThirdPartyFiles $missingSignatures -path "$(System.ArtifactsDirectory)\thirtdparty.xml"
+    displayName: Create ThirdParty Signing Xml
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign ThirdParty $(Architecture)'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(System.ArtifactsDirectory)\thirtdparty.xml'
+      inPathRoot: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+      outPathRoot: '$(System.ArtifactsDirectory)\signedThirdParty'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - powershell: |
+      Get-ChildItem '$(System.ArtifactsDirectory)\signedThirdParty\*'
+    displayName: Captrue ThirdParty Signed files
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - powershell: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Import-Module $(PowerShellRoot)/tools/packaging -Force
+      $signedFilesPath = '$(System.ArtifactsDirectory)\signedThirdParty\'
+      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+
+      Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+    displayName: Merge ThirdParty signed files with Build
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - powershell: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Import-Module $(PowerShellRoot)/tools/packaging -Force
+
       $destFolder = '$(System.ArtifactsDirectory)\signedZip'
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
       New-Item -ItemType Directory -Path $destFolder -Force
 
-      $BuildPackagePath = New-PSSignedBuildZip -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath -DestinationFolder $destFolder
+      $BuildPackagePath = New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $destFolder
 
       Write-Verbose -Verbose "New-PSSignedBuildZip returned `$BuildPackagePath as: $BuildPackagePath"
       Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$BuildPackagePath"

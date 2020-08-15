@@ -418,7 +418,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WaitForWindowClosedOrHelpNeeded()
         {
-            do
+            while (true)
             {
                 int which = WaitHandle.WaitAny(new WaitHandle[] { _showCommandProxy.WindowClosed, _showCommandProxy.HelpNeeded, _showCommandProxy.ImportModuleNeeded });
 
@@ -452,7 +452,6 @@ namespace Microsoft.PowerShell.Commands
                 _showCommandProxy.ImportModuleDone(_importedModules, _commands);
                 continue;
             }
-            while (true);
         }
 
         /// <summary>

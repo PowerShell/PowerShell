@@ -270,7 +270,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // We access those fields directly. The struct is here for reference only.
         //
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        struct PDH_COUNTER_INFO
+        private struct PDH_COUNTER_INFO
         {
             [FieldOffset(0)] public UInt32 dwLength;
             [FieldOffset(4)] public UInt32 dwType;
@@ -462,7 +462,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             defaultScale = 0;
             timeBase = 0;
 
-            Debug.Assert(hCounter != null);
+            Debug.Assert(hCounter != IntPtr.Zero);
 
             IntPtr pBufferSize = new IntPtr(0);
             res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
@@ -957,7 +957,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             // NOTE: 1-based enumeration because the name strings follow index strings in the array
             Int32 counterIndex = -1;
             Int32 objIndex = -1;
-            for (uint enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
+            for (int enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
                 if (regString.ToLowerInvariant() == lowerEngCtrName)
@@ -1190,7 +1190,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 UInt64 timeBase = 0;
 
                 IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
-                Debug.Assert(hCounter != null);
+                Debug.Assert(hCounter != IntPtr.Zero);
 
                 res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
                 if (res != 0)

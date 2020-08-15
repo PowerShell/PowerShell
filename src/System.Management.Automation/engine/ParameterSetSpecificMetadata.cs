@@ -21,7 +21,7 @@ namespace System.Management.Automation
         {
             if (attribute == null)
             {
-                throw PSTraceSource.NewArgumentNullException("attribute");
+                throw PSTraceSource.NewArgumentNullException(nameof(attribute));
             }
 
             _attribute = attribute;

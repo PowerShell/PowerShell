@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (wildcardPatternsStrings == null)
             {
-                throw new ArgumentNullException("wildcardPatternsStrings");
+                throw new ArgumentNullException(nameof(wildcardPatternsStrings));
             }
 
             _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
@@ -329,6 +329,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             internal readonly PSObject WrittenObject;
+
             internal int NotePropertyCount { get; }
         }
 

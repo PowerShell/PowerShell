@@ -4,7 +4,6 @@
 #pragma warning disable 1634, 1691
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -70,9 +70,6 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
-        /// <param name = "args">
-        /// Command line parameters to pwsh.exe
-        /// </param>
         /// <returns>
         /// The exit code for the shell.
         ///
@@ -99,7 +96,7 @@ namespace Microsoft.PowerShell
         /// Anyone checking the exit code of the shell or monitor can mask off the high word to determine the exit code passed
         /// by the script that the shell last executed.
         /// </returns>
-        internal static int Start(string bannerText, string helpText, string[] args)
+        internal static int Start(string bannerText, string helpText)
         {
 #if DEBUG
             if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
@@ -161,15 +158,8 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                PSHostUserInterface hostUi = s_theConsoleHost?.UI ?? new NullHostUserInterface();
-                s_cpp = new CommandLineParameterParser(hostUi, bannerText, helpText);
-                s_cpp.Parse(args);
-
-#if UNIX
-                // On Unix, logging has to be deferred until after command-line parsing
-                // completes to allow overriding logging options.
-                PSEtwLog.LogConsoleStartup();
-#endif
+                PSHostUserInterface hostUI = s_theConsoleHost?.UI ?? new NullHostUserInterface();
+                s_cpp.ShowErrorHelpBanner(hostUI, bannerText, helpText);
 
                 if (s_cpp.ShowVersion)
                 {
@@ -277,7 +267,22 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static CommandLineParameterParser s_cpp;
+        internal static void ParseCommandLine(string[] args)
+        {
+            s_cpp.Parse(args);
+
+            if (s_cpp.SettingsFile is not null)
+            {
+                PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
+            }
+
+            // Check registry setting for a Group Policy ConfigurationName entry and
+            // use it to override anything set by the user.
+            // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
+            s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
+        }
+
+        private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
 
 #if UNIX
         /// <summary>
@@ -579,7 +584,7 @@ namespace Microsoft.PowerShell
 
             RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
-            remoteRunspace.StateChanged += new EventHandler<RunspaceStateEventArgs>(HandleRemoteRunspaceStateChanged);
+            remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
             // Unsubscribe the local session debugger.
             if (_runspaceRef.Runspace.Debugger != null)
@@ -735,7 +740,7 @@ namespace Microsoft.PowerShell
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
-                if (ui == null) throw new ArgumentNullException("ui");
+                if (ui == null) throw new ArgumentNullException(nameof(ui));
                 _ui = ui;
             }
 
@@ -1206,7 +1211,6 @@ namespace Microsoft.PowerShell
             if (!_isDisposed)
             {
 #if !UNIX
-                Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 if (breakHandlerGcHandle.IsAllocated)
                 {
@@ -1280,7 +1284,7 @@ namespace Microsoft.PowerShell
                 {
                     // If ShouldEndSession is already true, you can't set it back
 
-                    Dbg.Assert(_shouldEndSession != true || value != false,
+                    Dbg.Assert(_shouldEndSession != true || value,
                         "ShouldEndSession can only be set from false to true");
 
                     _shouldEndSession = value;
@@ -1580,7 +1584,7 @@ namespace Microsoft.PowerShell
             if (Platform.IsWindowsDesktop)
             {
                 // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
-                // Quoted from https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
+                // Quoted from https://docs.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
                 // accessibility parameter 'SPI_GETSCREENREADER':
                 // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
                 bool enabled = false;
@@ -2375,8 +2379,8 @@ namespace Microsoft.PowerShell
                 _parent = parent;
                 _isNested = isNested;
                 _isRunspacePushed = parent.IsRunspacePushed;
-                parent.RunspacePopped += new EventHandler(HandleRunspacePopped);
-                parent.RunspacePushed += new EventHandler(HandleRunspacePushed);
+                parent.RunspacePopped += HandleRunspacePopped;
+                parent.RunspacePushed += HandleRunspacePushed;
                 _exec = new Executor(parent, isNested, false);
                 _promptExec = new Executor(parent, isNested, true);
             }

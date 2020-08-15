@@ -39,6 +39,7 @@ namespace System.Management.Automation
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
+
         private static readonly PSVersionHashTable s_psVersionTable;
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
-            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
+            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription;
         }
 
         internal static PSVersionHashTable GetPSVersionTable()
@@ -350,6 +351,7 @@ namespace System.Management.Automation
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
         private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
+
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }
@@ -429,6 +431,7 @@ namespace System.Management.Automation
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
+
         private string versionString;
 
         /// <summary>
@@ -904,9 +907,9 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator ==(SemanticVersion v1, SemanticVersion v2)
         {
-            if (object.ReferenceEquals(v1, null))
+            if (v1 is null)
             {
-                return object.ReferenceEquals(v2, null);
+                return v2 is null;
             }
 
             return v1.Equals(v2);

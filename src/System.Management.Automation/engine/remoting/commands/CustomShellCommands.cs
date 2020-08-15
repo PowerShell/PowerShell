@@ -271,6 +271,7 @@ else
     Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -erroraction $args[14]
 }}
 ";
+
         private static readonly ScriptBlock s_newPluginSb;
 
         private const string pluginXmlFormat = @"
@@ -293,6 +294,7 @@ else
   {11}
 </PlugInConfiguration>
 ";
+
         private const string architectureAttribFormat = @"
     Architecture='{0}'";
 
@@ -310,6 +312,7 @@ else
 
         private const string initParamFormat = @"
 <Param Name='{0}' Value='{1}' />{2}";
+
         private const string privateDataFormat = @"<Param Name='PrivateData'>{0}</Param>";
         private const string securityElementFormat = "<Security Uri='{0}' ExactMatch='true' Sddl='{1}' />";
         private const string SessionConfigDataFormat = @"<SessionConfigurationData>{0}</SessionConfigurationData>";
@@ -1658,6 +1661,7 @@ else
         }
 
         private const string DACLPrefix = "D:";
+
         private static Collection<string> ParseDACLACEs(
             string sddl,
             out string prologue,
@@ -2518,6 +2522,7 @@ else
     Unregister-PSSessionConfiguration -filter $args[0] -whatif:$args[1] -confirm:$args[2] -action $args[3] -targetTemplate $args[4] -shellNotErrMsgFormat $args[5] -force $args[6] -erroraction $args[7]
 }}
 ";
+
         private static readonly ScriptBlock s_removePluginSb;
         private bool _isErrorReported;
 
@@ -2787,6 +2792,7 @@ $args[0] | ForEach-Object {{
 ";
 
         private const string MODULEPATH = "ModulesToImport";
+
         private static readonly ScriptBlock s_getPluginSb;
 
         #endregion
@@ -2913,6 +2919,7 @@ $args[0] | ForEach-Object {{
         private const string getCurrentIdleTimeoutmsFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\Quotas\IdleTimeoutms').Value";
         private const string getAssemblyNameDataFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\InitializationParameters\assemblyname').Value";
         private const string getSessionConfigurationDataSbFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\InitializationParameters\SessionConfigurationData').Value";
+
         private const string setSessionConfigurationDataSbFormat = @"
 function Set-SessionConfigurationData([string] $scd) {{
     if (test-path 'WSMan:\localhost\Plugin\{0}\InitializationParameters\" + ConfigurationDataFromXML.SESSIONCONFIGTOKEN + @"')
@@ -3178,6 +3185,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
 
 Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5] $args[6] $args[7] $args[8] $args[9] $args[10] $args[11]
 ";
+
         private const string initParamFormat = @"<Param Name='{0}' Value='{1}' />";
         private const string privateDataFormat = @"<Param Name='PrivateData'>{0}</Param>";
 
@@ -3562,56 +3570,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 setQuotasSb.LanguageMode = PSLanguageMode.FullLanguage;
 
                 Hashtable quotas = transportOption.ConstructQuotasAsHashtable();
-
-                int idleTimeOut = 0;
-
-                if (idleTimeOut != 0 && quotas.ContainsKey(WSManConfigurationOption.AttribMaxIdleTimeout))
-                {
-                    bool setMaxIdleTimeoutFirst = true;
-                    int maxIdleTimeOut;
-
-                    if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out maxIdleTimeOut))
-                    {
-                        int? currentIdleTimeoutms = WSManConfigurationOption.DefaultIdleTimeout;
-
-                        // Get the current IdleTimeOut quota value
-                        //
-                        using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
-                        {
-                            ps.AddScript(string.Format(CultureInfo.InvariantCulture, getCurrentIdleTimeoutmsFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                            Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                            if (psObjectCollection == null || psObjectCollection.Count != 1)
-                            {
-                                Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
-                            }
-
-                            currentIdleTimeoutms = Convert.ToInt32(psObjectCollection[0].ToString(), CultureInfo.InvariantCulture);
-                        }
-
-                        if (currentIdleTimeoutms >= maxIdleTimeOut && currentIdleTimeoutms >= idleTimeOut)
-                        {
-                            setMaxIdleTimeoutFirst = false;
-                        }
-                    }
-
-                    ScriptBlock setTimeoutQuotasSb = ScriptBlock.Create(
-                           string.Format(CultureInfo.InvariantCulture, setSessionConfigurationTimeoutQuotasSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                    setTimeoutQuotasSb.LanguageMode = PSLanguageMode.FullLanguage;
-
-                    setTimeoutQuotasSb.InvokeUsingCmdlet(
-                        contextCmdlet: this,
-                        useLocalScope: true,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: AutomationNull.Value,
-                        input: Array.Empty<object>(),
-                        scriptThis: AutomationNull.Value,
-                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimeoutFirst });
-
-                    // Remove Idle timeout values as we have set them above
-                    //
-                    quotas.Remove(WSManConfigurationOption.AttribMaxIdleTimeout);
-                    quotas.Remove(WSManConfigurationOption.AttribIdleTimeout);
-                }
 
                 setQuotasSb.InvokeUsingCmdlet(
                     contextCmdlet: this,
@@ -4496,6 +4454,7 @@ param(
 
 $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$args[2] -restartWinRMMessage $args[3] -setEnabledTarget $args[4] -setEnabledAction $args[5] -noServiceRestart $args[6]
 ";
+
         private static ScriptBlock s_disablePluginSb;
 
         #endregion
@@ -5126,6 +5085,7 @@ param(
 
 Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2] -restartWinRMMessage $args[3] -whatif:$args[4] -confirm:$args[5]
 ";
+
         private static ScriptBlock s_disableRemotingSb;
 
         #endregion Private Data

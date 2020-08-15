@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    isValidUnblockableFile = true; ;
+                    isValidUnblockableFile = true;
                 }
             }
 

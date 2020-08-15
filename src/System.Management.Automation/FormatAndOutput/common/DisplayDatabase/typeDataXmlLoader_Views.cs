@@ -98,7 +98,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         mainControlFound = true;
                         view.mainControl = LoadListControl(n);
                     }
-
                     else if (MatchNodeName(n, XmlTags.WideControlNode))
                     {
                         if (mainControlFound)
@@ -201,10 +200,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool LoadCommonViewData(XmlNode viewNode, ViewDefinition view, List<XmlNode> unprocessedNodes)
         {
             if (viewNode == null)
-                throw PSTraceSource.NewArgumentNullException("viewNode");
+                throw PSTraceSource.NewArgumentNullException(nameof(viewNode));
 
             if (view == null)
-                throw PSTraceSource.NewArgumentNullException("view");
+                throw PSTraceSource.NewArgumentNullException(nameof(view));
 
             // set loading information
             view.loadingInfo = this.LoadingInfo;

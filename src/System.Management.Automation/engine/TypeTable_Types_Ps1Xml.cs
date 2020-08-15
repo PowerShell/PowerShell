@@ -12,6 +12,7 @@ namespace System.Management.Automation.Runspaces
     public sealed partial class TypeTable
     {
         private const int ValueFactoryCacheCount = 6;
+
         private static readonly Func<string, PSMemberInfoInternalCollection<PSMemberInfo>>[] s_valueFactoryCache;
 
         private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)
@@ -36,7 +37,6 @@ namespace System.Management.Automation.Runspaces
             }
 
             return s_valueFactoryCache[cacheIndex];
-
 
             // Local helper function to avoid creating an instance of the generated delegate helper class
             // every time 'GetValueFactoryBasedOnInitCapacity' is invoked.
@@ -1133,6 +1133,24 @@ namespace System.Management.Automation.Runspaces
                 new PSScriptProperty(
                     @"Path",
                     GetScriptBlock(@"$this.Mainmodule.FileName"),
+                    setterScript: null,
+                    shouldCloneOnAccess: true),
+                typeMembers,
+                isOverride: false);
+
+            newMembers.Add(@"CommandLine");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(
+                    @"CommandLine",
+                    GetScriptBlock(@"
+                        if ($IsWindows) {
+                            (Get-CimInstance Win32_Process -Filter ""ProcessId = $($this.Id)"").CommandLine
+                        } elseif ($IsLinux) {
+                            Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                        }
+                    "),
                     setterScript: null,
                     shouldCloneOnAccess: true),
                 typeMembers,

@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class NameEntryDefinition : HashtableEntryDefinition
     {
         internal const string NameEntryKey = "name";
+
         internal NameEntryDefinition()
             : base(NameEntryKey, new string[] { FormatParameterDefinitionKeys.LabelEntryKey }, new Type[] { typeof(string) }, false)
         {
@@ -140,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal HashtableEntryDefinition MatchEntry(string keyName, TerminatingErrorContext invocationContext)
         {
             if (string.IsNullOrEmpty(keyName))
-                PSTraceSource.NewArgumentNullException("keyName");
+                PSTraceSource.NewArgumentNullException(nameof(keyName));
 
             HashtableEntryDefinition matchingEntry = null;
             for (int k = 0; k < this.hashEntries.Count; k++)
@@ -227,7 +228,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("ParameterProcessor", "ParameterProcessor")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("ParameterProcessor", "ParameterProcessor");
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ParameterProcessor", "ParameterProcessor");
         #endregion tracer
 
         internal static void ThrowParameterBindingException(TerminatingErrorContext invocationContext,

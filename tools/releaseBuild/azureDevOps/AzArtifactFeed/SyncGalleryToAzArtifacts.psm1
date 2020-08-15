@@ -146,7 +146,7 @@ Function SortPackage {
 
     End {
         $versions = $allPackages.Version |
-        Foreach-Object { ($_ -split '-')[0] } |
+        ForEach-Object { ($_ -split '-')[0] } |
         Select-Object -Unique |
         Sort-Object -Descending -Property Version
 

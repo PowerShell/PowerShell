@@ -395,7 +395,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (nameset.Count == 0)
                 {
-                    throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                    throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                 }
                 else
                 {
@@ -452,7 +452,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (boundParameterSetName != null)
                     {
-                        throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                        throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                     }
 
                     boundParameterSetName = parameterSetName;
@@ -465,7 +465,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 // throw if there are > 1 parameter set
                 if (noMandatoryParameterSet.Count > 1)
                 {
-                    throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                    throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                 }
                 else if (noMandatoryParameterSet.Count == 1)
                 {
@@ -482,7 +482,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // throw if still can not find the parameter set name
             if (boundParameterSetName == null)
             {
-                throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
             }
 
             return boundParameterSetName;
@@ -511,7 +511,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// </summary>
     public class CimBaseCommand : Cmdlet, IDisposable
     {
-
         #region resolve parameter set name
         /// <summary>
         /// <para>
@@ -703,6 +702,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Whether at begin process time, false means in processrecord.
         /// </summary>
         private bool atBeginProcess = true;
+
         internal bool AtBeginProcess
         {
             get
@@ -903,7 +903,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string parameterName,
             PasswordAuthenticationMechanism authentication)
         {
-            string message = string.Format(CultureInfo.CurrentUICulture, Strings.InvalidAuthenticationTypeWithNullCredential,
+            string message = string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidAuthenticationTypeWithNullCredential,
                 authentication,
                 ImpersonatedAuthenticationMechanism.None,
                 ImpersonatedAuthenticationMechanism.Negotiate,
@@ -926,7 +926,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string conflictParameterName)
         {
             string message = string.Format(CultureInfo.CurrentUICulture,
-                Strings.ConflictParameterWasSet,
+                CimCmdletStrings.ConflictParameterWasSet,
                 parameterName, conflictParameterName);
             PSArgumentException exception = new PSArgumentException(message, parameterName);
             ThrowTerminatingError(exception, operationName);
@@ -955,7 +955,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 propList.Append(property);
             }
 
-            string message = string.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindPropertyFromGivenClass,
+            string message = string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.CouldNotFindPropertyFromGivenClass,
                 className, propList);
             PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
                 parameterName, actualValue, message);
@@ -981,7 +981,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 NetworkCredential networkCredential = psCredentials.GetNetworkCredential();
                 DebugHelper.WriteLog("Domain:{0}; UserName:{1}; Password:{2}.", 1, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);
                 credentials = new CimCredential(passwordAuthentication, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);
-
             }
             else
             {

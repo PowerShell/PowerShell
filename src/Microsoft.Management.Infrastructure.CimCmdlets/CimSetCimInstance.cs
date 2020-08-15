@@ -232,7 +232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             // can not modify ReadOnly property
                             exception = new CimException(string.Format(CultureInfo.CurrentUICulture,
-                                Strings.CouldNotModifyReadonlyProperty, key, cimInstance));
+                                CimCmdletStrings.CouldNotModifyReadonlyProperty, key, cimInstance));
                             return false;
                         }
                         // allow modify the key property value as long as it is not readonly,
@@ -281,7 +281,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             if (e.NativeErrorCode == NativeErrorCode.Failed)
                             {
                                 string errorMessage = string.Format(CultureInfo.CurrentUICulture,
-                                    Strings.UnableToAddPropertyToInstance,
+                                    CimCmdletStrings.UnableToAddPropertyToInstance,
                                     newProperty.Name,
                                     cimInstance);
                                 exception = new CimException(errorMessage, e);

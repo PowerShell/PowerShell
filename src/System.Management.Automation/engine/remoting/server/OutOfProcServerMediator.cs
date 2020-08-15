@@ -120,7 +120,7 @@ namespace System.Management.Automation.Remoting.Server
         protected void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDIN;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting.Server
 
             try
             {
-                do
+                while (true)
                 {
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
@@ -381,7 +381,6 @@ namespace System.Management.Automation.Remoting.Server
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
                 }
-                while (true);
             }
             catch (Exception e)
             {
@@ -603,7 +602,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             if (namedPipeServer == null)
             {
-                throw new PSArgumentNullException("namedPipeServer");
+                throw new PSArgumentNullException(nameof(namedPipeServer));
             }
 
             _namedPipeServer = namedPipeServer;

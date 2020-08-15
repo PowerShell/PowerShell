@@ -156,6 +156,7 @@ namespace System.Management.Automation.Internal
         }
 
         private bool _terminatingErrorLogged = false;
+
         internal void LogExecutionException(Exception exception)
         {
             _executionFailed = true;
@@ -239,7 +240,7 @@ namespace System.Management.Automation.Internal
             {
                 // We check to see if the command is needs writing (or if there is anything in the buffer)
                 // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
-                if (_commands == null || _commands.Count <= 0 || _eventLogBuffer.Count == 0)
+                if (_commands == null || _commands.Count == 0 || _eventLogBuffer.Count == 0)
                     return;
 
                 MshLog.LogPipelineExecutionDetailEvent(_commands[0].Command.Context,
@@ -285,7 +286,7 @@ namespace System.Management.Automation.Internal
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
         {
-            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException("pipelineProcessor");
+            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
             if (_redirectionPipes == null)
                 _redirectionPipes = new List<PipelineProcessor>();
             _redirectionPipes.Add(pipelineProcessor);
@@ -317,7 +318,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandProcessor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandProcessor");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandProcessor));
             }
 
             if (_commands == null)
@@ -349,7 +350,7 @@ namespace System.Management.Automation.Internal
                 {
                     // "First command cannot have input"
                     throw PSTraceSource.NewArgumentException(
-                        "readFromCommand",
+                        nameof(readFromCommand),
                         PipelineStrings.FirstCommandCannotHaveInput);
                 }
 
@@ -360,7 +361,7 @@ namespace System.Management.Automation.Internal
             {
                 // "invalid command number"
                 throw PSTraceSource.NewArgumentException(
-                    "readFromCommand",
+                    nameof(readFromCommand),
                     PipelineStrings.InvalidCommandNumber);
             }
             else
@@ -1405,8 +1406,8 @@ namespace System.Management.Automation.Internal
                 // Note that the pipeline could have been stopped asynchronously
                 // before hitting the error, therefore we check whether
                 // firstTerminatingError is PipelineStoppedException.
-                else if ((!(_firstTerminatingError.SourceException is PipelineStoppedException))
-                    && command != null && command.Context != null)
+                else if (_firstTerminatingError.SourceException is not PipelineStoppedException
+                    && command?.Context != null)
                 {
                     Exception ex = e;
                     while ((ex is TargetInvocationException || ex is CmdletInvocationException)
@@ -1415,7 +1416,7 @@ namespace System.Management.Automation.Internal
                         ex = ex.InnerException;
                     }
 
-                    if (!(ex is PipelineStoppedException))
+                    if (ex is not PipelineStoppedException)
                     {
                         string message = StringUtil.Format(PipelineStrings.SecondFailure,
                             _firstTerminatingError.GetType().Name,
@@ -1559,6 +1560,7 @@ namespace System.Management.Automation.Internal
         }
 
         private LocalPipeline _localPipeline;
+
         internal LocalPipeline LocalPipeline
         {
             get { return _localPipeline; }

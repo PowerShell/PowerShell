@@ -26,7 +26,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// The blob version is fixed.
         /// </summary>
-        public const uint CUR_BLOB_VERSION = 0x00000002; 
+        public const uint CUR_BLOB_VERSION = 0x00000002;
 
         /// <summary>
         /// RSA Key.
@@ -74,10 +74,10 @@ namespace System.Management.Automation.Internal
 
         private static byte[] GetBytesLE(int val)
         {
-            return new [] { 
-                (byte)(val & 0xff), 
-                (byte)((val >> 8) & 0xff), 
-                (byte)((val >> 16) & 0xff), 
+            return new[] {
+                (byte)(val & 0xff),
+                (byte)((val >> 8) & 0xff),
+                (byte)((val >> 16) & 0xff),
                 (byte)((val >> 24) & 0xff)
             };
         }
@@ -90,12 +90,12 @@ namespace System.Management.Automation.Internal
             return reverseData;
         }
 
-        internal static RSA FromCapiPublicKeyBlob(byte[] blob) 
+        internal static RSA FromCapiPublicKeyBlob(byte[] blob)
         {
             return FromCapiPublicKeyBlob(blob, 0);
         }
 
-        private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset) 
+        private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset)
         {
             if (blob == null)
             {
@@ -109,13 +109,13 @@ namespace System.Management.Automation.Internal
 
             var rsap = GetParametersFromCapiPublicKeyBlob(blob, offset);
 
-            try 
+            try
             {
                 RSA rsa = RSA.Create();
                 rsa.ImportParameters(rsap);
                 return rsa;
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 throw new CryptographicException(SecuritySupportStrings.CannotImportPublicKey, ex);
             }
@@ -138,14 +138,14 @@ namespace System.Management.Automation.Internal
                 throw new ArgumentException(SecuritySupportStrings.InvalidPublicKey);
             }
 
-            try 
+            try
             {
                 if ((blob[offset]   != PUBLICKEYBLOB) ||            // PUBLICKEYBLOB (0x06)
                     (blob[offset + 1] != CUR_BLOB_VERSION) ||       // Version (0x02)
                     (blob[offset + 2] != 0x00) ||                   // Reserved (word)
                     (blob[offset + 3] != 0x00) ||
                     (ToUInt32LE(blob, offset + 8) != 0x31415352))   // DWORD magic = RSA1
-                { 
+                {
                     throw new CryptographicException(SecuritySupportStrings.InvalidPublicKey);
                 }
 
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Internal
                 rsap.Exponent[0] = blob[offset + 18];
                 rsap.Exponent[1] = blob[offset + 17];
                 rsap.Exponent[2] = blob[offset + 16];
-            
+
                 int pos = offset + 20;
                 int byteLen = (bitLen >> 3);
                 rsap.Modulus = new byte[byteLen];
@@ -166,14 +166,14 @@ namespace System.Management.Automation.Internal
                 Array.Reverse(rsap.Modulus);
 
                 return rsap;
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 throw new CryptographicException(SecuritySupportStrings.InvalidPublicKey, ex);
             }
         }
 
-        internal static byte[] ToCapiPublicKeyBlob(RSA rsa) 
+        internal static byte[] ToCapiPublicKeyBlob(RSA rsa)
         {
             if (rsa == null)
             {
@@ -381,7 +381,7 @@ namespace System.Management.Automation.Internal
 
         // this flag indicates that this class has a key imported from the 
         // remote end and so can be used for encryption
-        private bool _canEncrypt;            
+        private bool _canEncrypt;
 
         // bool indicating if session key was generated before
         private bool _sessionKeyGenerated = false;
@@ -439,7 +439,7 @@ namespace System.Management.Automation.Internal
                 {
                     // Aes object gens key automatically on construction, so this is somewhat redundant, 
                     // but at least the actionable key will not be in-memory until it's requested fwiw.
-                    _aes.GenerateKey();  
+                    _aes.GenerateKey();
                     _sessionKeyGenerated = true;
                     _canEncrypt = true;  // we can encrypt and decrypt once session key is available
                 }
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Internal
                 }
 
                 return targetStream.ToArray();
-            } 
+            }
         }
 
         /// <summary>

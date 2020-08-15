@@ -853,9 +853,9 @@ namespace Microsoft.PowerShell.Commands
     internal class ExportCsvHelper : IDisposable
     {
         private char _delimiter;
-        readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
-        readonly private HashSet<string> _quoteFields;
-        readonly private StringBuilder _outputString;
+        private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
+        private readonly HashSet<string> _quoteFields;
+        private readonly StringBuilder _outputString;
 
         /// <summary>
         /// Create ExportCsvHelper instance.
@@ -1738,7 +1738,7 @@ namespace Microsoft.PowerShell.Commands
                 case "UseCulture":
                 case "CulturePath":
                 case "CultureLiteralPath":
-                    if (useCulture == true)
+                    if (useCulture)
                     {
                         // ListSeparator is apparently always a character even though the property returns a string, checked via:
                         // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1

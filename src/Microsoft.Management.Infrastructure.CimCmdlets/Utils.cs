@@ -27,47 +27,47 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Default computername
         /// </para>
         /// </summary>
-        internal static string[] DefaultSessionName = { @"*" };
+        internal static readonly string[] DefaultSessionName = { @"*" };
 
         /// <summary>
         /// <para>
         /// Empty computername, which will create DCOM session
         /// </para>
         /// </summary>
-        internal static string NullComputerName = null;
+        internal static readonly string NullComputerName = null;
 
         /// <summary>
         /// <para>
         /// Empty computername array, which will create DCOM session
         /// </para>
         /// </summary>
-        internal static string[] NullComputerNames = { NullComputerName };
+        internal static readonly string[] NullComputerNames = { NullComputerName };
 
         /// <summary>
         /// <para>
         /// localhost computername, which will create WSMAN session
         /// </para>
         /// </summary>
-        internal static string LocalhostComputerName = @"localhost";
+        internal static readonly string LocalhostComputerName = @"localhost";
 
         /// <summary>
         /// <para>
         /// Default namespace
         /// </para>
         /// </summary>
-        internal static string DefaultNameSpace = @"root\cimv2";
+        internal static readonly string DefaultNameSpace = @"root\cimv2";
 
         /// <summary>
         /// <para>
         /// Default namespace
         /// </para>
         /// </summary>
-        internal static string DefaultQueryDialect = @"WQL";
+        internal static readonly string DefaultQueryDialect = @"WQL";
 
         /// <summary>
         /// Name of the note property that controls if "PSComputerName" column is shown.
         /// </summary>
-        internal static string ShowComputerNameNoteProperty = "PSShowComputerName";
+        internal static readonly string ShowComputerNameNoteProperty = "PSShowComputerName";
 
         /// <summary>
         /// <para>
@@ -141,6 +141,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Flag used to control generating log message into file.
         /// </summary>
         private static bool generateLog = true;
+
         internal static bool GenerateLog
         {
             get { return generateLog; }
@@ -157,6 +158,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Flag used to control generating message into powershell.
         /// </summary>
         private static bool generateVerboseMessage = true;
+
         internal static bool GenerateVerboseMessage
         {
             get { return generateVerboseMessage; }
@@ -167,17 +169,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Flag used to control generating message into powershell.
         /// </summary>
-        internal static string logFile = @"c:\temp\Cim.log";
+        internal static readonly string logFile = @"c:\temp\Cim.log";
 
         /// <summary>
         /// Indent space string.
         /// </summary>
-        internal static string space = @"    ";
+        internal static readonly string space = @"    ";
 
         /// <summary>
         /// Indent space strings array.
         /// </summary>
-        internal static string[] spaces = {
+        internal static readonly string[] spaces = {
                                               string.Empty,
                                               space,
                                               space + space,
@@ -189,26 +191,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock the log file.
         /// </summary>
-        internal static object logLock = new object();
+        internal static readonly object logLock = new object();
 
         #endregion
 
         #region internal strings
-        internal static string runspaceStateChanged = "Runspace {0} state changed to {1}";
-        internal static string classDumpInfo = @"Class type is {0}";
-        internal static string propertyDumpInfo = @"Property name {0} of type {1}, its value is {2}";
-        internal static string defaultPropertyType = @"It is a default property, default value is {0}";
-        internal static string propertyValueSet = @"This property value is set by user {0}";
-        internal static string addParameterSetName = @"Add parameter set {0} name to cache";
-        internal static string removeParameterSetName = @"Remove parameter set {0} name from cache";
-        internal static string currentParameterSetNameCount = @"Cache have {0} parameter set names";
-        internal static string currentParameterSetNameInCache = @"Cache have parameter set {0} valid {1}";
-        internal static string currentnonMandatoryParameterSetInCache = @"Cache have optional parameter set {0} valid {1}";
-        internal static string optionalParameterSetNameCount = @"Cache have {0} optional parameter set names";
-        internal static string finalParameterSetName = @"------Final parameter set name of the cmdlet is {0}";
-        internal static string addToOptionalParameterSet = @"Add to optional ParameterSetNames {0}";
-        internal static string startToResolveParameterSet = @"------Resolve ParameterSet Name";
-        internal static string reservedString = @"------";
+        internal static readonly string runspaceStateChanged = "Runspace {0} state changed to {1}";
+        internal static readonly string classDumpInfo = @"Class type is {0}";
+        internal static readonly string propertyDumpInfo = @"Property name {0} of type {1}, its value is {2}";
+        internal static readonly string defaultPropertyType = @"It is a default property, default value is {0}";
+        internal static readonly string propertyValueSet = @"This property value is set by user {0}";
+        internal static readonly string addParameterSetName = @"Add parameter set {0} name to cache";
+        internal static readonly string removeParameterSetName = @"Remove parameter set {0} name from cache";
+        internal static readonly string currentParameterSetNameCount = @"Cache have {0} parameter set names";
+        internal static readonly string currentParameterSetNameInCache = @"Cache have parameter set {0} valid {1}";
+        internal static readonly string currentnonMandatoryParameterSetInCache = @"Cache have optional parameter set {0} valid {1}";
+        internal static readonly string optionalParameterSetNameCount = @"Cache have {0} optional parameter set names";
+        internal static readonly string finalParameterSetName = @"------Final parameter set name of the cmdlet is {0}";
+        internal static readonly string addToOptionalParameterSet = @"Add to optional ParameterSetNames {0}";
+        internal static readonly string startToResolveParameterSet = @"------Resolve ParameterSet Name";
+        internal static readonly string reservedString = @"------";
         #endregion
 
         #region runtime methods
@@ -369,7 +371,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         writer.WriteLineAsync(spaces[indent] + sourceInformation + @"        " + message);
                     }
-
                 }
             }
         }
@@ -433,7 +434,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             DebugHelper.WriteLogEx("An invalid name: {0}={1}", 0, parameterName, value);
-            throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
+            throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidParameterValue, value, parameterName));
         }
 
         /// <summary>
@@ -451,7 +452,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 foreach (string propertyName in value)
                 {
                     // * is wild char supported in select properties
-                    if ((propertyName != null) && (string.Compare(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0))
+                    if ((propertyName != null) && string.Equals(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

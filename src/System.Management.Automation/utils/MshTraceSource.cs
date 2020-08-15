@@ -103,7 +103,7 @@ namespace System.Management.Automation
                 // 2005/04/13-JonN In theory this should be ArgumentException,
                 // but I don't want to deal with loading the string in this
                 // low-level code.
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             lock (PSTraceSource.s_getTracerLock)
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw new ArgumentNullException("paramName");
+                throw new ArgumentNullException(nameof(paramName));
             }
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentNull, paramName);
@@ -259,12 +259,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw NewArgumentNullException("paramName");
+                throw NewArgumentNullException(nameof(paramName));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw new ArgumentNullException("paramName");
+                throw new ArgumentNullException(nameof(paramName));
             }
 
             string message = StringUtil.Format(AutomationExceptions.Argument, paramName);
@@ -319,12 +319,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw NewArgumentNullException("paramName");
+                throw NewArgumentNullException(nameof(paramName));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -479,7 +479,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw new ArgumentNullException("paramName");
+                throw new ArgumentNullException(nameof(paramName));
             }
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
@@ -511,12 +511,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw NewArgumentNullException("paramName");
+                throw NewArgumentNullException(nameof(paramName));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -542,7 +542,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(objectName))
             {
-                throw NewArgumentNullException("objectName");
+                throw NewArgumentNullException(nameof(objectName));
             }
 
             string message = StringUtil.Format(AutomationExceptions.ObjectDisposed, objectName);

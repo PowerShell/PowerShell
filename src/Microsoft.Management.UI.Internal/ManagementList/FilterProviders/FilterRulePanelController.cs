@@ -96,7 +96,7 @@ namespace Microsoft.Management.UI.Internal
             int insertionIndex = this.GetInsertionIndex(item);
             this.filterRulePanelItems.Insert(insertionIndex, item);
 
-            item.Rule.EvaluationResultInvalidated += new EventHandler(this.Rule_EvaluationResultInvalidated);
+            item.Rule.EvaluationResultInvalidated += this.Rule_EvaluationResultInvalidated;
 
             this.UpdateFilterRulePanelItemTypes();
 
@@ -121,7 +121,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("item");
             }
 
-            item.Rule.EvaluationResultInvalidated -= new EventHandler(this.Rule_EvaluationResultInvalidated);
+            item.Rule.EvaluationResultInvalidated -= this.Rule_EvaluationResultInvalidated;
 
             this.filterRulePanelItems.Remove(item);
             this.UpdateFilterRulePanelItemTypes();

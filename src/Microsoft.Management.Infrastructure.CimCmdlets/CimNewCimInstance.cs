@@ -79,7 +79,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -92,7 +91,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -103,7 +101,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             cimInstance = CreateCimInstance(cmdlet.CimClass,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -313,7 +310,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);
                 }
-
             }
 
             return cimInstance;

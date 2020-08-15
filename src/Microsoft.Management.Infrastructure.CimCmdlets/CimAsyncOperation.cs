@@ -53,7 +53,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="actionArgs">Event argument.</param>
         protected void NewCmdletActionHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
-            DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this._disposed, actionArgs.Action);
+            DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this.Disposed, actionArgs.Action);
 
             if (this.Disposed)
             {
@@ -404,7 +404,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     return null;
                 }
-                else if (!(cimReferenceArray[0] is PSReference))
+                else if (cimReferenceArray[0] is not PSReference)
                 {
                     return null;
                 }
@@ -443,11 +443,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return Interlocked.Read(ref this._disposed) == 1;
+                return this._disposed == 1;
             }
         }
 
-        private long _disposed;
+        private int _disposed;
 
         /// <summary>
         /// <para>

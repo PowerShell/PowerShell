@@ -225,6 +225,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Dictionary<string, CommandTypes> _existingCommands;
+
         private Dictionary<string, CommandTypes> ExistingCommands
         {
             get

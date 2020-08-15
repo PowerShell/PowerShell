@@ -397,7 +397,8 @@ namespace Microsoft.WSMan.Management
         #endregion parameter
 
         #  region private
-        WSManHelper helper;
+        private WSManHelper helper;
+
         private string GetFilter()
         {
             string name;
@@ -418,7 +419,7 @@ namespace Microsoft.WSMan.Management
             }
 
             filter = filter + "</wsman:SelectorSet>";
-            return (filter.ToString());
+            return (filter);
         }
 
         private void ReturnEnumeration(IWSManEx wsmanObject, IWSManResourceLocator wsmanResourceLocator, IWSManSession wsmanSession)
@@ -1474,9 +1475,9 @@ namespace Microsoft.WSMan.Management
         private Hashtable valueset;
 
         private WSManHelper helper;
-        IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-        IWSManSession m_session = null;
-        string connectionStr = string.Empty;
+        private IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+        private IWSManSession m_session = null;
+        private string connectionStr = string.Empty;
 
         /// <summary>
         /// BeginProcessing method.

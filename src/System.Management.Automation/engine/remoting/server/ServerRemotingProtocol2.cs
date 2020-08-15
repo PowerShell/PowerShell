@@ -110,7 +110,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.RunspacePool,
@@ -224,7 +224,7 @@ namespace System.Management.Automation
                 _associatedShells.Add(dsHandler.PowerShellId, dsHandler);
             }
 
-            dsHandler.RemoveAssociation += new EventHandler(HandleRemoveAssociation);
+            dsHandler.RemoveAssociation += HandleRemoveAssociation;
 
             return dsHandler;
         }
@@ -414,6 +414,7 @@ namespace System.Management.Automation
         // runspace pool driver handles all client
         // communication
         private AbstractServerSessionTransportManager _transportManager;
+
         private Dictionary<Guid, ServerPowerShellDataStructureHandler> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDataStructureHandler>();
         // powershell data structure handlers associated with this
@@ -464,8 +465,7 @@ namespace System.Management.Automation
 
             if (localPowerShell != null)
             {
-                localPowerShell.RunspaceAssigned +=
-                    new EventHandler<PSEventArgs<Runspace>>(LocalPowerShell_RunspaceAssigned);
+                localPowerShell.RunspaceAssigned += LocalPowerShell_RunspaceAssigned;
             }
         }
 
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.PowerShell,

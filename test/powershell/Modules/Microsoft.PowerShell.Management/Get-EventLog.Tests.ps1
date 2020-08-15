@@ -28,7 +28,7 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       $logs.Count                                           | Should -BeGreaterThan 3
     }
     It "should be able to Get-EventLog -LogName Application -Newest 100" -Pending:($true) {
-      { $result=get-eventlog -LogName Application -Newest 100 -ErrorAction Stop } | Should -Not -Throw
+      { $result=Get-EventLog -LogName Application -Newest 100 -ErrorAction Stop } | Should -Not -Throw
       $result                                                                     | Should -Not -BeNullOrEmpty
       $result.Length                                                              | Should -BeLessThan 100
       $result[0]                                                                  | Should -BeOfType EventLogEntry
@@ -37,7 +37,7 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       { Get-EventLog -LogName System -List -ErrorAction Stop } | Should -Throw -ErrorId "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetEventLogCommand"
     }
     It "should be able to Get-EventLog -LogName * with multiple matches" -Pending:($true) {
-      { $result=get-eventlog -LogName *  -ErrorAction Stop }  | Should -Not -Throw
+      { $result=Get-EventLog -LogName *  -ErrorAction Stop }  | Should -Not -Throw
       $result                                                 | Should -Not -BeNullOrEmpty
       $result                                                 | Should -BeExactly "Security"
       $result.Count                                           | Should -BeGreaterThan 3

@@ -204,7 +204,7 @@ $PID
 
         $items | Should -Not -Be $null
         $items.Count | Should -BeGreaterThan 2
-        $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+        $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
         $createdEvents.Count | Should -BeGreaterOrEqual 3
 
         # Verify we log that we are executing a file
@@ -233,7 +233,7 @@ $PID
 
         $items | Should -Not -Be $null
         $items.Count | Should -BeGreaterThan 2
-        $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+        $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
         $createdEvents.Count | Should -BeGreaterOrEqual 3
 
         # Verify we log that we are executing a file
@@ -353,7 +353,7 @@ $PID
 
             $items | Should -Not -Be $null
             $items.Count | Should -BeGreaterThan 2
-            $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+            $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
             $createdEvents.Count | Should -BeGreaterOrEqual 3
 
             # Verify we log that we are executing a file
@@ -391,7 +391,7 @@ $PID
 
             $items | Should -Not -Be $null
             $items.Count | Should -BeGreaterThan 2
-            $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+            $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
             $createdEvents.Count | Should -BeGreaterOrEqual 3
 
             # Verify we log that we are executing a file

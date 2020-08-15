@@ -3,19 +3,47 @@
 
 Import-Module HelpersCommon
 
+function GetGatewayAddress
+{
+    return [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
+        Where-Object { $_.OperationalStatus -eq 'Up' -and $_.NetworkInterfaceType -ne 'Loopback' } |
+        ForEach-Object { $_.GetIPProperties().GatewayAddresses } |
+        Select-Object -First 1 |
+        ForEach-Object { $_.Address.IPAddressToString }
+}
+
+function GetExternalHostAddress([string]$HostName)
+{
+    if (-not $HostName)
+    {
+        return
+    }
+
+    try
+    {
+        return [System.Net.Dns]::GetHostEntry($HostName).AddressList |
+            Where-Object { $_.AddressFamily -eq 'InterNetwork' } |
+            Select-Object -First 1 |
+            ForEach-Object { $_.IPAddressToString }
+    }
+    catch
+    {
+        return
+    }
+}
+
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
+        $gatewayAddress = GetGatewayAddress
+        $publicHostAddress = GetExternalHostAddress -HostName $hostName
+
+        $testAddress = if ($publicHostAddress) { $publicHostAddress } else  { $gatewayAddress }
+
         $targetName = "localhost"
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
-        # this resolves to an actual IP rather than 127.0.0.1
-        # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
-        $realAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
-            Where-Object { $_.AddressFamily -eq "InterNetwork" } |
-            Select-Object -First 1 |
-            ForEach-Object { $_.IPAddressToString }
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
@@ -27,7 +55,7 @@ Describe "Test-Connection" -tags "CI" {
             $pingResults.Count | Should -Be 4
 
             $result = $pingResults |
-                Where-Object Status -eq 'Success' |
+                Where-Object Status -EQ 'Success' |
                 Select-Object -First 1
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
@@ -77,11 +105,10 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        # In VSTS, address is 0.0.0.0. Making pending due to instability in Az DevOps.
-        It "Force IPv4 with implicit PingOptions" -Pending:($IsMacOS) {
-            $result = Test-Connection $hostName -Count 1 -IPv4
+        It "Force IPv4 with implicit PingOptions" -Pending {
+            $result = Test-Connection $testAddress -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $realAddress
+            $result[0].Address | Should -BeExactly $testAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
             if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
@@ -89,15 +116,14 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
-        # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
         It "Force IPv4 with explicit PingOptions" -Pending {
-            $result1 = Test-Connection $hostName -Count 1 -IPv4 -MaxHops 10 -DontFragment
+            $result1 = Test-Connection $testAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1.Address | Should -BeExactly $realAddress
+            $result1.Address | Should -BeExactly $testAddress
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$IsWindows) {
@@ -105,7 +131,9 @@ Describe "Test-Connection" -tags "CI" {
                 # Depending on the network configuration any of the following should be returned
                 $result2.Status | Should -BeIn "TtlExpired", "TimedOut", "Success"
             } else {
-                $result1.Reply.Options.DontFragment | Should -BeTrue
+                # This assertion currently fails, see https://github.com/PowerShell/PowerShell/issues/12967
+                #$result1.Reply.Options.DontFragment | Should -BeTrue
+
                 # We expect 'TtlExpired' but if a router don't reply we get `TimedOut`
                 # AzPipelines returns $null
                 $result2.Status | Should -BeIn "TtlExpired", "TimedOut", $null
@@ -118,7 +146,7 @@ Describe "Test-Connection" -tags "CI" {
             # be a lack of or inconsistent support for IPv6 in CI environments.
             It "Allows us to Force IPv6" -Pending {
                 $result = Test-Connection $targetName -IPv6 -Count 4 |
-                    Where-Object Status -eq Success |
+                    Where-Object Status -EQ Success |
                     Select-Object -First 1
 
                 $result.Address | Should -BeExactly $targetAddressIPv6
@@ -127,7 +155,7 @@ Describe "Test-Connection" -tags "CI" {
 
             It 'can convert IPv6 addresses to IPv4 with -IPv4 parameter' -Pending {
                 $result = Test-Connection '2001:4860:4860::8888' -IPv4 -Count 4 |
-                    Where-Object Status -eq Success |
+                    Where-Object Status -EQ Success |
                     Select-Object -First 1
                 # Google's DNS can resolve to either address.
                 $result.Address.IPAddressToString | Should -BeIn @('8.8.8.8', '8.8.4.4')
@@ -136,7 +164,7 @@ Describe "Test-Connection" -tags "CI" {
 
             It 'can convert IPv4 addresses to IPv6 with -IPv6 parameter' -Pending {
                 $result = Test-Connection '8.8.8.8' -IPv6 -Count 4 |
-                    Where-Object Status -eq Success |
+                    Where-Object Status -EQ Success |
                     Select-Object -First 1
                 # Google's DNS can resolve to either address.
                 $result.Address.IPAddressToString | Should -BeIn @('2001:4860:4860::8888', '2001:4860:4860::8844')
@@ -231,17 +259,17 @@ Describe "Test-Connection" -tags "CI" {
     Context "MTUSizeDetect" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
-        It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $hostName -MtuSize
+        It "MTUSizeDetect works" -Pending:($true -or $env:__INCONTAINER -eq 1) {
+            $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $hostName
+            $result.Destination | Should -BeExactly $testAddress
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
         It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $hostName -MtuSize -Quiet
+            $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
@@ -249,17 +277,16 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     Context "TraceRoute" {
-        # Mark it as pending due to instability in Az DevOps
-        It "TraceRoute works" -Pending:($IsMacOS) {
+        It "TraceRoute works" -Pending {
             # real address is an ipv4 address, so force IPv4
-            $result = Test-Connection $hostName -TraceRoute -IPv4
+            $result = Test-Connection $testAddress -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
             $result[0].Source | Should -BeExactly $hostName
-            $result[0].TargetAddress | Should -BeExactly $realAddress
-            $result[0].Target | Should -BeExactly $hostName
+            $result[0].TargetAddress | Should -BeExactly $testAddress
+            $result[0].Target | Should -BeExactly $testAddress
             $result[0].Hop | Should -Be 1
-            $result[0].HopAddress | Should -BeExactly $realAddress
+            $result[0].HopAddress.IPAddressToString | Should -BeExactly $testAddress
             $result[0].Status | Should -BeExactly "Success"
             if (!$IsWindows) {
                 $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'

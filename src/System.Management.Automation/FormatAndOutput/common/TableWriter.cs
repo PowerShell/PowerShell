@@ -40,8 +40,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private ScreenInfo _si;
+
         private const char ESC = '\u001b';
         private const string ResetConsoleVt100Code = "\u001b[m";
+
         private List<string> _header;
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
@@ -202,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int cols = _si.columnInfo.Length;
             Span<int> currentAlignment = cols <= OutCommandInner.StackAllocThreshold ? stackalloc int[cols] : new int[cols];
 
-            if (alignment == null)
+            if (alignment.IsEmpty)
             {
                 for (int i = 0; i < currentAlignment.Length; i++)
                 {

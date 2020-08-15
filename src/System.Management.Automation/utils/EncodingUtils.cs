@@ -25,11 +25,12 @@ namespace System.Management.Automation
         internal const string Utf32 = "utf32";
         internal const string Default = "default";
         internal const string OEM = "oem";
+
         internal static readonly string[] TabCompletionResults = {
                 Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
-        internal static Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
         {
             { Ascii, System.Text.Encoding.ASCII },
             { BigEndianUnicode, System.Text.Encoding.BigEndianUnicode },

@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_jobTrackingLock)
             {
-                return _jobsToWaitFor.FirstOrDefault(j => j.JobStateInfo.State == JobState.Blocked);
+                return _jobsToWaitFor.Find(j => j.JobStateInfo.State == JobState.Blocked);
             }
         }
 

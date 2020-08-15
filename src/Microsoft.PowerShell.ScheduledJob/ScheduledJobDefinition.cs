@@ -938,7 +938,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     { }
                 }
 
-                if (!(ex is ScheduledJobException))
+                if (ex is not ScheduledJobException)
                 {
                     // Wrap in ScheduledJobException type.
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRegisteringDefinitionStore, this.Name);

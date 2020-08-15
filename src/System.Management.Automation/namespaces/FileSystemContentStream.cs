@@ -56,7 +56,9 @@ namespace Microsoft.PowerShell.Commands
         private StreamReader _reader;
         private StreamWriter _writer;
         private bool _usingByteEncoding;
+
         private const char DefaultDelimiter = '\n';
+
         private string _delimiter = $"{DefaultDelimiter}";
         private int[] _offsetDictionary;
         private bool _usingDelimiter;
@@ -156,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (s_tracer.IsEnabled)
@@ -435,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
             if (backCount < 0)
             {
                 // The caller needs to guarantee that 'backCount' is greater or equals to 0
-                throw PSTraceSource.NewArgumentException("backCount");
+                throw PSTraceSource.NewArgumentException(nameof(backCount));
             }
 
             if (_isRawStream && _waitForChanges)
@@ -1088,7 +1090,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidCastException)
                 {
-                    throw PSTraceSource.NewArgumentException("content", FileSystemProviderStrings.ByteEncodingError);
+                    throw PSTraceSource.NewArgumentException(nameof(content), FileSystemProviderStrings.ByteEncodingError);
                 }
             }
             else
@@ -1156,6 +1158,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Encoding _defaultAnsiEncoding;
 
         private const int BuffSize = 4096;
+
         private readonly byte[] _byteBuff = new byte[BuffSize];
         private readonly char[] _charBuff = new char[BuffSize];
         private int _byteCount = 0;
@@ -1379,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            do
+            while (true)
             {
                 while (_charCount > 0)
                 {
@@ -1400,7 +1403,7 @@ namespace Microsoft.PowerShell.Commands
                     line.Remove(line.Length - charsToRemove, charsToRemove);
                     return line.ToString();
                 }
-            } while (true);
+            }
         }
 
         /// <summary>

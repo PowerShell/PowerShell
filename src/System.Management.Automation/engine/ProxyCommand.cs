@@ -354,7 +354,7 @@ namespace System.Management.Automation
         {
             if (help == null)
             {
-                throw new ArgumentNullException("help");
+                throw new ArgumentNullException(nameof(help));
             }
 
             bool isHelpObject = false;
@@ -434,7 +434,7 @@ namespace System.Management.Automation
                         foreach (PSObject remark in remarks)
                         {
                             string remarkText = GetProperty<string>(remark, "text");
-                            exsb.Append(remarkText.ToString());
+                            exsb.Append(remarkText);
                         }
                     }
 

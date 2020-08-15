@@ -20,10 +20,13 @@ namespace System.Diagnostics.Eventing
         //
         //
         private EventProvider _provider;
+
         private const string s_nullStringValue = "null";
         private const string s_nullStringComaValue = "null,";
         private const string s_nullCStringValue = ": null";
+
         private string _delimiter = ";";
+
         private const uint s_keyWordMask = 0xFFFFFF00;
         private const int s_defaultPayloadSize = 512;
 
@@ -70,7 +73,7 @@ namespace System.Diagnostics.Eventing
             : base(name)
         {
             if (delimiter == null)
-                throw new ArgumentNullException("delimiter");
+                throw new ArgumentNullException(nameof(delimiter));
 
             if (delimiter.Length == 0)
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);

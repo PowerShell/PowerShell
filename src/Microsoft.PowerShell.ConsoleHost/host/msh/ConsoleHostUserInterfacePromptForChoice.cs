@@ -46,18 +46,18 @@ namespace Microsoft.PowerShell
 
             if (choices == null)
             {
-                throw PSTraceSource.NewArgumentNullException("choices");
+                throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }
 
             if (choices.Count == 0)
             {
-                throw PSTraceSource.NewArgumentException("choices",
+                throw PSTraceSource.NewArgumentException(nameof(choices),
                     ConsoleHostUserInterfaceStrings.EmptyChoicesErrorTemplate, "choices");
             }
 
             if ((defaultChoice < -1) || (defaultChoice >= choices.Count))
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("defaultChoice", defaultChoice,
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(defaultChoice), defaultChoice,
                     ConsoleHostUserInterfaceStrings.InvalidDefaultChoiceErrorTemplate, "defaultChoice", "choice");
             }
 
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell
                     defaultChoiceKeys.Add(defaultChoice, true);
                 }
 
-                do
+                while (true)
                 {
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
@@ -140,7 +140,6 @@ namespace Microsoft.PowerShell
 
                     // their input matched none of the choices, so prompt again
                 }
-                while (true);
 
                 return result;
             }
@@ -175,12 +174,12 @@ namespace Microsoft.PowerShell
 
             if (choices == null)
             {
-                throw PSTraceSource.NewArgumentNullException("choices");
+                throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }
 
             if (choices.Count == 0)
             {
-                throw PSTraceSource.NewArgumentException("choices",
+                throw PSTraceSource.NewArgumentException(nameof(choices),
                     ConsoleHostUserInterfaceStrings.EmptyChoicesErrorTemplate, "choices");
             }
 
@@ -231,7 +230,7 @@ namespace Microsoft.PowerShell
 
                 // used to display ChoiceMessage like Choice[0],Choice[1] etc
                 int choicesSelected = 0;
-                do
+                while (true)
                 {
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
@@ -286,7 +285,6 @@ namespace Microsoft.PowerShell
                     }
                     // prompt for multiple choices
                 }
-                while (true);
 
                 return result;
             }

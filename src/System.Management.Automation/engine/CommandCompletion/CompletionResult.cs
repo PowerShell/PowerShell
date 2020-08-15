@@ -170,22 +170,22 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(completionText))
             {
-                throw PSTraceSource.NewArgumentNullException("completionText");
+                throw PSTraceSource.NewArgumentNullException(nameof(completionText));
             }
 
             if (string.IsNullOrEmpty(listItemText))
             {
-                throw PSTraceSource.NewArgumentNullException("listItemText");
+                throw PSTraceSource.NewArgumentNullException(nameof(listItemText));
             }
 
             if (resultType < CompletionResultType.Text || resultType > CompletionResultType.DynamicKeyword)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("resultType", resultType);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(resultType), resultType);
             }
 
             if (string.IsNullOrEmpty(toolTip))
             {
-                throw PSTraceSource.NewArgumentNullException("toolTip");
+                throw PSTraceSource.NewArgumentNullException(nameof(toolTip));
             }
 
             _completionText = completionText;

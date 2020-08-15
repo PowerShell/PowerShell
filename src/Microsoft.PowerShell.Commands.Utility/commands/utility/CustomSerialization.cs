@@ -55,12 +55,12 @@ namespace System.Management.Automation
         {
             if (writer == null)
             {
-                throw PSTraceSource.NewArgumentException("writer");
+                throw PSTraceSource.NewArgumentException(nameof(writer));
             }
 
             if (depth < 1)
             {
-                throw PSTraceSource.NewArgumentException("writer", Serialization.DepthOfOneRequired);
+                throw PSTraceSource.NewArgumentException(nameof(writer), Serialization.DepthOfOneRequired);
             }
 
             _depth = depth;
@@ -648,7 +648,7 @@ namespace System.Management.Automation
             if (property != null)
             {
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
-                WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, property.ToString());
+                WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, property);
             }
             else
             {
@@ -1063,9 +1063,9 @@ namespace System.Management.Automation
             XmlWriter writer, PSPropertyInfo source, int depth)
         {
             WriteStartElement(writer, CustomSerializationStrings.Properties);
-            WriteAttribute(writer, CustomSerializationStrings.NameAttribute, ((PSPropertyInfo)source).Name.ToString());
+            WriteAttribute(writer, CustomSerializationStrings.NameAttribute, ((PSPropertyInfo)source).Name);
             if (!_notypeinformation)
-                WriteAttribute(writer, CustomSerializationStrings.TypeAttribute, ((PSPropertyInfo)source).TypeNameOfValue.ToString());
+                WriteAttribute(writer, CustomSerializationStrings.TypeAttribute, ((PSPropertyInfo)source).TypeNameOfValue);
             writer.WriteEndElement();
         }
 
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
             if (property != null)
             {
                 WriteStartElement(writer, CustomSerializationStrings.Properties);
-                WriteAttribute(writer, CustomSerializationStrings.NameAttribute, property.ToString());
+                WriteAttribute(writer, CustomSerializationStrings.NameAttribute, property);
             }
             else
             {

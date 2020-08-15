@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.NonExistingViewNameError, formatTypeName, so.BaseObject.GetType()));
                 }
 
-                msg = unKnowViewFormatStringBuilder.ToString(); ;
+                msg = unKnowViewFormatStringBuilder.ToString();
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
@@ -516,7 +516,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we must check we have enough properties for a list view
-                if (new PSPropertyExpression("*").ResolveNames(so).Count <= 0)
+                if (new PSPropertyExpression("*").ResolveNames(so).Count == 0)
                 {
                     return null;
                 }

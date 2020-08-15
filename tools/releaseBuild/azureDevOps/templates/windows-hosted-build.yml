@@ -2,14 +2,16 @@ parameters:
   BuildConfiguration: release
   BuildPlatform: any cpu
   Architecture: x64
-
+  parentJob: ''
 jobs:
 - job: build_windows_${{ parameters.Architecture }}
   displayName: Build Windows - ${{ parameters.Architecture }}
   condition: succeeded()
+  dependsOn: ${{ parameters.parentJob }}
   pool:
     vmImage: windows-latest
   variables:
+    runCodesignValidationInjection: false
     BuildConfiguration: ${{ parameters.BuildConfiguration }}
     BuildPlatform: ${{ parameters.BuildPlatform }}
     Architecture: ${{ parameters.Architecture }}

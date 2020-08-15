@@ -169,6 +169,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToMethodInvocationException =
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), StaticFlags);
+
         internal static readonly MethodInfo ExceptionHandlingOps_FindMatchingHandler =
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), StaticFlags);
 
@@ -221,14 +222,19 @@ namespace System.Management.Automation.Language
 
         internal static readonly FieldInfo FunctionContext__currentSequencePointIndex =
             typeof(FunctionContext).GetField(nameof(FunctionContext._currentSequencePointIndex), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__executionContext =
             typeof(FunctionContext).GetField(nameof(FunctionContext._executionContext), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__functionName =
             typeof(FunctionContext).GetField(nameof(FunctionContext._functionName), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__localsTuple =
             typeof(FunctionContext).GetField(nameof(FunctionContext._localsTuple), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__outputPipe =
             typeof(FunctionContext).GetField(nameof(FunctionContext._outputPipe), InstanceFlags);
+
         internal static readonly MethodInfo FunctionContext_PopTrapHandlers =
             typeof(FunctionContext).GetMethod(nameof(FunctionContext.PopTrapHandlers), InstanceFlags);
 
@@ -275,13 +281,16 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo InterpreterError_NewInterpreterException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterException), StaticFlags);
+
         internal static readonly MethodInfo InterpreterError_NewInterpreterExceptionWithInnerException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), StaticFlags);
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
+
         internal static readonly MethodInfo LanguagePrimitives_IsNull =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNull), StaticFlags);
+
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
@@ -455,6 +464,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo PSScriptProperty_InvokeGetter =
             typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeGetter), InstanceFlags);
+
         internal static readonly MethodInfo PSScriptProperty_InvokeSetter =
             typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeSetter), InstanceFlags);
 
@@ -612,7 +622,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo VariableOps_SetVariableValue =
             typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), StaticFlags);
 
-
         internal static readonly MethodInfo Utils_IsComObject =
             typeof(Utils).GetMethod(nameof(Utils.IsComObject), StaticFlags);
 
@@ -658,7 +667,8 @@ namespace System.Management.Automation.Language
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         // Empty expression is used at the end of blocks to give them the void expression result
         internal static readonly Expression Empty = Expression.Empty();
-        internal static Expression GetExecutionContextFromTLS =
+
+        internal static readonly Expression GetExecutionContextFromTLS =
             Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
 
         internal static readonly Expression BoxedTrue = Expression.Field(null, typeof(Boxed).GetField("True", BindingFlags.Static | BindingFlags.NonPublic));
@@ -804,8 +814,10 @@ namespace System.Management.Automation.Language
 
         private static readonly CatchBlock[] s_stmtCatchHandlers;
         internal static readonly Type DottedLocalsTupleType = MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes);
+
         internal static readonly Dictionary<string, int> DottedLocalsNameIndexMap =
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length, StringComparer.OrdinalIgnoreCase);
+
         internal static readonly Dictionary<string, int> DottedScriptCmdletLocalsNameIndexMap =
             new Dictionary<string, int>(
                 SpecialVariables.AutomaticVariableTypes.Length + SpecialVariables.PreferenceVariableTypes.Length,
@@ -982,19 +994,23 @@ namespace System.Management.Automation.Language
             {
                 return left;
             }
-            else if (leftType == typeof(AutomationNull))
-            {
-                return right;
-            }
             else
             {
-                Expression lhs = left.Cast(typeof(object));
-                Expression rhs = right.Cast(typeof(object));
+                ParameterExpression lhsStoreVar = Expression.Variable(typeof(object));
+                var blockParameters = new ParameterExpression[] { lhsStoreVar };
+                var blockStatements = new Expression[]
+                {
+                    Expression.Assign(lhsStoreVar, left.Cast(typeof(object))),
+                    Expression.Condition(
+                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhsStoreVar),
+                        right.Cast(typeof(object)),
+                        lhsStoreVar),
+                };
 
-                return Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhs),
-                    rhs,
-                    lhs);
+                return Expression.Block(
+                    typeof(object),
+                    blockParameters,
+                    blockStatements);
             }
         }
 
@@ -2277,7 +2293,7 @@ namespace System.Management.Automation.Language
                     result = resultList;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("context");
+                    throw new ArgumentOutOfRangeException(nameof(context));
             }
 
             finallyExprs.Add(Expression.Assign(s_getCurrentPipe, oldPipe));
@@ -2575,7 +2591,7 @@ namespace System.Management.Automation.Language
             // If Parent of rootForDefiningTypesAndUsings is not null, then we already defined all types, when Visit a parent ScriptBlock
             if (rootForDefiningTypesAndUsings.Parent == null)
             {
-                if (rootForDefiningTypesAndUsings.UsingStatements.Any())
+                if (rootForDefiningTypesAndUsings.UsingStatements.Count > 0)
                 {
                     bool allUsingsAreNamespaces = rootForDefiningTypesAndUsings.UsingStatements.All(us => us.UsingStatementKind == UsingStatementKind.Namespace);
                     GenerateLoadUsings(rootForDefiningTypesAndUsings.UsingStatements, allUsingsAreNamespaces, exprs);
@@ -3667,7 +3683,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var exprs = new List<Expression>();
 
-            if (!(pipelineAst.Parent is AssignmentStatementAst || pipelineAst.Parent is ParenExpressionAst))
+            if (pipelineAst.Parent is not AssignmentStatementAst && pipelineAst.Parent is not ParenExpressionAst)
             {
                 // If the parent is an assignment, we've already added a sequence point, don't add another.
                 exprs.Add(UpdatePosition(pipelineAst));
@@ -4171,7 +4187,9 @@ namespace System.Management.Automation.Language
         private Expression GetCommandArgumentExpression(CommandElementAst element)
         {
             var constElement = element as ConstantExpressionAst;
-            if (constElement != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType)))
+            if (constElement != null
+                && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType))
+                || constElement.StaticType == typeof(System.Numerics.BigInteger)))
             {
                 var commandArgumentText = constElement.Extent.Text;
                 if (!commandArgumentText.Equals(constElement.Value.ToString(), StringComparison.Ordinal))
@@ -4223,7 +4241,8 @@ namespace System.Management.Automation.Language
                     Expression.Constant(errorPos.Text),
                     Expression.Constant(arg),
                     Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
-                    ExpressionCache.Constant(spaceAfterParameter));
+                    ExpressionCache.Constant(spaceAfterParameter),
+                    ExpressionCache.Constant(false));
             }
 
             return Expression.Call(

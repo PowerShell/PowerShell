@@ -334,12 +334,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (cmdlet == null)
             {
-                throw new ArgumentNullException("cmdlet");
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
             if (matchingSources == null)
             {
-                throw new ArgumentNullException("matchingSources");
+                throw new ArgumentNullException(nameof(matchingSources));
             }
 
             _cmdlet = cmdlet;
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
             if (mshobj != null)
             {
                 object baseObject = mshobj.BaseObject;
-                if (!(baseObject is PSCustomObject))
+                if (baseObject is not PSCustomObject)
                 {
                     obj = baseObject;
                 }

@@ -215,7 +215,7 @@ function Install-PluginEndpoint {
 
     try
     {
-        Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -foregroundcolor "green"
+        Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -ForegroundColor "green"
         Get-PSSessionConfiguration $pluginEndpointName -ErrorAction Stop
     }
     catch [Microsoft.PowerShell.Commands.WriteErrorException]
@@ -227,6 +227,6 @@ function Install-PluginEndpoint {
 Install-PluginEndpoint -Force $Force
 Install-PluginEndpoint -Force $Force -VersionIndependent
 
-Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -foregroundcolor Magenta
+Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -ForegroundColor Magenta
 Restart-Service winrm
 

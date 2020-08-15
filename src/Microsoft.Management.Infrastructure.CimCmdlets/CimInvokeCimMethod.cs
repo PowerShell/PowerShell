@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     if (declaration == null)
                     {
                         throw new ArgumentException(string.Format(
-                                CultureInfo.CurrentUICulture, Strings.InvalidMethod, methodName, className));
+                                CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethod, methodName, className));
                     }
                 }
                 else if (cimInstance != null)
@@ -407,7 +407,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     if (paramDeclaration == null)
                     {
                         throw new ArgumentException(string.Format(
-                            CultureInfo.CurrentUICulture, Strings.InvalidMethodParameter, parameterName, methodName, className));
+                            CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethodParameter, parameterName, methodName, className));
                     }
 
                     parameter = CimMethodParameter.Create(

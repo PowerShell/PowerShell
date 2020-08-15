@@ -97,12 +97,12 @@ namespace Microsoft.PowerShell
 
             if (descriptions == null)
             {
-                throw PSTraceSource.NewArgumentNullException("descriptions");
+                throw PSTraceSource.NewArgumentNullException(nameof(descriptions));
             }
 
             if (descriptions.Count < 1)
             {
-                throw PSTraceSource.NewArgumentException("descriptions",
+                throw PSTraceSource.NewArgumentException(nameof(descriptions),
                     ConsoleHostUserInterfaceStrings.PromptEmptyDescriptionsErrorTemplate, "descriptions");
             }
 
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell
                     descIndex++;
                     if (desc == null)
                     {
-                        throw PSTraceSource.NewArgumentException("descriptions",
+                        throw PSTraceSource.NewArgumentException(nameof(descriptions),
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
                             string.Format(CultureInfo.InvariantCulture, "descriptions[{0}]", descIndex));
                     }
@@ -516,13 +516,13 @@ namespace Microsoft.PowerShell
 
             if (command.Length == 2)
             {
-                if (0 == string.Compare(command, "\"\"", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(command, "\"\"", StringComparison.OrdinalIgnoreCase))
                 {
                     return string.Empty;
                 }
             }
 
-            if (0 == string.Compare(command, "$null", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(command, "$null", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }

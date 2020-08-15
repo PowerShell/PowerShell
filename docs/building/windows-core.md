@@ -18,8 +18,9 @@ This guide assumes that you have recursively cloned the PowerShell repository an
 
 ### Visual Studio
 
-You will need to install an edition of Visual Studio 2015 (Community, Enterprise, or Professional) with the optional feature 'Common Tools for Visual C++' installed.
-The free Community edition of Visual Studio 2015 can be downloaded [here](https://www.visualstudio.com/visual-studio-community-vs/).
+Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/). The Community edition is available free of charge.
+
+The PowerShell/PowerShell repository requires at least Visual Studio 2019 16.7.
 
 ### Visual Studio Code
 
@@ -43,7 +44,7 @@ Or you can call `Install-Dotnet` directly:
 Install-Dotnet
 ```
 
-It removes the previously installed version of .NET CLI and install the version that PowerShell Core depends on.
+It removes the previously installed version of .NET CLI and installs the version that PowerShell Core depends on.
 If you have any problems installing `dotnet`, please see their [documentation][cli-docs].
 
 [dotnet-cli]: https://github.com/dotnet/cli
@@ -68,11 +69,16 @@ The function `Get-PSOutput` will return the path to the executable;
 thus you can execute the development copy via `& (Get-PSOutput)`.
 
 The `powershell` project is the .NET Core PowerShell host.
-It is the top level project, so `dotnet build` transitively builds all its dependencies,
+It is the top-level project, so `dotnet build` transitively builds all its dependencies,
 and emits a `pwsh` executable.
 The cross-platform host has built-in documentation via `--help`.
 
 You can run our cross-platform Pester tests with `Start-PSPester`.
+
+```powershell
+Import-Module ./build.psm1
+Start-PSPester
+```
 
 ## Building in Visual Studio
 

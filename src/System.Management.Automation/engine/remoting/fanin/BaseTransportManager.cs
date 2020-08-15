@@ -805,7 +805,7 @@ namespace System.Management.Automation.Remoting.Client
 
             try
             {
-                do
+                while (true)
                 {
                     // if the transport manager is closed return.
                     if (isClosed)
@@ -818,7 +818,7 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         // If queue is empty or if queue servicing is suspended
                         // then break out of loop.
-                        if (_callbackNotificationQueue.Count <= 0 || _suspendQueueServicing)
+                        if (_callbackNotificationQueue.Count == 0 || _suspendQueueServicing)
                         {
                             break;
                         }
@@ -843,7 +843,7 @@ namespace System.Management.Automation.Remoting.Client
                             base.OnDataAvailableCallback(rcvdDataInfo.remoteObject);
                         }
                     }
-                } while (true);
+                }
             }
             catch (Exception exception)
             {

@@ -63,10 +63,10 @@ namespace Microsoft.Management.UI.Internal
             this.DisplayName = UICultureResources.FilterRule_IsBetween;
 
             this.StartValue = new ValidatingValue<T>();
-            this.StartValue.PropertyChanged += new PropertyChangedEventHandler(this.Value_PropertyChanged);
+            this.StartValue.PropertyChanged += this.Value_PropertyChanged;
 
             this.EndValue = new ValidatingValue<T>();
-            this.EndValue.PropertyChanged += new PropertyChangedEventHandler(this.Value_PropertyChanged);
+            this.EndValue.PropertyChanged += this.Value_PropertyChanged;
         }
 
         #endregion Ctor
@@ -111,8 +111,8 @@ namespace Microsoft.Management.UI.Internal
         [OnDeserialized]
         private void Initialize(StreamingContext context)
         {
-            this.StartValue.PropertyChanged += new PropertyChangedEventHandler(this.Value_PropertyChanged);
-            this.EndValue.PropertyChanged += new PropertyChangedEventHandler(this.Value_PropertyChanged);
+            this.StartValue.PropertyChanged += this.Value_PropertyChanged;
+            this.EndValue.PropertyChanged += this.Value_PropertyChanged;
         }
 
         #endregion Value Change Handlers

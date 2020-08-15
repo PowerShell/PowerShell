@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the get-date command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
-    [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
-    [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = DateAndFormatParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
+    [OutputType(typeof(string))]
+    [OutputType(typeof(DateTime), ParameterSetName = new[] { DateAndFormatParameterSet, UnixTimeSecondsAndFormatParameterSet })]
     public sealed class GetDateCommand : Cmdlet
     {
         #region parameters
@@ -24,7 +24,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows user to override the date/time object that will be processed.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndFormatParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndUFormatParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
         public DateTime Date
         {
@@ -40,14 +41,38 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private DateTime _date;
+        private bool _dateSpecified;
+
+        // The const comes from DateTimeOffset.MinValue.ToUnixTimeSeconds()
+        private const long MinimumUnixTimeSecond = -62135596800;
+
+        // The const comes from DateTimeOffset.MaxValue.ToUnixTimeSeconds()
+        private const long MaximumUnixTimeSecond = 253402300799;
+
         /// <summary>
         /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
-        [Parameter]
-        public SwitchParameter FromUnixTime;
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormatParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormatParameterSet, Mandatory = true)]
+        [ValidateRange(MinimumUnixTimeSecond, MaximumUnixTimeSecond)]
+        [Alias("UnixTime")]
+        public long UnixTimeSeconds
+        {
+            get
+            {
+                return _unixTimeSeconds;
+            }
 
-        private DateTime _date;
-        private bool _dateSpecified;
+            set
+            {
+                _unixTimeSeconds = value;
+                _unixTimeSecondsSpecified = true;
+            }
+        }
+
+        private long _unixTimeSeconds;
+        private bool _unixTimeSecondsSpecified;
 
         /// <summary>
         /// Allows the user to override the year.
@@ -212,21 +237,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter(ParameterSetName = "UFormat")]
-        [ValidateNotNullOrEmpty]
+        [Parameter(ParameterSetName = DateAndUFormatParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormatParameterSet, Mandatory = true)]
         public string UFormat { get; set; }
 
         /// <summary>
-        /// Unix format string.
+        /// DotNet format string.
         /// </summary>
-        [Parameter(ParameterSetName = "net")]
+        [Parameter(ParameterSetName = DateAndFormatParameterSet)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormatParameterSet)]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
         /// <summary>
         /// Gets or sets a value that converts date to UTC before formatting.
         /// </summary>
-        [Parameter(ParameterSetName = "net")]
+        [Parameter]
         public SwitchParameter AsUTC { get; set; }
         #endregion
 
@@ -243,14 +269,11 @@ namespace Microsoft.PowerShell.Commands
             // use passed date object if specified
             if (_dateSpecified)
             {
-                if (FromUnixTime.IsPresent)
-                {
-                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
-                }
-                else
-                {
-                    dateToUse = Date;
-                }
+                dateToUse = Date;
+            }
+            else if (_unixTimeSecondsSpecified)
+            {
+                dateToUse = DateTimeOffset.FromUnixTimeSeconds(UnixTimeSeconds).LocalDateTime;
             }
 
             // use passed year if specified
@@ -544,6 +567,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+
+        private const string DateAndFormatParameterSet = "DateAndFormat";
+        private const string DateAndUFormatParameterSet = "DateAndUFormat";
+        private const string UnixTimeSecondsAndFormatParameterSet = "UnixTimeSecondsAndFormat";
+        private const string UnixTimeSecondsAndUFormatParameterSet = "UnixTimeSecondsAndUFormat";
     }
 
     #endregion

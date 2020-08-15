@@ -63,7 +63,8 @@
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
 
       <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
-      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
+      <ApplicationIcon Condition="$(ProductVersion.Contains('daily'))">..\..\assets\Powershell_avatar.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview')) And !$(ProductVersion.Contains('daily'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
     </PropertyGroup>
 
@@ -93,11 +94,11 @@
   <PropertyGroup>
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
-    <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
 
     <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
-    <PublishReadyToRun>true</PublishReadyToRun>
+    <LangVersion>preview</LangVersion>
+    <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

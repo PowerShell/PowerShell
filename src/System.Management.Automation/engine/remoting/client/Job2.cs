@@ -502,9 +502,11 @@ namespace System.Management.Automation
         #region Private Members
 
         private const string TraceClassName = "ContainerParentJob";
+
         private bool _moreData = true;
         private readonly object _syncObject = new object();
         private int _isDisposed = 0;
+
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
         // This variable is set to true if atleast one child job failed.
@@ -531,6 +533,7 @@ namespace System.Management.Automation
         private readonly PSDataCollection<ErrorRecord> _executionError = new PSDataCollection<ErrorRecord>();
 
         private PSEventManager _eventManager;
+
         internal PSEventManager EventManager
         {
             get { return _eventManager; }
@@ -543,6 +546,7 @@ namespace System.Management.Automation
         }
 
         private ManualResetEvent _jobRunning;
+
         private ManualResetEvent JobRunning
         {
             get
@@ -567,6 +571,7 @@ namespace System.Management.Automation
         }
 
         private ManualResetEvent _jobSuspendedOrAborted;
+
         private ManualResetEvent JobSuspendedOrAborted
         {
             get
@@ -704,7 +709,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             if (childJob == null)
             {
-                throw new ArgumentNullException("childJob");
+                throw new ArgumentNullException(nameof(childJob));
             }
 
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
@@ -715,7 +720,7 @@ namespace System.Management.Automation
                 // Store job's state and subscribe to State Changed event. Locking here will
                 // ensure that the jobstateinfo we get is the state before any state changed events are handled by ContainerParentJob.
                 childJobStateInfo = childJob.JobStateInfo;
-                childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
+                childJob.StateChanged += HandleChildJobStateChanged;
             }
 
             ChildJobs.Add(childJob);
@@ -2181,7 +2186,7 @@ namespace System.Management.Automation
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             base.GetObjectData(info, context);
 

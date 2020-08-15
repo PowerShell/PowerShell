@@ -345,7 +345,7 @@ namespace System.Management.Automation.Remoting
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             return source.Length;
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             Dbg.Assert(offset >= 0, "offset >= 0");

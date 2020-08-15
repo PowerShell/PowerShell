@@ -333,7 +333,7 @@ namespace System.Management.Automation
         {
             if (jobStateInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("jobStateInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(jobStateInfo));
             }
 
             JobStateInfo = jobStateInfo;
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         internal JobIdentifier(int id, Guid instanceId)
         {
             if (id <= 0)
-                PSTraceSource.NewArgumentException("id", RemotingErrorIdStrings.JobSessionIdLessThanOne, id);
+                PSTraceSource.NewArgumentException(nameof(id), RemotingErrorIdStrings.JobSessionIdLessThanOne, id);
             Id = id;
             InstanceId = instanceId;
         }
@@ -463,10 +463,10 @@ namespace System.Management.Automation
         protected Job(string command, string name, JobIdentifier token)
         {
             if (token == null)
-                throw PSTraceSource.NewArgumentNullException("token", RemotingErrorIdStrings.JobIdentifierNull);
+                throw PSTraceSource.NewArgumentNullException(nameof(token), RemotingErrorIdStrings.JobIdentifierNull);
             if (token.Id > s_jobIdSeed)
             {
-                throw PSTraceSource.NewArgumentException("token", RemotingErrorIdStrings.JobIdNotYetAssigned, token.Id);
+                throw PSTraceSource.NewArgumentException(nameof(token), RemotingErrorIdStrings.JobIdNotYetAssigned, token.Id);
             }
 
             Command = command;
@@ -831,6 +831,7 @@ namespace System.Management.Automation
         }
 
         private Lazy<int> _parentActivityId;
+
         internal void SetParentActivityIdGetter(Func<int> parentActivityIdGetter)
         {
             Dbg.Assert(parentActivityIdGetter != null, "Caller should verify parentActivityIdGetter != null");
@@ -1787,8 +1788,8 @@ namespace System.Management.Automation
                 // Create Child Job and Register for its StateChanged Event
                 PSRemotingChildJob childJob = new PSRemotingChildJob(remoteCommand,
                                             helper, _throttleManager);
-                childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
-                childJob.JobUnblocked += new EventHandler(HandleJobUnblocked);
+                childJob.StateChanged += HandleChildJobStateChanged;
+                childJob.JobUnblocked += HandleJobUnblocked;
 
                 // Add this job to list of childjobs
                 ChildJobs.Add(childJob);
@@ -1822,8 +1823,8 @@ namespace System.Management.Automation
                 // Create Child Job object and Register for its state changed event
                 PSRemotingChildJob job = new PSRemotingChildJob(remoteCommand,
                                 helper, _throttleManager);
-                job.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
-                job.JobUnblocked += new EventHandler(HandleJobUnblocked);
+                job.StateChanged += HandleChildJobStateChanged;
+                job.JobUnblocked += HandleJobUnblocked;
 
                 // Add the child job to list of child jobs
                 ChildJobs.Add(job);
@@ -1852,8 +1853,8 @@ namespace System.Management.Automation
             foreach (ExecutionCmdletHelper helper in helpers)
             {
                 PSRemotingChildJob job = new PSRemotingChildJob(helper, _throttleManager, aggregateResults);
-                job.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
-                job.JobUnblocked += new EventHandler(HandleJobUnblocked);
+                job.StateChanged += HandleChildJobStateChanged;
+                job.JobUnblocked += HandleJobUnblocked;
 
                 ChildJobs.Add(job);
             }
@@ -2462,7 +2463,7 @@ namespace System.Management.Automation
                 {
                     SetJobState(JobState.Failed);
                 }
-                else if (_stopIsCalled == true)
+                else if (_stopIsCalled)
                 {
                     SetJobState(JobState.Stopped);
                 }
@@ -2684,7 +2685,7 @@ namespace System.Management.Automation
         internal DisconnectedJobOperation(Pipeline pipeline)
         {
             this.pipeline = pipeline;
-            this.pipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+            this.pipeline.StateChanged += HandlePipelineStateChanged;
         }
 
         internal override void StartOperation()
@@ -2813,15 +2814,15 @@ namespace System.Management.Automation
             }
             else
             {
-                _remotePipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
-                _remotePipeline.Output.DataReady += new EventHandler(HandleOutputReady);
-                _remotePipeline.Error.DataReady += new EventHandler(HandleErrorReady);
+                _remotePipeline.StateChanged += HandlePipelineStateChanged;
+                _remotePipeline.Output.DataReady += HandleOutputReady;
+                _remotePipeline.Error.DataReady += HandleErrorReady;
             }
 
             Runspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
 
             IThrottleOperation operation = helper as IThrottleOperation;
-            operation.OperationComplete += new EventHandler<OperationStateEventArgs>(HandleOperationComplete);
+            operation.OperationComplete += HandleOperationComplete;
 
             SetJobState(JobState.Disconnected, null);
         }
@@ -3240,12 +3241,12 @@ namespace System.Management.Automation
         /// </summary>
         protected virtual void DoFinish()
         {
-            if (_doFinishCalled == true)
+            if (_doFinishCalled)
                 return;
 
             lock (SyncObject)
             {
-                if (_doFinishCalled == true)
+                if (_doFinishCalled)
                     return;
 
                 _doFinishCalled = true;
@@ -3493,7 +3494,7 @@ namespace System.Management.Automation
             StopAggregateResultsFromHelper(Helper);
             Runspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
             IThrottleOperation operation = Helper as IThrottleOperation;
-            operation.OperationComplete -= new EventHandler<OperationStateEventArgs>(HandleOperationComplete);
+            operation.OperationComplete -= HandleOperationComplete;
             UnregisterThrottleComplete(_throttleManager);
             _throttleManager = null;
         }
@@ -3508,31 +3509,26 @@ namespace System.Management.Automation
         {
             // Get the pipeline associated with this helper and register for appropriate events
             Pipeline pipeline = helper.Pipeline;
-            pipeline.Output.DataReady += new EventHandler(HandleOutputReady);
-            pipeline.Error.DataReady += new EventHandler(HandleErrorReady);
-            pipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+            pipeline.Output.DataReady += HandleOutputReady;
+            pipeline.Error.DataReady += HandleErrorReady;
+            pipeline.StateChanged += HandlePipelineStateChanged;
 
             // Register handler for method executor object stream.
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
-            remotePipeline.MethodExecutorStream.DataReady += new EventHandler(HandleHostCalls);
-            remotePipeline.PowerShell.Streams.Progress.DataAdded +=
-                new EventHandler<DataAddedEventArgs>(HandleProgressAdded);
-            remotePipeline.PowerShell.Streams.Warning.DataAdded +=
-                new EventHandler<DataAddedEventArgs>(HandleWarningAdded);
-            remotePipeline.PowerShell.Streams.Verbose.DataAdded +=
-                new EventHandler<DataAddedEventArgs>(HandleVerboseAdded);
-            remotePipeline.PowerShell.Streams.Debug.DataAdded +=
-                new EventHandler<DataAddedEventArgs>(HandleDebugAdded);
-            remotePipeline.PowerShell.Streams.Information.DataAdded +=
-                new EventHandler<DataAddedEventArgs>(HandleInformationAdded);
+            remotePipeline.MethodExecutorStream.DataReady += HandleHostCalls;
+            remotePipeline.PowerShell.Streams.Progress.DataAdded += HandleProgressAdded;
+            remotePipeline.PowerShell.Streams.Warning.DataAdded += HandleWarningAdded;
+            remotePipeline.PowerShell.Streams.Verbose.DataAdded += HandleVerboseAdded;
+            remotePipeline.PowerShell.Streams.Debug.DataAdded += HandleDebugAdded;
+            remotePipeline.PowerShell.Streams.Information.DataAdded += HandleInformationAdded;
 
             // Enable method executor stream so that host methods are queued up
             // on it instead of being executed asynchronously when they arrive.
             remotePipeline.IsMethodExecutorStreamEnabled = true;
 
             IThrottleOperation operation = helper as IThrottleOperation;
-            operation.OperationComplete += new EventHandler<OperationStateEventArgs>(HandleOperationComplete);
+            operation.OperationComplete += HandleOperationComplete;
         }
 
         /// <summary>
@@ -3685,19 +3681,14 @@ namespace System.Management.Automation
             // Remove old data aggregation and host calls.
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
-            remotePipeline.MethodExecutorStream.DataReady -= new EventHandler(HandleHostCalls);
+            remotePipeline.MethodExecutorStream.DataReady -= HandleHostCalls;
             if (remotePipeline.PowerShell != null)
             {
-                remotePipeline.PowerShell.Streams.Progress.DataAdded -=
-                    new EventHandler<DataAddedEventArgs>(HandleProgressAdded);
-                remotePipeline.PowerShell.Streams.Warning.DataAdded -=
-                    new EventHandler<DataAddedEventArgs>(HandleWarningAdded);
-                remotePipeline.PowerShell.Streams.Verbose.DataAdded -=
-                    new EventHandler<DataAddedEventArgs>(HandleVerboseAdded);
-                remotePipeline.PowerShell.Streams.Debug.DataAdded -=
-                    new EventHandler<DataAddedEventArgs>(HandleDebugAdded);
-                remotePipeline.PowerShell.Streams.Information.DataAdded -=
-                    new EventHandler<DataAddedEventArgs>(HandleInformationAdded);
+                remotePipeline.PowerShell.Streams.Progress.DataAdded -= HandleProgressAdded;
+                remotePipeline.PowerShell.Streams.Warning.DataAdded -= HandleWarningAdded;
+                remotePipeline.PowerShell.Streams.Verbose.DataAdded -= HandleVerboseAdded;
+                remotePipeline.PowerShell.Streams.Debug.DataAdded -= HandleDebugAdded;
+                remotePipeline.PowerShell.Streams.Information.DataAdded -= HandleInformationAdded;
                 remotePipeline.IsMethodExecutorStreamEnabled = false;
             }
         }
@@ -3709,7 +3700,7 @@ namespace System.Management.Automation
         /// <param name="throttleManager"></param>
         protected void RegisterThrottleComplete(ThrottleManager throttleManager)
         {
-            throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleComplete);
+            throttleManager.ThrottleComplete += HandleThrottleComplete;
         }
 
         /// <summary>
@@ -3719,7 +3710,7 @@ namespace System.Management.Automation
         /// <param name="throttleManager"></param>
         protected void UnregisterThrottleComplete(ThrottleManager throttleManager)
         {
-            throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+            throttleManager.ThrottleComplete -= HandleThrottleComplete;
         }
 
         /// <summary>
@@ -3882,12 +3873,12 @@ namespace System.Management.Automation
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             _wrappedDebugger = debugger;
@@ -4125,7 +4116,7 @@ namespace System.Management.Automation
         private Pipeline DrainAndBlockRemoteOutput()
         {
             // We only do this for remote runspaces.
-            if (!(_runspace is RemoteRunspace)) { return null; }
+            if (_runspace is not RemoteRunspace) { return null; }
 
             Pipeline runningCmd = _runspace.GetCurrentlyRunningPipeline();
             if (runningCmd != null)
@@ -4386,12 +4377,12 @@ namespace System.Management.Automation
         /// </summary>
         protected override void DoFinish()
         {
-            if (_doFinishCalled == true)
+            if (_doFinishCalled)
                 return;
 
             lock (SyncObject)
             {
-                if (_doFinishCalled == true)
+                if (_doFinishCalled)
                     return;
 
                 _doFinishCalled = true;

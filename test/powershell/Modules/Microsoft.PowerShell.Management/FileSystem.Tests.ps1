@@ -131,10 +131,34 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             "$destDir/$testDir/$testFile" | Should -Exist
         }
 
+        It "Verify Move-Item across devices for directory" {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $true)
+            try
+            {
+                $dir = (New-Item -Path TestDrive:/dir -ItemType Directory -ErrorAction Stop).FullName
+                $file = (New-Item -Path "$dir/file.txt" -Value "HELLO" -ErrorAction Stop).Name
+                $destination = "$TestDrive/destination"
+
+                Move-Item -Path $dir -Destination $destination -ErrorAction Stop
+
+                $dir | Should -Not -Exist
+                $destination | Should -Exist
+                "$destination/$file" | Should -Exist
+            }
+            finally
+            {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $false)
+            }
+        }
+
         It "Verify Move-Item will not move to an existing file" {
             { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
             $error[0].Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
+        }
+
+        It "Verify Move-Item throws correct error for non-existent source" {
+            { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
 
         It "Verify Move-Item as substitute for Rename-Item" {
@@ -703,8 +727,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link = Join-Path $TestDrive "sym-to-folder"
             New-Item -ItemType Directory -Path $folder > $null
             New-Item -ItemType File -Path $file -Value "some content" > $null
-            New-Item -ItemType SymbolicLink -Path $link -value $folder > $null
-            $childA = Get-Childitem $folder
+            New-Item -ItemType SymbolicLink -Path $link -Value $folder > $null
+            $childA = Get-ChildItem $folder
             Remove-Item -Path $link -Recurse
             $childB = Get-ChildItem $folder
             $childB.Count | Should -Be 1
@@ -983,7 +1007,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         It "Verify Filter" {
-            $result = Get-Item -Path "TestDrive:\*" -filter "*2.txt"
+            $result = Get-Item -Path "TestDrive:\*" -Filter "*2.txt"
             $result.Name | Should -BeExactly $testFile2
         }
 
@@ -1085,7 +1109,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         It "Verify Include and Exclude Intersection" {
-            Remove-Item "TestDrive:\*" -Include "*.txt" -exclude "*2*"
+            Remove-Item "TestDrive:\*" -Include "*.txt" -Exclude "*2*"
             $file1 = Get-Item $testFile -ErrorAction SilentlyContinue
             $file2 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file1 | Should -BeNullOrEmpty

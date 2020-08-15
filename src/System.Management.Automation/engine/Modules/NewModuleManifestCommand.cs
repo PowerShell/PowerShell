@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (name == null)
                 return "''";
-            return ("'" + name.ToString().Replace("'", "''") + "'");
+            return ("'" + name.Replace("'", "''") + "'");
         }
 
         /// <summary>
@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (object spec in moduleSpecs)
                 {
-                    if (!(spec is Hashtable))
+                    if (spec is not Hashtable)
                     {
                         yield return spec.ToString();
                     }
@@ -965,7 +965,7 @@ namespace Microsoft.PowerShell.Commands
                 ValidateUriParameterValue(new Uri(_helpInfoUri), "HelpInfoUri");
             }
 
-            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
+            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Length))
             {
                 string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);

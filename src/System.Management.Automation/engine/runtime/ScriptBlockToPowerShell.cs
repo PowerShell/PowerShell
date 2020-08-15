@@ -643,7 +643,9 @@ namespace System.Management.Automation
                     {
                         var constantExprAst = ast as ConstantExpressionAst;
                         object argument;
-                        if (constantExprAst != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType)))
+                        if (constantExprAst != null
+                            && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType))
+                            || constantExprAst.StaticType == typeof(System.Numerics.BigInteger)))
                         {
                             var commandArgumentText = constantExprAst.Extent.Text;
                             argument = constantExprAst.Value;
@@ -746,7 +748,7 @@ namespace System.Management.Automation
             foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst))
             {
                 CommandParameter publicParameter = CommandParameter.FromCommandParameterInternal(splattedParameter);
-                _powershell.AddParameter(publicParameter.Name, publicParameter.Value);
+                _powershell.AddParameter(publicParameter);
             }
         }
 

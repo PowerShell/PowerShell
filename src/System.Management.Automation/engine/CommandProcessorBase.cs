@@ -35,7 +35,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
             if (commandInfo is IScriptCommandInfo scriptCommand)
@@ -156,6 +156,7 @@ namespace System.Management.Automation
         /// The command runtime used for this instance of a command processor.
         /// </summary>
         protected MshCommandRuntime commandRuntime;
+
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
@@ -230,6 +231,7 @@ namespace System.Management.Automation
         /// The execution context used by the system.
         /// </summary>
         protected ExecutionContext _context;
+
         internal ExecutionContext Context
         {
             get { return _context; }
@@ -278,12 +280,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (string.IsNullOrEmpty(helpTarget))
             {
-                throw PSTraceSource.NewArgumentNullException("helpTarget");
+                throw PSTraceSource.NewArgumentNullException(nameof(helpTarget));
             }
 
             CommandProcessorBase helpCommandProcessor = context.CreateCommand("get-help", false);

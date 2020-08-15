@@ -59,6 +59,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract string ReadLine();
+
         /// <summary>
         /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
         /// collected (or is echoed in some obfuscated way, such as showing a dot for each character).
@@ -391,12 +392,16 @@ namespace System.Management.Automation.Host
         /// make it to the actual host.
         /// </summary>
         internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
+
         private int _transcribeOnlyCount = 0;
+
         internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
+
         private sealed class TranscribeOnlyCookie : IDisposable
         {
             private PSHostUserInterface _ui;
             private bool _disposed = false;
+
             public TranscribeOnlyCookie(PSHostUserInterface ui)
             {
                 _ui = ui;
@@ -950,6 +955,7 @@ namespace System.Management.Automation.Host
 
         internal static TranscriptionOption systemTranscript = null;
         private static object s_systemTranscriptLock = new object();
+
         private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
@@ -1259,7 +1265,7 @@ namespace System.Management.Automation.Host
                 #endregion SplitLabel
 
                 // ? is not localizable
-                if (string.Compare(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal) == 0)
+                if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
                         string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
@@ -1291,7 +1297,7 @@ namespace System.Management.Automation.Host
             for (int i = 0; i < choices.Count; ++i)
             {
                 // pick the one that matches either the hot key or the full label
-                if (string.Compare(response, hotkeysAndPlainLabels[1, i], StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Equals(response, hotkeysAndPlainLabels[1, i], StringComparison.CurrentCultureIgnoreCase))
                 {
                     result = i;
                     break;
@@ -1306,7 +1312,7 @@ namespace System.Management.Automation.Host
                     // Ignore labels with empty hotkeys
                     if (hotkeysAndPlainLabels[0, i].Length > 0)
                     {
-                        if (string.Compare(response, hotkeysAndPlainLabels[0, i], StringComparison.CurrentCultureIgnoreCase) == 0)
+                        if (string.Equals(response, hotkeysAndPlainLabels[0, i], StringComparison.CurrentCultureIgnoreCase))
                         {
                             result = i;
                             break;

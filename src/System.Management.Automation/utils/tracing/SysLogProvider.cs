@@ -123,19 +123,19 @@ namespace System.Management.Automation.Tracing
         /// property to ensure correct thread initialization; otherwise, a null reference can occur.
         /// </remarks>
         [ThreadStatic]
-        private static StringBuilder _messageBuilder;
+        private static StringBuilder t_messageBuilder;
 
         private static StringBuilder MessageBuilder
         {
             get
             {
-                if (_messageBuilder == null)
+                if (t_messageBuilder == null)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    _messageBuilder = new StringBuilder(200);
+                    t_messageBuilder = new StringBuilder(200);
                 }
 
-                return _messageBuilder;
+                return t_messageBuilder;
             }
         }
 
@@ -147,24 +147,24 @@ namespace System.Management.Automation.Tracing
         /// to ensure correct thread initialization.
         /// </remarks>
         [ThreadStatic]
-        static Guid? _activity;
+        static Guid? t_activity;
 
         private static Guid Activity
         {
             get
             {
-                if (_activity.HasValue == false)
+                if (t_activity.HasValue == false)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    _activity = Guid.NewGuid();
+                    t_activity = Guid.NewGuid();
                 }
 
-                return _activity.Value;
+                return t_activity.Value;
             }
 
             set
             {
-                _activity = value;
+                t_activity = value;
             }
         }
 
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (object.ReferenceEquals(_resourceManager, null))
+                if (_resourceManager is null)
                 {
                     _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
                 }

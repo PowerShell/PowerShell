@@ -10,14 +10,20 @@ param (
     [string] $location = $env:BUILD_REPOSITORY_LOCALPATH,
 
     # Destination location of the package on docker host
+    [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
     [string] $destination = '/mnt',
 
+    [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
+    [Parameter(ParameterSetName = 'packageSigned')]
+    [Parameter(ParameterSetName = 'IncludeSymbols')]
     [Parameter(ParameterSetName = 'Build')]
     [ValidateSet("zip", "tar")]
     [string[]]$ExtraPackage,
@@ -25,13 +31,23 @@ param (
     [Parameter(Mandatory, ParameterSetName = 'Bootstrap')]
     [switch] $BootStrap,
 
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
-    [switch] $Build
+    [switch] $Build,
+
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
+    [switch] $Symbols,
+
+    [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
+    [ValidatePattern("-signed.zip$")]
+    [string]$BuildZip,
+
+    [string]$ArtifactName = 'result'
 )
 
 $repoRoot = $location
 
-if ($Build.IsPresent) {
+if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
     $releaseTagParam = @{ }
     if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
@@ -59,8 +75,11 @@ try {
         Start-PSBootstrap -Package
     }
 
-    if ($Build.IsPresent) {
-        Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
+    if ($PSCmdlet.ParameterSetName -eq 'packageSigned') {
+        Write-Verbose "Expanding signed build $BuildZip ..." -Verbose
+        Expand-PSSignedBuild -BuildZip $BuildZip
+
+        Remove-Item -Path $BuildZip
 
         Start-PSPackage @releaseTagParam
         switch ($ExtraPackage) {
@@ -74,19 +93,42 @@ try {
             }
         }
     }
+
+    if ($Build.IsPresent) {
+        if ($Symbols.IsPresent) {
+            Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
+            $pspackageParams = @{}
+            $pspackageParams['Type']='zip'
+            $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+            Write-Verbose "Starting powershell packaging(zip)..." -Verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        } else {
+            Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
+            Start-PSPackage @releaseTagParam
+            switch ($ExtraPackage) {
+                "tar" { Start-PSPackage -Type tar @releaseTagParam }
+            }
+
+            if ($LTS) {
+                Start-PSPackage @releaseTagParam -LTS
+                switch ($ExtraPackage) {
+                    "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                }
+            }
+        }
+    }
 } finally {
     Pop-Location
 }
 
-if ($Build.IsPresent) {
-    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz
+if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz, *.zip
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName
-        $name = split-path -Leaf -Path $filePath
         $extension = (Split-Path -Extension -Path $filePath).Replace('.', '')
         Write-Verbose "Copying $filePath to $destination" -Verbose
-        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$filePath"
+        Write-Host "##vso[artifact.upload containerfolder=$ArtifactName;artifactname=$ArtifactName]$filePath"
         Write-Host "##vso[task.setvariable variable=Package-$extension]$filePath"
-        Copy-Item -Path $filePath -Destination $destination -force
+        Copy-Item -Path $filePath -Destination $destination -Force
     }
 }
