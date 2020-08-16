@@ -23,7 +23,7 @@ namespace PSTests.Sequential
         private static void VerifySubsystemMetadata(SubsystemInfo ssInfo)
         {
             Assert.Equal(SubsystemKind.CommandPredictor, ssInfo.Kind);
-            Assert.Equal(typeof(IPredictor), ssInfo.SubsystemType);
+            Assert.Equal(typeof(ICommandPredictor), ssInfo.SubsystemType);
             Assert.True(ssInfo.AllowUnregistration);
             Assert.True(ssInfo.AllowMultipleRegistration);
             Assert.Empty(ssInfo.RequiredCmdlets);
@@ -33,7 +33,7 @@ namespace PSTests.Sequential
         [Fact]
         public static void GetSubsystemInfo()
         {
-            SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(IPredictor));
+            SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(ICommandPredictor));
 
             VerifySubsystemMetadata(ssInfo);
             Assert.False(ssInfo.IsRegistered);
@@ -46,9 +46,9 @@ namespace PSTests.Sequential
             Assert.Single(ssInfos);
             Assert.Same(ssInfos[0], ssInfo);
 
-            IPredictor impl = SubsystemManager.GetSubsystem<IPredictor>();
+            ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
             Assert.Null(impl);
-            ReadOnlyCollection<IPredictor> impls = SubsystemManager.GetSubsystems<IPredictor>();
+            ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
             Assert.Empty(impls);
         }
 
@@ -59,7 +59,7 @@ namespace PSTests.Sequential
             {
                 Assert.Throws<ArgumentNullException>(
                     paramName: "proxy",
-                    () => SubsystemManager.RegisterSubsystem<IPredictor, MyPredictor>(null));
+                    () => SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(null));
                 Assert.Throws<ArgumentNullException>(
                     paramName: "proxy",
                     () => SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, null));
@@ -68,10 +68,10 @@ namespace PSTests.Sequential
                     () => SubsystemManager.RegisterSubsystem((SubsystemKind)0, predictor1));
 
                 // Register 'predictor1'
-                SubsystemManager.RegisterSubsystem<IPredictor, MyPredictor>(predictor1);
+                SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(predictor1);
 
-                // Now validate the SubsystemInfo of the 'IPredictor' subsystem
-                SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(IPredictor));
+                // Now validate the SubsystemInfo of the 'ICommandPredictor' subsystem
+                SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(ICommandPredictor));
                 VerifySubsystemMetadata(ssInfo);
                 Assert.True(ssInfo.IsRegistered);
                 Assert.Single(ssInfo.Implementations);
@@ -90,7 +90,7 @@ namespace PSTests.Sequential
                 Assert.Same(ssInfos[0], ssInfo);
 
                 // Now validate the subsystem implementation itself.
-                IPredictor impl = SubsystemManager.GetSubsystem<IPredictor>();
+                ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
                 Assert.Same(impl, predictor1);
                 Assert.Null(impl.FunctionsToDefine);
                 Assert.Equal(SubsystemKind.CommandPredictor, impl.Kind);
@@ -101,14 +101,14 @@ namespace PSTests.Sequential
                 Assert.Equal($"Hello world TeSt-2 from {impl.Name}", results[1].SuggestionText);
 
                 // Now validate the all-subsystem-implementation collection.
-                ReadOnlyCollection<IPredictor> impls = SubsystemManager.GetSubsystems<IPredictor>();
+                ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
                 Assert.Single(impls);
                 Assert.Same(predictor1, impls[0]);
 
                 // Register 'predictor2'
                 SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, predictor2);
 
-                // Now validate the SubsystemInfo of the 'IPredictor' subsystem
+                // Now validate the SubsystemInfo of the 'ICommandPredictor' subsystem
                 VerifySubsystemMetadata(ssInfo);
                 Assert.True(ssInfo.IsRegistered);
                 Assert.Equal(2, ssInfo.Implementations.Count);
@@ -122,18 +122,18 @@ namespace PSTests.Sequential
                 Assert.Same(typeof(MyPredictor), implInfo.ImplementationType);
 
                 // Now validate the new subsystem implementation.
-                impl = SubsystemManager.GetSubsystem<IPredictor>();
+                impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
                 Assert.Same(impl, predictor2);
 
                 // Now validate the all-subsystem-implementation collection.
-                impls = SubsystemManager.GetSubsystems<IPredictor>();
+                impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
                 Assert.Equal(2, impls.Count);
                 Assert.Same(predictor1, impls[0]);
                 Assert.Same(predictor2, impls[1]);
             }
             finally
             {
-                SubsystemManager.UnregisterSubsystem<IPredictor>(predictor1.Id);
+                SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id);
                 SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, predictor2.Id);
             }
         }
@@ -142,16 +142,16 @@ namespace PSTests.Sequential
         public static void UnregisterSubsystem()
         {
             // Exception expected when no implementation is registered
-            Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<IPredictor>(predictor1.Id));
+            Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id));
 
-            SubsystemManager.RegisterSubsystem<IPredictor, MyPredictor>(predictor1);
+            SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(predictor1);
             SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, predictor2);
 
             // Exception is expected when specified id cannot be found
-            Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<IPredictor>(Guid.NewGuid()));
+            Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<ICommandPredictor>(Guid.NewGuid()));
 
             // Unregister 'predictor1'
-            SubsystemManager.UnregisterSubsystem<IPredictor>(predictor1.Id);
+            SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id);
 
             SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
             VerifySubsystemMetadata(ssInfo);
@@ -165,10 +165,10 @@ namespace PSTests.Sequential
             Assert.Equal(SubsystemKind.CommandPredictor, implInfo.Kind);
             Assert.Same(typeof(MyPredictor), implInfo.ImplementationType);
 
-            IPredictor impl = SubsystemManager.GetSubsystem<IPredictor>();
+            ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
             Assert.Same(impl, predictor2);
 
-            ReadOnlyCollection<IPredictor> impls = SubsystemManager.GetSubsystems<IPredictor>();
+            ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
             Assert.Single(impls);
             Assert.Same(predictor2, impls[0]);
 
@@ -179,10 +179,10 @@ namespace PSTests.Sequential
             Assert.False(ssInfo.IsRegistered);
             Assert.Empty(ssInfo.Implementations);
 
-            impl = SubsystemManager.GetSubsystem<IPredictor>();
+            impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
             Assert.Null(impl);
 
-            impls = SubsystemManager.GetSubsystems<IPredictor>();
+            impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
             Assert.Empty(impls);
         }
     }

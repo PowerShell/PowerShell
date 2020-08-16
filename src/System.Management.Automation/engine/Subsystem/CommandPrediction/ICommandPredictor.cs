@@ -14,7 +14,7 @@ namespace System.Management.Automation.Subsystem
     /// <summary>
     /// Interface for implementing a predictor plugin.
     /// </summary>
-    public interface IPredictor : ISubsystem
+    public interface ICommandPredictor : ISubsystem
     {
         /// <summary>
         /// Default implementation. No function is required for a predictor.

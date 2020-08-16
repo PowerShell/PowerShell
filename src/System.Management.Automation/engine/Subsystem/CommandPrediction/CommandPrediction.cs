@@ -67,7 +67,7 @@ namespace System.Management.Automation.Subsystem
         {
             Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
 
-            var predictors = SubsystemManager.GetSubsystems<IPredictor>();
+            var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
             {
                 return null;
@@ -79,11 +79,11 @@ namespace System.Management.Automation.Subsystem
 
             for (int i = 0; i < predictors.Count; i++)
             {
-                IPredictor predictor = predictors[i];
+                ICommandPredictor predictor = predictors[i];
 
                 tasks[i] = Task.Factory.StartNew(
                     state => {
-                        var predictor = (IPredictor)state!;
+                        var predictor = (ICommandPredictor)state!;
                         List<PredictiveSuggestion>? texts = predictor.GetSuggestion(context, cancellationSource.Token);
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;
                     },
@@ -122,17 +122,17 @@ namespace System.Management.Automation.Subsystem
         {
             Requires.NotNull(history, nameof(history));
 
-            var predictors = SubsystemManager.GetSubsystems<IPredictor>();
+            var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
             {
                 return;
             }
 
-            foreach (IPredictor predictor in predictors)
+            foreach (ICommandPredictor predictor in predictors)
             {
                 if (predictor.SupportEarlyProcessing)
                 {
-                    ThreadPool.QueueUserWorkItem<IPredictor>(
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(
                         state => state.StartEarlyProcessing(history),
                         predictor,
                         preferLocal: false);
@@ -149,17 +149,17 @@ namespace System.Management.Automation.Subsystem
         {
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
 
-            var predictors = SubsystemManager.GetSubsystems<IPredictor>();
+            var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
             {
                 return;
             }
 
-            foreach (IPredictor predictor in predictors)
+            foreach (ICommandPredictor predictor in predictors)
             {
                 if (predictor.AcceptFeedback && predictor.Id == predictorId)
                 {
-                    ThreadPool.QueueUserWorkItem<IPredictor>(
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(
                         state => state.OnSuggestionAccepted(suggestionText),
                         predictor,
                         preferLocal: false);

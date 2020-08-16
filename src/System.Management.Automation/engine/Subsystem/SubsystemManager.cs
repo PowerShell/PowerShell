@@ -24,7 +24,10 @@ namespace System.Management.Automation.Subsystem
         {
             var subsystems = new SubsystemInfo[]
             {
-                SubsystemInfo.Create<IPredictor>(SubsystemKind.CommandPredictor, allowUnregistration: true, allowMultipleRegistration: true),
+                SubsystemInfo.Create<ICommandPredictor>(
+                    SubsystemKind.CommandPredictor,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: true),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);

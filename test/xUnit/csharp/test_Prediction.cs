@@ -10,7 +10,7 @@ using Xunit;
 
 namespace PSTests.Sequential
 {
-    public class MyPredictor : IPredictor
+    public class MyPredictor : ICommandPredictor
     {
         private readonly Guid _id;
         private readonly string _name, _description;
@@ -56,9 +56,9 @@ namespace PSTests.Sequential
 
         public string Description => _description;
 
-        bool IPredictor.SupportEarlyProcessing => true;
+        bool ICommandPredictor.SupportEarlyProcessing => true;
 
-        bool IPredictor.AcceptFeedback => true;
+        bool ICommandPredictor.AcceptFeedback => true;
 
         public void StartEarlyProcessing(IReadOnlyList<string> history)
         {
@@ -104,7 +104,7 @@ namespace PSTests.Sequential
             try
             {
                 // Register 2 predictor implementations
-                SubsystemManager.RegisterSubsystem<IPredictor, MyPredictor>(slow);
+                SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(slow);
                 SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, fast);
 
                 // Expect the results from 'fast' predictor only b/c the 'slow' one
@@ -140,7 +140,7 @@ namespace PSTests.Sequential
             }
             finally
             {
-                SubsystemManager.UnregisterSubsystem<IPredictor>(slow.Id);
+                SubsystemManager.UnregisterSubsystem<ICommandPredictor>(slow.Id);
                 SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, fast.Id);
             }
         }
@@ -154,7 +154,7 @@ namespace PSTests.Sequential
             try
             {
                 // Register 2 predictor implementations
-                SubsystemManager.RegisterSubsystem<IPredictor, MyPredictor>(slow);
+                SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(slow);
                 SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, fast);
 
                 var history = new[] { "hello", "world" };
@@ -182,7 +182,7 @@ namespace PSTests.Sequential
             }
             finally
             {
-                SubsystemManager.UnregisterSubsystem<IPredictor>(slow.Id);
+                SubsystemManager.UnregisterSubsystem<ICommandPredictor>(slow.Id);
                 SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, fast.Id);
             }
         }
