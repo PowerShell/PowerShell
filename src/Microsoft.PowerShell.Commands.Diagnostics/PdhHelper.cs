@@ -542,21 +542,29 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return ConnectToDataSource(blgFileNames[0]);
             }
 
-            int capacity = blgFileNames.Count + 1;
+            int length = blgFileNames.Count + 1;
             for (int i = 0; i < blgFileNames.Count; i++)
             {
-                capacity += blgFileNames[i].Length;
+                length += blgFileNames[i].Length;
             }
 
-            StringBuilder doubleNullTerminated = new StringBuilder(capacity);
+            Span<char> doubleNullTerminated = new char[length];
 
+            int pos = 0;
             for (int i = 0; i < blgFileNames.Count; i++)
             {
-                string fileName = blgFileNames[i];
-                doubleNullTerminated.Append(fileName).Append('\0');
+                ReadOnlySpan<char> fileName = blgFileNames[i];
+                fileName.CopyTo(
+                    doubleNullTerminated.Slice(pos, fileName.Length));
+                pos += fileName.Length;
+                doubleNullTerminated[pos] = '\0';
+                pos++;
             }
 
-            doubleNullTerminated.Append('\0');
+            doubleNullTerminated[pos] = '\0';
+            pos++;
+
+            Debug.Assert(pos == length, "Error constructing double null terminated string.");
 
             return ConnectToDataSource(doubleNullTerminated.ToString());
         }
