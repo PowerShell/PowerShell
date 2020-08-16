@@ -542,7 +542,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return ConnectToDataSource(blgFileNames[0]);
             }
 
-            StringBuilder doubleNullTerminated = new StringBuilder();
+            int capacity = blgFileNames.Count + 1;
+            for (int i = 0; i < blgFileNames.Count; i++)
+            {
+                capacity += blgFileNames[i].Length;
+            }
+
+            StringBuilder doubleNullTerminated = new StringBuilder(capacity);
+
             for (int i = 0; i < blgFileNames.Count; i++)
             {
                 string fileName = blgFileNames[i];
