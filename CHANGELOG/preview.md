@@ -1,5 +1,146 @@
 # Current preview release
 
+## [7.1.0-preview.6] - 2020-08-17
+
+### Breaking Changes
+
+- Rename `-FromUnixTime` to `-UnixTimeSeconds` on `Get-Date` to allow Unix time input (#13084) (Thanks @aetos382!)
+- Make `$ErrorActionPreference` not affect `stderr` output of native commands (#13361)
+- Allow explicitly specified named parameter to supersede the same one from hashtable splatting (#13162)
+
+### Engine Updates and Fixes
+
+- Refactor command line parser to do early parsing (#11482) (Thanks @iSazonov!)
+- Add support for some .NET intrinsic type converters (#12580) (Thanks @iSazonov!)
+- Refresh and enable the `ComInterop` code in PowerShell (#13304)
+
+### Experimental Features
+
+- Add `-Runspace` parameter to all `*-PSBreakpoint` cmdlets (#10492) (Thanks @KirkMunro!)
+
+### General Cmdlet Updates and Fixes
+
+- Fix error message from new symbolic link missing target (#13085) (Thanks @yecril71pl!)
+- Make the parameter `args` non-nullable in the public `ConsoleHost` APIs (#13429)
+- Add missing dispose for `CancellationTokenSource` (#13420) (Thanks @Youssef1313!)
+- Add the parameter `-Paged` to `Get-Help` to support paging (#13374)
+- Fix `Get-Help` not properly displaying if parameter supports wildcards (#13353) (Thanks @ThomasNieto!)
+- Update `pwsh` help for `-InputFormat` parameter (#13355) (Thanks @sethvs!)
+- Declare MIT license for files copied from Roslyn (#13305) (Thanks @xtqqczze!)
+- Improve `BigInteger` casting behaviors (#12629) (Thanks @vexx32!)
+- Fix `Get-Acl -LiteralPath "HKLM:Software\Classes\*"` behavior (#13107) (Thanks @Shriram0908!)
+- Add `DefaultVisit` method to the visitor interface and class (#13258)
+- Fix conflicting shorthand switch `-s` (STA) for `pwsh` (#13262) (Thanks @iSazonov!)
+- Change `Read-Host -MaskInput` to use existing `SecureString` path, but return as plain text (#13256)
+- Remove `ComEnumerator` as COM objects using `IEnumerator` is now supported in .NET 5.0 (#13259)
+- Use temporary personal path at Runspace startup when the 'HOME' environment variable is not defined (#13239)
+- Fix `Invoke-Command` to detect recursive call of the same history entry (#13197)
+- Change `pwsh` executable `-inputformat` switch prefix `-in` to `-inp` to fix conflict with `-interactive` (#13205) (Thanks @iSazonov!)
+- Handle WSL filesystem path when analyze security zone of a file (#13120)
+- Make other switches mandatory in `Split-Path` (#13150) (Thanks @kvprasoon!)
+- New Fluent Design icon for PowerShell 7 (#13100) (Thanks @sarthakmalik!)
+- Fix `Move-Item` to support cross-mount moves on Unix (#13044)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @yecril71pl, @ThomasNieto, @dgoldman-msft</p>
+
+</summary>
+
+<ul>
+<li>Use null check with pattern-matching instead of <code>object.ReferenceEquals</code> (#13065) (Thanks @xtqqczze!)</li>
+<li>Fix comparison of value type object to null (#13285) (Thanks @xtqqczze!)</li>
+<li>Use <code>is</code> operator instead of <code>as</code> operator (#13287) (Thanks @xtqqczze!)</li>
+<li>Change <code>SwitchParameter</code> fields to properties (#13291) (Thanks @xtqqczze!)</li>
+<li>Change &quot;operable&quot; to &quot;executable&quot; (#13281) (Thanks @yecril71pl!)</li>
+<li>Remove <code>AssemblyInfo</code> property from list views (#13331) (Thanks @ThomasNieto!)</li>
+<li>Use <code>is not</code> syntax where appropriate and remove unnecessary parentheses (#13323) (Thanks @xtqqczze!)</li>
+<li>Remove unreachable code in CustomShellCommands.cs (#13316) (Thanks @xtqqczze!)</li>
+<li>Add copyright header to <code>.editorconfig</code> and update files (#13306) (Thanks @xtqqczze!)</li>
+<li>Fix typo in Out-File.cs and Out-Printer.cs (#13298) (Thanks @dgoldman-msft!)</li>
+<li>Fix <code>SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation</code> (#13249) (Thanks @xtqqczze!)</li>
+<li>Remove usage of do statement to create an infinite loop (#13137) (Thanks @xtqqczze!)</li>
+<li>Use <code>int</code> instead of <code>uint</code> in places where it's more appropriate (#13141) (Thanks @xtqqczze!)</li>
+<li>Use <code>int</code> instead of <code>long</code> to avoid <code>Interlocked.Read</code> (#13069) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Fix `dotnet` install errors (#13387)
+- Increase the timeout of Windows daily build to 90 minutes (#13354)
+- Update the `dependabot` configuration to version 2 (#13230) (Thanks @RDIL!)
+- Fix `Test-XUnitTestResults` function (#13270) (Thanks @iSazonov!)
+- Update `.devcontainer` to use nightly docker SDK images (#13128)
+
+### Tests
+
+- Mark `Test-Connection -TraceRoute` tests as pending (#13310)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @iSazonov, @77, @WorrenB</p>
+
+</summary>
+
+<ul>
+<li>Update <code>README.md</code> and <code>metadata.json</code> for next release (#13059)</li>
+<li>Create release pipeline as a yaml pipeline (#13394)</li>
+<li>Update infrastructure to consume private builds from .NET (#13427)</li>
+<li>Fix breaks in packages daily build due to macOS signing changes (#13421)</li>
+<li>Sign individual files for macOS PKG (#13392)</li>
+<li>Disable code sign validation on jobs that do not sign (#13389)</li>
+<li>Bump <code>PSReadLine</code> from 2.0.2 to 2.0.4 (#13240)</li>
+<li>Update build documentation for Visual Studio 2019 dependency (#13336) (Thanks @xtqqczze!)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from 3.6.0 to 3.7.0 (#13360)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 16.6.1 to 16.7.0 (#13364)</li>
+<li>Bump <code>xunit.runner.visualstudio</code> from 2.4.2 to 2.4.3 (#13343)</li>
+<li>Use Authenticode certificate for MSIX signing (#13330)</li>
+<li>Add default help content to the assets folder (#13257)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.7.20366.2</code> to <code>5.0.100-preview.7.20366.15</code> (#13200)</li>
+<li>Set C# language version to preview/9.0 (#13090) (Thanks @iSazonov!)</li>
+<li>Use <code>pwsh</code> for build and test of package in CI build (#13223)</li>
+<li>Remove <code>rcedit</code> dependency, move daily ico dependency to props file (#13123)</li>
+<li>Bump NJsonSchema from 10.1.23 to 10.1.24 (#13214)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.7.20364.3</code> to <code>5.0.100-preview.7.20366.2</code> (#13192)</li>
+<li>Add support for installing arm64 MSIX package. (#13043) (Thanks @77!)</li>
+<li>Fix Azure file copy issues in release build (#13182)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.7.20358.6</code> to <code>5.0.100-preview.7.20364.3</code> (#13155)</li>
+<li>Fix Azure file copy break in Azure DevOps (#13173)</li>
+<li>Bump <code>Xunit.SkippableFact</code> from <code>1.4.8</code> to <code>1.4.13</code> (#13143)</li>
+<li>Add new chibi svg version of the avatar (#13160) (Thanks @WorrenB!)</li>
+<li>Refactor MSI code to make it easier to add a WiX exe installer (#13139)</li>
+<li>Disable ReadyToRun for debug build (#13144) (Thanks @iSazonov!)</li>
+<li>Add new chibi version of the avatar (#13140)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.7.20356.2</code> to <code>5.0.100-preview.7.20358.6</code> (#13134) (Thanks @github-actions[bot]!)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.6.20318.15</code> to <code>5.0.100-preview.7.20356.2</code> (#13125) (Thanks @github-actions[bot]!)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Fix/clarify instructions for running Start-PSPester tests (#13373)
+- Improve inline documentation for `VerbInfo` (#13265) (Thanks @yecril71pl!)
+- Improve the wording of inline comments in the help system (#13274) (Thanks @yecril71pl!)
+- Correct grammar in `README.md` and other docs (#13269) (Thanks @tasnimzotder!)
+- Add "GitHub Actions Python builds" to `ADOPTERS.md` (#13228) (Thanks @brcrista!)
+- Update change logs for `6.2.x` and `7.0.x` (#13194)
+- Update `README.md` and `metadata.json` for the v7.0.3 release (#13187)
+
+[7.1.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.5...v7.1.0-preview.6
+
 ## [7.1.0-preview.5] - 2020-07-06
 
 ### Engine Updates and Fixes
