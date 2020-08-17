@@ -129,7 +129,7 @@ stages:
     pool:
       vmImage: windows-latest
     variables:
-    - group: 'ACR'
+    - group: 'Staging_ACR'
     environment: PSReleaseAzureBlobPublic
     strategy:
       runOnce:
