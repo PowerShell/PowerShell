@@ -22,7 +22,7 @@ using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Serialization;
 using Microsoft.PowerShell.Commands;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
     /// <summary>
     /// </summary>
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
     }
 }
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Mof
+namespace Microsoft.PowerShell.DesiredStateConfiguration
 {
     /// <summary>
     /// To make it easier to specify -ConfigurationData parameter, we add an ArgumentTransformationAttribute here.

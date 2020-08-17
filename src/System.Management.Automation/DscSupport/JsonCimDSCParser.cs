@@ -10,7 +10,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Security;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 {
     /// <summary>
     /// Class that does high level Cim schema parsing

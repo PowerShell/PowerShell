@@ -22,7 +22,7 @@ using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Serialization;
 using Microsoft.PowerShell.Commands;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
     /// <summary>
     /// </summary>
@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
         /// <returns>List of classes from MOF schema file</returns>
         public static List<CimClass> ReadCimSchemaMof(string mofPath)
         {
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
             return parser.ParseSchemaMof(mofPath);
         }
 
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
 
             s_tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             List<CimClass> classes = null;
             try
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             return parser.ParseInstanceMof(path);
         }
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
                 throw new IndexOutOfRangeException("schemaValidationOption");
             }
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback, (Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption)schemaValidationOption);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback, (Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption)schemaValidationOption);
 
             return parser.ParseInstanceMof(path);
         }
@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
                 throw PSTraceSource.NewArgumentNullException(nameof(instanceText));
             }
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             parser.ValidateInstanceText(instanceText);
         }
@@ -2218,7 +2218,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
             }
 
             var result = false;
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(module._declaredDscResourceExports, wildcardOptions);
@@ -2699,7 +2699,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
         {
             bool result = false;
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser(MyClassCallback);
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             IEnumerable<Type> resourceDefinitions =
                 assembly.GetTypes().Where(t => t.GetCustomAttributes<DscResourceAttribute>().Any());
@@ -2729,7 +2729,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Mof
         }
 
         private static void ProcessMofForDynamicKeywords(PSModuleInfo module, ICollection<string> resourcesFound,
-            Dictionary<string, ScriptBlock> functionsToDefine, Microsoft.PowerShell.DesiredStateConfiguration.Mof.CimDSCParser parser, string mof, DSCResourceRunAsCredential runAsBehavior)
+            Dictionary<string, ScriptBlock> functionsToDefine, Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser parser, string mof, DSCResourceRunAsCredential runAsBehavior)
         {
             foreach (var c in parser.ParseSchemaMofFileBuffer(mof))
             {

@@ -19,7 +19,7 @@ using System.Text;
 
 using Microsoft.PowerShell.Commands;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 {
     /// <summary>
     /// </summary>
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return null;
             }
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser();
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Json.CimDSCParser();
             List<PSObject> classes = parser.ParseSchemaJson(jsonFilePath, useNewRunspace);
             return classes;
         }
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             s_tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
 
-            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser();
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Json.CimDSCParser();
 
             List<PSObject> classes = null;
             try
@@ -2160,7 +2160,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             var result = false;
-            var parser = new CimDSCParser();
+            var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Json.CimDSCParser();
 
             const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(module._declaredDscResourceExports, wildcardOptions);
@@ -2244,6 +2244,208 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             return true;
+        }
+
+        private static string MapAttributesToMof(string[] enumNames, IEnumerable<object> customAttributes, string embeddedInstanceType)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append("[");
+            bool needComma = false;
+            foreach (var attr in customAttributes)
+            {
+                var dscProperty = attr as DscPropertyAttribute;
+                if (dscProperty != null)
+                {
+                    if (dscProperty.Key)
+                    {
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
+                        needComma = true;
+                    }
+
+                    if (dscProperty.Mandatory)
+                    {
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
+                        needComma = true;
+                    }
+
+                    if (dscProperty.NotConfigurable)
+                    {
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
+                        needComma = true;
+                    }
+
+                    continue;
+                }
+
+                var validateSet = attr as ValidateSetAttribute;
+                if (validateSet != null)
+                {
+                    bool valueMapComma = false;
+                    StringBuilder sbValues = new StringBuilder(", Values{");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
+                    needComma = true;
+
+                    foreach (var value in validateSet.ValidValues)
+                    {
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        valueMapComma = true;
+                    }
+
+                    sb.Append("}");
+                    sb.Append(sbValues);
+                    sb.Append("}");
+                }
+            }
+
+            // Default is write - skipped if we already have some attributes
+            if (sb.Length == 1)
+            {
+                sb.Append("write");
+                needComma = true;
+            }
+
+            if (enumNames != null)
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
+                needComma = false;
+                foreach (var name in enumNames)
+                {
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
+                    needComma = true;
+                }
+
+                sb.Append("}, Values{");
+                needComma = false;
+                foreach (var name in enumNames)
+                {
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
+                    needComma = true;
+                }
+
+                sb.Append("}");
+            }
+            else if (embeddedInstanceType != null)
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static string GenerateMofForType(Type type)
+        {
+            var embeddedInstanceTypes = new List<object>();
+            var sb = new StringBuilder();
+
+            GenerateMofForType(type, sb, embeddedInstanceTypes);
+            var visitedInstances = new List<object>();
+            visitedInstances.Add(type);
+            ProcessEmbeddedInstanceTypes(embeddedInstanceTypes, visitedInstances, sb);
+
+            return sb.ToString();
+        }
+
+        private static void ProcessEmbeddedInstanceTypes(List<object> embeddedInstanceTypes, List<object> visitedInstances, StringBuilder sb)
+        {
+            StringBuilder nestedSb = null;
+
+            while (embeddedInstanceTypes.Count > 0)
+            {
+                if (nestedSb == null)
+                {
+                    nestedSb = new StringBuilder();
+                }
+                else
+                {
+                    nestedSb.Clear();
+                }
+
+                var batchedTypes = embeddedInstanceTypes.Where(x => !visitedInstances.Contains(x)).ToArray();
+                embeddedInstanceTypes.Clear();
+
+                for (int i = batchedTypes.Length - 1; i >= 0; i--)
+                {
+                    visitedInstances.Add(batchedTypes[i]);
+                    var type = batchedTypes[i] as Type;
+                    if (type != null)
+                    {
+                        GenerateMofForType(type, nestedSb, embeddedInstanceTypes);
+                    }
+
+                    nestedSb.Append('\n');
+                }
+
+                sb.Insert(0, nestedSb.ToString());
+            }
+        }
+
+        private static void GenerateMofForType(Type type, StringBuilder sb, List<object> embeddedInstanceTypes)
+        {
+            var className = type.Name;
+            // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
+            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
+
+            if (type.GetCustomAttributes<DscResourceAttribute>().Any())
+            {
+                sb.Append(" : OMI_BaseResource");
+            }
+
+            sb.Append("\n{\n");
+
+            ProcessMembers(type, sb, embeddedInstanceTypes, className);
+            sb.Append("};");
+        }
+
+        private static void ProcessMembers(Type type, StringBuilder sb, List<object> embeddedInstanceTypes, string className)
+        {
+            foreach (var member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public).Where(m => m is PropertyInfo || m is FieldInfo))
+            {
+                if (member.CustomAttributes.All(cad => cad.AttributeType != typeof(DscPropertyAttribute)))
+                {
+                    continue;
+                }
+
+                Type memberType;
+                var propertyInfo = member as PropertyInfo;
+                if (propertyInfo == null)
+                {
+                    var fieldInfo = (FieldInfo)member;
+                    memberType = fieldInfo.FieldType;
+                }
+                else
+                {
+                    if (propertyInfo.GetSetMethod() == null)
+                    {
+                        continue;
+                    }
+
+                    memberType = propertyInfo.PropertyType;
+                }
+
+                // TODO - validate type and name
+                bool isArrayType;
+                string embeddedInstanceType;
+                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
+                    embeddedInstanceTypes);
+                string arrayAffix = isArrayType ? "[]" : string.Empty;
+
+                var enumNames = memberType.IsEnum
+                    ? Enum.GetNames(memberType)
+                    : null;
+                sb.AppendFormat(CultureInfo.InvariantCulture,
+                    "    {0}{1} {2}{3};\n",
+                    MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType),
+                    mofType,
+                    member.Name,
+                    arrayAffix);
+            }
         }
 
         internal static string MapTypeToMofType(Type type, string memberName, string className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
@@ -2949,7 +3151,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if ($DependsOnVar -notmatch '^\[[a-z]\w*\][a-z_0-9][a-z_0-9\p{Zs}\.\\-]*$')
             {
                 Update-ConfigurationErrorCount
-                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::GetBadlyFormedRequiredResourceIdErrorRecord($DependsOnVar, $resourceId))
+                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::GetBadlyFormedRequiredResourceIdErrorRecord($DependsOnVar, $resourceId))
             }
 
 # Fix up DependsOn for nested names
@@ -3025,7 +3227,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         if (Test-NodeResources $resourceId)
         {
             Update-ConfigurationErrorCount
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::DuplicateResourceIdInNodeStatementErrorRecord($resourceId, (Get-PSCurrentConfigurationNode)))
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::DuplicateResourceIdInNodeStatementErrorRecord($resourceId, (Get-PSCurrentConfigurationNode)))
         }
         else
         {
@@ -3041,7 +3243,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         if($null -ne $value['PsDscRunAsCredential'])
         {
             Update-ConfigurationErrorCount
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::PsDscRunAsCredentialMergeErrorForCompositeResources($resourceId))
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::PsDscRunAsCredentialMergeErrorForCompositeResources($resourceId))
         }
 # Set the Value of RunAsCred to that of outer configuration
         else
@@ -3060,14 +3262,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     if($value['RefreshMode'] -eq 'Pull' -and -not $value['ConfigurationSource'])
                     {
                         Update-ConfigurationErrorCount
-                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::GetPullModeNeedConfigurationSource($resourceId))
+                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::GetPullModeNeedConfigurationSource($resourceId))
                     }
 
 # Verify that RefreshMode is not Disabled for Partial configuration
                     if($value['RefreshMode'] -eq 'Disabled')
                     {
                         Update-ConfigurationErrorCount
-                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::DisabledRefreshModeNotValidForPartialConfig($resourceId))
+                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::DisabledRefreshModeNotValidForPartialConfig($resourceId))
                     }
 
                     if($null -ne $value['ConfigurationSource'])
@@ -3088,7 +3290,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         if (($ExclusiveResource -notmatch '^[a-z][a-z_0-9]*\\[a-z][a-z_0-9]*$') -and ($ExclusiveResource -notmatch '^[a-z][a-z_0-9]*$') -and ($ExclusiveResource -notmatch '^[a-z][a-z_0-9]*\\\*$'))
                         {
                             Update-ConfigurationErrorCount
-                            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::GetBadlyFormedExclusiveResourceIdErrorRecord($ExclusiveResource, $resourceId))
+                            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::GetBadlyFormedExclusiveResourceIdErrorRecord($ExclusiveResource, $resourceId))
                         }
                     }
 
@@ -3116,7 +3318,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if ($OldMetaConfig -and (-not ($V1MetaConfigPropertyList -contains $key)))
             {
-                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::InvalidLocalConfigurationManagerPropertyErrorRecord($key, ($V1MetaConfigPropertyList -join ', ')))
+                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::InvalidLocalConfigurationManagerPropertyErrorRecord($key, ($V1MetaConfigPropertyList -join ', ')))
                 Update-ConfigurationErrorCount
             }
 # see if there is a list of allowed values for this property (similar to an enum)
@@ -3126,7 +3328,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if(($null -eq $value[$key]) -and ($allowedValues -notcontains $value[$key]))
                 {
-                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::InvalidValueForPropertyErrorRecord($key, ""$($value[$key])"", $keywordData.Keyword, ($allowedValues -join ', ')))
+                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::InvalidValueForPropertyErrorRecord($key, ""$($value[$key])"", $keywordData.Keyword, ($allowedValues -join ', ')))
                     Update-ConfigurationErrorCount
                 }
                 else
@@ -3143,7 +3345,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     if($notAllowedValue)
                     {
                         $notAllowedValue = $notAllowedValue.Substring(0, $notAllowedValue.Length -2)
-                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::UnsupportedValueForPropertyErrorRecord($key, $notAllowedValue, $keywordData.Keyword, ($allowedValues -join ', ')))
+                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::UnsupportedValueForPropertyErrorRecord($key, $notAllowedValue, $keywordData.Keyword, ($allowedValues -join ', ')))
                         Update-ConfigurationErrorCount
                     }
                 }
@@ -3156,7 +3358,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 $castedValue = $value[$key] -as [int]
                 if((($castedValue -is [int]) -and (($castedValue -lt  $keywordData.Properties[$key].Range.Item1) -or ($castedValue -gt $keywordData.Properties[$key].Range.Item2))) -or ($null -eq $castedValue))
                 {
-                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::ValueNotInRangeErrorRecord($key, $keywordName, $value[$key],  $keywordData.Properties[$key].Range.Item1,  $keywordData.Properties[$key].Range.Item2))
+                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::ValueNotInRangeErrorRecord($key, $keywordName, $value[$key],  $keywordData.Properties[$key].Range.Item1,  $keywordData.Properties[$key].Range.Item2))
                     Update-ConfigurationErrorCount
                 }
             }
@@ -3190,7 +3392,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         elseif ($keywordData.Properties[$key].Mandatory)
         {
 # If the property was mandatory but the user didn't provide a value, write and error.
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::MissingValueForMandatoryPropertyErrorRecord($keywordData.Keyword, $keywordData.Properties[$key].TypeConstraint, $Key))
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::MissingValueForMandatoryPropertyErrorRecord($keywordData.Keyword, $keywordData.Properties[$key].TypeConstraint, $Key))
             Update-ConfigurationErrorCount
         }
 
@@ -3243,7 +3445,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         if($canonicalizedValue['DebugMode'] -and @($canonicalizedValue['DebugMode']).Length -gt 1)
         {
 # we only allow one value for debug mode now.
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::DebugModeShouldHaveOneValue())
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.Internal.DscClassCache]::DebugModeShouldHaveOneValue())
             Update-ConfigurationErrorCount
         }
     }
