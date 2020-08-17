@@ -88,7 +88,7 @@ namespace System.Management.Automation.Subsystem
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;
                     },
                     predictor,
-                    CancellationToken.None,
+                    cancellationSource.Token,
                     TaskCreationOptions.DenyChildAttach,
                     TaskScheduler.Default);
             }
