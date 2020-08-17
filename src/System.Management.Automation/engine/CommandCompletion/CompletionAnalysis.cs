@@ -95,7 +95,7 @@ namespace System.Management.Automation
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
 
-        internal struct AstAnalysisContext
+        internal readonly struct AstAnalysisContext
         {
             internal AstAnalysisContext(Token tokenAtCursor, Token tokenBeforeCursor, List<Ast> relatedAsts, int replacementIndex)
             {
