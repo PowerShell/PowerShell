@@ -13,11 +13,11 @@ Function Install-ModuleIfMissing {
         $Force
     )
 
-    $module = Get-Module -Name $Name -ListAvailable -ErrorAction Ignore | Sort-Object -Property Version -Descending | Select-Object -First 1
+    $module = Get-InstalledModule -Name $Name -ErrorAction Ignore | Sort-Object -Property Version -Descending | Select-Object -First 1
 
     if (!$module -or $module.Version -lt $MinimumVersion) {
         Write-Verbose "Installing module '$Name' ..." -Verbose
-        Install-Module -Name $Name -Force -SkipPublisherCheck:$SkipPublisherCheck.IsPresent
+        Install-Module -Name $Name -SkipPublisherCheck #:$false #$SkipPublisherCheck.IsPresent #-Force
     }
 }
 
@@ -94,22 +94,22 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         BeforeAll {
             $origProgress = $global:ProgressPreference
             $global:ProgressPreference = 'SilentlyContinue'
-            Install-ModuleIfMissing -Name PSDscResources
+            Install-ModuleIfMissing -Name NetworkingDSC -verbose
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'groupset'
-                    ModuleName   = 'PSDscResources'
+                    Name         = 'groupset' #'networkteam'
+                    ModuleName   = 'PSDscResources' #'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'GroupSet'
-                    ModuleName   = 'PSDscResources'
+                    Name         = 'GroupSet' #'NetworkTeam'
+                    ModuleName   = 'PSDscResources' #'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'GroupSet'
-                    ModuleName   = 'psdscResources'
+                    Name         = 'GroupSet' #'NetworkTeam'
+                    ModuleName   = 'psdscResources' #'networkingdsc'
                 }
             )
         }
@@ -391,7 +391,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     }
                 )
 
-                Install-ModuleIfMissing -Name PowerShellGet -Force -SkipPublisherCheck -MinimumVersion '2.2.1'
+                Install-ModuleIfMissing -Name PowerShellGet -SkipPublisherCheck -MinimumVersion '2.2.1' -Force
                 Install-ModuleIfMissing -Name xWebAdministration
                 $module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 
@@ -405,7 +405,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 if (!$IsLinux) {
                     $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method set -Property @{
                         Name               = 'PsDscResources'
-                        InstallationPolicy = 'Trusted'
+                        #InstallationPolicy = 'Trusted'
                     }
                 }
                 else {
@@ -535,7 +535,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method Get -Property @{ Name = 'PsDscResources' }
                 $result | Should -Not -BeNullOrEmpty
                 $result.Author | Should -BeLike 'Microsoft*'
-                $result.InstallationPolicy | Should -BeOfType string
+                #$result.Trusted | Should -BeOfType boolean
                 $result.Guid | Should -BeOfType Guid
                 $result.Ensure | Should -Be 'Present'
                 $result.Name | Should -Be 'PsDscResources'
