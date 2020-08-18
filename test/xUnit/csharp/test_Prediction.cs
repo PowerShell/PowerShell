@@ -163,9 +163,12 @@ namespace PSTests.Sequential
                 CommandPrediction.OnCommandLineAccepted(history);
                 CommandPrediction.OnSuggestionAccepted(slow.Id, "Yeah");
 
-                // The calls to 'EarlyProcessWithHistory' and the feedback methods are queued in thread pool,
+                // The calls to 'StartEarlyProcessing' and 'OnSuggestionAccepted' are queued in thread pool,
                 // so we wait a bit to make sure the calls are done.
-                Thread.Sleep(10);
+                while (slow.History.Count == 0 || slow.AcceptedSuggestions.Count == 0)
+                {
+                    Thread.Sleep(10);
+                }
 
                 Assert.Equal(2, slow.History.Count);
                 Assert.Equal(history[0], slow.History[0]);
