@@ -37,6 +37,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.NonInteractive);
             Assert.False(cpp.NoPrompt);
             Assert.Equal(Microsoft.PowerShell.Serialization.DataFormat.Text, cpp.OutputFormat);
+            Assert.Null(cpp.OutputLog);
             Assert.False(cpp.OutputFormatSpecified);
 #if !UNIX
             Assert.False(cpp.RemoveWorkingDirectoryTrailingCharacter);
@@ -612,6 +613,46 @@ namespace PSTests.Parallel
             Assert.True(cpp.ShowBanner);
             Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-outputlog", "test.log")]
+        [InlineData("-outputl", "test.log")]
+        [InlineData("-ol", "test.log")]
+        public static void TestParameter_OutputLog_With_Value(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.True(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.True(cpp.ShowBanner);
+            Assert.Equal("test.log", cpp.OutputLog);
+            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
+            Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-outputlog")]
+        [InlineData("-outputl")]
+        [InlineData("-ol")]
+        public static void TestParameter_OutputLog_No_Value(params string[] commandLine)
+        {
+            var index = CommandLineParameterParserStrings.MissingOutputLogParameter.IndexOf('.');
+            var errorMessage = CommandLineParameterParserStrings.MissingOutputLogParameter.Substring(0, index);
+
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.True(cpp.AbortStartup);
+            Assert.True(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.ShowBanner);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
+            Assert.Equal(errorMessage, cpp.ErrorMessage.Substring(0, index));
         }
 
         [Theory]
