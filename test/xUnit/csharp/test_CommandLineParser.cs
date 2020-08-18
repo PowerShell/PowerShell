@@ -475,7 +475,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookConsoleInputRedirected = false;
+            cpp.InputRedirectedTestHook = false;
 
             cpp.Parse(commandLine);
 
@@ -512,7 +512,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookConsoleInputRedirected = true;
+            cpp.InputRedirectedTestHook = true;
 
             cpp.Parse(commandLine);
 
@@ -855,7 +855,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookConsoleInputRedirected = true;
+            cpp.InputRedirectedTestHook = true;
 
             cpp.Parse(commandLine);
 

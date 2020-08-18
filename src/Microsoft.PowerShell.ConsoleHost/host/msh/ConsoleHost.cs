@@ -271,6 +271,11 @@ namespace Microsoft.PowerShell
         {
             s_cpp.Parse(args);
 
+            if (s_cpp.WindowStyle.HasValue)
+            {
+                ConsoleControl.SetConsoleMode(s_cpp.WindowStyle.Value);
+            }
+
             if (s_cpp.SettingsFile is not null)
             {
                 PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);

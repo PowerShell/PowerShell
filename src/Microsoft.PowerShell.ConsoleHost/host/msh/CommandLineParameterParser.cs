@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell
             return maxLength - Path.GetTempPath().Length;
         }
 
-        internal bool? TestHookConsoleInputRedirected;
+        internal bool? InputRedirectedTestHook;
 
         private static readonly string[] s_validParameters = {
             "sta",
@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell
         }
 
         #region Internal properties
+
         internal bool AbortStartup
         {
             get
@@ -242,6 +243,15 @@ namespace Microsoft.PowerShell
             {
                 AssertArgumentsParsed();
                 return _wasCommandEncoded;
+            }
+        }
+
+        internal ProcessWindowStyle? WindowStyle
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _windowStyle;
             }
         }
 
@@ -846,9 +856,7 @@ namespace Microsoft.PowerShell
 
                     try
                     {
-                        ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
-                            args[i], typeof(ProcessWindowStyle), CultureInfo.InvariantCulture);
-                        ConsoleControl.SetConsoleMode(style);
+                        _windowStyle = LanguagePrimitives.ConvertTo<ProcessWindowStyle>(args[i]);
                     }
                     catch (PSInvalidCastException e)
                     {
@@ -1234,7 +1242,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (TestHookConsoleInputRedirected.HasValue ? !TestHookConsoleInputRedirected.Value : !Console.IsInputRedirected)
+                if (InputRedirectedTestHook.HasValue ? !InputRedirectedTestHook.Value : !Console.IsInputRedirected)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.StdinNotRedirected, showHelp: true);
                     return false;
@@ -1338,6 +1346,7 @@ namespace Microsoft.PowerShell
         private string? _executionPolicy;
         private string? _settingsFile;
         private string? _workingDirectory;
+        private ProcessWindowStyle? _windowStyle;
 
 #if !UNIX
         private bool _removeWorkingDirectoryTrailingCharacter = false;
