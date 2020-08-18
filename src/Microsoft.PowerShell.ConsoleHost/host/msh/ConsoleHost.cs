@@ -271,10 +271,12 @@ namespace Microsoft.PowerShell
         {
             s_cpp.Parse(args);
 
+#if !UNIX
             if (s_cpp.WindowStyle.HasValue)
             {
                 ConsoleControl.SetConsoleMode(s_cpp.WindowStyle.Value);
             }
+#endif
 
             if (s_cpp.SettingsFile is not null)
             {
