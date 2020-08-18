@@ -485,26 +485,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return null;
         }
 
-        internal static bool CimPropertyIsInherited(string propertyName, CimClass parentClass)
-        {
-            if (parentClass == null)
-            {
-                return false;
-            }
-            else
-            {
-                foreach(var p in parentClass.CimClassProperties)
-                {
-                    if (p.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-
-                return CimPropertyIsInherited(propertyName, parentClass.CimSuperClass);
-            }
-        }
-
         /// <summary>
         /// Reads CIM MOF schema file and returns classes defined in it
         /// </summary>
@@ -1039,11 +1019,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 // Copy the type name string. If it's an embedded instance, need to grab it from the ReferenceClassName
                 bool referenceClassNameIsNullOrEmpty = string.IsNullOrEmpty(prop.ReferenceClassName);
-                if (prop.CimType == Microsoft.Management.Infrastructure.CimType.Instance && !referenceClassNameIsNullOrEmpty)
+                if (prop.CimType == CimType.Instance && !referenceClassNameIsNullOrEmpty)
                 {
                     keyProp.TypeConstraint = prop.ReferenceClassName;
                 }
-                else if (prop.CimType == Microsoft.Management.Infrastructure.CimType.InstanceArray && !referenceClassNameIsNullOrEmpty)
+                else if (prop.CimType == CimType.InstanceArray && !referenceClassNameIsNullOrEmpty)
                 {
                     keyProp.TypeConstraint = prop.ReferenceClassName + "[]";
                 }
