@@ -6744,7 +6744,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public object GetContentReaderDynamicParameters(string path)
         {
-            return new FileSystemContentReaderDynamicParameters();
+            return new FileSystemContentReaderDynamicParameters(this);
         }
 
         /// <summary>
@@ -6878,7 +6878,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public object GetContentWriterDynamicParameters(string path)
         {
-            return new FileSystemContentWriterDynamicParameters();
+            return new FileSystemContentWriterDynamicParameters(this);
         }
 
         /// <summary>
@@ -7593,6 +7593,13 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentDynamicParametersBase
     {
+        internal FileSystemContentDynamicParametersBase(FileSystemProvider provider)
+        {
+            _provider = provider;
+        }
+
+        private FileSystemProvider _provider;
+
         /// <summary>
         /// Gets or sets the encoding method used when
         /// reading data from the file.
@@ -7610,6 +7617,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
+                if (value == System.Text.Encoding.UTF7)
+                {
+                    _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+                }
                 _encoding = value;
                 // If an encoding was explicitly set, be sure to capture that.
                 WasStreamTypeSpecified = true;
@@ -7659,6 +7670,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentWriterDynamicParameters : FileSystemContentDynamicParametersBase
     {
+        internal FileSystemContentWriterDynamicParameters(FileSystemProvider provider) : base(provider) { }
+
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
         /// </summary>
@@ -7684,6 +7697,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentReaderDynamicParameters : FileSystemContentDynamicParametersBase
     {
+        internal FileSystemContentReaderDynamicParameters(FileSystemProvider provider) : base (provider) { }
+
         /// <summary>
         /// Gets or sets the delimiter to use when reading the file.  Custom delimiters
         /// may not be used when the file is opened with a "Byte" encoding.

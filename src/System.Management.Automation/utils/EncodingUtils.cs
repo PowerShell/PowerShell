@@ -63,6 +63,12 @@ namespace System.Management.Automation
             Encoding foundEncoding;
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
+                // Write a warning if using utf7 as it is obsolete in .NET5
+                if (string.Compare(encoding, Utf7, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+                }
+
                 return foundEncoding;
             }
 
@@ -80,6 +86,19 @@ namespace System.Management.Automation
             cmdlet.ThrowTerminatingError(errorRecord);
 
             return null;
+        }
+
+        /// <summary>
+        /// Warn if the encoding has been designated as obsolete.
+        /// </summary>
+        /// <param name="cmdlet">A cmdlet instance which is used to emit the warning.</param>
+        /// <param name="encoding">The encoding to check for obsolescence.</param>
+        internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
+        {
+            if (encoding == System.Text.Encoding.UTF7)
+            {
+                cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+            }
         }
     }
 
