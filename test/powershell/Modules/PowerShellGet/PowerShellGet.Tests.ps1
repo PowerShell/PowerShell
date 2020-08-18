@@ -14,15 +14,21 @@ $Initialized = $false
 $myDocumentsPath = [Environment]::GetFolderPath(5)
 $programFilesPath = [Environment]::GetFolderPath(38)
 
-$myDocumentsPathPS = [System.IO.Path]::Combine($myDocumentsPath, "PowerShell");
-$programFilesPathPS = [System.IO.Path]::Combine($programFilesPath, "PowerShell");
+$myDocumentsPathPS = [System.IO.Path]::Combine($myDocumentsPath, "powershell");
+$programFilesPathPS = [System.IO.Path]::Combine($programFilesPath, "powershell");
 
 
-$myDocumentsPathPSModules = [System.IO.Path]::Combine($myDocumentsPathPS, "Modules");
-$programFilesPathPSModules = [System.IO.Path]::Combine($programFilesPathPS, "Modules");
+$myDocumentsPathPSModules = [System.IO.Path]::Combine($myDocumentsPathPS, "modules");
+$programFilesPathPSModules = [System.IO.Path]::Combine($programFilesPathPS, "modules");
 
-$myDocumentsPathPSScripts = [System.IO.Path]::Combine($myDocumentsPathPS, "Scripts");
-$programFilesPathPSScripts = [System.IO.Path]::Combine($programFilesPathPS, "Scripts");
+$myDocumentsPathPSModules2 = [System.IO.Path]::Combine($myDocumentsPathPS, "Modules");
+$programFilesPathPSModules2 = [System.IO.Path]::Combine($programFilesPathPS, "Modules");
+
+$myDocumentsPathPSScripts = [System.IO.Path]::Combine($myDocumentsPathPS, "scripts");
+$programFilesPathPSScripts = [System.IO.Path]::Combine($programFilesPathPS, "scripts");
+
+$myDocumentsPathPSScripts = [System.IO.Path]::Combine($myDocumentsPathPS2, "Scripts");
+$programFilesPathPSScripts = [System.IO.Path]::Combine($programFilesPathPS2, "Scripts");
 
 #region Utility functions
 
@@ -146,11 +152,14 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
-        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+        Write-Host("test MyDocuments\powershell\modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\powershell\modules path: " + (test-path $programFilesPathPSModules))
+
+        Write-Host("test MyDocuments\powershell\Modules path: " + (test-path $myDocumentsPathPSModules2))
+        Write-Host("test Program Files\powershell\Modules path: " + (test-path $programFilesPathPSModules2))
 
         Install-Module -Name $ContosoServer -Repository $RepositoryName -AllowClobber -verbose
 
@@ -158,11 +167,14 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
-        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+        Write-Host("test MyDocuments\powershell\modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\powershell\modules path: " + (test-path $programFilesPathPSModules))
+
+        Write-Host("test MyDocuments\powershell\Modules path: " + (test-path $myDocumentsPathPSModules2))
+        Write-Host("test Program Files\powershell\Modules path: " + (test-path $programFilesPathPSModules2))
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
         $installedModuleInfo | Should -Not -BeNullOrEmpty
         $installedModuleInfo.Name | Should -Be $ContosoServer
@@ -201,11 +213,14 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
-        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+        Write-Host("test MyDocuments\powershell\modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\powershell\modules path: " + (test-path $programFilesPathPSModules))
+
+        Write-Host("test MyDocuments\powershell\Modules path: " + (test-path $myDocumentsPathPSModules2))
+        Write-Host("test Program Files\powershell\Modules path: " + (test-path $programFilesPathPSModules2))
 
 
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers -AllowClobber -verbose
@@ -214,11 +229,14 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
-        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+        Write-Host("test MyDocuments\powershell\modules path: " + (test-path $myDocumentsPathPSModules))
+        Write-Host("test Program Files\powershell\modules path: " + (test-path $programFilesPathPSModules))
+
+        Write-Host("test MyDocuments\powershell\Modules path: " + (test-path $myDocumentsPathPSModules2))
+        Write-Host("test Program Files\powershell\Modules path: " + (test-path $programFilesPathPSModules2))
 
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -270,11 +288,14 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
-        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+        Write-Host("test MyDocuments\powershell\scripts path: " + (test-path $myDocumentsPathPSScripts))
+        Write-Host("test Program Files\powershell\scripts path: " + (test-path $programFilesPathPSScripts))
+
+        Write-Host("test MyDocuments\powershell\Scripts path: " + (test-path $myDocumentsPathPSScripts2))
+        Write-Host("test Program Files\powershell\Scripts path: " + (test-path $programFilesPathPSScripts2))
 
 
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Verbose
@@ -283,11 +304,15 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Scripts path: " + (test-path $myDocumentsPathPSScripts))
-        Write-Host("test Program Files\PowerShell\Scripts path: " + (test-path $programFilesPathPSScripts))
+        Write-Host("test MyDocuments\powershell\scripts path: " + (test-path $myDocumentsPathPSScripts))
+        Write-Host("test Program Files\powershell\scripts path: " + (test-path $programFilesPathPSScripts))
+
+        Write-Host("test MyDocuments\powershell\Scripts path: " + (test-path $myDocumentsPathPSScripts2))
+        Write-Host("test Program Files\powershell\Scripts path: " + (test-path $programFilesPathPSScripts2))
+
 
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
@@ -323,11 +348,14 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Modules path: " + (test-path $myDocumentsPathPSModules))
-        Write-Host("test Program Files\PowerShell\Modules path: " + (test-path $programFilesPathPSModules))
+        Write-Host("test MyDocuments\powershell\scripts path: " + (test-path $myDocumentsPathPSScripts))
+        Write-Host("test Program Files\powershell\scripts path: " + (test-path $programFilesPathPSScripts))
+
+        Write-Host("test MyDocuments\powershell\Scripts path: " + (test-path $myDocumentsPathPSScripts2))
+        Write-Host("test Program Files\powershell\Scripts path: " + (test-path $programFilesPathPSScripts2))
 
 
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -Scope AllUsers -verbose
@@ -336,11 +364,15 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
         Write-Host("test Program Files path: " + (test-path $programFilesPath))
 
-        Write-Host("test MyDocuments\PowerShell path: " + (test-path $myDocumentsPathPS))
-        Write-Host("test Program Files\PowerShell path: " + (test-path $programFilesPathPS))
+        Write-Host("test MyDocuments\powershell path: " + (test-path $myDocumentsPathPS))
+        Write-Host("test Program Files\powershell path: " + (test-path $programFilesPathPS))
 
-        Write-Host("test MyDocuments\PowerShell\Scripts path: " + (test-path $myDocumentsPathPSScripts))
-        Write-Host("test Program Files\PowerShell\Scripts path: " + (test-path $programFilesPathPSScripts))
+        Write-Host("test MyDocuments\powershell\scripts path: " + (test-path $myDocumentsPathPSScripts))
+        Write-Host("test Program Files\powershell\scripts path: " + (test-path $programFilesPathPSScripts))
+
+        Write-Host("test MyDocuments\powershell\Scripts path: " + (test-path $myDocumentsPathPSScripts2))
+        Write-Host("test Program Files\powershell\Scripts path: " + (test-path $programFilesPathPSScripts2))
+
 
 
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
