@@ -246,6 +246,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#if !UNIX
         internal ProcessWindowStyle? WindowStyle
         {
             get
@@ -254,6 +255,7 @@ namespace Microsoft.PowerShell
                 return _windowStyle;
             }
         }
+#endif
 
         internal bool ShowBanner
         {
@@ -1346,9 +1348,9 @@ namespace Microsoft.PowerShell
         private string? _executionPolicy;
         private string? _settingsFile;
         private string? _workingDirectory;
-        private ProcessWindowStyle? _windowStyle;
 
 #if !UNIX
+        private ProcessWindowStyle? _windowStyle;
         private bool _removeWorkingDirectoryTrailingCharacter = false;
 #endif
     }
