@@ -24,7 +24,7 @@ Describe "Set-Date" -Tag 'CI' {
     BeforeAll {
         $IsAdmin = $false
         if ($IsWindows) {
-            $IsAdmin = ([Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+            $IsAdmin = Test-IsElevated
         }
     }
 

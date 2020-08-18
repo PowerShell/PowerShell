@@ -46,7 +46,7 @@ Describe "Get-Process" -Tags "CI" {
         $idleProcessPid = 0
         $IsAdmin = $false
         if ($IsWindows) {
-            $IsAdmin = ([Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")
+            $IsAdmin = Test-IsElevated
         }
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {

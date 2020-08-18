@@ -413,6 +413,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
+                AssertArgumentsParsed();
                 return _outputLog;
             }
         }
@@ -880,6 +881,11 @@ namespace Microsoft.PowerShell
                     // Just toss this option, it was processed earlier in 'ManagedEntrance.Start()'.
                 }
 #endif
+                else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
+                {
+                    ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
+                    _outputFormatSpecified = true;
+                }
                 else if (MatchSwitch(switchKey, "outputlog", "outputl") || MatchSwitch(switchKey, "ol", "ol"))
                 {
                     ++i;
@@ -891,11 +897,6 @@ namespace Microsoft.PowerShell
                     }
 
                     _outputLog = args[i];
-                }
-                else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
-                {
-                    ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
-                    _outputFormatSpecified = true;
                 }
                 else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
                 {

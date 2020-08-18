@@ -131,6 +131,7 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
             },
             @{
                 Name = 'Non-simple pipeline should not be batched'
+                # need to use FriendlyName as the process can be pwsh or pwshw
                 CommandLine = '1..2 | % { Get-Process [System.AppDomain]::CurrentDomain.FriendlyName | Write-Output }'
                 ExpectedOutput = $false
             }

@@ -24,7 +24,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ([System.AppDomain]::CurrentDomain.FriendlyName -eq 'pwshw') {
-            # these tests don't work correctly with pwshw
+            # these tests don't work correctly with pwshw due to SimpleSmtpServer depending on console
             $PSDefaultParameterValues["it:skip"] = $true
             return
         }

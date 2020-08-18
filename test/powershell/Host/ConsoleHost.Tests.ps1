@@ -253,13 +253,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "-OutputLog logs output to file" {
-            & $powershell -outputlog $testdrive/test.log -noprofile -command "write-host 'myHost'; write-verbose -verbose 'myVerbose'; write-debug -debug 'myDebug'; write-error 'myError'"
+            & $powershell -outputlog $testdrive/test.log -noprofile -command "write-host 'myHost'; write-verbose -verbose 'myVerbose'; write-debug -debug 'myDebug'; write-error 'myError'; write-information 'myInfo' -informationaction continue; write-warning 'myWarning'; write-output 'myOutput'; exit 1"
 
             $LASTEXITCODE | Should -Be 1
             "$testdrive/test.log" | Should -FileContentMatch 'myHost'
             "$testdrive/test.log" | Should -FileContentMatch 'VERBOSE: myVerbose'
             "$testdrive/test.log" | Should -FileContentMatch 'DEBUG: myDebug'
             "$testdrive/test.log" | Should -FileContentMatch 'myError'
+            "$testdrive/test.log" | Should -FileContentMatch 'myInfo'
+            "$testdrive/test.log" | Should -FileContentMatch 'WARNING: myWarning'
+            "$testdrive/test.log" | Should -FileContentMatch 'myOutput'
         }
     }
 

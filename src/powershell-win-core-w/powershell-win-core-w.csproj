@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
 
   <PropertyGroup>
-    <Description>PowerShell on Windows top-level project</Description>
+    <Description>Console-less PowerShell on Windows top-level project</Description>
     <AssemblyName>pwshw</AssemblyName>
     <OutputType>WinExe</OutputType>
     <TieredCompilation>true</TieredCompilation>
