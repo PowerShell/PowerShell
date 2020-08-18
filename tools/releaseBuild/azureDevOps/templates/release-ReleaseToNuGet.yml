@@ -8,6 +8,7 @@ steps:
 
 - pwsh: |
     #Exclude all global tool packages. Their names start with 'PowerShell.'
+    $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
     Copy-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
     $releaseVersion = Get-Content "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
