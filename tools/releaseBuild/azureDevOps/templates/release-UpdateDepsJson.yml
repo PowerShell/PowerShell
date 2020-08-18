@@ -20,16 +20,18 @@ jobs:
         throw "Unexpected fileName: $fileName"
       }
 
-      $vstsCommand = "vso[task.setvariable variable=ContainerName]$fileName"
+      $vstsCommand = "vso[task.setvariable variable=BlobPrefix]$fileName"
+      Write-Verbose -Verbose $vstsCommand
       Write-Host "##$vstsCommand"
     displayName: Determine container name
 
   - pwsh: |
-      $zipFile = (Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell*-winx64.zip")
+      $zipFile = (Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell*-win-x64.zip")
       Expand-Archive -Path $zipFile -Destination "$ENV:PIPELINE_WORKSPACE/expanded"
 
       $pwshDepsFile = Get-Item "$ENV:PIPELINE_WORKSPACE/expanded/pwsh.deps.json"
       $vstsCommand = "vso[task.setvariable variable=FileToUpload]$pwshDepsFile"
+      Write-Verbose -Verbose $vstsCommand
       Write-Host "##$vstsCommand"
     displayName: Determine file to upload
 
@@ -41,3 +43,4 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: ps-deps-json
+      blobPrefix: '$(BlobPrefix)'
