@@ -7617,9 +7617,9 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#pragma warning disable 618
+#pragma warning disable 612, 618
                 if (value == System.Text.Encoding.UTF7)
-#pragma warning restore 618
+#pragma warning restore 612, 618
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }
