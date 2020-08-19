@@ -8073,16 +8073,7 @@ namespace Microsoft.PowerShell.Commands
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
 #if !UNIX
-                // We set accessMode parameter to zero because documentation says:
-                // If this parameter is zero, the application can query certain metadata
-                // such as file, directory, or device attributes without accessing
-                // that file or device, even if GENERIC_READ access would have been denied.
-                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericZero))
-                {
-                    string linkTarget = WinInternalGetTarget(handle);
-
-                    return linkTarget;
-                }
+                return WinInternalGetTarget(fileSysInfo.FullName);
 #else
                return UnixInternalGetTarget(fileSysInfo.FullName);
 #endif
@@ -8382,6 +8373,21 @@ namespace Microsoft.PowerShell.Commands
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
 
+#if !UNIX
+        internal static string WinInternalGetTarget(string path)
+        {
+            // We set accessMode parameter to zero because documentation says:
+            // If this parameter is zero, the application can query certain metadata
+            // such as file, directory, or device attributes without accessing
+            // that file or device, even if GENERIC_READ access would have been denied.
+            using (SafeFileHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericZero))
+            {
+                string linkTarget = WinInternalGetTarget(handle);
+
+                return linkTarget;
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetTarget(SafeFileHandle handle)
         {
@@ -8456,6 +8462,7 @@ namespace Microsoft.PowerShell.Commands
                 Marshal.FreeHGlobal(outBuffer);
             }
         }
+#endif
 
         internal static bool CreateJunction(string path, string target)
         {
