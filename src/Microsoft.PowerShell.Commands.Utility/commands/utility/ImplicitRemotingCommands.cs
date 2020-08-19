@@ -1682,7 +1682,7 @@ namespace Microsoft.PowerShell.Commands
             powerShell.AddParameter("ArgumentList", this.ArgumentList);
 
             powerShell.Runspace = Session.Runspace;
-            powerShell.RemotePowerShell.HostCallReceived += new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
+            powerShell.RemotePowerShell.HostCallReceived += HandleHostCallReceived;
             return powerShell;
         }
 
