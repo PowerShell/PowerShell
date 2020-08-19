@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         Justification = "Needed Internal use only")]
     public static class DscClassCache
     {
-        private const string InboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
+        private const string windowsInboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
         private const string reservedDynamicKeywords = "^(Synchronization|Certificate|IIS|SQL)$";
 
         private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
@@ -82,11 +82,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
         private static readonly string[] s_hiddenResourceList =
-    {
-        "MSFT_BaseConfigurationProviderRegistration",
-        "MSFT_CimConfigurationProviderRegistration",
-        "MSFT_PSConfigurationProviderRegistration",
-    };
+        {
+            "MSFT_BaseConfigurationProviderRegistration",
+            "MSFT_CimConfigurationProviderRegistration",
+            "MSFT_PSConfigurationProviderRegistration",
+        };
 
         // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
         private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(s_hiddenResourceList,
@@ -128,11 +128,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// DSC filename to defined class mapper.
         /// </summary>
-        private static Dictionary<string, List<PSObject>> ByFileClassCache
-            => t_byFileClassCache ??= new Dictionary<string, List<PSObject>>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, IEnumerable<PSObject>> ByFileClassCache
+            => t_byFileClassCache ??= new Dictionary<string, IEnumerable<PSObject>>(StringComparer.OrdinalIgnoreCase);
 
         [ThreadStatic]
-        private static Dictionary<string, List<PSObject>> t_byFileClassCache;
+        private static Dictionary<string, IEnumerable<PSObject>> t_byFileClassCache;
 
         /// <summary>
         /// Filenames from which we have imported script dynamic keywords.
@@ -232,8 +232,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                     }
                 }
-
-                // Linux DSC Modules are installed to the dscConfigurationDirectory, so no need to load them.
             }
             else
             {
@@ -246,7 +244,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 {
                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
                     systemResourceRoot = Path.Join(configSystemPath, "Configuration");
-                    inboxModulePath = InboxDscResourceModulePath;
+                    inboxModulePath = windowsInboxDscResourceModulePath;
                 }
 
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -442,7 +440,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="jsonFilePath">Path to json file</param>
         /// <param name="useNewRunspace">If True PowerShell will use a fresh runspace to do Json deserialization</param>
         /// <returns>List of classes from json file</returns>
-        public static List<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace = false)
+        public static IEnumerable<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace = false)
         {
             if (string.IsNullOrEmpty(jsonFilePath))
             {
@@ -456,8 +454,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Json.CimDSCParser();
-            List<PSObject> classes = parser.ParseSchemaJson(jsonFilePath, useNewRunspace);
-            return classes;
+            return parser.ParseSchemaJson(jsonFilePath, useNewRunspace);
         }
 
         /// <summary>
@@ -468,7 +465,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="errors"></param>
         /// <param name="importInBoxResourcesImplicitly"></param>
         /// <returns></returns>
-        public static List<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly = false)
+        public static IEnumerable<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly = false)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -485,7 +482,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.Json.CimDSCParser();
 
-            List<PSObject> classes = null;
+            IEnumerable<PSObject> classes = null;
             try
             {
                 classes = parser.ParseSchemaJson(path);
@@ -709,14 +706,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public static List<PSObject> GetCachedClassByFileName(string fileName)
+        public static IEnumerable<PSObject> GetCachedClassByFileName(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fileName));
             }
 
-            List<PSObject> listCimClass;
+            IEnumerable<PSObject> listCimClass;
             ByFileClassCache.TryGetValue(fileName, out listCimClass);
             return listCimClass;
         }
@@ -727,7 +724,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         /// <param name="moduleName"></param>
         /// <returns></returns>
-        public static List<PSObject> GetCachedClassByModuleName(string moduleName)
+        public static IEnumerable<PSObject> GetCachedClassByModuleName(string moduleName)
         {
             if (string.IsNullOrWhiteSpace(moduleName))
             {

@@ -24,19 +24,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             _json_deserializer = JsonDeserializer.Create();
         }
 
-        internal List<PSObject> ParseSchemaJson(string filePath, bool useNewRunspace = false)
+        internal IEnumerable<PSObject> ParseSchemaJson(string filePath, bool useNewRunspace = false)
         {
             string json = System.IO.File.ReadAllText(filePath);
             try
             {
                 string fileNameDefiningClass = Path.GetFileNameWithoutExtension(filePath);
-                int dotIndex = fileNameDefiningClass.IndexOf('.');
+                int dotIndex = fileNameDefiningClass.IndexOf(".schema", StringComparison.InvariantCultureIgnoreCase);
                 if (dotIndex != -1)
                 {
                     fileNameDefiningClass = fileNameDefiningClass.Substring(0, dotIndex);
                 }
 
-                var result = new List<PSObject>(_json_deserializer.DeserializeClasses(json, useNewRunspace));
+                var result = _json_deserializer.DeserializeClasses(json, useNewRunspace);
                 foreach (dynamic classObject in result)
                 {
                     string superClassName = classObject.CimSuperClassName;

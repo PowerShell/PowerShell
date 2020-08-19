@@ -30,6 +30,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// </summary>
         public IEnumerable<PSObject> DeserializeClasses(string json, bool useNewRunspace = false)
         {
+            if (string.IsNullOrEmpty(json))
+            {
+                throw new ArgumentNullException(nameof(json));
+            }
+
             IEnumerable<PSObject> result = null;
             System.Management.Automation.PowerShell powerShell = null;
 
