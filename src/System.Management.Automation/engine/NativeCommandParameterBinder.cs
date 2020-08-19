@@ -133,12 +133,19 @@ namespace System.Management.Automation
                         // We need to search the string for a double quote.
                         // If the double quote is not preceded by a "\", we need to add one
                         string valueString = argValue as string;
-                        if ( ExperimentalFeature.IsEnabled("PSEscapeDoubleQuotedStringForNativeExecutables") && ! string.IsNullOrEmpty(valueString) && valueString.IndexOf('"') > 1)
+                        if ( ExperimentalFeature.IsEnabled("PSEscapeDoubleQuotedStringForNativeExecutables") && ! string.IsNullOrEmpty(valueString) && valueString.IndexOf('"') >= 0)
                         {
                             StringBuilder parameterValue = new StringBuilder(valueString);
-                            for(int i = 1; i < parameterValue.Length; i++)
+                            for(int i = valueString.Length-1; i >= 0; i--)
                             {
-                                if ( parameterValue[i] == '"' && parameterValue[i-1] != '\\')
+                                if (i == 0)
+                                {
+                                    if ( valueString[0] == '"' )
+                                    {
+                                        parameterValue.Insert(0,'\\');
+                                    }
+                                }
+                                else if ( parameterValue[i] == '"' && parameterValue[i-1] != '\\')
                                 {
                                     parameterValue.Insert(i, '\\');
                                 }
