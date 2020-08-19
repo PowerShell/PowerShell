@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Native Command Arguments" -tags "CI" {
+    BeforeAll {
+        [bool]$skipQuoteTests = ! (Get-ExperimentalFeature PSEscapeDoubleQuotedStringForNativeExecutables).Enabled
+    }
     # When passing arguments to native commands, quoted segments that contain
     # spaces need to be quoted with '"' characters when they are passed to the
     # native command (or to bash or sh on Linux).
@@ -11,11 +14,43 @@ Describe "Native Command Arguments" -tags "CI" {
         $a = 'a"b c"d'
         $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
         $lines.Count | Should -Be 3
-        $lines[0] | Should -BeExactly 'Arg 0 is <ab cd>'
-        $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
-        $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+        if ( $skipQuoteTests ) {
+            $lines[0] | Should -BeExactly 'Arg 0 is <ab cd>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+            $lines[3] | Should -BeExactly 'Arg 3 is <ab cd>'
+        }
+        else {
+            $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
+            # the following is the only example of where the parser removes the quotes
+            # this is because the whole string is not quoted
+            $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+            $lines[3] | Should -BeExactly 'Arg 3 is <a"b c"d>'
+        }
     }
 
+    # tests for the new experimental feature of escaping double quotes
+    It "Should handle example: '<argument>'" -Skip:$skipQuoteTests -TestCases @(
+        @{ argument = '"This is" "a test-1"'; expected = '"This is" "a test-1"' }
+        @{ argument = """This is"" ""a test-2""" ; expected = '"This is" "a test-2"'}
+        @{ argument = '"this" is "a test"'; expected = '"this" is "a test"' }
+        @{ argument = '""""this is a test'; expected = '""""this is a test' }
+        @{ argument = '"""this is a test'; expected = '"""this is a test' }
+        @{ argument = '`"this is a test'; expected = '`"this is a test' }
+        @{ argument = "`"this is a test (first quote with ``)"; expected = '"this is a test (first quote with `)' }
+    ) {
+        param ( $argument, $expected )
+        $lines = testexe -echoargs $argument
+        $lines.Count | Should -Be 1
+        $expected = 'Arg 0 is <{0}>' -f $expected
+        @($lines)[0] | Should -BeExactly $expected
+    }
+
+    # The following tests should work with or without the experimental feature
+    # which checks to see if there is already a "\" in the string and then
+    # does not add the escape
+    #
     # In order to pass '"' characters so they are actually part of command line
     # arguments for native commands, they need to be escaped with a '\' (this
     # is in addition to the '`' escaping needed inside '"' quoted strings in
