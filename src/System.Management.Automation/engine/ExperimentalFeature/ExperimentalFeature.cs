@@ -126,6 +126,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
+                    name: "PSEscapeDoubleQuotedStringForNativeExecutables",
+                    description: "Alternative approach for escaping quotes when calling a native executable"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

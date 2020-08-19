@@ -130,13 +130,25 @@ namespace System.Management.Automation
                             stringConstantType = StringConstantType.DoubleQuoted;
                         }
 
-                        string valueString = parameter.ArgumentValue as string;
-                        if ( valueString != null && stringConstantType == StringConstantType.DoubleQuoted && valueString.Contains("\"")) {
-                            AppendOneNativeArgument(Context, valueString.Replace("\"","\\\""), arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
+                        // We need to search the string for a double quote.
+                        // If the double quote is not preceded by a "\", we need to add one
+                        string valueString = argValue as string;
+                        if ( ExperimentalFeature.IsEnabled("PSEscapeDoubleQuotedStringForNativeExecutables") && ! string.IsNullOrEmpty(valueString) && valueString.IndexOf('"') > 1)
+                        {
+                            StringBuilder parameterValue = new StringBuilder(valueString);
+                            for(int i = 1; i < parameterValue.Length; i++)
+                            {
+                                if ( parameterValue[i] == '"' && parameterValue[i-1] != '\\')
+                                {
+                                    parameterValue.Insert(i, '\\');
+                                }
+
+                            }
+
+                            argValue = parameterValue.ToString();
                         }
-                        else {
-                            AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
-                        }
+
+                        AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
 
                     }
                 }
