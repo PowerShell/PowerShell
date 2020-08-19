@@ -29,18 +29,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Store the RunAs Credentials that this DSC resource will use.
         /// </summary>
-        public DSCResourceRunAsCredential DscResRunAsCred {get; set;}
+        public DSCResourceRunAsCredential DscResRunAsCred { get; set; }
 
         /// <summary>
         /// If we have implicitly imported this resource, we will set this field to true. This will
         /// only happen to InBox resources.
         /// </summary>
-        public bool IsImportedImplicitly {get; set;}
+        public bool IsImportedImplicitly { get; set; }
 
         /// <summary>
         /// A CimClass instance for this resource.
         /// </summary>
-        public PSObject CimClassInstance {get; set;}
+        public PSObject CimClassInstance { get; set; }
 
         /// <summary>
         /// Initializes variables with default values.

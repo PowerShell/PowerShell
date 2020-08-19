@@ -57,9 +57,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
             using (powerShell)
             {
-                powerShell.AddCommand("ConvertFrom-Json");
-                powerShell.AddParameter("InputObject", json);
-                powerShell.AddParameter("Depth", 100); // maximum supported by cmdlet
+                const string convertFromJson = @"ConvertFrom-Json";
+                const string inputObject = @"InputObject";
+                const string depth = @"Depth";
+
+                powerShell.AddCommand(convertFromJson);
+                powerShell.AddParameter(inputObject, json);
+                powerShell.AddParameter(depth, 100); // maximum supported by cmdlet
 
                 result = powerShell.Invoke();
             }
