@@ -161,7 +161,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
         Write-Host("test MyDocuments\powershell\Modules path: " + (test-path $myDocumentsPathPSModules2))
         Write-Host("test Program Files\powershell\Modules path: " + (test-path $programFilesPathPSModules2))
 
-        Install-Module -Name $ContosoServer -Repository $RepositoryName -AllowClobber -verbose
+        Install-Module -Name $ContosoServer -Repository $RepositoryName -AllowClobber -verbose -debug
 
         Write-Host("Test paths After running install-module: ")
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
@@ -223,7 +223,7 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("test Program Files\powershell\Modules path: " + (test-path $programFilesPathPSModules2))
 
 
-        Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers -AllowClobber -verbose
+        Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers -AllowClobber -verbose -debug
 
         Write-Host("Test paths After running install-module: ")
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
@@ -298,7 +298,7 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
         Write-Host("test Program Files\powershell\Scripts path: " + (test-path $programFilesPathPSScripts2))
 
 
-        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Verbose
+        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Verbose -debug
 
         Write-Host("Test paths after Install-Script: ")
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
@@ -358,7 +358,7 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Write-Host("test Program Files\powershell\Scripts path: " + (test-path $programFilesPathPSScripts2))
 
 
-        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -Scope AllUsers -verbose
+        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -Scope AllUsers -verbose -debug
 
         Write-Host("Test paths after Install-Script: ")
         Write-Host("test MyDocuments path: " + (test-path $myDocumentsPath))
