@@ -22,26 +22,25 @@ using Microsoft.PowerShell.Commands;
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 {
     /// <summary>
+    /// Class that defines Dsc cache entries.
     /// </summary>
-    [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
-        Justification = "Needed Internal use only")]
     internal class DscClassCacheEntry
     {
         /// <summary>
         /// Store the RunAs Credentials that this DSC resource will use.
         /// </summary>
-        public DSCResourceRunAsCredential DscResRunAsCred;
+        public DSCResourceRunAsCredential DscResRunAsCred {get; set;}
 
         /// <summary>
         /// If we have implicitly imported this resource, we will set this field to true. This will
         /// only happen to InBox resources.
         /// </summary>
-        public bool IsImportedImplicitly;
+        public bool IsImportedImplicitly {get; set;}
 
         /// <summary>
         /// A CimClass instance for this resource.
         /// </summary>
-        public PSObject CimClassInstance;
+        public PSObject CimClassInstance {get; set;}
 
         /// <summary>
         /// Initializes variables with default values.
@@ -73,7 +72,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
 
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
         // Constants for items in the module qualified name (Module\Version\ClassName)
         private const int IndexModuleName = 0;
@@ -121,17 +120,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// DSC classname to source module mapper.
         /// </summary>
         private static Dictionary<string, Tuple<string, Version>> ByClassModuleCache
-        {
-            get
-            {
-                if (t_byClassModuleCache == null)
-                {
-                    t_byClassModuleCache = new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
-                }
-
-                return t_byClassModuleCache;
-            }
-        }
+            => t_byClassModuleCache ??= new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
 
         [ThreadStatic]
         private static Dictionary<string, Tuple<string, Version>> t_byClassModuleCache;
@@ -140,17 +129,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// DSC filename to defined class mapper.
         /// </summary>
         private static Dictionary<string, List<PSObject>> ByFileClassCache
-        {
-            get
-            {
-                if (t_byFileClassCache == null)
-                {
-                    t_byFileClassCache = new Dictionary<string, List<PSObject>>(StringComparer.OrdinalIgnoreCase);
-                }
-
-                return t_byFileClassCache;
-            }
-        }
+            => t_byFileClassCache ??= new Dictionary<string, List<PSObject>>(StringComparer.OrdinalIgnoreCase);
 
         [ThreadStatic]
         private static Dictionary<string, List<PSObject>> t_byFileClassCache;
@@ -159,17 +138,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// Filenames from which we have imported script dynamic keywords.
         /// </summary>
         private static HashSet<string> ScriptKeywordFileCache
-        {
-            get
-            {
-                if (t_scriptKeywordFileCache == null)
-                {
-                    t_scriptKeywordFileCache = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                }
-
-                return t_scriptKeywordFileCache;
-            }
-        }
+            => t_scriptKeywordFileCache ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         [ThreadStatic]
         private static HashSet<string> t_scriptKeywordFileCache;
@@ -177,12 +146,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Default ModuleName and ModuleVersion to use.
         /// </summary>
-        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version("1.1"));
+        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version(1, 1));
 
         /// <summary>
         /// Default ModuleName and ModuleVersion to use for meta configuration resources.
         /// </summary>
-        internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource = new Tuple<string, Version>("PSDesiredStateConfigurationEngine", new Version("2.0"));
+        internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource = new Tuple<string, Version>("PSDesiredStateConfigurationEngine", new Version(2, 0));
 
         /// <summary>
         /// A set of dynamic keywords that can be used in both configuration and meta configuration.
@@ -217,7 +186,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static void Initialize()
         {
-            Initialize(null, null);
+            Initialize(errors: null, modulePathList: null);
         }
 
         /// <summary>
@@ -227,13 +196,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
-            s_tracer.WriteLine("Initializing DSC class cache force={0}");
+            s_tracer.WriteLine("Initializing DSC class cache");
 
             if (Platform.IsLinux || Platform.IsMacOS)
             {
-                //
                 // Load the base schema files.
-                //
                 ClearCache();
                 var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
                                                 "/etc/opt/omi/conf/dsc/configuration";
@@ -243,26 +210,24 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     throw new DirectoryNotFoundException("Unable to find DSC schema store at " + dscConfigurationDirectory + ". Please ensure PS DSC for Linux is installed.");
                 }
 
-                var resourceBaseFile = Path.Combine(dscConfigurationDirectory, "BaseRegistration/BaseResource.schema.json");
+                var resourceBaseFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "BaseResource.schema.json");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
-                var metaConfigFile = Path.Combine(dscConfigurationDirectory, "BaseRegistration/MSFT_DSCMetaConfiguration.json");
+                var metaConfigFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
                 ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
 
                 var allResourceRoots = new string[] { dscConfigurationDirectory };
 
-                //
                 // Load all of the system resource schema files, searching
-                //
                 string resources;
                 foreach (var resourceRoot in allResourceRoots)
                 {
-                    resources = Path.Combine(resourceRoot, "schema");
+                    resources = Path.Join(resourceRoot, "schema");
                     if (!Directory.Exists(resources))
                     {
                         continue;
                     }
 
-                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.json")))
+                    foreach (var schemaFile in Directory.EnumerateFiles(resources, "*.schema.json", SearchOption.AllDirectories))
                     {
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                     }
@@ -274,47 +239,42 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 // DSC SxS scenario
                 var configSystemPath = Utils.DefaultPowerShellAppBase;
-                var systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
-                var inboxModulePath = "Modules\\PSDesiredStateConfiguration";
+                var systemResourceRoot = Path.Join(configSystemPath, "Configuration");
+                var inboxModulePath = Path.Join("Modules", "PSDesiredStateConfiguration");
 
                 if (!Directory.Exists(systemResourceRoot))
                 {
                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
-                    systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                    systemResourceRoot = Path.Join(configSystemPath, "Configuration");
                     inboxModulePath = InboxDscResourceModulePath;
                 }
 
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-                Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
-                var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
-                Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
+                var customResourceRoot = Path.Join(programFilesDirectory, "WindowsPowerShell", "Configuration");
                 var allResourceRoots = new string[] { systemResourceRoot, customResourceRoot };
-                //
+
                 // Load the base schema files.
-                //
                 ClearCache();
-                var resourceBaseFile = Path.Combine(systemResourceRoot, "BaseRegistration\\BaseResource.schema.json");
+                var resourceBaseFile = Path.Join(systemResourceRoot, "BaseRegistration", "BaseResource.schema.json");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
 
-                var metaConfigFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_DSCMetaConfiguration.json");
+                var metaConfigFile = Path.Join(systemResourceRoot, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
                 ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
 
-                var metaConfigExtensionFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_MetaConfigurationExtensionClasses.schema.json");
+                var metaConfigExtensionFile = Path.Join(systemResourceRoot, "BaseRegistration", "MSFT_MetaConfigurationExtensionClasses.schema.json");
                 ImportClasses(metaConfigExtensionFile, DefaultModuleInfoForMetaConfigResource, errors);
 
-                //
                 // Load all of the system resource schema files, searching
-                //
                 string resources;
                 foreach (var resourceRoot in allResourceRoots)
                 {
-                    resources = Path.Combine(resourceRoot, "Schema");
+                    resources = Path.Join(resourceRoot, "Schema");
                     if (!Directory.Exists(resources))
                     {
                         continue;
                     }
 
-                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.json")))
+                    foreach (var schemaFile in Directory.EnumerateFiles(resources, "*.schema.json", SearchOption.AllDirectories))
                     {
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                     }
@@ -323,9 +283,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 // Load Regular and DSC PS modules
                 bool importInBoxResourcesImplicitly = false;
                 List<string> modulePaths = new List<string>();
-                if (modulePathList == null || modulePathList.Count == 0)
+                if (modulePathList?.Count == 0)
                 {
-                    modulePaths.Add(Path.Combine(configSystemPath, inboxModulePath));
+                    modulePaths.Add(Path.Join(configSystemPath, inboxModulePath));
                     importInBoxResourcesImplicitly = true;
                 }
                 else
@@ -362,7 +322,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 if (!Directory.Exists(moduleDir)) continue;
 
-                var dscResourcesPath = Path.Combine(moduleDir, "DscResources");
+                var dscResourcesPath = Path.Join(moduleDir, "DscResources");
                 if (Directory.Exists(dscResourcesPath))
                 {
                     foreach (string resourceDir in Directory.EnumerateDirectories(dscResourcesPath))
@@ -409,7 +369,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 moduleName = Path.GetFileName(moduleFolderPath);
             }
 
-            string manifestPath = Path.Combine(moduleFolderPath, moduleName + ".psd1");
+            string manifestPath = Path.Join(moduleFolderPath, moduleName + ".psd1");
             s_tracer.WriteLine("DSC GetModuleVersion: Try retrieving module version information from file: {0}.", manifestPath);
 
             if (!File.Exists(manifestPath))
@@ -435,7 +395,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         PsUtils.ManifestModuleVersionPropertyName);
 
                 object versionValue = dataFileSetting["ModuleVersion"];
-                if (versionValue != null)
+                if (versionValue is not null)
                 {
                     Version moduleVersion;
                     if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
@@ -477,14 +437,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// Parses json file without adding it to caches or creating dynamic keywords
+        /// Parses json file without adding it to caches or creating dynamic keywords.
         /// </summary>
         /// <param name="jsonFilePath">Path to json file</param>
         /// <param name="useNewRunspace">If True PowerShell will use a fresh runspace to do Json deserialization</param>
         /// <returns>List of classes from json file</returns>
         public static List<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace = false)
         {
-            if (! jsonFilePath.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrEmpty(jsonFilePath))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(jsonFilePath));
+            }
+
+            if (!jsonFilePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
             {
                 WriteWarning(string.Format("Cannot parse non-JSON file {0}", jsonFilePath));
                 return null;
@@ -510,7 +475,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            if (! path.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
+            if (!path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
             {
                 WriteWarning(string.Format("Cannot parse non-JSON file {0}", path));
                 return null;
@@ -554,7 +519,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         // allow sharing of nested objects.
                         if (!IsSameNestedObject(cimClass, c))
                         {
-                            var files = string.Join(",", GetFileDefiningClass(className));
+                            var files = string.Join(',', GetFileDefiningClass(className));
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                 ParserStrings.DuplicateCimClassDefinition, className, path, files);
 
@@ -595,7 +560,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 foreach (dynamic c in classes)
                 {
                     sb.Append(c.CimSystemProperties.ClassName);
-                    sb.Append(",");
+                    sb.Append(',');
                 }
 
                 s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added the following classes to the cache: {1}", path, sb.ToString());
@@ -786,7 +751,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 foreach(dynamic qualifier in cimClass.CimClassQualifiers)
                 {
-                    if (qualifier.Name == "FriendlyName")
+                    if (qualifier.Name.Equals("FriendlyName", StringComparison.OrdinalIgnoreCase))
                     {
                         return qualifier.Value as string;
                     }
@@ -927,7 +892,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             foreach (var prop in cimClass.CimClassProperties)
             {
                 // If the property is marked as readonly, skip it...
-                if ((prop.Flags != null)  && prop.Flags.Contains("ReadOnly"))
+                if (prop.Flags?.Contains("ReadOnly"))
                 {
                     continue;
                 }
@@ -935,7 +900,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 // If the property has the Read qualifier, also skip it.
                 foreach(var qualifier in prop.Qualifiers)
                 {
-                    if (qualifier.Name == "Read")
+                    if (qualifier.Name.Equals("Read", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -967,7 +932,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 keyProp.Name = prop.Name;
 
                 // Set the mandatory flag if appropriate
-                if ((prop.Flags != null)  && prop.Flags.Contains("Key"))
+                if (prop.Flags?.Contains("Key"))
                 {
                     keyProp.Mandatory = true;
                     keyProp.IsKey = true;
@@ -996,7 +961,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     {
                         int count = qualifier.Value.Length;
                         string[] values = new string[count];
-                        for(int i=0; i<count; i++)
+                        for(int i = 0; i < count; i++)
                         {
                             values[i] = qualifier.Value[i].ToString();
                         }
@@ -1008,7 +973,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     {
                         int count = qualifier.Value.Length;
                         valueMap = new string[count];
-                        for(int i=0; i<count; i++)
+                        for(int i = 0; i < count; i++)
                         {
                             valueMap[i] = qualifier.Value[i].ToString();
                         }
@@ -1106,7 +1071,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static void LoadDefaultCimKeywords()
         {
-            LoadDefaultCimKeywords(null, null, null, false);
+            LoadDefaultCimKeywords(functionsToDefine: null, errors: null, modulePathList: null, cacheResourcesFromMultipleModuleVersions: false);
         }
 
         /// <summary>
@@ -1115,7 +1080,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void LoadDefaultCimKeywords(List<string> modulePathList)
         {
-            LoadDefaultCimKeywords(null, null, modulePathList, false);
+            LoadDefaultCimKeywords(functionsToDefine: null, errors: null, modulePathList, cacheResourcesFromMultipleModuleVersions: false);
         }
 
         /// <summary>
@@ -1124,7 +1089,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="errors">Collection of any errors encountered while loading keywords.</param>
         public static void LoadDefaultCimKeywords(Collection<Exception> errors)
         {
-            LoadDefaultCimKeywords(null, errors, null, false);
+            LoadDefaultCimKeywords(functionsToDefine: null, errors, modulePathList: null, cacheResourcesFromMultipleModuleVersions: false);
         }
 
         /// <summary>
@@ -1133,7 +1098,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
-            LoadDefaultCimKeywords(functionsToDefine, null, null, false);
+            LoadDefaultCimKeywords(functionsToDefine, errors: null, modulePathList: null, cacheResourcesFromMultipleModuleVersions: false);
         }
 
         /// <summary>
@@ -1143,7 +1108,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules.</param>
         public static void LoadDefaultCimKeywords(Collection<Exception> errors, bool cacheResourcesFromMultipleModuleVersions)
         {
-            LoadDefaultCimKeywords(null, errors, null, cacheResourcesFromMultipleModuleVersions);
+            LoadDefaultCimKeywords(functionsToDefine: null, errors, modulePathList: null, cacheResourcesFromMultipleModuleVersions);
         }
 
         /// <summary>
@@ -1242,9 +1207,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var parameterBindingResult = binding.Value;
                 if (boundParameterName.All(char.IsDigit))
                 {
-                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent,
-                                                 "ImportDscResourcePositionalParamsNotSupported",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourcePositionalParamsNotSupported)));
+                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent, "ImportDscResourcePositionalParamsNotSupported", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourcePositionalParamsNotSupported)));
                     continue;
                 }
 
@@ -1262,17 +1225,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
                 else
                 {
-                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent,
-                                                 "ImportDscResourceNeedParams",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent, "ImportDscResourceNeedParams", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                 }
             }
 
             if (errorList.Count == 0 && moduleNameBindingResult == null && resourceNameBindingResult == null)
             {
-                errorList.Add(new ParseError(kwAst.Extent,
-                                             "ImportDscResourceNeedParams",
-                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceNeedParams", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
             }
 
             // Check here if Version is specified but modulename is not specified
@@ -1284,9 +1243,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 // once we have different error messages for 2 scenarios we can remove this check
                 if (resourceNameBindingResult != null)
                 {
-                    errorList.Add(new ParseError(kwAst.Extent,
-                                                 "ImportDscResourceNeedModuleNameWithModuleVersion",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                    errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceNeedModuleNameWithModuleVersion", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                 }
             }
 
@@ -1582,7 +1539,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             foreach (var moduleInfo in modules)
             {
-                var dscResourcesPath = Path.Combine(moduleInfo.ModuleBase, "DscResources");
+                var dscResourcesPath = Path.Join(moduleInfo.ModuleBase, "DscResources");
 
                 var resourcesFound = new List<string>();
                 LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, errorList, null, true, scriptExtent);
@@ -1710,42 +1667,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             if (moduleInfo.ModuleType == ModuleType.Binary)
             {
-#if CORECLR
                 throw PSTraceSource.NewArgumentException("isConfiguration", ParserStrings.ConfigurationNotSupportedInPowerShellCore);
-#else
-                ResolveEventHandler reh = (sender, args) => CurrentDomain_ReflectionOnlyAssemblyResolve(sender, args, moduleInfo);
-
-                try
-                {
-                    AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += reh;
-                    var assembly = moduleInfo.ImplementingAssembly;
-                    if (assembly == null && moduleInfo.Path != null)
-                    {
-                        try
-                        {
-                            var path = moduleInfo.Path;
-
-                            if (moduleInfo.RootModule != null && !Path.GetExtension(moduleInfo.Path).Equals(".dll", StringComparison.OrdinalIgnoreCase))
-                            {
-                                path = moduleInfo.ModuleBase + "\\" + moduleInfo.RootModule;
-                            }
-
-                            assembly = Assembly.ReflectionOnlyLoadFrom(path);
-                        }
-                        catch { }
-                    }
-
-                    // Ignore the module if we can't find the assembly.
-                    if (assembly != null)
-                    {
-                        throw new NotImplementedException("ModuleType.Binary / ImportKeywordsFromAssembly not supported yet");
-                    }
-                }
-                finally
-                {
-                    AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= reh;
-                }
-#endif
             }
             else
             {
@@ -1753,7 +1675,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 // handle RootModule and nestedModule together
                 if (moduleInfo.RootModule != null)
                 {
-                    scriptPath = Path.Combine(moduleInfo.ModuleBase, moduleInfo.RootModule);
+                    scriptPath = Path.Join(moduleInfo.ModuleBase, moduleInfo.RootModule);
                 }
                 else if (moduleInfo.Path != null)
                 {
@@ -1771,30 +1693,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
             }
         }
-
-#if !CORECLR
-        private static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args, PSModuleInfo moduleInfo)
-        {
-            AssemblyName name = new AssemblyName(args.Name);
-
-            if (moduleInfo != null && !string.IsNullOrEmpty(moduleInfo.Path))
-            {
-                string asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".dll";
-                if (File.Exists(asmToCheck))
-                {
-                    return Assembly.ReflectionOnlyLoadFrom(asmToCheck);
-                }
-
-                asmToCheck = Path.GetDirectoryName(moduleInfo.Path) + "\\" + name.Name + ".exe";
-                if (File.Exists(asmToCheck))
-                {
-                    return Assembly.ReflectionOnlyLoadFrom(asmToCheck);
-                }
-            }
-
-            return Assembly.ReflectionOnlyLoad(args.Name);
-        }
-#endif
 
         /// <summary>
         /// </summary>
@@ -2428,8 +2326,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceName));
             }
 
-            string dscResourcesPath = Path.Combine(module.ModuleBase, "DscResources");
-            schemaFilePath = Path.Combine(Path.Combine(dscResourcesPath, resourceName), resourceName + ".schema.json");
+            string dscResourcesPath = Path.Join(module.ModuleBase, "DscResources");
+            schemaFilePath = Path.Join(dscResourcesPath, resourceName, resourceName + ".schema.json");
 
             if (File.Exists(schemaFilePath))
             {
@@ -2540,7 +2438,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 throw PSTraceSource.NewArgumentNullException(nameof(resourceName));
             }
 
-            schemaFilePath = Path.Combine(Path.Combine(Path.Combine(module.ModuleBase, "DscResources"), resourceName), resourceName + ".Schema.psm1");
+            schemaFilePath = Path.Join(module.ModuleBase, "DscResources", resourceName, resourceName + ".Schema.psm1");
 
             if (File.Exists(schemaFilePath) && !s_currentImportingScriptFiles.Contains(schemaFilePath))
             {

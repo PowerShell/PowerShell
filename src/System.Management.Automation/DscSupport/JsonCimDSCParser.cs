@@ -13,7 +13,7 @@ using System.Security;
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 {
     /// <summary>
-    /// Class that does high level Cim schema parsing
+    /// Class that does high level Cim schema parsing.
     /// </summary>
     internal class CimDSCParser
     {
@@ -37,11 +37,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 }
 
                 var result = new List<PSObject>(_json_deserializer.DeserializeClasses(json, useNewRunspace));
-                foreach (dynamic c in result)
+                foreach (dynamic classObject in result)
                 {
-                    string superClassName = c.CimSuperClassName;
-                    string className = c.CimSystemProperties.ClassName;
-                    if ((superClassName != null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
+                    string superClassName = classObject.CimSuperClassName;
+                    string className = classObject.CimSystemProperties.ClassName;
+                    if (superClassName?.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase) ?? false)
                     {
                         // Get the name of the file without schema.mof/json extension
                         if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))

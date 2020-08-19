@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         #region Constructors
 
         /// <summary>
-        /// Instantiates a default deserializer
+        /// Instantiates a default deserializer.
         /// </summary>
         public static JsonDeserializer Create()
         {
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         #region Methods
 
         /// <summary>
-        /// Returns schema of Cim classes from specified json file
+        /// Returns schema of Cim classes from specified json file.
         /// </summary>
         public IEnumerable<PSObject> DeserializeClasses(string json, bool useNewRunspace = false)
         {

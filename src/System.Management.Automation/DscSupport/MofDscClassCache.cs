@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
-            s_tracer.WriteLine("Initializing DSC class cache force={0}");
+            s_tracer.WriteLine("Initializing DSC class cache");
 
             if (Platform.IsLinux || Platform.IsMacOS)
             {
