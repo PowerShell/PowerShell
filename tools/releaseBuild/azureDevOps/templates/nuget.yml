@@ -179,9 +179,9 @@ jobs:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
   - powershell: |
-      if (-not (Test-Path "$(System.ArtifactsDirectory)\signed"))
+      if (-not (Test-Path "$(System.ArtifactsDirectory)\signed\globaltool"))
       {
-        $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
+        $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory -Force
       }
 
       Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
