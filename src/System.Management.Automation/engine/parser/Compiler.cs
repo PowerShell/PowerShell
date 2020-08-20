@@ -951,7 +951,7 @@ namespace System.Management.Automation.Language
 
         private IEnumerable<Expression> CompileInvocationArguments(IEnumerable<ExpressionAst> arguments)
         {
-            return arguments == null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand);
+            return arguments == null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand).ToArray();
         }
 
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
