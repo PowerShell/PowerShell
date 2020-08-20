@@ -1806,8 +1806,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Whether to escpae the argumentList.
+        /// Whether to escape the argumentList.
         /// </summary>
+        /// <remarks>
+        /// <para>When set to true, the argumentList is escaped using the same algorithm as in the PSEscapeForNativeExecutables experimental feature. This is the correct behavior for all Unix programs as well as Windows applications using MSVCRT argv.</para>
+        /// <para>When set to false, the command-line is produced by joining argumentList with spaces.</para>
+        /// <para>If no value is provided, the on-off state of PSEscapeForNativeExecutables is used as the default.</para>
+        /// </remarks>
         [Parameter]
         public bool? EscapeArgs { get; set; }
 
