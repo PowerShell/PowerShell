@@ -202,10 +202,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 // Load the base schema files.
                 ClearCache();
-                /*var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
-                                                "/etc/opt/omi/conf/dsc/configuration";*/
-
-                var dscConfigurationDirectory = "/etc/opt/omi/conf/dsc/configuration";
+                var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
+                                                "/etc/opt/omi/conf/dsc/configuration";
 
                 if (!Directory.Exists(dscConfigurationDirectory))
                 {
