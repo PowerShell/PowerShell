@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
 // Fetched from https://github.com/dotnet/runtime/blob/a3befe1917526e5c735cd8a528cbee280fd66df2/src/libraries/System.Private.CoreLib/src/System/PasteArguments.cs
 
 using System.Collections.Generic;
@@ -55,6 +53,7 @@ namespace System.Management.Automation.Internal
                     {
                         numBackSlash++;
                     }
+
                     stringBuilder.Append(Backslash, numBackSlash);
                     stringBuilder.Append(Quote);
                 }
