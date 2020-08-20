@@ -493,7 +493,7 @@ namespace System.Management.Automation
             {
                 // TODO: Accomendate msiexec et al, by splitting into two halves by '=' or ':' and
                 // appending separately.
-                PasteArguments.AppendArgument(_arguments, arg, doQuote ?? false);
+                PasteArguments.AppendArgument(_arguments, arg, forceQuote: doQuote ?? false);
             }
             else
             {

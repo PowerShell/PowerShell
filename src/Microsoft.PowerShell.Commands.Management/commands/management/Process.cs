@@ -1889,7 +1889,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (EscapeArgs ?? ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables"))
                 {
-                    startInfo.Arguments = PasteArguments.Paste(ArgumentList, false);
+                    startInfo.Arguments = PasteArguments.Paste(ArgumentList, forceQuote: false);
                 }
                 else
                 {
