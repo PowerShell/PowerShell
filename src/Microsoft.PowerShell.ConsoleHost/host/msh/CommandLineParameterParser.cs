@@ -704,7 +704,7 @@ namespace Microsoft.PowerShell
             {
                 if (args[i] is null)
                 {
-                    throw new ArgumentNullException("The 'args' array contains a null element.");
+                    throw new ArgumentNullException(nameof(args), "The specified arguments should not contain null elements.");
                 }
             }
 
