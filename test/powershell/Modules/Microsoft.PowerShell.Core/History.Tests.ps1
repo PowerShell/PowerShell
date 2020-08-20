@@ -37,6 +37,10 @@ Describe "History cmdlet test cases" -Tags "CI" {
             $result = $ps.AddScript("Invoke-History 2,4").Invoke()
             $result | Should -Be @(2, 4)
         }
+        It "Invoke-History executes multiple IDs via pipeline" {
+            $result = $ps.AddScript("@(2,4) | Invoke-History").Invoke()
+            $result | Should -Be @(2, 4)
+        }
         It "Invoke-History invokes the last command by default" {
             $result = $ps.AddScript("Invoke-History").Invoke()
             $result | Should -Be 4
