@@ -126,6 +126,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
+                new ExperimentalFeature(
+                    name: "PSDscJsonSchemaSupport",
+                    description: "Support JSON-based APIs for DSC schema processing"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

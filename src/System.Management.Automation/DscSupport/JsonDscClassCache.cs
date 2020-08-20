@@ -72,6 +72,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
 
+        private const string jsonSchemaSupportExperimentalFeatureName = "PSDscJsonSchemaSupport";
+
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
         // Constants for items in the module qualified name (Module\Version\ClassName)
@@ -595,6 +597,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static void ClearCache()
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             s_tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
             ClassCache.Clear();
             ByClassModuleCache.Clear();
@@ -652,6 +659,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>List of cached cim classes.</returns>
         public static List<PSObject> GetCachedClassesForModule(PSModuleInfo module)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             List<PSObject> cachedClasses = new List<PSObject>();
             var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
             foreach (var dscClassCacheEntry in ClassCache)
@@ -672,6 +684,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns></returns>
         public static List<string> GetFileDefiningClass(string className)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             List<string> files = new List<string>();
             foreach (var pair in ByFileClassCache)
             {
@@ -698,6 +715,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns></returns>
         public static string[] GetLoadedFiles()
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             return ByFileClassCache.Keys.ToArray();
         }
 
@@ -708,6 +730,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns></returns>
         public static IEnumerable<PSObject> GetCachedClassByFileName(string fileName)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(fileName));
@@ -726,6 +753,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns></returns>
         public static IEnumerable<PSObject> GetCachedClassByModuleName(string moduleName)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             if (string.IsNullOrWhiteSpace(moduleName))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(moduleName));
@@ -767,6 +799,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static Collection<DynamicKeyword> GetCachedKeywords()
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             Collection<DynamicKeyword> keywords = new Collection<DynamicKeyword>();
 
             foreach (KeyValuePair<string, DscClassCacheEntry> cachedClass in ClassCache)
@@ -1118,6 +1155,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
                                                    List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                Exception exception = new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+                errors.Add(exception);
+                return;
+            }
+
             DynamicKeyword.Reset();
             Initialize(errors, modulePathList);
 
@@ -1699,6 +1743,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>The list of resources imported from this module.</returns>
         public static List<string> ImportClassResourcesFromModule(PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, Dictionary<string, ScriptBlock> functionsToDefine)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             var resourcesImported = new List<string>();
             LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesImported, null, functionsToDefine);
             return resourcesImported;
@@ -2313,6 +2362,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             if (module == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(module));
@@ -2425,6 +2479,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="functionsToDefine"></param>
         public static bool ImportScriptKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             if (module == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(module));
