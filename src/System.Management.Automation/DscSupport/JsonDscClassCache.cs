@@ -202,12 +202,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 // Load the base schema files.
                 ClearCache();
-                var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
-                                                "/etc/opt/omi/conf/dsc/configuration";
+                /*var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
+                                                "/etc/opt/omi/conf/dsc/configuration";*/
+
+                var dscConfigurationDirectory = "/etc/opt/omi/conf/dsc/configuration";
 
                 if (!Directory.Exists(dscConfigurationDirectory))
                 {
-                    throw new DirectoryNotFoundException("Unable to find DSC schema store at " + dscConfigurationDirectory + ". Please ensure PS DSC for Linux is installed.");
+                    throw new DirectoryNotFoundException(string.Format(ParserStrings.PsDscMissingSchemaStore, dscConfigurationDirectory));
                 }
 
                 var resourceBaseFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "BaseResource.schema.json");
