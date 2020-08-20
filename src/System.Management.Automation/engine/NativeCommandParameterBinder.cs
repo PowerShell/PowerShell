@@ -524,7 +524,7 @@ namespace System.Management.Automation
         /// </summary>
         private (string[], string) splitOption(string arg)
         {
-            string[] pieces = arg.Split(OptionDeliminators, 1);
+            string[] pieces = arg.Split(OptionDeliminators, 2);
             string sep = "";
 
             // Contains separator?
@@ -542,7 +542,7 @@ namespace System.Management.Automation
         private NativeCommand _nativeCommand;
         private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
         private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
-        private static const char[] OptionDeliminators = { ":", "=" };
+        private static const char[] OptionDeliminators = { ':', '=' };
 
         #endregion private members
     }
