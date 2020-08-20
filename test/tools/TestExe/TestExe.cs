@@ -8,6 +8,9 @@ namespace TestExe
 {
     class TestExe
     {
+        [DllImport("kernel32.dll")]
+        private static extern System.IntPtr GetCommandLineW();
+
         static int Main(string[] args)
         {
             if (args.Length > 0)
@@ -18,8 +21,11 @@ namespace TestExe
                         EchoArgs(args);
                         break;
                     case "-echocmdline":
-                        // This is blocked by dotnet/runtime#11305: need the raw cmdline on Windows to make sure we can make rogue apps and bats happy
-                        Console.WriteLine(Environment.CommandLine);
+                        // A P/Invoke is needed due to https://github.com/dotnet/runtime/issues/11305.
+                        // Suggested by https://github.com/PowerShell/PowerShell/issues/1995#issuecomment-677664318.
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                            Console.WriteLine(Marshal.PtrToStringUni(GetCommandLineW()));
+                        }
                         break;
                     case "-createchildprocess":
                         CreateChildProcess(args);

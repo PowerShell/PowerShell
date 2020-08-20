@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Native Command Arguments" -tags "CI" {
+    BeforeAll {
+        [bool]$hasNewBehavior = (Get-ExperimentalFeature PSEscapeForNativeExecutables).Enabled
+    }
+
     # When passing arguments to native commands, quoted segments that contain
     # spaces need to be quoted with '"' characters when they are passed to the
     # native command (or to bash or sh on Linux).
@@ -8,13 +12,18 @@ Describe "Native Command Arguments" -tags "CI" {
     # This test checks that the proper quoting is occuring by passing arguments
     # to the testexe native command and looking at how it got the arguments.
     It "Should handle quoted spaces correctly" {
-        Set-TestInconclusive -Message "This assumes legacy behavior. Re-enable after experimental switch is added."
         $a = 'a"b c"d'
         $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
         $lines.Count | Should -Be 3
-        $lines[0] | Should -BeExactly 'Arg 0 is <ab cd>'
-        $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
-        $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+        if ($hasNewBehavior) {
+            $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+        } else {
+            $lines[0] | Should -BeExactly 'Arg 0 is <ab cd>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+        }
     }
 
     # In order to pass '"' characters so they are actually part of command line
@@ -28,8 +37,7 @@ Describe "Native Command Arguments" -tags "CI" {
     # This test checks that the proper quoting and escaping is occurring by
     # passing arguments with escaped quotes to the testexe native command and
     # looking at how it got the arguments.
-    It "Should handle spaces between escaped quotes" {
-        Set-TestInconclusive -Message "This assumes legacy behavior. Re-enable after experimental switch is added."
+    It "Should handle spaces between escaped quotes" -Skip:$hasNewBehavior {
         $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
         $lines.Count | Should -Be 2
         $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
@@ -64,6 +72,12 @@ Describe "Native Command Arguments" -tags "CI" {
         for ($i = 0; $i -lt $expected.Count; $i++) {
             $lines[$i] | Should -BeExactly "Arg $i is <$($expected[$i])>"
         }
+    }
+
+    It "Should always quote arguments that are double quoted" -Skip:!($hasNewBehavior -and $IsWindows) {
+        $lines = testexe -echocmdline "NoNeedToQuoteButIWantTo"
+        $lines.Count | Should -Be 1
+        $lines[0] | Should -MatchExactly '.* "NoNeedToQuoteButIWantTo"'
     }
 }
 
