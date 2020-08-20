@@ -491,9 +491,26 @@ namespace System.Management.Automation
         {
             if (ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables"))
             {
-                // TODO: Accomendate msiexec et al, by splitting into two halves by '=' or ':' and
-                // appending separately.
-                PasteArguments.AppendArgument(_arguments, arg, forceQuote: doQuote ?? false);
+                // Split into two parts by = or : to appease msiexec et al.
+                bool forceQuote = doQuote ?? false;
+                (string[] pieces, string sep) = splitOption(arg);
+                bool first = true;
+
+                foreach (string piece in pieces)
+                {
+                    if (!first)
+                    {
+                        _arguments.Append(sep);
+                        if (piece.Length == 0)
+                        {
+                            // No need to turn `abc:` into `abc:""`
+                            continue;
+                        }
+                    }
+
+                    PasteArguments.AppendArgument(_arguments, piece, forceQuote: forceQuote);
+                    first = false;
+                }
             }
             else
             {
@@ -503,11 +520,29 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Split an argument into parts that can be appended separately.
+        /// </summary>
+        private (string[], string) splitOption(string arg)
+        {
+            string[] pieces = arg.Split(OptionDeliminators, 1);
+            string sep = "";
+
+            // Contains separator?
+            if (pieces.Length > 1)
+            {
+                sep = arg[pieces[0].Length];
+            }
+
+            return (pieces, sep);
+        }
+
+        /// <summary>
         /// The native command to bind to.
         /// </summary>
         private NativeCommand _nativeCommand;
         private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
         private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
+        private static const char[] OptionDeliminators = { ":", "=" };
 
         #endregion private members
     }

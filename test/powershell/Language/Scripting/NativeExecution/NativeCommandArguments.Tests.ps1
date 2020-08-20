@@ -79,6 +79,12 @@ Describe "Native Command Arguments" -tags "CI" {
         $lines.Count | Should -Be 1
         $lines[0] | Should -MatchExactly '.* "NoNeedToQuoteButIWantTo"'
     }
+
+    It "Should quote two sides of a msiexec-like separator independently" -Skip:!($hasNewBehavior -and $IsWindows) {
+        $lines = testexe -echocmdline PROPERTY="SPACE SPACE!" /option:'naughty value' trailing=
+        $lines.Count | Should -Be 1
+        $lines[0] | Should -MatchExactly '.* PROPERTY="SPACE SPACE!" /option:"naughty value" trailing='
+    }
 }
 
 Describe 'PSPath to native commands' {
