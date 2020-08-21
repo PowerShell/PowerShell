@@ -361,6 +361,22 @@ namespace PSTests.Sequential
             File.Create(fileName).Dispose();
         }
 
+        public void SetupConfigFile5()
+        {
+            CleanupConfigFiles();
+
+            // System wide config file is broken
+            CreateBrokenConfigFile(systemWideConfigFile);
+
+            // Current user config file is broken
+            CreateBrokenConfigFile(currentUserConfigFile);
+        }
+
+        private void CreateBrokenConfigFile(string fileName)
+        {
+            File.WriteAllText(fileName, "[abbra");
+        }
+
         internal void ForceReadingFromFile()
         {
             // Reset the cached roots.
@@ -950,6 +966,16 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
+        }
+
+        [Fact, TestPriority(11)]
+        public void PowerShellConfig_GetPowerShellPolicies_BrokenSystemConfig()
+        {
+            fixture.SetupConfigFile5();
+            fixture.ForceReadingFromFile();
+
+            Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers));
+            Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
         }
     }
 }

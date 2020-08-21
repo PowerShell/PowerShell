@@ -402,6 +402,10 @@ namespace System.Management.Automation.Configuration
 
                         configData = serializer.Deserialize<JObject>(jsonReader) ?? emptyConfig;
                     }
+                    catch (Exception exc)
+                    {
+                        PSTraceSource.NewInvalidOperationException(exc, PSConfigurationStrings.CanNotConfigurationFile, args: fileName);
+                    }
                     finally
                     {
                         fileLock.ExitReadLock();
