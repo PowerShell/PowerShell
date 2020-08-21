@@ -404,7 +404,7 @@ namespace System.Management.Automation.Configuration
                     }
                     catch (Exception exc)
                     {
-                        PSTraceSource.NewInvalidOperationException(exc, PSConfigurationStrings.CanNotConfigurationFile, args: fileName);
+                        throw PSTraceSource.NewInvalidOperationException(exc, PSConfigurationStrings.CanNotConfigurationFile, args: fileName);
                     }
                     finally
                     {
