@@ -95,7 +95,9 @@ namespace System.Management.Automation
         /// <param name="encoding">The encoding to check for obsolescence.</param>
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
+#pragma warning disable 612, 618
             if (encoding == System.Text.Encoding.UTF7)
+#pragma warning restore 612, 618
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
             }
