@@ -1256,9 +1256,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             var errorList = new List<ParseError>();
             foreach (var bindingException in bindingResult.BindingExceptions.Values)
             {
-                errorList.Add(new ParseError(bindingException.CommandElement.Extent,
-                                             "ParameterBindingException",
-                                             bindingException.BindingException.Message));
+                errorList.Add(new ParseError(bindingException.CommandElement.Extent, "ParameterBindingException", bindingException.BindingException.Message));
             }
 
             ParameterBindingResult moduleNameBindingResult = null;
@@ -2220,7 +2218,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 bool skip = true;
                 foreach (var toImport in resourcesToImport)
                 {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name))
+                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase).IsMatch(resourceDefnAst.Name))
                     {
                         skip = false;
                         break;

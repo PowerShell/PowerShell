@@ -445,9 +445,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// Parses json file without adding it to caches or creating dynamic keywords.
         /// </summary>
         /// <param name="jsonFilePath">Path to json file</param>
+        /// <returns>List of classes from json file</returns>
+        public static IEnumerable<PSObject> ReadClassesFromJson(string jsonFilePath)
+        {
+            return ReadClassesFromJson(jsonFilePath, false);
+        }
+
+        /// <summary>
+        /// Parses json file without adding it to caches or creating dynamic keywords.
+        /// </summary>
+        /// <param name="jsonFilePath">Path to json file</param>
         /// <param name="useNewRunspace">If True PowerShell will use a fresh runspace to do Json deserialization</param>
         /// <returns>List of classes from json file</returns>
-        public static IEnumerable<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace = false)
+        public static IEnumerable<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace)
         {
             if (string.IsNullOrEmpty(jsonFilePath))
             {
@@ -467,12 +477,24 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// <summary>
         /// Import CIM classes from the given file.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="moduleInfo"></param>
-        /// <param name="errors"></param>
-        /// <param name="importInBoxResourcesImplicitly"></param>
-        /// <returns></returns>
-        public static IEnumerable<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly = false)
+        /// <param name="path">Path to schema file</param>
+        /// <param name="moduleInfo">Module information</param>
+        /// <param name="errors">Error collection that will be shown to the user</param>
+        /// <returns>Class objects from schema file</returns>
+        public static IEnumerable<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors)
+        {
+            return ImportClasses(path, moduleInfo, errors, false);
+        }
+
+        /// <summary>
+        /// Import CIM classes from the given file.
+        /// </summary>
+        /// <param name="path">Path to schema file</param>
+        /// <param name="moduleInfo">Module information</param>
+        /// <param name="errors">Error collection that will be shown to the user</param>
+        /// <param name="importInBoxResourcesImplicitly">Flag for implicitly imported resource</param>
+        /// <returns>Class objects from schema file</returns>
+        public static IEnumerable<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -817,7 +839,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 string moduleName = splittedName[IndexModuleName];
                 string moduleVersion = splittedName[IndexModuleVersion];
 
-                var keyword = CreateKeywordFromCimClass(moduleName, Version.Parse(moduleVersion), cachedClass.Value.CimClassInstance, null, cachedClass.Value.DscResRunAsCred);
+                var keyword = CreateKeywordFromCimClass(moduleName, Version.Parse(moduleVersion), cachedClass.Value.CimClassInstance, cachedClass.Value.DscResRunAsCred);
                 if (keyword != null)
                 {
                     keywords.Add(keyword);
@@ -837,7 +859,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// <param name="runAsBehavior">To Specify RunAsBehavior of the class.</param>
         private static void CreateAndRegisterKeywordFromCimClass(string moduleName, Version moduleVersion, PSObject cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
-            var keyword = CreateKeywordFromCimClass(moduleName, moduleVersion, cimClass, functionsToDefine, runAsBehavior);
+            var keyword = CreateKeywordFromCimClass(moduleName, moduleVersion, cimClass, runAsBehavior);
             if (keyword == null)
             {
                 return;
@@ -871,9 +893,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// <param name="moduleName"></param>
         /// <param name="moduleVersion"></param>
         /// <param name="cimClass"></param>
-        /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
         /// <param name="runAsBehavior">To specify RunAs behavior of the class.</param>
-        private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, dynamic cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
+        private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, dynamic cimClass, DSCResourceRunAsCredential runAsBehavior)
         {
             var resourceName = cimClass.CimSystemProperties.ClassName;
             string alias = GetFriendlyName(cimClass);
@@ -1838,7 +1859,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             _FriendlyName.Properties.Add(new PSNoteProperty("CimType", "String"));
             _FriendlyName.Properties.Add(new PSNoteProperty("Flags", "EnableOverride, Restricted"));
 
-            var _CimClassQualifiers = new PSObject[] {_ClassVersion, _FriendlyName};
+            var _CimClassQualifiers = new [] {_ClassVersion, _FriendlyName};
 
             var _CimSystemProperties = new PSObject();
             _CimSystemProperties.Properties.Add(new PSNoteProperty("Namespace", null));
@@ -1865,7 +1886,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 WriteWarning(string.Format("BaseTypes count for type {0} is {1} and not implemented yet", className, bases.Count));
             }
 
-            return new PSObject[] {result};
+            return new [] {result};
         }
 
         /// <summary>
@@ -2109,7 +2130,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             }
 
             var result = false;
-            var parser = new CimDSCParser();
 
             const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(module._declaredDscResourceExports, wildcardOptions);

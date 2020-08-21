@@ -328,9 +328,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         {
             _deserializer = CimMofDeserializer.Create();
             _onClassNeeded = onClassNeeded;
-
-            //TODO-AM: this is for debugging:
-            _deserializer.SchemaValidationOption = MofDeserializerSchemaValidationOption.Ignore;
         }
 
         /// <summary>
@@ -338,10 +335,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         internal CimDSCParser(CimMofDeserializer.OnClassNeeded onClassNeeded, Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption validationOptions)
         {
             _deserializer = CimMofDeserializer.Create();
-            //_deserializer.SchemaValidationOption = validationOptions;
-            //TODO-AM: this is for debugging:
-            _deserializer.SchemaValidationOption = MofDeserializerSchemaValidationOption.Ignore;
-            
+            _deserializer.SchemaValidationOption = validationOptions;
             _onClassNeeded = onClassNeeded;
         }
 

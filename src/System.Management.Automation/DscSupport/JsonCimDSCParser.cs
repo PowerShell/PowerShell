@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
     /// </summary>
     internal class CimDSCParser
     {
-        private JsonDeserializer _json_deserializer;
+        private readonly JsonDeserializer _json_deserializer;
         
         internal CimDSCParser()
         {
