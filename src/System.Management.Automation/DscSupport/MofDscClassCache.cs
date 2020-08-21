@@ -450,21 +450,25 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         s_tracer.WriteLine(
                             "DSC GetModuleVersion: ModuleVersion value '{0}' cannot be converted to System.Version. Skip the module '{1}'.",
-                            versionValue, moduleName);
+                            versionValue,
+                            moduleName);
                     }
                 }
                 else
                 {
                     s_tracer.WriteLine(
                         "DSC GetModuleVersion: Manifest file '{0}' does not contain ModuleVersion. Skip the module '{1}'.",
-                        manifestPath, moduleName);
+                        manifestPath,
+                        moduleName);
                 }
             }
             catch (PSInvalidOperationException ex)
             {
                 s_tracer.WriteLine(
                     "DSC GetModuleVersion: Error evaluating module manifest file '{0}', with error '{1}'. Skip the module '{2}'.",
-                    manifestPath, ex, moduleName);
+                    manifestPath,
+                    ex,
+                    moduleName);
             }
 
             return null;
@@ -825,7 +829,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         private static bool IsMagicProperty(string propertyName)
         {
-            return System.Text.RegularExpressions.Regex.Match(propertyName,
+            return System.Text.RegularExpressions.Regex.Match(
+                propertyName,
                 "^(ResourceId|SourceInfo|ModuleName|ModuleVersion|ConfigurationName)$",
                 System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success;
         }
@@ -1071,7 +1076,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         s_tracer.WriteLine(
                             "DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {0}, count of 'ValueMap': {1}. Skip the keyword '{2}'.",
-                            keyProp.Values.Count, valueMap.Length, keyword.Keyword);
+                            keyProp.Values.Count,
+                            valueMap.Length,
+                            keyword.Keyword);
                         return null;
                     }
 
@@ -1111,11 +1118,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static void UpdateKnownRestriction(DynamicKeyword keyword)
         {
             if (
-                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfigurationV2",
-                    StringComparison.OrdinalIgnoreCase)
+                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfigurationV2", StringComparison.OrdinalIgnoreCase)
                 ||
-                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfiguration",
-                    StringComparison.OrdinalIgnoreCase))
+                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfiguration", StringComparison.OrdinalIgnoreCase))
             {
                 if (keyword.Properties["RefreshFrequencyMins"] != null)
                 {
@@ -1187,8 +1192,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="errors">Collection of any errors encountered while loading keywords.</param>
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules.</param>
-        private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
-                                                   List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
+        private static void LoadDefaultCimKeywords(
+            Dictionary<string, ScriptBlock> functionsToDefine,
+            Collection<Exception> errors,
+            List<string> modulePathList,
+            bool cacheResourcesFromMultipleModuleVersions)
         {
             DynamicKeyword.Reset();
             Initialize(errors, modulePathList);
@@ -1278,9 +1286,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var parameterBindingResult = binding.Value;
                 if (boundParameterName.All(char.IsDigit))
                 {
-                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent,
-                                                 "ImportDscResourcePositionalParamsNotSupported",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourcePositionalParamsNotSupported)));
+                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent, "ImportDscResourcePositionalParamsNotSupported", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourcePositionalParamsNotSupported)));
                     continue;
                 }
 
@@ -1298,17 +1304,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
                 else
                 {
-                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent,
-                                                 "ImportDscResourceNeedParams",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                    errorList.Add(new ParseError(parameterBindingResult.Value.Extent, "ImportDscResourceNeedParams", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                 }
             }
 
             if (errorList.Count == 0 && moduleNameBindingResult == null && resourceNameBindingResult == null)
             {
-                errorList.Add(new ParseError(kwAst.Extent,
-                                             "ImportDscResourceNeedParams",
-                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                errorList.Add(new ParseError(
+                    kwAst.Extent,
+                    "ImportDscResourceNeedParams",
+                    string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
             }
 
             // Check here if Version is specified but modulename is not specified
@@ -1320,9 +1325,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // once we have different error messages for 2 scenarios we can remove this check
                 if (resourceNameBindingResult != null)
                 {
-                    errorList.Add(new ParseError(kwAst.Extent,
-                                                 "ImportDscResourceNeedModuleNameWithModuleVersion",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                    errorList.Add(new ParseError(
+                        kwAst.Extent,
+                        "ImportDscResourceNeedModuleNameWithModuleVersion",
+                        string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                 }
             }
 
@@ -1333,9 +1339,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (!IsConstantValueVisitor.IsConstant(resourceNameBindingResult.Value, out resourceName, true, true) ||
                     !LanguagePrimitives.TryConvertTo(resourceName, out resourceNames))
                 {
-                    errorList.Add(new ParseError(resourceNameBindingResult.Value.Extent,
-                                                 "RequiresInvalidStringArgument",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, nameParam)));
+                    errorList.Add(new ParseError(
+                        resourceNameBindingResult.Value.Extent,
+                        "RequiresInvalidStringArgument",
+                        string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, nameParam)));
                 }
             }
 
@@ -1345,9 +1352,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 object moduleVer = null;
                 if (!IsConstantValueVisitor.IsConstant(moduleVersionBindingResult.Value, out moduleVer, true, true))
                 {
-                    errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent,
-                                                 "RequiresArgumentMustBeConstant",
-                                                 ParserStrings.RequiresArgumentMustBeConstant));
+                    errorList.Add(new ParseError(
+                        moduleVersionBindingResult.Value.Extent,
+                        "RequiresArgumentMustBeConstant",
+                        ParserStrings.RequiresArgumentMustBeConstant));
                 }
 
                 if (moduleVer is double)
@@ -1360,9 +1368,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (!LanguagePrimitives.TryConvertTo(moduleVer, out moduleVersion))
                 {
-                    errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent,
-                                                 "RequiresVersionInvalid",
-                                                 ParserStrings.RequiresVersionInvalid));
+                    errorList.Add(new ParseError(
+                        moduleVersionBindingResult.Value.Extent,
+                        "RequiresVersionInvalid",
+                        ParserStrings.RequiresVersionInvalid));
                 }
             }
 
@@ -1372,9 +1381,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 object moduleName = null;
                 if (!IsConstantValueVisitor.IsConstant(moduleNameBindingResult.Value, out moduleName, true, true))
                 {
-                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                 "RequiresArgumentMustBeConstant",
-                                                 ParserStrings.RequiresArgumentMustBeConstant));
+                    errorList.Add(new ParseError(
+                        moduleNameBindingResult.Value.Extent,
+                        "RequiresArgumentMustBeConstant",
+                        ParserStrings.RequiresArgumentMustBeConstant));
                 }
 
                 if (LanguagePrimitives.TryConvertTo(moduleName, out moduleSpecifications))
@@ -1382,25 +1392,28 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // if resourceNames are specified then we can not specify multiple modules name
                     if (moduleSpecifications != null && moduleSpecifications.Length > 1 && resourceNames != null)
                     {
-                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                     "ImportDscResourceMultipleModulesNotSupportedWithName",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceMultipleModulesNotSupportedWithName)));
+                        errorList.Add(new ParseError(
+                            moduleNameBindingResult.Value.Extent,
+                            "ImportDscResourceMultipleModulesNotSupportedWithName",
+                            string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceMultipleModulesNotSupportedWithName)));
                     }
 
                     // if moduleversion is specified then we can not specify multiple modules name
                     if (moduleSpecifications != null && moduleSpecifications.Length > 1 && moduleVersion != null)
                     {
-                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                     "ImportDscResourceMultipleModulesNotSupportedWithVersion",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                        errorList.Add(new ParseError(
+                            moduleNameBindingResult.Value.Extent,
+                            "ImportDscResourceMultipleModulesNotSupportedWithVersion",
+                            string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                     }
 
                     // if moduleversion is specified then we can not specify another version in modulespecification object of ModuleName
                     if (moduleSpecifications != null && (moduleSpecifications[0].Version != null || moduleSpecifications[0].MaximumVersion != null) && moduleVersion != null)
                     {
-                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                     "ImportDscResourceMultipleModuleVersionsNotSupported",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                        errorList.Add(new ParseError(
+                            moduleNameBindingResult.Value.Extent,
+                            "ImportDscResourceMultipleModuleVersionsNotSupported",
+                            string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                     }
 
                     // If moduleVersion is specified we have only one module Name in valid scenario
@@ -1412,9 +1425,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
                 else
                 {
-                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                 "RequiresInvalidStringArgument",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, moduleNameParam)));
+                    errorList.Add(new ParseError(
+                        moduleNameBindingResult.Value.Extent,
+                        "RequiresInvalidStringArgument",
+                        string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, moduleNameParam)));
                 }
             }
 
@@ -1516,10 +1530,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 int i = 0;
                 foreach (string name in mandatoryPropertiesNames)
                 {
-                    errors[i] = new ParseError(extent, "MissingValueForMandatoryProperty",
-                        string.Format(CultureInfo.CurrentCulture, ParserStrings.MissingValueForMandatoryProperty,
-                                    kwAst.Keyword.Keyword, kwAst.Keyword.Properties.First(
-                                        p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint, name));
+                    errors[i] = new ParseError(
+                        extent,
+                        "MissingValueForMandatoryProperty",
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            ParserStrings.MissingValueForMandatoryProperty,
+                            kwAst.Keyword.Keyword,
+                            kwAst.Keyword.Properties.First(p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint, name));
                     i++;
                 }
 
@@ -1536,10 +1554,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleSpecifications">Module information, can be null.</param>
         /// <param name="resourceNames">Name of the resource to be loaded from module.</param>
         /// <param name="errorList">List of errors reported by the method.</param>
-        public static void LoadResourcesFromModule(IScriptExtent scriptExtent,
-                                                           ModuleSpecification[] moduleSpecifications,
-                                                           string[] resourceNames,
-                                                           List<ParseError> errorList)
+        public static void LoadResourcesFromModule(
+            IScriptExtent scriptExtent,
+            ModuleSpecification[] moduleSpecifications,
+            string[] resourceNames,
+            List<ParseError> errorList)
         {
             // get all required modules
             var modules = new Collection<PSModuleInfo>();
@@ -1574,11 +1593,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         if (moduleInfos.Count > 1)
                         {
-                            errorList.Add(new ParseError(scriptExtent,
-                                                         "MultipleModuleEntriesFoundDuringParse",
-                                                         string.Format(CultureInfo.CurrentCulture,
-                                                                       ParserStrings.MultipleModuleEntriesFoundDuringParse,
-                                                                       moduleToImport.Name)));
+                            errorList.Add(new ParseError(
+                                scriptExtent,
+                                "MultipleModuleEntriesFoundDuringParse",
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    ParserStrings.MultipleModuleEntriesFoundDuringParse,
+                                    moduleToImport.Name)));
                         }
                         else
                         {
@@ -1586,8 +1607,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 ? moduleToImport.Name
                                 : string.Format(CultureInfo.CurrentCulture, "<{0}, {1}>", moduleToImport.Name, moduleToImport.Version);
 
-                            errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse",
-                                string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
+                            errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse", string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
                         }
 
                         return;
@@ -1642,21 +1662,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             }
                             catch (FileNotFoundException)
                             {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "SchemaFileNotFound",
-                                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.SchemaFileNotFound, schemaMofFilePath)));
+                                errorList.Add(new ParseError(scriptExtent, "SchemaFileNotFound", string.Format(CultureInfo.CurrentCulture, ParserStrings.SchemaFileNotFound, schemaMofFilePath)));
                             }
                             catch (PSInvalidOperationException e)
                             {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                            e.ErrorRecord.FullyQualifiedErrorId,
-                                                            e.Message));
+                                errorList.Add(new ParseError(scriptExtent, e.ErrorRecord.FullyQualifiedErrorId, e.Message));
                             }
                             catch (Exception e)
                             {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "ExceptionParsingMOFFile",
-                                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.ExceptionParsingMOFFile, schemaMofFilePath, e.Message)));
+                                errorList.Add(new ParseError(scriptExtent, "ExceptionParsingMOFFile", string.Format(CultureInfo.CurrentCulture, ParserStrings.ExceptionParsingMOFFile, schemaMofFilePath, e.Message)));
                             }
 
                             var schemaScriptFilePath = string.Empty;
@@ -1667,16 +1681,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             }
                             catch (FileNotFoundException)
                             {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "SchemaFileNotFound",
-                                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.SchemaFileNotFound, schemaScriptFilePath)));
+                                errorList.Add(new ParseError(scriptExtent, "SchemaFileNotFound", string.Format(CultureInfo.CurrentCulture, ParserStrings.SchemaFileNotFound, schemaScriptFilePath)));
                             }
                             catch (Exception e)
                             {
                                 // This shouldn't happen so just report the error as is
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "UnexpectedParseError",
-                                                             string.Format(CultureInfo.CurrentCulture, e.ToString())));
+                                errorList.Add(new ParseError(scriptExtent, "UnexpectedParseError", string.Format(CultureInfo.CurrentCulture, e.ToString())));
                             }
 
                             if (foundCimSchema || foundScriptSchema)
@@ -1725,9 +1735,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (!resourceNameToImport.Contains("*"))
                     {
-                        errorList.Add(new ParseError(scriptExtent,
-                                                     "DscResourcesNotFoundDuringParsing",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.DscResourcesNotFoundDuringParsing, resourceNameToImport)));
+                        errorList.Add(new ParseError(scriptExtent, "DscResourcesNotFoundDuringParsing", string.Format(CultureInfo.CurrentCulture, ParserStrings.DscResourcesNotFoundDuringParsing, resourceNameToImport)));
                     }
                 }
             }
@@ -1768,7 +1776,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                             assembly = Assembly.ReflectionOnlyLoadFrom(path);
                         }
-                        catch { }
+                        catch
+                        {
+                        }
                     }
 
                     // Ignore the module if we can't find the assembly.
@@ -1994,7 +2004,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             // All 3 methods (Get/Set/Test) position should be found.
-            return (methodsLinePosition.Count == 3);
+            return methodsLinePosition.Count == 3;
         }
 
         /// <summary>
@@ -2082,9 +2092,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (memberType != null)
                 {
                     // TODO - validate type and name
-                    mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
-                        out embeddedInstanceType,
-                        embeddedInstanceTypes);
+                    mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType, embeddedInstanceTypes);
                     if (memberType.IsEnum)
                     {
                         enumNames = Enum.GetNames(memberType);
@@ -2093,9 +2101,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 else
                 {
                     // PropertyType can't be null, we used typeof(object) above in that case so we don't get here.
-                    mofType = MapTypeNameToMofType(property.PropertyType.TypeName, member.Name, className,
+                    mofType = MapTypeNameToMofType(
+                        property.PropertyType.TypeName,
+                        member.Name,
+                        className,
                         out isArrayType,
-                        out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
+                        out embeddedInstanceType,
+                        embeddedInstanceTypes,
+                        ref enumNames);
                 }
 
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
@@ -2161,20 +2174,22 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return false;
             }
 
-            resourceDefinitions = ast.FindAll(n =>
-            {
-                var typeAst = n as TypeDefinitionAst;
-                if (typeAst != null)
+            resourceDefinitions = ast.FindAll(
+                n =>
                 {
-                    for (int i = 0; i < typeAst.Attributes.Count; i++)
+                    var typeAst = n as TypeDefinitionAst;
+                    if (typeAst != null)
                     {
-                        var a = typeAst.Attributes[i];
-                        if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                        for (int i = 0; i < typeAst.Attributes.Count; i++)
+                        {
+                            var a = typeAst.Attributes[i];
+                            if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                        }
                     }
-                }
 
-                return false;
-            }, false);
+                    return false;
+                },
+                false);
 
             return true;
         }
@@ -2216,7 +2231,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 bool skip = true;
                 foreach (var toImport in resourcesToImport)
                 {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name))
+                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name)
                     {
                         skip = false;
                         break;
@@ -2655,8 +2670,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // TODO - validate type and name
                 bool isArrayType;
                 string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
-                    embeddedInstanceTypes);
+                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType, embeddedInstanceTypes);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
                 var enumNames = memberType.IsEnum
@@ -2671,11 +2685,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
         }
 
-        private static bool ImportKeywordsFromAssembly(PSModuleInfo module,
-                                                       ICollection<string> resourcesToImport,
-                                                       ICollection<string> resourcesFound,
-                                                       Dictionary<string, ScriptBlock> functionsToDefine,
-                                                       Assembly assembly)
+        private static bool ImportKeywordsFromAssembly(
+            PSModuleInfo module,
+            ICollection<string> resourcesToImport,
+            ICollection<string> resourcesFound,
+            Dictionary<string, ScriptBlock> functionsToDefine,
+            Assembly assembly)
         {
             bool result = false;
 
@@ -2708,8 +2723,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             return result;
         }
 
-        private static void ProcessMofForDynamicKeywords(PSModuleInfo module, ICollection<string> resourcesFound,
-            Dictionary<string, ScriptBlock> functionsToDefine, Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser parser, string mof, DSCResourceRunAsCredential runAsBehavior)
+        private static void ProcessMofForDynamicKeywords(
+            PSModuleInfo module,
+            ICollection<string> resourcesFound,
+            Dictionary<string, ScriptBlock> functionsToDefine,
+            Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser parser,
+            string mof,
+            DSCResourceRunAsCredential runAsBehavior)
         {
             foreach (var c in parser.ParseSchemaMofFileBuffer(mof))
             {
@@ -2810,10 +2830,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else if (Directory.Exists(dscResourcesPath))
             {
-                //
                 // Cannot find the schema file, then resourceName may be a friendly name,
                 // try to search all DscResources' schemas under DscResources folder
-                //
                 try
                 {
                     var dscResourceDirectories = Directory.GetDirectories(dscResourcesPath);
@@ -2827,9 +2845,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
                             if (classes != null)
                             {
-                                //
                                 // search if class's friendly name is the given resourceName
-                                //
                                 foreach (var c in classes)
                                 {
                                     var alias = GetFriendlyName(c);
@@ -2846,9 +2862,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
                 catch (Exception)
                 {
-                    //
                     // silent in case of exception
-                    //
                 }
             }
 
@@ -2911,7 +2925,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // Parsing the file is all that needs to be done to add the keywords
                     // BUGBUG - need to fix up how the module gets set.
                     // BUGBUG - should fail somehow if errors is not empty
-                    Token[] tokens; ParseError[] errors;
+                    Token[] tokens;
+                    ParseError[] errors;
                     s_currentImportingScriptFiles.Add(schemaFilePath);
                     Parser.ParseFile(schemaFilePath, out tokens, out errors);
                     s_currentImportingScriptFiles.Remove(schemaFilePath);
