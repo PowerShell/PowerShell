@@ -158,16 +158,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         throw invalidOperationException;
                     }
 
-                    var memberFieldInfo = member as FieldInfo;
-                    if (memberFieldInfo != null)
+                    if (member is FieldInfo)
                     {
-                        memberFieldInfo.SetValue(targetObject, targetValue);
+                        ((FieldInfo)member).SetValue(targetObject, targetValue);
                     }
 
-                    var memberPropertyInfo = member as PropertyInfo;
-                    if (memberPropertyInfo != null)
+                    if (member is PropertyInfo)
                     {
-                        memberPropertyInfo.SetValue(targetObject, targetValue);
+                        ((PropertyInfo)member).SetValue(targetObject, targetValue);
                     }
                 }
             }
@@ -322,8 +320,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     /// </summary>
     internal class CimDSCParser
     {
-        private readonly CimMofDeserializer _deserializer;
-        private readonly CimMofDeserializer.OnClassNeeded _onClassNeeded;
+        private CimMofDeserializer _deserializer;
+        private CimMofDeserializer.OnClassNeeded _onClassNeeded;
         /// <summary>
         /// </summary>
         internal CimDSCParser(CimMofDeserializer.OnClassNeeded onClassNeeded)
