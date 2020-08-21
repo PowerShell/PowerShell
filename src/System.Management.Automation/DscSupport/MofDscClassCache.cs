@@ -2231,7 +2231,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 bool skip = true;
                 foreach (var toImport in resourcesToImport)
                 {
-                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name)
+                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name))
                     {
                         skip = false;
                         break;
