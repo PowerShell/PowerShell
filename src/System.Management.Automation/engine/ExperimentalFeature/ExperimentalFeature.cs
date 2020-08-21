@@ -126,6 +126,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
+                new ExperimentalFeature(
+                    name: "PSSubsystemPluginModel",
+                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
