@@ -8,6 +8,7 @@ using System.Text;
 
 using System.Management.Automation.Internal;
 
+
 namespace System.Management.Automation
 {
     internal static class EncodingConversion
@@ -38,7 +39,9 @@ namespace System.Management.Automation
             { Default, ClrFacade.GetDefaultEncoding() },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
+#pragma warning disable 612, 618
             { Utf7, System.Text.Encoding.UTF7 },
+#pragma warning restore 612, 618
             { Utf8, ClrFacade.GetDefaultEncoding() },
             { Utf8Bom, System.Text.Encoding.UTF8 },
             { Utf8NoBom, ClrFacade.GetDefaultEncoding() },
@@ -101,6 +104,7 @@ namespace System.Management.Automation
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
             }
+#pragma warning restore 612, 618
         }
     }
 

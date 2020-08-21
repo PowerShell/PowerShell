@@ -7626,6 +7626,7 @@ namespace Microsoft.PowerShell.Commands
                 _encoding = value;
                 // If an encoding was explicitly set, be sure to capture that.
                 WasStreamTypeSpecified = true;
+#pragma warning restore 612, 618
             }
         }
 
