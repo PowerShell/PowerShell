@@ -951,7 +951,7 @@ namespace System.Management.Automation.Language
 
         private IEnumerable<Expression> CompileInvocationArguments(IReadOnlyList<ExpressionAst> arguments)
         {
-            if (arguments is null)
+            if (arguments is null || arguments.Count == 0)
             {
                 return Array.Empty<Expression>();
             }
@@ -6682,7 +6682,7 @@ namespace System.Management.Automation.Language
 
             ReadOnlyCollection<ExpressionAst> arguments = InvokeMemberExpressionAst.Arguments;
 
-            if (arguments is null)
+            if (arguments is null || arguments.Count == 0)
             {
                 return Array.Empty<Expression>();
             }
