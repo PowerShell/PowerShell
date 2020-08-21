@@ -949,9 +949,20 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        private IEnumerable<Expression> CompileInvocationArguments(IEnumerable<ExpressionAst> arguments)
+        private IEnumerable<Expression> CompileInvocationArguments(IReadOnlyList<ExpressionAst> arguments)
         {
-            return arguments == null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand).ToArray();
+            if (arguments is null)
+            {
+                return Array.Empty<Expression>();
+            }
+
+            var result = new Expression[arguments.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = CompileExpressionOperand(arguments[i]);
+            }
+
+            return result;
         }
 
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
@@ -6669,9 +6680,20 @@ namespace System.Management.Automation.Language
                 return _argExprTemps;
             }
 
-            return InvokeMemberExpressionAst.Arguments == null
-               ? Array.Empty<Expression>()
-               : InvokeMemberExpressionAst.Arguments.Select(compiler.Compile).ToArray();
+            ReadOnlyCollection<ExpressionAst> arguments = InvokeMemberExpressionAst.Arguments;
+
+            if (arguments is null)
+            {
+                return Array.Empty<Expression>();
+            }
+
+            var result = new Expression[arguments.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = compiler.Compile(arguments[i]);
+            }
+
+            return result;
         }
 
         public Expression GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps)
