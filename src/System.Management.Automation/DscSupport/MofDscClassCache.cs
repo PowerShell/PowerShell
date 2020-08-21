@@ -93,7 +93,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     };
 
         // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
-        private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(s_hiddenResourceList,
+        private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(
+            s_hiddenResourceList,
             StringComparer.OrdinalIgnoreCase);
 
         // a collection to hold current importing script based resource file
@@ -234,9 +235,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (Platform.IsLinux || Platform.IsMacOS)
             {
-                //
                 // Load the base schema files.
-                //
                 ClearCache();
                 var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
                                                 "/etc/opt/omi/conf/dsc/configuration";
@@ -254,9 +253,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 var allResourceRoots = new string[] { dscConfigurationDirectory };
 
-                //
                 // Load all of the system resource schema files, searching
-                //
                 string resources;
                 foreach (var resourceRoot in allResourceRoots)
                 {
@@ -293,9 +290,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
                 Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
                 var allResourceRoots = new string[] { systemResourceRoot, customResourceRoot };
-                //
+
                 // Load the base schema files.
-                //
                 ClearCache();
                 var resourceBaseFile = Path.Combine(systemResourceRoot, "BaseRegistration\\BaseResource.schema.mof");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
@@ -306,9 +302,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var metaConfigExtensionFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_MetaConfigurationExtensionClasses.schema.mof");
                 ImportClasses(metaConfigExtensionFile, DefaultModuleInfoForMetaConfigResource, errors);
 
-                //
                 // Load all of the system resource schema files, searching
-                //
                 string resources;
                 foreach (var resourceRoot in allResourceRoots)
                 {
@@ -928,9 +922,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             string alias = GetFriendlyName(cimClass);
             var keywordString = string.IsNullOrEmpty(alias) ? resourceName : alias;
 
-            //
             // Skip all of the base, meta, registration and other classes that are not intended to be used directly by a script author
-            //
             if (System.Text.RegularExpressions.Regex.Match(keywordString, "^OMI_Base|^OMI_.*Registration", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
             {
                 return null;
@@ -966,9 +958,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // If it's a resource type, then a resource name is required.
             keyword.NameMode = isResourceType ? DynamicKeywordNameMode.NameRequired : DynamicKeywordNameMode.NoName;
 
-            //
             // Add the settable properties to the keyword object
-            //
             foreach (var prop in cimClass.CimClassProperties)
             {
                 // If the property is marked as readonly, skip it...
@@ -1091,7 +1081,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             s_tracer.WriteLine(
                                 "DSC CreateDynamicKeywordFromClass: same string value '{0}' appears more than once in qualifier 'Values'. Skip the keyword '{1}'.",
-                                key, keyword.Keyword);
+                                key,
+                                keyword.Keyword);
                             return null;
                         }
 
@@ -1248,17 +1239,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
         }
 
-        // This function is called after parsing the Import-DscResource keyword and it's arguments, but before parsing
-        // anything else.
-        //
-        //
+        // This function is called after parsing the Import-DscResource keyword and it's arguments, but before parsing anything else.
         private static ParseError[] ImportResourcePostParse(DynamicKeywordStatementAst kwAst)
         {
             var elements = Ast.CopyElements(kwAst.CommandElements);
 
-            Diagnostics.Assert(elements[0] is StringConstantExpressionAst &&
-                               ((StringConstantExpressionAst)elements[0]).Value.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase),
-                               "Incorrect ast for expected keyword");
+            Diagnostics.Assert(elements[0] is StringConstantExpressionAst && ((StringConstantExpressionAst)elements[0]).Value.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase), "Incorrect ast for expected keyword");
             var commandAst = new CommandAst(kwAst.Extent, elements, TokenKind.Unknown, null);
 
             const string nameParam = "Name";
@@ -1456,9 +1442,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         errorList = new List<ParseError>();
                     }
 
-                    errorList.Add(new ParseError(kwAst.Extent,
-                                         "ImportDscResourceInsideNode",
-                                         string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
+                    errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceInsideNode", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
                     break;
                 }
 
@@ -1537,7 +1521,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             CultureInfo.CurrentCulture,
                             ParserStrings.MissingValueForMandatoryProperty,
                             kwAst.Keyword.Keyword,
-                            kwAst.Keyword.Properties.First(p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint, name));
+                            kwAst.Keyword.Properties.First(p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint,
+                        name));
                     i++;
                 }
 
@@ -1741,7 +1726,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
         }
 
-        private static void LoadPowerShellClassResourcesFromModule(PSModuleInfo primaryModuleInfo, PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, ICollection<string> resourcesFound,
+        private static void LoadPowerShellClassResourcesFromModule(
+            PSModuleInfo primaryModuleInfo,
+            PSModuleInfo moduleInfo,
+            ICollection<string> resourcesToImport,
+            ICollection<string> resourcesFound,
             List<ParseError> errorList,
             Dictionary<string, ScriptBlock> functionsToDefine = null,
             bool recurse = true,
@@ -2113,7 +2102,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                sb.AppendFormat(CultureInfo.InvariantCulture,
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
                     "    {0}{1} {2}{3};\n",
                     MapAttributesToMof(enumNames, attributes, embeddedInstanceType),
                     mofType,
@@ -2167,8 +2157,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         errorMessages.Add(error.ToString());
                     }
 
-                    errorList.Add(new ParseError(extent, "FailToParseModuleScriptFile",
-                        string.Format(CultureInfo.CurrentCulture, ParserStrings.FailToParseModuleScriptFile, fileName, string.Join(Environment.NewLine, errorMessages))));
+                    errorList.Add(new ParseError(extent, "FailToParseModuleScriptFile", string.Format(CultureInfo.CurrentCulture, ParserStrings.FailToParseModuleScriptFile, fileName, string.Join(Environment.NewLine, errorMessages))));
                 }
 
                 return false;
@@ -2676,7 +2665,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
                     : null;
-                sb.AppendFormat(CultureInfo.InvariantCulture,
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
                     "    {0}{1} {2}{3};\n",
                     MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType),
                     mofType,
@@ -2706,7 +2696,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 foreach (var toImport in resourcesToImport)
                 {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(r.Name))
+                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase).IsMatch(r.Name))
                     {
                         skip = false;
                         break;
