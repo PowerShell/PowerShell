@@ -1157,7 +1157,26 @@ namespace System.Management.Automation
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
-            startInfo.Arguments = NativeParameterBinderController.Arguments;
+            if (ExperimentalFeature.IsEnabled("PSEscapeDoubleQuotedStringForNativeExecutables"))
+            {
+                    foreach(var p in arguments)
+                    {
+                        if (p.ParameterExtent.Text != "")
+                        {
+                            startInfo.ArgumentList.Add(p.ParameterExtent.Text);
+                        }
+                        string argValue = p.ArgumentValue as string;
+                        if (argValue != null && ! string.IsNullOrEmpty(argValue))
+                        {
+                            startInfo.ArgumentList.Add(argValue);
+                        }
+                    }
+
+            }
+            else
+            {
+                startInfo.Arguments = NativeParameterBinderController.Arguments;
+            }
 
             ExecutionContext context = this.Command.Context;
 
