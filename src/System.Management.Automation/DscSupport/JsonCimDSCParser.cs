@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
         internal IEnumerable<PSObject> ParseSchemaJson(string filePath, bool useNewRunspace = false)
         {
-            string json = System.IO.File.ReadAllText(filePath);
+            string json = File.ReadAllText(filePath);
             try
             {
                 string fileNameDefiningClass = Path.GetFileNameWithoutExtension(filePath);
