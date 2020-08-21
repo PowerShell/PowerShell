@@ -8,20 +8,21 @@ steps:
 
 - pwsh: |
     #Exclude all global tool packages. Their names start with 'PowerShell.'
-    Copy-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force
+    $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
+    Copy-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
     $releaseVersion = Get-Content "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
     $globalToolPath = "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell.$releaseVersion.nupkg"
     ### -WhatIf to make sure we do not release global tool. Remove -WhatIf when the PowerShell name reservation is done.
     Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release" -WhatIf
 
-    Get-ChildItem "$(Pipeline.Workspace)"
+    Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
   displayName: Download and capture nupkgs
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
   inputs:
     command: push
-    packagesToPush: '$(Agent.ReleaseDirectory)/*.nupkg'
+    packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
     nuGetFeedType: external
     publishFeedCredentials: PowerShellNuGetOrgPush

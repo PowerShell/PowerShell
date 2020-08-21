@@ -129,6 +129,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSDscJsonSchemaSupport",
                     description: "Support JSON-based DSC schema processing"),
+                new ExperimentalFeature(
+                    name: "PSSubsystemPluginModel",
+                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

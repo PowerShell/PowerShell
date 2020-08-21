@@ -112,60 +112,45 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyCompiledandLoaded" xml:space="preserve">
-    <value>The source code was already compiled and loaded.</value>
+  <data name="MultipleRegistrationNotAllowed" xml:space="preserve">
+    <value>The subsystem '{0}' does not allow more than one implementation to be registered.</value>
   </data>
-  <data name="MethodDefinitionNotPublic" xml:space="preserve">
-    <value>The generated type defines no public methods or properties.</value>
+  <data name="ImplementationAlreadyRegistered" xml:space="preserve">
+    <value>The implementation with Id '{0}' was already registered for the subsystem '{1}'.</value>
   </data>
-  <data name="TypeDefinitionNotPublic" xml:space="preserve">
-    <value>The generated type is not public.</value>
+  <data name="UnregistrationNotAllowed" xml:space="preserve">
+    <value>The subsystem '{0}' does not allow the unregistration of an implementation.</value>
   </data>
-  <data name="FromMemberNotSupported" xml:space="preserve">
-    <value>Cannot add type. The -MemberDefinition parameter is not supported for this language.</value>
+  <data name="NoImplementationRegistered" xml:space="preserve">
+    <value>No implementation was registered for the subsystem '{0}'.</value>
   </data>
-  <data name="FileExtensionNotSupported" xml:space="preserve">
-    <value>Cannot add type. The "{0}" extension is not supported.</value>
+  <data name="ImplementationNotFound" xml:space="preserve">
+    <value>A registered implementation with the Id '{0}' was not found.</value>
   </data>
-  <data name="MultipleExtensionsNotSupported" xml:space="preserve">
-    <value>Cannot add type. Input files must all have the same file extension.</value>
+  <data name="SubsystemTypeUnknown" xml:space="preserve">
+    <value>The specified subsystem type '{0}' is unknown.</value>
   </data>
-  <data name="LanguageAndProviderSpecified" xml:space="preserve">
-    <value>Cannot add type. Specify only the Language or CodeDomProvider parameters.</value>
+  <data name="SubsystemKindUnknown" xml:space="preserve">
+    <value>The specified subsystem kind '{0}' is unknown.</value>
   </data>
-  <data name="AmbiguousAssemblyName" xml:space="preserve">
-    <value>Cannot add type. The assembly name {0} matches both {1} and {2}.</value>
+  <data name="ImplementationMismatch" xml:space="preserve">
+    <value>The specified implementation instance implements the subsystem '{0}', which does not match the target subsystem '{1}'.</value>
   </data>
-  <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Cannot add type. The assembly '{0}' could not be found.</value>
+  <data name="InvalidSubsystemInfo" xml:space="preserve">
+    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
   </data>
-  <data name="TypeAlreadyExists" xml:space="preserve">
-    <value>Cannot add type. The type name '{0}' already exists.</value>
+  <data name="EmptyImplementationId" xml:space="preserve">
+    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
   </data>
-  <data name="OutputAssemblyDidNotResolve" xml:space="preserve">
-    <value>Cannot set output assembly. The path {0} did not resolve to a single file.</value>
+  <data name="NullOrEmptyImplementationName" xml:space="preserve">
+    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
   </data>
-  <data name="CompilerErrors" xml:space="preserve">
-    <value>Cannot add type. Compilation errors occurred.</value>
-  </data>
-  <data name="AssemblyLoadErrors" xml:space="preserve">
-    <value>Cannot add type. One or more required assemblies are missing.</value>
-  </data>
-  <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
-    <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
-  </data>
-  <data name="CannotDefineNewType" xml:space="preserve">
-    <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
-  </data>
-  <data name="ReferenceAssemblyIgnored" xml:space="preserve">
-    <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
-  </data>
-  <data name="AssemblyTypeNotSupported" xml:space="preserve">
-    <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
+  <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
+    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
   </data>
 </root>

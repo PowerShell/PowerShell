@@ -2278,4 +2278,34 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal static readonly ReadOnlyBag<T> Empty = new ReadOnlyBag<T>(new HashSet<T>(capacity: 0));
     }
+
+    /// <summary>
+    /// Helper class for simple argument validations.
+    /// </summary>
+    internal static class Requires
+    {
+        internal static void NotNull(object value, string paramName)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void NotNullOrEmpty(string value, string paramName)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
+        {
+            if (!precondition)
+            {
+                throw new ArgumentException(paramName);
+            }
+        }
+    }
 }
