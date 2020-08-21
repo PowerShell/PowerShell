@@ -165,4 +165,7 @@
   <data name="ReferenceAssemblyIgnored" xml:space="preserve">
     <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
   </data>
+  <data name="AssemblyTypeNotSupported" xml:space="preserve">
+    <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
+  </data>
 </root>
