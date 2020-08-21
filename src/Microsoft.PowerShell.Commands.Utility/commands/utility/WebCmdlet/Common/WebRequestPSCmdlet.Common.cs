@@ -734,7 +734,7 @@ namespace Microsoft.PowerShell.Commands
                 UriBuilder uriBuilder = new UriBuilder(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
                 {
-                    uriBuilder.Query = uriBuilder.Query.Substring(1) + "&" + FormatDictionary(bodyAsDictionary);
+                    uriBuilder.Query = string.Concat(uriBuilder.Query.AsSpan().Slice(1), "&", FormatDictionary(bodyAsDictionary));
                 }
                 else
                 {
