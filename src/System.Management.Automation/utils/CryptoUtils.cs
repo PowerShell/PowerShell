@@ -64,7 +64,7 @@ namespace System.Management.Automation.Internal
 
         private static int ToInt32LE(byte[] bytes, int offset)
         {
-            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1 ] << 8) | bytes[offset];
+            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1] << 8) | bytes[offset];
         }
 
         private static uint ToUInt32LE(byte[] bytes, int offset)
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Internal
 
             try
             {
-                if ((blob[offset]   != PUBLICKEYBLOB) ||            // PUBLICKEYBLOB (0x06)
+                if ((blob[offset] != PUBLICKEYBLOB) ||            // PUBLICKEYBLOB (0x06)
                     (blob[offset + 1] != CUR_BLOB_VERSION) ||       // Version (0x02)
                     (blob[offset + 2] != 0x00) ||                   // Reserved (word)
                     (blob[offset + 3] != 0x00) ||

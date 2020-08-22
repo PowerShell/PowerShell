@@ -617,23 +617,23 @@ namespace Microsoft.PowerShell
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptProtectData(
-                [In]     IntPtr pDataIn,
-                [In]     string szDataDescr,
-                [In]     IntPtr pOptionalEntropy,
-                [In]     IntPtr pvReserved,
-                [In]     IntPtr pPromptStruct,
-                [In]     uint dwFlags,
+                [In] IntPtr pDataIn,
+                [In] string szDataDescr,
+                [In] IntPtr pOptionalEntropy,
+                [In] IntPtr pvReserved,
+                [In] IntPtr pPromptStruct,
+                [In] uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptUnprotectData(
-                [In]     IntPtr pDataIn,
-                [In]     IntPtr ppszDataDescr,
-                [In]     IntPtr pOptionalEntropy,
-                [In]     IntPtr pvReserved,
-                [In]     IntPtr pPromptStruct,
-                [In]     uint dwFlags,
+                [In] IntPtr pDataIn,
+                [In] IntPtr ppszDataDescr,
+                [In] IntPtr pOptionalEntropy,
+                [In] IntPtr pvReserved,
+                [In] IntPtr pPromptStruct,
+                [In] uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("ntdll.dll", EntryPoint = "RtlZeroMemory", SetLastError = true)]

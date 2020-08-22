@@ -7699,7 +7699,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentReaderDynamicParameters : FileSystemContentDynamicParametersBase
     {
-        internal FileSystemContentReaderDynamicParameters(FileSystemProvider provider) : base (provider) { }
+        internal FileSystemContentReaderDynamicParameters(FileSystemProvider provider) : base(provider) { }
 
         /// <summary>
         /// Gets or sets the delimiter to use when reading the file.  Custom delimiters
