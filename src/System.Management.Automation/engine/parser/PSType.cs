@@ -1300,7 +1300,7 @@ namespace System.Management.Automation.Language
 
         private static int counter = 0;
 
-        internal static Assembly DefineTypes(Parser parser, Ast rootAst, TypeDefinitionAst[] typeDefinitions)
+        internal static Assembly DefineTypes(Parser parser, Ast rootAst, IReadOnlyList<TypeDefinitionAst> typeDefinitions)
         {
             Diagnostics.Assert(rootAst.Parent == null, "Caller should only define types from the root ast");
 

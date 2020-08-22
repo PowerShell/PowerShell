@@ -432,6 +432,21 @@ namespace System.Management.Automation.Language
             return searcher.Results.Count > 0;
         }
 
+        internal static bool AnyContains(IReadOnlyList<Ast> asts, Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
+        {
+            Diagnostics.Assert(asts != null && predicate != null, "caller to verify arguments");
+
+            for (int index = 0; index < asts.Count; index++)
+            {
+                if (Contains(asts[index], predicate, searchNestedScriptBlocks))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         internal static bool IsUsingDollarInput(Ast ast)
         {
             return (AstSearcher.Contains(
