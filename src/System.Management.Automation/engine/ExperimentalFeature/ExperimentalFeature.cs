@@ -127,6 +127,9 @@ namespace System.Management.Automation
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
                 new ExperimentalFeature(
+                    name: "PSSubsystemPluginModel",
+                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
                     name: "PSEscapeForNativeExecutables",
                     description: "Alternative approach for escaping when calling a native executable"),
             };
