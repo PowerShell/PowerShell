@@ -996,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string CentralAccessPolicy
         {
-            get; set;
+            get;
         }
 #else
         private string centralAccessPolicy;

@@ -66,7 +66,7 @@ namespace System.Management.Automation.Tracing
         public bool Success
         {
             get;
-            private set;
+
         }
 
         /// <summary> Gets payload in the event </summary>
@@ -74,7 +74,7 @@ namespace System.Management.Automation.Tracing
         public object[] Payload
         {
             get;
-            private set;
+
         }
 
         /// <summary>

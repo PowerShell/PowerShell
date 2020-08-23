@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// Note there may be more than one breakpoint on the same object (line, variable, command). A single event is
         /// raised for all these breakpoints.
         /// </remarks>
-        public ReadOnlyCollection<Breakpoint> Breakpoints { get; private set; }
+        public ReadOnlyCollection<Breakpoint> Breakpoints { get; }
 
         /// <summary>
         /// This property must be set in the event handler to indicate the debugger what it should do next.
@@ -155,17 +155,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the breakpoint that was updated.
         /// </summary>
-        public Breakpoint Breakpoint { get; private set; }
+        public Breakpoint Breakpoint { get; }
 
         /// <summary>
         /// Gets the type of update.
         /// </summary>
-        public BreakpointUpdateType UpdateType { get; private set; }
+        public BreakpointUpdateType UpdateType { get; }
 
         /// <summary>
         /// Gets the current breakpoint count.
         /// </summary>
-        public int BreakpointCount { get; private set; }
+        public int BreakpointCount { get; }
     };
 
     #region PSJobStartEventArgs
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         public Job Job
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace System.Management.Automation
         public Debugger Debugger
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace System.Management.Automation
         public bool IsAsync
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace System.Management.Automation
         public Runspace Runspace
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace System.Management.Automation
         public Runspace Runspace
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -4199,7 +4199,7 @@ namespace System.Management.Automation
         public PSMonitorRunspaceType RunspaceType
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -5021,7 +5021,7 @@ namespace System.Management.Automation
         public bool EvaluatedByDebugger
         {
             get;
-            private set;
+
         }
 
         #endregion
@@ -5488,18 +5488,18 @@ namespace System.Management.Automation
         /// <summary>
         /// InvocationInfo of the command currently being executed.
         /// </summary>
-        public InvocationInfo InvocationInfo { get; private set; }
+        public InvocationInfo InvocationInfo { get; }
 
         /// <summary>
         /// If not empty, indicates that the execution was suspended because one or more breakpoints
         /// were hit. Otherwise, the execution was suspended as part of a step operation.
         /// </summary>
-        public Breakpoint[] Breakpoints { get; private set; }
+        public Breakpoint[] Breakpoints { get; }
 
         /// <summary>
         /// Gets the object that triggered the current dynamic breakpoint.
         /// </summary>
-        public object Trigger { get; private set; }
+        public object Trigger { get; }
     }
 
     #endregion
@@ -5567,13 +5567,13 @@ namespace System.Management.Automation
         /// <summary>
         /// The InvocationInfo of the command.
         /// </summary>
-        public InvocationInfo InvocationInfo { get; private set; }
+        public InvocationInfo InvocationInfo { get; }
 
         /// <summary>
         /// The position information for the current position in the frame.  Null if the frame is not
         /// associated with a script.
         /// </summary>
-        public IScriptExtent Position { get; private set; }
+        public IScriptExtent Position { get; }
 
         /// <summary>
         /// The name of the function associated with this frame.
@@ -5765,12 +5765,12 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Created Runspace.
         /// </summary>
-        public Runspace Runspace { get; private set; }
+        public Runspace Runspace { get; }
 
         /// <summary>
         /// Type of runspace for monitoring.
         /// </summary>
-        public PSMonitorRunspaceType RunspaceType { get; private set; }
+        public PSMonitorRunspaceType RunspaceType { get; }
 
         /// <summary>
         /// Nested debugger wrapper for runspace debugger.
@@ -5876,7 +5876,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// PowerShell command to run.  Can be null.
         /// </summary>
-        public PowerShell Command { get; private set; }
+        public PowerShell Command { get; }
 
         /// <summary>
         /// Unique parent debugger identifier.

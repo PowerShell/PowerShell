@@ -873,7 +873,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// HTTP error response.
         /// </summary>
-        public HttpResponseMessage Response { get; private set; }
+        public HttpResponseMessage Response { get; }
     }
 
     /// <summary>

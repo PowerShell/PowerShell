@@ -56,7 +56,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the parameter binder for the command.
         /// </summary>
-        internal ParameterBinderBase DefaultParameterBinder { get; private set; }
+        internal ParameterBinderBase DefaultParameterBinder { get; }
 
         /// <summary>
         /// The invocation information about the code being run.

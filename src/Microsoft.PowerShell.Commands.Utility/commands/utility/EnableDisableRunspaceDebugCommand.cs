@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         public bool Enabled
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         public bool BreakAll
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         public string RunspaceName
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         public int RunspaceId
         {
             get;
-            private set;
+
         }
 
         #endregion

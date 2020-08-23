@@ -750,7 +750,7 @@ namespace Microsoft.PowerShell.Commands
         public string ProcessName
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
         public int ProcessId
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.Commands
         public string AppDomainName
         {
             get;
-            private set;
+
         }
 
         /// <summary>
@@ -777,7 +777,7 @@ namespace Microsoft.PowerShell.Commands
         public string MainWindowTitle
         {
             get;
-            private set;
+
         }
 
         #endregion

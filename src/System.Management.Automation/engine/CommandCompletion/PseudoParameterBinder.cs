@@ -782,12 +782,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The command element associated with the exception.
         /// </summary>
-        public CommandElementAst CommandElement { get; private set; }
+        public CommandElementAst CommandElement { get; }
 
         /// <summary>
         /// The ParameterBindingException that this command element caused.
         /// </summary>
-        public ParameterBindingException BindingException { get; private set; }
+        public ParameterBindingException BindingException { get; }
     }
 
     #region "PseudoBindingInfo"

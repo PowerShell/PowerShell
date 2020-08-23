@@ -371,7 +371,7 @@ namespace System.Management.Automation
             InstanceId = instanceId;
         }
 
-        internal int Id { get; private set; }
+        internal int Id { get; }
 
         internal Guid InstanceId { get; private set; }
     }
@@ -4521,7 +4521,7 @@ namespace System.Management.Automation
         internal bool ProcessingOutput
         {
             get;
-            private set;
+
         }
 
         internal OutputProcessingStateEventArgs(bool processingOutput)

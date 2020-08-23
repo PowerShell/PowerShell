@@ -761,7 +761,7 @@ namespace System.Management.Automation.Runspaces
         public int Id
         {
             get;
-            private set;
+
         }
 
         /// <summary>

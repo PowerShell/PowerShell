@@ -53,9 +53,9 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
-            public string[] Candidates { private set; get; }
+            public string[] Candidates { get; }
 
-            public TypeName TypeName { private set; get; }
+            public TypeName TypeName { get; }
 
             public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
             {

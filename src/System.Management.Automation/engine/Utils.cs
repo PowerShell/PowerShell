@@ -2035,7 +2035,7 @@ namespace System.Management.Automation
         internal string ErrorId
         {
             get;
-            private set;
+
         }
 
         internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(

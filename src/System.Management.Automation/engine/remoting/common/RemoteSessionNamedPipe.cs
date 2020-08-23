@@ -303,7 +303,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public Exception Reason
         {
-            private set;
+
             get;
         }
 
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public bool RestartListener
         {
-            private set;
+
             get;
         }
 
