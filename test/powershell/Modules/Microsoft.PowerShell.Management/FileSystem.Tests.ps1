@@ -28,6 +28,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 @{ deviceName = 'AUX' }
                 @{ deviceName = 'CLOCK$' }
                 @{ deviceName = 'NUL' }
+                @{ deviceName = 'CONIN$' }
+                @{ deviceName = 'CONOUT$' }
                 @{ deviceName = 'COM0' }
                 @{ deviceName = 'COM1' }
                 @{ deviceName = 'COM2' }
