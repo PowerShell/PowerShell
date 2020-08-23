@@ -63,19 +63,11 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary> Gets whether the event is successfully written </summary>
-        public bool Success
-        {
-            get;
-
-        }
+        public bool Success { get; }
 
         /// <summary> Gets payload in the event </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public object[] Payload
-        {
-            get;
-
-        }
+        public object[] Payload { get; }
 
         /// <summary>
         /// Creates a new instance of EtwEventArgs class.

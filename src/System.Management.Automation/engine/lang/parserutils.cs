@@ -1725,15 +1725,9 @@ namespace System.Management.Automation
             get { return Current; }
         }
 
-        internal char LowerBound
-        {
-            get;
-        }
+        internal char LowerBound { get; }
 
-        internal char UpperBound
-        {
-            get;
-        }
+        internal char UpperBound { get; }
 
         public char Current
         {

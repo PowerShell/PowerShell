@@ -4518,11 +4518,7 @@ namespace System.Management.Automation
 
     internal class OutputProcessingStateEventArgs : EventArgs
     {
-        internal bool ProcessingOutput
-        {
-            get;
-
-        }
+        internal bool ProcessingOutput { get; }
 
         internal OutputProcessingStateEventArgs(bool processingOutput)
         {

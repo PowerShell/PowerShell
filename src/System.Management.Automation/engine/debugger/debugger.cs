@@ -178,29 +178,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Job to be started.
         /// </summary>
-        public Job Job
-        {
-            get;
-
-        }
+        public Job Job { get; }
 
         /// <summary>
         /// Job debugger.
         /// </summary>
-        public Debugger Debugger
-        {
-            get;
-
-        }
+        public Debugger Debugger { get; }
 
         /// <summary>
         /// Job is run asynchronously.
         /// </summary>
-        public bool IsAsync
-        {
-            get;
-
-        }
+        public bool IsAsync { get; }
 
         /// <summary>
         /// Constructor.
@@ -226,11 +214,7 @@ namespace System.Management.Automation
     public sealed class StartRunspaceDebugProcessingEventArgs : EventArgs
     {
         /// <summary> The runspace to process </summary>
-        public Runspace Runspace
-        {
-            get;
-
-        }
+        public Runspace Runspace { get; }
 
         /// <summary>
         /// When set to true this will cause PowerShell to process this runspace debug session through its
@@ -262,11 +246,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The runspace where internal debug processing has ended.
         /// </summary>
-        public Runspace Runspace
-        {
-            get;
-
-        }
+        public Runspace Runspace { get; }
 
         /// <summary>
         /// Constructor.
@@ -4196,11 +4176,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Type of runspace being monitored for debugging.
         /// </summary>
-        public PSMonitorRunspaceType RunspaceType
-        {
-            get;
-
-        }
+        public PSMonitorRunspaceType RunspaceType { get; }
 
         /// <summary>
         /// Unique parent debugger identifier for monitored runspace.
@@ -5018,11 +4994,7 @@ namespace System.Management.Automation
         /// True if debugger evaluated command.  Otherwise evaluation was
         /// performed by PowerShell.
         /// </summary>
-        public bool EvaluatedByDebugger
-        {
-            get;
-
-        }
+        public bool EvaluatedByDebugger { get; }
 
         #endregion
 

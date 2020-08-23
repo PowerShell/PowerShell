@@ -1049,11 +1049,7 @@ namespace System.Management.Automation.Host
             PromptText = "PS>";
         }
 
-        internal List<TranscriptionOption> Transcripts
-        {
-            get;
-
-        }
+        internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
         internal string CommandBeingIgnored { get; set; }

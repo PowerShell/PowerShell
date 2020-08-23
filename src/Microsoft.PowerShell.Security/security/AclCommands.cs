@@ -994,10 +994,7 @@ namespace Microsoft.PowerShell.Commands
         /// Parameter '-CentralAccessPolicy' is not supported in OneCore powershell,
         /// because function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
         /// </summary>
-        private string CentralAccessPolicy
-        {
-            get;
-        }
+        private string CentralAccessPolicy { get; }
 #else
         private string centralAccessPolicy;
 

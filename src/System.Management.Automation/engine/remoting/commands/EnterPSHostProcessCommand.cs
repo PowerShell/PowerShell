@@ -747,38 +747,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Name of process.
         /// </summary>
-        public string ProcessName
-        {
-            get;
-
-        }
+        public string ProcessName { get; }
 
         /// <summary>
         /// Id of process.
         /// </summary>
-        public int ProcessId
-        {
-            get;
-
-        }
+        public int ProcessId { get; }
 
         /// <summary>
         /// Name of PowerShell AppDomain in process.
         /// </summary>
-        public string AppDomainName
-        {
-            get;
-
-        }
+        public string AppDomainName { get; }
 
         /// <summary>
         /// Main window title of the process.
         /// </summary>
-        public string MainWindowTitle
-        {
-            get;
-
-        }
+        public string MainWindowTitle { get; }
 
         #endregion
 
