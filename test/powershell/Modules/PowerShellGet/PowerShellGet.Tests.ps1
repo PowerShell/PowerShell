@@ -27,8 +27,8 @@ $programFilesPathPSModules2 = [System.IO.Path]::Combine($programFilesPathPS, "Mo
 $myDocumentsPathPSScripts = [System.IO.Path]::Combine($myDocumentsPathPS, "scripts");
 $programFilesPathPSScripts = [System.IO.Path]::Combine($programFilesPathPS, "scripts");
 
-$myDocumentsPathPSScripts2 = [System.IO.Path]::Combine($myDocumentsPathPS2, "Scripts");
-$programFilesPathPSScripts2 = [System.IO.Path]::Combine($programFilesPathPS2, "Scripts");
+$myDocumentsPathPSScripts2 = [System.IO.Path]::Combine($myDocumentsPathPS, "Scripts");
+$programFilesPathPSScripts2 = [System.IO.Path]::Combine($programFilesPathPS, "Scripts");
 
 #region Utility functions
 
