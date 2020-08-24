@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 foreach (dynamic c in classes)
                 {
                     // Only add the class once...
-                    var className = c.CimSystemProperties.ClassName;
+                    var className = c.ClassName;
                     string alias = GetFriendlyName(c);
                     var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
                     string moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleInfo.Item1, moduleInfo.Item2.ToString(), className, friendlyName);
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 var sb = new System.Text.StringBuilder();
                 foreach (dynamic c in classes)
                 {
-                    sb.Append(c.CimSystemProperties.ClassName);
+                    sb.Append(c.ClassName);
                     sb.Append(',');
                 }
 
@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 {
                     foreach(dynamic c in classList)
                     {
-                        if (string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(c.ClassName, className, StringComparison.OrdinalIgnoreCase))
                         {
                             files.Add(file);
                         }
@@ -803,22 +803,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
         private static string GetFriendlyName(dynamic cimClass)
         {
-            try
-            {
-                foreach(dynamic qualifier in cimClass.CimClassQualifiers)
-                {
-                    if (qualifier.Name.Equals("FriendlyName", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return qualifier.Value as string;
-                    }
-                }
-            }
-            catch (Microsoft.Management.Infrastructure.CimException)
-            {
-                // exception means no DSCAlias
-            }
-
-            return null;
+            return cimClass.FriendlyName;
         }
 
         /// <summary>
@@ -896,7 +881,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// <param name="runAsBehavior">To specify RunAs behavior of the class.</param>
         private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, dynamic cimClass, DSCResourceRunAsCredential runAsBehavior)
         {
-            var resourceName = cimClass.CimSystemProperties.ClassName;
+            var resourceName = cimClass.ClassName;
             string alias = GetFriendlyName(cimClass);
             var keywordString = string.IsNullOrEmpty(alias) ? resourceName : alias;
 
@@ -938,7 +923,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             // so to simplify things we just check superclass to be OMI_BaseResource
             // with assumption that current code will not work for multi-level class inheritance (which is never used in practice according to DSC team)
             // this simplification allows us to avoid linking objects together using CimSuperClass field during deserialization from json schema
-            if ((!string.IsNullOrEmpty(cimClass.CimSuperClassName)) && string.Equals("OMI_BaseResource", cimClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase))
+            if ((!string.IsNullOrEmpty(cimClass.SuperClassName)) && string.Equals("OMI_BaseResource", cimClass.SuperClassName, StringComparison.OrdinalIgnoreCase))
             {
                 isResourceType = true;
             }
@@ -946,104 +931,91 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             // If it's a resource type, then a resource name is required.
             keyword.NameMode = isResourceType ? DynamicKeywordNameMode.NameRequired : DynamicKeywordNameMode.NoName;
 
-            //
             // Add the settable properties to the keyword object
-            //
-            foreach (var prop in cimClass.CimClassProperties)
+            if (cimClass.ClassProperties != null)
             {
-                // If the property is marked as readonly, skip it...
-                if (prop.Flags?.Contains("ReadOnly"))
+                foreach (var prop in cimClass.ClassProperties)
                 {
-                    continue;
-                }
-
-                // If the property has the Read qualifier, also skip it.
-                foreach(var qualifier in prop.Qualifiers)
-                {
-                    if (qualifier.Name.Equals("Read", StringComparison.OrdinalIgnoreCase))
+                    // If the property has the Read qualifier, skip it.
+                    if (string.Equals(prop.Qualifiers?.Read?.ToString(), "True", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
-                }
 
-                // If it's one of our magic properties, skip it
-                if (IsMagicProperty(prop.Name))
-                {
-                    continue;
-                }
-
-                if (runAsBehavior == DSCResourceRunAsCredential.NotSupported)
-                {
-                    if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
+                    // If it's one of our magic properties, skip it
+                    if (IsMagicProperty(prop.Name))
                     {
-                        // skip adding PsDscRunAsCredential to the dynamic word for the dsc resource.
                         continue;
                     }
-                }
-                // If it's one of our reserved properties, save it for error reporting
-                if (System.Text.RegularExpressions.Regex.Match(prop.Name, reservedProperties, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
-                {
-                    keyword.HasReservedProperties = true;
-                    continue;
-                }
 
-                // Otherwise, add it to the Keyword List.
-                var keyProp = new System.Management.Automation.Language.DynamicKeywordProperty();
-                keyProp.Name = prop.Name;
-
-                // Set the mandatory flag if appropriate
-                if (prop.Flags?.Contains("Key"))
-                {
-                    keyProp.Mandatory = true;
-                    keyProp.IsKey = true;
-                }
-
-                // Copy the type name string. If it's an embedded instance, need to grab it from the ReferenceClassName
-                bool referenceClassNameIsNullOrEmpty = string.IsNullOrEmpty(prop.ReferenceClassName);
-                if (prop.CimType == "Instance" && !referenceClassNameIsNullOrEmpty)
-                {
-                    keyProp.TypeConstraint = prop.ReferenceClassName;
-                }
-                else if (prop.CimType == "InstanceArray" && !referenceClassNameIsNullOrEmpty)
-                {
-                    keyProp.TypeConstraint = prop.ReferenceClassName + "[]";
-                }
-                else
-                {
-                    keyProp.TypeConstraint = prop.CimType.ToString();
-                }
-
-                string[] valueMap = null;
-                foreach (var qualifier in prop.Qualifiers)
-                {
-                    // Check to see if there is a Values attribute and save the list of allowed values if so.
-                    if (string.Equals(qualifier.Name, "Values", StringComparison.OrdinalIgnoreCase) && qualifier.CimType == "StringArray")
+                    if (runAsBehavior == DSCResourceRunAsCredential.NotSupported)
                     {
-                        int count = qualifier.Value.Length;
-                        string[] values = new string[count];
-                        for(int i = 0; i < count; i++)
+                        if (string.Equals(prop.Name, "PsDscRunAsCredential", StringComparison.OrdinalIgnoreCase))
                         {
-                            values[i] = qualifier.Value[i].ToString();
+                            // skip adding PsDscRunAsCredential to the dynamic word for the dsc resource.
+                            continue;
                         }
-                        keyProp.Values.AddRange(values);
+                    }
+
+                    // If it's one of our reserved properties, save it for error reporting
+                    if (System.Text.RegularExpressions.Regex.Match(prop.Name, reservedProperties, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+                    {
+                        keyword.HasReservedProperties = true;
+                        continue;
+                    }
+
+                    // Otherwise, add it to the Keyword List.
+                    var keyProp = new System.Management.Automation.Language.DynamicKeywordProperty();
+                    keyProp.Name = prop.Name;
+
+                    // Copy the type name string. If it's an embedded instance, need to grab it from the ReferenceClassName
+                    bool referenceClassNameIsNullOrEmpty = string.IsNullOrEmpty(prop.ReferenceClassName);
+                    if (prop.CimType == "Instance" && !referenceClassNameIsNullOrEmpty)
+                    {
+                        keyProp.TypeConstraint = prop.ReferenceClassName;
+                    }
+                    else if (prop.CimType == "InstanceArray" && !referenceClassNameIsNullOrEmpty)
+                    {
+                        keyProp.TypeConstraint = prop.ReferenceClassName + "[]";
+                    }
+                    else
+                    {
+                        keyProp.TypeConstraint = prop.CimType.ToString();
+                    }
+
+                    // Check to see if there is a Values attribute and save the list of allowed values if so.
+                    var values = prop.Qualifiers?.Values;
+                    if (values != null)
+                    {
+                        foreach(var val in values)
+                        {
+                            keyProp.Values.Add(val.ToString());
+                        }
                     }
 
                     // Check to see if there is a ValueMap attribute and save the list of allowed values if so.
-                    if (string.Equals(qualifier.Name, "ValueMap", StringComparison.OrdinalIgnoreCase) && qualifier.CimType == "StringArray")
+                    var nativeValueMap = prop.Qualifiers?.ValueMap;
+                    List<string> valueMap = null;
+                    if (nativeValueMap != null)
                     {
-                        int count = qualifier.Value.Length;
-                        valueMap = new string[count];
-                        for(int i = 0; i < count; i++)
+                        valueMap = new List<string>();
+                        foreach(var val in nativeValueMap)
                         {
-                            valueMap[i] = qualifier.Value[i].ToString();
+                            valueMap.Add(val.ToString());
                         }
                     }
 
                     // Check to see if this property has the Required qualifier associated with it.
-                    if (string.Equals(qualifier.Name, "Required", StringComparison.OrdinalIgnoreCase) &&
-                        qualifier.CimType == "Boolean" && (bool)qualifier.Value)
+                    if (string.Equals(prop.Qualifiers?.Required?.ToString(), "True", StringComparison.OrdinalIgnoreCase))
                     {
                         keyProp.Mandatory = true;
+                    }
+
+                    // Check to see if this property has the Key qualifier associated with it.
+                    if (string.Equals(prop.Qualifiers?.Key?.ToString(), "True", StringComparison.OrdinalIgnoreCase))
+                    {
+                        keyProp.Mandatory = true;
+                        keyProp.IsKey = true;
                     }
 
                     // set the property to mandatory is specified for the resource.
@@ -1054,36 +1026,36 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                             keyProp.Mandatory = true;
                         }
                     }
-                }
 
-                if (valueMap != null && keyProp.Values.Count > 0)
-                {
-                    if (valueMap.Length != keyProp.Values.Count)
+                    if (valueMap != null && keyProp.Values.Count > 0)
                     {
-                        s_tracer.WriteLine(
-                            "DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {0}, count of 'ValueMap': {1}. Skip the keyword '{2}'.",
-                            keyProp.Values.Count, valueMap.Length, keyword.Keyword);
-                        return null;
-                    }
-
-                    for (int index = 0; index < valueMap.Length; index++)
-                    {
-                        string key = keyProp.Values[index];
-                        string value = valueMap[index];
-
-                        if (keyProp.ValueMap.ContainsKey(key))
+                        if (valueMap.Count != keyProp.Values.Count)
                         {
                             s_tracer.WriteLine(
-                                "DSC CreateDynamicKeywordFromClass: same string value '{0}' appears more than once in qualifier 'Values'. Skip the keyword '{1}'.",
-                                key, keyword.Keyword);
+                                "DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {0}, count of 'ValueMap': {1}. Skip the keyword '{2}'.",
+                                keyProp.Values.Count, valueMap.Count, keyword.Keyword);
                             return null;
                         }
 
-                        keyProp.ValueMap.Add(key, value);
-                    }
-                }
+                        for (int index = 0; index < valueMap.Count; index++)
+                        {
+                            string key = keyProp.Values[index];
+                            string value = valueMap[index];
 
-                keyword.Properties.Add(prop.Name, keyProp);
+                            if (keyProp.ValueMap.ContainsKey(key))
+                            {
+                                s_tracer.WriteLine(
+                                    "DSC CreateDynamicKeywordFromClass: same string value '{0}' appears more than once in qualifier 'Values'. Skip the keyword '{1}'.",
+                                    key, keyword.Keyword);
+                                return null;
+                            }
+
+                            keyProp.ValueMap.Add(key, value);
+                        }
+                    }
+
+                    keyword.Properties.Add(prop.Name, keyProp);
+                }
             }
 
             // update specific keyword with range constraints
@@ -1199,7 +1171,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
             foreach (dynamic cimClass in GetCachedClasses())
             {
-                var className = cimClass.CimClassInstance.CimSystemProperties.ClassName;
+                var className = cimClass.CimClassInstance.ClassName;
                 var moduleInfo = ByClassModuleCache[className];
                 CreateAndRegisterKeywordFromCimClass(moduleInfo.Item1, moduleInfo.Item2, cimClass.CimClassInstance, functionsToDefine, cimClass.DscResRunAsCred);
             }
@@ -1847,33 +1819,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 cimSuperClassName = "OMI_BaseResource";
             }
 
-            var _ClassVersion = new PSObject();
-            _ClassVersion.Properties.Add(new PSNoteProperty("Name", "ClassVersion"));
-            _ClassVersion.Properties.Add(new PSNoteProperty("Value", "1.0.0"));
-            _ClassVersion.Properties.Add(new PSNoteProperty("CimType", "String"));
-            _ClassVersion.Properties.Add(new PSNoteProperty("Flags", "EnableOverride, Restricted"));
-
-            var _FriendlyName = new PSObject();
-            _FriendlyName.Properties.Add(new PSNoteProperty("Name", "FriendlyName"));
-            _FriendlyName.Properties.Add(new PSNoteProperty("Value", className));
-            _FriendlyName.Properties.Add(new PSNoteProperty("CimType", "String"));
-            _FriendlyName.Properties.Add(new PSNoteProperty("Flags", "EnableOverride, Restricted"));
-
-            var _CimClassQualifiers = new [] {_ClassVersion, _FriendlyName};
-
-            var _CimSystemProperties = new PSObject();
-            _CimSystemProperties.Properties.Add(new PSNoteProperty("Namespace", null));
-            _CimSystemProperties.Properties.Add(new PSNoteProperty("ServerName", null));
-            _CimSystemProperties.Properties.Add(new PSNoteProperty("ClassName", className));
-            _CimSystemProperties.Properties.Add(new PSNoteProperty("Path", null));
-
             var _CimClassProperties = ProcessMembers(embeddedInstanceTypes, typeAst, className).ToArray();
 
             var result = new PSObject();
-            result.Properties.Add(new PSNoteProperty("CimSuperClassName", cimSuperClassName));
-            result.Properties.Add(new PSNoteProperty("CimClassProperties", _CimClassProperties));
-            result.Properties.Add(new PSNoteProperty("CimClassQualifiers", _CimClassQualifiers));
-            result.Properties.Add(new PSNoteProperty("CimSystemProperties", _CimSystemProperties));
+            result.Properties.Add(new PSNoteProperty("ClassName", className));
+            result.Properties.Add(new PSNoteProperty("ClassVersion", "1.0.0"));
+            result.Properties.Add(new PSNoteProperty("FriendlyName", className));
+            result.Properties.Add(new PSNoteProperty("SuperClassName", cimSuperClassName));
+            result.Properties.Add(new PSNoteProperty("ClassProperties", _CimClassProperties));
 
             Queue<object> bases = new Queue<object>();
             foreach (var b in typeAst.BaseTypes)
@@ -2030,10 +1983,56 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
                 var propertyObject = new PSObject();
                 propertyObject.Properties.Add(new PSNoteProperty(@"Name", member.Name));
-                propertyObject.Properties.Add(new PSNoteProperty(@"Value", "null"));
                 propertyObject.Properties.Add(new PSNoteProperty(@"CimType", mofType + (isArrayType ? "Array" : "")));
-                propertyObject.Properties.Add(new PSNoteProperty(@"Flags", "Property, NullValue"));
-                propertyObject.Properties.Add(new PSNoteProperty(@"Qualifiers", new PSObject[0])); //TODO: mark Keys
+
+                PSObject attributesPSObject = null;
+                foreach (var attr in attributes)
+                {
+                    var dscProperty = attr as DscPropertyAttribute;
+                    if (dscProperty != null)
+                    {
+                        if (attributesPSObject == null)
+                        {
+                            attributesPSObject = new PSObject();
+                        }
+
+                        if (dscProperty.Key)
+                        {
+                            attributesPSObject.Properties.Add(new PSNoteProperty("Key", true));
+                        }
+
+                        if (dscProperty.Mandatory)
+                        {
+                            attributesPSObject.Properties.Add(new PSNoteProperty("Required", true));
+                        }
+
+                        if (dscProperty.NotConfigurable)
+                        {
+                            attributesPSObject.Properties.Add(new PSNoteProperty("Read", true));
+                        }
+
+                        continue;
+                    }
+
+                    var validateSet = attr as ValidateSetAttribute;
+                    if (validateSet != null)
+                    {
+                        if (attributesPSObject == null)
+                        {
+                            attributesPSObject = new PSObject();
+                        }
+
+                        List<string> ValueMap = new List<string>(validateSet.ValidValues);
+                        List<string> Values = new List<string>(validateSet.ValidValues);
+                        attributesPSObject.Properties.Add(new PSNoteProperty("ValueMap", ValueMap));
+                        attributesPSObject.Properties.Add(new PSNoteProperty("Values", Values));
+                    }
+                }
+
+                if (attributesPSObject != null)
+                {
+                    propertyObject.Properties.Add(new PSNoteProperty(@"Qualifiers", attributesPSObject));
+                }
 
                 result.Add(propertyObject);
             }
@@ -2206,8 +2205,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         private static bool IsSameNestedObject(dynamic oldClass, dynamic newClass)
         {
             // #1 both the classes should be nested class and not DSC resource
-            if ((oldClass.CimSuperClassName != null && string.Equals("OMI_BaseResource", oldClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase)) ||
-                (newClass.CimSuperClassName != null && string.Equals("OMI_BaseResource", newClass.CimSuperClassName, StringComparison.OrdinalIgnoreCase)))
+            if ((oldClass.SuperClassName != null && string.Equals("OMI_BaseResource", oldClass.SuperClassName, StringComparison.OrdinalIgnoreCase)) ||
+                (newClass.SuperClassName != null && string.Equals("OMI_BaseResource", newClass.SuperClassName, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }
@@ -2323,7 +2322,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         {
             foreach (dynamic c in classes)
             {
-                var className = c.CimSystemProperties.ClassName;
+                var className = c.ClassName;
                 string alias = GetFriendlyName(c);
                 var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
                 if (!CacheResourcesFromMultipleModuleVersions)
@@ -2425,10 +2424,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             }
             else if (Directory.Exists(dscResourcesPath))
             {
-                //
                 // Cannot find the schema file, then resourceName may be a friendly name,
                 // try to search all DscResources' schemas under DscResources folder
-                //
                 try
                 {
                     var dscResourceDirectories = Directory.GetDirectories(dscResourcesPath);
@@ -2442,9 +2439,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
                             if (classes != null)
                             {
-                                //
                                 // search if class's friendly name is the given resourceName
-                                //
                                 foreach (var c in classes)
                                 {
                                     var alias = GetFriendlyName(c);
@@ -2461,9 +2456,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 }
                 catch (Exception)
                 {
-                    //
                     // silent in case of exception
-                    //
                 }
             }
 
@@ -2477,7 +2470,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// <param name="cimClass"></param>
         private static void ClearImplicitlyImportedFlagFromResourceInClassCache(PSModuleInfo module, dynamic cimClass)
         {
-            var className = cimClass.CimSystemProperties.ClassName;
+            var className = cimClass.ClassName;
             var alias = GetFriendlyName(cimClass);
             var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
             var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className, friendlyName);

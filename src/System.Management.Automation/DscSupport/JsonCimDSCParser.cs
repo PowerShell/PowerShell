@@ -39,8 +39,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 var result = _json_deserializer.DeserializeClasses(json, useNewRunspace);
                 foreach (dynamic classObject in result)
                 {
-                    string superClassName = classObject.CimSuperClassName;
-                    string className = classObject.CimSystemProperties.ClassName;
+                    string superClassName = classObject.SuperClassName;
+                    string className = classObject.ClassName;
                     if (superClassName?.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase) ?? false)
                     {
                         // Get the name of the file without schema.mof/json extension
