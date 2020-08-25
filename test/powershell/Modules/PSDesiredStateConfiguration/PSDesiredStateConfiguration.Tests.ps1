@@ -17,7 +17,7 @@ Function Install-ModuleIfMissing {
 
     if (!$module -or $module.Version -lt $MinimumVersion) {
         Write-Verbose "Installing module '$Name' ..." -Verbose
-        Install-PSResource -Name $Name -TrustRepository -Verobse -Debug
+        Install-PSResource -Name $Name -TrustRepository -Verbose -Debug
     }
 }
 
