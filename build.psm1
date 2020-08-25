@@ -2009,10 +2009,6 @@ function Start-DevPowerShell {
         {
             Remove-Item env:DEVPATH
         }
-
-        if ($ZapDisable) {
-            Remove-Item env:COMPLUS_ZapDisable
-        }
     }
 }
 
