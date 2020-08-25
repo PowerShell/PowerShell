@@ -17,7 +17,7 @@ Function Install-ModuleIfMissing {
 
     if (!$module -or $module.Version -lt $MinimumVersion) {
         Write-Verbose "Installing module '$Name' ..." -Verbose
-        Install-Module -Name $Name -SkipPublisherCheck #:$false #$SkipPublisherCheck.IsPresent #-Force
+        Install-PSResource -Name $Name -TrustRepository -Verobse -Debug
     }
 }
 
@@ -94,22 +94,23 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         BeforeAll {
             $origProgress = $global:ProgressPreference
             $global:ProgressPreference = 'SilentlyContinue'
-            Install-ModuleIfMissing -Name NetworkingDSC -verbose
+
+            Install-ModuleIfMissing -Name NetworkingDSC -verbose -debug
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'groupset' #'networkteam'
-                    ModuleName   = 'PSDscResources' #'NetworkingDSC'
+                    Name         = 'networkteam'
+                    ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'GroupSet' #'NetworkTeam'
-                    ModuleName   = 'PSDscResources' #'NetworkingDSC'
+                    Name         = 'NetworkTeam'
+                    ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'GroupSet' #'NetworkTeam'
-                    ModuleName   = 'psdscResources' #'networkingdsc'
+                    Name         = 'NetworkTeam'
+                    ModuleName   = 'networkingdsc'
                 }
             )
         }
@@ -169,7 +170,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             $origProgress = $global:ProgressPreference
             $global:ProgressPreference = 'SilentlyContinue'
 
-            Install-ModuleIfMissing -Name PSDscResources -Force
+            Install-ModuleIfMissing -Name NetworkingDSC -Force
 
             # Install PowerShellGet only if PowerShellGet 2.2.1 or newer does not exist
             Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
@@ -180,18 +181,18 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'script'
-                    ModuleName   = 'PSDscResources'
+                    Name         = 'hostsfile'
+                    ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'Script'
-                    ModuleName   = 'PSDscResources'
+                    Name         = 'HostsFile'
+                    ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'Script'
-                    ModuleName   = 'psdscResources'
+                    Name         = 'HostsFile'
+                    ModuleName   = 'networkingDSC'
                 }
                 <#
                 Add these back when PowerShellGet is fixed https://github.com/PowerShell/PowerShellGet/pull/529
@@ -359,10 +360,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         BeforeAll {
             $origProgress = $global:ProgressPreference
             $global:ProgressPreference = 'SilentlyContinue'
-            $module = Get-InstalledModule -Name PsDscResources -ErrorAction Ignore
+            $module = Get-InstalledModule -Name NetworkingDSC -ErrorAction Ignore
             if ($module) {
-                Write-Verbose "removing PSDscResources, tests will re-install..." -Verbose
-                Uninstall-Module -Name PsDscResources -AllVersions -Force
+                Write-Verbose "removing NetworkingDSC, tests will re-install..." -Verbose
+                Uninstall-Module -Name NetworkingDSC -AllVersions -Force
             }
         }
 
@@ -404,17 +405,17 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
                 if (!$IsLinux) {
                     $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method set -Property @{
-                        Name               = 'PsDscResources'
+                        Name               = 'NetworkingDSC'
                         #InstallationPolicy = 'Trusted'
                     }
                 }
                 else {
                     # workraound because of https://github.com/PowerShell/PowerShellGet/pull/529
-                    Install-ModuleIfMissing -Name PsDscResources -Force
+                    Install-ModuleIfMissing -Name NetworkingDSC -Force
                 }
 
                 $result.RebootRequired | Should -BeFalse
-                $module = Get-Module PsDscResources -ListAvailable
+                $module = Get-Module NetworkingDSC -ListAvailable
                 $module | Should -Not -BeNullOrEmpty -Because "Resource should have installed module"
             }
             It 'Set method should return RebootRequired=<expectedResult> when $global:DSCMachineStatus = <value>'  -Skip:(!(Test-IsInvokeDscResourceEnable))  -TestCases $dscMachineStatusCases {
@@ -429,7 +430,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
                 # using create scriptBlock because $using:<variable> doesn't work with existing Invoke-DscResource
                 # Verified in Windows PowerShell on 20190814
-                $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = [scriptblock]::Create("`$global:DSCMachineStatus = $value;return") }
+                $result = Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = [scriptblock]::Create("`$global:DSCMachineStatus = $value;return") }
                 $result | Should -Not -BeNullOrEmpty
                 $result.RebootRequired | Should -BeExactly $expectedResult
             }
@@ -439,7 +440,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Test -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = { return } }
+                $result = Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Test -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -Not -BeNullOrEmpty
                 $result.InDesiredState | Should -BeFalse -Because "Test method return false"
             }
@@ -449,7 +450,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
+                $result = Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
             }
 
@@ -458,7 +459,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $module = Get-Module PsDscResources -ListAvailable
+                $module = Get-Module NetworkingDSC -ListAvailable
                 $moduleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
                 $result = Invoke-DscResource -Name Script -ModuleName $moduleSpecification -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
@@ -466,7 +467,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             It "Invalid moduleSpecification"  -Skip:(!(Test-IsInvokeDscResourceEnable)) {
                 Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/17"
-                $moduleSpecification = @{ModuleName = 'PsDscResources'; ModuleVersion = '99.99.99.993' }
+                $moduleSpecification = @{ModuleName = 'NetworkingDSC'; ModuleVersion = '99.99.99.993' }
                 {
                     Invoke-DscResource -Name Script -ModuleName $moduleSpecification -Method Test -Property @{TestScript = { Write-Host 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } } -ErrorAction Stop
                 } |
@@ -498,7 +499,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             It "Using PsDscRunAsCredential should say not supported" -Skip:(!(Test-IsInvokeDscResourceEnable)) {
                 {
-                    Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = {return}; PsDscRunAsCredential='natoheu'}  -ErrorAction Stop
+                    Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = {return}; PsDscRunAsCredential='natoheu'}  -ErrorAction Stop
                 } |
                 Should -Throw -ErrorId 'PsDscRunAsCredentialNotSupport,Invoke-DscResource'
             }
@@ -532,16 +533,16 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/12 and https://github.com/PowerShell/PowerShellGet/pull/529"
                 }
 
-                $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method Get -Property @{ Name = 'PsDscResources' }
+                $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method Get -Property @{ Name = 'NetworkingDSC' }
                 $result | Should -Not -BeNullOrEmpty
                 $result.Author | Should -BeLike 'Microsoft*'
                 #$result.Trusted | Should -BeOfType boolean
                 $result.Guid | Should -BeOfType Guid
                 $result.Ensure | Should -Be 'Present'
-                $result.Name | Should -Be 'PsDscResources'
+                $result.Name | Should -Be 'NetworkingDSC'
                 $result.Description | Should -BeLike 'This*DSC*'
                 $result.InstalledVersion | Should -BeOfType Version
-                $result.ModuleBase | Should -BeLike '*PSDscResources*'
+                $result.ModuleBase | Should -BeLike '*NetworkingDSC*'
                 $result.Repository | Should -BeOfType string
                 $result.ModuleType | Should -Be 'Manifest'
             }
