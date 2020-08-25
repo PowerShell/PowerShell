@@ -346,7 +346,6 @@ namespace System.Management.Automation.Remoting
         /// If the parameter <paramref name="fsmEventArg"/> is not NegotiationReceived event or it does not hold the
         /// client negotiation packet.
         /// </exception>
-
         private void DoNegotiationReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())
@@ -386,7 +385,6 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-
         private void DoNegotiationSending(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             if (fsmEventArg == null)
@@ -413,7 +411,6 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-
         private void DoNegotiationCompleted(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())
@@ -441,7 +438,6 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-
         private void DoEstablished(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())

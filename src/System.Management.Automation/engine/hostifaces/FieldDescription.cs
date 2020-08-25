@@ -22,7 +22,6 @@ namespace System.Management.Automation.Host
     /// It is permitted to subclass <see cref="System.Management.Automation.Host.FieldDescription"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-
     public class
     FieldDescription
     {
@@ -35,7 +34,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// <paramref name="name"/> is null or empty.
         /// </exception>
-
         public
         FieldDescription(string name)
         {
@@ -69,7 +67,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
         /// If <paramref name="parameterType"/> is null.
         /// </exception>
-
         public
         void
         SetParameterType(System.Type parameterType)
@@ -96,7 +93,6 @@ namespace System.Management.Automation.Host
         /// <!--The value of ParameterTypeName is the string value returned.
         /// by System.Type.Name.-->
         /// </remarks>
-
         public
         string
         ParameterTypeName
@@ -123,7 +119,6 @@ namespace System.Management.Automation.Host
         /// <!--The value of ParameterTypeName is the string value returned.
         /// by System.Type.Name.-->
         /// </remarks>
-
         public
         string
         ParameterTypeFullName
@@ -151,7 +146,6 @@ namespace System.Management.Automation.Host
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
         /// <see cref="System.String"/> will be used as the type.
         /// </remarks>
-
         public
         string
         ParameterAssemblyFullName
@@ -189,7 +183,6 @@ namespace System.Management.Automation.Host
         ///
         /// If no label is set, then the empty string is returned.
         /// </remarks>
-
         public
         string
         Label
@@ -222,7 +215,6 @@ namespace System.Management.Automation.Host
         /// This should be a few sentences to describe the field, suitable for presentation as a tool tip.
         /// Avoid placing including formatting characters such as newline and tab.
         /// </remarks>
-
         public
         string
         HelpMessage
@@ -248,7 +240,6 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Gets and sets whether a value must be supplied for this field.
         /// </summary>
-
         public
         bool
         IsMandatory
@@ -274,7 +265,6 @@ namespace System.Management.Automation.Host
         /// can make use of the object in its presentation of the fields prompt.
         ///
         ///</remarks>
-
         public
         PSObject
         DefaultValue
@@ -297,7 +287,6 @@ namespace System.Management.Automation.Host
         /// is being called from the MSH engine, this will contain the set of prompting attributes that are attached to a
         /// cmdlet parameter declaration.
         /// </summary>
-
         public
         Collection<Attribute>
         Attributes
@@ -312,7 +301,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// If <paramref name="nameOfType"/> is null.
         /// </exception>
-
         internal
         void
         SetParameterTypeName(string nameOfType)
@@ -332,7 +320,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// If <paramref name="fullNameOfType"/> is null.
         /// </exception>
-
         internal
         void
         SetParameterTypeFullName(string fullNameOfType)
@@ -352,7 +339,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// If <paramref name="fullNameOfAssembly"/> is null.
         /// </exception>
-
         internal
         void
         SetParameterAssemblyFullName(string fullNameOfAssembly)

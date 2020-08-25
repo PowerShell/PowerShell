@@ -245,7 +245,6 @@ namespace System.Management.Automation.ComInterop
                 typeNames += typeName;
             }
 
-
             throw Error.AmbiguousConversion(argumentType.Name, typeNames);
         }
 

@@ -87,7 +87,6 @@ namespace Microsoft.PowerShell
         /// If the converting the user input to the prompt field type fails unless it is caused by
         ///     OverflowException or FormatException
         /// </exception>
-
         public override
         Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
@@ -475,7 +474,6 @@ namespace Microsoft.PowerShell
         /// <param name="desc"></param>
         /// <param name="inputDone"></param>
         /// <returns></returns>
-
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
             Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
