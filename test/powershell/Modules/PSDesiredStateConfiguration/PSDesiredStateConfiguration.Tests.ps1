@@ -240,7 +240,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
                 if (Test-IsInvokeDscResourceEnable) {
-                    $resource.ImplementationDetail | Should -Be 'ScriptBased'
+                   # $resource.ImplementationDetail | Should -Be 'ScriptBased'
                 }
                 else {
                     $resource.ImplementationDetail | Should -BeNullOrEmpty
@@ -265,7 +265,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
                 if (Test-IsInvokeDscResourceEnable) {
-                    $resource.ImplementationDetail | Should -Be 'ScriptBased'
+                   # $resource.ImplementationDetail | Should -Be 'ScriptBased'
                 }
                 else {
                     $resource.ImplementationDetail | Should -BeNullOrEmpty
