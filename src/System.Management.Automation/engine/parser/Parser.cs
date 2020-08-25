@@ -2934,6 +2934,7 @@ namespace System.Management.Automation.Language
             //
             Runspaces.Runspace localRunspace = null;
             bool topLevel = false;
+            bool useJsonSchema = true;
             try
             {
                 // At this point, we'll need a runspace to use to hold the metadata for the parse. If there is no
@@ -2997,7 +2998,80 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                            if (ExperimentalFeature.IsEnabled("PSDscJsonSchemaSupport"))
+                            {
+                                // In addition to checking if experimental feature is enabled
+                                // also check if v3.0 (or later) of PSDesiredStateConfiguration module is available
+
+                                // pre-v3 module is mof-based
+                                // having a pre-v3 module pre-loaded gives user a way to force usage of mof-based APIs for dsc configuration compilation
+
+                                // First check if PSDesiredStateConfiguration is already loaded
+                                // if pre-v3 is already loaded then use old mof-based APIs
+                                // otherwise if v3.0.0 or later is already loaded then use new json-based APIS
+                                // otherwise no version of the module is currently loaded - then try to load v3 and use json-based APIs
+                                // if v3 can not be found/loaded then use old mof-based APIs
+
+                                p.AddCommand(new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand)));
+                                p.AddParameter("Name", "PSDesiredStateConfiguration");
+                                
+                                bool v3IsLoaded = false;
+                                bool prev3IsLoaded = false;
+                                foreach(var moduleInfo in p.Invoke())
+                                {
+                                    if (((Version)moduleInfo.Properties["Version"].Value).Major < 3)
+                                    {
+                                        prev3IsLoaded = true;
+                                    }
+                                    else
+                                    {
+                                        v3IsLoaded = true;
+                                    }
+                                }
+
+                                p.Commands.Clear();
+                                
+                                if (prev3IsLoaded)
+                                {
+                                    useJsonSchema = false;
+                                }
+                                else
+                                {
+                                    // if v3 is already loaded we don't need to do anything extra - just use json APIs
+                                    // if it is not loaded - try to load it
+                                    if (!v3IsLoaded)
+                                    {
+                                        p.AddCommand(new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand)));
+                                        p.AddParameter("PassThru", true);
+                                        p.AddParameter("FullyQualifiedName", new Microsoft.PowerShell.Commands.ModuleSpecification()
+                                            {
+                                                Name = "PSDesiredStateConfiguration",
+                                                Version = new Version(3,0,0)
+                                            });
+
+                                        var newModuleInfo = p.Invoke();
+                                        p.Commands.Clear();
+                                        if (newModuleInfo.Count == 0)
+                                        {
+                                            // v3 of the module was not found/loaded successfully - use old mof APIs
+                                            useJsonSchema = false;
+                                        }
+                                    }
+                                }
+
+                                if (useJsonSchema)
+                                {
+                                    Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                }
+                                else
+                                {
+                                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                }
+                            }
+                            else
+                            {
+                                Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                            }
 
                             // Report any errors encountered while loading CIM dynamic keywords.
                             if (CIMKeywordErrors.Count > 0)
@@ -3239,7 +3313,15 @@ namespace System.Management.Automation.Language
                     // Clear out all of the cached classes and keywords.
                     // They will need to be reloaded when the generated function is actually run.
                     //
-                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.ClearCache();
+                    if (useJsonSchema)
+                    {
+                        Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache.ClearCache();
+                    }
+                    else
+                    {
+                        Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.ClearCache();
+                    }
+
                     System.Management.Automation.Language.DynamicKeyword.Reset();
                 }
 
