@@ -295,16 +295,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 }
                 else
                 {
-                    foreach (string moduleFolderPath in modulePathList)
+                    if (modulePathList != null)
                     {
-                        if (!Directory.Exists(moduleFolderPath))
+                        foreach (string moduleFolderPath in modulePathList)
                         {
-                            continue;
-                        }
+                            if (!Directory.Exists(moduleFolderPath))
+                            {
+                                continue;
+                            }
 
-                        foreach (string moduleDir in Directory.EnumerateDirectories(moduleFolderPath))
-                        {
-                            modulePaths.Add(moduleDir);
+                            foreach (string moduleDir in Directory.EnumerateDirectories(moduleFolderPath))
+                            {
+                                modulePaths.Add(moduleDir);
+                            }
                         }
                     }
                 }
