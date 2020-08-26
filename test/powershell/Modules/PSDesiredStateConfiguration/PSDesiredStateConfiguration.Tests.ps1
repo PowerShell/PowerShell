@@ -100,17 +100,17 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'networkteam'
+                    Name         = 'hostsfile'
                     ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'NetworkTeam'
+                    Name         = 'HostsFile'
                     ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'NetworkTeam'
+                    Name         = 'HostsFile'
                     ModuleName   = 'networkingdsc'
                 }
             )
@@ -173,26 +173,26 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             Install-ModuleIfMissing -Name NetworkingDSC -Force -Verbose -Debug
 
-            # Install PowerShellGet only if PowerShellGet 2.2.1 or newer does not exist
-           # Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
-            #$module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
+            #Install PowerShellGet only if PowerShellGet 2.2.1 or newer does not exist
+            Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
+            $module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 
             $psGetModuleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
-           # $psGetModuleCount = @(Get-Module PowerShellGet -ListAvailable).Count
+            $psGetModuleCount = @(Get-Module PowerShellGet -ListAvailable).Count
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'hostsfile'
+                    Name         = 'networkteam'
                     ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'HostsFile'
+                    Name         = 'NetworkTeam'
                     ModuleName   = 'NetworkingDSC'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'HostsFile'
+                    Name         = 'NetworkTeam'
                     ModuleName   = 'networkingDSC'
                 }
                 <#
@@ -240,7 +240,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
                 if (Test-IsInvokeDscResourceEnable) {
-                   # $resource.ImplementationDetail | Should -Be 'ScriptBased'
+                    $resource.ImplementationDetail | Should -Be 'ScriptBased'
                 }
                 else {
                     $resource.ImplementationDetail | Should -BeNullOrEmpty
@@ -265,7 +265,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
                 if (Test-IsInvokeDscResourceEnable) {
-                   # $resource.ImplementationDetail | Should -Be 'ScriptBased'
+                    $resource.ImplementationDetail | Should -Be 'ScriptBased'
                 }
                 else {
                     $resource.ImplementationDetail | Should -BeNullOrEmpty
