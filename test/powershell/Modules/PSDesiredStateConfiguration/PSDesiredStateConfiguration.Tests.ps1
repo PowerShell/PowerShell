@@ -171,14 +171,14 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             $origProgress = $global:ProgressPreference
             $global:ProgressPreference = 'SilentlyContinue'
 
-            Install-ModuleIfMissing -Name NetworkingDSC -Force
+            Install-ModuleIfMissing -Name NetworkingDSC -Force -Verbose -Debug
 
             # Install PowerShellGet only if PowerShellGet 2.2.1 or newer does not exist
-            Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
-            $module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
+           # Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
+            #$module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 
             $psGetModuleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
-            $psGetModuleCount = @(Get-Module PowerShellGet -ListAvailable).Count
+           # $psGetModuleCount = @(Get-Module PowerShellGet -ListAvailable).Count
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
@@ -235,7 +235,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because $PendingBecause
             }
 
-            $resources = @(Get-DscResource -Name $name)
+            $resources = @(Get-DscResource -Name $name -Module $ModuleName)
             $resources | Should -Not -BeNullOrEmpty
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
