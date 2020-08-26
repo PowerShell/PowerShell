@@ -67,11 +67,6 @@ Describe "Native Command Arguments" -tags "CI" {
 
 Describe 'PSPath to native commands' {
     BeforeAll {
-        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
-        $PSDefaultParameterValues["it:skip"] = (-not $featureEnabled)
-
         if ($IsWindows) {
             $cmd = "cmd"
             $cmdArg1 = "/c"
@@ -95,8 +90,6 @@ Describe 'PSPath to native commands' {
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-
         Remove-Item -Path "env:/test var"
         Remove-Item -Path $filePath
         Remove-PSDrive -Name $complexDriveName
