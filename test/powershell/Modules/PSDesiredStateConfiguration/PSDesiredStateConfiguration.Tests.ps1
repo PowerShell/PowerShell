@@ -133,6 +133,16 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             $resource = Get-DscResource -Name $name
             $resource | Should -Not -BeNullOrEmpty
+            Write-Host $resource.CompanyName
+            Write-Host $resource.Count
+            Write-Host $resource.FriendlyName
+            Write-Host $resource.ImplementedAs
+            Write-Host $resource.Module
+            Write-Host $resource.ModuleName
+            Write-Host $resource.ImplementationDetail
+
+
+
             $resource.Name | Should -Be $Name
             if (Test-IsInvokeDscResourceEnable) {
                 $resource.ImplementationDetail | Should -BeNullOrEmpty
@@ -221,7 +231,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         }
 
         It "should be able to get <Name> - <TestCaseName>" -TestCases $testCases {
-            param($Name, $ModuleName )
+            param($Name)
 
             if ($IsWindows) {
                 Set-ItResult -Pending -Because "Will only find script from PSDesiredStateConfiguration without modulename"
@@ -235,7 +245,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because $PendingBecause
             }
 
-            $resources = @(Get-DscResource -Name $name -Module $ModuleName)
+            $resources = @(Get-DscResource -Name $name)
             $resources | Should -Not -BeNullOrEmpty
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
