@@ -2934,7 +2934,7 @@ namespace System.Management.Automation.Language
             //
             Runspaces.Runspace localRunspace = null;
             bool topLevel = false;
-            bool useJsonSchema = true;
+            bool useJsonSchema = false;
             try
             {
                 // At this point, we'll need a runspace to use to hold the metadata for the parse. If there is no
@@ -3009,7 +3009,7 @@ namespace System.Management.Automation.Language
                                 // First check if PSDesiredStateConfiguration is already loaded
                                 // if pre-v3 is already loaded then use old mof-based APIs
                                 // otherwise if v3.0.0 or later is already loaded then use new json-based APIS
-                                // otherwise no version of the module is currently loaded - then try to load v3 and use json-based APIs
+                                // otherwise no version of the module is currently loaded - then try to load v3 and use json-based APIs is loading is successful
                                 // if v3 can not be found/loaded then use old mof-based APIs
 
                                 p.AddCommand(new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand)));
@@ -3031,15 +3031,15 @@ namespace System.Management.Automation.Language
 
                                 p.Commands.Clear();
                                 
-                                if (prev3IsLoaded)
-                                {
-                                    useJsonSchema = false;
-                                }
-                                else
+                                if (!prev3IsLoaded)
                                 {
                                     // if v3 is already loaded we don't need to do anything extra - just use json APIs
                                     // if it is not loaded - try to load it
-                                    if (!v3IsLoaded)
+                                    if (v3IsLoaded)
+                                    {
+                                        useJsonSchema = true;
+                                    }
+                                    else
                                     {
                                         p.AddCommand(new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand)));
                                         p.AddParameter("PassThru", true);
@@ -3051,10 +3051,10 @@ namespace System.Management.Automation.Language
 
                                         var newModuleInfo = p.Invoke();
                                         p.Commands.Clear();
-                                        if (newModuleInfo.Count == 0)
+                                        if (newModuleInfo.Count > 0)
                                         {
-                                            // v3 of the module was not found/loaded successfully - use old mof APIs
-                                            useJsonSchema = false;
+                                            // v3 of the module was found/loaded successfully - use new json APIs
+                                            useJsonSchema = true;
                                         }
                                     }
                                 }
