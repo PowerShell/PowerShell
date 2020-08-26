@@ -231,7 +231,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         }
 
         It "should be able to get <Name> - <TestCaseName>" -TestCases $testCases {
-            param($Name)
+            param($Name, $ModuleName)
 
             if ($IsWindows) {
                 Set-ItResult -Pending -Because "Will only find script from PSDesiredStateConfiguration without modulename"
@@ -245,7 +245,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because $PendingBecause
             }
 
-            $resources = @(Get-DscResource -Name $name)
+            $resources = @(Get-DscResource -Name $name -Module $ModuleName)
             $resources | Should -Not -BeNullOrEmpty
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
