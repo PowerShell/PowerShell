@@ -221,7 +221,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         }
 
         It "should be able to get <Name> - <TestCaseName>" -TestCases $testCases {
-            param($Name)
+            param($Name, $ModuleName )
 
             if ($IsWindows) {
                 Set-ItResult -Pending -Because "Will only find script from PSDesiredStateConfiguration without modulename"
