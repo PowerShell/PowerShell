@@ -150,13 +150,19 @@ Describe "Default enablement of Experimental Features" -Tags CI {
                 "Expected: Feature $Name to be Enabled"
             }
 
+            $succeeded = if ($Negate) {
+                $ActualValue -eq $false
+            }
+            else {
+                $ActualValue -eq $true
+            }
+
+            if (!$succeeded) {
+                Write-Warning (Get-ExperimentalFeature | Out-String)
+            }
+
             return [PSCustomObject]@{
-                Succeeded = if ($Negate) {
-                    $ActualValue -eq $false
-                }
-                else {
-                    $ActualValue -eq $true
-                }
+                Succeeded = $succeeded
                 FailureMessage = $failure
             }
         }
