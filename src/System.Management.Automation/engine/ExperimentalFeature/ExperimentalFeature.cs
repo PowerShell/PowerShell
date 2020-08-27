@@ -115,9 +115,6 @@ namespace System.Management.Automation
                     description: "Provide unix permission information for files and directories"),
 #endif
                 new ExperimentalFeature(
-                    name: "PSNullConditionalOperators",
-                    description: "Support the null conditional member access operators in PowerShell language"),
-                new ExperimentalFeature(
                     name: "PSCultureInvariantReplaceOperator",
                     description: "Use culture invariant to-string convertor for lval in replace operator"),
                 new ExperimentalFeature(
