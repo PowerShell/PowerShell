@@ -10,7 +10,6 @@ using System.Text;
 using System.Collections;
 using System.Threading;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Xml;
 using System.Runtime.InteropServices;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -221,6 +220,29 @@ namespace System.Management.Automation
                 return path;
             }
         }
+
+        /// <summary>
+        /// Gets true if Path is Console Application.
+        /// </summary>
+        private bool IsConsoleApplication => !IsWindowsApplication;
+
+        /// <summary>
+        /// Gets true if Path is Windows Application.
+        /// </summary>
+        private bool IsWindowsApplication
+        {
+            get
+            {
+                if (!_isWindowsApplication.HasValue)
+                {
+                    _isWindowsApplication = CheckIfWindowsApplication(Path);
+                }
+
+                return _isWindowsApplication.Value;
+            }
+        }
+
+        private bool? _isWindowsApplication;
 
         #endregion ctor/native command properties
 
@@ -476,7 +498,7 @@ namespace System.Management.Automation
                         bool notDone = true;
                         if (!string.IsNullOrEmpty(executable))
                         {
-                            if (IsConsoleApplication(executable))
+                            if (CheckIfConsoleApplication(executable))
                             {
                                 // Allocate a console if there isn't one attached already...
                                 ConsoleVisibility.AllocateHiddenConsole();
@@ -532,7 +554,7 @@ namespace System.Management.Automation
                     _isRunningInBackground = true;
                     if (startInfo.UseShellExecute == false)
                     {
-                        _isRunningInBackground = IsWindowsApplication(_nativeProcess.StartInfo.FileName);
+                        _isRunningInBackground = IsWindowsApplication;
                     }
                 }
 
@@ -935,9 +957,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        private static bool IsConsoleApplication(string fileName)
+        private static bool CheckIfConsoleApplication(string fileName)
         {
-            return !IsWindowsApplication(fileName);
+            return !CheckIfWindowsApplication(fileName);
         }
 
         /// <summary>
@@ -946,9 +968,21 @@ namespace System.Management.Automation
         /// <param name="fileName"></param>
         /// <returns></returns>
         [ArchitectureSensitive]
-        private static bool IsWindowsApplication(string fileName)
+        private static bool CheckIfWindowsApplication(string fileName)
         {
+#if UNIX
+            return false;
+#else
             if (!Platform.IsWindowsDesktop) { return false; }
+
+            // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error")
+            // so we are trying to get a real path before.
+            // It is a workaround for Microsoft Store applications.
+            string realPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.WinInternalGetTarget(fileName);
+            if (realPath is not null)
+            {
+                fileName = realPath;
+            }
 
             SHFILEINFO shinfo = new SHFILEINFO();
             IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
@@ -968,6 +1002,7 @@ namespace System.Management.Automation
                     // anything else - is a windows program...
                     return true;
             }
+#endif
         }
 
         #endregion checkForConsoleApplication
@@ -1266,7 +1301,7 @@ namespace System.Management.Automation
                 redirectOutput = true;
                 redirectError = true;
             }
-            else if (Platform.IsWindowsDesktop && IsConsoleApplication(this.Path))
+            else if (Platform.IsWindowsDesktop && IsConsoleApplication)
             {
                 // On Windows desktops, if the command to run is a console application,
                 // then allocate a console if there isn't one attached already...
