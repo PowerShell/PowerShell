@@ -8382,9 +8382,7 @@ namespace Microsoft.PowerShell.Commands
             // that file or device, even if GENERIC_READ access would have been denied.
             using (SafeFileHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericZero))
             {
-                string linkTarget = WinInternalGetTarget(handle);
-
-                return linkTarget;
+                return WinInternalGetTarget(handle);
             }
         }
 
