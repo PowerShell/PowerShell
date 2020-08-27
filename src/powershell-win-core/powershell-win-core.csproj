@@ -13,20 +13,13 @@
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
   </PropertyGroup>
 
-  <!-- Have default so this builds in Visual Studio -->
-  <PropertyGroup Condition = "'$(SDKToUse)' == ''">
-    <SDKToUse>Microsoft.NET.Sdk.WindowsDesktop</SDKToUse>
-  </PropertyGroup>
-
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
-
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' ">
     <UseWpf>true</UseWpf>
     <UseWindowsForms>true</UseWindowsForms>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>7.0</TargetPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -63,5 +56,7 @@
     <ProjectReference Include="..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
     <ProjectReference Include="..\Microsoft.Management.UI.Internal\Microsoft.PowerShell.GraphicalHost.csproj" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' "/>
   </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
 </Project>
