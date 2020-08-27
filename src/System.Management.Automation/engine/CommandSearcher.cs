@@ -1334,10 +1334,6 @@ namespace System.Management.Automation
         /// </exception>
         internal LookupPathCollection ConstructSearchPatternsFromName(string name, bool commandDiscovery = false)
         {
-            Dbg.Assert(
-                !string.IsNullOrEmpty(name),
-                "Caller should verify name");
-
             var result = new LookupPathCollection();
 
             // First check to see if the commandName has an extension, if so
