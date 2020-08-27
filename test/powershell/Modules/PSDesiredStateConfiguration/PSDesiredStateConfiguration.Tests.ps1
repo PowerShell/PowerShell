@@ -175,7 +175,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             }
         }
     }
-
+<#
     Context "Get-DscResource - ScriptResources" {
         BeforeAll {
             $origProgress = $global:ProgressPreference
@@ -192,18 +192,18 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'networkteam'
-                    ModuleName   = 'NetworkingDSC'
+                    Name         = 'script'
+                    ModuleName   = 'PSDSCResources'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'NetworkTeam'
-                    ModuleName   = 'NetworkingDSC'
+                    Name         = 'Script'
+                    ModuleName   = 'PSDSCResources'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'NetworkTeam'
-                    ModuleName   = 'networkingDSC'
+                    Name         = 'Script'
+                    ModuleName   = 'psdscResources'
                 }
                 <#
                 Add these back when PowerShellGet is fixed https://github.com/PowerShell/PowerShellGet/pull/529
@@ -223,9 +223,11 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     ModuleName = 'powershellget'
                 }
                 #>
+<#
             )
         }
-
+        #>
+<#
         AfterAll {
             $Global:ProgressPreference = $origProgress
         }
@@ -291,6 +293,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.WriteErrorException,CheckResourceFound'
         }
     }
+    #>
     Context "Get-DscResource - Class base Resources" {
 
         BeforeAll {
@@ -403,10 +406,12 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     }
                 )
 
-                Install-ModuleIfMissing -Name PowerShellGet -SkipPublisherCheck -MinimumVersion '2.2.1' -Force
+                Install-ModuleIfMissing -Name PowerShellGet -SkipPublisherCheck -MinimumVersion '3.0.0' -Force
                 Install-ModuleIfMissing -Name xWebAdministration
                 $module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 
+                $modVersion = $module.Version.ToString();
+                Write-Host ">>>>>>>>>>>>>>>>>>>>  PS MODULE:  $module, $modVersion"
                 $psGetModuleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
             }
             It "Set method should work" -Skip:(!(Test-IsInvokeDscResourceEnable)) {
@@ -426,7 +431,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 }
 
                 $result.RebootRequired | Should -BeFalse
-                $module = Get-Module NetworkingDSC -ListAvailable
+                $module = Get-PSResource NetworkingDSC
                 $module | Should -Not -BeNullOrEmpty -Because "Resource should have installed module"
             }
             It 'Set method should return RebootRequired=<expectedResult> when $global:DSCMachineStatus = <value>'  -Skip:(!(Test-IsInvokeDscResourceEnable))  -TestCases $dscMachineStatusCases {
@@ -470,7 +475,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $module = Get-Module PSDSCResources -ListAvailable
+                $module = Get-PSResource PSDSCResources
                 $moduleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
                 $result = Invoke-DscResource -Name Script -ModuleName $moduleSpecification -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
