@@ -98,9 +98,7 @@ namespace System.Management.Automation
         /// <param name="encoding">The encoding to check for obsolescence.</param>
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
-#pragma warning disable MSLIB0001
-            if (encoding == System.Text.Encoding.UTF7)
-#pragma warning restore MSLIB0001
+            if (encoding != null && encoding.CodePage == 65000)
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
             }

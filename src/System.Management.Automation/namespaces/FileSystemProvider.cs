@@ -7617,9 +7617,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#pragma warning disable MSLIB0001
-                if (value == System.Text.Encoding.UTF7)
-#pragma warning restore MSLIB0001
+                if (value != null && value.CodePage == 65000)
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }
