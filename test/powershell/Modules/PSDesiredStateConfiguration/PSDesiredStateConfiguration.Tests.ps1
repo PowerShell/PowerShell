@@ -184,11 +184,11 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             Install-ModuleIfMissing -Name NetworkingDSC -Force -Verbose -Debug
 
             #Install PowerShellGet only if PowerShellGet 2.2.1 or newer does not exist
-            Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
-            $module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
+            #Install-ModuleIfMissing -Name PowerShellGet -MinimumVersion '2.2.1'
+            #$module = Get-Module PowerShellGet -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
 
-            $psGetModuleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
-            $psGetModuleCount = @(Get-Module PowerShellGet -ListAvailable).Count
+            #$psGetModuleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
+            #$psGetModuleCount = @(Get-Module PowerShellGet -ListAvailable).Count
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
