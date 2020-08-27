@@ -245,7 +245,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because $PendingBecause
             }
 
-            $resources = @(Get-DscResource -Name $name -Module $ModuleName)
+            $resources = @(Get-DscResource -Name $name)
             $resources | Should -Not -BeNullOrEmpty
             foreach ($resource in $resource) {
                 $resource.Name | Should -Be $Name
