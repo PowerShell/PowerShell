@@ -100,18 +100,18 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             $testCases = @(
                 @{
                     TestCaseName = 'case mismatch in resource name'
-                    Name         = 'hostsfile'
-                    ModuleName   = 'NetworkingDSC'
+                    Name         = 'groupset'
+                    ModuleName   = 'PSDscResources'
                 }
                 @{
                     TestCaseName = 'Both names have matching case'
-                    Name         = 'HostsFile'
-                    ModuleName   = 'NetworkingDSC'
+                    Name         = 'GroupSet'
+                    ModuleName   = 'PSDscResources'
                 }
                 @{
                     TestCaseName = 'case mismatch in module name'
-                    Name         = 'HostsFile'
-                    ModuleName   = 'networkingdsc'
+                    Name         = 'GroupSet'
+                    ModuleName   = 'psdscresources'
                 }
             )
         }
@@ -441,7 +441,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
                 # using create scriptBlock because $using:<variable> doesn't work with existing Invoke-DscResource
                 # Verified in Windows PowerShell on 20190814
-                $result = Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = [scriptblock]::Create("`$global:DSCMachineStatus = $value;return") }
+                $result = Invoke-DscResource -Name Script -ModuleName PSDSCResources -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = [scriptblock]::Create("`$global:DSCMachineStatus = $value;return") }
                 $result | Should -Not -BeNullOrEmpty
                 $result.RebootRequired | Should -BeExactly $expectedResult
             }
@@ -451,7 +451,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $result = Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Test -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = { return } }
+                $result = Invoke-DscResource -Name Script -ModuleName PSDSCResources -Method Test -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -Not -BeNullOrEmpty
                 $result.InDesiredState | Should -BeFalse -Because "Test method return false"
             }
@@ -461,7 +461,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $result = Invoke-DscResource -Name Script -ModuleName NetworkingDSC -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
+                $result = Invoke-DscResource -Name Script -ModuleName PSDSCResources -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
             }
 
@@ -470,7 +470,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
-                $module = Get-Module NetworkingDSC -ListAvailable
+                $module = Get-Module PSDSCResources -ListAvailable
                 $moduleSpecification = @{ModuleName = $module.Name; ModuleVersion = $module.Version.ToString() }
                 $result = Invoke-DscResource -Name Script -ModuleName $moduleSpecification -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
@@ -544,16 +544,16 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/12 and https://github.com/PowerShell/PowerShellGet/pull/529"
                 }
 
-                $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method Get -Property @{ Name = 'NetworkingDSC' }
+                $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method Get -Property @{ Name = 'PSDSCResources' }
                 $result | Should -Not -BeNullOrEmpty
                 $result.Author | Should -BeLike 'Microsoft*'
                 #$result.Trusted | Should -BeOfType boolean
                 $result.Guid | Should -BeOfType Guid
                 $result.Ensure | Should -Be 'Present'
-                $result.Name | Should -Be 'NetworkingDSC'
+                $result.Name | Should -Be 'PSDSCResources'
                 $result.Description | Should -BeLike 'This*DSC*'
                 $result.InstalledVersion | Should -BeOfType Version
-                $result.ModuleBase | Should -BeLike '*NetworkingDSC*'
+                $result.ModuleBase | Should -BeLike '*PSDSCResources*'
                 $result.Repository | Should -BeOfType string
                 $result.ModuleType | Should -Be 'Manifest'
             }
