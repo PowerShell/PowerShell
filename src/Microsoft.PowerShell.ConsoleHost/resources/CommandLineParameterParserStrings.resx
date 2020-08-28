@@ -219,4 +219,7 @@ Valid formats are:
   <data name="STANotImplemented" xml:space="preserve">
     <value>Parameter -STA is not supported on this platform.</value>
   </data>
+  <data name="NullElementInArgs" xml:space="preserve">
+    <value>The specified arguments should not contain null elements.</value>
+  </data>
 </root>
