@@ -456,7 +456,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
         {
-            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             counterType = 0;
             defaultScale = 0;
             timeBase = 0;
@@ -464,7 +463,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             Debug.Assert(hCounter != IntPtr.Zero);
 
             IntPtr pBufferSize = new IntPtr(0);
-            res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
+            uint res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
             if (res != PdhResults.PDH_MORE_DATA)
             {
                 return res;
@@ -1030,7 +1029,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             int strSize = 256;
             IntPtr localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
             locName = string.Empty;
-            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
+            uint res;
             try
             {
                 res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);

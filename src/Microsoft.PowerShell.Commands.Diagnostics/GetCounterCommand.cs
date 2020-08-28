@@ -437,7 +437,6 @@ namespace Microsoft.PowerShell.Commands
             CultureInfo culture = GetCurrentCulture();
             List<Tuple<char, char>> characterReplacementList = null;
             List<string> paths = CombineMachinesAndCounterPaths();
-            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             if (!_defaultCounters)
             {
@@ -445,6 +444,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             StringCollection allExpandedPaths = new StringCollection();
+            uint res;
             foreach (string path in paths)
             {
                 string localizedPath = path;
