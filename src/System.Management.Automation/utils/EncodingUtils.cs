@@ -8,7 +8,6 @@ using System.Text;
 
 using System.Management.Automation.Internal;
 
-
 namespace System.Management.Automation
 {
     internal static class EncodingConversion
