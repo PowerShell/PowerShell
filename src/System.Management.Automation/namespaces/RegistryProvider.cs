@@ -3834,6 +3834,7 @@ namespace Microsoft.PowerShell.Commands
                             value = 0;
                         }
                     }
+                    
                     break;
 
                 case RegistryValueKind.ExpandString:
@@ -3872,6 +3873,7 @@ namespace Microsoft.PowerShell.Commands
                             value = 0;
                         }
                     }
+
                     break;
 
                 case RegistryValueKind.String:
