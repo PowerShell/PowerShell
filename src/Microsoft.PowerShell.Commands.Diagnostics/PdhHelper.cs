@@ -548,25 +548,27 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 length += blgFileNames[i].Length;
             }
 
-            Span<char> doubleNullTerminated = new char[length];
-
-            int pos = 0;
-            for (int i = 0; i < blgFileNames.Count; i++)
+            string doubleNullTerminated = string.Create(length, blgFileNames, (buf, fileNames) =>
             {
-                ReadOnlySpan<char> fileName = blgFileNames[i];
-                fileName.CopyTo(
-                    doubleNullTerminated.Slice(pos, fileName.Length));
-                pos += fileName.Length;
-                doubleNullTerminated[pos] = '\0';
+                int pos = 0;
+                for (int i = 0; i < fileNames.Count; i++)
+                {
+                    string fileName = fileNames[i];
+                    int fileNameLength = fileName.Length;
+                    fileName.AsSpan().CopyTo(
+                        buf.Slice(pos, fileNameLength));
+                    pos += fileNameLength;
+                    buf[pos] = '\0';
+                    pos++;
+                }
+
+                buf[pos] = '\0';
                 pos++;
-            }
 
-            doubleNullTerminated[pos] = '\0';
-            pos++;
+                Debug.Assert(pos == length, "Error constructing double null terminated string.");
+            });
 
-            Debug.Assert(pos == length, "Error constructing double null terminated string.");
-
-            return ConnectToDataSource(doubleNullTerminated.ToString());
+            return ConnectToDataSource(doubleNullTerminated);
         }
 
         public uint OpenQuery()
