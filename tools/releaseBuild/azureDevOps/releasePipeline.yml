@@ -198,7 +198,7 @@ stages:
 - stage: ReleaseDocker
   displayName: Release Docker
   dependsOn:
-    - StartDocker
+    - GitHubManualTasks
   jobs:
   - deployment: ReleaseDocker
     displayName: Release Docker
