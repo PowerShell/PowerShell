@@ -1973,7 +1973,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="hWnd">The window to show...</param>
         /// <param name="nCmdShow">The command to do.</param>
-        /// <returns>True it it was successful.</returns>
+        /// <returns>True if it was successful.</returns>
         [DllImport("user32.dll")]
         internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
