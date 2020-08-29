@@ -551,7 +551,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the aliases of the the current cmdlet.
+        /// Get the aliases of the current cmdlet.
         /// </summary>
         /// <returns></returns>
         private List<string> GetAliasOfCurrentCmdlet()

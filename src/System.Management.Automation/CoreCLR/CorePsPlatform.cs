@@ -1159,10 +1159,10 @@ namespace System.Management.Automation
                     /// <summary>This filesystem item is a socket.</summary>
                     internal int IsSocket;
 
-                    /// <summary>This filesystem item will run as the the owner if executed.</summary>
+                    /// <summary>This filesystem item will run as the owner if executed.</summary>
                     internal int IsSetUid;
 
-                    /// <summary>This filesystem item will run as the the group if executed.</summary>
+                    /// <summary>This filesystem item will run as the group if executed.</summary>
                     internal int IsSetGid;
 
                     /// <summary>Whether the sticky bit is set on the filesystem item.</summary>

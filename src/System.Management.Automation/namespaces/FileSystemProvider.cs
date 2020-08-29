@@ -7120,7 +7120,7 @@ namespace Microsoft.PowerShell.Commands
             /// network resource.
             /// </summary>
             /// <param name="netResource">
-            /// The The netResource structure contains information
+            /// The netResource structure contains information
             /// about a network resource.</param>
             /// <param name="password">
             /// The password used to get connected to network resource.
