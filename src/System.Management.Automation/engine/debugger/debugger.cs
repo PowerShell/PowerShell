@@ -1447,7 +1447,7 @@ namespace System.Management.Automation
                     return null;
 
                 var callStackInfo = _callStack.Last();
-                var currentScriptFile = (callStackInfo != null) ? callStackInfo.File : null;
+                var currentScriptFile = callStackInfo?.File;
                 return breakpoints.Values.Where(bp => bp.Trigger(currentScriptFile, read: read)).ToList();
             }
             finally
@@ -1633,7 +1633,7 @@ namespace System.Management.Automation
             internal FunctionContext LastFunctionContext()
             {
                 var last = Last();
-                return last != null ? last.FunctionContext : null;
+                return last?.FunctionContext;
             }
 
             internal bool Any()
@@ -3678,7 +3678,7 @@ namespace System.Management.Automation
             }
 
             // Clean up nested debugger.
-            NestedRunspaceDebugger nestedDebugger = (runspaceInfo != null) ? runspaceInfo.NestedDebugger : null;
+            NestedRunspaceDebugger nestedDebugger = runspaceInfo?.NestedDebugger;
             if (nestedDebugger != null)
             {
                 nestedDebugger.DebuggerStop -= HandleMonitorRunningRSDebuggerStop;
@@ -4449,7 +4449,7 @@ namespace System.Management.Automation
         {
             // Nested debugged runspace prompt should look like:
             // [ComputerName]: [DBG]: [Process:<id>]: [RunspaceName]: PS C:\>
-            string computerName = (_runspace.ConnectionInfo != null) ? _runspace.ConnectionInfo.ComputerName : null;
+            string computerName = _runspace.ConnectionInfo?.ComputerName;
             string processPartPattern = "{0}[{1}:{2}]:{3}";
             string processPart = StringUtil.Format(processPartPattern,
                 @"""",

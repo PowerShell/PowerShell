@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("GoldMan", "#pw17903:UseOfLCID", Justification = "The CultureNumber is only used if the property has been set with a hex string starting with 0x")]
         public string Culture
         {
-            get { return _cultureInfo != null ? _cultureInfo.ToString() : null; }
+            get { return _cultureInfo?.ToString(); }
 
             set
             {

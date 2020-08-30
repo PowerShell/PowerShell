@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
             HttpHeaders[] headerCollections =
             {
                 response.Headers,
-                response.Content == null ? null : response.Content.Headers
+                response.Content?.Headers
             };
 
             foreach (var headerCollection in headerCollections)

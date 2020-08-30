@@ -608,7 +608,7 @@ namespace System.Management.Automation
             string errorId,
             params object[] args)
         {
-            Type inputObjectType = (inputObject == null) ? null : inputObject.GetType();
+            Type inputObjectType = inputObject?.GetType();
 
             ParameterBindingException bindingException = new ParameterBindingException(
                 ErrorCategory.InvalidArgument,

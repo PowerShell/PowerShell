@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
 
             CimMethodParameter outParameter = methodResult.OutParameters[methodParameter.Name];
-            object valueReturnedFromMethod = (outParameter == null) ? null : outParameter.Value;
+            object valueReturnedFromMethod = outParameter?.Value;
 
             object dotNetValue = CimValueConverter.ConvertFromCimToDotNet(valueReturnedFromMethod, methodParameter.ParameterType);
             if (MethodParameterBindings.Out == (methodParameter.Bindings & MethodParameterBindings.Out))

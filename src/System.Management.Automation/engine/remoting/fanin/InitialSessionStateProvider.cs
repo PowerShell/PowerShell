@@ -2395,7 +2395,7 @@ namespace System.Management.Automation.Remoting
                 if (Convert.ToBoolean(_configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture))
                 {
                     iss.UserDriveEnabled = true;
-                    iss.UserDriveUserName = (senderInfo != null) ? senderInfo.UserInfo.Identity.Name : null;
+                    iss.UserDriveUserName = senderInfo?.UserInfo.Identity.Name;
 
                     // Set user drive max drive if provided.
                     if (_configHash.ContainsKey(ConfigFileConstants.UserDriveMaxSize))

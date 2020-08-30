@@ -2478,7 +2478,7 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         public PSEventJob(PSEventManager eventManager, PSEventSubscriber subscriber, ScriptBlock action, string name) :
-            base(action == null ? null : action.ToString(), name)
+            base(action?.ToString(), name)
         {
             if (eventManager == null)
                 throw new ArgumentNullException(nameof(eventManager));

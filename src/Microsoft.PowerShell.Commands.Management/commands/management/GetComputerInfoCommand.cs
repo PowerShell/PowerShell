@@ -1142,7 +1142,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return culture == null ? null : culture.Name;
+            return culture?.Name;
         }
 
         /// <summary>

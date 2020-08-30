@@ -246,7 +246,7 @@ namespace System.Management.Automation.Language
             try
             {
                 exception = null;
-                var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
+                var currentScope = context?.EngineSessionState.CurrentScope;
                 Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                 if (exception == null && result == null)

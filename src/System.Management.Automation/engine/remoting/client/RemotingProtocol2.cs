@@ -1412,7 +1412,7 @@ namespace System.Management.Automation.Internal
             // disconnect may be called on a pipeline that is already disconnected.
             PSInvocationStateInfo stateInfo =
                             new PSInvocationStateInfo(PSInvocationState.Disconnected,
-                                (rsStateInfo != null) ? rsStateInfo.Reason : null);
+                                rsStateInfo?.Reason);
 
             Dbg.Assert(InvocationStateInfoReceived != null,
                 "ClientRemotePowerShell should subscribe to all data structure handler events");

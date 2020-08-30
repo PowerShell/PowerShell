@@ -1668,7 +1668,7 @@ namespace System.Management.Automation.Language
                 statements.Add(predefinedStatementAst);
             }
 
-            IScriptExtent statementListExtent = paramBlockAst != null ? paramBlockAst.Extent : null;
+            IScriptExtent statementListExtent = paramBlockAst?.Extent;
             IScriptExtent scriptBlockExtent;
 
             while (true)
@@ -1709,7 +1709,7 @@ namespace System.Management.Automation.Language
             NamedBlockAst endBlock = null;
             IScriptExtent startExtent = lCurly != null
                                             ? lCurly.Extent
-                                            : (paramBlockAst != null) ? paramBlockAst.Extent : null;
+                                            : paramBlockAst?.Extent;
             IScriptExtent endExtent = null;
             IScriptExtent extent = null;
             IScriptExtent scriptBlockExtent = null;
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation.Language
                     statement = BlockStatementRule(token);
                     break;
                 case TokenKind.Configuration:
-                    statement = ConfigurationStatementRule(attributes != null ? attributes.OfType<AttributeAst>() : null, token);
+                    statement = ConfigurationStatementRule(attributes?.OfType<AttributeAst>(), token);
                     break;
                 case TokenKind.From:
                 case TokenKind.Define:
@@ -2850,7 +2850,7 @@ namespace System.Management.Automation.Language
             }
 
             return new SwitchStatementAst(ExtentOf(labelToken ?? switchToken, rCurly),
-                labelToken != null ? labelToken.LabelText : null, condition, flags, clauses, @default);
+                labelToken?.LabelText, condition, flags, clauses, @default);
         }
 
         private StatementAst ConfigurationStatementRule(IEnumerable<AttributeAst> customAttributes, Token configurationToken)
@@ -3441,7 +3441,7 @@ namespace System.Management.Automation.Language
             }
 
             return new ForEachStatementAst(ExtentOf(startOfStatement, body),
-                labelToken != null ? labelToken.LabelText : null,
+                labelToken?.LabelText,
                 flags,
                 throttleLimit, variableAst, pipeline, body);
         }
@@ -3554,7 +3554,7 @@ namespace System.Management.Automation.Language
             }
 
             return new ForStatementAst(ExtentOf(labelToken ?? forToken, body),
-                labelToken != null ? labelToken.LabelText : null, initializer, condition, iterator, body);
+                labelToken?.LabelText, initializer, condition, iterator, body);
         }
 
         private StatementAst WhileStatementRule(LabelToken labelToken, Token whileToken)
@@ -3636,7 +3636,7 @@ namespace System.Management.Automation.Language
             }
 
             return new WhileStatementAst(ExtentOf(labelToken ?? whileToken, body),
-                labelToken != null ? labelToken.LabelText : null, condition, body);
+                labelToken?.LabelText, condition, body);
         }
 
         /// <summary>
@@ -4131,7 +4131,7 @@ namespace System.Management.Automation.Language
             }
 
             IScriptExtent extent = ExtentOf(startExtent, rParen);
-            string label = (labelToken != null) ? labelToken.LabelText : null;
+            string label = labelToken?.LabelText;
             if (whileOrUntilToken.Kind == TokenKind.Until)
             {
                 return new DoUntilStatementAst(extent, label, condition, body);
@@ -4285,7 +4285,7 @@ namespace System.Management.Automation.Language
                                       ? customAttributes[0].Extent
                                       : classToken.Extent;
                 var extent = ExtentOf(startExtent, lastExtent);
-                var classDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Class, superClassesList);
+                var classDefn = new TypeDefinitionAst(extent, name.Value, customAttributes?.OfType<AttributeAst>(), members, TypeAttributes.Class, superClassesList);
                 if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
                     if (nestedAsts == null)
@@ -4746,7 +4746,7 @@ namespace System.Management.Automation.Language
                                           ? customAttributes[0].Extent
                                           : enumToken.Extent;
                 var extent = ExtentOf(startExtent, rCurly);
-                var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint == null ? null : new[] { underlyingTypeConstraint });
+                var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes?.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint == null ? null : new[] { underlyingTypeConstraint });
                 if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
                     // No need to report error since there is error reported in method StatementRule
@@ -5624,7 +5624,7 @@ namespace System.Management.Automation.Language
             IScriptExtent endErrorStatement = null;
             SkipNewlines();
             var dataVariableNameAst = SimpleNameRule();
-            string dataVariableName = (dataVariableNameAst != null) ? dataVariableNameAst.Value : null;
+            string dataVariableName = dataVariableNameAst?.Value;
 
             SkipNewlines();
             Token supportedCommandToken = PeekToken();
@@ -6630,7 +6630,7 @@ namespace System.Management.Automation.Language
 
             return new CommandAst(ExtentOf(firstToken, endExtent), elements,
                                   dotSource || ampersand ? firstToken.Kind : TokenKind.Unknown,
-                                  redirections != null ? redirections.Where(r => r != null) : null);
+                                  redirections?.Where(r => r != null));
         }
 
         #endregion Pipelines

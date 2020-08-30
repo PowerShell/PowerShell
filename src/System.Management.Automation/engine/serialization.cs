@@ -4659,7 +4659,7 @@ namespace System.Management.Automation
                 activityId = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordActivityId), CultureInfo.InvariantCulture);
 
                 object tmp = deserializer.ReadOneObject();
-                currentOperation = (tmp == null) ? null : tmp.ToString();
+                currentOperation = tmp?.ToString();
 
                 parentActivityId = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordParentActivityId), CultureInfo.InvariantCulture);
                 percentComplete = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordPercentComplete), CultureInfo.InvariantCulture);

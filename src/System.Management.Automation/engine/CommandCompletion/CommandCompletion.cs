@@ -157,7 +157,7 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
@@ -236,7 +236,7 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(ast, tokens, cursorPosition, options, debugger);
