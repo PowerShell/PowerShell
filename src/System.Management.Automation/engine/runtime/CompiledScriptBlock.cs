@@ -105,7 +105,7 @@ namespace System.Management.Automation
                     {
                         if (attribute is CmdletBindingAttribute c)
                         {
-                            cmdletBindingAttribute = cmdletBindingAttribute ?? c;
+                            cmdletBindingAttribute ??= c;
                         }
                         else if (attribute is DebuggerHiddenAttribute)
                         {
@@ -739,7 +739,7 @@ namespace System.Management.Automation
 
         private PipelineAst GetSimplePipeline(Func<string, PipelineAst> errorHandler)
         {
-            errorHandler = errorHandler ?? (_ => null);
+            errorHandler ??= (_ => null);
 
             if (HasBeginBlock || HasProcessBlock)
             {
@@ -2001,7 +2001,7 @@ namespace System.Management.Automation
                     uint h = text[i];
                     if (h >= 'A' && h <= 'Z')
                     {
-                        h = h | 0x20; // ToLower
+                        h |= 0x20; // ToLower
                     }
                     else if (!((h >= 'a' && h <= 'z') || h == '-'))
                     {

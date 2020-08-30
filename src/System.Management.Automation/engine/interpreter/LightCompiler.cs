@@ -221,7 +221,7 @@ namespace System.Management.Automation.Interpreter
                     return null;
                 }
                 // return the last one that is smaller
-                i = i - 1;
+                i -= 1;
             }
 
             return debugInfos[i];

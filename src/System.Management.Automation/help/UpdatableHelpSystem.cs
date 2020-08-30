@@ -1002,7 +1002,7 @@ namespace System.Management.Automation.Help
 
                 if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
-                    attributes = (attributes & ~FileAttributes.ReadOnly);
+                    attributes &= ~FileAttributes.ReadOnly;
                     File.SetAttributes(path, attributes);
                 }
             }

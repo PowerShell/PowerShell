@@ -104,7 +104,7 @@ namespace System.Management.Automation
                 else
                 {
                     var commandName = command as string ?? PSObject.ToStringParser(context, command);
-                    invocationName = invocationName ?? commandName;
+                    invocationName ??= commandName;
 
                     if (string.IsNullOrEmpty(commandName))
                     {
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
             if (types[length - 1].Equals(typeof(CatchAll)))
             {
                 ranks[length - 1] = length - 1;
-                length = length - 1;
+                length -= 1;
             }
 
             // For each type check if it's a sub-class of any types after it.

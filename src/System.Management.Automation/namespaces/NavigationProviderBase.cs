@@ -651,7 +651,7 @@ namespace System.Management.Automation.Provider
 
             if (originalPathHadTrailingSlash)
             {
-                result = result + StringLiterals.DefaultPathSeparator;
+                result += StringLiterals.DefaultPathSeparator;
             }
 
             return result;

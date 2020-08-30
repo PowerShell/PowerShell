@@ -346,7 +346,7 @@ namespace System.Management.Automation
                     throw new XmlException(message);
                 }
 
-                _totalDataProcessedSoFar = _totalDataProcessedSoFar + amountOfExtraMemory;
+                _totalDataProcessedSoFar += amountOfExtraMemory;
             }
         }
 

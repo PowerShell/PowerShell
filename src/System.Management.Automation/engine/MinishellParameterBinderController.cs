@@ -271,7 +271,7 @@ namespace System.Management.Automation
             }
             else
             {
-                seen = seen | parameter;
+                seen |= parameter;
             }
         }
 

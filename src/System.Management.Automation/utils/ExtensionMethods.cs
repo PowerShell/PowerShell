@@ -49,10 +49,10 @@ namespace System.Management.Automation
                 int hash = 41; // 41 is a random prime number
                 foreach (T x in xs)
                 {
-                    hash = hash * 59; // 59 is a random prime number
+                    hash *= 59; // 59 is a random prime number
                     if (x != null)
                     {
-                        hash = hash + x.GetHashCode();
+                        hash += x.GetHashCode();
                     }
                 }
 

@@ -1443,7 +1443,7 @@ namespace System.Management.Automation
                                     {
                                         string completionText = isCursorInString ? value : stringQuote + value + stringQuote;
                                         if (hasNewLine)
-                                            completionText = completionText + stringQuote;
+                                            completionText += stringQuote;
                                         result.Add(new CompletionResult(
                                             completionText,
                                             value,
@@ -1494,7 +1494,7 @@ namespace System.Management.Automation
                                             {
                                                 string completionText = isCursorInString ? resource : stringQuote + resource + stringQuote;
                                                 if (hasNewLine)
-                                                    completionText = completionText + stringQuote;
+                                                    completionText += stringQuote;
                                                 result.Add(new CompletionResult(
                                                     completionText,
                                                     resource,
