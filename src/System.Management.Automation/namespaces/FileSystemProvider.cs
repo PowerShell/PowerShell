@@ -3999,8 +3999,7 @@ namespace Microsoft.PowerShell.Commands
                                     // try again
                                     FileInfo destinationItem = new FileInfo(destinationPath);
 
-                                    destinationItem.Attributes &=
-~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                                    destinationItem.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                                 }
                                 else
                                 {
@@ -5901,8 +5900,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // mask off the readonly and hidden bits and try again
-                        file.Attributes &=
-~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                        file.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
 
                         file.MoveTo(destination);
 
@@ -6022,8 +6020,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // mask off the readonly and hidden bits and try again
-                        directory.Attributes &=
-~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                        directory.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
 
                         MoveDirectoryInfoUnchecked(directory, destination, force);
 
