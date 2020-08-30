@@ -1076,8 +1076,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.InvariantCulture,
                         Modules.RemoteDiscoveryFailedToGenerateProxyForRemoteModule,
                         remoteModuleName);
-                    int numberOfLocallyCreatedFiles = RemoteDiscoveryHelper.InvokePowerShell(powerShell, this.CancellationToken, this, errorMessageTemplate).Count();
-                    if (numberOfLocallyCreatedFiles == 0)
+                    if (!RemoteDiscoveryHelper.InvokePowerShell(powerShell, this.CancellationToken, this, errorMessageTemplate).Any())
                     {
                         return null;
                     }

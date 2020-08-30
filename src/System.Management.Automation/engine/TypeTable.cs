@@ -3291,7 +3291,12 @@ namespace System.Management.Automation.Runspaces
 
         #region add members from TypeData
 
-        private static void ProcessMembersData(ConcurrentBag<string> errors, string typeName, IEnumerable<TypeMemberData> membersData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        private static void ProcessMembersData(
+            ConcurrentBag<string> errors,
+            string typeName,
+            Dictionary<string, TypeMemberData>.ValueCollection membersData,
+            PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
+            bool isOverride)
         {
             foreach (TypeMemberData typeMember in membersData)
             {
@@ -3449,12 +3454,12 @@ namespace System.Management.Automation.Runspaces
         private static void ProcessStandardMembers(
             ConcurrentBag<string> errors,
             string typeName,
-            IEnumerable<TypeMemberData> standardMembers,
-            IEnumerable<PropertySetData> propertySets,
+            Dictionary<string, TypeMemberData>.ValueCollection standardMembers,
+            List<PropertySetData> propertySets,
             PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
             bool isOverride)
         {
-            int newMemberCount = standardMembers.Count() + propertySets.Count();
+            int newMemberCount = standardMembers.Count + propertySets.Count;
 
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
             if (membersCollection[PSStandardMembers] == null)
@@ -3679,7 +3684,7 @@ namespace System.Management.Automation.Runspaces
             string typeName = typeData.TypeName;
             Dbg.Assert(!string.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
 
-            var propertySets = new Collection<PropertySetData>();
+            var propertySets = new List<PropertySetData>();
             if (typeData.DefaultDisplayPropertySet != null)
             {
                 propertySets.Add(typeData.DefaultDisplayPropertySet);

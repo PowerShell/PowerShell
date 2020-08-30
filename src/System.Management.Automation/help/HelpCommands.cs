@@ -864,18 +864,13 @@ namespace Microsoft.PowerShell.Commands
                 IEnumerable<SessionStateCommandEntry> publicGetHelpEntries = iss
                     .Commands["Get-Help"]
                     .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
-                if (publicGetHelpEntries.Count() != 1)
-                {
-                    return false;
-                }
 
-                foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
+                using (var en = publicGetHelpEntries.GetEnumerator())
                 {
-                    SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
-                    if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
-                    {
-                        return true;
-                    }
+                    // Returns false if the number of elements is not 1
+                    return en.MoveNext()
+                        && ((en.Current as SessionStateCmdletEntry)?.ImplementingType.Equals(typeof(GetHelpCommand)) == true)
+                        && !en.MoveNext();
                 }
             }
 

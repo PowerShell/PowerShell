@@ -20,7 +20,7 @@ namespace mvc
     {
         public static void Main(string[] args)
         {
-            if (args.Count() != 6)
+            if (args.Length != 6)
             {
                 System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumberTls2> <HTTPSPortNumberTls11> <HTTPSPortNumberTls>");
                 Environment.Exit(1);
