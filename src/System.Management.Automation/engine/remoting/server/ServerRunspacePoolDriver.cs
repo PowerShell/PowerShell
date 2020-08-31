@@ -1115,7 +1115,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forces a state reset on a single runspace runspace pool.
+        /// Forces a state reset on a single runspace pool.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>

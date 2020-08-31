@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Helper to to add any pre-load intrinsics to the db.
+        /// Helper to add any pre-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPreLoadIntrinsics(TypeInfoDataBase db)
@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Helper to to add any post-load intrinsics to the db.
+        /// Helper to add any post-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPostLoadIntrinsics(TypeInfoDataBase db)
