@@ -305,7 +305,9 @@ namespace Microsoft.PowerShell
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
                     const int CharactersToRead = 1;
+#pragma warning disable CA2014
                     Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+#pragma warning restore CA2014
                     string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 

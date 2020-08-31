@@ -7617,9 +7617,9 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#pragma warning disable 612, 618
-                if (value == System.Text.Encoding.UTF7)
-#pragma warning restore 612, 618
+                // Check for UTF-7 by checking for code page 65000
+                // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+                if (value != null && value.CodePage == 65000)
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }

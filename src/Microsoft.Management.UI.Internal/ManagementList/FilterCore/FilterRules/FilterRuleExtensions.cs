@@ -40,10 +40,14 @@ namespace Microsoft.Management.UI.Internal
             FilterRule copy = null;
             try
             {
+#pragma warning disable MSLIB0003
                 formatter.Serialize(ms, rule);
+#pragma warning restore MSLIB0003
 
                 ms.Position = 0;
+#pragma warning disable MSLIB0003
                 copy = (FilterRule)formatter.Deserialize(ms);
+#pragma warning restore MSLIB0003
             }
             finally
             {

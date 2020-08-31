@@ -2576,7 +2576,9 @@ namespace Microsoft.PowerShell
                     {
                         var endOfLine = Environment.NewLine.AsSpan();
                         var endOfLineLength = endOfLine.Length;
+#pragma warning disable CA2014
                         Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
+#pragma warning restore CA2014
                         outBuffer.CopyTo(outBufferLine);
                         endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
                         WriteConsole(consoleHandle, outBufferLine);
