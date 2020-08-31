@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Retrieves input from the host virtual console and writes it to the pipeline output.
     /// </summary>
-
     [Cmdlet(VerbsCommunications.Read, "Host", DefaultParameterSetName = "AsString", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096610")]
     [OutputType(typeof(string), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
@@ -24,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-
         public
         ReadHostCommand()
         {
@@ -36,7 +34,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The objects to display on the host before collecting input.
         /// </summary>
-
         [Parameter(Position = 0, ValueFromRemainingArguments = true)]
         [AllowNull]
         public

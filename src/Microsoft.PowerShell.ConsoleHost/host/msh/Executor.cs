@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell
     /// The class' instance methods manage a single pipeline.  The class' static methods track the outstanding instances to
     /// ensure that only one instance is 'active' (and therefore cancellable) at a time.
     /// </summary>
-
     internal class Executor
     {
         [Flags]
@@ -527,7 +526,6 @@ namespace Microsoft.PowerShell
         /// The Nullable`bool representation of the first result object returned, or null if an exception was thrown or no
         /// objects were returned by the command.
         /// </returns>
-
         internal bool? ExecuteCommandAndGetResultAsBool(string command)
         {
             Exception unused = null;

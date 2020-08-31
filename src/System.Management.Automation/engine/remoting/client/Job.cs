@@ -2316,7 +2316,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the status of remote command execution.
         /// </summary>
-
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void SetStatusMessage()
         {

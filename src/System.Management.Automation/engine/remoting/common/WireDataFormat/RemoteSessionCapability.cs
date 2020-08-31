@@ -174,7 +174,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Data.
         /// </summary>
-
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private Dictionary<HostDefaultDataId, object> data;
