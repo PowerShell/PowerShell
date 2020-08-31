@@ -38,7 +38,9 @@ namespace System.Management.Automation
             { Default, ClrFacade.GetDefaultEncoding() },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
+#pragma warning disable MSLIB0001
             { Utf7, System.Text.Encoding.UTF7 },
+#pragma warning restore MSLIB0001
             { Utf8, ClrFacade.GetDefaultEncoding() },
             { Utf8Bom, System.Text.Encoding.UTF8 },
             { Utf8NoBom, ClrFacade.GetDefaultEncoding() },
@@ -95,9 +97,9 @@ namespace System.Management.Automation
         /// <param name="encoding">The encoding to check for obsolescence.</param>
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
-#pragma warning disable 612, 618
-            if (encoding == System.Text.Encoding.UTF7)
-#pragma warning restore 612, 618
+            // Check for UTF-7 by checking for code page 65000
+            // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+            if (encoding != null && encoding.CodePage == 65000)
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
             }

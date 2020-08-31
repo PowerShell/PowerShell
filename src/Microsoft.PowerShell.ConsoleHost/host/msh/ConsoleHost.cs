@@ -271,6 +271,13 @@ namespace Microsoft.PowerShell
         {
             s_cpp.Parse(args);
 
+#if !UNIX
+            if (s_cpp.WindowStyle.HasValue)
+            {
+                ConsoleControl.SetConsoleMode(s_cpp.WindowStyle.Value);
+            }
+#endif
+
             if (s_cpp.SettingsFile is not null)
             {
                 PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
@@ -394,7 +401,6 @@ namespace Microsoft.PowerShell
         /// executing instance is stopped.
         ///
         ///</param>
-
         private static void SpinUpBreakHandlerThread(bool shouldEndSession)
         {
             ConsoleHost host = ConsoleHost.SingletonInstance;
@@ -526,7 +532,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override string Name
         {
             get
@@ -543,7 +548,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Version Version
         {
             get
@@ -558,7 +562,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
@@ -1614,7 +1617,6 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             Dbg.Assert(_runspaceRef == null, "runspace should be null");
@@ -2002,7 +2004,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-
         internal static string EscapeSingleQuotes(string str)
         {
             // worst case we have to escape every character, so capacity is twice as large as input length
@@ -2340,7 +2341,6 @@ namespace Microsoft.PowerShell
             /// <exception cref="InvalidOperationException">
             ///  when there is no instanceStack.Count == 0
             /// </exception>
-
             internal static bool ExitCurrentLoop()
             {
                 if (s_instanceStack.Count == 0)

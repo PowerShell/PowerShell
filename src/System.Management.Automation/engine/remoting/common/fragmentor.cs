@@ -364,7 +364,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fragmentBytes"></param>
         /// <param name="startIndex"></param>
         /// <returns>
-        /// True if the the E-flag is set in the encoding. Otherwise false.
+        /// True if the E-flag is set in the encoding. Otherwise false.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If fragmentBytes is null.

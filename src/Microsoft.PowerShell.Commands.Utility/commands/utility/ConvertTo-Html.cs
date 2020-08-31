@@ -18,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class comment.
     /// </summary>
-
     [Cmdlet(VerbsData.ConvertTo, "Html", DefaultParameterSetName = "Page",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096595", RemotingCapability = RemotingCapability.None)]
     public sealed

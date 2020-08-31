@@ -23,7 +23,6 @@ namespace Microsoft.WSMan.Management
     /// <summary>
     /// Session option class.
     /// </summary>
-
     public sealed class SessionOption
     {
         /// <summary>

@@ -1272,7 +1272,6 @@ $result
     /// workgroup computer. Use this command to rename domain workstations and local
     /// machines only. It cannot be used to rename Domain Controllers.
     /// </summary>
-
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet

@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell
             return maxLength - Path.GetTempPath().Length;
         }
 
-        internal bool? TestHookConsoleInputRedirected;
+        internal bool? InputRedirectedTestHook;
 
         private static readonly string[] s_validParameters = {
             "sta",
@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell
         }
 
         #region Internal properties
+
         internal bool AbortStartup
         {
             get
@@ -244,6 +245,17 @@ namespace Microsoft.PowerShell
                 return _wasCommandEncoded;
             }
         }
+
+#if !UNIX
+        internal ProcessWindowStyle? WindowStyle
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _windowStyle;
+            }
+        }
+#endif
 
         internal bool ShowBanner
         {
@@ -700,6 +712,14 @@ namespace Microsoft.PowerShell
                 throw new InvalidOperationException("This instance has already been used. Create a new instance.");
             }
 
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is null)
+                {
+                    throw new ArgumentNullException(nameof(args), CommandLineParameterParserStrings.NullElementInArgs);
+                }
+            }
+
             // Indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
             _dirty = true;
@@ -846,9 +866,7 @@ namespace Microsoft.PowerShell
 
                     try
                     {
-                        ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
-                            args[i], typeof(ProcessWindowStyle), CultureInfo.InvariantCulture);
-                        ConsoleControl.SetConsoleMode(style);
+                        _windowStyle = LanguagePrimitives.ConvertTo<ProcessWindowStyle>(args[i]);
                     }
                     catch (PSInvalidCastException e)
                     {
@@ -1234,7 +1252,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (TestHookConsoleInputRedirected.HasValue ? !TestHookConsoleInputRedirected.Value : !Console.IsInputRedirected)
+                if (InputRedirectedTestHook.HasValue ? !InputRedirectedTestHook.Value : !Console.IsInputRedirected)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.StdinNotRedirected, showHelp: true);
                     return false;
@@ -1340,6 +1358,7 @@ namespace Microsoft.PowerShell
         private string? _workingDirectory;
 
 #if !UNIX
+        private ProcessWindowStyle? _windowStyle;
         private bool _removeWorkingDirectoryTrailingCharacter = false;
 #endif
     }

@@ -545,7 +545,6 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         /// To display the modules of a process.
         ///</summary>
-
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
@@ -785,8 +784,10 @@ namespace Microsoft.PowerShell.Commands
                     // The buffer length must be +1, last position is for a null string terminator.
                     int userNameLength = 257;
                     int domainNameLength = 16;
+#pragma warning disable CA2014
                     Span<char> userNameStr = stackalloc char[userNameLength];
                     Span<char> domainNameStr = stackalloc char[domainNameLength];
+#pragma warning restore CA2014
                     Win32Native.SID_NAME_USE accountType;
 
                     // userNameLength and domainNameLength will be set to actual lengths.

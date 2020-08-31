@@ -122,14 +122,6 @@ namespace System.Management.Automation
                                 break;
                         }
 
-                        // Prior to PSNativePSPathResolution experimental feature, a single quote worked the same as a double quote
-                        // so if the feature is not enabled, we treat any quotes as double quotes.  When this feature is no longer
-                        // experimental, this code here needs to be removed.
-                        if (!ExperimentalFeature.IsEnabled("PSNativePSPathResolution") && stringConstantType == StringConstantType.SingleQuoted)
-                        {
-                            stringConstantType = StringConstantType.DoubleQuoted;
-                        }
-
                         AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
                     }
                 }
@@ -362,57 +354,54 @@ namespace System.Management.Automation
         /// <returns>Resolved PSPath if applicable otherwise the original path</returns>
         internal static string ResolvePath(string path, ExecutionContext context)
         {
-            if (ExperimentalFeature.IsEnabled("PSNativePSPathResolution"))
-            {
 #if !UNIX
-                // on Windows, we need to expand ~ to point to user's home path
-                if (string.Equals(path, "~", StringComparison.Ordinal) || path.StartsWith(TildeDirectorySeparator, StringComparison.Ordinal) || path.StartsWith(TildeAltDirectorySeparator, StringComparison.Ordinal))
+            // on Windows, we need to expand ~ to point to user's home path
+            if (string.Equals(path, "~", StringComparison.Ordinal) || path.StartsWith(TildeDirectorySeparator, StringComparison.Ordinal) || path.StartsWith(TildeAltDirectorySeparator, StringComparison.Ordinal))
+            {
+                try
                 {
-                    try
-                    {
-                        ProviderInfo fileSystemProvider = context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
-                        return new StringBuilder(fileSystemProvider.Home)
-                            .Append(path.Substring(1))
-                            .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-                            .ToString();
-                    }
-                    catch
+                    ProviderInfo fileSystemProvider = context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+                    return new StringBuilder(fileSystemProvider.Home)
+                        .Append(path.Substring(1))
+                        .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                        .ToString();
+                }
+                catch
+                {
+                    return path;
+                }
+            }
+
+            // check if the driveName is an actual disk drive on Windows, if so, no expansion
+            if (path.Length >= 2 && path[1] == ':')
+            {
+                foreach (var drive in DriveInfo.GetDrives())
+                {
+                    if (drive.Name.StartsWith(new string(path[0], 1), StringComparison.OrdinalIgnoreCase))
                     {
                         return path;
                     }
                 }
-
-                // check if the driveName is an actual disk drive on Windows, if so, no expansion
-                if (path.Length >= 2 && path[1] == ':')
-                {
-                    foreach (var drive in DriveInfo.GetDrives())
-                    {
-                        if (drive.Name.StartsWith(new string(path[0], 1), StringComparison.OrdinalIgnoreCase))
-                        {
-                            return path;
-                        }
-                    }
-                }
+            }
 #endif
 
-                if (path.Contains(':'))
+            if (path.Contains(':'))
+            {
+                LocationGlobber globber = new LocationGlobber(context.SessionState);
+                try
                 {
-                    LocationGlobber globber = new LocationGlobber(context.SessionState);
-                    try
-                    {
-                        ProviderInfo providerInfo;
+                    ProviderInfo providerInfo;
 
-                        // replace the argument with resolved path if it's a filesystem path
-                        string pspath = globber.GetProviderPath(path, out providerInfo);
-                        if (string.Equals(providerInfo.Name, FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            path = pspath;
-                        }
-                    }
-                    catch
+                    // replace the argument with resolved path if it's a filesystem path
+                    string pspath = globber.GetProviderPath(path, out providerInfo);
+                    if (string.Equals(providerInfo.Name, FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        // if it's not a provider path, do nothing
+                        path = pspath;
                     }
+                }
+                catch
+                {
+                    // if it's not a provider path, do nothing
                 }
             }
 

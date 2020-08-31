@@ -109,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cleared status of an entry.
         /// </summary>
-
         internal bool Cleared { get; set; } = false;
 
         /// <summary>
@@ -167,7 +166,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs history store.
         /// </summary>
-
         internal History(ExecutionContext context)
         {
             // Create history size variable. Add ValidateRangeAttribute to
@@ -586,7 +584,6 @@ namespace Microsoft.PowerShell.Commands
         /// gets the total number of entries added
         ///</summary>
         ///<returns>count of total entries added.</returns>
-
         internal int Buffercapacity()
         {
             return _capacity;
@@ -1416,7 +1413,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert mshObject that has has the properties of an HistoryInfo
+        /// Convert mshObject that has the properties of an HistoryInfo
         /// object in to HistoryInfo object.
         /// </summary>
         /// <param name="mshObject">
@@ -1586,7 +1583,6 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     /// This Class implements the Clear History cmdlet
     ///</summary>
-
     [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096691")]
     public class ClearHistoryCommand : PSCmdlet
     {
@@ -1616,13 +1612,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of a history entry.
         /// </summary>
-
         private int[] _id;
 
         /// <summary>
         /// Command line name of an entry in the session history.
         /// </summary>
-
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1642,7 +1636,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commandline parameter.
         /// </summary>
-
         private string[] _commandline = null;
 
         ///<summary>
@@ -1677,7 +1670,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies whether new entries to be cleared or the default old ones.
         /// </summary>
-
         [Parameter(Mandatory = false, HelpMessage = "Specifies whether new entries to be cleared or the default old ones.")]
         public SwitchParameter Newest
         {
@@ -1695,7 +1687,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Switch parameter on the history entries.
         /// </summary>
-
         private SwitchParameter _newest;
 
         #endregion Command Line Parameters
@@ -1703,7 +1694,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding Begin Processing.
         /// </summary>
-
         protected override void BeginProcessing()
         {
             _history = ((LocalRunspace)Context.CurrentRunspace).History;
@@ -1712,7 +1702,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding Process Record.
         /// </summary>
-
         protected override void ProcessRecord()
         {
             // case statement to identify the parameter set
@@ -1915,7 +1904,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newest" >Order of the entries.</param>
         /// <returns>Nothing.</returns>
         /// </summary>
-
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)
         {
             // if cmdline is null,use default parameter set notion.

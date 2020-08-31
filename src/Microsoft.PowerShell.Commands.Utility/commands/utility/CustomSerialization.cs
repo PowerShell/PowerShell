@@ -1104,7 +1104,6 @@ namespace System.Management.Automation
         /// <param name="property">Name of property. Pass null for item.</param>
         /// <param name="source">Object to be written.</param>
         /// <param name="entry">Serialization information about source.</param>
-
         private void WriteOnePrimitiveKnownType(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
         {
