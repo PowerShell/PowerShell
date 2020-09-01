@@ -3061,7 +3061,7 @@ namespace System.Management.Automation.Language
 
                                 if (useJsonSchema)
                                 {
-                                    Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
                                 }
                                 else
                                 {
@@ -3315,7 +3315,7 @@ namespace System.Management.Automation.Language
                     //
                     if (useJsonSchema)
                     {
-                        Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache.ClearCache();
+                        Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.ClearCache();
                     }
                     else
                     {

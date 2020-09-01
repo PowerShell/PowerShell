@@ -10,7 +10,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Security;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 {
     /// <summary>
     /// Class that does high level Cim schema parsing.
@@ -26,9 +26,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
         internal IEnumerable<PSObject> ParseSchemaJson(string filePath, bool useNewRunspace = false)
         {
-            string json = File.ReadAllText(filePath);
             try
             {
+                string json = File.ReadAllText(filePath);
                 string fileNameDefiningClass = Path.GetFileNameWithoutExtension(filePath);
                 int dotIndex = fileNameDefiningClass.IndexOf(".schema", StringComparison.InvariantCultureIgnoreCase);
                 if (dotIndex != -1)

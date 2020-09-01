@@ -19,7 +19,7 @@ using System.Text;
 
 using Microsoft.PowerShell.Commands;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 {
     /// <summary>
     /// Class that defines Dsc cache entries.
@@ -914,15 +914,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
 
             // see if it's a resource type i.e. it inherits from OMI_BaseResource
             bool isResourceType = false;
-            /*for (var classToCheck = cimClass; !string.IsNullOrEmpty(classToCheck.CimSuperClassName); classToCheck = classToCheck.CimSuperClass)
-            {
-                if (string.Equals("OMI_BaseResource", classToCheck.CimSuperClassName, StringComparison.OrdinalIgnoreCase) || string.Equals("OMI_MetaConfigurationResource", classToCheck.CimSuperClassName, StringComparison.OrdinalIgnoreCase))
-                {
-                    isResourceType = true;
-                    break;
-                }
-            }*/
-            // code above is the only place that references CimSuperClass
+
+            // previous version of this code was the only place that referenced CimSuperClass
             // so to simplify things we just check superclass to be OMI_BaseResource
             // with assumption that current code will not work for multi-level class inheritance (which is never used in practice according to DSC team)
             // this simplification allows us to avoid linking objects together using CimSuperClass field during deserialization from json schema
@@ -1076,6 +1069,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         /// <param name="keyword"></param>
         private static void UpdateKnownRestriction(DynamicKeyword keyword)
         {
+            const int RefreshFrequencyMin = 30;
+            const int RefreshFrequencyMax = 44640;
+
+            const int ConfigurationModeFrequencyMin = 15;
+            const int ConfigurationModeFrequencyMax = 44640;
+
             if (
                 string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfigurationV2",
                     StringComparison.OrdinalIgnoreCase)
@@ -1085,12 +1084,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             {
                 if (keyword.Properties["RefreshFrequencyMins"] != null)
                 {
-                    keyword.Properties["RefreshFrequencyMins"].Range = new Tuple<int, int>(30, 44640);
+                    keyword.Properties["RefreshFrequencyMins"].Range = new Tuple<int, int>(RefreshFrequencyMin, RefreshFrequencyMax);
                 }
 
                 if (keyword.Properties["ConfigurationModeFrequencyMins"] != null)
                 {
-                    keyword.Properties["ConfigurationModeFrequencyMins"].Range = new Tuple<int, int>(15, 44640);
+                    keyword.Properties["ConfigurationModeFrequencyMins"].Range = new Tuple<int, int>(ConfigurationModeFrequencyMin, ConfigurationModeFrequencyMax);
                 }
 
                 if (keyword.Properties["DebugMode"] != null)
@@ -2924,7 +2923,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             if ($DependsOnVar -notmatch '^\[[a-z]\w*\][a-z_0-9][a-z_0-9\p{Zs}\.\\-]*$')
             {
                 Update-ConfigurationErrorCount
-                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::GetBadlyFormedRequiredResourceIdErrorRecord($DependsOnVar, $resourceId))
+                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::GetBadlyFormedRequiredResourceIdErrorRecord($DependsOnVar, $resourceId))
             }
 
 # Fix up DependsOn for nested names
@@ -3000,7 +2999,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         if (Test-NodeResources $resourceId)
         {
             Update-ConfigurationErrorCount
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::DuplicateResourceIdInNodeStatementErrorRecord($resourceId, (Get-PSCurrentConfigurationNode)))
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::DuplicateResourceIdInNodeStatementErrorRecord($resourceId, (Get-PSCurrentConfigurationNode)))
         }
         else
         {
@@ -3016,7 +3015,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         if($null -ne $value['PsDscRunAsCredential'])
         {
             Update-ConfigurationErrorCount
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::PsDscRunAsCredentialMergeErrorForCompositeResources($resourceId))
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::PsDscRunAsCredentialMergeErrorForCompositeResources($resourceId))
         }
 # Set the Value of RunAsCred to that of outer configuration
         else
@@ -3035,14 +3034,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                     if($value['RefreshMode'] -eq 'Pull' -and -not $value['ConfigurationSource'])
                     {
                         Update-ConfigurationErrorCount
-                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::GetPullModeNeedConfigurationSource($resourceId))
+                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::GetPullModeNeedConfigurationSource($resourceId))
                     }
 
 # Verify that RefreshMode is not Disabled for Partial configuration
                     if($value['RefreshMode'] -eq 'Disabled')
                     {
                         Update-ConfigurationErrorCount
-                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::DisabledRefreshModeNotValidForPartialConfig($resourceId))
+                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::DisabledRefreshModeNotValidForPartialConfig($resourceId))
                     }
 
                     if($null -ne $value['ConfigurationSource'])
@@ -3063,7 +3062,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                         if (($ExclusiveResource -notmatch '^[a-z][a-z_0-9]*\\[a-z][a-z_0-9]*$') -and ($ExclusiveResource -notmatch '^[a-z][a-z_0-9]*$') -and ($ExclusiveResource -notmatch '^[a-z][a-z_0-9]*\\\*$'))
                         {
                             Update-ConfigurationErrorCount
-                            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::GetBadlyFormedExclusiveResourceIdErrorRecord($ExclusiveResource, $resourceId))
+                            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::GetBadlyFormedExclusiveResourceIdErrorRecord($ExclusiveResource, $resourceId))
                         }
                     }
 
@@ -3091,7 +3090,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         {
             if ($OldMetaConfig -and (-not ($V1MetaConfigPropertyList -contains $key)))
             {
-                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::InvalidLocalConfigurationManagerPropertyErrorRecord($key, ($V1MetaConfigPropertyList -join ', ')))
+                Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::InvalidLocalConfigurationManagerPropertyErrorRecord($key, ($V1MetaConfigPropertyList -join ', ')))
                 Update-ConfigurationErrorCount
             }
 # see if there is a list of allowed values for this property (similar to an enum)
@@ -3101,7 +3100,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
             {
                 if(($null -eq $value[$key]) -and ($allowedValues -notcontains $value[$key]))
                 {
-                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::InvalidValueForPropertyErrorRecord($key, ""$($value[$key])"", $keywordData.Keyword, ($allowedValues -join ', ')))
+                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::InvalidValueForPropertyErrorRecord($key, ""$($value[$key])"", $keywordData.Keyword, ($allowedValues -join ', ')))
                     Update-ConfigurationErrorCount
                 }
                 else
@@ -3118,7 +3117,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                     if($notAllowedValue)
                     {
                         $notAllowedValue = $notAllowedValue.Substring(0, $notAllowedValue.Length -2)
-                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::UnsupportedValueForPropertyErrorRecord($key, $notAllowedValue, $keywordData.Keyword, ($allowedValues -join ', ')))
+                        Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::UnsupportedValueForPropertyErrorRecord($key, $notAllowedValue, $keywordData.Keyword, ($allowedValues -join ', ')))
                         Update-ConfigurationErrorCount
                     }
                 }
@@ -3131,7 +3130,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
                 $castedValue = $value[$key] -as [int]
                 if((($castedValue -is [int]) -and (($castedValue -lt  $keywordData.Properties[$key].Range.Item1) -or ($castedValue -gt $keywordData.Properties[$key].Range.Item2))) -or ($null -eq $castedValue))
                 {
-                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::ValueNotInRangeErrorRecord($key, $keywordName, $value[$key],  $keywordData.Properties[$key].Range.Item1,  $keywordData.Properties[$key].Range.Item2))
+                    Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::ValueNotInRangeErrorRecord($key, $keywordName, $value[$key],  $keywordData.Properties[$key].Range.Item1,  $keywordData.Properties[$key].Range.Item2))
                     Update-ConfigurationErrorCount
                 }
             }
@@ -3165,7 +3164,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         elseif ($keywordData.Properties[$key].Mandatory)
         {
 # If the property was mandatory but the user didn't provide a value, write and error.
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::MissingValueForMandatoryPropertyErrorRecord($keywordData.Keyword, $keywordData.Properties[$key].TypeConstraint, $Key))
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::MissingValueForMandatoryPropertyErrorRecord($keywordData.Keyword, $keywordData.Properties[$key].TypeConstraint, $Key))
             Update-ConfigurationErrorCount
         }
 
@@ -3218,7 +3217,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Json
         if($canonicalizedValue['DebugMode'] -and @($canonicalizedValue['DebugMode']).Length -gt 1)
         {
 # we only allow one value for debug mode now.
-            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Json.DscClassCache]::DebugModeShouldHaveOneValue())
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache]::DebugModeShouldHaveOneValue())
             Update-ConfigurationErrorCount
         }
     }
