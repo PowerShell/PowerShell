@@ -3105,9 +3105,6 @@
       <Component Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D">
         <File Id="fil8FEEEB3B27DF40148EB85CE6AE1A420B" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.DiaSymReader.Native.$(var.FileArchitecture).dll" />
       </Component>
-      <Component Id="cmp5485813EC16244898CB9A944AC2BC5E9">
-        <File Id="fil6EA784763CF94299BC6E75DF068F05A3" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Pager.dll" />
-      </Component>
       <Component Id="cmp9AFE828DDCCC4A0E83C4D7476B353023">
         <File Id="filBE5924015B7147E5BE1D6CDEB8AFB6C3" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.40711.dll" />
       </Component>
@@ -4112,7 +4109,6 @@
       <ComponentRef Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" />
       <ComponentRef Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" />
       <ComponentRef Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D" />
-      <ComponentRef Id="cmp5485813EC16244898CB9A944AC2BC5E9" />
       <ComponentRef Id="cmp9AFE828DDCCC4A0E83C4D7476B353023" />
     </ComponentGroup>
   </Fragment>
