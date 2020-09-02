@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.PowerShell.Commands;
 
@@ -26,6 +27,27 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
     /// </summary>
     internal class DscClassCacheEntry
     {
+        /// <summary>
+        /// Initializes variables with default values.
+        /// </summary>
+        public DscClassCacheEntry()
+            : this(DSCResourceRunAsCredential.Default, isImportedImplicitly: false, cimClassInstance: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes all values.
+        /// </summary>
+        /// <param name="dscResourceRunAsCredential"></param>
+        /// <param name="isImportedImplicitly"></param>
+        /// <param name="cimClassInstance"></param>
+        public DscClassCacheEntry(DSCResourceRunAsCredential dscResourceRunAsCredential, bool isImportedImplicitly, PSObject cimClassInstance)
+        {
+            DscResRunAsCred = dscResourceRunAsCredential;
+            IsImportedImplicitly = isImportedImplicitly;
+            CimClassInstance = cimClassInstance;
+        }
+
         /// <summary>
         /// Store the RunAs Credentials that this DSC resource will use.
         /// </summary>
@@ -41,24 +63,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// A CimClass instance for this resource.
         /// </summary>
         public PSObject CimClassInstance { get; set; }
-
-        /// <summary>
-        /// Initializes variables with default values.
-        /// </summary>
-        public DscClassCacheEntry() : this(DSCResourceRunAsCredential.Default, false, null) { }
-
-        /// <summary>
-        /// Initializes all values.
-        /// </summary>
-        /// <param name="aDSCResourceRunAsCredential"></param>
-        /// <param name="aIsImportedImplicitly"></param>
-        /// <param name="aCimClassInstance"></param>
-        public DscClassCacheEntry(DSCResourceRunAsCredential aDSCResourceRunAsCredential, bool aIsImportedImplicitly, PSObject aCimClassInstance)
-        {
-            DscResRunAsCred = aDSCResourceRunAsCredential;
-            IsImportedImplicitly = aIsImportedImplicitly;
-            CimClassInstance = aCimClassInstance;
-        }
     }
 
     /// <summary>
@@ -69,9 +73,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
     {
         private const string windowsInboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
 
-        private const string reservedDynamicKeywords = "^(Synchronization|Certificate|IIS|SQL)$";
+        private static readonly Regex reservedDynamicKeywordRegex = new Regex("^(Synchronization|Certificate|IIS|SQL)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
+        private static readonly Regex reservedPropertiesRegex = new Regex("^(Require|Trigger|Notify|Before|After|Subscribe)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private const string jsonSchemaSupportExperimentalFeatureName = "PSDscJsonSchemaSupport";
 
@@ -83,17 +87,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private const int IndexClassName = 2;
         private const int IndexFriendlyName = 3;
 
-        // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
-        private static readonly string[] s_hiddenResourceList =
-        {
-            "MSFT_BaseConfigurationProviderRegistration",
-            "MSFT_CimConfigurationProviderRegistration",
-            "MSFT_PSConfigurationProviderRegistration",
-        };
-
         // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
-        private static readonly HashSet<string> s_hiddenResourceCache = new HashSet<string>(s_hiddenResourceList,
-            StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> s_hiddenResourceCache =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
 
         // a collection to hold current importing script based resource file
         // this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
@@ -907,7 +903,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             };
 
             // If it's one of reserved dynamic keyword, mark it
-            if (System.Text.RegularExpressions.Regex.Match(keywordString, reservedDynamicKeywords, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+            if (reservedDynamicKeywordRegex.Match(keywordString).Success)
             {
                 keyword.IsReservedKeyword = true;
             }
@@ -954,7 +950,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     }
 
                     // If it's one of our reserved properties, save it for error reporting
-                    if (System.Text.RegularExpressions.Regex.Match(prop.Name, reservedProperties, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+                    if (reservedPropertiesRegex.Match(prop.Name).Success)
                     {
                         keyword.HasReservedProperties = true;
                         continue;

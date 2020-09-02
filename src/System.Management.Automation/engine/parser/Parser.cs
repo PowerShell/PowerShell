@@ -3017,9 +3017,9 @@ namespace System.Management.Automation.Language
                                 
                                 bool v3IsLoaded = false;
                                 bool prev3IsLoaded = false;
-                                foreach(var moduleInfo in p.Invoke())
+                                foreach(PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
                                 {
-                                    if (((Version)moduleInfo.Properties["Version"].Value).Major < 3)
+                                    if (moduleInfo.Version.Major < 3)
                                     {
                                         prev3IsLoaded = true;
                                     }

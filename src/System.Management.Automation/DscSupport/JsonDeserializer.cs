@@ -35,7 +35,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 throw new ArgumentNullException(nameof(json));
             }
 
-            IEnumerable<PSObject> result = null;
             System.Management.Automation.PowerShell powerShell = null;
 
             if (useNewRunspace)
@@ -57,18 +56,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             using (powerShell)
             {
-                const string convertFromJson = @"ConvertFrom-Json";
-                const string inputObject = @"InputObject";
-                const string depth = @"Depth";
-
-                powerShell.AddCommand(convertFromJson);
-                powerShell.AddParameter(inputObject, json);
-                powerShell.AddParameter(depth, 100); // maximum supported by cmdlet
-
-                result = powerShell.Invoke();
+                return powerShell.AddCommand("Microsoft.PowerShell.Utility\\ConvertFrom-Json")
+                    .AddParameter("InputObject", json)
+                    .AddParameter("Depth", 100) // maximum supported by cmdlet
+                    .Invoke();
             }
-
-            return result;
         }
 
         #endregion Methods

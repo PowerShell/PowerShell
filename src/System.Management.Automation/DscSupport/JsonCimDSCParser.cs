@@ -17,11 +17,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
     /// </summary>
     internal class CimDSCParser
     {
-        private readonly JsonDeserializer _json_deserializer;
+        private readonly JsonDeserializer _jsonDeserializer;
         
         internal CimDSCParser()
         {
-            _json_deserializer = JsonDeserializer.Create();
+            _jsonDeserializer = JsonDeserializer.Create();
         }
 
         internal IEnumerable<PSObject> ParseSchemaJson(string filePath, bool useNewRunspace = false)
@@ -36,12 +36,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     fileNameDefiningClass = fileNameDefiningClass.Substring(0, dotIndex);
                 }
 
-                var result = _json_deserializer.DeserializeClasses(json, useNewRunspace);
+                IEnumerable<PSObject> result = _jsonDeserializer.DeserializeClasses(json, useNewRunspace);
                 foreach (dynamic classObject in result)
                 {
                     string superClassName = classObject.SuperClassName;
                     string className = classObject.ClassName;
-                    if (superClassName?.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase) ?? false)
+                    if (string.Equals(superClassName, "OMI_BaseResource", StringComparison.OrdinalIgnoreCase))
                     {
                         // Get the name of the file without schema.mof/json extension
                         if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
