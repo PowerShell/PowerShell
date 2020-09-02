@@ -2257,7 +2257,7 @@ namespace System.Management.Automation
 
                         // If we have one or the other, we can latch onto that set without difficulty
                         uint uniqueSetThatTakesPipelineInput = 0;
-                        if ((foundSetThatTakesPipelineInputByValue & foundSetThatTakesPipelineInputByPropertyName) &&
+                        if (foundSetThatTakesPipelineInputByValue && foundSetThatTakesPipelineInputByPropertyName &&
                             (setThatTakesPipelineInputByValue == setThatTakesPipelineInputByPropertyName))
                         {
                             uniqueSetThatTakesPipelineInput = setThatTakesPipelineInputByValue;
