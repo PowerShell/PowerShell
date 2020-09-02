@@ -126,7 +126,7 @@ namespace Microsoft.WSMan.Management
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
-                if (xNode != null)
+                if (xNode is not null)
                 {
                     inputXml = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>";
                 }
@@ -194,7 +194,7 @@ namespace Microsoft.WSMan.Management
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.Service_CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
-                if (xNode != null)
+                if (xNode is not null)
                 {
                     inputXml = string.Format(CultureInfo.InvariantCulture,
                         @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>",
