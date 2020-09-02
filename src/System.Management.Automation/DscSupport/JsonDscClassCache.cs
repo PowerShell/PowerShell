@@ -244,11 +244,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 // DSC SxS scenario
                 var configSystemPath = Utils.DefaultPowerShellAppBase;
-                var systemResourceRoot = Path.Join(configSystemPath, "Configuration");
+                var systemResourceRoot = Environment.GetEnvironmentVariable("DSC_HOME");
                 var inboxModulePath = Path.Join("Modules", "PSDesiredStateConfiguration");
 
-                if (!Directory.Exists(systemResourceRoot))
+                if (string.IsNullOrEmpty(systemResourceRoot) || (!Directory.Exists(systemResourceRoot)))
                 {
+                    // if DSC_HOME env var is not set, then use system-wide Windows resource location (i.e. %WINDIR%\System32\Configuration) as backup
                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
                     systemResourceRoot = Path.Join(configSystemPath, "Configuration");
                     inboxModulePath = windowsInboxDscResourceModulePath;
