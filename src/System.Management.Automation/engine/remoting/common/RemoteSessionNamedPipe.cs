@@ -301,20 +301,12 @@ namespace System.Management.Automation.Remoting
         /// Exception reason for listener end event.  Can be null
         /// which indicates listener thread end is not due to an error.
         /// </summary>
-        public Exception Reason
-        {
-            private set;
-            get;
-        }
+        public Exception Reason { get; }
 
         /// <summary>
         /// True if listener should be restarted after ending.
         /// </summary>
-        public bool RestartListener
-        {
-            private set;
-            get;
-        }
+        public bool RestartListener { get; }
 
         #endregion
 

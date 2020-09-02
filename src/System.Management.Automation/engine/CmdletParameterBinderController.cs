@@ -3879,7 +3879,7 @@ namespace System.Management.Automation
         /// Gets or sets the command that this parameter binder controller
         /// will bind parameters to.
         /// </summary>
-        internal Cmdlet Command { get; private set; }
+        internal Cmdlet Command { get; }
 
         #region DefaultParameterBindingStructures
 

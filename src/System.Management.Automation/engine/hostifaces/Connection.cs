@@ -758,11 +758,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the Runspace Id.
         /// </summary>
-        public int Id
-        {
-            get;
-            private set;
-        }
+        public int Id { get; }
 
         /// <summary>
         /// Returns protocol version that the remote server uses for PS remoting.

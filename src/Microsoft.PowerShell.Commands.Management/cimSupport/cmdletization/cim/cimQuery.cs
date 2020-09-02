@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal readonly Dictionary<string, object> queryOptions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-        internal ClientSideQuery ClientSideQuery { get; private set; }
+        internal ClientSideQuery ClientSideQuery { get; }
 
         internal CimQuery()
         {

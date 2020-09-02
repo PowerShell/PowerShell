@@ -74,32 +74,32 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// The full name of the outermost type.
         /// </summary>
-        public string FullName { get; private set; }
+        public string FullName { get; }
 
         /// <summary>
         /// Whether or not this type is an enum.
         /// </summary>
-        public bool IsEnum { get; private set; }
+        public bool IsEnum { get; }
 
         /// <summary>
         /// Whether or not this type is an dictionary.
         /// </summary>
-        public bool ImplementsDictionary { get; private set; }
+        public bool ImplementsDictionary { get; }
 
         /// <summary>
         /// Whether or not this enum has a flag attribute.
         /// </summary>
-        public bool HasFlagAttribute { get; private set; }
+        public bool HasFlagAttribute { get; }
 
         /// <summary>
         /// Whether or not this type is an array type.
         /// </summary>
-        public bool IsArray { get; private set; }
+        public bool IsArray { get; }
 
         /// <summary>
         /// Gets the inner type, if this corresponds to an array type.
         /// </summary>
-        public ShowCommandParameterType ElementType { get; private set; }
+        public ShowCommandParameterType ElementType { get; }
 
         /// <summary>
         /// Whether or not this type is a string.
@@ -148,6 +148,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// If this is an enum value, return the list of potential values.
         /// </summary>
-        public ArrayList EnumValues { get; private set; }
+        public ArrayList EnumValues { get; }
     }
 }

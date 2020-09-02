@@ -95,11 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual string ComputerName
-        {
-            get;
-            private set;
-        }
+        internal virtual string ComputerName { get; }
 
         /// <summary>
         /// <para>
@@ -109,11 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual CimInstance TargetCimInstance
-        {
-            get;
-            private set;
-        }
+        internal virtual CimInstance TargetCimInstance { get; }
     }
     #endregion
 

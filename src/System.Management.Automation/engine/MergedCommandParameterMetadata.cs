@@ -657,12 +657,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the compiled command parameter for the association.
         /// </summary>
-        internal CompiledCommandParameter Parameter { get; private set; }
+        internal CompiledCommandParameter Parameter { get; }
 
         /// <summary>
         /// Gets the type of binder that the compiled command parameter should be bound with.
         /// </summary>
-        internal ParameterBinderAssociation BinderAssociation { get; private set; }
+        internal ParameterBinderAssociation BinderAssociation { get; }
 
         public override string ToString()
         {

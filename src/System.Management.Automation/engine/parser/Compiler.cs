@@ -2206,11 +2206,11 @@ namespace System.Management.Automation.Language
                 this.ContinueLabel = continueLabel;
             }
 
-            internal string Label { get; private set; }
+            internal string Label { get; }
 
-            internal LabelTarget ContinueLabel { get; private set; }
+            internal LabelTarget ContinueLabel { get; }
 
-            internal LabelTarget BreakLabel { get; private set; }
+            internal LabelTarget BreakLabel { get; }
         }
 
         private LabelTarget _returnTarget;

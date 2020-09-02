@@ -2032,11 +2032,7 @@ namespace System.Management.Automation
 
     internal class ImplicitRemotingBatchingNotSupportedException : Exception
     {
-        internal string ErrorId
-        {
-            get;
-            private set;
-        }
+        internal string ErrorId { get; }
 
         internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(
             ParserStrings.ImplicitRemotingPipelineBatchingNotSupported)

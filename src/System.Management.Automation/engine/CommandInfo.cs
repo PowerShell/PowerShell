@@ -889,7 +889,7 @@ namespace System.Management.Automation
         /// <summary>
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
-        public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+        public TypeDefinitionAst TypeDefinitionAst { get; }
 
         private bool _typeWasCalculated;
 

@@ -211,12 +211,12 @@ namespace Microsoft.PowerShell.Commands
         /// Gets underlying bytes stored in the collection.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public byte[] Bytes { get; private set; }
+        public byte[] Bytes { get; }
 
         /// <summary>
         /// Gets the path of the file whose contents are wrapped in the ByteCollection.
         /// </summary>
-        public string Path { get; private set; }
+        public string Path { get; }
 
         /// <summary>
         /// Gets the hexadecimal representation of the <see cref="Offset64"/> value.
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the type of the input objects used to create the <see cref="ByteCollection"/>.
         /// </summary>
-        public string Label { get; private set; }
+        public string Label { get; }
 
         private const int BytesPerLine = 16;
 

@@ -20,7 +20,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The action to take when the breakpoint is hit.
         /// </summary>
-        public ScriptBlock Action { get; private set; }
+        public ScriptBlock Action { get; }
 
         /// <summary>
         /// Gets whether this breakpoint is enabled.
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This breakpoint's Id.
         /// </summary>
-        public int Id { get; private set; }
+        public int Id { get; }
 
         /// <summary>
         /// True if breakpoint is set on a script, false if the breakpoint is not scoped.
@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The script this breakpoint is on, or null if the breakpoint is not scoped.
         /// </summary>
-        public string Script { get; private set; }
+        public string Script { get; }
 
         #endregion properties
 
@@ -191,9 +191,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Which command this breakpoint is on.
         /// </summary>
-        public string Command { get; private set; }
+        public string Command { get; }
 
-        internal WildcardPattern CommandPattern { get; private set; }
+        internal WildcardPattern CommandPattern { get; }
 
         /// <summary>
         /// Gets a string representation of this breakpoint.
@@ -312,12 +312,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The access mode to trigger this variable breakpoint on.
         /// </summary>
-        public VariableAccessMode AccessMode { get; private set; }
+        public VariableAccessMode AccessMode { get; }
 
         /// <summary>
         /// Which variable this breakpoint is on.
         /// </summary>
-        public string Variable { get; private set; }
+        public string Variable { get; }
 
         /// <summary>
         /// Gets the string representation of this breakpoint.
@@ -415,12 +415,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Which column this breakpoint is on.
         /// </summary>
-        public int Column { get; private set; }
+        public int Column { get; }
 
         /// <summary>
         /// Which line this breakpoint is on.
         /// </summary>
-        public int Line { get; private set; }
+        public int Line { get; }
 
         /// <summary>
         /// Gets a string representation of this breakpoint.

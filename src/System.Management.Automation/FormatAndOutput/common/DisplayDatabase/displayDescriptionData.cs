@@ -672,10 +672,10 @@ namespace System.Management.Automation
     public sealed class FormatViewDefinition
     {
         /// <summary>Name of the formatting view as defined in the formatting file</summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>The control defined by this formatting view can be one of table, list, wide, or custom</summary>
-        public PSControl Control { get; private set; }
+        public PSControl Control { get; }
 
         /// <summary>instance id of the original view this will be used to distinguish two views with the same name and control types</summary>
         internal Guid InstanceId { get; set; }

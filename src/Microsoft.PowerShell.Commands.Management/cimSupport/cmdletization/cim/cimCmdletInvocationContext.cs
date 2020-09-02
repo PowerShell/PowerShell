@@ -81,21 +81,21 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        public CimCmdletDefinitionContext CmdletDefinitionContext { get; private set; }
+        public CimCmdletDefinitionContext CmdletDefinitionContext { get; }
 
-        public InvocationInfo CmdletInvocationInfo { get; private set; }
+        public InvocationInfo CmdletInvocationInfo { get; }
 
-        public MshCommandRuntime.ShouldProcessPossibleOptimization ShouldProcessOptimization { get; private set; }
+        public MshCommandRuntime.ShouldProcessPossibleOptimization ShouldProcessOptimization { get; }
 
-        public ActionPreference ErrorActionPreference { get; private set; }
+        public ActionPreference ErrorActionPreference { get; }
 
-        public ActionPreference WarningActionPreference { get; private set; }
+        public ActionPreference WarningActionPreference { get; }
 
-        public ActionPreference VerboseActionPreference { get; private set; }
+        public ActionPreference VerboseActionPreference { get; }
 
-        public ActionPreference DebugActionPreference { get; private set; }
+        public ActionPreference DebugActionPreference { get; }
 
-        public string NamespaceOverride { get; private set; }
+        public string NamespaceOverride { get; }
 
         public bool IsRunningInBackground
         {

@@ -193,7 +193,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        internal string Name { get; private set; }
+        internal string Name { get; }
 
         /// <summary>
         /// The PSTypeName from a PSTypeNameAttribute.
@@ -203,38 +203,38 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the Type information of the attribute.
         /// </summary>
-        internal Type Type { get; private set; }
+        internal Type Type { get; }
 
         /// <summary>
         /// Gets the Type information of the attribute.
         /// </summary>
-        internal Type DeclaringType { get; private set; }
+        internal Type DeclaringType { get; }
 
         /// <summary>
         /// Gets whether the parameter is a dynamic parameter or not.
         /// </summary>
-        internal bool IsDynamic { get; private set; }
+        internal bool IsDynamic { get; }
 
         /// <summary>
         /// Gets the parameter collection type information.
         /// </summary>
-        internal ParameterCollectionTypeInformation CollectionTypeInformation { get; private set; }
+        internal ParameterCollectionTypeInformation CollectionTypeInformation { get; }
 
         /// <summary>
         /// A collection of the attributes found on the member. The attributes have been compiled into
         /// a format that easier to digest by the metadata processor.
         /// </summary>
-        internal Collection<Attribute> CompiledAttributes { get; private set; }
+        internal Collection<Attribute> CompiledAttributes { get; }
 
         /// <summary>
         /// Gets the collection of data generation attributes on this parameter.
         /// </summary>
-        internal ArgumentTransformationAttribute[] ArgumentTransformationAttributes { get; private set; }
+        internal ArgumentTransformationAttribute[] ArgumentTransformationAttributes { get; }
 
         /// <summary>
         /// Gets the collection of data validation attributes on this parameter.
         /// </summary>
-        internal ValidateArgumentsAttribute[] ValidationAttributes { get; private set; }
+        internal ValidateArgumentsAttribute[] ValidationAttributes { get; }
 
         /// <summary>
         /// Get and private set the obsolete attribute on this parameter.
@@ -299,12 +299,12 @@ namespace System.Management.Automation
         /// <summary>
         /// A dictionary of the parameter sets and the parameter set specific data for this parameter.
         /// </summary>
-        internal Dictionary<string, ParameterSetSpecificMetadata> ParameterSetData { get; private set; }
+        internal Dictionary<string, ParameterSetSpecificMetadata> ParameterSetData { get; }
 
         /// <summary>
         /// The alias names for this parameter.
         /// </summary>
-        internal string[] Aliases { get; private set; }
+        internal string[] Aliases { get; }
 
         /// <summary>
         /// Determines if this parameter takes pipeline input for any of the specified
@@ -675,11 +675,11 @@ namespace System.Management.Automation
         /// <summary>
         /// The collection type of the parameter.
         /// </summary>
-        internal ParameterCollectionType ParameterCollectionType { get; private set; }
+        internal ParameterCollectionType ParameterCollectionType { get; }
 
         /// <summary>
         /// The type of the elements in the collection.
         /// </summary>
-        internal Type ElementType { get; private set; }
+        internal Type ElementType { get; }
     }
 }

@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Holds the set of parameters that were not bound to any argument (i.e $args)
         /// </summary>
-        internal List<object> DollarArgs { get; private set; }
+        internal List<object> DollarArgs { get; }
 
         /// <summary>
         /// Binds the command line parameters for shell functions/filters/scripts/scriptblocks.
