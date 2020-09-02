@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 using System.Collections.Generic;
@@ -63,19 +64,11 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary> Gets whether the event is successfully written </summary>
-        public bool Success
-        {
-            get;
-            private set;
-        }
+        public bool Success { get; }
 
         /// <summary> Gets payload in the event </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public object[] Payload
-        {
-            get;
-            private set;
-        }
+        public object[] Payload { get; }
 
         /// <summary>
         /// Creates a new instance of EtwEventArgs class.

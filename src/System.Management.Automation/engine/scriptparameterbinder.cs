@@ -161,7 +161,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The script that is being bound to.
         /// </summary>
-        internal ScriptBlock Script { get; private set; }
+        internal ScriptBlock Script { get; }
 
         internal SessionStateScope LocalScope { get; set; }
 

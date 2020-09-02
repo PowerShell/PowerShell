@@ -551,7 +551,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the aliases of the the current cmdlet.
+        /// Get the aliases of the current cmdlet.
         /// </summary>
         /// <returns></returns>
         private List<string> GetAliasOfCurrentCmdlet()
@@ -2257,7 +2257,7 @@ namespace System.Management.Automation
 
                         // If we have one or the other, we can latch onto that set without difficulty
                         uint uniqueSetThatTakesPipelineInput = 0;
-                        if ((foundSetThatTakesPipelineInputByValue & foundSetThatTakesPipelineInputByPropertyName) &&
+                        if (foundSetThatTakesPipelineInputByValue && foundSetThatTakesPipelineInputByPropertyName &&
                             (setThatTakesPipelineInputByValue == setThatTakesPipelineInputByPropertyName))
                         {
                             uniqueSetThatTakesPipelineInput = setThatTakesPipelineInputByValue;
@@ -3879,7 +3879,7 @@ namespace System.Management.Automation
         /// Gets or sets the command that this parameter binder controller
         /// will bind parameters to.
         /// </summary>
-        internal Cmdlet Command { get; private set; }
+        internal Cmdlet Command { get; }
 
         #region DefaultParameterBindingStructures
 

@@ -24,10 +24,10 @@ namespace System.Management.Automation
     {
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-        public Type Type { get; private set; }
+        public Type Type { get; }
 
         /// <summary/>
-        public ScriptBlock ScriptBlock { get; private set; }
+        public ScriptBlock ScriptBlock { get; }
 
         /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)

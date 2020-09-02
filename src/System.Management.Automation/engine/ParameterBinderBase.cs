@@ -1985,7 +1985,7 @@ namespace System.Management.Automation
 
         private static readonly IDictionary s_emptyUsingParameters = new ReadOnlyDictionary<object, object>(new Dictionary<object, object>());
 
-        public List<string> BoundPositionally { get; private set; }
+        public List<string> BoundPositionally { get; }
 
         internal IDictionary ImplicitUsingParameters { get; set; }
     }

@@ -2011,7 +2011,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether the event should be unregistered.
         /// </summary>
-        internal bool AutoUnregister { get; private set; }
+        internal bool AutoUnregister { get; }
 
         /// <summary>
         /// Indicate how many new should be added to the action queue.

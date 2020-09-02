@@ -10,7 +10,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
-    /// that is used the the Monad components to produce trace output.
+    /// that is used in the Monad components to produce trace output.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSTraceSource"/>

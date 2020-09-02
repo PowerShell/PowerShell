@@ -164,7 +164,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
-        /// AutomationNull.Value, they are are ignored.
+        /// AutomationNull.Value, they are ignored.
         /// This can cause the return value to be less than the size of
         /// the collection.
         /// </remarks>

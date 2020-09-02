@@ -3824,7 +3824,7 @@ namespace System.Management.Automation
         #region Event Handlers
 
         /// <summary>
-        /// Handler for state changed changed events for the currently running pipeline.
+        /// Handler for state changed events for the currently running pipeline.
         /// </summary>
         /// <param name="source">
         /// Source of the event.

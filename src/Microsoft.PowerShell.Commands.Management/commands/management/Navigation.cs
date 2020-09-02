@@ -654,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the path path property, when bound from the pipeline.
+        /// Gets or sets the path property, when bound from the pipeline.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]

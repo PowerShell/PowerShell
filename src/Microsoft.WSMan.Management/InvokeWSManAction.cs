@@ -156,7 +156,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 2,
