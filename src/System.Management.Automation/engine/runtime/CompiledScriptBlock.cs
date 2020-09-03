@@ -833,7 +833,7 @@ namespace System.Management.Automation
             set { _scriptBlockData.SkipLogging = value; }
         }
 
-        internal Assembly AssemblyDefiningPSTypes { set; get; }
+        internal Assembly AssemblyDefiningPSTypes { get; set; }
 
         internal HelpInfo GetHelpInfo(
             ExecutionContext context,

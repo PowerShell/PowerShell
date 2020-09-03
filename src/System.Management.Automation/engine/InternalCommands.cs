@@ -80,9 +80,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public PSObject InputObject
         {
-            set { _inputObject = value; }
-
             get { return _inputObject; }
+
+            set { _inputObject = value; }
         }
 
         private PSObject _inputObject = AutomationNull.Value;
@@ -220,9 +220,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Args")]
         public object[] ArgumentList
         {
-            set { _arguments = value; }
-
             get { return _arguments; }
+
+            set { _arguments = value; }
         }
 
         private object[] _arguments;

@@ -172,7 +172,7 @@ namespace System.Management.Automation
         /// trace flag.
         /// </summary>
         /// <value>The current state of the IgnoreScriptDebug flag.</value>
-        internal bool IgnoreScriptDebug { set; get; } = true;
+        internal bool IgnoreScriptDebug { get; set; } = true;
 
         /// <summary>
         /// Gets the automation engine instance.

@@ -30,7 +30,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the instance of PSHost - null by default.
         /// </summary>
-        public PSHost Host { set; get; }
+        public PSHost Host { get; set; }
 
         #region Write
         /// <summary>

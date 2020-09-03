@@ -1265,7 +1265,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the Regex options to be used in the validation.
         /// </summary>
-        public RegexOptions Options { set; get; } = RegexOptions.IgnoreCase;
+        public RegexOptions Options { get; set; } = RegexOptions.IgnoreCase;
 
         /// <summary>
         /// Gets or sets the custom error message pattern that is displayed to the user.

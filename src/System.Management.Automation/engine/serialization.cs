@@ -322,7 +322,7 @@ namespace System.Management.Automation
         /// is used by PriorityReceivedDataCollection (remoting) to process incoming data from the
         /// remote end. A value of Null means that the max memory is unlimited.
         /// </summary>
-        internal int? MaximumAllowedMemory { set; get; }
+        internal int? MaximumAllowedMemory { get; set; }
 
         /// <summary>
         /// Logs that memory used by deserialized objects is not related to the size of input xml.

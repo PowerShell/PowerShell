@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         #endregion
 
