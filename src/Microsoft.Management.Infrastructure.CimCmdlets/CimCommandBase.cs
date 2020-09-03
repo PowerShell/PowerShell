@@ -727,6 +727,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal CimAsyncOperation AsyncOperation
         {
+            get
+            {
+                return this.operation;
+            }
+
             set
             {
                 lock (this.myLock)
@@ -734,11 +739,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     Debug.Assert(this.operation == null, "Caller should verify that operation is null");
                     this.operation = value;
                 }
-            }
-
-            get
-            {
-                return this.operation;
             }
         }
 
