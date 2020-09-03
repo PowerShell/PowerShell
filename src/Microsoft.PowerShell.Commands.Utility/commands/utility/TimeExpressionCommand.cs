@@ -25,13 +25,13 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// The script block to apply.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
-        public ScriptBlock Expression { set; get; }
+        public ScriptBlock Expression { get; set; }
 
         #endregion
 

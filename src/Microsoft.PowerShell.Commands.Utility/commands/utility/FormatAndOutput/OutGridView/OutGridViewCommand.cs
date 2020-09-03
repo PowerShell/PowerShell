@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         /// and if it should be possible to select multiple or single list items.
         /// </summary>
         [Parameter(ParameterSetName = "OutputMode")]
-        public OutputModeOption OutputMode { set; get; }
+        public OutputModeOption OutputMode { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the selected items should be written to the pipeline.
@@ -97,9 +97,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "PassThru")]
         public SwitchParameter PassThru
         {
-            set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
-
             get { return OutputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
+
+            set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
         }
 
         #endregion Input Parameters

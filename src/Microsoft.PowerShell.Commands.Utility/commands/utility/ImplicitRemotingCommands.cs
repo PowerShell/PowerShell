@@ -257,9 +257,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public new string Prefix
         {
-            set { base.Prefix = value; }
-
             get { return base.Prefix; }
+
+            set { base.Prefix = value; }
         }
 
         /// <summary>
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
-        internal string Prefix { set; get; } = string.Empty;
+        internal string Prefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the certificate with which to sign the format file and psm1 file.
