@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     /// Contains information about a cmdlet's Shard ParameterSet,
     /// ParameterSets, Parameters, Common Parameters and error message.
     /// </summary>
-    public sealed class CommandViewModel : INotifyPropertyChanged
+    public class CommandViewModel : INotifyPropertyChanged
     {
         #region Private Fields
         /// <summary>
