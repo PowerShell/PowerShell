@@ -2766,7 +2766,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="streamOutput">
         /// Determines if the directory should be streamed out after being created.
         /// </param>
-        private void CreateDirectory(string path, bool streamOutput)
+        private DirectoryInfo CreateDirectory(string path, bool streamOutput)
         {
             Dbg.Diagnostics.Assert(
                 !string.IsNullOrEmpty(path),
@@ -2790,13 +2790,13 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.ResourceExists,
                     path));
 
-                return;
+                return null;
             }
 
             if (error != null)
             {
                 WriteError(error);
-                return;
+                return null;
             }
 
             try
@@ -2814,6 +2814,7 @@ namespace Microsoft.PowerShell.Commands
                         // Write the result to the pipeline
                         WriteItemObject(result, path, true);
                     }
+                    return result;
                 }
             }
             catch (ArgumentException argException)
@@ -2833,6 +2834,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(accessException, "CreateDirectoryUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
+            return null;
         }
 
         private bool CreateIntermediateDirectories(string path)
@@ -3730,6 +3732,7 @@ namespace Microsoft.PowerShell.Commands
                                     destinationPath,
                                     force,
                                     recurse,
+                                    ItemInfo,
                                     ps);
                             }
                             else
@@ -3827,7 +3830,8 @@ namespace Microsoft.PowerShell.Commands
                 // CreateDirectory does the WriteItemObject for the new DirectoryInfo
                 if (ps == null)
                 {
-                    CreateDirectory(destination, true);
+                    var destDir = CreateDirectory(destination, true);
+                    destDir.Attributes = directory.Attributes;
                 }
                 else
                 {
@@ -3841,7 +3845,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    destination = CreateDirectoryOnRemoteSession(destination, force, ps);
+                    destination = CreateDirectoryOnRemoteSession(directory, destination, force, ps);
                     if (destination == null)
                     {
                         return;
@@ -4048,6 +4052,7 @@ namespace Microsoft.PowerShell.Commands
             string destination,
             bool force,
             bool recurse,
+            Hashtable srcDir,
             System.Management.Automation.PowerShell ps)
         {
             Dbg.Diagnostics.Assert((sourceDirectoryName != null && sourceDirectoryFullName != null), "The caller should verify directory.");
@@ -4067,7 +4072,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Create destinationPath directory. This will fail if the directory already exists
                 // and Force is not selected.
-                CreateDirectory(destination, false);
+                var destDir = CreateDirectory(destination, true);
+                foreach(var attribute in ((string)srcDir["Attributes"]).Split(','))
+                    destDir.Attributes |= Enum.Parse<System.IO.FileAttributes>(attribute.Trim());
 
                 // If failed to create directory
                 if (!Directory.Exists(destination))
@@ -4148,6 +4155,7 @@ namespace Microsoft.PowerShell.Commands
                                                            destination,
                                                            force,
                                                            recurse,
+                                                           dir,
                                                            ps);
                         }
                     }
@@ -4856,10 +4864,11 @@ namespace Microsoft.PowerShell.Commands
             return (bool)(op["IsFileInfo"]);
         }
 
-        private string CreateDirectoryOnRemoteSession(string destination, bool force, System.Management.Automation.PowerShell ps)
+        private string CreateDirectoryOnRemoteSession(DirectoryInfo srcDir, string destination, bool force, System.Management.Automation.PowerShell ps)
         {
             ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
             ps.AddParameter("createDirectoryPath", destination);
+            ps.AddParameter("attributes", srcDir.Attributes);
             if (force)
             {
                 ps.AddParameter(nameof(force), true);
@@ -8886,6 +8895,10 @@ namespace System.Management.Automation.Internal
 
             [string] $createDirectoryPath,
 
+            [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"", Mandatory=$true)]
+
+            [System.IO.FileAttributes] $attributes,
+
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"")]
             [switch] $force
         )
@@ -9194,6 +9207,7 @@ namespace System.Management.Automation.Internal
         {{
             param (
                 [string] $createDirectoryPath,
+                [System.IO.FileAttributes] $attributes,
                 [switch] $force = $false
             )
 
@@ -9210,6 +9224,7 @@ namespace System.Management.Automation.Internal
                     if ($force)
                     {{
                         Microsoft.PowerShell.Management\New-Item $createDirectoryPath -ItemType Directory -Force | Out-Null
+                        (Get-Item $createDirectoryPath -Force).Attributes = $attributes
                         $op['DirectoryPath'] = $createDirectoryPath
                     }}
                     else
@@ -9220,6 +9235,7 @@ namespace System.Management.Automation.Internal
                 else
                 {{
                     Microsoft.PowerShell.Management\New-Item $createDirectoryPath -ItemType Directory | Out-Null
+                    (Get-Item $createDirectoryPath -Force).Attributes = $attributes
                     $op['DirectoryPath'] = $createDirectoryPath
                 }}
             }}
@@ -9649,11 +9665,12 @@ namespace System.Management.Automation.Internal
                     return $op
                 }}
 
-                $items = @(Microsoft.PowerShell.Management\Get-Item -Path $getPathItems | Microsoft.PowerShell.Core\ForEach-Object {{
+                $items = @(Microsoft.PowerShell.Management\Get-Item -Path $getPathItems -Force | Microsoft.PowerShell.Core\ForEach-Object {{
                     @{{
                         FullName = ConvertToPSDrivePath $_.PSDrive $_.FullName;
                         Name = $_.Name;
                         FileSize = $_.Length; IsDirectory = $_ -is [System.IO.DirectoryInfo]
+                        Attributes = $_.Attributes.ToString()
                      }}
                 }})
                 $op['Exists'] = $true
@@ -9694,23 +9711,25 @@ namespace System.Management.Automation.Internal
 
             try
             {{
-                $item = Microsoft.PowerShell.Management\Get-Item $getPathDir
+                $item = Microsoft.PowerShell.Management\Get-Item $getPathDir -Force
 
                 if ($item -isnot [System.IO.DirectoryInfo])
                 {{
                     return $op
                 }}
 
-                $files = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -File | Microsoft.PowerShell.Core\ForEach-Object {{
+                $files = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -File -Force | Microsoft.PowerShell.Core\ForEach-Object {{
                     @{{ FileName = $_.Name;
                         FilePath = (ConvertToPSDrivePath $_.PSDrive $_.FullName);
                         FileSize = $_.Length
+                        Attributes = $_.Attributes.ToString()
                      }}
                 }})
 
-                $directories = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -Directory | Microsoft.PowerShell.Core\ForEach-Object {{
+                $directories = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -Directory -Force | Microsoft.PowerShell.Core\ForEach-Object {{
                     @{{ Name = $_.Name;
                         FullName = (ConvertToPSDrivePath $_.PSDrive $_.FullName)
+                        Attributes = $_.Attributes.ToString()
                      }}
                 }})
 
