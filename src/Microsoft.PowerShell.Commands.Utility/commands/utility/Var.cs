@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
                     GetMatchingVariables(varName, Scope, out wasFiltered, /*quiet*/ false);
 
                 matchingVariables.Sort(
-                    delegate (PSVariable left, PSVariable right)
+                    (PSVariable left, PSVariable right) =>
                     {
                         return StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name);
                     });

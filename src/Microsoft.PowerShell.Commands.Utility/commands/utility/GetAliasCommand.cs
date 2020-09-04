@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             results.Sort(
-                delegate (AliasInfo left, AliasInfo right)
+                (AliasInfo left, AliasInfo right) =>
                 {
                     return StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name);
                 });

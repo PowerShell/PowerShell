@@ -2571,7 +2571,7 @@ namespace System.Management.Automation.Remoting.Client
             ThreadPool.QueueUserWorkItem(new WaitCallback(
                 // wsManSessionHandle is passed as parameter to allow the thread to be independent
                 // of the rest of the parent object.
-                delegate (object state)
+                (object state) =>
                 {
                     IntPtr sessionHandle = (IntPtr)state;
                     if (sessionHandle != IntPtr.Zero)

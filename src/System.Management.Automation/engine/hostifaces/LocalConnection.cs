@@ -950,7 +950,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) =>
                 {
                     remoteRunspaceCloseCompleted.Set();
                 };
@@ -979,7 +979,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) =>
                 {
                     jobsStopCompleted.Set();
                 };

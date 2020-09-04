@@ -399,21 +399,21 @@ namespace Microsoft.PowerShell.Cim
                 return dotNetObject;
             }
 
-            Func<Func<object>, object> exceptionSafeReturn = delegate (Func<object> innerAction)
-                                                                 {
-                                                                     try
-                                                                     {
-                                                                         return innerAction();
-                                                                     }
-                                                                     catch (Exception e)
-                                                                     {
-                                                                         throw CimValueConverter.GetInvalidCastException(
-                                                                             e,
-                                                                             "InvalidCimToDotNetCast",
-                                                                             cimObject,
-                                                                             expectedDotNetType.FullName);
-                                                                     }
-                                                                 };
+            Func<Func<object>, object> exceptionSafeReturn = (Func<object> innerAction) =>
+            {
+                try
+                {
+                    return innerAction();
+                }
+                catch (Exception e)
+                {
+                    throw CimValueConverter.GetInvalidCastException(
+                        e,
+                        "InvalidCimToDotNetCast",
+                        cimObject,
+                        expectedDotNetType.FullName);
+                }
+            };
 
             if (typeof(ObjectSecurity).IsAssignableFrom(expectedDotNetType))
             {

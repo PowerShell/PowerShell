@@ -112,24 +112,24 @@ namespace System.Management.Automation
         private static EventHandler<DataAddedEventArgs> GetStreamForwarder<T>(Action<T> forwardingAction, bool swallowInvalidOperationExceptions = false)
         {
             // TODO/FIXME: ETW event for extended semantics streams
-            return delegate (object sender, DataAddedEventArgs eventArgs)
-                       {
-                           var psDataCollection = (PSDataCollection<T>)sender;
-                           foreach (T t in psDataCollection.ReadAll())
-                           {
-                               try
-                               {
-                                   forwardingAction(t);
-                               }
-                               catch (InvalidOperationException)
-                               {
-                                   if (!swallowInvalidOperationExceptions)
-                                   {
-                                       throw;
-                                   }
-                               }
-                           }
-                       };
+            return (object sender, DataAddedEventArgs eventArgs) =>
+            {
+                var psDataCollection = (PSDataCollection<T>)sender;
+                foreach (T t in psDataCollection.ReadAll())
+                {
+                    try
+                    {
+                        forwardingAction(t);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        if (!swallowInvalidOperationExceptions)
+                        {
+                            throw;
+                        }
+                    }
+                }
+            };
         }
 
         // This is a static field (instead of a constant) to make it possible to set through tests (and/or by customers if needed for a workaround)
@@ -151,7 +151,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
                     errorRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             errorRecord = GetErrorRecordForRemotePipelineInvocation(errorRecord, errorMessageTemplate);
                             HandleErrorFromPipeline(c, errorRecord, powerShell);
@@ -161,7 +161,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> warningHandler = GetStreamForwarder<WarningRecord>(
                     warningRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteWarning(warningRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -170,7 +170,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> verboseHandler = GetStreamForwarder<VerboseRecord>(
                     verboseRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteVerbose(verboseRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -179,7 +179,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> debugHandler = GetStreamForwarder<DebugRecord>(
                     debugRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteDebug(debugRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -188,7 +188,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> informationHandler = GetStreamForwarder<InformationRecord>(
                     informationRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteInformation(informationRecord);
                             return Enumerable.Empty<PSObject>();
@@ -262,7 +262,7 @@ namespace System.Management.Automation
             string errorMessageTemplate)
         {
             EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
-                delegate (ErrorRecord errorRecord)
+                (ErrorRecord errorRecord) =>
                 {
                     errorRecord = GetErrorRecordForRemotePipelineInvocation(errorRecord, errorMessageTemplate);
                     HandleErrorFromPipeline(cmdlet, errorRecord, powerShell);
@@ -486,7 +486,7 @@ namespace System.Management.Automation
 
             return EnumerateWithCatch(
                 outputStream,
-                delegate (Exception exception)
+                (Exception exception) =>
                 {
                     ErrorRecord errorRecord = GetErrorRecordForRemotePipelineInvocation(exception, errorMessageTemplate);
                     HandleErrorFromPipeline(cmdlet, errorRecord, powerShell);
@@ -801,7 +801,7 @@ namespace System.Management.Automation
             if (!onlyManifests)
             {
                 cimModules = cimModules.Select(
-                    delegate (CimModule cimModule)
+                    (CimModule cimModule) =>
                     {
                         cimModule.FetchAllModuleFiles(cimSession, cimNamespace, options);
                         return cimModule;
@@ -810,7 +810,7 @@ namespace System.Management.Automation
 
             return EnumerateWithCatch(
                 cimModules,
-                delegate (Exception exception)
+                (Exception exception) =>
                 {
                     ErrorRecord errorRecord = GetErrorRecordForRemoteDiscoveryProvider(exception);
                     if (!cmdlet.MyInvocation.ExpectingInput)

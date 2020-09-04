@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             string message = StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, eventArgs.Data.OriginalString);
-            Action<Cmdlet> warningWriter = delegate (Cmdlet cmdlet)
+            Action<Cmdlet> warningWriter = (Cmdlet cmdlet) =>
             {
                 cmdlet.WriteWarning(message);
             };
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands
 
                         this.RunspaceRepository.Add(remoteRunspaceInfo);
 
-                        Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
+                        Action<Cmdlet> outputWriter = (Cmdlet cmdlet) =>
                         {
                             cmdlet.WriteObject(remoteRunspaceInfo);
                         };
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
                                    ErrorCategory.OpenError, null, null,
                                         null, null, null, errorDetails, null);
 
-                        Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
+                        Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
                         {
                             //
                             // In case of PSDirectException, we should output the precise error message
@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
                                         (connectionUri != null) ?
                                         connectionUri.AbsoluteUri : string.Empty);
 
-                        Action<Cmdlet> verboseWriter = delegate (Cmdlet cmdlet)
+                        Action<Cmdlet> verboseWriter = (Cmdlet cmdlet) =>
                         {
                             cmdlet.WriteVerbose(message);
                         };
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
                                  "PSSessionStateClosed",
                                        ErrorCategory.OpenError, remoteRunspace);
 
-                            Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
+                            Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
                             {
                                 cmdlet.WriteError(errorRecord);
                             };
@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                                 ErrorCategory.InvalidArgument, remoteRunspaceInfo);
 
-                        Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
+                        Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
                         {
                             cmdlet.WriteError(errorRecord);
                         };
@@ -853,7 +853,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                             ErrorCategory.InvalidArgument, resolvedComputerNames[i]);
 
-                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
                     {
                         cmdlet.WriteError(errorRecord);
                     };
@@ -1262,7 +1262,7 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                 ErrorCategory.InvalidArgument, uri);
 
-            Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
+            Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
             {
                 cmdlet.WriteError(errorRecord);
             };

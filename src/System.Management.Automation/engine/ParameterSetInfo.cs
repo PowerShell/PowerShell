@@ -93,17 +93,17 @@ namespace System.Management.Automation
 
             GenerateParametersInDisplayOrder(
                                  parameter => AppendFormatCommandParameterInfo(parameter, result),
-                                 delegate (string str)
+                                 (string str) =>
+                                 {
+                                     if (result.Length > 0)
                                      {
-                                         if (result.Length > 0)
-                                         {
-                                             result.Append(" ");
-                                         }
+                                         result.Append(" ");
+                                     }
 
-                                         result.Append("[");
-                                         result.Append(str);
-                                         result.Append("]");
-                                     });
+                                     result.Append("[");
+                                     result.Append(str);
+                                     result.Append("]");
+                                 });
 
             return result.ToString();
         }

@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Id,
-                    delegate (Breakpoint breakpoint, int id)
+                    (Breakpoint breakpoint, int id) =>
                     {
                         return breakpoint.Id == id;
                     }
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Command,
-                    delegate (Breakpoint breakpoint, string command)
+                    (Breakpoint breakpoint, string command) =>
                     {
                         CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
 
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Variable,
-                    delegate (Breakpoint breakpoint, string variable)
+                    (Breakpoint breakpoint, string variable) =>
                     {
                         VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
 
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Type,
-                    delegate (Breakpoint breakpoint, BreakpointType type)
+                    (Breakpoint breakpoint, BreakpointType type) =>
                     {
                         switch (type)
                         {
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Script,
-                    delegate (Breakpoint breakpoint, string script)
+                    (Breakpoint breakpoint, string script) =>
                     {
                         if (breakpoint.Script == null)
                         {

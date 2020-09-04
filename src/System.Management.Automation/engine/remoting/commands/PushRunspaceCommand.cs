@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             string message = StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, eventArgs.Data.OriginalString);
-            Action<Cmdlet> streamObject = delegate (Cmdlet cmdlet)
+            Action<Cmdlet> streamObject = (Cmdlet cmdlet) =>
             {
                 cmdlet.WriteWarning(message);
             };
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingRunspaceId(Guid remoteRunspaceId)
         {
-            Predicate<PSSession> condition = delegate (PSSession info)
+            Predicate<PSSession> condition = (PSSession info) =>
             {
                 return info.InstanceId == remoteRunspaceId;
             };
@@ -810,7 +810,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingSessionId(int sessionId)
         {
-            Predicate<PSSession> condition = delegate (PSSession info)
+            Predicate<PSSession> condition = (PSSession info) =>
             {
                 return info.Id == sessionId;
             };
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingName(string name)
         {
-            Predicate<PSSession> condition = delegate (PSSession info)
+            Predicate<PSSession> condition = (PSSession info) =>
             {
                 // doing case-insensitive match for session name
                 return info.Name.Equals(name, StringComparison.OrdinalIgnoreCase);

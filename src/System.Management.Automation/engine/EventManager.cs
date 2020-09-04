@@ -954,7 +954,7 @@ namespace System.Management.Automation
             else
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(
-                    delegate (object unused)
+                    (object unused) =>
                     {
                         ProcessNewEventImplementation(newEvent, false);
                     }));
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
                     // teardown event. That can result in starvation of
                     // foreground threads that also want to use the runspace.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(
-                        delegate (object unused)
+                        (object unused) =>
                         {
                             System.Threading.Thread.Sleep(100);
                             this.PulseEngine();
