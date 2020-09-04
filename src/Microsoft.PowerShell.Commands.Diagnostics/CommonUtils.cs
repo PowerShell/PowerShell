@@ -100,4 +100,3 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         }
     }
 }
-

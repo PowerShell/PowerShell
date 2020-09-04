@@ -626,4 +626,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private Dictionary<ExpressionToken, PSPropertyExpression> _expressionCache;
     }
 }
-

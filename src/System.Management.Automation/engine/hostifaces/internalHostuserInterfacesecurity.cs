@@ -72,4 +72,3 @@ namespace System.Management.Automation.Internal.Host
         }
     }
 }
-

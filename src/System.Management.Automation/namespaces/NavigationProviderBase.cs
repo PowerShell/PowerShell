@@ -1094,4 +1094,3 @@ namespace System.Management.Automation.Provider
 
     #endregion NavigationCmdletProvider
 }
-

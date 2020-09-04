@@ -1006,4 +1006,3 @@ namespace Microsoft.PowerShell
         private const int maxNodeCount = 128;
     }
 }   // namespace
-

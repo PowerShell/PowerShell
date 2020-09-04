@@ -142,4 +142,3 @@ namespace System.Management.Automation
         private object _target = null;
     }
 }
-

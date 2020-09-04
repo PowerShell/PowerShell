@@ -579,4 +579,3 @@ namespace System.Management.Automation
         #endregion NewSecurityDescriptor
     }
 }
-

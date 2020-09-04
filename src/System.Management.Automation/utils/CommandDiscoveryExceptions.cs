@@ -536,4 +536,3 @@ namespace System.Management.Automation
         #endregion Private
     }
 }
-

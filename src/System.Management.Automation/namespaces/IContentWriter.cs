@@ -66,4 +66,3 @@ namespace System.Management.Automation.Provider
 
     #endregion IContentWriter
 }
-

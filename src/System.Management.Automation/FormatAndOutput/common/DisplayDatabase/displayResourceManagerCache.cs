@@ -223,4 +223,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
     }
 }
-

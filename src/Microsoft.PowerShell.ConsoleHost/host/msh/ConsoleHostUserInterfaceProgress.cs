@@ -195,4 +195,3 @@ namespace Microsoft.PowerShell
         private int progPaneUpdateFlag = 0;
     }
 }   // namespace
-

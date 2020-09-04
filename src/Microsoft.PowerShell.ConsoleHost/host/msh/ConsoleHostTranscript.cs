@@ -130,4 +130,3 @@ namespace Microsoft.PowerShell
         private object _transcriptionStateLock = new object();
     }
 }   // namespace
-

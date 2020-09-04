@@ -780,4 +780,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int _enumerationLimit;
     }
 }
-

@@ -542,4 +542,3 @@ namespace Microsoft.PowerShell
         private const string PromptCommandPrefix = "!";
     }
 }   // namespace
-

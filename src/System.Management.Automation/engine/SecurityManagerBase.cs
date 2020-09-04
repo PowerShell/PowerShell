@@ -181,4 +181,3 @@ namespace System.Management.Automation
         #endregion methods for derived class to override
     }
 }
-

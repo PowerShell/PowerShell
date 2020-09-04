@@ -560,4 +560,3 @@ namespace System.Management.Automation
         #endregion public_methods
     }
 }
-

@@ -739,4 +739,3 @@ namespace Microsoft.PowerShell
         private bool _isPromptFunctionExecutor;
     }
 }   // namespace
-
