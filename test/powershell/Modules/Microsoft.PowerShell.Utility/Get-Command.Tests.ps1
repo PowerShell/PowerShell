@@ -101,6 +101,10 @@ Describe "Get-Command Feature tests" -Tag Feature {
         It "No results if wildcard is used" {
             Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
         }
+
+        It "Returns CommandNotFoundException if a single space is used" {
+            {Get-Command ' ' -ErrorAction Stop} | Should -Throw -ErrorId "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+        }
     }
 }
 
