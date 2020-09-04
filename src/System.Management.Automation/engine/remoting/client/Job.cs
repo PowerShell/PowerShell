@@ -2028,7 +2028,7 @@ namespace System.Management.Automation
                 using (ManualResetEvent connectResult = new ManualResetEvent(false))
                 {
                     EventHandler<EventArgs> throttleCompleteEventHandler =
-                            (object sender, EventArgs eventArgs) => connectResult.Set();
+                        (object sender, EventArgs eventArgs) => connectResult.Set();
 
                     connectThrottleManager.ThrottleComplete += throttleCompleteEventHandler;
                     try

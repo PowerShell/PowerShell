@@ -2621,8 +2621,7 @@ namespace System.Management.Automation.Remoting.Client
             // Dispose and de-initialize the WSManAPIData instance object on separate worker thread to ensure
             // it is not run on a WinRM thread (which will fail).
             // Note that WSManAPIData.Dispose() method is thread safe.
-            System.Threading.ThreadPool.QueueUserWorkItem(
-                (state) => tempWSManApiData.Dispose());
+            ThreadPool.QueueUserWorkItem((_) => tempWSManApiData.Dispose());
         }
 
         #endregion
