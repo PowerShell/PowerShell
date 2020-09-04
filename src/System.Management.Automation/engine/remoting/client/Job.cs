@@ -787,12 +787,12 @@ namespace System.Management.Automation
         {
             this.Error.Add(errorRecord);
             this.InvokeCmdletMethodAndWaitForResults<object>(
-                    (Cmdlet cmdlet) =>
-                    {
-                        this.WriteError(cmdlet, errorRecord);
-                        return null;
-                    },
-                    out exceptionThrownOnCmdletThread);
+                (Cmdlet cmdlet) =>
+                {
+                    this.WriteError(cmdlet, errorRecord);
+                    return null;
+                },
+                out exceptionThrownOnCmdletThread);
         }
 
         internal virtual void WriteWarning(string message)
@@ -858,15 +858,15 @@ namespace System.Management.Automation
             string caption)
         {
             InvokeCmdletMethodAndIgnoreResults(
-                    (Cmdlet cmdlet) =>
-                    {
-                        ShouldProcessReason throwAwayProcessReason;
-                        cmdlet.ShouldProcess(
-                            verboseDescription,
-                            verboseWarning,
-                            caption,
-                            out throwAwayProcessReason);
-                    });
+                (Cmdlet cmdlet) =>
+                {
+                    ShouldProcessReason throwAwayProcessReason;
+                    cmdlet.ShouldProcess(
+                        verboseDescription,
+                        verboseWarning,
+                        caption,
+                        out throwAwayProcessReason);
+                });
         }
 
         internal virtual bool ShouldProcess(

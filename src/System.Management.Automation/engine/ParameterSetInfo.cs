@@ -92,18 +92,18 @@ namespace System.Management.Automation
             Text.StringBuilder result = new Text.StringBuilder();
 
             GenerateParametersInDisplayOrder(
-                                 parameter => AppendFormatCommandParameterInfo(parameter, result),
-                                 (string str) =>
-                                 {
-                                     if (result.Length > 0)
-                                     {
-                                         result.Append(" ");
-                                     }
+                parameter => AppendFormatCommandParameterInfo(parameter, result),
+                (string str) =>
+                {
+                    if (result.Length > 0)
+                    {
+                        result.Append(" ");
+                    }
 
-                                     result.Append("[");
-                                     result.Append(str);
-                                     result.Append("]");
-                                 });
+                    result.Append("[");
+                    result.Append(str);
+                    result.Append("]");
+                });
 
             return result.ToString();
         }

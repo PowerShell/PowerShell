@@ -154,9 +154,10 @@ namespace Microsoft.PowerShell.Cmdletization
                         : ((PSObject pso) =>
                         {
                             var objectInstance =
-                                (TObjectInstance)
-                                LanguagePrimitives.ConvertTo(pso, typeof(TObjectInstance),
-                                                             CultureInfo.InvariantCulture);
+                                (TObjectInstance)LanguagePrimitives.ConvertTo(
+                                    pso,
+                                    typeof(TObjectInstance),
+                                    CultureInfo.InvariantCulture);
                             actionAgainstResults(sessionForJob, objectInstance);
                         }));
             }

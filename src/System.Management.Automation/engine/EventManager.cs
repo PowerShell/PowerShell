@@ -1133,7 +1133,7 @@ namespace System.Management.Automation
                     // teardown event. That can result in starvation of
                     // foreground threads that also want to use the runspace.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(
-                        (object unused) =>
+                        (_) =>
                         {
                             System.Threading.Thread.Sleep(100);
                             this.PulseEngine();
