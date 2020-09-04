@@ -900,10 +900,7 @@ namespace System.Management.Automation.Remoting
 
             ManualResetEventSlim clientConnectionEnded = new ManualResetEventSlim(false);
             IPCNamedPipeServer.ListenerEnded -= OnIPCNamedPipeServerEnded;
-            IPCNamedPipeServer.ListenerEnded += (sender, e) =>
-                {
-                    clientConnectionEnded.Set();
-                };
+            IPCNamedPipeServer.ListenerEnded += (sender, e) => clientConnectionEnded.Set();
 
             // Wait for server to service a single client connection.
             clientConnectionEnded.Wait();

@@ -983,10 +983,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 // wait for the close to be completed and then release the resources.
-                this.CloseCompleted += (object source, EventArgs args) =>
-                {
-                    Dispose(false);
-                };
+                this.CloseCompleted += (object source, EventArgs args) => Dispose(false);
 
                 try
                 {

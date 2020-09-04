@@ -455,10 +455,7 @@ namespace Microsoft.PowerShell.Commands
             _taskCollection = new PSDataCollection<System.Management.Automation.PSTasks.PSTask>();
             _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
             _taskPool = new PSTaskPool(ThrottleLimit, UseNewRunspace);
-            _taskPool.PoolComplete += (sender, args) =>
-            {
-                _taskDataStreamWriter.Close();
-            };
+            _taskPool.PoolComplete += (sender, args) => _taskDataStreamWriter.Close();
 
             // Create timeout timer if requested.
             if (TimeoutSeconds != 0)

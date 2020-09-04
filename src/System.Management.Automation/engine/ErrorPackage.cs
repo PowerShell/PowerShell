@@ -1206,21 +1206,21 @@ namespace System.Management.Automation
 
         private void ToPSObjectForRemoting(PSObject dest, bool serializeExtInfo)
         {
-            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", () => { return Exception; });
-            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", () => { return TargetObject; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", () => { return FullyQualifiedErrorId; });
-            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", () => { return InvocationInfo; });
-            RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", () => { return (int)CategoryInfo.Category; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", () => { return CategoryInfo.Activity; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", () => { return CategoryInfo.Reason; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetName", () => { return CategoryInfo.TargetName; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", () => { return CategoryInfo.TargetType; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", () => { return CategoryInfo.GetMessage(CultureInfo.CurrentCulture); });
+            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", () => Exception);
+            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", () => TargetObject);
+            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", () => FullyQualifiedErrorId);
+            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", () => InvocationInfo);
+            RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", () => (int)CategoryInfo.Category);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", () => CategoryInfo.Activity);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", () => CategoryInfo.Reason);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetName", () => CategoryInfo.TargetName);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", () => CategoryInfo.TargetType);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", () => CategoryInfo.GetMessage(CultureInfo.CurrentCulture));
 
             if (ErrorDetails != null)
             {
-                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", () => { return ErrorDetails.Message; });
-                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", () => { return ErrorDetails.RecommendedAction; });
+                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", () => ErrorDetails.Message);
+                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", () => ErrorDetails.RecommendedAction);
             }
 
             if (!serializeExtInfo || this.InvocationInfo == null)
@@ -1231,12 +1231,12 @@ namespace System.Management.Automation
             {
                 RemotingEncoder.AddNoteProperty(dest, "SerializeExtendedInfo", () => true);
                 this.InvocationInfo.ToPSObjectForRemoting(dest);
-                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", () => { return PipelineIterationInfo; });
+                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", () => PipelineIterationInfo);
             }
 
             if (!string.IsNullOrEmpty(this.ScriptStackTrace))
             {
-                RemotingEncoder.AddNoteProperty(dest, "ErrorDetails_ScriptStackTrace", () => { return this.ScriptStackTrace; });
+                RemotingEncoder.AddNoteProperty(dest, "ErrorDetails_ScriptStackTrace", () => this.ScriptStackTrace);
             }
         }
 

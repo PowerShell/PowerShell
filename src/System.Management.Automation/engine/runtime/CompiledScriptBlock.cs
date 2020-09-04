@@ -726,7 +726,7 @@ namespace System.Management.Automation
         internal SteppablePipeline GetSteppablePipelineImpl(CommandOrigin commandOrigin, object[] args)
         {
             var pipelineAst = GetSimplePipeline(
-                resourceString => { throw PSTraceSource.NewInvalidOperationException(resourceString); });
+                resourceString => throw PSTraceSource.NewInvalidOperationException(resourceString));
             Diagnostics.Assert(pipelineAst != null, "This should be checked by GetSimplePipeline");
 
             if (pipelineAst.PipelineElements[0] is not CommandAst)

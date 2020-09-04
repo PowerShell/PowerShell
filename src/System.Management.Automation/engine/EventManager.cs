@@ -954,10 +954,7 @@ namespace System.Management.Automation
             else
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(
-                    (object unused) =>
-                    {
-                        ProcessNewEventImplementation(newEvent, false);
-                    }));
+                    (object unused) => ProcessNewEventImplementation(newEvent, false)));
             }
         }
 

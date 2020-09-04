@@ -176,10 +176,7 @@ namespace System.Management.Automation.Remoting
             // Otherwise write it to error-stream.
             else
             {
-                writeErrorAction = (ErrorRecord errorRecord) =>
-                {
-                    errorStream.Write(errorRecord);
-                };
+                writeErrorAction = (ErrorRecord errorRecord) => errorStream.Write(errorRecord);
             }
 
             this.Execute(writeErrorAction);

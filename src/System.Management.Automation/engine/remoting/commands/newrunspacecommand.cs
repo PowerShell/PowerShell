@@ -397,10 +397,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             string message = StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, eventArgs.Data.OriginalString);
-            Action<Cmdlet> warningWriter = (Cmdlet cmdlet) =>
-            {
-                cmdlet.WriteWarning(message);
-            };
+            Action<Cmdlet> warningWriter = (Cmdlet cmdlet) => cmdlet.WriteWarning(message);
             _stream.Write(warningWriter);
         }
 
@@ -450,10 +447,7 @@ namespace Microsoft.PowerShell.Commands
 
                         this.RunspaceRepository.Add(remoteRunspaceInfo);
 
-                        Action<Cmdlet> outputWriter = (Cmdlet cmdlet) =>
-                        {
-                            cmdlet.WriteObject(remoteRunspaceInfo);
-                        };
+                        Action<Cmdlet> outputWriter = (Cmdlet cmdlet) => cmdlet.WriteObject(remoteRunspaceInfo);
                         if (writer.IsOpen)
                         {
                             writer.Write(outputWriter);
@@ -589,10 +583,7 @@ namespace Microsoft.PowerShell.Commands
                                         (connectionUri != null) ?
                                         connectionUri.AbsoluteUri : string.Empty);
 
-                        Action<Cmdlet> verboseWriter = (Cmdlet cmdlet) =>
-                        {
-                            cmdlet.WriteVerbose(message);
-                        };
+                        Action<Cmdlet> verboseWriter = (Cmdlet cmdlet) => cmdlet.WriteVerbose(message);
                         if (writer.IsOpen)
                         {
                             writer.Write(verboseWriter);
@@ -607,10 +598,7 @@ namespace Microsoft.PowerShell.Commands
                                  "PSSessionStateClosed",
                                        ErrorCategory.OpenError, remoteRunspace);
 
-                            Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
-                            {
-                                cmdlet.WriteError(errorRecord);
-                            };
+                            Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                             if (writer.IsOpen)
                             {
                                 writer.Write(errorWriter);
@@ -716,10 +704,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                                 ErrorCategory.InvalidArgument, remoteRunspaceInfo);
 
-                        Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
-                        {
-                            cmdlet.WriteError(errorRecord);
-                        };
+                        Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                         writer.Write(errorWriter);
                     }
                 }
@@ -853,10 +838,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                             ErrorCategory.InvalidArgument, resolvedComputerNames[i]);
 
-                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
-                    {
-                        cmdlet.WriteError(errorRecord);
-                    };
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                     writer.Write(errorWriter);
                 }
             }
@@ -1262,10 +1244,7 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord errorRecord = new ErrorRecord(e, "CreateRemoteRunspaceFailed",
                 ErrorCategory.InvalidArgument, uri);
 
-            Action<Cmdlet> errorWriter = (Cmdlet cmdlet) =>
-            {
-                cmdlet.WriteError(errorRecord);
-            };
+            Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
             writer.Write(errorWriter);
         }
 

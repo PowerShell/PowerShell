@@ -2622,10 +2622,7 @@ namespace System.Management.Automation.Remoting.Client
             // it is not run on a WinRM thread (which will fail).
             // Note that WSManAPIData.Dispose() method is thread safe.
             System.Threading.ThreadPool.QueueUserWorkItem(
-                (state) =>
-                {
-                    tempWSManApiData.Dispose();
-                });
+                (state) => tempWSManApiData.Dispose());
         }
 
         #endregion

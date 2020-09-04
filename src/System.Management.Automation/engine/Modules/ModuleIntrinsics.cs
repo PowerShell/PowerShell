@@ -1527,7 +1527,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, (FunctionInfo ci) => { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, (FunctionInfo ci) => ci.Name);
             }
 
             if (cmdletPatterns != null)
@@ -1582,7 +1582,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, (CmdletInfo ci) => { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, (CmdletInfo ci) => ci.Name);
             }
 
             if (variablePatterns != null)
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, (PSVariable v) => { return v.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, (PSVariable v) => v.Name);
             }
 
             if (aliasPatterns != null)
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, (AliasInfo ci) => { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, (AliasInfo ci) => ci.Name);
             }
         }
 

@@ -107,10 +107,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Id,
-                    (Breakpoint breakpoint, int id) =>
-                    {
-                        return breakpoint.Id == id;
-                    }
+                    (Breakpoint breakpoint, int id) => breakpoint.Id == id
                 );
             }
             else if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
