@@ -102,9 +102,6 @@ Describe "Get-Command Feature tests" -Tag Feature {
             Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
         }
 
-        It "Returns CommandNotFoundException if a single space is used" {
-            {Get-Command ' ' -ErrorAction Stop} | Should -Throw -ErrorId "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
-        }
     }
 }
 
@@ -181,6 +178,16 @@ Describe "Get-Command" -Tag CI {
             $Result = Get-Command -Name Remove-Item
 
             $Result | Should -BeOfType [System.Management.Automation.CommandInfo]
+        }
+
+        It "Throws <expected> exception if <name> name is used" -TestCases @(
+            @{ Name = ' '; expected = "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand" }
+            @{ Name = ''; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
+            @{ Name = $null; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
+        ) {
+            param($name, $expected)
+            $shortExpected = $expected -split ","
+            { Get-Command $name -ErrorAction Stop } | Should -Throw -ErrorId $expected
         }
     }
 }
