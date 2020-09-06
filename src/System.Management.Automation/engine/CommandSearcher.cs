@@ -1100,7 +1100,6 @@ namespace System.Management.Automation
                 // Home Path:           "~\command.exe"
                 // Drive Relative Path: "\Users\User\AppData\Local\Temp\command.exe"
 
-                //char firstChar = _commandName[0];
                 if (_commandName.Length != 0) 
                 {
                     char firstChar = _commandName[0];
