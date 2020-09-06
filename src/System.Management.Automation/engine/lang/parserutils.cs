@@ -1976,7 +1976,7 @@ namespace System.Management.Automation
         {
             ActionPreference pref = ActionPreference.Continue;
 
-            if (context.PSDebugTraceLevel > level)
+            if (context.PSDebugTraceLevel > level && context.PSDebugTraceLevel < 3)
             {
                 string message;
                 if (args == null || 0 == args.Length)

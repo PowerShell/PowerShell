@@ -1187,7 +1187,7 @@ namespace System.Management.Automation
                     OnSequencePointHit(functionContext);
                 }
 
-                if (_context.PSDebugTraceLevel > 1 && !functionContext._debuggerStepThrough && !functionContext._debuggerHidden)
+                if (_context.PSDebugTraceLevel == 2 && !functionContext._debuggerStepThrough && !functionContext._debuggerHidden)
                 {
                     TraceScriptFunctionEntry(functionContext);
                 }
@@ -1541,7 +1541,8 @@ namespace System.Management.Automation
         {
             if (_context.ShouldTraceStatement && !_callStack.Last().IsFrameHidden && !functionContext._debuggerStepThrough)
             {
-                TraceLine(functionContext.CurrentPosition);
+                Profiler.Trace(functionContext);
+                TraceLine(functionContext);
             }
 
             // If a nested debugger received a stop debug command then all debugging
@@ -4116,8 +4117,16 @@ namespace System.Management.Automation
             ((InternalHostUserInterface)_context.EngineHostInterface.UI).WriteDebugLine(message, ref pref);
         }
 
-        internal void TraceLine(IScriptExtent extent)
+        internal void TraceLine(FunctionContext functionContext)
         {
+            // this is called from few places just skip it for now
+            var a = true;
+            if (a)
+            {
+                return;
+            }
+
+            IScriptExtent extent = functionContext.CurrentPosition;
             string msg = PositionUtilities.BriefMessage(extent.StartScriptPosition);
             InternalHostUserInterface ui = (InternalHostUserInterface)_context.EngineHostInterface.UI;
 
@@ -4146,7 +4155,7 @@ namespace System.Management.Automation
         internal void TraceVariableSet(string varName, object value)
         {
             // Don't trace into debugger hidden or debugger step through unless the trace level > 2.
-            if (_callStack.Any() && _context.PSDebugTraceLevel <= 2)
+            if (_callStack.Any() && _context.PSDebugTraceLevel != 2)
             {
                 // Skip trace messages in hidden/step through frames.
                 var frame = _callStack.Last();

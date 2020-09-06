@@ -26,7 +26,7 @@ namespace System.Management.Automation
             }
 
             // Variable assignment is traced only if trace level 2 is specified.
-            if (executionContext.PSDebugTraceLevel > 1)
+            if (executionContext.PSDebugTraceLevel == 2)
             {
                 executionContext.Debugger.TraceVariableSet(variablePath.UnqualifiedPath, value);
             }

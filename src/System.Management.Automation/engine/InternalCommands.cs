@@ -2498,7 +2498,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the script tracing level.
         /// </summary>
         [Parameter(ParameterSetName = "on")]
-        [ValidateRange(0, 2)]
+        [ValidateRange(0, 3)]
         public int Trace
         {
             get
