@@ -1099,13 +1099,19 @@ namespace System.Management.Automation
                 // Relative Path:       ".\command.exe"
                 // Home Path:           "~\command.exe"
                 // Drive Relative Path: "\Users\User\AppData\Local\Temp\command.exe"
-                if (!string.IsNullOrEmpty(_commandName) && (_commandName[0] == '.' || _commandName[0] == '~' || _commandName[0] == '\\'))
+
+                //char firstChar = _commandName[0];
+                if (_commandName.Length != 0) 
                 {
-                    using (CommandDiscovery.discoveryTracer.TraceScope(
-                        "{0} appears to be a relative path. Trying to resolve relative path",
-                        _commandName))
+                    char firstChar = _commandName[0];
+                    if (firstChar == '.' || firstChar == '~' || firstChar == '\\')
                     {
-                        result = ResolvePSPath(_commandName);
+                        using (CommandDiscovery.discoveryTracer.TraceScope(
+                            "{0} appears to be a relative path. Trying to resolve relative path",
+                            _commandName))
+                        {
+                            result = ResolvePSPath(_commandName);
+                        }
                     }
                 }
             }
