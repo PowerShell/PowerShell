@@ -1087,7 +1087,7 @@ namespace System.Management.Automation
             string? result = null;
 
             if (_context.EngineSessionState != null &&
-                _context.EngineSessionState.ProviderCount > 0)
+                _context.EngineSessionState.ProviderCount > 0 && _commandName.Length != 0)
             {
                 // NTRAID#Windows OS Bugs-1009294-2004/02/04-JeffJon
                 // This is really slow.  Maybe since we are only allowing FS paths right
@@ -1100,17 +1100,14 @@ namespace System.Management.Automation
                 // Home Path:           "~\command.exe"
                 // Drive Relative Path: "\Users\User\AppData\Local\Temp\command.exe"
 
-                if (_commandName.Length != 0) 
+                char firstChar = _commandName[0];
+                if (firstChar == '.' || firstChar == '~' || firstChar == '\\')
                 {
-                    char firstChar = _commandName[0];
-                    if (firstChar == '.' || firstChar == '~' || firstChar == '\\')
+                    using (CommandDiscovery.discoveryTracer.TraceScope(
+                        "{0} appears to be a relative path. Trying to resolve relative path",
+                        _commandName))
                     {
-                        using (CommandDiscovery.discoveryTracer.TraceScope(
-                            "{0} appears to be a relative path. Trying to resolve relative path",
-                            _commandName))
-                        {
-                            result = ResolvePSPath(_commandName);
-                        }
+                        result = ResolvePSPath(_commandName);
                     }
                 }
             }
