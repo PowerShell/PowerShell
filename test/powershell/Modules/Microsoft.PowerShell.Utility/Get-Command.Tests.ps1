@@ -186,7 +186,6 @@ Describe "Get-Command" -Tag CI {
             @{ Name = $null; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
         ) {
             param($name, $expected)
-            $shortExpected = $expected -split ","
             { Get-Command $name -ErrorAction Stop } | Should -Throw -ErrorId $expected
         }
     }
