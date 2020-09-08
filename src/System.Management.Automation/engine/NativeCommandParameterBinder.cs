@@ -122,14 +122,6 @@ namespace System.Management.Automation
                                 break;
                         }
 
-                        // Prior to PSNativePSPathResolution experimental feature, a single quote worked the same as a double quote
-                        // so if the feature is not enabled, we treat any quotes as double quotes.  When this feature is no longer
-                        // experimental, this code here needs to be removed.
-                        if (!ExperimentalFeature.IsEnabled("PSNativePSPathResolution") && stringConstantType == StringConstantType.SingleQuoted)
-                        {
-                            stringConstantType = StringConstantType.DoubleQuoted;
-                        }
-
                         // We need to search the string for a double quote.
                         // If the double quote is not preceded by a "\", we need to add one
                         string valueString = argValue as string;
