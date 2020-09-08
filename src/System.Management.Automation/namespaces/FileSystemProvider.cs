@@ -8246,7 +8246,7 @@ namespace Microsoft.PowerShell.Commands
             bool isHardLink = false;
 
             // only check for hard link if the item is not directory
-            if (!((fileInfo.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory))
+            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
                 IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
                     fileInfo.FullName,
