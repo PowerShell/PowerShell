@@ -90,7 +90,7 @@
 
 - Update `README` links and `metadata.json` for `7.1.0-preview.6` (#13437)
 
-[7.1.0-preview.7]: https://github.com/PowerShell/PowerShell/compare/...v7.1.0-preview.7
+[7.1.0-preview.7]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.6...v7.1.0-preview.7
 
 ## [7.1.0-preview.6] - 2020-08-17
 
