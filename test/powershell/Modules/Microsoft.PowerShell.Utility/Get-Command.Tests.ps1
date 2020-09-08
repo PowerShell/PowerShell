@@ -180,13 +180,13 @@ Describe "Get-Command" -Tag CI {
             $Result | Should -BeOfType [System.Management.Automation.CommandInfo]
         }
 
-        It "Throws <expected> exception if <name> name is used" -TestCases @(
-            @{ Name = ' '; expected = "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand" }
-            @{ Name = ''; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
-            @{ Name = $null; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
+        It "Throws '<expected>' exception if <name> name is used" -TestCases @(
+            @{ Name = 'space'; Value = ' '; expected = "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand" }
+            @{ Name = 'empty'; Value = ''; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
+            @{ Name = 'null'; Value = $null; expected = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCommandCommand" }
         ) {
-            param($name, $expected)
-            { Get-Command $name -ErrorAction Stop } | Should -Throw -ErrorId $expected
+            param($value, $expected)
+            { Get-Command $value -ErrorAction Stop } | Should -Throw -ErrorId $expected
         }
     }
 }
