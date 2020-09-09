@@ -1,5 +1,97 @@
 # Current preview release
 
+## [7.1.0-preview.7] - 2020-09-08
+
+### Breaking Changes
+
+- Fix `$?` to not be `$false` when native command writes to `stderr` (#13395)
+
+### Engine Updates and Fixes
+
+- Initial work of the subsystem plugin model (for minimal powershell) (#13186)
+- Optimize `GetSystemLockdownPolicy` for non-lockdown scenarios (#13438)
+
+### General Cmdlet Updates and Fixes
+
+- Revert "Add the parameter `-Paged` to `Get-Help` to support paging (#13374)" (#13519)
+- Add support for `TLS` 1.3 in Web cmdlets (#13409) (Thanks @iSazonov!)
+- Add null check for `args` in `CommandLineParser` (#13451) (Thanks @iSazonov!)
+- Process reparse points for Microsoft Store applications (#13481) (Thanks @iSazonov!)
+- Move `PSNullConditionalOperators` feature out of experimental (#13529)
+- Move `PSNativePSPathResolution` feature out of Experimental (#13522)
+- Use field if property does not exist for `ObRoot` when using PowerShell Direct to container (#13375) (Thanks @hemisphera!)
+- Suppress `UTF-7` obsolete warnings (#13484)
+- Avoid multiple enumerations of an `IEnumerable<Expression>` instance in `Compiler.cs` (#13491)
+- Change `Add-Type -OutputType` to not support `ConsoleApplication` and `WindowsApplication` (#13440)
+- Create warnings when `UTF-7` is specified as an encoding (#13430)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @tamasvajk</p>
+
+</summary>
+
+<ul>
+<li>Add single blank line after copyright header (#13486) (Thanks @xtqqczze!)</li>
+<li>Use read-only auto-implemented properties (#13507) (Thanks @xtqqczze!)</li>
+<li>Use boolean instead of bitwise operators on bool values (#13506) (Thanks @xtqqczze!)</li>
+<li>Fix erroneous assert (#13495) (Thanks @tamasvajk!)</li>
+<li>Cleanup: remove duplicate words in comments (#13539) (Thanks @xtqqczze!)</li>
+<li>Reformat <code>StringUtil</code> (#13509) (Thanks @xtqqczze!)</li>
+<li>Use <code>uint</code> instead of <code>long</code> for <code>PDH</code> constants (#13502) (Thanks @xtqqczze!)</li>
+<li>Cleanup: Remove redundant empty lines (#13404) (Thanks @xtqqczze!)</li>
+<li>Add <code>StringUtil.Format</code> overload to avoid unnecessary allocations (#13408) (Thanks @xtqqczze!)</li>
+<li>Fix test hooks for <code>CommandLineParameterParser</code> (#13459)</li>
+<li>Remove redundant delegate creation (#13441) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- vscode: Add `editorconfig` to recommended extensions (#13537) (Thanks @xtqqczze!)
+- Remove the out-dated `ZapDisable` related code from `build.psm1` (#13350) (Thanks @jackerr3!)
+
+### Tests
+
+- Disable `WMF` download link validation test (#13479)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@yecril71pl</p>
+
+</summary>
+
+<ul>
+<li>Add <code>Microsoft.NET.Test.Sdk</code> dependency (Internal 12589)</li>
+<li>Update .NET NuGet package version to <code>5.0.0-preview.8.20407.11</code> (Internal 12555)</li>
+<li>Update to .NET 5 preview 8 (#13530)</li>
+<li>Change stage dependency for docker release stage in release pipeline (#13512)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 16.7.0 to 16.7.1 (#13492)</li>
+<li>Create the folder before copying the global tools (#13476)</li>
+<li>A few fixes to the release pipeline (#13473)</li>
+<li>Bump <code>Markdig.Signed</code> from 0.20.0 to 0.21.1 (#13463)</li>
+<li>Add a pre-check for git to <code>build.psm1</code> (#13227) (Thanks @yecril71pl!)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README` links and `metadata.json` for `7.1.0-preview.6` (#13437)
+
+[7.1.0-preview.7]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.6...v7.1.0-preview.7
+
 ## [7.1.0-preview.6] - 2020-08-17
 
 ### Breaking Changes
