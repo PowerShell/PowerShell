@@ -111,6 +111,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
             $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
+
+        It "Error shows for advanced function" {
+            # need to have it virtually interactive so that InvocationInfo.MyCommand is empty
+            $e = '[cmdletbinding()]param()$pscmdlet.writeerror([System.Management.Automation.ErrorRecord]::new(([System.NotImplementedException]::new("myTest")),"stub","notimplemented","command"))' | pwsh -noprofile -file - | Out-String
+            $e | Should -Not -BeNullOrEmpty
+            $e | Should -BeLike "*: `e*myTest*"
+        }
     }
 
     Context 'NormalView tests' {
