@@ -1226,7 +1226,7 @@ namespace System.Management.Automation.Runspaces
                                             $reason = 'Exception'
                                         }
                                         # MyCommand can be the script block, so we don't want to show that so check if it's an actual command
-                                        elseif ($myinv.MyCommand -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
+                                        elseif ($myinv.MyCommand -and $myinv.MyCommand.Name -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
                                         {
                                             $reason = $myinv.MyCommand
                                         }
