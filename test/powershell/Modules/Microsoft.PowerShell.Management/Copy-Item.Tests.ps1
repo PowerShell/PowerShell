@@ -283,10 +283,10 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         It "Copy-Item Locally and Retain Attributes" {
             $srcDir = GetSourceFolderPath
             $destDir = GetDestinationFolderPath
-            $hiddenFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "HiddenFolder") -ItemType Directory
-            $hiddenFolder.Attributes += "Hidden"
-            Copy-Item -Path $hiddenFolder -Destination $destDir
-            ValidateCopyItemOperation -filePath $hiddenFolder
+            $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory
+            $testFolder.Attributes += "System"
+            Copy-Item -Path $testFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $testFolder
         }
     }
 
