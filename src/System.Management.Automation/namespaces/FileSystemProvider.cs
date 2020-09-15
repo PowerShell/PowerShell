@@ -7840,7 +7840,9 @@ namespace Microsoft.PowerShell.Commands
         // data is 16KB, plus there's a header.
         private const int MAX_REPARSE_SIZE = (16 * 1024) + REPARSE_GUID_DATA_BUFFER_HEADER_SIZE;
 
-        private const int ERROR_NOT_A_REPARSE_POINT = 4390;
+        private const int ERROR_NOT_A_REPARSE_POINT = 0x00001126;
+
+        private const int ERROR_INVALID_FUNCTION = 0x00000001;
 
         private const int FSCTL_GET_REPARSE_POINT = 0x000900A8;
 
@@ -8162,10 +8164,15 @@ namespace Microsoft.PowerShell.Commands
                     if (!result)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        if (lastError == ERROR_NOT_A_REPARSE_POINT)
+                        if (lastError == ERROR_NOT_A_REPARSE_POINT || lastError == ERROR_INVALID_FUNCTION)
+                        {
+                            // ERROR_INVALID_FUNCTION - underlying file system does not support reparse points
                             linkType = null;
+                        }
                         else
+                        {
                             throw new Win32Exception(lastError);
+                        }
                     }
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
@@ -8408,8 +8415,11 @@ namespace Microsoft.PowerShell.Commands
                 if (!result)
                 {
                     int lastError = Marshal.GetLastWin32Error();
-                    if (lastError == ERROR_NOT_A_REPARSE_POINT)
+                    if (lastError == ERROR_NOT_A_REPARSE_POINT || lastError == ERROR_INVALID_FUNCTION)
+                    {
+                        // ERROR_INVALID_FUNCTION - underlying file system does not support reparse points
                         return null;
+                    }
 
                     throw new Win32Exception(lastError);
                 }
