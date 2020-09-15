@@ -228,6 +228,11 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         {
             return (Get-Item -Path $destinationDirectory).FullName
         }
+
+        function GetSourceFolderPath
+        {
+            return (Get-Item -Path $sourceDirectory).FullName
+        }
     }
 
     AfterAll {
@@ -273,6 +278,15 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\SourceDirectory")
                 $copiedFilePath | Should -Exist
             }
+        }
+
+        It "Copy-Item Locally and Retain Attributes" {
+            $srcDir = GetSourceFolderPath
+            $destDir = GetDestinationFolderPath
+            $hiddenFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "HiddenFolder") -ItemType Directory
+            $hiddenFolder.Attributes += "Hidden"
+            Copy-Item -Path $hiddenFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $hiddenFolder
         }
     }
 
