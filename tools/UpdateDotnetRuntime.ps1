@@ -7,6 +7,9 @@ param (
     [string]$SDKVersionOverride,
 
     [Parameter()]
+    [switch]$UseNuGetOrg,
+
+    [Parameter()]
     [switch]$UpdateMSIPackaging,
 
     [Parameter()]
@@ -91,8 +94,9 @@ function Update-PackageVersion {
 
     $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
+    $source = if ($UseNuGetOrg) { 'nuget.org' } else { 'dotnet5' }
     $packages.GetEnumerator() | ForEach-Object {
-        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source 'dotnet5'
+        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
 
         foreach ($v in $_.Value) {
             $version = $v.Version
@@ -200,7 +204,7 @@ if ($dotnetUpdate.ShouldUpdate) {
     $addDotnet5Source = (-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
     $addDotnet5InternalSource = (-not (Get-PackageSource -Name 'dotnet5-internal' -ErrorAction SilentlyContinue))
 
-    if ($addDotnet5Source -or $addDotnet5InternalSource) {
+    if (!$UseNuGetOrg -and ($addDotnet5Source -or $addDotnet5InternalSource)) {
         $nugetFileSources = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add
 
         if ($addDotnet5Source) {
