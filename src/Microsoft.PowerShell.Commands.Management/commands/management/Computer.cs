@@ -123,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">
         /// streaming context
         /// </param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
