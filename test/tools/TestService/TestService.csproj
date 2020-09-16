@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Description>Very tiny windows service to do service testing</Description>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
     <AssemblyName>TestService</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
