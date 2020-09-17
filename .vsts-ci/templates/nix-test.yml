@@ -17,6 +17,8 @@ jobs:
   steps:
   - pwsh: |
       Get-ChildItem -Path env:
+      cat /etc/lsb-release
+      openssl version
     displayName: Capture Environment
     condition: succeededOrFailed()
 
