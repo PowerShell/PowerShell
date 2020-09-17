@@ -189,7 +189,7 @@ namespace System.Management.Automation
                 }
 
                 if (!ExperimentalFeature.IsEnabled("PSNativePSPathResolution") &&
-                    arg.Length == 0)
+                    !string.IsNullOrEmpty(arg))
                 {
                     continue;
                 }
