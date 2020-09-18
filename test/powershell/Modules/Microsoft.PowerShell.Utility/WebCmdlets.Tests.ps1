@@ -1747,7 +1747,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 }
                 catch
                 {
-                    Get-Error
+                    Get-Error | Write-Host
                     throw
                 }
 
