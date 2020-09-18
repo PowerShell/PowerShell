@@ -1743,18 +1743,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 try
                 {
-                    Write-Host "Running web request"
                     $response = Invoke-WebRequest @params -ErrorAction Stop
                 }
                 catch
                 {
-                    Write-Host "Caught error"
-                    $_ | Format-List * -Force
+                    Write-Host $_.Exception.StackTrace
+                    if ($_.Exception.InnerException) { Write-Host $_.Exception.InnerException.StackTrace }
+                    $_ | Format-List * -Force | Out-String
                     throw
                 }
                 finally
                 {
-                    Write-Host "In finally block"
                     Get-Error
                 }
 
