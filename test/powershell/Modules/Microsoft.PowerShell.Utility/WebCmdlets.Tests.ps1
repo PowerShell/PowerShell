@@ -1747,14 +1747,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 }
                 catch
                 {
-                    Write-Host $_.Exception.StackTrace
-                    if ($_.Exception.InnerException) { Write-Host $_.Exception.InnerException.StackTrace }
-                    $_ | Format-List * -Force | Out-String
+                    Write-Verbose -Verbose $_.Exception.StackTrace
+                    if ($_.Exception.InnerException) { Write-Verbose -Verbose $_.Exception.InnerException.StackTrace }
+                    $_ | Format-List * -Force | Out-String | Write-Verbose -Verbose
                     throw
                 }
                 finally
                 {
-                    Get-Error
+                    Get-Error | Out-String | Write-Verbose -Verbose
                 }
 
                 $result = $Response.Content | ConvertFrom-Json
