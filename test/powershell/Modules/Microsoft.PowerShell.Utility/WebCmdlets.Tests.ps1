@@ -1743,16 +1743,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 try
                 {
+                    Write-Host "Running web request"
                     $response = Invoke-WebRequest @params -ErrorAction Stop
                 }
                 catch
                 {
+                    Write-Host "Caught error"
                     $_ | Format-List * -Force
                     throw
                 }
                 finally
                 {
-                    Get-Error | Write-Host
+                    Write-Host "In finally block"
+                    Get-Error
                 }
 
                 $result = $Response.Content | ConvertFrom-Json
