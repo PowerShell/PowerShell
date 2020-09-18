@@ -1747,9 +1747,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 }
                 catch
                 {
-                    Get-Error | Write-Host
                     $_ | Format-List * -Force
                     throw
+                }
+                finally
+                {
+                    Get-Error | Write-Host
                 }
 
                 $result = $Response.Content | ConvertFrom-Json
