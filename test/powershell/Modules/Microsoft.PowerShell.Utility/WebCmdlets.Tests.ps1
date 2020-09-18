@@ -1743,11 +1743,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 try
                 {
-                    $response = Invoke-WebRequest @params
+                    $response = Invoke-WebRequest @params -ErrorAction Stop
                 }
                 catch
                 {
                     Get-Error | Write-Host
+                    $_ | Format-List * -Force
                     throw
                 }
 
