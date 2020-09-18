@@ -1740,7 +1740,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                     SslProtocol          = $SslProtocol
                     SkipCertificateCheck = $true
                 }
-                $response = Invoke-WebRequest @params
+
+                try
+                {
+                    $response = Invoke-WebRequest @params
+                }
+                catch
+                {
+                    Get-Error
+                    throw
+                }
+
                 $result = $Response.Content | ConvertFrom-Json
 
                 $result.headers.Host | Should -Be $params.Uri.Authority
