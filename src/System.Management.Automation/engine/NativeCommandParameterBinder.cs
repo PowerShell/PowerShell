@@ -522,6 +522,14 @@ namespace System.Management.Automation
                 sep = arg[pieces[0].Length];
             }
 
+            // Special case: only accept : when starting with [/-].
+            // (Just to make C:\Program Files look better.)
+            // The better solution might be using a different set of delims?
+            if (sep == ":" && !ColonInitials.Contains(arg[0]))
+            {
+                return (new string[] { arg }, "");
+            }
+
             return (pieces, sep);
         }
 
@@ -532,6 +540,7 @@ namespace System.Management.Automation
         private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
         private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
         private static const char[] OptionDeliminators = { ':', '=' };
+        private static const string ColonInitials = "-/";
 
         #endregion private members
     }
