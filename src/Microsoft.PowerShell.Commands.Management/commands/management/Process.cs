@@ -1621,12 +1621,24 @@ namespace Microsoft.PowerShell.Commands
         public string FilePath { get; set; }
 
         /// <summary>
-        /// Arguments for the process.
+        /// Arguments for the process (non-escaped).
         /// </summary>
+        /// <remarks>
+        /// This option accepts an array of strings due to legacy concerns. Use
+        /// ArgumentArray instead for properly-escaped arguments.
+        /// </remarks>
         [Parameter(Position = 1)]
         [Alias("Args")]
+        [Alias("ArgumentList")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ArgumentList { get; set; }
+        public string[] ArgumentString { get; set; }
+
+        /// <summary>
+        /// Arguments for the process (escaped).
+        /// </summary>
+        [Parameter]
+        [Alias("Argv")]
+        public string[] ArgumentArray { get; set; }
 
         /// <summary>
         /// Credentials for the process.
@@ -1804,17 +1816,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Whether to escape the argumentList.
-        /// </summary>
-        /// <remarks>
-        /// <para>When set to true, the argumentList is escaped using the same algorithm as in the PSEscapeForNativeExecutables experimental feature. This is the correct behavior for all Unix programs as well as Windows applications using MSVCRT argv.</para>
-        /// <para>When set to false, the command-line is produced by joining argumentList with spaces.</para>
-        /// <para>If no value is provided, the on-off state of PSEscapeForNativeExecutables is used as the default.</para>
-        /// </remarks>
-        [Parameter]
-        public bool? EscapeArgs { get; set; }
-
         private SwitchParameter _UseNewEnvironment;
 
         #endregion
@@ -1880,20 +1881,19 @@ namespace Microsoft.PowerShell.Commands
 
                 // Linux relies on `xdg-open` and macOS relies on `open` which behave differently than Windows ShellExecute when running console commands
                 // as a new console will be opened.  So to avoid that, we only use ShellExecute on non-Windows if the filename is not an actual command (like a URI)
-                startInfo.UseShellExecute = (ArgumentList == null);
+                startInfo.UseShellExecute = (ArgumentString == null);
 #endif
             }
 
-            if (ArgumentList != null)
+            if (ArgumentString != null)
             {
-                if (EscapeArgs ?? ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables"))
-                {
-                    startInfo.Arguments = PasteArguments.Paste(ArgumentList, forceQuote: false);
-                }
-                else
-                {
-                    startInfo.Arguments = string.Join(' ', ArgumentList);
-                }
+                // FIXME: make a warning for non-one size?
+                startInfo.Arguments = string.Join(' ', ArgumentString);
+            }
+            else if (ArgumentArray != null)
+            {
+                // FIXME: make NativeCommandParameterBinder magic public?
+                startInfo.Arguments = PasteArguments.Paste(ArgumentString, forceQuote: false);
             }
 
             if (WorkingDirectory != null)
