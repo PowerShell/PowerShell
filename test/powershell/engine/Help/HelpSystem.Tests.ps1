@@ -529,6 +529,30 @@ Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags
     }
 }
 
+Describe "Get-Help should work for script file with using statement" -Tags 'CI' {
+    BeforeAll {
+        $test = @'
+            using namespace System.Management.Automation
+
+            <#
+            .SYNOPSIS
+            A simple script for problem reproduction.
+            #>
+            Param ($SampleParam)
+'@
+        $testPath = Join-Path $TestDrive "test.ps1"
+        Set-Content -Path $testPath -Value $test
+    }
+
+    AfterAll {
+    }
+
+    It "Get-Help should work for script file with using statement" {
+        $testHelpSynopsis = (Get-Help $testPath).Synopsis
+        $testHelpSynopsis | Should -BeExactly "A simple script for problem reproduction."
+    }
+}
+
 Describe "Get-Help for function parameter should be consistent" -Tags 'CI' {
     BeforeAll {
         $test1 = @'
