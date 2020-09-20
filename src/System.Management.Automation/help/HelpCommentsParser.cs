@@ -1124,6 +1124,8 @@ namespace System.Management.Automation
             int lastTokenIndex;
 
             var funcDefnAst = ast as FunctionDefinitionAst;
+            var scriptBlockAst = ast as ScriptBlockAst;
+            Queue<UsingStatementAst> unprocessedUsingStatements = new Queue<UsingStatementAst>();
             List<Language.Token> commentBlock;
             if (funcDefnAst != null || configAst != null)
             {
@@ -1160,6 +1162,11 @@ namespace System.Management.Automation
             {
                 startTokenIndex = savedStartIndex = 0;
                 lastTokenIndex = tokens.Length - 1;
+
+                if (scriptBlockAst != null)
+                {
+                    unprocessedUsingStatements = new Queue<UsingStatementAst>(scriptBlockAst.UsingStatements);
+                }
             }
             else
             {
@@ -1181,7 +1188,20 @@ namespace System.Management.Automation
             {
                 commentBlock = GetCommentBlock(tokens, ref startTokenIndex);
                 if (commentBlock.Count == 0)
-                    break;
+                {
+                    if (unprocessedUsingStatements.Count == 0 || tokens[startTokenIndex].Kind != TokenKind.Using)
+                    {
+                        break;
+                    }
+
+                    UsingStatementAst unprocessedUsing = unprocessedUsingStatements.Dequeue();
+                    while (tokens[startTokenIndex].Extent.EndOffset <= unprocessedUsing.Extent.EndOffset)
+                    {
+                        ++startTokenIndex;
+                    }
+
+                    continue;
+                }
 
                 if (!HelpCommentsParser.IsCommentHelpText(commentBlock))
                     continue;
