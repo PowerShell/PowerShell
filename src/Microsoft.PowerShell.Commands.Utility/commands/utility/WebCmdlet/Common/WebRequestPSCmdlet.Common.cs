@@ -1599,7 +1599,13 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (HttpRequestException ex)
                             {
-                                ThrowTerminatingError(GetErrorRecordFromWebRequestException(ex, request));
+                                ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                if (ex.InnerException != null)
+                                {
+                                    er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
+                                }
+
+                                ThrowTerminatingError(er);
                             }
 
                             if (_followRelLink)
@@ -1956,33 +1962,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-
-        private ErrorRecord GetErrorRecordFromWebRequestException(HttpRequestException exception, HttpRequestMessage request)
-        {
-            // Specifically handle scenarios where TLS configurations are not supported
-            if (exception.InnerException?.InnerException != null
-                && exception.InnerException.InnerException is CryptographicException cryptoException)
-            {
-                return new ErrorRecord(
-                    exception,
-                    "UnsupportedSslConfiguration",
-                    ErrorCategory.AuthenticationError,
-                    SslProtocol)
-                {
-                    ErrorDetails = new ErrorDetails(cryptoException.Message)
-                };
-            }
-
-            var error = new ErrorRecord(exception, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-
-            if (exception.InnerException != null)
-            {
-                error.ErrorDetails = new ErrorDetails(exception.InnerException.Message);
-            };
-
-            return error;
-        }
-
         #endregion Helper Methods
     }
 }
