@@ -2284,7 +2284,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (itemType == ItemType.Directory)
             {
-                CreateDirectory(path, true);
+                CreateDirectory(path, streamOutput: true);
             }
             else if (itemType == ItemType.File)
             {
@@ -2632,7 +2632,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        CreateDirectory(path, false);
+                        CreateDirectory(path, streamOutput: false);
                         pathDirInfo = new DirectoryInfo(path);
                     }
 
@@ -2891,7 +2891,7 @@ namespace Microsoft.PowerShell.Commands
                 // Now create the missing directories
                 foreach (string directoryPath in missingDirectories)
                 {
-                    CreateDirectory(directoryPath, false);
+                    CreateDirectory(directoryPath, streamOutput: false);
                 }
 
                 result = true;
@@ -3830,7 +3830,7 @@ namespace Microsoft.PowerShell.Commands
                 // CreateDirectory does the WriteItemObject for the new DirectoryInfo
                 if (ps == null)
                 {
-                    var destDir = CreateDirectory(destination, true);
+                    var destDir = CreateDirectory(destination, streamOutput: true);
                     destDir.Attributes = directory.Attributes;
                 }
                 else
@@ -4072,7 +4072,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Create destinationPath directory. This will fail if the directory already exists
                 // and Force is not selected.
-                var destDir = CreateDirectory(destination, true);
+                var destDir = CreateDirectory(destination, streamOutput: true);
                 foreach(var attribute in ((string)srcDir["Attributes"]).Split(','))
                     destDir.Attributes |= Enum.Parse<System.IO.FileAttributes>(attribute.Trim());
 
@@ -4864,11 +4864,11 @@ namespace Microsoft.PowerShell.Commands
             return (bool)(op["IsFileInfo"]);
         }
 
-        private string CreateDirectoryOnRemoteSession(DirectoryInfo srcDir, string destination, bool force, System.Management.Automation.PowerShell ps)
+        private string CreateDirectoryOnRemoteSession(DirectoryInfo sourceDirectory, string destination, bool force, System.Management.Automation.PowerShell ps)
         {
             ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
             ps.AddParameter("createDirectoryPath", destination);
-            ps.AddParameter("attributes", srcDir.Attributes);
+            ps.AddParameter("attributes", sourceDirectory.Attributes);
             if (force)
             {
                 ps.AddParameter(nameof(force), true);
@@ -6117,7 +6117,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!ItemExists(destination))
             {
-                CreateDirectory(destination, false);
+                CreateDirectory(destination, streamOutput: false);
             }
             else if (ItemExists(destination) && !IsItemContainer(destination))
             {

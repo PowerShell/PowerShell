@@ -299,6 +299,15 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             ValidateCopyItemOperation -filePath $filePath
         }
 
+        It "Copy-Item One Folder to Remote Session and Retain Attributes" {
+            $srcDir = GetSourceFolderPath
+            $destDir = GetDestinationFolderPath
+            $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory -ToSession $s
+            $testFolder.Attributes += "System"
+            Copy-Item -Path $testFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $testFolder
+        }
+
         It "Copy one read only file to remote session." {
 
             $filePath = CreateTestFile -setReadOnlyAttribute
@@ -400,6 +409,15 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $copiedFilePath | Should -Not -Exist
             Copy-Item -Path $filePath  -FromSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperation -filePath $filePath
+        }
+
+        It "Copy-Item One Folder to From Session and Retain Attributes" {
+            $srcDir = GetSourceFolderPath
+            $destDir = GetDestinationFolderPath
+            $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory -FromSession $s
+            $testFolder.Attributes += "System"
+            Copy-Item -Path $testFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $testFolder
         }
 
         It "Copy one empty file from remote session." {
