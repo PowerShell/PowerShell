@@ -8622,14 +8622,15 @@ namespace System.Management.Automation.Internal
                 findStreamData, 0);
             if (handle.IsInvalid)
             {
-                // Except for a test for handle.IsInvalid, this must be immediately after a P/Invoke call.
                 int error = Marshal.GetLastWin32Error();
+
                 // Directories don't normally have alternate streams, so this is not an exceptional state.
                 // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
                 if (error == NativeMethods.ERROR_HANDLE_EOF)
                 {
                     return alternateStreams;
                 }
+
                 // Filesystems other than NTFS generally don't support alternate streams, so we still
                 // must be prepared to throw the error. It's usually ERROR_INVALID_PARAMETER in that case.
                 throw new Win32Exception(error);
