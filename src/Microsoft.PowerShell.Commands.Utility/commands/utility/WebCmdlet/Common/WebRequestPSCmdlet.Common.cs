@@ -1358,13 +1358,7 @@ namespace Microsoft.PowerShell.Commands
                 var currentUri = req.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
-                try
-                {
-                    response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
-                }
-                catch (Https e) when (e.GetType().Name == "OpenSslCryptographicException")
-                {
-                }
+                response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (keepAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
                 {
