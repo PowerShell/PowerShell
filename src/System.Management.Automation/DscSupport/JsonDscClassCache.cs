@@ -442,39 +442,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// Parses json file without adding it to caches or creating dynamic keywords.
-        /// </summary>
-        /// <param name="jsonFilePath">Path to json file</param>
-        /// <returns>List of classes from json file</returns>
-        public static IEnumerable<PSObject> ReadClassesFromJson(string jsonFilePath)
-        {
-            return ReadClassesFromJson(jsonFilePath, false);
-        }
-
-        /// <summary>
-        /// Parses json file without adding it to caches or creating dynamic keywords.
-        /// </summary>
-        /// <param name="jsonFilePath">Path to json file</param>
-        /// <param name="useNewRunspace">If True PowerShell will use a fresh runspace to do Json deserialization</param>
-        /// <returns>List of classes from json file</returns>
-        public static IEnumerable<PSObject> ReadClassesFromJson(string jsonFilePath, bool useNewRunspace)
-        {
-            if (string.IsNullOrEmpty(jsonFilePath))
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(jsonFilePath));
-            }
-
-            if (!jsonFilePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-            {
-                WriteWarning(string.Format("Cannot parse non-JSON file {0}", jsonFilePath));
-                return null;
-            }
-
-            var parser = new CimDSCParser();
-            return parser.ParseSchemaJson(jsonFilePath, useNewRunspace);
-        }
-
-        /// <summary>
         /// Import CIM classes from the given file.
         /// </summary>
         /// <param name="path">Path to schema file</param>
@@ -770,6 +737,28 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             IEnumerable<PSObject> listCimClass;
             ByFileClassCache.TryGetValue(fileName, out listCimClass);
             return listCimClass;
+        }
+
+        /// <summary>
+        /// Returns class declaration from cache.
+        /// </summary>
+        /// <param name="moduleName">Module name</param>
+        /// <param name="moduleVersion">Module version</param>
+        /// <param name="className">Name of the class</param>
+        /// <param name="resourceName">Friendly name of the resource</param>
+        /// <returns>Class declaration from cache.</returns>
+        public static PSObject GetCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
+        {
+            var moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleName, moduleVersion, className, string.IsNullOrEmpty(resourceName) ? className : resourceName);
+            DscClassCacheEntry classCacheEntry = null;
+            if(ClassCache.TryGetValue(moduleQualifiedResourceName, out classCacheEntry))
+            {
+                return classCacheEntry?.CimClassInstance;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
