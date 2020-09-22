@@ -241,6 +241,12 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo FunctionContext_PushTrapHandlers =
             typeof(FunctionContext).GetMethod(nameof(FunctionContext.PushTrapHandlers), InstanceFlags);
 
+        internal static readonly MethodInfo FunctionContext_UpdatePosition =
+            typeof(FunctionContext).GetMethod(nameof(FunctionContext.UpdatePosition), InstanceFlags);
+
+        internal static readonly MethodInfo FunctionContext_UpdatePositionNoBreak =
+            typeof(FunctionContext).GetMethod(nameof(FunctionContext.UpdatePositionNoBreak), InstanceFlags);
+
         internal static readonly MethodInfo FunctionOps_DefineFunction =
             typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), StaticFlags);
 
@@ -801,6 +807,25 @@ namespace System.Management.Automation.Language
         internal void PopTrapHandlers()
         {
             _traps.RemoveAt(_traps.Count - 1);
+        }
+
+        internal void UpdatePositionNoBreak(int pos)
+        {
+            _currentSequencePointIndex = pos;
+
+            if (ProfilerEventSource.LogInstance.IsEnabled())
+            {
+                ProfilerEventSource.LogInstance.SequencePoint(_scriptBlock.Id, pos);
+            }
+        }
+
+        internal void UpdatePosition(int pos)
+        {
+            UpdatePositionNoBreak(pos);
+            if (_executionContext._debuggingMode > 0)
+            {
+                _executionContext.Debugger.OnSequencePointHit(this);
+            }
         }
     }
 
@@ -7055,26 +7080,10 @@ namespace System.Management.Automation.Language
                 exprs.Add(Expression.DebugInfo(_debugSymbolDocument, _extent.StartLineNumber, _extent.StartColumnNumber, _extent.EndLineNumber, _extent.EndColumnNumber));
             }
 
-            exprs.Add(
-                Expression.Assign(
-                    Expression.Field(Compiler.s_functionContext, CachedReflectionInfo.FunctionContext__currentSequencePointIndex),
-                    ExpressionCache.Constant(_sequencePoint)));
-
-            if (_checkBreakpoints)
-            {
-                exprs.Add(
-                    Expression.IfThen(
-                        Expression.GreaterThan(
-                            Expression.Field(Compiler.s_executionContextParameter, CachedReflectionInfo.ExecutionContext_DebuggingMode),
-                            ExpressionCache.Constant(0)),
-                        Expression.Call(
-                            Expression.Field(Compiler.s_executionContextParameter, CachedReflectionInfo.ExecutionContext_Debugger),
-                            CachedReflectionInfo.Debugger_OnSequencePointHit,
-                            Compiler.s_functionContext)));
-            }
-
-            exprs.Add(ExpressionCache.Empty);
-
+            var method = _checkBreakpoints
+                ? CachedReflectionInfo.FunctionContext_UpdatePosition
+                : CachedReflectionInfo.FunctionContext_UpdatePositionNoBreak;
+            exprs.Add(Expression.Call(Compiler.s_functionContext, method, ExpressionCache.Constant(_sequencePoint)));
             return Expression.Block(exprs);
         }
 

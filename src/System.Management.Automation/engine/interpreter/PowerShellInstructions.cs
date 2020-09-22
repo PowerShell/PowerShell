@@ -29,17 +29,14 @@ namespace System.Management.Automation.Interpreter
         public override int Run(InterpretedFrame frame)
         {
             var functionContext = frame.FunctionContext;
-            var context = frame.ExecutionContext;
-
-            functionContext._currentSequencePointIndex = _sequencePoint;
             if (_checkBreakpoints)
             {
-                if (context._debuggingMode > 0)
-                {
-                    context.Debugger.OnSequencePointHit(functionContext);
-                }
+                functionContext.UpdatePosition(_sequencePoint);
             }
-
+            else
+            {
+                functionContext.UpdatePositionNoBreak(_sequencePoint);
+            }
             return +1;
         }
 

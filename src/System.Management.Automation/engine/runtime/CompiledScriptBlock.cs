@@ -39,18 +39,41 @@ namespace System.Management.Automation
 
     internal class CompiledScriptBlockData
     {
+        private readonly static ConcurrentDictionary<Guid, CompiledScriptBlockData> s_IdToScriptBlock
+            = new ConcurrentDictionary<Guid, CompiledScriptBlockData>();
+
+        internal static void ResetIdToScriptBlock()
+        {
+            s_IdToScriptBlock.Clear();
+        }
+
+        internal static bool TryGetCompiledScriptBlockData(Guid key, /* [MaybeNullWhen(false)] */ out CompiledScriptBlockData value)
+        {
+            return s_IdToScriptBlock.TryGetValue(key, out value);
+        }
+
+        internal static ConcurrentDictionary<Guid, CompiledScriptBlockData> GetCompiledScriptBlockData()
+        {
+            return s_IdToScriptBlock;
+        }
+
+        internal void RegisterCompiledScriptBlockData()
+        {
+            s_IdToScriptBlock.TryAdd(this.Id, this);
+        }
+
         internal CompiledScriptBlockData(IParameterMetadataProvider ast, bool isFilter)
         {
             _ast = ast;
-            this.IsFilter = isFilter;
-            this.Id = Guid.NewGuid();
+            IsFilter = isFilter;
+            Id = Guid.NewGuid();
         }
 
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
             _isProductCode = isProductCode;
             _scriptText = scriptText;
-            this.Id = Guid.NewGuid();
+            Id = Guid.NewGuid();
         }
 
         internal bool Compile(bool optimized)
@@ -76,6 +99,11 @@ namespace System.Management.Automation
             else if (optimized && !_compiledOptimized)
             {
                 CompileOptimized();
+            }
+
+            if (ProfilerEventSource.LogInstance.IsEnabled())
+            {
+                RegisterCompiledScriptBlockData();
             }
 
             return optimized;
