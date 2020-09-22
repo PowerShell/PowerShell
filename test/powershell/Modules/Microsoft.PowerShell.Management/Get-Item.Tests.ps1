@@ -141,8 +141,8 @@ Describe "Get-Item" -Tags "CI" {
             { Get-Item $altStreamDirectory -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
         It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
-            { $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
-              $result.Length | Should -Be (0) } | Should -Not -Throw
+            $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
+            $result.Length | Should -Be 0
         }
     }
 
