@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determines if built-in limits are applied to the data.
+        /// Gets or sets switch that determines if built-in limits are applied to the data.
         /// </summary>
         [Experimental("Microsoft.PowerShell.Utility.PSImportPSDataFileNoLimit", ExperimentAction.Show)]
         [Parameter]

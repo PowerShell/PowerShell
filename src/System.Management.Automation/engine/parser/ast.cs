@@ -205,7 +205,7 @@ namespace System.Management.Automation.Language
         /// <param name="skipHashtableCheck">Set to skip hashtable limit validation.</param>
         /// <returns>The object represented by the AST as a safe object.</returns>
         /// <exception cref="InvalidOperationException">
-        /// If <paramref name="extent"/> is deemed unsafe
+        /// If <paramref name="extent"/> is deemed unsafe.
         /// </exception>
         public object SafeGetValue(bool skipHashtableCheck)
         {
