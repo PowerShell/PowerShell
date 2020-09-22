@@ -362,7 +362,8 @@ namespace System.Management.Automation.Language
         {
             Default,
             GetPowerShell,
-            ModuleAnalysis
+            ModuleAnalysis,
+            SkipHashtableCheck,
         }
 
         // future proofing
@@ -371,7 +372,8 @@ namespace System.Management.Automation.Language
         public static object GetSafeValue(Ast ast, ExecutionContext context, SafeValueContext safeValueContext)
         {
             t_context = context;
-            if (IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
+
+            if (safeValueContext == SafeValueContext.SkipHashtableCheck || IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
             {
                 return ast.Accept(new GetSafeValueVisitor());
             }
