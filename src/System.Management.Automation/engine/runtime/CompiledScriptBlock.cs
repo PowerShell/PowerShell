@@ -39,7 +39,7 @@ namespace System.Management.Automation
 
     internal class CompiledScriptBlockData
     {
-        private readonly static ConcurrentDictionary<Guid, CompiledScriptBlockData> s_IdToScriptBlock
+        private static readonly ConcurrentDictionary<Guid, CompiledScriptBlockData> s_IdToScriptBlock
             = new ConcurrentDictionary<Guid, CompiledScriptBlockData>();
 
         internal static void ResetIdToScriptBlock()

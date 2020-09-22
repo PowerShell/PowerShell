@@ -37,6 +37,7 @@ namespace System.Management.Automation.Interpreter
             {
                 functionContext.UpdatePositionNoBreak(_sequencePoint);
             }
+
             return +1;
         }
 
