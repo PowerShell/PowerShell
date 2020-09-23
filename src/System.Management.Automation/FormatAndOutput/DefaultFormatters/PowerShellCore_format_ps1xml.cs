@@ -1184,7 +1184,7 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
+                                            $message = $message.Replace($newline, ' ').Replace(""`n"", ' ').Replace(""`t"", ' ')
 
                                             $windowWidth = 120
                                             if ($Host.UI.RawUI -ne $null) {
