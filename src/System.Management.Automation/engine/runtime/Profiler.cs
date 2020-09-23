@@ -112,17 +112,25 @@ namespace System.Management.Automation
         [NonEvent]
         internal void WriteRundownEvents()
         {
-            foreach (var csb in CompiledScriptBlockData.GetCompiledScriptBlockData().Values)
+            foreach (var pair in CompiledScriptBlockData.GetCompiledScriptBlockTable())
             {
-                ScriptBlockRundown(csb.Id, csb.Ast.Body.Extent.Text);
+                var compiledScriptBlock = pair.Key;
+                ScriptBlockRundown(compiledScriptBlock.Id, compiledScriptBlock.Ast.Body.Extent.Text);
 
-                for (var position = 0; position < csb.SequencePoints.Length; position++)
+                if (compiledScriptBlock.SequencePoints is null)
                 {
-                    var sequencePoint = csb.SequencePoints[position];
+                    // Why do we get script blocks without sequence points?
+                    // See a comment in Compiler.cs line 2035.
+                    continue;
+                }
+
+                for (var position = 0; position < compiledScriptBlock.SequencePoints.Length; position++)
+                {
+                    var sequencePoint = compiledScriptBlock.SequencePoints[position];
 
                     SequencePointRundown(
-                        csb.Id,
-                        csb.SequencePoints.Length,
+                        compiledScriptBlock.Id,
+                        compiledScriptBlock.SequencePoints.Length,
                         position,
                         sequencePoint.File,
                         sequencePoint.StartLineNumber,
@@ -134,22 +142,6 @@ namespace System.Management.Automation
                         sequencePoint.EndOffset);
                 }
             }
-        }
-
-        protected override void OnEventCommand(EventCommandEventArgs command)
-        {
-            base.OnEventCommand(command);
-
-            if (command.Command == EventCommand.Enable)
-            {
-                CompiledScriptBlockData.ResetIdToScriptBlock();
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            CompiledScriptBlockData.ResetIdToScriptBlock();
-            base.Dispose(disposing);
         }
     }
 
