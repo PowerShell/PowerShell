@@ -50,7 +50,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
     }
 
     It 'Succeeds if -NoLimit is used and has more than 500 keys' -Skip:$skipTest {
-        $result = Import-PowerShellDataFile $largePsd1Path -NoLimit
+        $result = Import-PowerShellDataFile $largePsd1Path -SkipLimitCheck
         $result.Keys.Count | Should -Be 501
     }
 }
