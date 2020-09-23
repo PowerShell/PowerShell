@@ -17,18 +17,6 @@ jobs:
   steps:
   - pwsh: |
       Get-ChildItem -Path env:
-      cat /etc/lsb-release
-      openssl version
-      'openssl ciphers -v'
-      openssl ciphers -v
-      'openssl ciphers cipherlist'
-      openssl ciphers cipherlist
-      'Check TLS 1.0'
-      echo blah | openssl s_client -connect google.com:443 -tls1
-      'Check TLS 1.1'
-      echo blah | openssl s_client -connect google.com:443 -tls1_1
-      'Check TLS 1.2'
-      echo blah | openssl s_client -connect google.com:443 -tls1_2
     displayName: Capture Environment
     condition: succeededOrFailed()
 
