@@ -2794,14 +2794,13 @@ namespace Microsoft.PowerShell.Commands
             {
             }
 
-            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
 
-            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
+            [DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
 
             protected override bool ReleaseHandle()
@@ -2877,7 +2876,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class SafeNativeMethods
     {
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
+        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
         public static extern bool CloseHandle(IntPtr handle);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2999,9 +2998,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(
-            SecurityAction.Demand,
-            SerializationFormatter = true)]
         public override void GetObjectData(
             SerializationInfo info,
             StreamingContext context)

@@ -194,7 +194,6 @@ namespace System.Management.Automation.Security
             CERT_FIND_HASH_STR = 20 << 16,        // thumbprint
         }
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
         bool CertCloseStore(IntPtr hCertStore, int dwFlags);
@@ -472,7 +471,6 @@ namespace System.Management.Automation.Security
                                               DWORD dwAddDisposition,
                                               ref IntPtr ppStoreContext);
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
         bool CertFreeCertificateContext(IntPtr certContext);

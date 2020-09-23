@@ -611,7 +611,6 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        // [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
         protected void Dispose(bool disposing)
         {
             if (disposing)
