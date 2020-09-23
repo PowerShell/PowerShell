@@ -39,7 +39,7 @@ PrivateData = @{
         Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger. Enables -Runspace parameter on *-PSBreakpoint cmdlets to support management of breakpoints in another runspace.'
       }
       @{
-        Name        = 'Microsoft.PowerShell.Utility.PSImportPSDataFileNoLimit'
+        Name        = 'Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck'
         Description = 'Enable -NoLimit switch for Import-PowerShellDataFile to not enforce built-in hashtable limits'
       }
     )

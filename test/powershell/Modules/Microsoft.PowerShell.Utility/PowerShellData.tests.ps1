@@ -10,7 +10,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         $largePsd1Builder.Append('}')
         Set-Content -Path $largePsd1Path -Value $largePsd1Builder.ToString()
 
-        if ((Get-ExperimentalFeature Microsoft.PowerShell.Utility.PSImportPSDataFileNoLimit).Enabled -ne $true) {
+        if ((Get-ExperimentalFeature Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck).Enabled -ne $true) {
             $skipTest = $true
         }
     }
