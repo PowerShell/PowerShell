@@ -68,6 +68,18 @@ namespace System.Management.Automation
         internal static ProfilerRundownEventSource LogInstance = new ProfilerRundownEventSource();
 
         [Event(2)]
+        public void ScriptBlockRundown(
+            Guid ScriptBlockId,
+            string ScriptBlockText)
+        {
+            // It is not performance critical so we use the standard method overload.
+            WriteEvent(
+                eventId: 2,
+                ScriptBlockId,
+                ScriptBlockText);
+        }
+
+        [Event(3)]
         public void SequencePointRundown(
             Guid ScriptBlockId,
             int SequencePointCount,
@@ -83,7 +95,7 @@ namespace System.Management.Automation
         {
             // It is not performance critical so we use the standard method overload.
             WriteEvent(
-                eventId: 2,
+                eventId: 3,
                 ScriptBlockId,
                 SequencePointCount,
                 SequencePoint,
@@ -102,6 +114,8 @@ namespace System.Management.Automation
         {
             foreach (var csb in CompiledScriptBlockData.GetCompiledScriptBlockData().Values)
             {
+                ScriptBlockRundown(csb.Id, csb.Ast.Body.Extent.Text);
+
                 for (var position = 0; position < csb.SequencePoints.Length; position++)
                 {
                     var sequencePoint = csb.SequencePoints[position];
@@ -255,6 +269,7 @@ namespace System.Management.Automation
             switch (eventData.EventId)
             {
                 case 1:
+                    // Performance event
                     SequencePointProfileEvents.Add(new SequencePointProfileEventData
                     {
                         Timestamp = eventData.TimeStamp,
@@ -263,6 +278,10 @@ namespace System.Management.Automation
                     });
                     break;
                 case 2:
+                    // Scriptblock rundown event
+                    break;
+                case 3:
+                    // SequencePoint rundown event
                     ScriptExtentEventData sequencePoint;
                     var scriptId = (Guid)payload[0]!;
                     var sequencePointCount = (int)payload[1]!;
