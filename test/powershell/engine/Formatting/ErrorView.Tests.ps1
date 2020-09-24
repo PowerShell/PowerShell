@@ -125,6 +125,17 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 $e | Should -BeLike "*: myTest*"
             }
         }
+
+        It "Error containing '<type>' are rendered correctly for scripts" -TestCases @(
+            @{ type = 'CRLF'; newline = "`r`n" }
+            @{ type = 'LF'  ; newline = "`n" }
+        ) {
+            param($newline)
+
+            Set-Content -path $testScriptPath -Value "throw 'hello${newline}there'"
+            $e = & "$PSHOME/pwsh" -noprofile -file $testScriptPath 2>&1 | Out-String
+            $e.Split("o${newline}t").Count | Should -Be 1 -Because "Error message should not contain newline"
+        }
     }
 
     Context 'NormalView tests' {
