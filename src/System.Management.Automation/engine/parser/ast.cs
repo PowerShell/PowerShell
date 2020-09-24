@@ -196,18 +196,18 @@ namespace System.Management.Automation.Language
         /// </exception>
         public object SafeGetValue()
         {
-            return SafeGetValue(skipHashtableCheck: false);
+            return SafeGetValue(skipHashtableSizeCheck: false);
         }
 
         /// <summary>
         /// Constructs the resultant object from the AST and returns it if it is safe.
         /// </summary>
-        /// <param name="skipHashtableCheck">Set to skip hashtable limit validation.</param>
+        /// <param name="skipHashtableSizeCheck">Set to skip hashtable limit validation.</param>
         /// <returns>The object represented by the AST as a safe object.</returns>
         /// <exception cref="InvalidOperationException">
         /// If <paramref name="extent"/> is deemed unsafe.
         /// </exception>
-        public object SafeGetValue(bool skipHashtableCheck)
+        public object SafeGetValue(bool skipHashtableSizeCheck)
         {
             try
             {
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Language
                     context = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
                 }
 
-                return GetSafeValueVisitor.GetSafeValue(this, context, skipHashtableCheck ? GetSafeValueVisitor.SafeValueContext.SkipHashtableCheck : GetSafeValueVisitor.SafeValueContext.Default);
+                return GetSafeValueVisitor.GetSafeValue(this, context, skipHashtableSizeCheck ? GetSafeValueVisitor.SafeValueContext.SkipHashtableSizeCheck : GetSafeValueVisitor.SafeValueContext.Default);
             }
             catch
             {

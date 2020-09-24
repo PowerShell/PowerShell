@@ -363,7 +363,7 @@ namespace System.Management.Automation.Language
             Default,
             GetPowerShell,
             ModuleAnalysis,
-            SkipHashtableCheck,
+            SkipHashtableSizeCheck,
         }
 
         // future proofing
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Language
         {
             t_context = context;
 
-            if (safeValueContext == SafeValueContext.SkipHashtableCheck || IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
+            if (safeValueContext == SafeValueContext.SkipHashtableSizeCheck || IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
             {
                 return ast.Accept(new GetSafeValueVisitor());
             }
