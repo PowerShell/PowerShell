@@ -32,11 +32,13 @@
 
   Removes ALL PowerShell paths from the Machine level path.
   Good for running right before upgrading PowerShell.
+
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process
 
   Removes all paths but the very last one when sorted in ascending order.
   Processes all path scopes including current process.
+
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process -RemoveAllOccurencs
 
