@@ -40,6 +40,10 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $ps.Dispose()
     }
 
+    It "Should accept minimum depth as 0." {
+        { $output = 1 | ConvertTo-Json -Depth 0 } | Should -Not -Throw
+    }
+
     It "The result string is packed in an array symbols when AsArray parameter is used." {
         $output = 1 | ConvertTo-Json -AsArray
         $output | Should -BeLike "``[*1*]"
