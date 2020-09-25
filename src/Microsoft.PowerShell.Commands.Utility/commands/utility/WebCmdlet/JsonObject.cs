@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static bool _maxDepthWarningWritten = false;
+        private static bool _maxDepthWarningWritten;
 
         /// <summary>
         /// Return an alternate representation of the specified object that serializes the same JSON, except
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (currentDepth > context.MaxDepth)
                     {
-                        if (!_maxDepthWarningWritten)
+                        if (!_maxDepthWarningWritten && context.Cmdlet != null)
                         {
                             _maxDepthWarningWritten = true;
                             string maxDepthMessage = string.Format(
