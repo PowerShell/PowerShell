@@ -1884,9 +1884,6 @@
           <Component Id="cmpA3A50C81E1704ABF9022F6ECE265165E">
             <File Id="fil08AD7407549745D196FA8B37C8D2507F" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PowerShellGet\PSGet.Resource.psd1" />
           </Component>
-          <Component Id="cmpFB8B96A05278462A97061B8C5FE3C92E">
-            <File Id="fil31F5B43EF5C248EB878EB1D25D292ECC" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.cat" />
-          </Component>
           <Directory Name="DSCResources" Id="dirAB16AE2D3D8B4288AE7576FDEC086E52">
             <Directory Name="MSFT_PSRepository" Id="dirDD4171A90E3249BAAE0CBA188ACFAEA9">
               <Component Id="cmp0744A0E2DA694EFB97172A770E654F92">
@@ -3726,7 +3723,6 @@
       <ComponentRef Id="cmpDCFC0B0822274CA2A1C954DF2E407911" />
       <ComponentRef Id="cmpE773C5B7686C496DAD2111AF1950D73E" />
       <ComponentRef Id="cmpA3A50C81E1704ABF9022F6ECE265165E" />
-      <ComponentRef Id="cmpFB8B96A05278462A97061B8C5FE3C92E" />
       <ComponentRef Id="cmp0744A0E2DA694EFB97172A770E654F92" />
       <ComponentRef Id="cmpFD06F9A229864F5790E63806319F83AD" />
       <ComponentRef Id="cmp15C7696A8C674672B37E17B47362007E" />
