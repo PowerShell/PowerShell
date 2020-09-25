@@ -457,6 +457,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
+                _maxDepthWarningWritten = false;
                 object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
                 var jsonSettings = new JsonSerializerSettings
                 {
@@ -483,6 +484,8 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
         }
+
+        private static bool _maxDepthWarningWritten = false;
 
         /// <summary>
         /// Return an alternate representation of the specified object that serializes the same JSON, except
@@ -561,6 +564,16 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (currentDepth > context.MaxDepth)
                     {
+                        if (!_maxDepthWarningWritten)
+                        {
+                            _maxDepthWarningWritten = true;
+                            string maxDepthMessage = string.Format(
+                                CultureInfo.CurrentCulture,
+                                WebCmdletStrings.JsonMaxDepthReached,
+                                context.MaxDepth);
+                            context.Cmdlet.WriteWarning(maxDepthMessage);
+                        }
+
                         if (pso != null && pso.ImmediateBaseObjectIsEmpty)
                         {
                             // The obj is a pure PSObject, we convert the original PSObject to a string,
