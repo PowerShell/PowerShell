@@ -39,17 +39,34 @@ namespace System.Management.Automation
 
     internal class CompiledScriptBlockData
     {
-        private static readonly ConditionalWeakTable<CompiledScriptBlockData, CompiledScriptBlockData> s_LiveScriptBlockTable
-            = new ConditionalWeakTable<CompiledScriptBlockData, CompiledScriptBlockData>();
+        private static readonly ConcurrentDictionary<Guid, CompiledScriptBlockData> s_IdToScriptBlock
+            = new ConcurrentDictionary<Guid, CompiledScriptBlockData>();
 
-        internal static ConditionalWeakTable<CompiledScriptBlockData, CompiledScriptBlockData> GetCompiledScriptBlockTable() => s_LiveScriptBlockTable;
+        internal static void ResetIdToScriptBlock()
+        {
+            s_IdToScriptBlock.Clear();
+        }
+
+        internal static bool TryGetCompiledScriptBlockData(Guid key, /* [MaybeNullWhen(false)] */ out CompiledScriptBlockData value)
+        {
+            return s_IdToScriptBlock.TryGetValue(key, out value);
+        }
+
+        internal static ConcurrentDictionary<Guid, CompiledScriptBlockData> GetCompiledScriptBlockData()
+        {
+            return s_IdToScriptBlock;
+        }
+
+        internal void RegisterCompiledScriptBlockData()
+        {
+            s_IdToScriptBlock.TryAdd(this.Id, this);
+        }
 
         internal CompiledScriptBlockData(IParameterMetadataProvider ast, bool isFilter)
         {
             _ast = ast;
             IsFilter = isFilter;
             Id = Guid.NewGuid();
-            s_LiveScriptBlockTable.Add(this, this);
         }
 
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
@@ -57,7 +74,6 @@ namespace System.Management.Automation
             _isProductCode = isProductCode;
             _scriptText = scriptText;
             Id = Guid.NewGuid();
-            s_LiveScriptBlockTable.Add(this, this);
         }
 
         internal bool Compile(bool optimized)
@@ -83,6 +99,11 @@ namespace System.Management.Automation
             else if (optimized && !_compiledOptimized)
             {
                 CompileOptimized();
+            }
+
+            if (ProfilerEventSource.LogInstance.IsEnabled())
+            {
+                RegisterCompiledScriptBlockData();
             }
 
             return optimized;
