@@ -581,7 +581,7 @@ namespace System.Management.Automation
         {
         }
 
-        private ScriptBlock(CompiledScriptBlockData scriptBlockData)
+        internal ScriptBlock(CompiledScriptBlockData scriptBlockData)
         {
             _scriptBlockData = scriptBlockData;
 
@@ -609,32 +609,25 @@ namespace System.Management.Automation
         {
         }
 
-        private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> s_cachedScripts =
-            new ConcurrentDictionary<Tuple<string, string>, ScriptBlock>();
+        private static readonly ConcurrentDictionary<Tuple<string, string>, CompiledScriptBlockData> s_cachedScripts =
+            new ConcurrentDictionary<Tuple<string, string>, CompiledScriptBlockData>();
 
-        internal static IEnumerable<CompiledScriptBlockData> GetCachedCompiledScriptBlockData()
+        internal static ICollection<CompiledScriptBlockData> GetCachedCompiledScriptBlockData()
         {
-            foreach (var pair in s_cachedScripts)
-            {
-                yield return pair.Value.ScriptBlockData;
-            }
+            return s_cachedScripts.Values;
         }
 
-        internal static ScriptBlock TryGetCachedScriptBlock(string fileName, string fileContents)
+        internal static CompiledScriptBlockData TryGetCompiledCachedScriptBlock(string fileName, string fileContents)
         {
             if (InternalTestHooks.IgnoreScriptBlockCache)
             {
                 return null;
             }
 
-            ScriptBlock scriptBlock;
             var key = Tuple.Create(fileName, fileContents);
-            if (s_cachedScripts.TryGetValue(key, out scriptBlock))
+            if (s_cachedScripts.TryGetValue(key, out var compiledScriptBlockData))
             {
-                Diagnostics.Assert(
-                    scriptBlock.SessionStateInternal == null,
-                    "A cached scriptblock should not have it's session state bound, that causes a memory leak.");
-                return scriptBlock.Clone();
+                return compiledScriptBlockData;
             }
 
             return null;
@@ -646,7 +639,7 @@ namespace System.Management.Automation
         private static bool IsUsingTypes(Ast ast)
             => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly();
 
-        internal static void CacheScriptBlock(ScriptBlock scriptBlock, string fileName, string fileContents)
+        internal static void CacheCompiledScriptBlock(ScriptBlock scriptBlock, string fileName, string fileContents)
         {
             if (InternalTestHooks.IgnoreScriptBlockCache)
             {
@@ -673,15 +666,7 @@ namespace System.Management.Automation
             }
 
             var key = Tuple.Create(fileName, fileContents);
-            s_cachedScripts.TryAdd(key, scriptBlock);
-        }
-
-        /// <summary>
-        /// Clears the cached scriptblocks.
-        /// </summary>
-        internal static void ClearScriptBlockCache()
-        {
-            s_cachedScripts.Clear();
+            s_cachedScripts.TryAdd(key, scriptBlock.ScriptBlockData);
         }
 
         internal static readonly ScriptBlock EmptyScriptBlock =
@@ -689,10 +674,10 @@ namespace System.Management.Automation
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {
-            var scriptBlock = TryGetCachedScriptBlock(fileName, fileContents);
-            if (scriptBlock != null)
+            var compiledScriptBlockData = TryGetCompiledCachedScriptBlock(fileName, fileContents);
+            if (compiledScriptBlockData != null)
             {
-                return scriptBlock;
+                return new ScriptBlock(compiledScriptBlockData);
             }
 
             var ast = parser.Parse(fileName, fileContents, null, out ParseError[] errors, ParseMode.Default);
@@ -702,12 +687,9 @@ namespace System.Management.Automation
             }
 
             var result = new ScriptBlock(ast, isFilter: false);
-            CacheScriptBlock(result, fileName, fileContents);
+            CacheCompiledScriptBlock(result, fileName, fileContents);
 
-            // The value returned will potentially be bound to a session state.  We don't want
-            // the cached script block to end up being bound to any session state, so clone
-            // the return value to ensure the cached value has no session state.
-            return result.Clone();
+            return result;
         }
 
         internal ScriptBlock Clone() => new ScriptBlock(_scriptBlockData);

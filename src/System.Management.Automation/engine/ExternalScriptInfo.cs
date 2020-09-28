@@ -188,7 +188,8 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Context == null) return SessionStateEntryVisibility.Public;
+                if (Context == null)
+                    return SessionStateEntryVisibility.Public;
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
@@ -267,7 +268,11 @@ namespace System.Management.Automation
             var scriptContents = ScriptContents;
             if (_scriptBlock == null)
             {
-                this.ScriptBlock = ScriptBlock.TryGetCachedScriptBlock(_path, scriptContents);
+                var compiledScriptBlockData = ScriptBlock.TryGetCompiledCachedScriptBlock(_path, scriptContents);
+                if (compiledScriptBlockData != null)
+                {
+                    this.ScriptBlock = new ScriptBlock(compiledScriptBlockData);
+                }
             }
 
             if (_scriptBlock != null)
@@ -305,7 +310,7 @@ namespace System.Management.Automation
                 if (errors.Length == 0)
                 {
                     this.ScriptBlock = new ScriptBlock(_scriptBlockAst, isFilter: false);
-                    ScriptBlock.CacheScriptBlock(_scriptBlock.Clone(), _path, scriptContents);
+                    ScriptBlock.CacheCompiledScriptBlock(_scriptBlock.Clone(), _path, scriptContents);
                 }
             }
 
