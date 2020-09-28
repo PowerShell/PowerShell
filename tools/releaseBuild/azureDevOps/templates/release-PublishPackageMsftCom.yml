@@ -17,11 +17,11 @@ steps:
 
 - pwsh: |
     $metadata = Get-Content -Path "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" -Raw | ConvertFrom-Json
-    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCLIClientID) $(RepoClientCLISecret) $(AzureVersion) $($metadata.LTSRelease)"
+    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease)"
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
-        AadClientId = "$(RepoClientCLIClientID)"
-        AadClientSecret = "$(RepoClientCLISecret)"
+        AadClientId = "$(RepoClientCliClientID)"
+        AadClientSecret = "$(RepoClientCliSecret)"
         BlobFolderName = "$(AzureVersion)"
         LTS = ($metadata.LTSRelease)
     }
