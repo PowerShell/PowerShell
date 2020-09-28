@@ -2,13 +2,13 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.CoreCLR.Eventing project</Description>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.CoreCLR.Eventing</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.0-preview.8.20407.11" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.0-rc.1.20451.14" />
   </ItemGroup>
 
 </Project>

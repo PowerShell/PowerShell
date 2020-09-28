@@ -116,14 +116,13 @@ namespace System.Management.Automation
             {
             }
 
-            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
 
-            [DllImport(PinvokeDllNames.LocalFreeDllName), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+            [DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
 
             protected override bool ReleaseHandle()
@@ -236,7 +235,7 @@ namespace System.Management.Automation
         /// This can happen if you close a handle twice, or if you call CloseHandle on a handle
         /// returned by the FindFirstFile function.
         /// </returns>
-        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]//, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
