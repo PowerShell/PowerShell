@@ -357,6 +357,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Limit-EventLog",                   "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Measure-Command",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Measure-Object",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Measure-Script",                   "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Move-Item",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Move-ItemProperty",                "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "New-Alias",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
