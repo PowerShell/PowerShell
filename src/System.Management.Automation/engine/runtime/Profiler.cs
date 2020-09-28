@@ -349,7 +349,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The cmdlet profiles a script block.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Measure, "Script", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsDiagnostic.Measure, "Script", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097029", RemotingCapability = RemotingCapability.None)]
     public class MeasureScriptCommand : PSCmdlet
     {
         /// <summary>
