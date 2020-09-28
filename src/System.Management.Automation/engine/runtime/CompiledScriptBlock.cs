@@ -39,27 +39,32 @@ namespace System.Management.Automation
 
     internal class CompiledScriptBlockData
     {
-        private static readonly ConcurrentDictionary<Guid, CompiledScriptBlockData> s_IdToScriptBlock
-            = new ConcurrentDictionary<Guid, CompiledScriptBlockData>();
+        private static readonly ConcurrentDictionary<CompiledScriptBlockData, CompiledScriptBlockData> s_compiledScriptBlockTable
+            = new ConcurrentDictionary<CompiledScriptBlockData, CompiledScriptBlockData>();
 
-        internal static void ResetIdToScriptBlock()
+        internal static void ClearCompiledScriptBlockTable()
         {
-            s_IdToScriptBlock.Clear();
+            s_compiledScriptBlockTable.Clear();
         }
 
-        internal static bool TryGetCompiledScriptBlockData(Guid key, /* [MaybeNullWhen(false)] */ out CompiledScriptBlockData value)
+        internal static ICollection<CompiledScriptBlockData> GetCompiledScriptBlockList()
         {
-            return s_IdToScriptBlock.TryGetValue(key, out value);
+            return s_compiledScriptBlockTable.Values;
         }
 
-        internal static ConcurrentDictionary<Guid, CompiledScriptBlockData> GetCompiledScriptBlockData()
+        internal static void InitCompiledScriptBlockTable()
         {
-            return s_IdToScriptBlock;
+            ClearCompiledScriptBlockTable();
+
+            foreach (var csb in ScriptBlock.GetCachedCompiledScriptBlockData())
+            {
+                s_compiledScriptBlockTable.TryAdd(csb, csb);
+            }
         }
 
         internal void RegisterCompiledScriptBlockData()
         {
-            s_IdToScriptBlock.TryAdd(this.Id, this);
+            s_compiledScriptBlockTable.TryAdd(this, this);
         }
 
         internal CompiledScriptBlockData(IParameterMetadataProvider ast, bool isFilter)
@@ -606,6 +611,14 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> s_cachedScripts =
             new ConcurrentDictionary<Tuple<string, string>, ScriptBlock>();
+
+        internal static IEnumerable<CompiledScriptBlockData> GetCachedCompiledScriptBlockData()
+        {
+            foreach (var pair in s_cachedScripts)
+            {
+                yield return pair.Value.ScriptBlockData;
+            }
+        }
 
         internal static ScriptBlock TryGetCachedScriptBlock(string fileName, string fileContents)
         {
