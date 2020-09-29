@@ -18,7 +18,7 @@ namespace System.Management.Automation
     {
         internal static ProfilerEventSource LogInstance = new ProfilerEventSource();
 
-        [Event(1)]
+        [Event(1, Opcode = EventOpcode.Start, ActivityOptions = EventActivityOptions.Recursive)]
         public void SequencePoint(Guid scriptBlockId, Guid runspaceInstanceId, Guid parentScriptBlockId, int sequencePointPosition)
         {
             // We could use:
@@ -372,6 +372,7 @@ namespace System.Management.Automation
     /// The cmdlet profiles a script block.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Measure, "Script", HelpUri = "", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(ProfileEventRecord))]
     public class MeasureScriptCommand : PSCmdlet
     {
         /// <summary>
