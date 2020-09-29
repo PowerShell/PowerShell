@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Clipboard", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2109826")]
     [Alias("scb")]
+    [OutputType(typeof(string))]
     public class SetClipboardCommand : PSCmdlet
     {
         private readonly List<string> _contentList = new();
