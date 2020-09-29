@@ -499,6 +499,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 {
                     // Only add the class once...
                     var className = c.ClassName;
+
+                    if (string.IsNullOrEmpty(className))
+                    {
+                        WriteWarning(string.Format("ClassName is empty in file {0}; skipping class import", path));
+                        continue;
+                    }
+
                     string alias = GetFriendlyName(c);
                     var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
                     string moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleInfo.Item1, moduleInfo.Item2.ToString(), className, friendlyName);
@@ -749,14 +756,29 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Class declaration from cache.</returns>
         public static PSObject GetCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
         {
+            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            {
+                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+            }
+
             var moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleName, moduleVersion, className, string.IsNullOrEmpty(resourceName) ? className : resourceName);
             DscClassCacheEntry classCacheEntry = null;
             if(ClassCache.TryGetValue(moduleQualifiedResourceName, out classCacheEntry))
             {
-                return classCacheEntry?.CimClassInstance;
+                return classCacheEntry.CimClassInstance;
             }
             else
             {
+                // if class was not found with current ResourceName then it may be a class with non-empty FriendlyName that caller does not know, so perform a broad search
+                string partialClassPath = string.Join('\\', moduleName, moduleVersion, className, string.Empty);
+                foreach(string key in ClassCache.Keys)
+                {
+                    if (key.StartsWith(partialClassPath))
+                    {
+                        return ClassCache[key].CimClassInstance;
+                    }
+                }
+
                 return null;
             }
         }
