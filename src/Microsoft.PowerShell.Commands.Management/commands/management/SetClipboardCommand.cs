@@ -38,6 +38,12 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Append { get; set; }
 
         /// <summary>
+        /// Gets or sets if the values sent down the pipeline.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
+
+        /// <summary>
         /// This method implements the BeginProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
@@ -53,6 +59,11 @@ namespace Microsoft.PowerShell.Commands
             if (Value != null)
             {
                 _contentList.AddRange(Value);
+
+                if (PassThru)
+                {
+                    WriteObject(Value);
+                }
             }
         }
 

@@ -51,5 +51,29 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             $text | Set-Clipboard
             Get-Clipboard -Raw | Should -BeNullOrEmpty
         }
+
+        It 'Set-Clipboard -PassThru returns single object with -Append = <Append>' -TestCases @(
+            @{ Append = $false }
+            @{ Append = $true }
+        ){
+            param ($append)
+
+            $params = @{ PassThru = $true; Append = $append }
+
+            $result = 'hello' | Set-Clipboard @params
+            $result | Should -BeExactly 'hello'
+        }
+
+        It 'Set-Clipboard -PassThru returns multiple objects with -Append = <Append>' -TestCases @(
+            @{ Append = $false }
+            @{ Append = $true }
+        ){
+            param ($append)
+
+            $params = @{ PassThru = $true; Append = $append }
+
+            $result = 'hello', 'world' | Set-Clipboard @params
+            $result | Should -BeExactly @('hello', 'world')
+        }
     }
 }
