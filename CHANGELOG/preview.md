@@ -1,5 +1,62 @@
 # Current preview release
 
+## [7.1.0-rc.1] - 2020-09-29
+
+### Engine Updates and Fixes
+
+- Make fixes to `ComInterop` code as suggested by .NET team (#13533)
+
+### General Cmdlet Updates and Fixes
+
+- Fix case where exception message contains just ``"`n"`` on Windows (#13684)
+- Recognize `CONOUT$` and `CONIN$` as reserved device names (#13508) (Thanks @davidreis97!)
+- Fix `ConciseView` for interactive advanced function when writing error (#13623)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @soccypowa</p>
+
+</summary>
+
+<ul>
+<li>Simplify logical negation (#13555) (Thanks @xtqqczze!)</li>
+<li>Fixed the indentation of the help content for <code>-nologo</code> (#13557) (Thanks @soccypowa!)</li>
+</ul>
+
+</details>
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@heaths</p>
+
+</summary>
+
+<ul>
+<li>Bump <code>NJsonSchema</code> from 10.1.24 to 10.1.26 (#13586)</li>
+<li>Bump <code>PowerShellGet</code> from 2.2.4 to 2.2.5 (#13683)</li>
+<li>Bump <code>Microsoft.ApplicationInsights</code> from 2.14.0 to 2.15.0 (#13639)</li>
+<li>Update PowerShell to build against dotnet 5.0-RC.1 (#13643)</li>
+<li>Write the <code>InstallLocation</code> to fixed registry key (#13576) (Thanks @heaths!)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README` and `metadata.json` for `7.1.0-preview.7` release (#13565)
+
+[7.1.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.7...v7.1.0-rc.1
+
 ## [7.1.0-preview.7] - 2020-09-08
 
 ### Breaking Changes
