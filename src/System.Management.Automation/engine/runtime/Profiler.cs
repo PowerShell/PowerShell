@@ -435,7 +435,8 @@ namespace System.Management.Automation
                             Source = extent.Text,
                             Extent = extent,
                             RunspaceId = profileData.RunspaceId,
-                            ParentScriptBlockId = profileData.ParentScriptBlockId
+                            ParentScriptBlockId = profileData.ParentScriptBlockId,
+                            ScriptBlockId = profileData.ScriptId
                         };
 
                         WriteObject(result);
@@ -478,6 +479,11 @@ namespace System.Management.Automation
             /// Unique identifer of the parent script block.
             /// </summary>
             public Guid ParentScriptBlockId;
+
+            /// <summary>
+            /// Unique identifer of the script block.
+            /// </summary>
+            public Guid ScriptBlockId;
         }
     }
 }
