@@ -1232,11 +1232,16 @@ namespace System.Management.Automation
             }
         }
 
-        internal Guid GetParentScriptBlockId()
+        internal Guid GetParentScriptBlockId(int sequencePointPosition)
         {
-            if (_callStack.Count > 1)
+            // Sequence point on 0 position is an entry point in a scriptblock.
+            // In the time the callstack has still point to parent scriptblock
+            // so we take last element from the callstack,
+            // for rest sequence points we take an element before last as parent.
+            int shift = sequencePointPosition == 0 ? 1 : 2;
+            if (_callStack.Count - shift > 0)
             {
-                var scriptBlock = _callStack[_callStack.Count - 2].FunctionContext._scriptBlock;
+                var scriptBlock = _callStack[_callStack.Count - shift].FunctionContext._scriptBlock;
                 if (scriptBlock is not null)
                 {
                     return scriptBlock.Id;
