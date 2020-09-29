@@ -149,20 +149,28 @@ function New-CronJob {
   0-23/2 or */2.
 .EXAMPLE
   New-CronJob -Minute 10-30 -Hour 10-20/2 -DayOfMonth */2 -Command "/bin/bash -c 'echo hello' > ~/hello"
+
 .RETURNVALUE
   If successful, an object representing the cron job is returned
+
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
+
 .PARAMETER Minute
   Valid values are 0 to 59.  If not specified, defaults to *.
+
 .PARAMETER Hour
   Valid values are 0-23.  If not specified, defaults to *.
+
 .PARAMETER DayOfMonth
   Valid values are 1-31.  If not specified, defaults to *.
+
 .PARAMETER Month
   Valid values are 1-12.  If not specified, defaults to *.
+
 .PARAMETER DayOfWeek
   Valid values are 0-7.  0 and 7 are both Sunday.  If not specified, defaults to *.
+
 .PARAMETER Command
   Command to execute at the scheduled time and day.
 #>
@@ -196,12 +204,16 @@ function Get-CronJob {
 <#
 .SYNOPSIS
   Returns the current cron jobs from the cron table
+
 .DESCRIPTION
   Returns the current cron jobs from the cron table
+
 .EXAMPLE
   Get-CronJob -UserName Steve
+
 .RETURNVALUE
   CronJob objects
+  
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
 #>
