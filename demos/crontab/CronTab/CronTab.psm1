@@ -77,16 +77,22 @@ function Remove-CronJob {
 <#
 .SYNOPSIS
   Removes the exactly matching cron job from the cron table
+
 .DESCRIPTION
   Removes the exactly matching cron job from the cron table
+
 .EXAMPLE
   Get-CronJob | Where-Object {%_.Command -like 'foo *'} | Remove-CronJob
+
 .RETURNVALUE
   None
+
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
+
 .PARAMETER Job
   Cron job object returned from Get-CronJob
+
 .PARAMETER Force
   Don't prompt when removing the cron job
 #>
