@@ -19,7 +19,7 @@ namespace System.Management.Automation
         internal static ProfilerEventSource LogInstance = new ProfilerEventSource();
 
         [Event(1)]
-        public void SequencePoint(Guid ScriptBlockId, int SequencePointPosition)
+        public void SequencePoint(Guid scriptBlockId, Guid runspaceInstanceId, Guid parentScriptBlockId, int sequencePointPosition)
         {
             // We could use:
             // WriteEvent(eventId: 1, ScriptBlockId, SequencePointPosition);
@@ -28,20 +28,30 @@ namespace System.Management.Automation
             {
                 unsafe
                 {
-                    EventData* eventPayload = stackalloc EventData[2];
+                    EventData* eventPayload = stackalloc EventData[4];
 
                     eventPayload[0] = new EventData
                     {
                         Size = sizeof(Guid),
-                        DataPointer = ((IntPtr)(&ScriptBlockId))
+                        DataPointer = ((IntPtr)(&scriptBlockId))
                     };
                     eventPayload[1] = new EventData
                     {
+                        Size = sizeof(Guid),
+                        DataPointer = ((IntPtr)(&runspaceInstanceId))
+                    };
+                    eventPayload[2] = new EventData
+                    {
+                        Size = sizeof(Guid),
+                        DataPointer = ((IntPtr)(&parentScriptBlockId))
+                    };
+                    eventPayload[3] = new EventData
+                    {
                         Size = sizeof(int),
-                        DataPointer = ((IntPtr)(&SequencePointPosition))
+                        DataPointer = ((IntPtr)(&sequencePointPosition))
                     };
 
-                    WriteEventCore(eventId: 1, eventDataCount: 2, eventPayload);
+                    WriteEventCore(eventId: 1, eventDataCount: 4, eventPayload);
                 }
             }
         }
@@ -233,6 +243,16 @@ namespace System.Management.Automation
             public Guid ScriptId;
 
             /// <summary>
+            /// Unique identifer of the runspace.
+            /// </summary>
+            public Guid RunspaceId;
+
+            /// <summary>
+            /// Unique identifer of the parent script block.
+            /// </summary>
+            public Guid ParentScriptBlockId;
+
+            /// <summary>
             /// SequencePoint index number/position of the script block.
             /// </summary>
             public int SequencePointPosition;
@@ -285,7 +305,9 @@ namespace System.Management.Automation
                     {
                         Timestamp = eventData.TimeStamp,
                         ScriptId = (Guid)payload[0]!,
-                        SequencePointPosition = (int)payload[1]!
+                        RunspaceId = (Guid)payload[1]!,
+                        ParentScriptBlockId = (Guid)payload[2]!,
+                        SequencePointPosition = (int)payload[3]!
                     });
                     break;
                 case 2:
@@ -401,21 +423,60 @@ namespace System.Management.Automation
 
                 for (var i = 0; i < events.Count - 1; i++)
                 {
-                    var profileDate = events[i];
-                    if (metaData.TryGetValue(profileDate.ScriptId, out var compiledScriptBlockData))
+                    var profileData = events[i];
+                    if (metaData.TryGetValue(profileData.ScriptId, out var compiledScriptBlockData))
                     {
-                        var extent = compiledScriptBlockData.SequencePoints[profileDate.SequencePointPosition];
-
-                        PSObject result = new PSObject();
-                        result.Properties.Add(new PSNoteProperty("TimeStamp", profileDate.Timestamp.TimeOfDay));
-                        result.Properties.Add(new PSNoteProperty("Duration", events[i + 1].Timestamp - profileDate.Timestamp));
-                        result.Properties.Add(new PSNoteProperty("ExtentText", extent.Text));
-                        result.Properties.Add(new PSNoteProperty("Extent", extent));
+                        var extent = compiledScriptBlockData.SequencePoints[profileData.SequencePointPosition];
+                        var result = new ProfileEventRecord
+                        {
+                            StartTime = profileData.Timestamp.TimeOfDay,
+                            Duration = events[i + 1].Timestamp - profileData.Timestamp,
+                            Source = extent.Text,
+                            Extent = extent,
+                            RunspaceId = profileData.RunspaceId,
+                            ParentScriptBlockId = profileData.ParentScriptBlockId
+                        };
 
                         WriteObject(result);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Measure-ScriptBlock output type.
+        /// </summary>
+        internal struct ProfileEventRecord
+        {
+            /// <summary>
+            /// StartTime of event.
+            /// </summary>
+            public TimeSpan StartTime;
+
+            /// <summary>
+            /// Duration of event.
+            /// </summary>
+            public TimeSpan Duration;
+
+            /// <summary>
+            /// Script text.
+            /// </summary>
+            public string Source;
+
+            /// <summary>
+            /// Script Extent.
+            /// </summary>
+            public ScriptExtentEventData Extent;
+
+            /// <summary>
+            /// Unique identifer of the runspace.
+            /// </summary>
+            public Guid RunspaceId;
+
+            /// <summary>
+            /// Unique identifer of the parent script block.
+            /// </summary>
+            public Guid ParentScriptBlockId;
         }
     }
 }

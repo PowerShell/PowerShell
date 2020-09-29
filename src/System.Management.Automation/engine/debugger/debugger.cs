@@ -1232,6 +1232,20 @@ namespace System.Management.Automation
             }
         }
 
+        internal Guid GetParentScriptBlockId()
+        {
+            if (_callStack.Count > 1)
+            {
+                var scriptBlock = _callStack[_callStack.Count - 2].FunctionContext._scriptBlock;
+                if (scriptBlock is not null)
+                {
+                    return scriptBlock.Id;
+                }
+            }
+
+            return Guid.Empty;
+        }
+
         #endregion Call stack management
 
         #region setting breakpoints

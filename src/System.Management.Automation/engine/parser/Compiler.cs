@@ -815,7 +815,11 @@ namespace System.Management.Automation.Language
 
             if (ProfilerEventSource.LogInstance.IsEnabled())
             {
-                ProfilerEventSource.LogInstance.SequencePoint(_scriptBlock.Id, pos);
+                ProfilerEventSource.LogInstance.SequencePoint(
+                    _scriptBlock.Id,
+                    _scriptBlock.SessionStateInternal.ExecutionContext.CurrentRunspace.InstanceId,
+                    _executionContext.Debugger.GetParentScriptBlockId(),
+                     pos);
             }
         }
 
