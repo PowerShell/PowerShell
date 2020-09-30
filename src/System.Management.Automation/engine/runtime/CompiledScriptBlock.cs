@@ -164,6 +164,11 @@ namespace System.Management.Automation
 
         private void CompileUnoptimized()
         {
+            if (_compiledUnoptimized)
+            {
+                return;
+            }
+
             lock (this)
             {
                 if (_compiledUnoptimized)
@@ -179,6 +184,11 @@ namespace System.Management.Automation
 
         private void CompileOptimized()
         {
+            if (_compiledOptimized)
+            {
+                return;
+            }
+
             lock (this)
             {
                 if (_compiledOptimized)
