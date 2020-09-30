@@ -24,6 +24,7 @@ steps:
         AadClientSecret = "$(RepoClientCliSecret)"
         BlobFolderName = "$(AzureVersion)"
         LTS = $metadata.LTSRelease
+        ForProduction = $true
     }
     & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' @params
   displayName: Run release script
