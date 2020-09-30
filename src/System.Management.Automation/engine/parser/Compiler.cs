@@ -819,7 +819,7 @@ namespace System.Management.Automation.Language
                     _scriptBlock is not null ? _scriptBlock.Id : Guid.Empty,
                     _executionContext.CurrentRunspace.InstanceId,
                     _executionContext.Debugger.GetParentScriptBlockId(pos),
-                     pos);
+                    pos);
             }
         }
 
@@ -2174,13 +2174,28 @@ namespace System.Management.Automation.Language
                 var pipe = new Pipe(resultList);
                 try
                 {
+                    ScriptBlock scriptBlock = null;
+                    if (ProfilerEventSource.LogInstance.IsEnabled())
+                    {
+                        // We need a scriptblock Id to keep track of the call stack.
+                        scriptBlock = ScriptBlock.Create(context, expressionAst.Extent.Text);
+
+                        // No need to optimize - we only want to add to the scriptblock cache
+                        // so that we can get rundown events.
+                        // We can safely do this because lambda and sequencePoints
+                        // parameters of the method come always from callsites as null.
+                        // (We could remove them at all.)
+                        scriptBlock.Compile(optimized: false);
+                    }
+
                     var functionContext = new FunctionContext
                     {
                         _sequencePoints = sequencePoints,
                         _executionContext = context,
                         _file = expressionAst.Extent.File,
                         _outputPipe = pipe,
-                        _localsTuple = MutableTuple.MakeTuple(localsTupleType, DottedLocalsNameIndexMap)
+                        _localsTuple = MutableTuple.MakeTuple(localsTupleType, DottedLocalsNameIndexMap),
+                        _scriptBlock = scriptBlock
                     };
                     if (usingValues != null)
                     {

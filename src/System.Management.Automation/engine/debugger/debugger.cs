@@ -1239,7 +1239,7 @@ namespace System.Management.Automation
             // so we take last element from the callstack,
             // for rest sequence points we take an element before last as parent.
             int shift = sequencePointPosition == 0 ? 1 : 2;
-            if (_callStack.Count - shift > 0)
+            if (_callStack.Count - shift >= 0)
             {
                 var scriptBlock = _callStack[_callStack.Count - shift].FunctionContext._scriptBlock;
                 if (scriptBlock is not null)
