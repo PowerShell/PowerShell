@@ -72,6 +72,33 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $result[1]     | Should -BeExactly "world"
         }
     }
+    Context "Set-Content should work with alternate data streams on Windows" {
+        BeforeAll {
+            if ( $skipNotWindows )
+            {
+                return
+            }
+            $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamDirectory = "$TESTDRIVE/altstreamdir"
+            $stringData = "test data"
+            $streamName = "test"
+            $absentStreamName = "noExist"
+            $item = New-Item -type file $altStreamPath
+            $altstreamdiritem = New-Item -type directory $altStreamDirectory
+        }
+        It "Should create a new data stream on a file" -Skip:$skipNotWindows {
+            Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
+        }
+        It "Should create a new data stream on a file using colon syntax" -Skip:$skipNotWindows {
+            Set-Content -Path ${altStreamPath}:${streamName} -Value $stringData
+        }
+        It "Should create a new data stream on a directory" -Skip:$skipNotWindows {
+            { Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData } | Should -Not -Throw
+        }
+        It "Should create a new data stream on a directory using colon syntax" -Skip:$skipNotWindows {
+            { Set-Content -Path ${altStreamDirectory}:${streamName} -Value $stringData } | Should -Not -Throw
+        }
+    }
 }
 
 Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI', 'RequireAdminOnWindows') {

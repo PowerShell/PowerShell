@@ -5,6 +5,9 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
   BeforeAll {
     $file1 = "file1.txt"
     Setup -File "$file1"
+    $directory1 = "addcontent"
+    Setup -Directory "$directory1"
+    $streamContent = "ShouldWork"
   }
 
   Context "Add-Content should actually add content" {
@@ -45,6 +48,11 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
 
     It "Should throw an error on a directory" {
       { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
+    }
+
+    It "Should not throw an error on a directory datastream (on Windows)" -Skip:$skipNotWindows {
+      { Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop } | Should -Not -Throw        
+      Get-Content -Path TestDrive\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]

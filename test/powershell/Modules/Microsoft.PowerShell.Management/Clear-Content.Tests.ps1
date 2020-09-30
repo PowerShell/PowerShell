@@ -51,6 +51,9 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     Setup -File "$file3" -Content $content2
     $streamContent = "content for alternate stream"
     $streamName = "altStream1"
+    $dirName = "clearcontent"
+    Setup -Directory "$dirName"
+    Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
   }
 
   Context "Clear-Content should actually clear content" {
@@ -84,6 +87,11 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       Clear-Content -Path "TestDrive:/$file3" -Stream $streamName
       Get-Content -Path "TestDrive:/$file3" | Should -BeExactly $content2
       Get-Content -Path "TestDrive:/$file3" -Stream $streamName | Should -BeNullOrEmpty
+    }
+    It "Should not error when targeting an existing stream on a directory." -Skip:$skipNotWindows {
+      { Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent } | Should -Not -Throw
+      Get-Content -Path "TestDrive:/$dirName" -Stream $streamName | Should -BeExactly $streamContent
+      { Clear-Content -Path TestDrive:\$dirName -Stream $streamName -ErrorAction Stop } | Should -Not -Throw
     }
 
     It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {

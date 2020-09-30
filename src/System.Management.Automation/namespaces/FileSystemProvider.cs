@@ -6664,7 +6664,11 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Directory.Exists(path))
+                if (Directory.Exists(path)
+#if !UNIX
+                    && string.IsNullOrEmpty(streamName)
+#endif
+                    )
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
@@ -6819,7 +6823,11 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Directory.Exists(path))
+                if (Directory.Exists(path)
+#if !UNIX
+                    && string.IsNullOrEmpty(streamName)
+#endif
+                    )
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.WriteContainerContentException, path);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "WriteContainerContentException", ErrorCategory.InvalidOperation, null);
@@ -6897,13 +6905,6 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (Directory.Exists(path))
-            {
-                string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
-                WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
-                return;
-            }
-
             try
             {
 #if !UNIX
@@ -6955,6 +6956,20 @@ namespace Microsoft.PowerShell.Commands
                     clearStream = false;
                 }
 
+#endif
+                // This block is after we determine if a stream is being cleared because directories
+                // can have data streams that are not child items. They just don't have unnamed data streams.
+                if (Directory.Exists(path)
+#if !UNIX
+                    && !clearStream
+#endif
+                    )
+                {
+                    string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
+                    WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
+                    return;
+                }
+#if !UNIX
                 if (clearStream)
                 {
                     FileStream fileStream = null;
