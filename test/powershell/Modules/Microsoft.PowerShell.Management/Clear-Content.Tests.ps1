@@ -53,7 +53,9 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     $streamName = "altStream1"
     $dirName = "clearcontent"
     Setup -Directory "$dirName"
-    Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
+    if ($isWindows) {
+      Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
+    }
   }
 
   Context "Clear-Content should actually clear content" {
