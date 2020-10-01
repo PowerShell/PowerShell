@@ -51,8 +51,8 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
     }
 
     It "Should not throw an error on a directory datastream (on Windows)" -Skip:$skipNotWindows {
-      { Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop } | Should -Not -Throw        
-      Get-Content -Path TestDrive\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+      Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
+      Get-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
