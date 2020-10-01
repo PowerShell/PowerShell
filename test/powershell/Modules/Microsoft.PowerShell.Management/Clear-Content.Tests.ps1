@@ -88,7 +88,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       Get-Content -Path "TestDrive:/$file3" | Should -BeExactly $content2
       Get-Content -Path "TestDrive:/$file3" -Stream $streamName | Should -BeNullOrEmpty
     }
-    It "Should not error when targeting an existing stream on a directory." -Skip:$skipNotWindows {
+    It "Should not error when targeting an existing stream on a directory." -Skip:(!$IsWindows) {
       { Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent } | Should -Not -Throw
       Get-Content -Path "TestDrive:/$dirName" -Stream $streamName | Should -BeExactly $streamContent
       { Clear-Content -Path TestDrive:\$dirName -Stream $streamName -ErrorAction Stop } | Should -Not -Throw
