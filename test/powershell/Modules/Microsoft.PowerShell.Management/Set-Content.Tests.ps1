@@ -74,7 +74,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
     }
     Context "Set-Content should work with alternate data streams on Windows" {
         BeforeAll {
-            if ( $skipNotWindows )
+            if ( -Not $IsWindows )
             {
                 return
             }
@@ -86,16 +86,16 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $item = New-Item -type file $altStreamPath
             $altstreamdiritem = New-Item -type directory $altStreamDirectory
         }
-        It "Should create a new data stream on a file" -Skip:$skipNotWindows {
+        It "Should create a new data stream on a file" -Skip:(-Not $IsWindows) {
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
         }
-        It "Should create a new data stream on a file using colon syntax" -Skip:$skipNotWindows {
+        It "Should create a new data stream on a file using colon syntax" -Skip:(-Not $IsWindows) {
             Set-Content -Path ${altStreamPath}:${streamName} -Value $stringData
         }
-        It "Should create a new data stream on a directory" -Skip:$skipNotWindows {
+        It "Should create a new data stream on a directory" -Skip:(-Not $IsWindows) {
             { Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData } | Should -Not -Throw
         }
-        It "Should create a new data stream on a directory using colon syntax" -Skip:$skipNotWindows {
+        It "Should create a new data stream on a directory using colon syntax" -Skip:(-Not $IsWindows) {
             { Set-Content -Path ${altStreamDirectory}:${streamName} -Value $stringData } | Should -Not -Throw
         }
     }
