@@ -50,7 +50,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
-    It "Should not throw an error on a directory datastream (on Windows)" -Skip:$skipNotWindows {
+    It "Should not throw an error on a directory datastream (on Windows)" -Skip:(-Not $IsWindows) {
       Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
       Get-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
     }
