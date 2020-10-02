@@ -316,7 +316,7 @@ namespace System.Management.Automation
             /// <summary>
             /// The color dark gray.
             /// </summary>
-            public string DarkGray { get; set; } = "\x1b[90m]";
+            public string DarkGray { get; set; } = "\x1b[90m";
 
             /// <summary>
             /// The color green.

@@ -263,6 +263,22 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.ByteCollection",
                 ViewsOf_Microsoft_PowerShell_Commands_ByteCollection());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle",
+                ViewsOf_System_Management_Automation_PSStyle());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+FormattingData",
+                ViewsOf_System_Management_Automation_PSStyleFormattingData());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+ForegroundColor",
+                ViewsOf_System_Management_Automation_PSStyleForegroundColor());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+BackgroundColor",
+                ViewsOf_System_Management_Automation_PSStyleBackgroundColor());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -2003,6 +2019,97 @@ namespace System.Management.Automation.Runspaces
                     .EndRowDefinition()
                     .GroupByProperty("Label")
                 .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyle()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Reset)Example Text""", label: "Reset")
+                        .AddItemScriptBlock(@"""$($_.BlinkOff)Example Text$($_.Reset)""", label: "BlinkOff")
+                        .AddItemScriptBlock(@"""$($_.Blink)Example Text$($_.Reset)""", label: "Blink")
+                        .AddItemScriptBlock(@"""$($_.BoldOff)Example Text$($_.Reset)""", label: "BoldOff")
+                        .AddItemScriptBlock(@"""$($_.Bold)Example Text$($_.Reset)""", label: "Bold")
+                        .AddItemScriptBlock(@"""$($_.Hidden)Example Text$($_.Reset)""", label: "Hidden")
+                        .AddItemScriptBlock(@"""$($_.HiddenOff)Example Text$($_.Reset)""", label: "HiddenOff")
+                        .AddItemScriptBlock(@"""$($_.Reverse)Example Text$($_.Reset)""", label: "Reverse")
+                        .AddItemScriptBlock(@"""$($_.ReverseOff)Example Text$($_.Reset)""", label: "ReverseOff")
+                        .AddItemScriptBlock(@"""$($_.ItalicOff)Example Text$($_.Reset)""", label: "ItalicOff")
+                        .AddItemScriptBlock(@"""$($_.Italic)Example Text$($_.Reset)""", label: "Italic")
+                        .AddItemScriptBlock(@"""$($_.UnderlineOff)Example Text$($_.Reset)""", label: "UnderlineOff")
+                        .AddItemScriptBlock(@"""$($_.Underline)Example Text$($_.Reset)""", label: "Underline")
+                        .AddItemProperty(@"OutputRendering")
+                        .AddItemProperty(@"Formatting")
+                        .AddItemProperty(@"Foreground")
+                        .AddItemProperty(@"Background")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleFormattingData()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+FormattingData",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.FormatAccent)Example Text$($PSStyle.Reset)""", label: "FormatAccent")
+                        .AddItemScriptBlock(@"""$($_.ErrorAccent)Example Text$($PSStyle.Reset)""", label: "ErrorAccent")
+                        .AddItemScriptBlock(@"""$($_.Error)Example Text$($PSStyle.Reset)""", label: "Error")
+                        .AddItemScriptBlock(@"""$($_.Warning)Example Text$($PSStyle.Reset)""", label: "Warning")
+                        .AddItemScriptBlock(@"""$($_.Debug)Example Text$($PSStyle.Reset)""", label: "Debug")
+                        .AddItemScriptBlock(@"""$($_.Progress)Example Text$($PSStyle.Reset)""", label: "Progress")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleForegroundColor()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+ForegroundColor",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Black)Example Text$($PSStyle.Reset)""", label: "Black")
+                        .AddItemScriptBlock(@"""$($_.White)Example Text$($PSStyle.Reset)""", label: "White")
+                        .AddItemScriptBlock(@"""$($_.DarkGray)Example Text$($PSStyle.Reset)""", label: "DarkGray")
+                        .AddItemScriptBlock(@"""$($_.LightGray)Example Text$($PSStyle.Reset)""", label: "LightGray")
+                        .AddItemScriptBlock(@"""$($_.Red)Example Text$($PSStyle.Reset)""", label: "Red")
+                        .AddItemScriptBlock(@"""$($_.LightRed)Example Text$($PSStyle.Reset)""", label: "LightRed")
+                        .AddItemScriptBlock(@"""$($_.Magenta)Example Text$($PSStyle.Reset)""", label: "Magenta")
+                        .AddItemScriptBlock(@"""$($_.LightMagenta)Example Text$($PSStyle.Reset)""", label: "LightMagenta")
+                        .AddItemScriptBlock(@"""$($_.Blue)Example Text$($PSStyle.Reset)""", label: "Blue")
+                        .AddItemScriptBlock(@"""$($_.LightBlue)Example Text$($PSStyle.Reset)""", label: "LightBlue")
+                        .AddItemScriptBlock(@"""$($_.Cyan)Example Text$($PSStyle.Reset)""", label: "Cyan")
+                        .AddItemScriptBlock(@"""$($_.LightCyan)Example Text$($PSStyle.Reset)""", label: "LightCyan")
+                        .AddItemScriptBlock(@"""$($_.Green)Example Text$($PSStyle.Reset)""", label: "Green")
+                        .AddItemScriptBlock(@"""$($_.LightGreen)Example Text$($PSStyle.Reset)""", label: "LightGreen")
+                        .AddItemScriptBlock(@"""$($_.Yellow)Example Text$($PSStyle.Reset)""", label: "Yellow")
+                        .AddItemScriptBlock(@"""$($_.LightYellow)Example Text$($PSStyle.Reset)""", label: "LightYellow")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleBackgroundColor()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+ForegroundColor",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Black)Example Text$($PSStyle.Reset)""", label: "Black")
+                        .AddItemScriptBlock(@"""$($_.White)Example Text$($PSStyle.Reset)""", label: "White")
+                        .AddItemScriptBlock(@"""$($_.DarkGray)Example Text$($PSStyle.Reset)""", label: "DarkGray")
+                        .AddItemScriptBlock(@"""$($_.LightGray)Example Text$($PSStyle.Reset)""", label: "LightGray")
+                        .AddItemScriptBlock(@"""$($_.Red)Example Text$($PSStyle.Reset)""", label: "Red")
+                        .AddItemScriptBlock(@"""$($_.LightRed)Example Text$($PSStyle.Reset)""", label: "LightRed")
+                        .AddItemScriptBlock(@"""$($_.Magenta)Example Text$($PSStyle.Reset)""", label: "Magenta")
+                        .AddItemScriptBlock(@"""$($_.LightMagenta)Example Text$($PSStyle.Reset)""", label: "LightMagenta")
+                        .AddItemScriptBlock(@"""$($_.Blue)Example Text$($PSStyle.Reset)""", label: "Blue")
+                        .AddItemScriptBlock(@"""$($_.LightBlue)Example Text$($PSStyle.Reset)""", label: "LightBlue")
+                        .AddItemScriptBlock(@"""$($_.Cyan)Example Text$($PSStyle.Reset)""", label: "Cyan")
+                        .AddItemScriptBlock(@"""$($_.LightCyan)Example Text$($PSStyle.Reset)""", label: "LightCyan")
+                        .AddItemScriptBlock(@"""$($_.Green)Example Text$($PSStyle.Reset)""", label: "Green")
+                        .AddItemScriptBlock(@"""$($_.LightGreen)Example Text$($PSStyle.Reset)""", label: "LightGreen")
+                        .AddItemScriptBlock(@"""$($_.Yellow)Example Text$($PSStyle.Reset)""", label: "Yellow")
+                        .AddItemScriptBlock(@"""$($_.LightYellow)Example Text$($PSStyle.Reset)""", label: "LightYellow")
+                    .EndEntry()
+                .EndList());
         }
     }
 }
