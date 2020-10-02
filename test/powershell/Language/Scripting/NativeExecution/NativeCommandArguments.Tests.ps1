@@ -67,6 +67,11 @@ Describe "Native Command Arguments" -tags "CI" {
 
 Describe 'PSPath to native commands' {
     BeforeAll {
+        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        $PSDefaultParameterValues["it:skip"] = (-not $featureEnabled)
+
         if ($IsWindows) {
             $cmd = "cmd"
             $cmdArg1 = "/c"
@@ -90,6 +95,8 @@ Describe 'PSPath to native commands' {
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+
         Remove-Item -Path "env:/test var"
         Remove-Item -Path $filePath
         Remove-PSDrive -Name $complexDriveName
@@ -137,10 +144,10 @@ Describe 'PSPath to native commands' {
 
     It 'Relative PSPath works' {
         New-Item -Path $testdrive -Name TestFolder -ItemType Directory -ErrorAction Stop
-        $cwd = Get-Location
+        $pwd = Get-Location
         Set-Content -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder' -AdditionalChildPath 'test.txt') -Value 'hello'
         Set-Location -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder')
-        Set-Location -Path $cwd
+        Set-Location -Path $pwd
         $out = & $cmd $cmdArg1 $cmdArg2 "TestDrive:test.txt"
         $LASTEXITCODE | Should -Be 0
         $out | Should -BeExactly 'Hello'
