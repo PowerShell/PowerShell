@@ -52,6 +52,11 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             Get-Clipboard -Raw | Should -BeNullOrEmpty
         }
 
+        It 'Set-Clipboard should not return object' {
+            $result = 'hello' | Set-Clipboard
+            $result | Should -BeNullOrEmpty
+        }
+
         It 'Set-Clipboard -PassThru returns single object with -Append = <Append>' -TestCases @(
             @{ Append = $false }
             @{ Append = $true }
@@ -60,6 +65,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
 
             $params = @{ PassThru = $true; Append = $append }
 
+            Set-Clipboard -Value 'world'
             $result = 'hello' | Set-Clipboard @params
             $result | Should -BeExactly 'hello'
         }
@@ -72,6 +78,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
 
             $params = @{ PassThru = $true; Append = $append }
 
+            Set-Clipboard -Value 'world'
             $result = 'hello', 'world' | Set-Clipboard @params
             $result | Should -BeExactly @('hello', 'world')
         }
