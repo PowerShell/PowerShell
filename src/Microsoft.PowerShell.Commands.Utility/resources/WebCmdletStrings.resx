@@ -261,4 +261,7 @@
   <data name="RetryVerboseMsg" xml:space="preserve">
     <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
   </data>
+  <data name="JsonMaxDepthReached" xml:space="preserve">
+    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+  </data>
 </root>
