@@ -5,8 +5,6 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
   BeforeAll {
     $file1 = "file1.txt"
     Setup -File "$file1"
-    $directory1 = "addcontent"
-    Setup -Directory "$directory1"
     $streamContent = "ShouldWork"
   }
 
@@ -50,9 +48,18 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
-    It "Should not throw an error on a directory datastream (on Windows)" -Skip:(-Not $IsWindows) {
-      Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
-      Get-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+    Context "Add-Content should work with alternate data streams on Windows" {
+      BeforeAll {
+        if (!$isWindows) {
+          return
+        }
+        $directory1 = "addcontent"
+        Setup -Directory "$directory1"
+      }
+      It "Should not throw an error on a directory datastream (on Windows)" -Skip:(-Not $IsWindows) {
+        Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
+        Get-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+      }
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]

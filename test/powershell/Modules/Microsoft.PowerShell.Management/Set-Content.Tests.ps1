@@ -79,7 +79,9 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
                 return
             }
             $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamPath2 = "$TESTDRIVE/altStream2.txt"
             $altStreamDirectory = "$TESTDRIVE/altstreamdir"
+            $altStreamDirectory2 = "$TESTDRIVE/altstream2dir"
             $stringData = "test data"
             $streamName = "test"
             $absentStreamName = "noExist"
@@ -88,15 +90,19 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         }
         It "Should create a new data stream on a file" -Skip:(-Not $IsWindows) {
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
+            Get-Content -Path $altStreamPath -Stream $streamName | Should -BeExactly $stringData
         }
         It "Should create a new data stream on a file using colon syntax" -Skip:(-Not $IsWindows) {
-            Set-Content -Path ${altStreamPath}:${streamName} -Value $stringData
+            Set-Content -Path ${altStreamPath2}:${streamName} -Value $stringData
+            Get-Content -Path ${altStreamPath2} -Stream $streamName | Should -BeExactly $stringData
         }
         It "Should create a new data stream on a directory" -Skip:(-Not $IsWindows) {
             { Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData } | Should -Not -Throw
+            Get-Content -Path $altStreamDirectory -Stream $streamName | Should -BeExactly $stringData
         }
         It "Should create a new data stream on a directory using colon syntax" -Skip:(-Not $IsWindows) {
-            { Set-Content -Path ${altStreamDirectory}:${streamName} -Value $stringData } | Should -Not -Throw
+            Set-Content -Path ${altStreamDirectory2}:${streamName} -Value $stringData
+            Get-Content -Path ${altStreamDirectory2} -Stream ${streamName} | Should -BeExactly $stringData
         }
     }
 }

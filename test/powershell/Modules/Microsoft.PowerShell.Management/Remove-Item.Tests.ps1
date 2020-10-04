@@ -7,9 +7,7 @@ Describe "Remove-Item" -Tags "CI" {
     Context "File removal Tests" {
 	BeforeEach {
 	    New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
-
 	    Test-Path $testfilepath | Should -BeTrue
-
 	}
 
 	It "Should be able to be called on a regular file without error using the Path parameter" {
@@ -137,5 +135,46 @@ Describe "Remove-Item" -Tags "CI" {
 
 	    Test-Path $testdirectory | Should -BeFalse
 	}
+    }
+
+    Context "Alternate Data Streams should be supported on Windows" {
+      BeforeAll {
+        $fileName = "ADStest.txt"
+        $streamName = "teststream"
+        $dirName = "ADStestdir"
+        $fileContent =" This is file content."
+        $streamContent = "datastream content here"
+        $streamfile = Join-Path -Path $testpath -ChildPath $fileName
+        $streamdir = Join-Path -Path $testpath -ChildPath $dirName
+
+        New-Item -Path $streamfile -ItemType "File" -force
+        Add-Content -Path $streamfile -Value $fileContent
+        Add-Content -Path $streamfile -Stream $streamName -Value $streamContent
+        New-Item -Path $streamdir -ItemType "Directory" -Force
+        Add-Content -Path $streamdir -Stream $streamName -Value $streamContent
+      }
+#      BeforeEach {
+#        Remove-Item $fileName
+#        Remove-Item $dirName -Recurse
+#        New-Item -Name $fileName -Path $testpath -ItemType "File" -force
+#        Add-Content -Name $fileName -Content $fileContent
+#        Add-Content -Name $fileName -Stream $streamName -Content $streamContent
+#        New-Item -Name $dirName -Path $testpath -ItemType "Directory" -Force
+#        Add-Content -Name $dirName -Stream $streamName -Content $streamContent
+#      }
+      It "Should completely remove a datastream from a file" {
+        # First, we verify that the stream exists.
+        Get-Item -Path $streamfile -Stream $streamName | Should -Not -BeNullOrEmpty
+        # Now, remove the stream and verify it's gone.
+        Remove-Item -Path $streamfile -Stream $streamName
+        Get-Item -Path $streamfile -Stream $streamName -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+      }
+      It "Should completely remove a datastream from a directory" {
+        # First, we verify that the stream exists.
+        Get-Item -Path $streamdir -Stream $streamName | Should -Not -BeNullOrEmpty
+        # Now, remove the stream and verify it's gone.        
+        Remove-Item -Path $streamdir -Stream $streamName
+        Get-Item -Path $streamdir -Stream $streamname -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+      }
     }
 }

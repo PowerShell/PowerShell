@@ -117,11 +117,11 @@ Describe "Get-Item" -Tags "CI" {
             $stringData = "test data"
             $streamName = "test"
             $absentStreamName = "noExist"
-            $item = New-Item -type file $altStreamPath
+            New-Item -type file $altStreamPath
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
-            $altstreamdiritem = New-Item -type directory $altStreamDirectory
+            New-Item -type directory $altStreamDirectory
             cmd.exe /c echo ${stringData} > "${altStreamDirectory}:${streamName}"
-            $noaltstreamdiritem = New-Item -type directory $noAltStreamDirectory
+            New-Item -type directory $noAltStreamDirectory
         }
         It "Should find an alternate stream on a file if present" -Skip:$skipNotWindows {
             $result = Get-Item $altStreamPath -Stream $streamName
@@ -138,7 +138,7 @@ Describe "Get-Item" -Tags "CI" {
             $result.Stream | Should -Be $streamName
         }
         It "Should not find an alternate stream on a directory if not present" -Skip:$skipNotWindows {
-            { Get-Item $altStreamDirectory -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item $noAltStreamDirectory -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
         It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
             $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
