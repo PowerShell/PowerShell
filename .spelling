@@ -3,18 +3,19 @@
 # global dictionary is at the start, file overrides afterwards
 # one word per line, to define a file override use ' - filename'
 # where filename is relative to this configuration file
--title
-0-powershell-crossplatform
-0xfeeddeadbeef
+#title
+da-art85:master-powershell-crossplatform
+1481066ec797b871f6ca6c231131dc321cfe2838
 100ms
-1redone
+1done
 2.x
 2ae5d07
 32-bit
 64-bit
-about_
-about_debuggers
-about_jobs
+#about
+--debuggers
+#about
+--jobs
 acl
 adamdriscoll
 add-localgroupmember
