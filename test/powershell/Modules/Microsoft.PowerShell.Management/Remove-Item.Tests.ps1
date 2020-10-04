@@ -139,6 +139,9 @@ Describe "Remove-Item" -Tags "CI" {
 
     Context "Alternate Data Streams should be supported on Windows" {
       BeforeAll {
+        if (!$IsWindows) {
+          return
+        }
         $fileName = "ADStest.txt"
         $streamName = "teststream"
         $dirName = "ADStestdir"
@@ -153,23 +156,14 @@ Describe "Remove-Item" -Tags "CI" {
         New-Item -Path $streamdir -ItemType "Directory" -Force
         Add-Content -Path $streamdir -Stream $streamName -Value $streamContent
       }
-#      BeforeEach {
-#        Remove-Item $fileName
-#        Remove-Item $dirName -Recurse
-#        New-Item -Name $fileName -Path $testpath -ItemType "File" -force
-#        Add-Content -Name $fileName -Content $fileContent
-#        Add-Content -Name $fileName -Stream $streamName -Content $streamContent
-#        New-Item -Name $dirName -Path $testpath -ItemType "Directory" -Force
-#        Add-Content -Name $dirName -Stream $streamName -Content $streamContent
-#      }
-      It "Should completely remove a datastream from a file" {
+      It "Should completely remove a datastream from a file" -Skip:(!$IsWindows) {
         # First, we verify that the stream exists.
         Get-Item -Path $streamfile -Stream $streamName | Should -Not -BeNullOrEmpty
         # Now, remove the stream and verify it's gone.
         Remove-Item -Path $streamfile -Stream $streamName
         Get-Item -Path $streamfile -Stream $streamName -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
       }
-      It "Should completely remove a datastream from a directory" {
+      It "Should completely remove a datastream from a directory" -Skip:(!$IsWindows) {
         # First, we verify that the stream exists.
         Get-Item -Path $streamdir -Stream $streamName | Should -Not -BeNullOrEmpty
         # Now, remove the stream and verify it's gone.        
