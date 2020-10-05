@@ -6664,6 +6664,9 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+                // Get-Content will write a non-terminating error if the target is a directory.
+                // On Windows, the streamName must be null or empty for it to write the error. Otherwise, the
+                // alternate data stream is not a directory, even if it's set on a directory.
                 if (Directory.Exists(path)
 #if !UNIX
                     && string.IsNullOrEmpty(streamName)
@@ -6823,6 +6826,9 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+                // Add-Content and Set-Content will write a non-terminating error if the target is a directory.
+                // On Windows, the streamName must be null or empty for it to write the error. Otherwise, the
+                // alternate data stream is not a directory, even if it's set on a directory.
                 if (Directory.Exists(path)
 #if !UNIX
                     && string.IsNullOrEmpty(streamName)
