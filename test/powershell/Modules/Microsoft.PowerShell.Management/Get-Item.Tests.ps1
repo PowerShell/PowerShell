@@ -119,7 +119,7 @@ Describe "Get-Item" -Tags "CI" {
             $absentStreamName = "noExist"
             $null = New-Item -type file $altStreamPath
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
-            New-Item -type directory $altStreamDirectory
+            $null = New-Item -type directory $altStreamDirectory
             cmd.exe /c echo ${stringData} > "${altStreamDirectory}:${streamName}"
             New-Item -type directory $noAltStreamDirectory
         }
