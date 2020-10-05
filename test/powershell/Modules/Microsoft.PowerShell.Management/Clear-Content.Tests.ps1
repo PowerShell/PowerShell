@@ -54,6 +54,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     $dirName = "clearcontent"
     Setup -Directory "$dirName"
     if ($isWindows) {
+      Set-Content -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
       Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
     }
   }
@@ -81,14 +82,6 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     }
 
     Context "Clear-Content should work with alternate data streams on Windows" {
-      BeforeAll {
-        if (!$IsWindows)
-        {
-          return
-        }
-        Set-Content -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
-        Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
-      }
       It "Alternate streams should be cleared with Clear-Content on a file" -Skip:(!$IsWindows) {
         # Make sure the test is set up correctly.
         Set-Content           -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
@@ -108,7 +101,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         Clear-Content         -Path "TestDrive:/$dirName" -Stream $streamName -ErrorAction Stop
         # The stream should exist, but should have 0 length.
         $result = Get-Item -Path "TestDrive:/$dirName" -Stream $streamName
-        $result | Should -Not -BeNullOrEmpty
+        $result | Should -BeOfType System.Management.Automation.Internal.AlternateStreamData
         $result.length | Should -Be 0
       }
       It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {
