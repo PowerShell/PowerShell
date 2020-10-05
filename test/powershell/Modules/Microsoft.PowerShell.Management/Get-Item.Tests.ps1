@@ -121,7 +121,7 @@ Describe "Get-Item" -Tags "CI" {
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
             $null = New-Item -type directory $altStreamDirectory
             cmd.exe /c echo ${stringData} > "${altStreamDirectory}:${streamName}"
-            New-Item -type directory $noAltStreamDirectory
+            $null = New-Item -type directory $noAltStreamDirectory
         }
         It "Should find an alternate stream on a file if present" -Skip:$skipNotWindows {
             $result = Get-Item $altStreamPath -Stream $streamName
