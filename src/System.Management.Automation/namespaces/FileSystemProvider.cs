@@ -3708,10 +3708,10 @@ namespace Microsoft.PowerShell.Commands
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
                         foreach (PSObject item in itemsList)
                         {
-                            Hashtable ItemInfo = (Hashtable)item.BaseObject;
-                            string itemName = (string)ItemInfo["Name"];
-                            string itemFullName = (string)ItemInfo["FullName"];
-                            bool isContainer = (bool)ItemInfo["IsDirectory"];
+                            Hashtable itemInfo = (Hashtable)item.BaseObject;
+                            string itemName = (string)itemInfo["Name"];
+                            string itemFullName = (string)itemInfo["FullName"];
+                            bool isContainer = (bool)itemInfo["IsDirectory"];
 
                             if (isContainer)
                             {
@@ -3727,12 +3727,10 @@ namespace Microsoft.PowerShell.Commands
                                 }
 
                                 CopyDirectoryFromRemoteSession(
-                                    itemName,
-                                    itemFullName,
+                                    itemInfo,
                                     destinationPath,
                                     force,
                                     recurse,
-                                    ItemInfo,
                                     ps);
                             }
                             else
@@ -3740,7 +3738,7 @@ namespace Microsoft.PowerShell.Commands
                                 bool excludeFile = SessionStateUtilities.MatchesAnyWildcardPattern(itemName, _excludeMatcher, false);
                                 if (!excludeFile)
                                 {
-                                    long itemSize = (long)ItemInfo["FileSize"];
+                                    long itemSize = (long)itemInfo["FileSize"];
                                     CopyFileFromRemoteSession(itemName, itemFullName, destinationPath, force, ps, itemSize);
                                 }
                             }
@@ -4047,14 +4045,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private void CopyDirectoryFromRemoteSession(
-            string sourceDirectoryName,
-            string sourceDirectoryFullName,
+            Hashtable sourceDirectoryInfo,
             string destination,
             bool force,
             bool recurse,
-            Hashtable srcDir,
             System.Management.Automation.PowerShell ps)
         {
+            string sourceDirectoryName = (string)sourceDirectoryInfo["Name"];
+            string sourceDirectoryFullName = (string)sourceDirectoryInfo["FullName"];
+            byte sourceDirectoryAttributes = (byte)sourceDirectoryInfo["Attributes"];
+
             Dbg.Diagnostics.Assert((sourceDirectoryName != null && sourceDirectoryFullName != null), "The caller should verify directory.");
 
             if (IsItemContainer(destination))
@@ -4070,11 +4070,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                // Create destinationPath directory. This will fail if the directory already exists
-                // and Force is not selected.
+                // Create destinationPath directory and apply attributes of source directory.
+                // This will fail if the directory already exists and Force is not selected.
                 var destDir = CreateDirectory(destination, streamOutput: true);
-                foreach(var attribute in ((string)srcDir["Attributes"]).Split(','))
-                    destDir.Attributes |= Enum.Parse<System.IO.FileAttributes>(attribute.Trim());
+                destDir.Attributes = (FileAttributes)sourceDirectoryAttributes;
 
                 // If failed to create directory
                 if (!Directory.Exists(destination))
@@ -4139,9 +4138,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (PSObject dirObject in directories)
                         {
-                            Hashtable dir = (Hashtable)dirObject.BaseObject;
-                            string dirName = (string)dir["Name"];
-                            string dirFullName = (string)dir["FullName"];
+                            Hashtable directoryInfo = (Hashtable)dirObject.BaseObject;
 
                             // Making sure to obey the StopProcessing.
                             if (Stopping)
@@ -4150,12 +4147,10 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             // If an exception is thrown in the remote session, it is surface to the user via PowerShell Write-Error.
-                            CopyDirectoryFromRemoteSession(dirName,
-                                                           dirFullName,
+                            CopyDirectoryFromRemoteSession(directoryInfo,
                                                            destination,
                                                            force,
                                                            recurse,
-                                                           dir,
                                                            ps);
                         }
                     }
@@ -9669,8 +9664,8 @@ namespace System.Management.Automation.Internal
                     @{{
                         FullName = ConvertToPSDrivePath $_.PSDrive $_.FullName;
                         Name = $_.Name;
-                        FileSize = $_.Length; IsDirectory = $_ -is [System.IO.DirectoryInfo]
-                        Attributes = $_.Attributes.ToString()
+                        FileSize = $_.Length; IsDirectory = $_ -is [System.IO.DirectoryInfo];
+                        Attributes = [byte]$_.Attributes;
                      }}
                 }})
                 $op['Exists'] = $true
@@ -9721,15 +9716,15 @@ namespace System.Management.Automation.Internal
                 $files = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -File -Force | Microsoft.PowerShell.Core\ForEach-Object {{
                     @{{ FileName = $_.Name;
                         FilePath = (ConvertToPSDrivePath $_.PSDrive $_.FullName);
-                        FileSize = $_.Length
-                        Attributes = $_.Attributes.ToString()
+                        FileSize = $_.Length;
+                        Attributes = [byte]$_.Attributes;
                      }}
                 }})
 
                 $directories = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -Directory -Force | Microsoft.PowerShell.Core\ForEach-Object {{
                     @{{ Name = $_.Name;
-                        FullName = (ConvertToPSDrivePath $_.PSDrive $_.FullName)
-                        Attributes = $_.Attributes.ToString()
+                        FullName = (ConvertToPSDrivePath $_.PSDrive $_.FullName);
+                        Attributes = [byte]$_.Attributes;
                      }}
                 }})
 
