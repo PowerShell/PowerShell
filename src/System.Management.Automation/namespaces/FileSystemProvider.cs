@@ -6957,8 +6957,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
 #endif
-                // This block is after we determine if a stream is being cleared because directories
-                // can have data streams that are not child items. They just don't have unnamed data streams.
+                // On Windows, determine if our argument is a directory only after we determine if
+                // we're being asked to work with an alternate data stream, because directories can have
+                // alternate data streams on them that are not child items. These alternate data streams
+                // must be treated as data streams, even if they're attached to directories. However,
+                // if asked to work with a directory without a data stream specified, write a non-terminating
+                // error instead of clearing all child items of the directory.  (On non-Windows, alternate
+                // data streams don't exist, so in that environment always write the error when addressing
+                // a directory.)
                 if (Directory.Exists(path)
 #if !UNIX
                     && !clearStream
@@ -8646,8 +8652,15 @@ namespace System.Management.Automation.Internal
                     return alternateStreams;
                 }
 
-                // Filesystems other than NTFS generally don't support alternate streams, so we still
-                // must be prepared to throw the error. It's usually ERROR_INVALID_PARAMETER in that case.
+                // Filesystems other than NTFS generally don't support alternate streams, and the system
+                // sets ERROR_INVALID_PARAMETER in that case.
+                if (error == NativeMethods.ERROR_INVALID_PARAMETER)
+                {
+                    throw new NotSupportedException("This filesystem does not support alternate data streams.");
+                }
+
+                // An unexpected error was returned, that we don't know how to interpret. The most helpful
+                // thing we can do at this point is simply throw the raw Win32 exception.
                 throw new Win32Exception(error);
             }
 
@@ -8784,6 +8797,7 @@ namespace System.Management.Automation.Internal
         internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
+            internal const int ERROR_INVALID_PARAMETER = 87;
 
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 
