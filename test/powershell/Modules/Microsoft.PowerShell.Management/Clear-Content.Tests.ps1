@@ -89,7 +89,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         Set-Content -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
         Set-Content -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
       }
-      It "Alternate streams should be cleared with Clear-Content" -Skip:(!$IsWindows) {
+      It "Alternate streams should be cleared with Clear-Content on a file" -Skip:(!$IsWindows) {
         # Make sure the test is set up correctly.
         Set-Content           -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
         # Truncate the stream.
