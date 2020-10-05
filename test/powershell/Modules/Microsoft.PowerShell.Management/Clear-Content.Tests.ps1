@@ -92,6 +92,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       It "Alternate streams should be cleared with Clear-Content on a file" -Skip:(!$IsWindows) {
         # Make sure the test is set up correctly.
         Set-Content           -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
+        Get-Content           -Path "TestDrive:/$file3" -Stream $streamName | Should -BeExactly $streamContent
         # Truncate the stream.
         Clear-Content         -Path "TestDrive:/$file3" -Stream $streamName -ErrorAction Stop
         # The stream should exist, but should have 0 length.
@@ -103,6 +104,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         # Make sure the test is set up correctly.
         Set-Content           -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
         # Truncate the stream.
+        Get-Content           -Path "TestDrive:/$dirName" -Stream $streamName | Should -BeExactly $streamContent
         Clear-Content         -Path "TestDrive:/$dirName" -Stream $streamName -ErrorAction Stop
         # The stream should exist, but should have 0 length.
         $result = Get-Item -Path "TestDrive:/$dirName" -Stream $streamName

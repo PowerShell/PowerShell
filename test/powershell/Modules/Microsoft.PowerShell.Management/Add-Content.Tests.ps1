@@ -53,12 +53,19 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
         if (!$isWindows) {
           return
         }
-        $directory1 = "addcontent"
-        Setup -Directory "$directory1"
+        $ADSTestDir = "addcontentadstest"
+        $ADSTestFile = "addcontentads.txt"
+        $streamContent = "This is a test stream."
+        Setup -Directory "$ADSTestDir"
+        Setup -File "$ADSTestFile"
       }
-      It "Should not throw an error on a directory datastream (on Windows)" -Skip:(-Not $IsWindows) {
-        Add-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
-        Get-Content -Path TestDrive:\$directory1 -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+      It "Should add an alternate data stream on a directory" -Skip:(!$IsWindows) {
+        Add-Content -Path TestDrive:\$ADSTestDir -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
+        Get-Content -Path TestDrive:\$ADSTestDir -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+      }
+      It "Should add an alternate data stream on a file" -Skip:(!$IsWindows) {
+        Add-Content -Path TestDrive:\$ADSTestFile -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
+        Get-Content -Path TestDrive:\$ADSTestFile -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
       }
     }
 
