@@ -3708,10 +3708,10 @@ namespace Microsoft.PowerShell.Commands
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
                         foreach (PSObject item in itemsList)
                         {
-                            Hashtable itemInfo = (Hashtable)item.BaseObject;
-                            string itemName = (string)itemInfo["Name"];
-                            string itemFullName = (string)itemInfo["FullName"];
-                            bool isContainer = (bool)itemInfo["IsDirectory"];
+                            var itemInfo = (Hashtable)item.BaseObject;
+                            var itemName = (string)itemInfo["Name"];
+                            var itemFullName = (string)itemInfo["FullName"];
+                            var isContainer = (bool)itemInfo["IsDirectory"];
 
                             if (isContainer)
                             {
@@ -4051,9 +4051,9 @@ namespace Microsoft.PowerShell.Commands
             bool recurse,
             System.Management.Automation.PowerShell ps)
         {
-            string sourceDirectoryName = (string)sourceDirectoryInfo["Name"];
-            string sourceDirectoryFullName = (string)sourceDirectoryInfo["FullName"];
-            byte sourceDirectoryAttributes = (byte)sourceDirectoryInfo["Attributes"];
+            var sourceDirectoryName = (string)sourceDirectoryInfo["Name"];
+            var sourceDirectoryFullName = (string)sourceDirectoryInfo["FullName"];
+            var sourceDirectoryAttributes = (byte)sourceDirectoryInfo["Attributes"];
 
             Dbg.Diagnostics.Assert((sourceDirectoryName != null && sourceDirectoryFullName != null), "The caller should verify directory.");
 
