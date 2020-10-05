@@ -99,7 +99,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         $result | Should -Not -BeNullOrEmpty
         $result.length | Should -Be 0
       }
-      It "Should not error when clearing an alternate stream on a directory" -Skip:(!$IsWindows) {
+      It "Alternate streams should be cleared with Clear-Content on a directory" -Skip:(!$IsWindows) {
         # Make sure the test is set up correctly.
         Set-Content           -Path "TestDrive:/$dirName" -Stream $streamName -Value $streamContent
         # Truncate the stream.
