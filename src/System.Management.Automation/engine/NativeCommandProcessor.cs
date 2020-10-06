@@ -957,9 +957,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        private static bool CheckIfConsoleApplication(string fileName)
+        private bool CheckIfConsoleApplication(string fileName)
         {
-            return !CheckIfWindowsApplication(fileName);
+            _isWindowsApplication = CheckIfWindowsApplication(fileName);
+            return !(bool)_isWindowsApplication;
         }
 
         /// <summary>
