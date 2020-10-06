@@ -1761,15 +1761,53 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             return resourcesImported;
         }
 
-        internal static PSObject[] GenerateJsonClassesForAst(TypeDefinitionAst typeAst)
+        internal static PSObject[] GenerateJsonClassesForAst(TypeDefinitionAst typeAst, PSModuleInfo module, DSCResourceRunAsCredential runAsBehavior)
         {
             var embeddedInstanceTypes = new List<object>();
 
             var result = GenerateJsonClassesForAst(typeAst, embeddedInstanceTypes);
             var visitedInstances = new List<object>();
             visitedInstances.Add(typeAst);
+            var classes = ProcessEmbeddedInstanceTypes(embeddedInstanceTypes, visitedInstances);
+            AddEmbeddedInstanceTypesToCaches(classes, module, runAsBehavior);
 
             return result;
+        }
+
+        private static List<PSObject> ProcessEmbeddedInstanceTypes(List<object> embeddedInstanceTypes, List<object> visitedInstances)
+        {
+            var result = new List<PSObject>();
+            while (embeddedInstanceTypes.Count > 0)
+            {
+                var batchedTypes = embeddedInstanceTypes.Where(x => !visitedInstances.Contains(x)).ToArray();
+                embeddedInstanceTypes.Clear();
+
+                for (int i = batchedTypes.Length - 1; i >= 0; i--)
+                {
+                    visitedInstances.Add(batchedTypes[i]);
+                    var typeAst = batchedTypes[i] as TypeDefinitionAst;
+                    if (typeAst != null)
+                    {
+                        var classes = GenerateJsonClassesForAst(typeAst, embeddedInstanceTypes);
+                        result.AddRange(classes);
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+        private static void AddEmbeddedInstanceTypesToCaches(IEnumerable<PSObject> classes, PSModuleInfo module, DSCResourceRunAsCredential runAsBehavior)
+        {
+            foreach(dynamic c in classes)
+            {
+                var className = c.ClassName;
+                string alias = GetFriendlyName(c);
+                var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
+                var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className, friendlyName);
+                ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c);
+                ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
+            }
         }
 
         internal static string MapTypeNameToMofType(ITypeName typeName, string memberName, string className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes, ref string[] enumNames)
@@ -1810,10 +1848,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 embeddedInstanceTypes.Add(propTypeName._typeDefinitionAst);
             }
 
-            // The type is obviously not a string, but in the mof, we represent
-            // it as string (really, embeddedinstance of the class type)
             embeddedInstanceType = propTypeName.Name.Replace('.', '_');
-            return "string";
+            return "Instance";
         }
 
         private static PSObject[] GenerateJsonClassesForAst(TypeDefinitionAst typeAst, List<object> embeddedInstanceTypes)
@@ -1994,6 +2030,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var propertyObject = new PSObject();
                 propertyObject.Properties.Add(new PSNoteProperty(@"Name", member.Name));
                 propertyObject.Properties.Add(new PSNoteProperty(@"CimType", mofType + (isArrayType ? "Array" : "")));
+                if (!string.IsNullOrEmpty(embeddedInstanceType))
+                {
+                    propertyObject.Properties.Add(new PSNoteProperty(@"ReferenceClassName", embeddedInstanceType));
+                }
 
                 PSObject attributesPSObject = null;
                 foreach (var attr in attributes)
@@ -2185,7 +2225,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     }
                 }
 
-                var classes = GenerateJsonClassesForAst(resourceDefnAst);
+                var classes = GenerateJsonClassesForAst(resourceDefnAst, module, runAsBehavior);
 
                 ProcessJsonForDynamicKeywords(module, resourcesFound, functionsToDefine, classes, runAsBehavior);
             }
