@@ -4053,7 +4053,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var sourceDirectoryName = (string)sourceDirectoryInfo["Name"];
             var sourceDirectoryFullName = (string)sourceDirectoryInfo["FullName"];
-            var sourceDirectoryAttributes = (byte)sourceDirectoryInfo["Attributes"];
+            var sourceDirectoryAttributes = (FileAttributes)(int)sourceDirectoryInfo["Attributes"];
 
             Dbg.Diagnostics.Assert((sourceDirectoryName != null && sourceDirectoryFullName != null), "The caller should verify directory.");
 
@@ -4073,7 +4073,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create destinationPath directory and apply attributes of source directory.
                 // This will fail if the directory already exists and Force is not selected.
                 var destDir = CreateDirectory(destination, streamOutput: true);
-                destDir.Attributes = (FileAttributes)sourceDirectoryAttributes;
+                destDir.Attributes = sourceDirectoryAttributes;
 
                 // If failed to create directory
                 if (!Directory.Exists(destination))
@@ -9665,7 +9665,7 @@ namespace System.Management.Automation.Internal
                         FullName = ConvertToPSDrivePath $_.PSDrive $_.FullName;
                         Name = $_.Name;
                         FileSize = $_.Length; IsDirectory = $_ -is [System.IO.DirectoryInfo];
-                        Attributes = [byte]$_.Attributes;
+                        Attributes = [int]$_.Attributes;
                      }}
                 }})
                 $op['Exists'] = $true
@@ -9717,14 +9717,14 @@ namespace System.Management.Automation.Internal
                     @{{ FileName = $_.Name;
                         FilePath = (ConvertToPSDrivePath $_.PSDrive $_.FullName);
                         FileSize = $_.Length;
-                        Attributes = [byte]$_.Attributes;
+                        Attributes = [int]$_.Attributes;
                      }}
                 }})
 
                 $directories = @(Microsoft.PowerShell.Management\Get-ChildItem -Path $getPathDir -Directory -Force | Microsoft.PowerShell.Core\ForEach-Object {{
                     @{{ Name = $_.Name;
                         FullName = (ConvertToPSDrivePath $_.PSDrive $_.FullName);
-                        Attributes = [byte]$_.Attributes;
+                        Attributes = [int]$_.Attributes;
                      }}
                 }})
 
