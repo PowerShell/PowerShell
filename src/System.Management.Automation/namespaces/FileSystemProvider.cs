@@ -7840,10 +7840,6 @@ namespace Microsoft.PowerShell.Commands
         // data is 16KB, plus there's a header.
         private const int MAX_REPARSE_SIZE = (16 * 1024) + REPARSE_GUID_DATA_BUFFER_HEADER_SIZE;
 
-        private const int ERROR_NOT_A_REPARSE_POINT = 0x00001126;
-
-        private const int ERROR_INVALID_FUNCTION = 0x00000001;
-
         private const int FSCTL_GET_REPARSE_POINT = 0x000900A8;
 
         private const int FSCTL_SET_REPARSE_POINT = 0x000900A4;
