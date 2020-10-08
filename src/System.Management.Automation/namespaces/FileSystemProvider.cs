@@ -8158,21 +8158,20 @@ namespace Microsoft.PowerShell.Commands
                     // Get Buffer size
                     IntPtr dangerousHandle = handle.DangerousGetHandle();
 
-                    bool result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT,
-                        IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero);
+                    bool result = DeviceIoControl(
+                        dangerousHandle,
+                        FSCTL_GET_REPARSE_POINT,
+                        InBuffer: IntPtr.Zero,
+                        nInBufferSize: 0,
+                        outBuffer,
+                        outBufferSize,
+                        out bytesReturned,
+                        lpOverlapped: IntPtr.Zero);
 
                     if (!result)
                     {
-                        int lastError = Marshal.GetLastWin32Error();
-                        if (lastError == ERROR_NOT_A_REPARSE_POINT || lastError == ERROR_INVALID_FUNCTION)
-                        {
-                            // ERROR_INVALID_FUNCTION - underlying file system does not support reparse points
-                            linkType = null;
-                        }
-                        else
-                        {
-                            throw new Win32Exception(lastError);
-                        }
+                        // It is not reparse point or the file system does't support reparse points.
+                        return null;
                     }
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
@@ -8409,19 +8408,20 @@ namespace Microsoft.PowerShell.Commands
                 // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
                 handle.DangerousAddRef(ref success);
 
-                bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT,
-                    IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero);
+                bool result = DeviceIoControl(
+                    handle.DangerousGetHandle(),
+                    FSCTL_GET_REPARSE_POINT,
+                    InBuffer: IntPtr.Zero,
+                    nInBufferSize: 0,
+                    outBuffer,
+                    outBufferSize,
+                    out bytesReturned,
+                    lpOverlapped: IntPtr.Zero);
 
                 if (!result)
                 {
-                    int lastError = Marshal.GetLastWin32Error();
-                    if (lastError == ERROR_NOT_A_REPARSE_POINT || lastError == ERROR_INVALID_FUNCTION)
-                    {
-                        // ERROR_INVALID_FUNCTION - underlying file system does not support reparse points
-                        return null;
-                    }
-
-                    throw new Win32Exception(lastError);
+                    // It is not reparse point or the file system does't support reparse points.
+                    return null;
                 }
 
                 string targetDir = null;
