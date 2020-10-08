@@ -153,7 +153,7 @@ Describe "Remove-Item" -Tags "CI" {
         $null = New-Item -Path $streamfile -ItemType "File" -force
         Add-Content -Path $streamfile -Value $fileContent
         Add-Content -Path $streamfile -Stream $streamName -Value $streamContent
-        New-Item -Path $streamdir -ItemType "Directory" -Force
+        $null = New-Item -Path $streamdir -ItemType "Directory" -Force
         Add-Content -Path $streamdir -Stream $streamName -Value $streamContent
       }
       It "Should completely remove a datastream from a file" -Skip:(!$IsWindows) {
