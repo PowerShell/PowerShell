@@ -3829,7 +3829,9 @@ namespace Microsoft.PowerShell.Commands
                 if (ps == null)
                 {
                     var destDir = CreateDirectory(destination, streamOutput: true);
-                    destDir.Attributes = directory.Attributes;
+                    if (ExperimentalFeature.IsEnabled("PSCopyItemDirectoryAttributes")) {
+                        destDir.Attributes = directory.Attributes;
+                    }
                 }
                 else
                 {
@@ -4073,7 +4075,9 @@ namespace Microsoft.PowerShell.Commands
                 // Create destinationPath directory and apply attributes of source directory.
                 // This will fail if the directory already exists and Force is not selected.
                 var destDir = CreateDirectory(destination, streamOutput: true);
-                destDir.Attributes = sourceDirectoryAttributes;
+                if (ExperimentalFeature.IsEnabled("PSCopyItemDirectoryAttributes")) {
+                    destDir.Attributes = sourceDirectoryAttributes;
+                }
 
                 // If failed to create directory
                 if (!Directory.Exists(destination))
@@ -9219,7 +9223,10 @@ namespace System.Management.Automation.Internal
                     if ($force)
                     {{
                         Microsoft.PowerShell.Management\New-Item $createDirectoryPath -ItemType Directory -Force | Out-Null
-                        (Get-Item $createDirectoryPath -Force).Attributes = $attributes
+                        if (ExperimentalFeature.IsEnabled('PSCopyItemDirectoryAttributes'))
+                        {{
+                            (Get-Item $createDirectoryPath -Force).Attributes = $attributes
+                        }}
                         $op['DirectoryPath'] = $createDirectoryPath
                     }}
                     else
@@ -9230,7 +9237,10 @@ namespace System.Management.Automation.Internal
                 else
                 {{
                     Microsoft.PowerShell.Management\New-Item $createDirectoryPath -ItemType Directory | Out-Null
-                    (Get-Item $createDirectoryPath -Force).Attributes = $attributes
+                    if (ExperimentalFeature.IsEnabled('PSCopyItemDirectoryAttributes'))
+                    {{
+                        (Get-Item $createDirectoryPath -Force).Attributes = $attributes
+                    }}
                     $op['DirectoryPath'] = $createDirectoryPath
                 }}
             }}

@@ -123,6 +123,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
+                    name: "PSCopyItemDirectoryAttributes",
+                    description: "Copy-Item will copy directory attributes")
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
