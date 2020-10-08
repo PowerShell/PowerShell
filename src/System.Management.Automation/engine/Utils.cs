@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
                 return Encoding.Unicode;
             }
 
-            return new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            return utf8NoBom;
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
