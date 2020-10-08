@@ -150,7 +150,7 @@ Describe "Remove-Item" -Tags "CI" {
         $streamfile = Join-Path -Path $testpath -ChildPath $fileName
         $streamdir = Join-Path -Path $testpath -ChildPath $dirName
 
-        New-Item -Path $streamfile -ItemType "File" -force
+        $null = New-Item -Path $streamfile -ItemType "File" -force
         Add-Content -Path $streamfile -Value $fileContent
         Add-Content -Path $streamfile -Stream $streamName -Value $streamContent
         New-Item -Path $streamdir -ItemType "Directory" -Force
