@@ -103,7 +103,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {
         try {
           Push-Location -Path TestDrive:
-          (Get-Command Clear-Content -Stream foo).parameters.keys -eq "stream" | Should -Be "stream"
+          (Get-Command Clear-Content -Stream foo).parameters.keys -eq "Stream" | Should -BeExactly "Stream"
         }
         finally {
           Pop-Location
