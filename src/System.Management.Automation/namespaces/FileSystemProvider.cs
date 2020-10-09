@@ -8416,7 +8416,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!result)
                 {
-                    // It is not reparse point or the file system does't support reparse points.
+                    // It's not a reparse point or the file system doesn't support reparse points.
                     return null;
                 }
 
