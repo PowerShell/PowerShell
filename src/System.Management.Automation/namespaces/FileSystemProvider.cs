@@ -8167,7 +8167,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!result)
                     {
                         // It's not a reparse point or the file system doesn't support reparse points.
-                        return null;
+                        return IsHardLink(ref dangerousHandle) ? "HardLink" : null;
                     }
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
@@ -8187,7 +8187,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         default:
-                            linkType = IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                            linkType = null;
                             break;
                     }
 
