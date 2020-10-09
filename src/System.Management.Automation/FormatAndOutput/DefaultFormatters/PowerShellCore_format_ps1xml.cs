@@ -738,7 +738,7 @@ namespace System.Management.Automation.Runspaces
                 "System.Management.Automation.Subsystem.SubsystemInfo",
                 TableControl.Create()
                     .AddHeader(Alignment.Left, width: 17, label: "Kind")
-                    .AddHeader(Alignment.Left, width: 15, label: "SubsystemType")
+                    .AddHeader(Alignment.Left, width: 18, label: "SubsystemType")
                     .AddHeader(Alignment.Right, width: 12, label: "IsRegistered")
                     .AddHeader(Alignment.Left, label: "Implementations")
                     .StartRowDefinition()
