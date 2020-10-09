@@ -95,6 +95,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         $destinationDirectory = Join-Path -Path $testDirectory -ChildPath $destinationFolderName
         $sourceDirectory = Join-Path -Path $testDirectory -ChildPath $sourceFolderName
 
+        $experimentalCopyItem = ExperimentalFeature.IsEnabled("PSCopyItemDirectoryAttributes")
+
         # Creates one txt file
         #
         function CreateTestFile
@@ -279,15 +281,14 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
                 $copiedFilePath | Should -Exist
             }
         }
-        if (ExperimentalFeature.IsEnabled("PSCopyItemDirectoryAttributes")) {
-            It "Copy-Item Locally and Retain Attributes" {
-                $srcDir = GetSourceFolderPath
-                $destDir = GetDestinationFolderPath
-                $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory
-                $testFolder.Attributes += "System"
-                Copy-Item -Path $testFolder -Destination $destDir
-                ValidateCopyItemOperation -filePath $testFolder
-            }
+
+        It "Copy-Item Locally and Retain Attributes" -Skip:!$experimentalCopyItem {
+            $srcDir = GetSourceFolderPath
+            $destDir = GetDestinationFolderPath
+            $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory
+            $testFolder.Attributes += "System"
+            Copy-Item -Path $testFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $testFolder
         }
     }
 
@@ -299,15 +300,14 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             Copy-Item -Path $filePath -ToSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperation -filePath $filePath
         }
-        if (ExperimentalFeature.IsEnabled("PSCopyItemDirectoryAttributes")) {
-            It "Copy-Item One Folder to Remote Session and Retain Attributes" {
-                $srcDir = GetSourceFolderPath
-                $destDir = GetDestinationFolderPath
-                $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory -ToSession $s
-                $testFolder.Attributes += "System"
-                Copy-Item -Path $testFolder -Destination $destDir
-                ValidateCopyItemOperation -filePath $testFolder
-            }
+
+        It "Copy-Item One Folder to Remote Session and Retain Attributes" -Skip:!$experimentalCopyItem {
+            $srcDir = GetSourceFolderPath
+            $destDir = GetDestinationFolderPath
+            $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory -ToSession $s
+            $testFolder.Attributes += "System"
+            Copy-Item -Path $testFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $testFolder
         }
 
         It "Copy one read only file to remote session." {
@@ -412,15 +412,14 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             Copy-Item -Path $filePath  -FromSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperation -filePath $filePath
         }
-        if (ExperimentalFeature.IsEnabled("PSCopyItemDirectoryAttributes")) {
-            It "Copy-Item One Folder to From Session and Retain Attributes" {
-                $srcDir = GetSourceFolderPath
-                $destDir = GetDestinationFolderPath
-                $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory -FromSession $s
-                $testFolder.Attributes += "System"
-                Copy-Item -Path $testFolder -Destination $destDir
-                ValidateCopyItemOperation -filePath $testFolder
-            }
+
+        It "Copy-Item One Folder to From Session and Retain Attributes" -Skip:!$experimentalCopyItem {
+            $srcDir = GetSourceFolderPath
+            $destDir = GetDestinationFolderPath
+            $testFolder = New-Item -Path (Join-Path -Path $srcDir -ChildPath "TestFolder") -ItemType Directory -FromSession $s
+            $testFolder.Attributes += "System"
+            Copy-Item -Path $testFolder -Destination $destDir
+            ValidateCopyItemOperation -filePath $testFolder
         }
 
         It "Copy one empty file from remote session." {
