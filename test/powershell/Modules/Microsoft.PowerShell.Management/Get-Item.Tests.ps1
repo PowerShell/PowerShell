@@ -142,8 +142,7 @@ Describe "Get-Item" -Tags "CI" {
         }
         It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
             $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
-            $result | Should -BeOfType System.Management.Automation.Internal.AlternateStreamData
-            $result.Length | Should -Be 0
+            $result | Should -Be $null
         }
     }
 
