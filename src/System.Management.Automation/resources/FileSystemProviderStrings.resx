@@ -345,4 +345,7 @@
   <data name="AlreadyListedDirectory" xml:space="preserve">
     <value>Skip already-visited directory {0}.</value>
   </data>
+  <data name="AlternateDataStreamNotSupported" xml:space="preserve">
+    <value>Alternate data streams are not supported for the path {0}.</value>
+  </data>
 </root>

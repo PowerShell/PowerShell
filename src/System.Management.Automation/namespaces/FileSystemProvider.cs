@@ -8662,7 +8662,8 @@ namespace System.Management.Automation.Internal
                 // sets ERROR_INVALID_PARAMETER in that case.
                 if (error == NativeMethods.ERROR_INVALID_PARAMETER)
                 {
-                    throw new NotSupportedException("This filesystem does not support alternate data streams.");
+                    throw new NotSupportedException(
+                        string.Format(FileSystemProviderStrings.AlternateDataStreamNotSupported, path));
                 }
 
                 // An unexpected error was returned, that we don't know how to interpret. The most helpful
