@@ -97,7 +97,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             Get-Content -Path ${altStreamPath2} -Stream $streamName | Should -BeExactly $stringData
         }
         It "Should create a new data stream on a directory" -Skip:(-Not $IsWindows) {
-            { Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData } | Should -Not -Throw
+            Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData
             Get-Content -Path $altStreamDirectory -Stream $streamName | Should -BeExactly $stringData
         }
         It "Should create a new data stream on a directory using colon syntax" -Skip:(-Not $IsWindows) {

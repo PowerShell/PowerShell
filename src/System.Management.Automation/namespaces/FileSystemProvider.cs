@@ -8658,14 +8658,6 @@ namespace System.Management.Automation.Internal
                     return alternateStreams;
                 }
 
-                // Filesystems other than NTFS generally don't support alternate streams, and the system
-                // sets ERROR_INVALID_PARAMETER in that case.
-                if (error == NativeMethods.ERROR_INVALID_PARAMETER)
-                {
-                    throw new NotSupportedException(
-                        string.Format(FileSystemProviderStrings.AlternateDataStreamNotSupported, path));
-                }
-
                 // An unexpected error was returned, that we don't know how to interpret. The most helpful
                 // thing we can do at this point is simply throw the raw Win32 exception.
                 throw new Win32Exception(error);
