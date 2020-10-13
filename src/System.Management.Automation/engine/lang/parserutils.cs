@@ -1305,7 +1305,9 @@ namespace System.Management.Automation
                                                       bool all)
         {
             if (!(right is ScriptBlock predicate))
+            {
                 return ContainsOperatorCompiled(context, getEnumeratorSite, comparerSite, left, right);
+            }
 
             IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
             if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
@@ -1334,7 +1336,9 @@ namespace System.Management.Automation
                         args: Array.Empty<object>()));
                 
                 if(predicateResult ^ all)
+                {
                     return predicateResult;
+                }
             }
 
             return all;
