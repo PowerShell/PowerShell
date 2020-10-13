@@ -41,11 +41,15 @@ Describe "ComparisonOperator" -Tag "CI" {
         @{lhs = "'Hello'"; operator = "-notcontains"; rhs = "'Hello'"; result = $false},
         @{lhs = "'Hello','world'"; operator = "-ccontains"; rhs = "'hello'"; result = $false},
         @{lhs = "'Hello','world'"; operator = "-ccontains"; rhs = "'Hello'"; result = $true}
-        @{lhs = "'Hello','world'"; operator = "-cnotcontains"; rhs = "'Hello'"; result = $false}
+        @{lhs = "'Hello','world'"; operator = "-cnotcontains"; rhs = "'Hello'"; result = $false},
         @{lhs = "'Hello world'"; operator = "-match"; rhs = "'Hello*'"; result = $true},
         @{lhs = "'Hello world'"; operator = "-like"; rhs = "'Hello*'"; result = $true},
         @{lhs = "'Hello world'"; operator = "-notmatch"; rhs = "'Hello*'"; result = $false},
-        @{lhs = "'Hello world'"; operator = "-notlike"; rhs = "'Hello*'"; result = $false}
+        @{lhs = "'Hello world'"; operator = "-notlike"; rhs = "'Hello*'"; result = $false},
+        @{lhs = "'Hello','world'"; operator = "-any"; rhs = '{$_.Length -eq 5}'; result = $true},
+        @{lhs = "'Hello','world'"; operator = "-any"; rhs = '{$_.Lenght -ne 5}'; result = $false},
+        @{lhs = "'Hello','world'"; operator = "-all"; rhs = '{$_ -like "*!*"}'; result = $false},
+        @{lhs = "'Hello','world'"; operator = "-all"; rhs = '{$_ -like "*l?"}'; result = $true}
     ) {
         param($lhs, $operator, $rhs, $result)
         Invoke-Expression "$lhs $operator $rhs" | Should -Be $result
