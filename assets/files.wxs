@@ -1834,12 +1834,6 @@
         </Directory>
         <Directory Name="PSReadLine" Id="dir863FE8E11F754A92B789BDA7F952862C">
           <Directory Name="en-US" Id="dir3D05031A285040E2A7B1C358D1A874D2">
-            <Component Id="cmpB672EAD9CF9F45619E709AD0DD50D685">
-              <File Id="filA03E62334D5C443A8A1BED87D89929AF" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\en-US\Microsoft.PowerShell.PSReadLine2.dll-help.xml" />
-            </Component>
-            <Component Id="cmp5718E385260F4B5F8B199ECAA3E72CD9">
-              <File Id="fil6550502650754CCB8AC9EDED1E1F7D26" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\en-US\about_PSReadLine.help.txt" />
-            </Component>
           </Directory>
           <Component Id="cmp3F09B23AC8E74CEB9C09BD3BDF48DE0B">
             <File Id="filE98EB0CE020843F8BA6D6E8F5B70D5CC" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\PSReadLine.format.ps1xml" />
@@ -3708,8 +3702,6 @@
       <ComponentRef Id="cmpBCEF6DF1461C426BB07539392C7299E1" />
       <ComponentRef Id="cmpF26771D0C4AC49DDB2A5231B9DD191E8" />
       <ComponentRef Id="cmp2B41C7F93EAA4322B3FAED6F2BE95724" />
-      <ComponentRef Id="cmpB672EAD9CF9F45619E709AD0DD50D685" />
-      <ComponentRef Id="cmp5718E385260F4B5F8B199ECAA3E72CD9" />
       <ComponentRef Id="cmp3F09B23AC8E74CEB9C09BD3BDF48DE0B" />
       <ComponentRef Id="cmp2A7508B89C784581B8FEF2BB5C810CB7" />
       <ComponentRef Id="cmp06639B424B054D12A42F24F28FB682E7" />
