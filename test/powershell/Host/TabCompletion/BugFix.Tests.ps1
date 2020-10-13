@@ -16,9 +16,11 @@ Describe "Tab completion bug fix" -Tags "CI" {
 
     It "Issue#1350 - '1 -a<tab>' should work" {
         $result = TabExpansion2 -inputScript "1 -a" -cursorColumn "1 -a".Length
-        $result.CompletionMatches | Should -HaveCount 2
-        $result.CompletionMatches[0].CompletionText | Should -BeExactly "-and"
-        $result.CompletionMatches[1].CompletionText | Should -BeExactly "-as"
+        $result.CompletionMatches | Should -HaveCount 4
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "-all"
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly "-and"
+        $result.CompletionMatches[2].CompletionText | Should -BeExactly "-any"
+        $result.CompletionMatches[3].CompletionText | Should -BeExactly "-as"
     }
     It "Issue#2295 - '[pscu<tab>' should expand to [pscustomobject]" {
         $result = TabExpansion2 -inputScript "[pscu" -cursorColumn "[pscu".Length

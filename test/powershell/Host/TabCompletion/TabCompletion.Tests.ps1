@@ -1034,7 +1034,7 @@ dir -Recurse `
             $inputStr = "55 -"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount ([System.Management.Automation.CompletionCompleters]::CompleteOperator("").Count)
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-and'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-all'
         }
     }
 

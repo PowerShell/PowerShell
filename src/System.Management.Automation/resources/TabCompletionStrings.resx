@@ -264,6 +264,12 @@
   <data name="cnotinOperatorDescription" xml:space="preserve">
     <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
   </data>
+  <data name="anyOperatorDescription" xml:space="preserve">
+    <value>Containment lambda operator. Returns TRUE when the predicate (right operand) is TRUE for at least one of the values in the left operand.</value>
+  </data>
+  <data name="allOperatorDescription" xml:space="preserve">
+    <value>Containment lambda operator. Returns TRUE when the predicate (right operand) is TRUE for all of the values in the left operand.</value>
+  </data>
   <data name="splitOperatorDescription" xml:space="preserve">
     <value>Split - case insensitive. Split one or more strings into substrings.
 -Split &lt;String&gt;
