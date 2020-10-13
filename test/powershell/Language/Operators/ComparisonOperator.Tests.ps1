@@ -47,7 +47,7 @@ Describe "ComparisonOperator" -Tag "CI" {
         @{lhs = "'Hello world'"; operator = "-notmatch"; rhs = "'Hello*'"; result = $false},
         @{lhs = "'Hello world'"; operator = "-notlike"; rhs = "'Hello*'"; result = $false},
         @{lhs = "'Hello','world'"; operator = "-any"; rhs = '{$_.Length -eq 5}'; result = $true},
-        @{lhs = "'Hello','world'"; operator = "-any"; rhs = '{$_.Lenght -ne 5}'; result = $false},
+        @{lhs = "'Hello','world'"; operator = "-any"; rhs = '{$_.Length -ne 5}'; result = $false},
         @{lhs = "'Hello','world'"; operator = "-all"; rhs = '{$_ -like "*!*"}'; result = $false},
         @{lhs = "'Hello','world'"; operator = "-all"; rhs = '{$_ -like "*l?"}'; result = $true}
     ) {
