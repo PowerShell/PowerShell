@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- Assembly -->
+    <RootNamespace>Microsoft.PowerShell.Blazor.Wasm.Demo</RootNamespace>
+    <AssemblyName>pwsh-blazor-wasm-demo</AssemblyName>
+    
+    <!-- Warnings -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    
+    <!-- Thread Pool -->
+    <ThreadPoolMinThreads>1</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>1</ThreadPoolMaxThreads>
+
+    <!-- Trim Configuration -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <TrimMode>Link</TrimMode>
+    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+    <ILLinkWarningLevel>999</ILLinkWarningLevel>
+    <ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
+
+    <!-- Trimming Symbols -->
+    <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+
+    <!-- Trimming framework library features / Feature Switches -->
+    <DebuggerSupport>true</DebuggerSupport>
+    <EnableUnsafeUTF7Encoding>true</EnableUnsafeUTF7Encoding>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    <EventSourceSupport>true</EventSourceSupport>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <HttpActivityPropagationSupport>true</HttpActivityPropagationSupport>
+    <UseSystemResourceKeys>false</UseSystemResourceKeys>
+
+    <!-- Trimming Blazor -->
+    <BlazorEnableTimeZoneSupport>true</BlazorEnableTimeZoneSupport>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <BlazorCacheBootResources>false</BlazorCacheBootResources>
+    <BlazorEnableCompression>false</BlazorEnableCompression>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0-rc.1.20451.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0-rc.1.20451.17" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0-rc.1.20451.14" />
+    
+     <!-- PowerShell Requirements  -->
+    <!-- Hack to prevent the library to failed and raise an assembly conflict -->
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" ExcludeAssets="all" NoWarn="NU1601" />
+    <ProjectReference Include="..\Microsoft.Management.Infrastructure\src\Microsoft.Management.Infrastructure\Microsoft.Management.Infrastructure.csproj" Version="2.0.0" NoWarn="NU1601" />
+   
+    <!-- S.M.A  -->
+    <ProjectReference Include="..\..\..\src\System.Management.Automation\System.Management.Automation.csproj" />
+    
+    <!-- PowerShell Module  -->
+    <ProjectReference Include="..\..\..\src\Microsoft.PowerShell.Commands.Management\Microsoft.PowerShell.Commands.Management.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.PowerShell.ConsoleHost\Microsoft.PowerShell.ConsoleHost.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+</Project>

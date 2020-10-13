@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -76,8 +77,7 @@ namespace System.Management.Automation
         {
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
-            string assemblyPath = typeof(PSVersionInfo).Assembly.Location;
-            string productVersion = FileVersionInfo.GetVersionInfo(assemblyPath).ProductVersion;
+            string productVersion = typeof(PSVersionInfo).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Trim();
 
             // Get 'GitCommitId' and 'PSVersion' from the 'productVersion' assembly attribute.
             //

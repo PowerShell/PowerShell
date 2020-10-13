@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Security;
 
 using Dbg = System.Management.Automation;
@@ -337,10 +338,9 @@ namespace System.Management.Automation
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PID
-            Process currentProcess = Process.GetCurrentProcess();
             v = new PSVariable(
                     SpecialVariables.PID,
-                    currentProcess.Id,
+                    OperatingSystem.IsBrowser() ? 0 : Process.GetCurrentProcess().Id,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PIDDescription);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);

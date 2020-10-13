@@ -16,6 +16,8 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal class PSSysLogProvider : LogProvider
     {
+        private static bool isBrowser;
+
         private static SysLogProvider s_provider;
 
         // by default, do not include channel bits
@@ -29,10 +31,17 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         static PSSysLogProvider()
         {
-            s_provider = new SysLogProvider(PowerShellConfig.Instance.GetSysLogIdentity(),
-                                            PowerShellConfig.Instance.GetLogLevel(),
-                                            PowerShellConfig.Instance.GetLogKeywords(),
-                                            PowerShellConfig.Instance.GetLogChannels());
+            if (OperatingSystem.IsBrowser())
+            {
+                isBrowser = true;
+            }
+            else 
+            {
+                s_provider = new SysLogProvider(PowerShellConfig.Instance.GetSysLogIdentity(),
+                                                PowerShellConfig.Instance.GetLogLevel(),
+                                                PowerShellConfig.Instance.GetLogKeywords(),
+                                                PowerShellConfig.Instance.GetLogChannels());
+            }
         }
 
         /// <summary>
@@ -73,7 +82,16 @@ namespace System.Management.Automation.Tracing
         /// </remarks>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return s_provider.IsEnabled(level, keywords);
+            if (isBrowser && (int)level <= 3)
+            {
+                // log if level is at least warning
+                return true;
+            }
+            else if (!isBrowser) 
+            {
+                return s_provider.IsEnabled(level, keywords);
+            }
+            return false;
         }
 
         /// <summary>
@@ -293,10 +311,24 @@ namespace System.Management.Automation.Tracing
         /// <param name="payLoad"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
-            s_provider.Log(id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity), DefaultKeywords,
+            if (isBrowser)
+            {
+                Console.WriteLine($"Id:       {id}\n" + 
+                                  $"Channel:  {channel}\n" + 
+                                  $"Task:     {task}\n" + 
+                                  $"OpCode:   {opcode}\n" +
+                                  $"Severity: {GetPSLevelFromSeverity(logContext.Severity)}\n" +
+                                  $"Context: \n{LogContextToString(logContext)}" +
+                                  $"PayLoad:  {payLoad}"  +
+                                  $"UserData: {GetPSLogUserData(logContext.ExecutionContext)}\n");
+            }
+            else
+            {
+                s_provider.Log(id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity), DefaultKeywords,
                            LogContextToString(logContext),
                            GetPSLogUserData(logContext.ExecutionContext),
                            payLoad);
+            }
         }
 
         /// <summary>
@@ -311,7 +343,20 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
         {
-            s_provider.Log(id, channel, task, opcode, level, keyword, args);
+            if (isBrowser)
+            {
+                Console.WriteLine($"Id: {id}\n" + 
+                                  $"Channel: {channel}\n" + 
+                                  $"Task: {task}\n" + 
+                                  $"OpCode: {opcode}\n" +
+                                  $"Level: {level}\n" +
+                                  $"Keyword: {keyword}\n" + 
+                                  $"Args: " + string.Join(", ", args));
+            }
+            else
+            {
+                s_provider.Log(id, channel, task, opcode, level, keyword, args);
+            }
         }
 
         /// <summary>
@@ -319,7 +364,14 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         internal void WriteTransferEvent(Guid parentActivityId)
         {
-            s_provider.LogTransfer(parentActivityId);
+            if (isBrowser)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                s_provider.LogTransfer(parentActivityId);
+            }
         }
 
         /// <summary>
@@ -328,7 +380,14 @@ namespace System.Management.Automation.Tracing
         /// <param name="newActivityId">The GUID identifying the activity.</param>
         internal void SetActivityIdForCurrentThread(Guid newActivityId)
         {
-            s_provider.SetActivity(newActivityId);
+            if (isBrowser)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                s_provider.SetActivity(newActivityId);
+            }
         }
     }
 }

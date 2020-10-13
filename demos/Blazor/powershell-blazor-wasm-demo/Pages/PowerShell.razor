@@ -1,0 +1,220 @@
+@page "/powershell"
+
+@using System.IO
+@using System.Threading
+@using System.Management.Automation
+@using System.Management.Automation.Runspaces
+@using PWSH = System.Management.Automation.PowerShell
+
+<h1>Powershell</h1>
+
+<h3>Code</h3>
+<textarea class="form-control" id="Code" style="width:100%; height:200px; overflow-y:auto; font-family:Consolas; font-size:0.9em;"
+            @bind-value="_code" @bind-value:event="oninput" />
+<br />
+<button class="btn btn-primary" @onclick="InvokeScript">Run</button>
+<button class="btn btn-danger" @onclick="ClearQuery">Clear</button>
+
+<h3>Results</h3>
+<pre style="width:100%; font-family:Consolas; font-size:0.9em;">
+    <code>@_results</code> 
+</pre>
+
+@code {
+    private string _code { get; set; } = "$PSVersionTable | Out-String";
+    private string _results { get; set; } = String.Empty;
+
+    private string _modulesPath = "/opt/powershell/Modules";
+    private InitialSessionState _iss;
+    private Runspace _runspace;
+    private PWSH _powershell;
+
+    override protected void OnInitialized()
+    {
+        var homePath = Environment.GetEnvironmentVariable("HOME");
+
+        Environment.SetEnvironmentVariable("XDG_CONFIG_HOME", $"{homePath}/.config");
+        Environment.SetEnvironmentVariable("XDG_CACHE_HOME", $"{homePath}/.cache");
+        Environment.SetEnvironmentVariable("XDG_DATA_HOME", $"{homePath}/.local/share");
+
+        Environment.SetEnvironmentVariable("POWERSHELL_TELEMETRY_OPTOUT", "1");
+        Environment.SetEnvironmentVariable("POWERSHELL_CLI_TELEMETRY_OPTOUT", "1");
+        Environment.SetEnvironmentVariable("POWERSHELL_UPDATECHECK_OPTOUT", "1");
+        Environment.SetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup", "1");
+        Environment.SetEnvironmentVariable("PSModuleAnalysisCachePath", "/dev/null");
+        Environment.SetEnvironmentVariable("UserName", "web_user");
+
+        Environment.SetEnvironmentVariable("PSModulePath", _modulesPath);
+        Directory.CreateDirectory(_modulesPath);
+
+        CreateModuleManifest("Microsoft.PowerShell.ConsoleHost", @"
+@{
+    GUID = '56D66100-99A0-4FFC-A12D-EEE9A6718AEF'
+    Author = 'PowerShell'
+    CompanyName = 'Microsoft Corporation'
+    Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+    ModuleVersion = '7.0.0.0'
+    CompatiblePSEditions = @('Core')
+    PowerShellVersion = '3.0'
+    FunctionsToExport = @()
+    CmdletsToExport = 'Start-Transcript', 'Stop-Transcript'
+    AliasesToExport = @()
+    NestedModules = 'Microsoft.PowerShell.ConsoleHost.dll'
+    HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113538'
+}
+");
+
+        CreateModuleManifest("Microsoft.PowerShell.Management", @"
+@{
+    GUID='EEFCB906-B326-4E99-9F54-8B4BB6EF3C6D'
+    Author = 'PowerShell'
+    CompanyName = 'Microsoft Corporation'
+    Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+    ModuleVersion = '7.0.0.0'
+    CompatiblePSEditions = @('Core')
+    PowerShellVersion = '3.0'
+    NestedModules = 'Microsoft.PowerShell.Commands.Management.dll'
+    HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113632'
+    FunctionsToExport = @()
+    AliasesToExport = @('gcb', 'gtz', 'scb')
+    CmdletsToExport =@(
+        'Add-Content', 'Clear-Content', 'Clear-ItemProperty', 'Join-Path', 'Convert-Path', 'Copy-ItemProperty',
+        'Get-ChildItem', 
+      # 'Get-Clipboard', 'Set-Clipboard', 
+        'Get-Content', 'Get-ItemProperty', 'Get-ItemPropertyValue', 'Move-ItemProperty', 'Get-Location', 'Set-Location', 'Push-Location',
+        'Pop-Location', 'New-PSDrive', 'Remove-PSDrive', 'Get-PSDrive', 'Get-Item', 'New-Item', 'Set-Item',
+        'Remove-Item', 'Move-Item', 'Rename-Item', 'Copy-Item', 'Clear-Item', 'Invoke-Item', 'Get-PSProvider',
+        'New-ItemProperty', 'Split-Path', 'Test-Path', 
+      # 'Get-Process', 'Stop-Process', 'Wait-Process', 'Debug-Process', 'Start-Process', 'Test-Connection', 
+        'Remove-ItemProperty', 'Rename-ItemProperty', 'Resolve-Path', 'Set-Content', 'Set-ItemProperty', 'Get-TimeZone'
+    )
+}
+");
+
+        CreateModuleManifest("Microsoft.PowerShell.Security", @"
+@{
+    GUID='A94C8C7E-9810-47C0-B8AF-65089C13A35A'
+    Author='PowerShell'
+    CompanyName='Microsoft Corporation'
+    Copyright='Copyright (c) Microsoft Corporation. All rights reserved.'
+    ModuleVersion='7.0.0.0'
+    CompatiblePSEditions = @('Core')
+    PowerShellVersion='3.0'
+    FunctionsToExport = @()
+    CmdletsToExport=@(
+        'Get-Credential', 'Get-ExecutionPolicy', 'Set-ExecutionPolicy', 
+        'ConvertFrom-SecureString', 'ConvertTo-SecureString', 
+        'Get-PfxCertificate'
+    )
+    AliasesToExport = @()
+    NestedModules='Microsoft.PowerShell.Security.dll'
+    HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113533'
+}
+");
+
+        CreateModuleManifest("Microsoft.PowerShell.Utility", @"
+@{
+    GUID = '1DA87E53-152B-403E-98DC-74D7B4D63D59'
+    Author = 'PowerShell'
+    CompanyName = 'Microsoft Corporation'
+    Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+    ModuleVersion = '7.0.0.0'
+    CompatiblePSEditions = @('Core')
+    PowerShellVersion = '3.0'
+    CmdletsToExport = @(
+      'Export-Alias', 'Get-Alias', 'Import-Alias', 'New-Alias', 'Remove-Alias', 'Set-Alias', 'Export-Clixml',
+      'Import-Clixml', 'Measure-Command', 'Trace-Command', 'ConvertFrom-Csv', 'ConvertTo-Csv', 'Export-Csv',
+      'Import-Csv', 'Get-Culture', 'Format-Custom', 'Get-Date', 'Set-Date', 'Write-Debug', 'Wait-Debugger',
+      'Register-EngineEvent', 'Write-Error', 'Get-Event', 'New-Event', 'Remove-Event', 'Unregister-Event',
+      'Wait-Event', 'Get-EventSubscriber', 'Invoke-Expression', 'Out-File', 'Get-FileHash', 'Export-FormatData',
+      'Get-FormatData', 'Update-FormatData', 'New-Guid', 'Format-Hex', 'Get-Host', 'Read-Host', 'Write-Host',
+      'ConvertTo-Html', 'Write-Information', 'ConvertFrom-Json', 'ConvertTo-Json', 'Test-Json', 'Format-List',
+      'Import-LocalizedData', 
+    # 'Send-MailMessage', 
+      'ConvertFrom-Markdown', 'Show-Markdown', 'Get-MarkdownOption',
+      'Set-MarkdownOption', 'Add-Member', 'Get-Member', 'Compare-Object', 'Group-Object', 'Measure-Object',
+      'New-Object', 'Select-Object', 'Sort-Object', 'Tee-Object', 'Register-ObjectEvent', 'Write-Output',
+      'Import-PowerShellDataFile', 'Write-Progress', 'Disable-PSBreakpoint', 'Enable-PSBreakpoint',
+      'Get-PSBreakpoint', 'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'Get-PSCallStack', 
+    # 'Export-PSSession', 'Import-PSSession', 
+      'Get-Random', 
+    # 'Invoke-RestMethod', 
+      'Debug-Runspace', 'Get-Runspace', 'Disable-RunspaceDebug', 'Enable-RunspaceDebug', 'Get-RunspaceDebug', 'Start-Sleep', 
+      'Join-String', 'Out-String', 'Select-String', 'ConvertFrom-StringData', 'Format-Table', 'New-TemporaryFile', 'New-TimeSpan',
+      'Get-TraceSource', 'Set-TraceSource', 'Add-Type', 'Get-TypeData', 'Remove-TypeData', 'Update-TypeData',
+      'Get-UICulture', 'Get-Unique', 'Get-Uptime', 'Clear-Variable', 'Get-Variable', 'New-Variable',
+      'Remove-Variable', 'Set-Variable', 'Get-Verb', 'Write-Verbose', 'Write-Warning', 
+    # 'Invoke-WebRequest',
+      'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Update-List'
+    # , 'Unblock-File'
+    )
+    FunctionsToExport = @()
+    AliasesToExport = @('fhx')
+    NestedModules = @('Microsoft.PowerShell.Commands.Utility.dll')
+    HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113633'
+    PrivateData = @{
+      PSData = @{
+        ExperimentalFeatures = @(
+          @{
+            Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
+            Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger.'
+          }
+        )
+      }
+    }
+}
+");
+
+        // Set Current Directory
+        Directory.SetCurrentDirectory(homePath);
+
+        _iss = InitialSessionState.CreateDefault2();
+        _iss.ApartmentState = ApartmentState.STA;
+        _iss.ThreadOptions = PSThreadOptions.UseCurrentThread;
+        _iss.ImportPSModule("Microsoft.PowerShell.Utility");
+
+        _runspace = RunspaceFactory.CreateRunspace(_iss);
+        _runspace.Open();
+
+        _powershell = PWSH.Create(_runspace);
+    }
+
+    private void CreateModuleManifest(string name, string value)
+    {
+        string modulePath = $"{_modulesPath}/{name}";
+        Directory.CreateDirectory(modulePath);
+        System.IO.File.AppendAllText($"{modulePath}/{name}.psd1", value) ;
+    }
+
+    private async Task InvokeScript()
+    {
+        Console.WriteLine($"Execute PS:\n{_code}");
+
+        _powershell.AddScript(_code);
+
+        try
+        {
+            PSDataCollection<PSObject> results = await Task.Factory.FromAsync<PSDataCollection<PSObject>, PSInvocationSettings, PSDataCollection<PSObject>>(
+                _powershell.BeginInvoke,
+                _powershell.EndInvoke,
+                new PSDataCollection<PSObject>(),
+                new PSInvocationSettings(),
+            null);
+
+            _results = String.Join("\n", results.ToList<PSObject>().Select(o => o.BaseObject.ToString()));
+        }
+        catch (Exception ex)
+        {
+            _results = $"Exception:\n{ex.Message}";
+        }
+
+        _powershell.Streams.ClearStreams();
+        _powershell.Commands.Clear();
+    }
+
+    private void ClearQuery()
+    {
+        _code = _results = String.Empty;
+    }
+
+}
