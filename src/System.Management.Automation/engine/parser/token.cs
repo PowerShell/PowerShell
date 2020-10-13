@@ -428,6 +428,12 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
 
+        /// <summary>The any containment operator '-any'</summary>
+        Any = 105,
+
+        /// <summary>The all containment operator '-all'</summary>
+        All = 106,
+
         #endregion Operators
 
         #region Keywords
@@ -616,8 +622,8 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
-        /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
-        /// and all of the case sensitive variants of these operators, if they exists.
+        /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', 
+        /// '-as', '-any', '-all', and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
         BinaryPrecedenceComparison = 0x5,
 
@@ -878,8 +884,8 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
-            /*     Reserved slot 8  */ TokenFlags.None,
+            /*                  Any */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
+            /*                  All */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
             /*     Reserved slot 11 */ TokenFlags.None,
