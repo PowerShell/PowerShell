@@ -284,6 +284,8 @@ namespace System.Management.Automation
         internal static readonly object _TrueObject = (object)true;
         internal static readonly object _FalseObject = (object)false;
 
+        private static readonly CallSite<Func<CallSite, object, bool>> s_toBoolSite = CallSite<Func<CallSite, object, bool>>.Create(PSConvertBinder.Get(typeof(bool)));
+
         internal static string CharToString(char ch)
         {
             if (ch < 255) return s_chars[ch];
@@ -1292,6 +1294,50 @@ namespace System.Management.Automation
             }
 
             return false;
+        }
+
+        // Implementation of the -any/-all operators and case insensitive variants.
+        internal static bool LambdaContainsOperator(ExecutionContext context,
+                                                      CallSite<Func<CallSite, object, IEnumerator>> getEnumeratorSite,
+                                                      CallSite<Func<CallSite, object, object, object>> comparerSite,
+                                                      object left,
+                                                      object right,
+                                                      bool all)
+        {
+            if (!(right is ScriptBlock predicate))
+                return ContainsOperatorCompiled(context, getEnumeratorSite, comparerSite, left, right);
+
+            IEnumerator list = getEnumeratorSite.Target.Invoke(getEnumeratorSite, left);
+            if (list == null || list is EnumerableOps.NonEnumerableObjectEnumerator)
+            {
+                object result = predicate.DoInvokeReturnAsIs(
+                    useLocalScope: true,
+                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                    dollarUnder: left,
+                    input: AutomationNull.Value,
+                    scriptThis: AutomationNull.Value,
+                    args: Array.Empty<object>());
+
+                return s_toBoolSite.Target.Invoke(s_toBoolSite, result);
+            }
+
+            while (EnumerableOps.MoveNext(context, list))
+            {
+                bool predicateResult = s_toBoolSite.Target.Invoke(
+                    s_toBoolSite,
+                    predicate.DoInvokeReturnAsIs(
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: EnumerableOps.Current(list),
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: Array.Empty<object>()));
+                
+                if(predicateResult ^ all)
+                    return predicateResult;
+            }
+
+            return all;
         }
 
         /// <summary>

@@ -330,6 +330,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ParserOps_ContainsOperatorCompiled =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ContainsOperatorCompiled), StaticFlags);
 
+        internal static readonly MethodInfo ParserOps_LambdaContainsOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.LambdaContainsOperator), StaticFlags);
+
         internal static readonly MethodInfo ParserOps_ImplicitOp =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ImplicitOp), StaticFlags);
 
@@ -5631,6 +5634,19 @@ namespace System.Management.Automation.Language
                 rhs.Cast(typeof(object)));
         }
 
+        public Expression GenerateCallLambdaContains(Expression lhs, Expression rhs, bool all)
+        {
+            return Expression.Call(
+                CachedReflectionInfo.ParserOps_LambdaContainsOperator,
+                s_executionContextParameter,
+                Expression.Constant(CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get())),
+                Expression.Constant(CallSite<Func<CallSite, object, object, object>>.Create(
+                    PSBinaryOperationBinder.Get(ExpressionType.Equal, false, scalarCompare: true))),
+                lhs.Cast(typeof(object)),
+                rhs.Cast(typeof(object)),
+                Expression.Constant(all));
+        }
+
         public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
         {
             var expr = Expression.Condition(
@@ -5835,6 +5851,10 @@ namespace System.Management.Automation.Language
                     return GenerateCallContains(rhs, lhs, true);
                 case TokenKind.Inotin:
                     return Expression.Not(GenerateCallContains(rhs, lhs, true));
+                case TokenKind.Any:
+                    return GenerateCallLambdaContains(lhs, rhs, false);
+                case TokenKind.All:
+                    return GenerateCallLambdaContains(lhs, rhs, true);
                 case TokenKind.Isplit:
                     // TODO: replace this with faster code
                     return Expression.Call(
