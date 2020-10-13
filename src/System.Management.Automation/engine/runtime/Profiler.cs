@@ -414,29 +414,65 @@ namespace System.Management.Automation
 
                 var metaData = profiler.CompiledScriptBlockMetaData;
 
-                // We have only start timestamp for sequence point.
+                // 1. We have only start timestamp for a sequence point.
                 // To evaluate a duration of the sequence point
                 // we take a start timestamp from next sequence point
                 // that is actually a stop timestamp for the previous sequence point.
-                // For last sequence point we have not next timestamp
-                // so we add a copy of the last sequence point as a workaround.
-                events.Add(events[events.Count - 1]);
+                //
+                // 2. We handle events separately for each runspace.
+                //
+                // 3. Last event of every runspace we output as-is
+                // without evaluating a duration because we have not a stop event.
+                //
+                Dictionary<Guid, InternalProfiler.SequencePointProfileEventData> runspaceCurrentEvent = new();
 
-                for (var i = 0; i < events.Count - 1; i++)
+                for (var i = 0; i < events.Count; i++)
                 {
-                    var profileData = events[i];
-                    if (metaData.TryGetValue(profileData.ScriptId, out var compiledScriptBlockData))
+                    var nextEvent = events[i];
+
+                    if (runspaceCurrentEvent.TryGetValue(nextEvent.RunspaceId, out var currentEvent))
                     {
-                        var extent = compiledScriptBlockData.SequencePoints[profileData.SequencePointPosition];
+                        runspaceCurrentEvent[nextEvent.RunspaceId] = nextEvent;
+                    }
+                    else
+                    {
+                        // It is first event in the runspace.
+                        runspaceCurrentEvent.Add(nextEvent.RunspaceId, nextEvent);
+                        continue;
+                    }
+
+                    if (metaData.TryGetValue(currentEvent.ScriptId, out var compiledScriptBlockData))
+                    {
+                        var extent = compiledScriptBlockData.SequencePoints[currentEvent.SequencePointPosition];
                         var result = new ProfileEventRecord
                         {
-                            StartTime = profileData.Timestamp.TimeOfDay,
-                            Duration = events[i + 1].Timestamp - profileData.Timestamp,
+                            StartTime = currentEvent.Timestamp.TimeOfDay,
+                            Duration = nextEvent.Timestamp - currentEvent.Timestamp,
                             Source = extent.Text,
                             Extent = extent,
-                            RunspaceId = profileData.RunspaceId,
-                            ParentScriptBlockId = profileData.ParentScriptBlockId,
-                            ScriptBlockId = profileData.ScriptId
+                            RunspaceId = currentEvent.RunspaceId,
+                            ParentScriptBlockId = currentEvent.ParentScriptBlockId,
+                            ScriptBlockId = currentEvent.ScriptId
+                        };
+
+                        WriteObject(result);
+                    }
+                }
+
+                foreach (var currentEvent in runspaceCurrentEvent.Values)
+                {
+                    if (metaData.TryGetValue(currentEvent.ScriptId, out var compiledScriptBlockData))
+                    {
+                        var extent = compiledScriptBlockData.SequencePoints[currentEvent.SequencePointPosition];
+                        var result = new ProfileEventRecord
+                        {
+                            StartTime = currentEvent.Timestamp.TimeOfDay,
+                            Duration = TimeSpan.Zero,
+                            Source = extent.Text,
+                            Extent = extent,
+                            RunspaceId = currentEvent.RunspaceId,
+                            ParentScriptBlockId = currentEvent.ParentScriptBlockId,
+                            ScriptBlockId = currentEvent.ScriptId
                         };
 
                         WriteObject(result);
