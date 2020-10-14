@@ -488,7 +488,6 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
-            Assembly assembly = typeof(PSObject).Assembly;
             if (OperatingSystem.IsBrowser())
             {
                 return "/opt/microsoft/powershell";
@@ -496,6 +495,7 @@ namespace System.Management.Automation
             else
             {
                 // Use the location of SMA.dll as the application base.
+                Assembly assembly = typeof(PSObject).Assembly;
                 return Path.GetDirectoryName(assembly.Location);
             }
         }
