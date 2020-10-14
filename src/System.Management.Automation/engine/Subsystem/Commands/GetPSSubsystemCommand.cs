@@ -6,12 +6,12 @@
 namespace System.Management.Automation.Subsystem
 {
     /// <summary>
-    /// Implementation of 'Get-Subsystem' cmdlet.
+    /// Implementation of 'Get-PSSubsystem' cmdlet.
     /// </summary>
     [Experimental("PSSubsystemPluginModel", ExperimentAction.Show)]
-    [Cmdlet(VerbsCommon.Get, "Subsystem", DefaultParameterSetName = AllSet)]
+    [Cmdlet(VerbsCommon.Get, "PSSubsystem", DefaultParameterSetName = AllSet)]
     [OutputType(typeof(SubsystemInfo))]
-    public sealed class GetSubsystemCommand : PSCmdlet
+    public sealed class GetPSSubsystemCommand : PSCmdlet
     {
         private const string AllSet = "GetAllSet";
         private const string TypeSet = "GetByTypeSet";
@@ -37,7 +37,7 @@ namespace System.Management.Automation.Subsystem
             switch (ParameterSetName)
             {
                 case AllSet:
-                    WriteObject(SubsystemManager.GetAllSubsystemInfo());
+                    WriteObject(SubsystemManager.GetAllSubsystemInfo(), enumerateCollection: true);
                     break;
                 case KindSet:
                     WriteObject(SubsystemManager.GetSubsystemInfo(Kind));

@@ -5395,7 +5395,7 @@ end {
 
             if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
             {
-                cmdlets.Add("Get-Subsystem", new SessionStateCmdletEntry("Get-Subsystem", typeof(Subsystem.GetSubsystemCommand), helpFile));
+                cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
             }
 
             foreach (var val in cmdlets.Values)
