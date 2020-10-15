@@ -2443,7 +2443,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="value">
         /// An int (DWORD) data.
         /// </param>
-        /// <returns></returns>
+        /// <returns>zero on success, otherwise the error code</returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManGetSessionOptionAsDword(IntPtr wsManSessionHandle,
             WSManSessionOption option,
