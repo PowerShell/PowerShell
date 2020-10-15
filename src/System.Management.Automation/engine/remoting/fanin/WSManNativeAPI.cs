@@ -2445,7 +2445,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         /// <returns></returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
-        internal static extern void WSManGetSessionOptionAsDword(IntPtr wsManSessionHandle,
+        internal static extern int WSManGetSessionOptionAsDword(IntPtr wsManSessionHandle,
             WSManSessionOption option,
             out int value);
 

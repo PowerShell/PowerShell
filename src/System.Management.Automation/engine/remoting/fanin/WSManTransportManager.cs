@@ -1546,8 +1546,14 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
             }
 
-            // Allow HTTPS on Unix only if SkipCACheck and SkipCNCheck are selected, because OMI client does not support validating server certificates.
-            if (isSSLSpecified && (!connectionInfo.SkipCACheck || !connectionInfo.SkipCNCheck))
+            // The OMI client distributed with PowerShell does not support validating server certificates. Check if
+            // psrpclient supports the CA check to determine if a custom build of psrpclient and mi are present which
+            // do support verification. If WSManGetSessionOptionAsDword does not return 0 then it's not supported.
+            int sslResult;
+            bool verificationAvailable = WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
+                WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SKIP_CA_CHECK, out sslResult) == 0;
+
+            if (isSSLSpecified && !verificationAvailable && (!connectionInfo.SkipCACheck || !connectionInfo.SkipCNCheck))
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectSkipCheckFailed, RemotingErrorIdStrings.UnixOnlyHttpsWithoutSkipCACheckNotSupported);
             }
