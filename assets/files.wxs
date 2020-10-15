@@ -1602,17 +1602,8 @@
         <Component Id="cmpEA40E9164309426C88C4388FDCA9559D">
           <File Id="fil205C9BE7027A408B985D96F5EEF11594" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Threading.Channels.dll" />
         </Component>
-        <Component Id="cmp34649490F5B04041A08E73D7A86D5A5A">
-          <File Id="fil2DDAEABD470A475E950B94AC186DAB2E" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Text.Encodings.Web.dll" />
-        </Component>
-        <Component Id="cmpB3116053008E492C9B36C89BF682B8F7">
-          <File Id="fil0D09CC7B4B8A43369D0207AC861D8D21" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Runtime.CompilerServices.Unsafe.dll" />
-        </Component>
         <Component Id="cmp859A3876902946E7B5B4965F90664C5D">
           <File Id="fil2E0E3963F95C47F3BEA7D5A5848D6F28" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Diagnostics.DiagnosticSource.dll" />
-        </Component>
-        <Component Id="cmpF1B0E6DCC3BD4797B206C879EF270062">
-          <File Id="fil2694AE6F8EB8473CBDF0F73A4E55164B" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Text.Encoding.CodePages.dll" />
         </Component>
         <Component Id="cmp25A144CC34E545378735B06794A02F90">
           <File Id="filFCE4A935DE1D4DD08E9A1D32A07E0266" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Drawing.dll" />
@@ -3597,10 +3588,7 @@
       <ComponentRef Id="cmp1719A38F3C30484BBA189D718AF00D3C" />
       <ComponentRef Id="cmp770700CA06564FB187D1CD2A79AA3DA8" />
       <ComponentRef Id="cmpEA40E9164309426C88C4388FDCA9559D" />
-      <ComponentRef Id="cmp34649490F5B04041A08E73D7A86D5A5A" />
-      <ComponentRef Id="cmpB3116053008E492C9B36C89BF682B8F7" />
       <ComponentRef Id="cmp859A3876902946E7B5B4965F90664C5D" />
-      <ComponentRef Id="cmpF1B0E6DCC3BD4797B206C879EF270062" />
       <ComponentRef Id="cmp25A144CC34E545378735B06794A02F90" />
       <ComponentRef Id="cmp19ADFEFDD03047828CF493B5B5CE7B6E" />
       <ComponentRef Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B" />
