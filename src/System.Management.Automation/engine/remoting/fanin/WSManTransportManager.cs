@@ -1546,9 +1546,9 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
             }
 
-            // The OMI client distributed with PowerShell does not support validating server certificates. Check if
-            // psrpclient supports the CA check to determine if a custom build of psrpclient and mi are present which
-            // do support verification. If WSManGetSessionOptionAsDword does not return 0 then it's not supported.
+            // The OMI client distributed with PowerShell does not support validating server certificates on Unix.
+            // Check if third-party psrpclient and MI support the verification.
+            // If WSManGetSessionOptionAsDword does not return 0 then it's not supported.
             bool verificationAvailable = WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                 WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SKIP_CA_CHECK, out _) == 0;
 
