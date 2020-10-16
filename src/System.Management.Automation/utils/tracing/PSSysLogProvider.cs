@@ -313,14 +313,14 @@ namespace System.Management.Automation.Tracing
         {
             if (isBrowser)
             {
-                Console.WriteLine($"Id:       {id}\n" + 
-                                  $"Channel:  {channel}\n" + 
-                                  $"Task:     {task}\n" + 
-                                  $"OpCode:   {opcode}\n" +
-                                  $"Severity: {GetPSLevelFromSeverity(logContext.Severity)}\n" +
-                                  $"Context: \n{LogContextToString(logContext)}" +
-                                  $"PayLoad:  {payLoad}"  +
-                                  $"UserData: {GetPSLogUserData(logContext.ExecutionContext)}\n");
+                Console.WriteLine($"PowerShell Event Id:       {id}\n" + 
+                                  $"                 Channel:  {channel}\n" + 
+                                  $"                 Task:     {task}\n" + 
+                                  $"                 OpCode:   {opcode}\n" +
+                                  $"                 Severity: {GetPSLevelFromSeverity(logContext.Severity)}\n" +
+                                  $"                 Context:  {LogContextToString(logContext)}\n" +
+                                  $"                 PayLoad:  {payLoad}\n"  +
+                                  $"                 UserData: {GetPSLogUserData(logContext.ExecutionContext)}\n");
             }
             else
             {
@@ -345,13 +345,13 @@ namespace System.Management.Automation.Tracing
         {
             if (isBrowser)
             {
-                Console.WriteLine($"Id: {id}\n" + 
-                                  $"Channel: {channel}\n" + 
-                                  $"Task: {task}\n" + 
-                                  $"OpCode: {opcode}\n" +
-                                  $"Level: {level}\n" +
-                                  $"Keyword: {keyword}\n" + 
-                                  $"Args: " + string.Join(", ", args));
+                Console.WriteLine($"PowerShell Event Id:       {id}\n" +
+                                  $"                 Channel:  {channel}\n" +
+                                  $"                 Task:     {task}\n" +
+                                  $"                 OpCode:   {opcode}\n" +
+                                  $"                 Level:    {level}\n" +
+                                  $"                 Keyword:  {keyword}\n" +
+                                  $"                 Args:     {string.Join(", ", args)}\n");
             }
             else
             {
