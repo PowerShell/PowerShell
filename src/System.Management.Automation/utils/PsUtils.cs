@@ -78,7 +78,7 @@ namespace System.Management.Automation
 
         // Cache of the current process' parentId
         private static int? s_currentParentProcessId;
-        private static readonly int s_currentProcessId = Process.GetCurrentProcess().Id;
+        private static readonly int s_currentProcessId = ( !OperatingSystem.IsBrowser() ? Process.GetCurrentProcess().Id : 1 );
 
         /// <summary>
         /// Retrieve the parent process of a process.
