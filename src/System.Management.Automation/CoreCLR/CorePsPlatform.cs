@@ -482,7 +482,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
-            return Unix.IsHardLink(fileInfo);
+            return ( !OperatingSystem.IsBrowser() ? Unix.IsHardLink(fileInfo) : false ) ;
         }
 
         internal static string NonWindowsInternalGetTarget(string path)
