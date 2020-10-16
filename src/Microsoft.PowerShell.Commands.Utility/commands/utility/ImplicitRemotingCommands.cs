@@ -1793,8 +1793,8 @@ namespace Microsoft.PowerShell.Commands
         private void WriteProgress(string statusDescription, int? percentComplete, int? secondsRemaining)
         {
             ProgressRecordType recordType;
-            if (secondsRemaining.HasValue && secondsRemaining.Value == 0 &&
-                percentComplete.HasValue && percentComplete.Value == 100)
+            if (secondsRemaining.GetValueOrDefault() == 0 &&
+                percentComplete.GetValueOrDefault() == 100)
             {
                 recordType = ProgressRecordType.Completed;
             }
