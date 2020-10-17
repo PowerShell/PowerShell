@@ -1311,35 +1311,33 @@ namespace Microsoft.PowerShell.Commands
                     // If we want to retrieve the file streams, retrieve them.
                     if (retrieveStreams)
                     {
-                        if (!isContainer)
+                        foreach (string desiredStream in dynamicParameters.Stream)
                         {
-                            foreach (string desiredStream in dynamicParameters.Stream)
+                            // See that it matches the name specified
+                            WildcardPattern p = WildcardPattern.Get(desiredStream, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+                            bool foundStream = false;
+
+                            foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(result.FullName))
                             {
-                                // See that it matches the name specified
-                                WildcardPattern p = WildcardPattern.Get(desiredStream, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-                                bool foundStream = false;
+                                if (!p.IsMatch(stream.Stream))
+                                { continue; }
 
-                                foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(result.FullName))
-                                {
-                                    if (!p.IsMatch(stream.Stream)) { continue; }
+                                string outputPath = result.FullName + ":" + stream.Stream;
+                                WriteItemObject(stream, outputPath, isContainer);
+                                foundStream = true;
+                            }
 
-                                    string outputPath = result.FullName + ":" + stream.Stream;
-                                    WriteItemObject(stream, outputPath, isContainer);
-                                    foundStream = true;
-                                }
+                            if ((!WildcardPattern.ContainsWildcardCharacters(desiredStream)) && (!foundStream))
+                            {
+                                string errorMessage = StringUtil.Format(
+                                    FileSystemProviderStrings.AlternateDataStreamNotFound, desiredStream, result.FullName);
+                                Exception e = new FileNotFoundException(errorMessage, result.FullName);
 
-                                if ((!WildcardPattern.ContainsWildcardCharacters(desiredStream)) && (!foundStream))
-                                {
-                                    string errorMessage = StringUtil.Format(
-                                        FileSystemProviderStrings.AlternateDataStreamNotFound, desiredStream, result.FullName);
-                                    Exception e = new FileNotFoundException(errorMessage, result.FullName);
-
-                                    WriteError(new ErrorRecord(
-                                        e,
-                                        "AlternateDataStreamNotFound",
-                                        ErrorCategory.ObjectNotFound,
-                                        path));
-                                }
+                                WriteError(new ErrorRecord(
+                                    e,
+                                    "AlternateDataStreamNotFound",
+                                    ErrorCategory.ObjectNotFound,
+                                    path));
                             }
                         }
                     }
@@ -6666,7 +6664,14 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Directory.Exists(path))
+                // Get-Content will write a non-terminating error if the target is a directory.
+                // On Windows, the streamName must be null or empty for it to write the error. Otherwise, the
+                // alternate data stream is not a directory, even if it's set on a directory.
+                if (Directory.Exists(path)
+#if !UNIX
+                    && string.IsNullOrEmpty(streamName)
+#endif
+                    )
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
@@ -6821,7 +6826,14 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Directory.Exists(path))
+                // Add-Content and Set-Content will write a non-terminating error if the target is a directory.
+                // On Windows, the streamName must be null or empty for it to write the error. Otherwise, the
+                // alternate data stream is not a directory, even if it's set on a directory.
+                if (Directory.Exists(path)
+#if !UNIX
+                    && string.IsNullOrEmpty(streamName)
+#endif
+                    )
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.WriteContainerContentException, path);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "WriteContainerContentException", ErrorCategory.InvalidOperation, null);
@@ -6899,13 +6911,6 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (Directory.Exists(path))
-            {
-                string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
-                WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
-                return;
-            }
-
             try
             {
 #if !UNIX
@@ -6957,6 +6962,26 @@ namespace Microsoft.PowerShell.Commands
                     clearStream = false;
                 }
 
+#endif
+                // On Windows, determine if our argument is a directory only after we determine if
+                // we're being asked to work with an alternate data stream, because directories can have
+                // alternate data streams on them that are not child items. These alternate data streams
+                // must be treated as data streams, even if they're attached to directories. However,
+                // if asked to work with a directory without a data stream specified, write a non-terminating
+                // error instead of clearing all child items of the directory.  (On non-Windows, alternate
+                // data streams don't exist, so in that environment always write the error when addressing
+                // a directory.)
+                if (Directory.Exists(path)
+#if !UNIX
+                    && !clearStream
+#endif
+                    )
+                {
+                    string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
+                    WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
+                    return;
+                }
+#if !UNIX
                 if (clearStream)
                 {
                     FileStream fileStream = null;
@@ -8622,7 +8647,21 @@ namespace System.Management.Automation.Internal
             SafeFindHandle handle = NativeMethods.FindFirstStreamW(
                 path, NativeMethods.StreamInfoLevels.FindStreamInfoStandard,
                 findStreamData, 0);
-            if (handle.IsInvalid) throw new Win32Exception();
+            if (handle.IsInvalid)
+            {
+                int error = Marshal.GetLastWin32Error();
+
+                // Directories don't normally have alternate streams, so this is not an exceptional state.
+                // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
+                if (error == NativeMethods.ERROR_HANDLE_EOF)
+                {
+                    return alternateStreams;
+                }
+
+                // An unexpected error was returned, that we don't know how to interpret. The most helpful
+                // thing we can do at this point is simply throw the raw Win32 exception.
+                throw new Win32Exception(error);
+            }
 
             try
             {
@@ -8757,6 +8796,7 @@ namespace System.Management.Automation.Internal
         internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
+            internal const int ERROR_INVALID_PARAMETER = 87;
 
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 

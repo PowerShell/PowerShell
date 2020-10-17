@@ -221,25 +221,27 @@ Describe "Get-Content" -Tags "CI" {
         $expected = 'He', 'o,', '', 'Wor', "d${nl}He", 'o2,', '', 'Wor', "d2${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]    | Should -BeExactly $expected[$i]}
     }
+    
+    Context "Alternate Data Stream support on Windows" {
+        It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
+            Set-Content "${testPath}:Stream" -Value "Foo"
+            { Test-Path "${testPath}:Stream" | Should -Throw -ErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
+            Get-Content "${testPath}:Stream" | Should -BeExactly "Foo"
+            Get-Content $testPath | Should -BeExactly $testString
+        }
 
-    It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
-        Set-Content "${testPath}:Stream" -Value "Foo"
-        { Test-Path "${testPath}:Stream" | Should -Throw -ErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
-        Get-Content "${testPath}:Stream" | Should -BeExactly "Foo"
-        Get-Content $testPath | Should -BeExactly $testString
-    }
-
-    It "Should support NTFS streams using -Stream" -Skip:(!$IsWindows) {
-        Set-Content -Path $testPath -Stream hello -Value World
-        Get-Content -Path $testPath | Should -BeExactly $testString
-        Get-Content -Path $testPath -Stream hello | Should -BeExactly "World"
-        $item = Get-Item -Path $testPath -Stream hello
-        $item | Should -BeOfType System.Management.Automation.Internal.AlternateStreamData
-        $item.Stream | Should -BeExactly "hello"
-        Clear-Content -Path $testPath -Stream hello
-        Get-Content -Path $testPath -Stream hello | Should -BeNullOrEmpty
-        Remove-Item -Path $testPath -Stream hello
-        { Get-Content -Path $testPath -Stream hello | Should -Throw -ErrorId "GetContentReaderFileNotFoundError,Microsoft.PowerShell.Commands.GetContentCommand" }
+        It "Should support NTFS streams using -Stream" -Skip:(!$IsWindows) {
+            Set-Content -Path $testPath -Stream hello -Value World
+            Get-Content -Path $testPath | Should -BeExactly $testString
+            Get-Content -Path $testPath -Stream hello | Should -BeExactly "World"
+            $item = Get-Item -Path $testPath -Stream hello
+            $item | Should -BeOfType System.Management.Automation.Internal.AlternateStreamData
+            $item.Stream | Should -BeExactly "hello"
+            Clear-Content -Path $testPath -Stream hello
+            Get-Content -Path $testPath -Stream hello | Should -BeNullOrEmpty
+            Remove-Item -Path $testPath -Stream hello
+            { Get-Content -Path $testPath -Stream hello -ErrorAction stop} | Should -Throw -ErrorId "GetContentReaderFileNotFoundError,Microsoft.PowerShell.Commands.GetContentCommand"
+        }
     }
 
     It "Should support colons in filename on Linux/Mac" -Skip:($IsWindows) {
