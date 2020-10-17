@@ -104,11 +104,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The value of the optional argument, if one was specified, otherwise UnboundParameter.Value.
+        /// The value of the optional argument, if one was specified, otherwise UnboundParameter.
         /// </summary>
         internal object ArgumentValue
         {
-            get { return _argument != null ? _argument.value : UnboundParameter.Value; }
+            get { return _argument != null ? _argument.value : UnboundParameter; }
         }
 
         /// <summary>

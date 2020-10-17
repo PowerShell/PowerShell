@@ -329,7 +329,7 @@ namespace System.Management.Automation
                 foreach (DictionaryEntry de in splattedTable)
                 {
                     string parameterName = de.Key.ToString();
-                    object parameterValue = de.Value;
+                    object parameterValue = de;
                     string parameterText = GetParameterText(parameterName);
 
                     if (markUntrustedData)
@@ -376,9 +376,9 @@ namespace System.Management.Automation
             {
                 var prop = psObject.Properties[ScriptParameterBinderController.NotePropertyNameForSplattingParametersInArgs];
                 var baseObj = psObject.BaseObject;
-                if (prop != null && prop.Value is string && baseObj is string)
+                if (prop != null && prop is string && baseObj is string)
                 {
-                    return CommandParameterInternal.CreateParameter((string)prop.Value, (string)baseObj, splatAst);
+                    return CommandParameterInternal.CreateParameter((string)prop, (string)baseObj, splatAst);
                 }
             }
 
@@ -431,11 +431,11 @@ namespace System.Management.Automation
                     context.Events.ProcessPendingActions();
                 }
 
-                if (input == AutomationNull.Value && !ignoreInput)
+                if (input == AutomationNull && !ignoreInput)
                 {
                     // We have seen something like:
                     //    $e | measure-object
-                    // And $e is AutomationNull.Value.  We want to ensure
+                    // And $e is AutomationNull.  We want to ensure
                     // measure-object runs w/o sending anything through the pipe,
                     // so we'll turn the pipe into Out-Null | ...
                     // This cleanly avoids any problems with the pipeline processing
@@ -582,7 +582,7 @@ namespace System.Management.Automation
                 context.PushPipelineProcessor(pipelineProcessor);
                 try
                 {
-                    pipelineProcessor.SynchronousExecuteEnumerate(AutomationNull.Value);
+                    pipelineProcessor.SynchronousExecuteEnumerate(AutomationNull);
                 }
                 finally
                 {
@@ -608,7 +608,7 @@ namespace System.Management.Automation
 
         internal static object CheckAutomationNullInCommandArgument(object obj)
         {
-            if (obj == AutomationNull.Value)
+            if (obj == AutomationNull)
             {
                 return null;
             }
@@ -623,7 +623,7 @@ namespace System.Management.Automation
             {
                 for (int i = 0; i < objArray.Length; ++i)
                 {
-                    if (objArray[i] == AutomationNull.Value)
+                    if (objArray[i] == AutomationNull)
                     {
                         objArray[i] = null;
                     }
@@ -792,7 +792,7 @@ namespace System.Management.Automation
             var resultCount = resultList.Count;
             if (resultCount == 0)
             {
-                return AutomationNull.Value;
+                return AutomationNull;
             }
 
             var result = resultCount == 1 ? resultList[0] : resultList.ToArray();
@@ -2242,12 +2242,12 @@ namespace System.Management.Automation
             {
                 if (usingStmt.UsingStatementKind == UsingStatementKind.Namespace)
                 {
-                    if (!usedSystem && usingStmt.Name.Value.Equals("System", StringComparison.OrdinalIgnoreCase))
+                    if (!usedSystem && usingStmt.Name.Equals("System", StringComparison.OrdinalIgnoreCase))
                     {
                         usedSystem = true;
                     }
 
-                    namespaces.Add(usingStmt.Name.Value);
+                    namespaces.Add(usingStmt.Name);
                 }
             }
 
@@ -2284,8 +2284,8 @@ namespace System.Management.Automation
 
             foreach (var t in types)
             {
-                Diagnostics.Assert(t.Value.Type != null, "TypeDefinitionAst.Type cannot be null");
-                context.EngineSessionState.CurrentScope.AddType(t.Key, t.Value.Type);
+                Diagnostics.Assert(t.Type != null, "TypeDefinitionAst.Type cannot be null");
+                context.EngineSessionState.CurrentScope.AddType(t.Key, t.Type);
             }
 
             context.EngineSessionState.CurrentScope.TypeResolutionState = trs.CloneWithAddTypesDefined(types.Keys);
@@ -2670,7 +2670,7 @@ namespace System.Management.Automation
                 }
 
                 resultCollection.Clear();
-                expressionSB.InvokeWithPipeImpl(false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, ie, AutomationNull.Value, AutomationNull.Value, outputPipe, null);
+                expressionSB.InvokeWithPipeImpl(false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, ie, AutomationNull, AutomationNull, outputPipe, null);
                 bool elementMatched = LanguagePrimitives.IsTrue(resultCollection);
 
                 if (elementMatched)
@@ -2859,7 +2859,7 @@ namespace System.Management.Automation
                 Pipe outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
                 {
-                    sb.InvokeWithPipeImpl(ScriptBlockClauseToInvoke.Begin, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, AutomationNull.Value, AutomationNull.Value, AutomationNull.Value, outputPipe, null, arguments);
+                    sb.InvokeWithPipeImpl(ScriptBlockClauseToInvoke.Begin, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, AutomationNull, AutomationNull, AutomationNull, outputPipe, null, arguments);
                 }
 
                 ScriptBlockClauseToInvoke processClause = (sb.HasProcessBlock) ? ScriptBlockClauseToInvoke.Process : ScriptBlockClauseToInvoke.End;
@@ -2867,16 +2867,16 @@ namespace System.Management.Automation
                 while (MoveNext(context, enumerator))
                 {
                     ie = Current(enumerator);
-                    if (ie != AutomationNull.Value)
+                    if (ie != AutomationNull)
                     {
-                        sb.InvokeWithPipeImpl(processClause, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, ie, AutomationNull.Value, AutomationNull.Value, outputPipe, null, arguments);
+                        sb.InvokeWithPipeImpl(processClause, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, ie, AutomationNull, AutomationNull, outputPipe, null, arguments);
                     }
                 }
 
                 if (processClause == ScriptBlockClauseToInvoke.Process && sb.HasEndBlock)
                 {
                     // $_ has the same value as it did in the last iteration of the process loop
-                    sb.InvokeWithPipeImpl(ScriptBlockClauseToInvoke.End, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, ie, AutomationNull.Value, AutomationNull.Value, outputPipe, null, arguments);
+                    sb.InvokeWithPipeImpl(ScriptBlockClauseToInvoke.End, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, ie, AutomationNull, AutomationNull, outputPipe, null, arguments);
                 }
             }
             else
@@ -2938,7 +2938,7 @@ namespace System.Management.Automation
                         }
 
                         var ie = PSObject.AsPSObject(current);
-                        if (ie != AutomationNull.Value)
+                        if (ie != AutomationNull)
                         {
                             PSMemberInfo member = ie.Members[name];
 
@@ -2995,17 +2995,17 @@ namespace System.Management.Automation
                                 {
                                     case 0:
                                         // No args: do a get
-                                        result.Add(PSObject.AsPSObject(property.Value));
+                                        result.Add(PSObject.AsPSObject(property));
                                         break;
 
                                     case 1:
                                         // 1 arg: set as a scalar
-                                        property.Value = arguments[0];
+                                        property = arguments[0];
                                         break;
 
                                     default:
                                         // more than one arg, just assign as is
-                                        property.Value = arguments;
+                                        property = arguments;
                                         break;
                                 }
                             }
@@ -3031,7 +3031,7 @@ namespace System.Management.Automation
             while (MoveNext(null, indexes))
             {
                 var value = indexer(target, Current(indexes));
-                if (value != AutomationNull.Value)
+                if (value != AutomationNull)
                 {
                     result.Add(value);
                 }
@@ -3048,7 +3048,7 @@ namespace System.Management.Automation
                 while (e.MoveNext())
                 {
                     o = e.Current;
-                    if (o != AutomationNull.Value)
+                    if (o != AutomationNull)
                     {
                         result.Add(o);
                     }
@@ -3070,7 +3070,7 @@ namespace System.Management.Automation
             {
                 var current = Current(enumerator);
                 var o = getMemberBinderSite.Target.Invoke(getMemberBinderSite, current);
-                if (o != AutomationNull.Value)
+                if (o != AutomationNull)
                 {
                     FlattenResults(o, result);
                 }
@@ -3142,8 +3142,8 @@ namespace System.Management.Automation
                     // be reporting the method's exception anyway, not a MissingMethodException.
                     foundMethod = true;
 
-                    // void methods return AutomationNull.Value, so don't add it
-                    if (o != AutomationNull.Value)
+                    // void methods return AutomationNull, so don't add it
+                    if (o != AutomationNull)
                     {
                         FlattenResults(o, result);
                     }
@@ -3202,7 +3202,7 @@ namespace System.Management.Automation
             if (result.Count == 0)
             {
                 // All void methods - don't return a value.
-                return AutomationNull.Value;
+                return AutomationNull;
             }
 
             return result.ToArray();

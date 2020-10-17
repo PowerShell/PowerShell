@@ -570,7 +570,7 @@ namespace System.Management.Automation
 
                     foreach (KeyValuePair<string, MergedCompiledCommandParameter> pair in merged.BindableParameters)
                     {
-                        result.Add(pair.Key, new ParameterMetadata(pair.Value.Parameter));
+                        result.Add(pair.Key, new ParameterMetadata(pair.Parameter));
                     }
 
                     // Don't cache this data...
@@ -970,7 +970,7 @@ namespace System.Management.Automation
                 {
                     if (IsPSTypeName(mem))
                     {
-                        typename = mem.Value.ToString();
+                        typename = mem.ToString();
                     }
                 }
             }

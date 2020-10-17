@@ -351,7 +351,7 @@ namespace System.Management.Automation
                     _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
                 }
 
-                return _isProductCode.Value;
+                return _isProductCode;
             }
         }
 
@@ -1008,17 +1008,17 @@ namespace System.Management.Automation
 
             var locals = MakeLocalsTuple(runOptimized);
 
-            if (dollarUnder != AutomationNull.Value)
+            if (dollarUnder != AutomationNull)
             {
                 locals.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnder, context);
             }
 
-            if (input != AutomationNull.Value)
+            if (input != AutomationNull)
             {
                 locals.SetAutomaticVariable(AutomaticVariable.Input, input, context);
             }
 
-            if (scriptThis != AutomationNull.Value)
+            if (scriptThis != AutomationNull)
             {
                 locals.SetAutomaticVariable(AutomaticVariable.This, scriptThis, context);
             }
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation
                                 throw e;
                             }
 
-                            if (def.Value == null)
+                            if (def== null)
                             {
                                 PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                     ParserStrings.NullFunctionBodyInFunctionDefinitionDictionary, def.Key);
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation
                                 throw e;
                             }
 
-                            newScope.FunctionTable.Add(def.Key, new FunctionInfo(def.Key, def.Value, context));
+                            newScope.FunctionTable.Add(def.Key, new FunctionInfo(def.Key, def, context));
                         }
                     }
                     // Inject passed in variables into the scope
@@ -1158,7 +1158,7 @@ namespace System.Management.Automation
                 // Set the language mode
                 if (newLanguageMode.HasValue)
                 {
-                    context.LanguageMode = newLanguageMode.Value;
+                    context.LanguageMode = newLanguageMode;
                 }
 
                 args = BindArgumentsForScriptblockInvoke(
@@ -1205,7 +1205,7 @@ namespace System.Management.Automation
                 // Restore the language mode
                 if (oldLanguageMode.HasValue)
                 {
-                    context.LanguageMode = oldLanguageMode.Value;
+                    context.LanguageMode = oldLanguageMode;
                 }
 
                 // Now restore the output pipe...
@@ -1226,9 +1226,9 @@ namespace System.Management.Automation
                     Diagnostics.Assert(backupWhenDotting != null, "when dotting, this dictionary isn't null");
                     foreach (var pair in backupWhenDotting)
                     {
-                        if (pair.Value != null)
+                        if (pair != null)
                         {
-                            context.EngineSessionState.SetVariable(pair.Value, false, CommandOrigin.Internal);
+                            context.EngineSessionState.SetVariable(pair, false, CommandOrigin.Internal);
                         }
                         else
                         {
@@ -1287,7 +1287,7 @@ namespace System.Management.Automation
                 bool wasDefaulted = false;
                 if (i >= args.Length)
                 {
-                    valueToBind = parameter.Value;
+                    valueToBind = parameter;
                     if (valueToBind is Compiler.DefaultValueExpressionWrapper)
                     {
                         // We pass in a null SessionStateInternal because the current scope is already set correctly.
@@ -1743,7 +1743,7 @@ namespace System.Management.Automation
                 return Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig);
             }
 
-            return s_sbLoggingSettingCache.Value;
+            return s_sbLoggingSettingCache;
         }
 
         // Quick check for script blocks that may have suspicious content. If this
@@ -2231,7 +2231,7 @@ namespace System.Management.Automation
             {
                 RunClause(
                     clause: _runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock,
-                    dollarUnderbar: AutomationNull.Value,
+                    dollarUnderbar: AutomationNull,
                     inputToProcess: _input);
             }
         }
@@ -2244,7 +2244,7 @@ namespace System.Management.Automation
             }
 
             object dollarUnder;
-            if (CurrentPipelineObject == AutomationNull.Value)
+            if (CurrentPipelineObject == AutomationNull)
             {
                 dollarUnder = null;
             }
@@ -2275,7 +2275,7 @@ namespace System.Management.Automation
             {
                 RunClause(
                     clause: _runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock,
-                    dollarUnderbar: AutomationNull.Value,
+                    dollarUnderbar: AutomationNull,
                     inputToProcess: _input.ToArray());
             }
         }
@@ -2320,12 +2320,12 @@ namespace System.Management.Automation
                         Context.RedirectErrorPipe(_commandRuntime.ErrorOutputPipe);
                     }
 
-                    if (dollarUnderbar != AutomationNull.Value)
+                    if (dollarUnderbar != AutomationNull)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, Context);
                     }
 
-                    if (inputToProcess != AutomationNull.Value)
+                    if (inputToProcess != AutomationNull)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Input, inputToProcess, Context);
                     }
@@ -2333,7 +2333,7 @@ namespace System.Management.Automation
                     // Set the language mode
                     if (newLanguageMode.HasValue)
                     {
-                        Context.LanguageMode = newLanguageMode.Value;
+                        Context.LanguageMode = newLanguageMode;
                     }
 
                     clause(_functionContext);
@@ -2350,7 +2350,7 @@ namespace System.Management.Automation
                     // Set the language mode
                     if (oldLanguageMode.HasValue)
                     {
-                        Context.LanguageMode = oldLanguageMode.Value;
+                        Context.LanguageMode = oldLanguageMode;
                     }
 
                     ExitScope();
@@ -2386,8 +2386,8 @@ namespace System.Management.Automation
                 _functionContext._outputPipe = new Pipe(resultList);
                 RunClause(
                     clause: _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
-                    dollarUnderbar: AutomationNull.Value,
-                    inputToProcess: AutomationNull.Value);
+                    dollarUnderbar: AutomationNull,
+                    inputToProcess: AutomationNull);
                 if (resultList.Count > 1)
                 {
                     throw PSTraceSource.NewInvalidOperationException(

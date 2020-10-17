@@ -185,7 +185,7 @@ namespace System.Management.Automation
         {
             if (this is not PSProperty thisAsProperty)
             {
-                this.Value = setValue;
+                this = setValue;
                 return;
             }
 
@@ -584,7 +584,7 @@ namespace System.Management.Automation
         {
             get
             {
-                object returnValue = this.ReferencedMember.Value;
+                object returnValue = this.ReferencedMember;
                 if (ConversionType != null)
                 {
                     returnValue = LanguagePrimitives.ConvertTo(returnValue, ConversionType, CultureInfo.InvariantCulture);
@@ -593,7 +593,7 @@ namespace System.Management.Automation
                 return returnValue;
             }
 
-            set => this.ReferencedMember.Value = value;
+            set => this.ReferencedMember = value;
         }
 
         #endregion virtual implementation
@@ -1273,7 +1273,7 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
 
-            returnValue.Append(GetDisplayTypeNameOfValue(this.Value));
+            returnValue.Append(GetDisplayTypeNameOfValue(this));
             returnValue.Append(" ");
             returnValue.Append(this.Name);
             returnValue.Append("=");
@@ -1356,7 +1356,7 @@ namespace System.Management.Automation
         {
             get
             {
-                object val = this.Value;
+                object val = this;
 
                 if (val == null)
                 {
@@ -1420,11 +1420,11 @@ namespace System.Management.Automation
         public override string ToString()
         {
             StringBuilder returnValue = new StringBuilder();
-            returnValue.Append(GetDisplayTypeNameOfValue(_variable.Value));
+            returnValue.Append(GetDisplayTypeNameOfValue(_variable));
             returnValue.Append(" ");
             returnValue.Append(_variable.Name);
             returnValue.Append("=");
-            returnValue.Append(_variable.Value ?? "null");
+            returnValue.Append(_variable ?? "null");
             return returnValue.ToString();
         }
 
@@ -1477,7 +1477,7 @@ namespace System.Management.Automation
         /// </summary>
         public override object Value
         {
-            get => _variable.Value;
+            get => _variable;
             set
             {
                 if (!this.IsInstance)
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation
                         this.Name);
                 }
 
-                _variable.Value = value;
+                _variable = value;
             }
         }
 
@@ -1499,7 +1499,7 @@ namespace System.Management.Automation
         {
             get
             {
-                object val = _variable.Value;
+                object val = _variable;
 
                 if (val == null)
                 {
@@ -1822,8 +1822,8 @@ namespace System.Management.Automation
                 SetterScript.DoInvokeReturnAsIs(
                     useLocalScope: true,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                    dollarUnder: AutomationNull.Value,
-                    input: AutomationNull.Value,
+                    dollarUnder: AutomationNull,
+                    input: AutomationNull,
                     scriptThis: scriptThis,
                     args: new[] { value });
                 return value;
@@ -1854,8 +1854,8 @@ namespace System.Management.Automation
                 return GetterScript.DoInvokeReturnAsIs(
                     useLocalScope: true,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.SwallowErrors,
-                    dollarUnder: AutomationNull.Value,
-                    input: AutomationNull.Value,
+                    dollarUnder: AutomationNull,
+                    input: AutomationNull,
                     scriptThis: scriptThis,
                     args: Array.Empty<object>());
             }
@@ -2378,8 +2378,8 @@ namespace System.Management.Automation
                 return script.DoInvokeReturnAsIs(
                     useLocalScope: true,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                    dollarUnder: AutomationNull.Value,
-                    input: AutomationNull.Value,
+                    dollarUnder: AutomationNull,
+                    input: AutomationNull,
                     scriptThis: @this,
                     args: arguments);
             }
@@ -4324,7 +4324,7 @@ namespace System.Management.Automation
                 {
                     if (predicate((string)entry.Key))
                     {
-                        return entry.Value as T;
+                        return entry as T;
                     }
                 }
             }

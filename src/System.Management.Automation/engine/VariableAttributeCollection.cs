@@ -142,7 +142,7 @@ namespace System.Management.Automation
                     null,
                     Metadata.InvalidMetadataForCurrentValue,
                     _variable.Name,
-                    ((_variable.Value != null) ? _variable.Value.ToString() : string.Empty));
+                    ((_variable != null) ? _variable.ToString() : string.Empty));
 
                 throw e;
             }

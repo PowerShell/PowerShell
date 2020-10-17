@@ -195,7 +195,7 @@ namespace System.Management.Automation
                     return returnValue;
                 }
 
-                return property.Value;
+                return property;
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                property.Value = value;
+                property = value;
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -513,7 +513,7 @@ namespace System.Management.Automation
                 PSNoteProperty note = standardMembers.Properties[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
                 if (note != null)
                 {
-                    defaultProperty = note.Value as string;
+                    defaultProperty = note as string;
                 }
             }
 

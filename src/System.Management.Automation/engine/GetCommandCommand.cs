@@ -596,8 +596,8 @@ namespace Microsoft.PowerShell.Commands
                 foreach (KeyValuePair<string, AliasInfo> tableEntry in aliasTable)
                 {
                     if ((Array.Exists(this.Name, name => name.Equals(tableEntry.Key, StringComparison.InvariantCultureIgnoreCase)) &&
-                        tableEntry.Value.Definition == command.Name) ||
-                        (_nameContainsWildcard && tableEntry.Value.Definition == command.Name))
+                        tableEntry.Definition == command.Name) ||
+                        (_nameContainsWildcard && tableEntry.Definition == command.Name))
                     {
                         aliasName = tableEntry.Key;
                         break;
@@ -1460,11 +1460,11 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 foreach (var alias in module.SessionState.Internal.GetAliasTable())
                                 {
-                                    if (matcher.IsMatch(alias.Key) && alias.Value.IsImported)
+                                    if (matcher.IsMatch(alias.Key) && alias.IsImported)
                                     {
                                         // make sure alias doesn't come from the current module's nested module
-                                        if (alias.Value.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                            yield return alias.Value;
+                                        if (alias.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                                            yield return alias;
                                     }
                                 }
                             }

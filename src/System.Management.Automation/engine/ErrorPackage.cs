@@ -1254,7 +1254,7 @@ namespace System.Management.Automation
         {
             if (mshObject.Properties[note] is PSNoteProperty p)
             {
-                return p.Value;
+                return p;
             }
             else
             {
@@ -1302,7 +1302,7 @@ namespace System.Management.Automation
                 PSPropertyInfo messageProperty = serializedException.Properties["Message"] as PSPropertyInfo;
                 if (messageProperty != null)
                 {
-                    exceptionMessage = messageProperty.Value as string;
+                    exceptionMessage = messageProperty as string;
                 }
             }
 

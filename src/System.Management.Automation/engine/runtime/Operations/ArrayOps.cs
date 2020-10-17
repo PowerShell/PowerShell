@@ -19,7 +19,7 @@ namespace System.Management.Automation
             foreach (object t in indexes)
             {
                 var value = indexer(target, t);
-                if (value != AutomationNull.Value)
+                if (value != AutomationNull)
                 {
                     result[j++] = value;
                 }
@@ -119,8 +119,8 @@ namespace System.Management.Automation
                     var context = LocalPipeline.GetExecutionContextFromTLS();
                     if (context != null && !context.IsStrictVersion(3))
                     {
-                        // If we're slicing, return AutomationNull.Value to signal no result)
-                        return slicing ? AutomationNull.Value : null;
+                        // If we're slicing, return AutomationNull to signal no result)
+                        return slicing ? AutomationNull : null;
                     }
                 }
             }
@@ -195,7 +195,7 @@ namespace System.Management.Automation
             foreach (var i in indexList)
             {
                 var value = GetMDArrayValue(array, i, true);
-                if (value != AutomationNull.Value)
+                if (value != AutomationNull)
                 {
                     result[j++] = value;
                 }
@@ -266,7 +266,7 @@ namespace System.Management.Automation
             //     $x
             // But disallow anything else:
             //     if in the strict mode, throw exception
-            //     otherwise, return AutomationNull.Value to signal no result
+            //     otherwise, return AutomationNull to signal no result
 
             if (indices.Length == 1)
             {
@@ -280,7 +280,7 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context == null || !context.IsStrictVersion(2))
             {
-                return AutomationNull.Value;
+                return AutomationNull;
             }
 
             throw InterpreterError.NewInterpreterException(target, typeof(RuntimeException), null, "CannotIndex",

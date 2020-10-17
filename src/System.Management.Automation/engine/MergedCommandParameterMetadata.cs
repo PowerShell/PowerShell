@@ -33,14 +33,14 @@ namespace System.Management.Automation
             _bindableParameters.Clear();
             foreach (KeyValuePair<string, MergedCompiledCommandParameter> entry in metadata.BindableParameters)
             {
-                _bindableParameters.Add(entry.Key, entry.Value);
-                result.Add(entry.Value);
+                _bindableParameters.Add(entry.Key, entry);
+                result.Add(entry);
             }
 
             _aliasedParameters.Clear();
             foreach (KeyValuePair<string, MergedCompiledCommandParameter> entry in metadata.AliasedParameters)
             {
-                _aliasedParameters.Add(entry.Key, entry.Value);
+                _aliasedParameters.Add(entry.Key, entry);
             }
 
             // Replace additional meta info
@@ -116,14 +116,14 @@ namespace System.Management.Automation
                 }
 
                 MergedCompiledCommandParameter mergedParameter =
-                    new MergedCompiledCommandParameter(bindableParameter.Value, binderAssociation);
+                    new MergedCompiledCommandParameter(bindableParameter, binderAssociation);
 
                 _bindableParameters.Add(bindableParameter.Key, mergedParameter);
                 result.Add(mergedParameter);
 
                 // Merge in the aliases
 
-                foreach (string aliasName in bindableParameter.Value.Aliases)
+                foreach (string aliasName in bindableParameter.Aliases)
                 {
                     if (_aliasedParameters.ContainsKey(aliasName))
                     {
@@ -145,7 +145,7 @@ namespace System.Management.Automation
                                 null,
                                 Metadata.ParameterNameConflictsWithAlias,
                                 RetrieveParameterNameForAlias(aliasName, _bindableParameters),
-                                bindableParameter.Value.Name);
+                                bindableParameter.Name);
                         throw exception;
                     }
 
@@ -297,7 +297,7 @@ namespace System.Management.Automation
                 foreach (var keyValuePair in parameter.Parameter.ParameterSetData)
                 {
                     var parameterSetName = keyValuePair.Key;
-                    var parameterSetData = keyValuePair.Value;
+                    var parameterSetData = keyValuePair;
                     if (string.Equals(parameterSetName, ParameterAttribute.AllParameterSets, StringComparison.OrdinalIgnoreCase))
                     {
                         // Don't add the parameter set name but assign the bit field zero and then mark the bool

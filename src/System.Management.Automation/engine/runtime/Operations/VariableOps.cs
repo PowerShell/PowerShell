@@ -99,7 +99,7 @@ namespace System.Management.Automation
                 else
                 {
                     // The setter will handle checking for variable writes.
-                    var.Value = value;
+                    var = value;
                 }
 
                 if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
@@ -157,7 +157,7 @@ namespace System.Management.Automation
 
             object result = executionContext.EngineSessionState.GetAutomaticVariableValue((AutomaticVariable)tupleIndex);
 
-            if (result == AutomationNull.Value)
+            if (result == AutomationNull)
             {
                 if (ThrowStrictModeUndefinedVariable(executionContext, varAst))
                 {
@@ -189,7 +189,7 @@ namespace System.Management.Automation
 
             if (var != null)
             {
-                return var.Value;
+                return var;
             }
 
             if (sessionState.ExecutionContext._debuggingMode > 0)
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                                                                ParserStrings.NonExistingVariableReference);
             }
 
-            object value = var.Value;
+            object value = var;
             if (staticType == null && value != null)
             {
                 value = PSObject.Base(value);
@@ -287,7 +287,7 @@ namespace System.Management.Automation
             UsingResult result = GetUsingValueFromTuple(tuple, usingExpressionKey, index);
             if (result != null)
             {
-                return result.Value;
+                return result;
             }
 
             var scope = context.EngineSessionState.CurrentScope;
@@ -296,7 +296,7 @@ namespace System.Management.Automation
                 result = GetUsingValueFromTuple(scope.LocalsTuple, usingExpressionKey, index);
                 if (result != null)
                 {
-                    return result.Value;
+                    return result;
                 }
 
                 foreach (var dottedScope in scope.DottedScopes)
@@ -304,7 +304,7 @@ namespace System.Management.Automation
                     result = GetUsingValueFromTuple(dottedScope, usingExpressionKey, index);
                     if (result != null)
                     {
-                        return result.Value;
+                        return result;
                     }
                 }
 

@@ -503,8 +503,8 @@ namespace System.Management.Automation
                 var match = Regex.Match(label, LabelRegEx);
                 if (!match.Success) throw new FormatException(nameof(label));
 
-                PreReleaseLabel = match.Groups["preLabel"].Value;
-                BuildLabel = match.Groups["buildLabel"].Value;
+                PreReleaseLabel = match.Groups["preLabel"];
+                BuildLabel = match.Groups["buildLabel"];
             }
         }
 
@@ -573,13 +573,13 @@ namespace System.Management.Automation
             var preLabelNote = psobj.Properties[PreLabelPropertyName];
             if (preLabelNote != null)
             {
-                PreReleaseLabel = preLabelNote.Value as string;
+                PreReleaseLabel = preLabelNote as string;
             }
 
             var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
             if (buildLabelNote != null)
             {
-                BuildLabel = buildLabelNote.Value as string;
+                BuildLabel = buildLabelNote as string;
             }
         }
 
@@ -760,19 +760,19 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!int.TryParse(match.Groups["major"].Value, out major))
+            if (!int.TryParse(match.Groups["major"], out major))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            if (match.Groups["minor"].Success && !int.TryParse(match.Groups["minor"].Value, out minor))
+            if (match.Groups["minor"].Success && !int.TryParse(match.Groups["minor"], out minor))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            if (match.Groups["patch"].Success && !int.TryParse(match.Groups["patch"].Value, out patch))
+            if (match.Groups["patch"].Success && !int.TryParse(match.Groups["patch"], out patch))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;

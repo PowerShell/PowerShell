@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _inputObject; }
         }
 
-        private PSObject _inputObject = AutomationNull.Value;
+        private PSObject _inputObject = AutomationNull;
 
         #endregion
 
@@ -628,9 +628,9 @@ namespace Microsoft.PowerShell.Commands
                 contextCmdlet: this,
                 useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder: AutomationNull.Value,
+                dollarUnder: AutomationNull,
                 input: emptyArray,
-                scriptThis: AutomationNull.Value,
+                scriptThis: AutomationNull,
                 args: emptyArray);
         }
 
@@ -733,10 +733,10 @@ namespace Microsoft.PowerShell.Commands
                         string propertyAction = string.Format(CultureInfo.InvariantCulture,
                             InternalCommandStrings.ForEachObjectPropertyAction, targetParameterizedProperty.Name);
 
-                        // ParameterizedProperty always take parameters, so we output the member.Value directly
+                        // ParameterizedProperty always take parameters, so we output the member directly
                         if (ShouldProcess(_targetString, propertyAction))
                         {
-                            WriteObject(member.Value);
+                            WriteObject(member);
                         }
 
                         return;
@@ -769,7 +769,7 @@ namespace Microsoft.PowerShell.Commands
                         MethodException mex = ex as MethodException;
                         if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
                         {
-                            WriteObject(targetMethod.Value);
+                            WriteObject(targetMethod);
                         }
                         else
                         {
@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                         dollarUnder: InputObject,
                         input: new object[] { InputObject },
-                        scriptThis: AutomationNull.Value,
+                        scriptThis: AutomationNull,
                         args: Array.Empty<object>());
                 }
             }
@@ -1000,9 +1000,9 @@ namespace Microsoft.PowerShell.Commands
                 contextCmdlet: this,
                 useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder: AutomationNull.Value,
+                dollarUnder: AutomationNull,
                 input: emptyArray,
-                scriptThis: AutomationNull.Value,
+                scriptThis: AutomationNull,
                 args: emptyArray);
         }
 
@@ -1177,7 +1177,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     object val = ParserOps.Current(null, list);
 
-                    if (val != AutomationNull.Value)
+                    if (val != AutomationNull)
                     {
                         WriteObject(val);
                     }
@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _inputObject = AutomationNull.Value;
+        private PSObject _inputObject = AutomationNull;
 
         private ScriptBlock _script;
         /// <summary>
@@ -2223,7 +2223,7 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="ParameterBindingException">See Pipeline.Invoke.</exception>
         protected override void ProcessRecord()
         {
-            if (_inputObject == AutomationNull.Value)
+            if (_inputObject == AutomationNull)
             {
                 return;
             }
@@ -2235,7 +2235,7 @@ namespace Microsoft.PowerShell.Commands
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                     dollarUnder: InputObject,
                     input: new object[] { _inputObject },
-                    scriptThis: AutomationNull.Value,
+                    scriptThis: AutomationNull,
                     args: Array.Empty<object>());
 
                 if (_toBoolSite.Target.Invoke(_toBoolSite, result))

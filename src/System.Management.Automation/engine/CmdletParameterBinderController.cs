@@ -539,7 +539,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                result.Add(param, pair.Value);
+                result.Add(param, pair);
             }
 
             if (result.Count > 0)
@@ -640,7 +640,7 @@ namespace System.Management.Automation
                 if (!DefaultParameterDictionary.CheckKeyIsValid(key, ref cmdletName, ref parameterName))
                 {
                     if (key.Equals("Disabled", StringComparison.OrdinalIgnoreCase) &&
-                        LanguagePrimitives.IsTrue(entry.Value))
+                        LanguagePrimitives.IsTrue(entry))
                     {
                         _useDefaultParameterBinding = false;
                         return null;
@@ -658,7 +658,7 @@ namespace System.Management.Automation
 
                 if (WildcardPattern.ContainsWildcardCharacters(key))
                 {
-                    wildcardDefault.Add(cmdletName + Separator + parameterName, entry.Value);
+                    wildcardDefault.Add(cmdletName + Separator + parameterName, entry);
                     continue;
                 }
 
@@ -670,7 +670,7 @@ namespace System.Management.Automation
                 }
 
                 GetDefaultParameterValuePairsHelper(
-                    cmdletName, parameterName, entry.Value,
+                    cmdletName, parameterName, entry,
                     bindableParameters, bindableAlias,
                     availablePairs, parametersToRemove);
             }
@@ -693,7 +693,7 @@ namespace System.Management.Automation
                 if (!WildcardPattern.ContainsWildcardCharacters(parameterName))
                 {
                     GetDefaultParameterValuePairsHelper(
-                        cmdletName, parameterName, wildcard.Value,
+                        cmdletName, parameterName, wildcard,
                         bindableParameters, bindableAlias,
                         availablePairs, parametersToRemove);
 
@@ -707,7 +707,7 @@ namespace System.Management.Automation
                 {
                     if (parameterPattern.IsMatch(entry.Key))
                     {
-                        matches.Add(entry.Value);
+                        matches.Add(entry);
                     }
                 }
 
@@ -715,7 +715,7 @@ namespace System.Management.Automation
                 {
                     if (parameterPattern.IsMatch(entry.Key))
                     {
-                        matches.Add(entry.Value);
+                        matches.Add(entry);
                     }
                 }
 
@@ -736,11 +736,11 @@ namespace System.Management.Automation
                 {
                     if (!availablePairs.ContainsKey(matches[0]))
                     {
-                        availablePairs.Add(matches[0], wildcard.Value);
+                        availablePairs.Add(matches[0], wildcard);
                         continue;
                     }
 
-                    if (!wildcard.Value.Equals(availablePairs[matches[0]]))
+                    if (!wildcard.Equals(availablePairs[matches[0]]))
                     {
                         if (!_warningSet.Contains(cmdletName + Separator + parameterName))
                         {
@@ -869,7 +869,7 @@ namespace System.Management.Automation
 
                 Type specifiedType = null;
                 object argumentValue = parameter.ArgumentValue;
-                if (argumentValue != null && argumentValue != UnboundParameter.Value)
+                if (argumentValue != null && argumentValue != UnboundParameter)
                 {
                     specifiedType = argumentValue.GetType();
                 }
@@ -1540,7 +1540,7 @@ namespace System.Management.Automation
                             if (argument.ArgumentSpecified)
                             {
                                 object argumentValue = argument.ArgumentValue;
-                                if (argumentValue != AutomationNull.Value && argumentValue != UnboundParameter.Value)
+                                if (argumentValue != AutomationNull && argumentValue != UnboundParameter)
                                 {
                                     valueFromRemainingArguments.Add(argumentValue);
                                 }
@@ -2883,7 +2883,7 @@ namespace System.Management.Automation
                             var argument =
                                 CommandParameterInternal.CreateParameterWithArgument(
                                 /*parameterAst*/null, entry.Key, "-" + entry.Key + ":",
-                                /*argumentAst*/null, entry.Value,
+                                /*argumentAst*/null, entry,
                                 false);
 
                             // Ignore the result since any failure should cause an exception
@@ -3265,7 +3265,7 @@ namespace System.Management.Automation
                 ConsolidatedString dontuseInternalTypeNames;
                 ParameterBinderBase.bindingTracer.WriteLine(
                     "PIPELINE object TYPE = [{0}]",
-                    inputToOperateOn == null || inputToOperateOn == AutomationNull.Value
+                    inputToOperateOn == null || inputToOperateOn == AutomationNull
                         ? "null"
                         : ((dontuseInternalTypeNames = inputToOperateOn.InternalTypeNames).Count > 0 && dontuseInternalTypeNames[0] != null)
                               ? dontuseInternalTypeNames[0]
@@ -3589,7 +3589,7 @@ namespace System.Management.Automation
                 {
                     bindResult =
                         BindPipelineParameter(
-                            member.Value,
+                            member,
                             parameter,
                             flags);
                 }
@@ -3678,7 +3678,7 @@ namespace System.Management.Automation
             {
                 thereWasSomethingToBind = true;
 
-                CommandParameterInternal argument = delayedScriptBlock.Value._argument;
+                CommandParameterInternal argument = delayedScriptBlock._argument;
                 MergedCompiledCommandParameter parameter = delayedScriptBlock.Key;
 
                 ScriptBlock script = argument.ArgumentValue as ScriptBlock;
@@ -3693,12 +3693,12 @@ namespace System.Management.Automation
                 using (ParameterBinderBase.bindingTracer.TraceScope(
                     "Invoking delay-bind ScriptBlock"))
                 {
-                    if (delayedScriptBlock.Value._parameterBinder == this)
+                    if (delayedScriptBlock._parameterBinder == this)
                     {
                         try
                         {
                             output = script.DoInvoke(inputToOperateOn, inputToOperateOn, Array.Empty<object>());
-                            delayedScriptBlock.Value._evaluatedArgument = output;
+                            delayedScriptBlock._evaluatedArgument = output;
                         }
                         catch (RuntimeException runtimeException)
                         {
@@ -3707,7 +3707,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        output = delayedScriptBlock.Value._evaluatedArgument;
+                        output = delayedScriptBlock._evaluatedArgument;
                     }
                 }
 
@@ -4105,7 +4105,7 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (parameterValue != AutomationNull.Value)
+            if (parameterValue != AutomationNull)
             {
                 s_tracer.WriteLine("Adding PipelineParameter name={0}; value={1}",
                                  parameter.Parameter.Name, parameterValue ?? "null");
@@ -4344,7 +4344,7 @@ namespace System.Management.Automation
                     Diagnostics.Assert(isSpecialKey || (cmdletName != null && parameterName != null), "The cmdletName and parameterName should be set in CheckKeyIsValid");
                     if (keysInBadFormat.Count == 0 && !base.ContainsKey(key))
                     {
-                        base.Add(key, entry.Value);
+                        base.Add(key, entry);
                     }
                 }
                 else

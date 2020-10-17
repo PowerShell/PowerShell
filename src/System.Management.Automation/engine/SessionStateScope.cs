@@ -358,7 +358,7 @@ namespace System.Management.Automation
                 return LocalsTuple.GetValue(index);
             }
 
-            return AutomationNull.Value;
+            return AutomationNull;
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace System.Management.Automation
                         // to it.
                         variable.Attributes.Clear();
 
-                        variable.Value = variableToSet.Value;
+                        variable = variableToSet;
                         variable.Options = variableToSet.Options;
                         variable.Description = variableToSet.Description;
 
@@ -485,7 +485,7 @@ namespace System.Management.Automation
             }
             else if (variable != null)
             {
-                variable.Value = value;
+                variable = value;
             }
             else
             {

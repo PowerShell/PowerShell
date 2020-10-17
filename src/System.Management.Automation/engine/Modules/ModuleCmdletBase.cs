@@ -1413,7 +1413,7 @@ namespace Microsoft.PowerShell.Commands
                 var fakeModuleInfo = new PSModuleInfo(moduleSpec.Name, Context, null);
                 if (moduleSpec.Guid.HasValue)
                 {
-                    fakeModuleInfo.SetGuid(moduleSpec.Guid.Value);
+                    fakeModuleInfo.SetGuid(moduleSpec.Guid);
                 }
 
                 fakeModuleInfo.SetVersion(moduleSpec.RequiredVersion ?? moduleSpec.Version);
@@ -1928,7 +1928,7 @@ namespace Microsoft.PowerShell.Commands
                     PSModuleInfo fakeManifestInfo = new PSModuleInfo(moduleManifestPath, Context, null);
                     if (manifestGuid.HasValue)
                     {
-                        fakeManifestInfo.SetGuid(manifestGuid.Value);
+                        fakeManifestInfo.SetGuid(manifestGuid);
                     }
 
                     if (moduleVersion != null)
@@ -2605,7 +2605,7 @@ namespace Microsoft.PowerShell.Commands
                         PSObject xml = PSSerializer.Deserialize(reader.ReadToEnd()) as PSObject;
                         if (xml != null && xml.Properties["RepositorySourceLocation"] != null)
                         {
-                            var repositorySourceLocation = xml.Properties["RepositorySourceLocation"].Value.ToString();
+                            var repositorySourceLocation = xml.Properties["RepositorySourceLocation"].ToString();
                             Uri repositorySourceLocationUri;
 
                             if (!string.IsNullOrWhiteSpace(repositorySourceLocation) &&
@@ -3311,7 +3311,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (var pair in manifestInfo.DetectedAliasExports)
                     {
-                        newManifestInfo.AddDetectedAliasExport(pair.Key, pair.Value);
+                        newManifestInfo.AddDetectedAliasExport(pair.Key, pair);
                     }
                 }
 
@@ -3535,7 +3535,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (var t in exportedTypes)
                         {
-                            scope.AddType(t.Key, t.Value.Type);
+                            scope.AddType(t.Key, t.Type);
                         }
                     }
                 }
@@ -3877,7 +3877,7 @@ namespace Microsoft.PowerShell.Commands
                                         Modules.RequiredModuleNotLoadedWrongGuid,
                                         moduleManifestPath,
                                         moduleName,
-                                        moduleGuid.Value);
+                                        moduleGuid);
                                     break;
 
                                 default:
@@ -3961,7 +3961,7 @@ namespace Microsoft.PowerShell.Commands
                     ModuleSpecification ms = new ModuleSpecification(moduleNameToCheckAgainst);
                     if (requiredModule.Guid != null)
                     {
-                        ms.Guid = requiredModule.Guid.Value;
+                        ms.Guid = requiredModule.Guid;
                     }
 
                     if (requiredModule.RequiredVersion != null)
@@ -4045,7 +4045,7 @@ namespace Microsoft.PowerShell.Commands
                     string.IsNullOrEmpty(rootedModulePath) ? nestedModuleSpec.Name : tempModuleName);
                 if (nestedModuleSpec.Guid.HasValue)
                 {
-                    tempSpec.Guid = nestedModuleSpec.Guid.Value;
+                    tempSpec.Guid = nestedModuleSpec.Guid;
                 }
 
                 if (nestedModuleSpec.Version != null)
@@ -4950,9 +4950,9 @@ namespace Microsoft.PowerShell.Commands
                             contextCmdlet: this,
                             useLocalScope: true,
                             errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
+                            dollarUnder: AutomationNull,
+                            input: AutomationNull,
+                            scriptThis: AutomationNull,
                             args: new object[] { module });
                     }
 
@@ -4980,7 +4980,7 @@ namespace Microsoft.PowerShell.Commands
                     List<string> keysToRemoveFromCmdletCache = new List<string>();
                     foreach (KeyValuePair<string, List<CmdletInfo>> cmdlet in Context.EngineSessionState.GetCmdletTable())
                     {
-                        List<CmdletInfo> matches = cmdlet.Value;
+                        List<CmdletInfo> matches = cmdlet;
                         // If the entry's module name matches, then remove it from the list...
                         for (int i = matches.Count - 1; i >= 0; i--)
                         {
@@ -5017,13 +5017,13 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (KeyValuePair<string, System.Collections.Generic.List<ProviderInfo>> pl in providers)
                         {
-                            Dbg.Assert(pl.Value != null, "There should never be a null list of entries in the provider table");
+                            Dbg.Assert(pl != null, "There should never be a null list of entries in the provider table");
 
                             // For each provider with this name, if it was imported from the module,
                             // remove it from the list.
-                            for (int i = pl.Value.Count - 1; i >= 0; i--)
+                            for (int i = pl.Count - 1; i >= 0; i--)
                             {
-                                ProviderInfo pi = pl.Value[i];
+                                ProviderInfo pi = pl[i];
 
                                 // If it was implemented by this module, remove it
                                 string implAssemblyLocation = pi.ImplementingType.Assembly.Location;
@@ -5048,13 +5048,13 @@ namespace Microsoft.PowerShell.Commands
                                         }
                                     }
 
-                                    pl.Value.RemoveAt(i);
+                                    pl.RemoveAt(i);
                                 }
                             }
 
                             // If there are no providers left with this name, add this key to the list
                             // of entries to remove.
-                            if (pl.Value.Count == 0)
+                            if (pl.Count == 0)
                             {
                                 keysToRemoveFromProviderTable.Add(pl.Key);
                             }
@@ -5119,7 +5119,7 @@ namespace Microsoft.PowerShell.Commands
                         //  because the names of the aliases might have been changed by the -Prefix parameter of Import-Module)
                         foreach (KeyValuePair<string, AliasInfo> entry in ss.GetAliasTable())
                         {
-                            AliasInfo ai = entry.Value;
+                            AliasInfo ai = entry;
                             if (ai.Module == null)
                             {
                                 continue;
@@ -5145,7 +5145,7 @@ namespace Microsoft.PowerShell.Commands
                     // Remove the module from all session state module tables...
                     foreach (KeyValuePair<string, PSModuleInfo> e in Context.Modules.ModuleTable)
                     {
-                        PSModuleInfo m = e.Value;
+                        PSModuleInfo m = e;
                         if (m.SessionState != null)
                         {
                             if (m.SessionState.Internal.ModuleTable.ContainsKey(module.Path))
@@ -5778,9 +5778,9 @@ namespace Microsoft.PowerShell.Commands
                                 ps1ScriptInfo.ScriptBlock.InvokeWithPipe(
                                     useLocalScope: false,
                                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                                    dollarUnder: AutomationNull.Value,
-                                    input: AutomationNull.Value,
-                                    scriptThis: AutomationNull.Value,
+                                    dollarUnder: AutomationNull,
+                                    input: AutomationNull,
+                                    scriptThis: AutomationNull,
                                     outputPipe: ((MshCommandRuntime)this.CommandRuntime).OutputPipe,
                                     invocationInfo: invocationInfo,
                                     args: this.BaseArgumentList ?? Array.Empty<object>());
@@ -6306,7 +6306,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (var pair in exportedCommands)
                     {
                         var commandName = pair.Key;
-                        var commandType = pair.Value;
+                        var commandType = pair;
 
                         if ((commandType & CommandTypes.Alias) == CommandTypes.Alias)
                         {
@@ -6371,7 +6371,7 @@ namespace Microsoft.PowerShell.Commands
                 // These are already filtered
                 if (!HasInvalidCharacters(commandName.Replace("-", string.Empty)))
                 {
-                    module.AddDetectedAliasExport(commandName, pair.Value);
+                    module.AddDetectedAliasExport(commandName, pair);
                 }
             }
 
@@ -6466,7 +6466,7 @@ namespace Microsoft.PowerShell.Commands
                         if (SessionStateUtilities.MatchesAnyWildcardPattern(commandName, patterns, true) &&
                             SessionStateUtilities.MatchesAnyWildcardPattern(commandName, scriptAnalysisPatterns, true))
                         {
-                            module.AddDetectedAliasExport(commandName, pair.Value.Definition);
+                            module.AddDetectedAliasExport(commandName, pair.Definition);
                         }
                     }
                 }

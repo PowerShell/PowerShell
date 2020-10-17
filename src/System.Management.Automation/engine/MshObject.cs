@@ -994,7 +994,7 @@ namespace System.Management.Automation
                 return obj;
             }
 
-            if (mshObj == AutomationNull.Value)
+            if (mshObj == AutomationNull)
                 return null;
             if (mshObj.ImmediateBaseObjectIsEmpty)
             {
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation
                 returnValue.Append("=");
 
                 // Don't evaluate script properties during a ToString() operation.
-                var propertyValue = property is PSScriptProperty ? property.GetType().FullName : property.Value;
+                var propertyValue = property is PSScriptProperty ? property.GetType().FullName : property;
 
                 returnValue.Append(PSObject.ToString(context, propertyValue, separator, format, formatProvider, false, false));
             }
@@ -1739,7 +1739,7 @@ namespace System.Management.Automation
         {
             if (PSGetMemberBinder.TryGetInstanceMember(this, memberName, out PSMemberInfo memberInfo) && memberInfo is PSPropertyInfo)
             {
-                memberInfo.Value = value;
+                memberInfo = value;
             }
             else
             {
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation
         {
             if (PSGetMemberBinder.TryGetInstanceMember(this, property.Name, out PSMemberInfo memberInfo) && memberInfo is PSPropertyInfo)
             {
-                memberInfo.Value = property.Value;
+                memberInfo = property;
             }
             else
             {
@@ -1867,13 +1867,13 @@ namespace System.Management.Automation
                 return defaultValue;
             }
 
-            object noteValue = note.Value;
+            object noteValue = note;
             if (noteValue == null || noteValue.GetType() != expectedType)
             {
                 return defaultValue;
             }
 
-            return note.Value;
+            return note;
         }
 
         internal int GetSerializationDepth(TypeTable backupTypeTable)
@@ -1981,7 +1981,7 @@ namespace System.Management.Automation
         internal Type GetTargetTypeForDeserialization(TypeTable backupTypeTable)
         {
             PSMemberInfo targetType = this.GetPSStandardMember(backupTypeTable, TypeTable.TargetTypeForDeserialization);
-            return targetType?.Value as Type;
+            return targetType? as Type;
         }
 
         /// <summary>
@@ -2135,7 +2135,7 @@ namespace System.Management.Automation
             {
             }
 
-            private new PSObject Value => (PSObject)base.Value;
+            private new PSObject Value => (PSObject)base;
 
             private DynamicMetaObject GetUnwrappedObject()
             {

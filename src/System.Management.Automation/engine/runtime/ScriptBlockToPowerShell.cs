@@ -648,8 +648,8 @@ namespace System.Management.Automation
                             || constantExprAst.StaticType == typeof(System.Numerics.BigInteger)))
                         {
                             var commandArgumentText = constantExprAst.Extent.Text;
-                            argument = constantExprAst.Value;
-                            if (!commandArgumentText.Equals(constantExprAst.Value.ToString(), StringComparison.Ordinal))
+                            argument = constantExprAst;
+                            if (!commandArgumentText.Equals(constantExprAst.ToString(), StringComparison.Ordinal))
                             {
                                 // The wrapped number will actually return a PSObject which could end holding a reference to
                                 // a typetable, making the object runspace specific.  We should find a better way to avoid

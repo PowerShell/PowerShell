@@ -155,7 +155,7 @@ namespace System.Management.Automation.Internal
             _ast = ast;
             // This 'Lazy<T>' constructor ensures that only a single thread can initialize the instance in a thread-safe manner.
             _scriptBlock = new Lazy<ScriptBlock>(() => new ScriptBlock(_ast, isFilter: false));
-            _boundScriptBlock = new ThreadLocal<ScriptBlock>(() => _scriptBlock.Value.Clone());
+            _boundScriptBlock = new ThreadLocal<ScriptBlock>(() => _scriptBlock.Clone());
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            _boundScriptBlock.Value.SessionStateInternal = sessionStateToUse;
+            _boundScriptBlock.SessionStateInternal = sessionStateToUse;
         }
 
         /// <summary>
@@ -231,15 +231,15 @@ namespace System.Management.Automation.Internal
             try
             {
                 PrepareScriptBlockToInvoke(instance, sessionStateInternal);
-                _boundScriptBlock.Value.InvokeAsMemberFunction(instance, args);
+                _boundScriptBlock.InvokeAsMemberFunction(instance, args);
             }
             finally
             {
-                // '_boundScriptBlock.Value' for a thread will live until
+                // '_boundScriptBlock' for a thread will live until
                 //  - the thread is gone, OR
                 //  - the dyanmic assembly holding this wrapper instance is GC collected.
                 // We don't hold on the SessionState object, so that GC can collect it as appropriate.
-                _boundScriptBlock.Value.SessionStateInternal = null;
+                _boundScriptBlock.SessionStateInternal = null;
             }
         }
 
@@ -255,15 +255,15 @@ namespace System.Management.Automation.Internal
             try
             {
                 PrepareScriptBlockToInvoke(instance, sessionStateInternal);
-                return _boundScriptBlock.Value.InvokeAsMemberFunctionT<T>(instance, args);
+                return _boundScriptBlock.InvokeAsMemberFunctionT<T>(instance, args);
             }
             finally
             {
-                // '_boundScriptBlock.Value' for a thread will live until
+                // '_boundScriptBlock' for a thread will live until
                 //  - the thread is gone, OR
                 //  - the dyanmic assembly holding this wrapper instance is GC collected.
                 // We don't hold on the SessionState object, so that GC can collect it as appropriate.
-                _boundScriptBlock.Value.SessionStateInternal = null;
+                _boundScriptBlock.SessionStateInternal = null;
             }
         }
     }

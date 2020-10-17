@@ -708,7 +708,7 @@ namespace System.Management.Automation
                             (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                             FuzzyMatcher.IsFuzzyMatch(aliasEntry.Key, _commandName)))
                         {
-                            matchingAliases.Add(aliasEntry.Value);
+                            matchingAliases.Add(aliasEntry);
                         }
                     }
 

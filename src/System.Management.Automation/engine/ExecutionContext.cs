@@ -407,7 +407,7 @@ namespace System.Management.Automation
         {
             bool result = false;
             var baseValue = PSObject.Base(value);
-            if (baseValue != null && baseValue != NullString.Value)
+            if (baseValue != null && baseValue != NullString)
             {
                 object unused;
                 result = UntrustedObjects.TryGetValue(baseValue, out unused);
@@ -423,7 +423,7 @@ namespace System.Management.Automation
         {
             // If the value is a PSObject, then we mark its base object untrusted
             var baseValue = PSObject.Base(value);
-            if (baseValue != null && baseValue != NullString.Value)
+            if (baseValue != null && baseValue != NullString)
             {
                 // It's actually setting a key value pair when the key doesn't exist
                 UntrustedObjects.GetValue(baseValue, key => null);
@@ -431,16 +431,16 @@ namespace System.Management.Automation
                 try
                 {
                     // If it's a PSReference object, we need to also mark the value it's holding on.
-                    // This could result in a recursion if psRef.Value points to itself directly or indirectly, so we check if psRef.Value is already
+                    // This could result in a recursion if psRef points to itself directly or indirectly, so we check if psRef is already
                     // marked before making a recursive call. The additional check adds extra overhead for handling PSReference object, but it should
                     // be rare in practice.
                     var psRef = baseValue as PSReference;
-                    if (psRef != null && !IsMarkedAsUntrusted(psRef.Value))
+                    if (psRef != null && !IsMarkedAsUntrusted(psRef))
                     {
-                        MarkObjectAsUntrusted(psRef.Value);
+                        MarkObjectAsUntrusted(psRef);
                     }
                 }
-                catch { /* psRef.Value may call PSVariable.Value under the hood, which may throw arbitrary exception */ }
+                catch { /* psRef may call PSVariable under the hood, which may throw arbitrary exception */ }
             }
         }
 
@@ -462,7 +462,7 @@ namespace System.Management.Automation
                 // Global variable may be referenced within trusted script block (scriptBlock.LanguageMode == 'FullLanguage'), and users could
                 // also set a 'Script:' variable in a trusted module scope from 'ConstrainedLanguage' environment via '& $mo { $script:<var> }'.
                 // So we need to mark the value as untrusted.
-                MarkObjectAsUntrusted(variable.Value);
+                MarkObjectAsUntrusted(variable);
             }
         }
 

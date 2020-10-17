@@ -791,17 +791,17 @@ namespace System.Management.Automation
 
                             if (hostOutput.ForegroundColor.HasValue)
                             {
-                                foregroundColor = hostOutput.ForegroundColor.Value;
+                                foregroundColor = hostOutput.ForegroundColor;
                             }
 
                             if (hostOutput.BackgroundColor.HasValue)
                             {
-                                backgroundColor = hostOutput.BackgroundColor.Value;
+                                backgroundColor = hostOutput.BackgroundColor;
                             }
 
                             if (hostOutput.NoNewLine.HasValue)
                             {
-                                noNewLine = hostOutput.NoNewLine.Value;
+                                noNewLine = hostOutput.NoNewLine;
                             }
 
                             if (foregroundColor.HasValue || backgroundColor.HasValue)
@@ -821,11 +821,11 @@ namespace System.Management.Automation
 
                                 if (noNewLine)
                                 {
-                                    CBhost.InternalUI.Write(foregroundColor.Value, backgroundColor.Value, message);
+                                    CBhost.InternalUI.Write(foregroundColor, backgroundColor, message);
                                 }
                                 else
                                 {
-                                    CBhost.InternalUI.WriteLine(foregroundColor.Value, backgroundColor.Value, message);
+                                    CBhost.InternalUI.WriteLine(foregroundColor, backgroundColor, message);
                                 }
                             }
                             else
@@ -2547,7 +2547,7 @@ namespace System.Management.Automation
                 {
                     varList = new ArrayList();
 
-                    if (oldValue != null && AutomationNull.Value != oldValue)
+                    if (oldValue != null && AutomationNull != oldValue)
                     {
                         IEnumerable enumerable = LanguagePrimitives.GetEnumerable(oldValue);
                         if (enumerable != null)
@@ -2613,7 +2613,7 @@ namespace System.Management.Automation
         {
             ThrowIfStopping();
 
-            if (AutomationNull.Value == sendToPipeline)
+            if (AutomationNull == sendToPipeline)
                 return;
 
             sendToPipeline = LanguagePrimitives.AsPSObjectOrNull(sendToPipeline);
@@ -2647,7 +2647,7 @@ namespace System.Management.Automation
             ArrayList convertedList = new ArrayList();
             foreach (object toConvert in enumerable)
             {
-                if (AutomationNull.Value == toConvert)
+                if (AutomationNull == toConvert)
                 {
                     continue;
                 }
@@ -2838,7 +2838,7 @@ namespace System.Management.Automation
                 ActionPreference preference = ErrorAction;
                 if (actionPreference.HasValue)
                 {
-                    preference = actionPreference.Value;
+                    preference = actionPreference;
                 }
 
                 // No trace of the error in the 'Ignore' case

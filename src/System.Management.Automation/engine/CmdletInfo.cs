@@ -496,8 +496,8 @@ namespace System.Management.Automation
                 // Handle the case in one or both of the properties might not be defined.
                 PSPropertyInfo nameProperty = psObject.Properties["Name"];
                 PSPropertyInfo psSnapInProperty = psObject.Properties["PSSnapIn"];
-                string nameString = nameProperty == null ? string.Empty : (string)nameProperty.Value;
-                string psSnapInString = psSnapInProperty == null ? string.Empty : (string)psSnapInProperty.Value;
+                string nameString = nameProperty == null ? string.Empty : (string)nameProperty;
+                string psSnapInString = psSnapInProperty == null ? string.Empty : (string)psSnapInProperty;
                 return GetFullName(psSnapInString, nameString);
             }
         }

@@ -704,7 +704,7 @@ namespace System.Management.Automation
             // Retrieve the object from the input pipeline
             object inputObject = this.commandRuntime.InputPipe.Retrieve();
 
-            if (inputObject == AutomationNull.Value)
+            if (inputObject == AutomationNull)
             {
                 return false;
             }

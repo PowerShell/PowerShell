@@ -232,7 +232,7 @@ namespace System.Management.Automation
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
         private readonly ArrayList _input = new ArrayList();
-        private readonly object _dollarUnderbar = AutomationNull.Value;
+        private readonly object _dollarUnderbar = AutomationNull;
         private new ScriptBlock _scriptBlock;
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
@@ -338,7 +338,7 @@ namespace System.Management.Automation
                     if (_scriptBlock.HasBeginBlock)
                     {
                         RunClause(_runOptimizedCode ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock,
-                                  AutomationNull.Value, _input);
+                                  AutomationNull, _input);
                     }
                 }
                 finally
@@ -362,7 +362,7 @@ namespace System.Management.Automation
 
                 if (_scriptBlock.HasBeginBlock)
                 {
-                    RunClause(_runOptimizedCode ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock, AutomationNull.Value, _input);
+                    RunClause(_runOptimizedCode ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock, AutomationNull, _input);
                 }
             }
 
@@ -422,12 +422,12 @@ namespace System.Management.Automation
                         }
 
                         // run with accumulated input
-                        RunClause(endBlock, AutomationNull.Value, _input);
+                        RunClause(endBlock, AutomationNull, _input);
                     }
                     else
                     {
                         // run with asynchronously updated $input enumerator
-                        RunClause(endBlock, AutomationNull.Value, this.CommandRuntime.InputPipe.ExternalReader.GetReadEnumerator());
+                        RunClause(endBlock, AutomationNull, this.CommandRuntime.InputPipe.ExternalReader.GetReadEnumerator());
                     }
                 }
             }
@@ -485,7 +485,7 @@ namespace System.Management.Automation
                     // mode is appropriately applied for evaluation parameter defaults.
                     if (newLanguageMode.HasValue)
                     {
-                        Context.LanguageMode = newLanguageMode.Value;
+                        Context.LanguageMode = newLanguageMode;
                     }
 
                     bool? oldLangModeTransitionStatus = null;
@@ -505,7 +505,7 @@ namespace System.Management.Automation
                         if (oldLangModeTransitionStatus.HasValue)
                         {
                             // Revert the transition state to old value after doing the parameter binding
-                            Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus.Value;
+                            Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus;
                         }
                     }
 
@@ -518,16 +518,16 @@ namespace System.Management.Automation
                         Context.RedirectErrorPipe(commandRuntime.ErrorOutputPipe);
                     }
 
-                    if (dollarUnderbar != AutomationNull.Value)
+                    if (dollarUnderbar != AutomationNull)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
                     }
-                    else if (_dollarUnderbar != AutomationNull.Value)
+                    else if (_dollarUnderbar != AutomationNull)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, _dollarUnderbar, _context);
                     }
 
-                    if (inputToProcess != AutomationNull.Value)
+                    if (inputToProcess != AutomationNull)
                     {
                         if (inputToProcess == null)
                         {
@@ -557,7 +557,7 @@ namespace System.Management.Automation
 
                     if (oldLanguageMode.HasValue)
                     {
-                        Context.LanguageMode = oldLanguageMode.Value;
+                        Context.LanguageMode = oldLanguageMode;
                     }
 
                     Context.EngineSessionState.CurrentScope.ScopeOrigin = oldScopeOrigin;

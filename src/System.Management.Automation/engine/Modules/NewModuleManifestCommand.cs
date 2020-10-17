@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ProcessorArchitecture ProcessorArchitecture
         {
-            get { return _processorArchitecture.HasValue ? _processorArchitecture.Value : ProcessorArchitecture.None; }
+            get { return _processorArchitecture.HasValue ? _processorArchitecture : ProcessorArchitecture.None; }
 
             set { _processorArchitecture = value; }
         }
@@ -1202,7 +1202,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (DictionaryEntry entry in privateDataHashTable)
                     {
-                        result.Append(ManifestFragment(entry.Key.ToString(), entry.Key.ToString(), QuoteName((string)LanguagePrimitives.ConvertTo(entry.Value, typeof(string), CultureInfo.InvariantCulture)), streamWriter));
+                        result.Append(ManifestFragment(entry.Key.ToString(), entry.Key.ToString(), QuoteName((string)LanguagePrimitives.ConvertTo(entry, typeof(string), CultureInfo.InvariantCulture)), streamWriter));
                     }
                 }
 
