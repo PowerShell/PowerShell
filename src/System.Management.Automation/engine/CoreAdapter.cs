@@ -3887,6 +3887,33 @@ namespace System.Management.Automation
             return entry.isStatic;
         }
 
+        /// <summary>
+        /// Get the string representation of the default value of passed-in parameter.
+        /// </summary>
+        /// <param name="parameter">Parameter.</param>
+        /// <returns>String representation of the parameter's default value.</returns>
+        private static string GetDefaultValueStringRepresentation(ParameterInfo parameter)
+        {
+            var parameterType = parameter.ParameterType;
+            var parameterValue = parameter.DefaultValue;
+
+            if (parameterValue == null)
+            {
+                return (parameterType.IsValueType || parameterType.IsGenericMethodParameter)
+                    ? "default"
+                    : "null";
+            }
+
+            if (parameterType.IsEnum)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterValue.ToString());
+            }
+
+            return (parameterValue is string)
+                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterValue.ToString())
+                : parameterValue.ToString();
+        }
+
         #endregion auxiliary methods and classes
 
         #region virtual
@@ -4480,6 +4507,13 @@ namespace System.Management.Automation
                     builder.Append(ToStringCodeMethods.Type(parameterType));
                     builder.Append(" ");
                     builder.Append(parameter.Name);
+
+                    if (parameter.HasDefaultValue)
+                    {
+                        builder.Append(" = ");
+                        builder.Append(GetDefaultValueStringRepresentation(parameter));
+                    }
+
                     builder.Append(", ");
                 }
 
