@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 if (_autosize.HasValue)
-                    return _autosize.Value;
+                    return _autosize;
                 return false;
             }
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 if (_column.HasValue)
-                    return _column.Value;
+                    return _column;
                 return -1;
             }
 
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             // we cannot specify -column and -autosize, they are mutually exclusive
             if (_autosize.HasValue && _column.HasValue)
             {
-                if (_autosize.Value)
+                if (_autosize)
                 {
                     // the user specified -autosize:true AND a column number
                     string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
@@ -132,13 +132,13 @@ namespace Microsoft.PowerShell.Commands
             parameters.expansion = ProcessExpandParameter();
 
             if (_autosize.HasValue)
-                parameters.autosize = _autosize.Value;
+                parameters.autosize = _autosize;
 
             WideSpecificParameters wideSpecific = new WideSpecificParameters();
             parameters.shapeParameters = wideSpecific;
             if (_column.HasValue)
             {
-                wideSpecific.columns = _column.Value;
+                wideSpecific.columns = _column;
             }
 
             return parameters;

@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (SetSeed.HasValue)
             {
-                Generator = new PolymorphicRandomNumberGenerator(SetSeed.Value);
+                Generator = new PolymorphicRandomNumberGenerator(SetSeed);
             }
 
             if (EffectiveParameterSet == MyParameterSet.RandomNumber)

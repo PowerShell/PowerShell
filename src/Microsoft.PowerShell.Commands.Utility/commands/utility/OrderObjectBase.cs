@@ -685,7 +685,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ascendingOverrides != null && ascendingOverrides[k].HasValue)
                 {
-                    ascending[k] = ascendingOverrides[k].Value;
+                    ascending[k] = ascendingOverrides[k];
                 }
                 else
                 {
