@@ -106,7 +106,7 @@ namespace PSTests.Parallel
             {
                 directoryObject = new DirectoryInfo(System.Environment.CurrentDirectory);
                 fileObject = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-                executableObject = new FileInfo(System.Diagnostics. Environment.ProcessPath);
+                executableObject = new FileInfo(Environment.ProcessPath);
             }
 
             Assert.Equal("d----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));
