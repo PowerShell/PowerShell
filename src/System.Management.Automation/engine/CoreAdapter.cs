@@ -3890,12 +3890,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the string representation of the default value of passed-in parameter.
         /// </summary>
-        /// <param name="parameter">Parameter.</param>
+        /// <param name="parameterInfo">ParameterInfo containing the parameter's default value.</param>
         /// <returns>String representation of the parameter's default value.</returns>
-        private static string GetDefaultValueStringRepresentation(ParameterInfo parameter)
+        private static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
         {
-            var parameterType = parameter.ParameterType;
-            var parameterValue = parameter.DefaultValue;
+            var parameterType = parameterInfo.ParameterType;
+            var parameterValue = parameterInfo.DefaultValue;
 
             if (parameterValue == null)
             {
