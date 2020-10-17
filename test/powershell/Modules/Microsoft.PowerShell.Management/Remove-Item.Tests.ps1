@@ -157,16 +157,12 @@ Describe "Remove-Item" -Tags "CI" {
         Add-Content -Path $streamdir -Stream $streamName -Value $streamContent
       }
       It "Should completely remove a datastream from a file" -Skip:(!$IsWindows) {
-        # First, we verify that the stream exists.
         Get-Item -Path $streamfile -Stream $streamName | Should -Not -BeNullOrEmpty
-        # Now, remove the stream and verify it's gone.
         Remove-Item -Path $streamfile -Stream $streamName
         Get-Item -Path $streamfile -Stream $streamName -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
       }
       It "Should completely remove a datastream from a directory" -Skip:(!$IsWindows) {
-        # First, we verify that the stream exists.
         Get-Item -Path $streamdir -Stream $streamName | Should -Not -BeNullOrEmpty
-        # Now, remove the stream and verify it's gone.        
         Remove-Item -Path $streamdir -Stream $streamName
         Get-Item -Path $streamdir -Stream $streamname -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
       }
