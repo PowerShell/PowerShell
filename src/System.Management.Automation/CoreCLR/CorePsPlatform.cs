@@ -72,9 +72,8 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
-
-                _isNanoServer = false;
+                _isNanoServer = _isNanoServer.GetValueOrDefault() ?? false;
+                
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
                 {
                     if (regKey != null)
@@ -87,7 +86,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return _isNanoServer.Value;
+                return _isNanoServer;
 #endif
             }
         }
