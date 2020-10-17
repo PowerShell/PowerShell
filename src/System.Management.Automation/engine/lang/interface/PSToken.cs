@@ -300,7 +300,9 @@ namespace System.Management.Automation
             /*                 Type */ PSTokenType.Keyword,
             /*             Assembly */ PSTokenType.Keyword,
             /*              Command */ PSTokenType.Keyword,
-            /*                  Def */ PSTokenType.Keyword,
+            /*               Hidden */ PSTokenType.Keyword,
+            /*                 Base */ PSTokenType.Keyword,
+            /*              Default */ PSTokenType.Keyword,
 
             #endregion Flags for keywords
 
