@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 if (_autosize.HasValue)
-                    return _autosize;
+                    return _autosize.GetValueOrDefault();
                 return false;
             }
 
@@ -145,4 +145,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
