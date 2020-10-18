@@ -525,7 +525,6 @@ namespace System.Management.Automation
         private string _name;
         private IList<Job> _childJobs;
         internal readonly object syncObject = new object();   // object used for synchronization
-        // ISSUE: Should Result be public property
         private PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
         private bool _resultsOwner = true;
         private PSDataCollection<ErrorRecord> _error = new PSDataCollection<ErrorRecord>();
@@ -683,7 +682,7 @@ namespace System.Management.Automation
         /// leaf node (with no children), then this will
         /// aggregate the results from all child jobs.
         /// </summary>
-        internal PSDataCollection<PSStreamObject> Results
+        public PSDataCollection<PSStreamObject> Results
         {
             get
             {
