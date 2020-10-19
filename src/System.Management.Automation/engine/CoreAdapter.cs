@@ -3895,9 +3895,9 @@ namespace System.Management.Automation
         private static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
         {
             var parameterType = parameterInfo.ParameterType;
-            var parameterValue = parameterInfo.DefaultValue;
+            var parameterDefaultValue = parameterInfo.DefaultValue;
 
-            if (parameterValue == null)
+            if (parameterDefaultValue == null)
             {
                 return (parameterType.IsValueType || parameterType.IsGenericMethodParameter)
                     ? "default"
@@ -3906,12 +3906,12 @@ namespace System.Management.Automation
 
             if (parameterType.IsEnum)
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterValue.ToString());
+                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterDefaultValue.ToString());
             }
 
-            return (parameterValue is string)
-                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterValue.ToString())
-                : parameterValue.ToString();
+            return (parameterDefaultValue is string)
+                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterDefaultValue.ToString())
+                : parameterDefaultValue.ToString();
         }
 
         #endregion auxiliary methods and classes
