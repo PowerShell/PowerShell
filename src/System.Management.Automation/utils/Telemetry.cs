@@ -391,6 +391,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerShell.Operation.Validation",
                         "Microsoft.PowerShell.RemotingTools",
                         "Microsoft.PowerShell.SecretManagement",
+                        "Microsoft.PowerShell.SecretStore",
                         "Microsoft.PowerShell.Security",
                         "Microsoft.PowerShell.TextUtility",
                         "Microsoft.PowerShell.Utility",
