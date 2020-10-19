@@ -113,7 +113,7 @@ public static void TestMethod_OptGeneric<T>(T param = default) { }
 
         It "Tooltip should contain methods' overload definitions" {
             $result = (TabExpansion2 -inputScript ($s = '[OverloadDefinitionTest.TestClass]::Bar') -cursorColumn $s.Length).CompletionMatches
-            $tooltipParts = $result.ToolTip -split [System.Environment]::NewLine
+            $tooltipParts = $result.ToolTip -split "\r?\n"
 
             $tooltipParts.Count | Should -Be 4
             $tooltipParts[0] | Should -BeExactly "static void Bar()"
