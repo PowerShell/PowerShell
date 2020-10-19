@@ -221,29 +221,6 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// Gets true if Path is Console Application.
-        /// </summary>
-        private bool IsConsoleApplication => !IsWindowsApplication;
-
-        /// <summary>
-        /// Gets true if Path is Windows Application.
-        /// </summary>
-        private bool IsWindowsApplication
-        {
-            get
-            {
-                if (!_isWindowsApplication.HasValue)
-                {
-                    _isWindowsApplication = CheckIfWindowsApplication(Path);
-                }
-
-                return _isWindowsApplication.Value;
-            }
-        }
-
-        private bool? _isWindowsApplication;
-
         #endregion ctor/native command properties
 
         #region parameter binder
@@ -423,7 +400,8 @@ namespace System.Management.Automation
 
             _startPosition = new Host.Coordinates();
 
-            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
+            bool isWindowsApplication = IsWindowsApplication(this.Path);
+            CalculateIORedirection(isWindowsApplication, out redirectOutput, out redirectError, out redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
@@ -498,7 +476,8 @@ namespace System.Management.Automation
                         bool notDone = true;
                         if (!string.IsNullOrEmpty(executable))
                         {
-                            if (CheckIfConsoleApplication(executable))
+                            isWindowsApplication = IsWindowsApplication(executable);
+                            if (!isWindowsApplication)
                             {
                                 // Allocate a console if there isn't one attached already...
                                 ConsoleVisibility.AllocateHiddenConsole();
@@ -554,7 +533,7 @@ namespace System.Management.Automation
                     _isRunningInBackground = true;
                     if (startInfo.UseShellExecute == false)
                     {
-                        _isRunningInBackground = IsWindowsApplication;
+                        _isRunningInBackground = isWindowsApplication;
                     }
                 }
 
@@ -953,22 +932,12 @@ namespace System.Management.Automation
         #region checkForConsoleApplication
 
         /// <summary>
-        /// Return true if the passed in process is a console process.
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        private static bool CheckIfConsoleApplication(string fileName)
-        {
-            return !CheckIfWindowsApplication(fileName);
-        }
-
-        /// <summary>
         /// Check if the passed in process is a windows application.
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
         [ArchitectureSensitive]
-        private static bool CheckIfWindowsApplication(string fileName)
+        private static bool IsWindowsApplication(string fileName)
         {
 #if UNIX
             return false;
@@ -1227,10 +1196,11 @@ namespace System.Management.Automation
         /// <summary>
         /// This method calculates if input and output of the process are redirected.
         /// </summary>
+        /// <param name="isWindowsApplication"></param>
         /// <param name="redirectOutput"></param>
         /// <param name="redirectError"></param>
         /// <param name="redirectInput"></param>
-        private void CalculateIORedirection(out bool redirectOutput, out bool redirectError, out bool redirectInput)
+        private void CalculateIORedirection(bool isWindowsApplication, out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
             redirectInput = this.Command.MyInvocation.ExpectingInput;
             redirectOutput = true;
@@ -1301,7 +1271,7 @@ namespace System.Management.Automation
                 redirectOutput = true;
                 redirectError = true;
             }
-            else if (Platform.IsWindowsDesktop && IsConsoleApplication)
+            else if (Platform.IsWindowsDesktop && !isWindowsApplication)
             {
                 // On Windows desktops, if the command to run is a console application,
                 // then allocate a console if there isn't one attached already...

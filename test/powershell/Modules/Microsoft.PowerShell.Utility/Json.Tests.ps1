@@ -1463,4 +1463,11 @@ Describe "Json Bug fixes"  -Tags "Feature" {
         $result = "[1,","2,","3]" | ConvertFrom-Json
         $result.Count | Should -Be 3
     }
+
+    It 'ConvertTo-Json will output warning if depth is exceeded.' {
+        $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
+        $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warningMessage -WarningAction SilentlyContinue
+        $json | Should -Not -BeNullOrEmpty
+        $warningMessage | Should -Not -BeNullOrEmpty
+    }
 }
