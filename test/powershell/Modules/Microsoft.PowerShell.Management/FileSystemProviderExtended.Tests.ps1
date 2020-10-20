@@ -246,18 +246,12 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
     Context 'Validate Get-ChildItem -Path -Recurse -Name' {
         It "Get-ChildItem -Path -Recurse -Name" {
             $result = Get-ChildItem -Path $rootDir -Recurse -Name
-            $msg = $result -join "`n"
-            Write-Warning $msg
-            $msg = Get-ChildItem -Path $rootDir -Recurse -Force | Out-String
-            Write-Warning $msg
             $result.Count | Should -Be 8
             $result[0] | Should -BeOfType System.String
         }
 
         It "Get-ChildItem -Path -Recurse -Name -Hidden" {
             $result = Get-ChildItem -Path $rootDir -Recurse -Name -Hidden
-            $msg = $result -join "`n"
-            Write-Warning $msg
             $result.Count | Should -Be 4
             $result | Should -BeOfType System.String
             $result.Where({ $_ -eq ".filehidden1.doc" }) | Should -BeOfType System.String
@@ -340,6 +334,8 @@ Describe "Extended FileSystem Provider Tests for Get-ChildItem cmdlet" -Tags "CI
 
         It "Get-ChildItem -Path -Depth 2 -Name -Force" {
             $result = Get-ChildItem -Path $rootDir -Depth 2 -Name -Force
+            $msg = $result -join "`n"
+            Write-Warning $msg
             $result.Count | Should -Be 13
             $result[0] | Should -BeOfType System.String
         }
