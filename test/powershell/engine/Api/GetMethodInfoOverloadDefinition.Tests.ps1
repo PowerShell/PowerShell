@@ -131,43 +131,45 @@ public static void TestMethod_OptGeneric<T>(T param = default) { }
     Context "Verify Definition of Parameterized Property" {
         BeforeAll {
             Add-Type -TypeDefinition @"
-public class TestClass1
-{
-    private string[] _indexerArray = new string[1];
-    public string this[int i]
+namespace TestParameterizedPropertyDefinition {
+    public class TestClass1
     {
-        get => _indexerArray[i];
-        set => _indexerArray[i] = value;
+        private string[] _indexerArray = new string[1];
+        public string this[int i]
+        {
+            get => _indexerArray[i];
+            set => _indexerArray[i] = value;
+        }
     }
-}
 
-public class TestClass2
-{
-    public int this[int i] => 42;
-}
+    public class TestClass2
+    {
+        public int this[int i] => 42;
+    }
 
-public class TestClass3
-{
-    [System.Runtime.CompilerServices.IndexerName("TheItem")]
-    public int this[int i] => 42;
+    public class TestClass3
+    {
+        [System.Runtime.CompilerServices.IndexerName("TheItem")]
+        public int this[int i] => 42;
+    }
 }
 "@
         }
 
         It "Get definition of parametrized property" {
-            $obj = [TestClass1]::new()
+            $obj = [TestParameterizedPropertyDefinition.TestClass1]::new()
             $result = $obj | Get-Member -Type ParameterizedProperty
             $result.Definition | Should -BeExactly "string Item(int i) {get;set;}"
         }
 
         It "Get definition of readonly parametrized property" {
-            $obj = [TestClass2]::new()
+            $obj = [TestParameterizedPropertyDefinition.TestClass2]::new()
             $result = $obj | Get-Member -Type ParameterizedProperty
             $result.Definition | Should -BeExactly "int Item(int i) {get;}"
         }
 
         It "Get definition of parametrized property with changed name" {
-            $obj = [TestClass3]::new()
+            $obj = [TestParameterizedPropertyDefinition.TestClass3]::new()
             $result = $obj | Get-Member -Type ParameterizedProperty
             $result.Name | Should -BeExactly "TheItem"
             $result.Definition | Should -BeExactly "int TheItem(int i) {get;}"
