@@ -122,68 +122,52 @@ public static void TestMethod_OptGeneric<T>(T param = default) { }
             $tooltipParts[3] | Should -BeExactly "static string Bar(System.Nullable[int] param1, string param2)"
         }
 
-        It "Tooltip should contain definition of the method with <Description>" -TestCases $testCases {
-            param($MethodName, $ExpectedDefinition)
-
-            $result = (TabExpansion2 -inputScript ($s = "[MethodDefinitionTest.TestClass]::$MethodName") -cursorColumn $s.Length).CompletionMatches
-            $result.ToolTip | Should -BeExactly $ExpectedDefinition
+        It "Tooltip should contain definition of the method with an optional parameter" {
+            $result = (TabExpansion2 -inputScript ($s = "[MethodDefinitionTest.TestClass]::TestMethod_OptInt") -cursorColumn $s.Length).CompletionMatches
+            $result.ToolTip | Should -BeExactly "static void TestMethod_OptInt(int optParam = $([int]::MinValue))"
         }
     }
 
     Context "Verify Definition of Parameterized Property" {
         BeforeAll {
-            $classDefinition1 = @"
-namespace ParameterizedPropertyDefinitionTest
+            Add-Type -TypeDefinition @"
+public class TestClass1
 {
-    public class TestClass
+    private string[] _indexerArray = new string[1];
+    public string this[int i]
     {
-        private string[] _indexerArray = new string[1];
-        public string this[int i]
-        {
-            get => _indexerArray[i];
-            set => _indexerArray[i] = value;
-        }
+        get => _indexerArray[i];
+        set => _indexerArray[i] = value;
     }
 }
-"@
-            $classDefinition2 = @"
-namespace ReadonlyParameterizedPropertyDefinitionTest
+
+public class TestClass2
 {
-    public class TestClass
-    {
-        public int this[int i] => 42;
-    }
+    public int this[int i] => 42;
+}
+
+public class TestClass3
+{
+    [System.Runtime.CompilerServices.IndexerName("TheItem")]
+    public int this[int i] => 42;
 }
 "@
-            $classDefinition3 = @"
-namespace ReadonlyParameterizedPropertyWithChangedNameDefinitionTest
-{
-    public class TestClass
-    {
-        [System.Runtime.CompilerServices.IndexerName("TheItem")]
-        public int this[int i] => 42;
-    }
-}
-"@
-            $TestType1 = Add-Type -PassThru -TypeDefinition $classDefinition1
-            $TestType2 = Add-Type -PassThru -TypeDefinition $classDefinition2
-            $TestType3 = Add-Type -PassThru -TypeDefinition $classDefinition3
         }
 
         It "Get definition of parametrized property" {
-            $obj = $TestType1::new()
+            $obj = [TestClass1]::new()
             $result = $obj | Get-Member -Type ParameterizedProperty
             $result.Definition | Should -BeExactly "string Item(int i) {get;set;}"
         }
 
         It "Get definition of readonly parametrized property" {
-            $obj = $TestType2::new()
+            $obj = [TestClass2]::new()
             $result = $obj | Get-Member -Type ParameterizedProperty
             $result.Definition | Should -BeExactly "int Item(int i) {get;}"
         }
 
         It "Get definition of parametrized property with changed name" {
-            $obj = $TestType3::new()
+            $obj = [TestClass3]::new()
             $result = $obj | Get-Member -Type ParameterizedProperty
             $result.Name | Should -BeExactly "TheItem"
             $result.Definition | Should -BeExactly "int TheItem(int i) {get;}"
