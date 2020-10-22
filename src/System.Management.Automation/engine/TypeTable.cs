@@ -3293,11 +3293,11 @@ namespace System.Management.Automation.Runspaces
         private static void ProcessMembersData(
             ConcurrentBag<string> errors,
             string typeName,
-            Dictionary<string, TypeMemberData>.ValueCollection membersData,
+            Dictionary<string, TypeMemberData> membersData,
             PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
             bool isOverride)
         {
-            foreach (TypeMemberData typeMember in membersData)
+            foreach (TypeMemberData typeMember in membersData.Values)
             {
                 typeMember.Process(errors, typeName, membersCollection, isOverride);
             }
@@ -3453,7 +3453,7 @@ namespace System.Management.Automation.Runspaces
         private static void ProcessStandardMembers(
             ConcurrentBag<string> errors,
             string typeName,
-            Dictionary<string, TypeMemberData>.ValueCollection standardMembers,
+            Dictionary<string, TypeMemberData> standardMembers,
             List<PropertySetData> propertySets,
             PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
             bool isOverride)
@@ -3714,7 +3714,7 @@ namespace System.Management.Automation.Runspaces
             if (typeData.Members.Count > 0)
             {
                 typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(collectionSize));
-                ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
+                ProcessMembersData(errors, typeName, typeData.Members, typeMembers, typeData.IsOverride);
 
                 foreach (var memberName in typeData.Members.Keys)
                 {
@@ -3729,7 +3729,7 @@ namespace System.Management.Automation.Runspaces
                     typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
                 }
 
-                ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
+                ProcessStandardMembers(errors, typeName, typeData.StandardMembers, propertySets, typeMembers, typeData.IsOverride);
             }
 
             if (typeData.TypeConverter != null)
