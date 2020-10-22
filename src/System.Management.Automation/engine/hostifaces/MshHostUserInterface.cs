@@ -1048,11 +1048,7 @@ namespace System.Management.Automation.Host
             PromptText = "PS>";
         }
 
-        internal List<TranscriptionOption> Transcripts
-        {
-            get;
-            private set;
-        }
+        internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
         internal string CommandBeingIgnored { get; set; }
@@ -1092,12 +1088,12 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Any output to log for this transcript.
         /// </summary>
-        internal List<string> OutputToLog { get; private set; }
+        internal List<string> OutputToLog { get; }
 
         /// <summary>
         /// Any output currently being logged for this transcript.
         /// </summary>
-        internal List<string> OutputBeingLogged { get; private set; }
+        internal List<string> OutputBeingLogged { get; }
 
         /// <summary>
         /// Whether to include time stamp / command separators in

@@ -738,7 +738,7 @@ namespace System.Management.Automation.Runspaces
                 "System.Management.Automation.Subsystem.SubsystemInfo",
                 TableControl.Create()
                     .AddHeader(Alignment.Left, width: 17, label: "Kind")
-                    .AddHeader(Alignment.Left, width: 15, label: "SubsystemType")
+                    .AddHeader(Alignment.Left, width: 18, label: "SubsystemType")
                     .AddHeader(Alignment.Right, width: 12, label: "IsRegistered")
                     .AddHeader(Alignment.Left, label: "Implementations")
                     .StartRowDefinition()
@@ -1184,7 +1184,7 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
+                                            $message = $message.Replace($newline, ' ').Replace(""`n"", ' ').Replace(""`t"", ' ')
 
                                             $windowWidth = 120
                                             if ($Host.UI.RawUI -ne $null) {
@@ -1226,7 +1226,7 @@ namespace System.Management.Automation.Runspaces
                                             $reason = 'Exception'
                                         }
                                         # MyCommand can be the script block, so we don't want to show that so check if it's an actual command
-                                        elseif ($myinv.MyCommand -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
+                                        elseif ($myinv.MyCommand -and $myinv.MyCommand.Name -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
                                         {
                                             $reason = $myinv.MyCommand
                                         }

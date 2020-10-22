@@ -7120,7 +7120,7 @@ namespace Microsoft.PowerShell.Commands
             /// network resource.
             /// </summary>
             /// <param name="netResource">
-            /// The The netResource structure contains information
+            /// The netResource structure contains information
             /// about a network resource.</param>
             /// <param name="password">
             /// The password used to get connected to network resource.
@@ -7617,9 +7617,9 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-#pragma warning disable 612, 618
-                if (value == System.Text.Encoding.UTF7)
-#pragma warning restore 612, 618
+                // Check for UTF-7 by checking for code page 65000
+                // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+                if (value != null && value.CodePage == 65000)
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }
@@ -8246,7 +8246,7 @@ namespace Microsoft.PowerShell.Commands
             bool isHardLink = false;
 
             // only check for hard link if the item is not directory
-            if (!((fileInfo.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory))
+            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
                 IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
                     fileInfo.FullName,

@@ -11,5 +11,5 @@ public class TestPriorityAttribute : Attribute
         Priority = priority;
     }
 
-    public int Priority { get; private set; }
+    public int Priority { get; }
 }

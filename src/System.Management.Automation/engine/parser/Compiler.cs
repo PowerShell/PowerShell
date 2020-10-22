@@ -1255,7 +1255,7 @@ namespace System.Management.Automation.Language
                 {
                     var rdp = runtimeDefinedParamList[index];
                     var paramAttribute = (ParameterAttribute)rdp.Attributes.First(attr => attr is ParameterAttribute);
-                    if (!(rdp.ParameterType == typeof(SwitchParameter)))
+                    if (rdp.ParameterType != typeof(SwitchParameter))
                     {
                         paramAttribute.Position = pos++;
                     }
@@ -2206,11 +2206,11 @@ namespace System.Management.Automation.Language
                 this.ContinueLabel = continueLabel;
             }
 
-            internal string Label { get; private set; }
+            internal string Label { get; }
 
-            internal LabelTarget ContinueLabel { get; private set; }
+            internal LabelTarget ContinueLabel { get; }
 
-            internal LabelTarget BreakLabel { get; private set; }
+            internal LabelTarget BreakLabel { get; }
         }
 
         private LabelTarget _returnTarget;
@@ -5664,7 +5664,7 @@ namespace System.Management.Automation.Language
                     if (rhs is ConstantExpression && rhs.Type == typeof(Type))
                     {
                         var isType = (Type)((ConstantExpression)rhs).Value;
-                        if (!(isType == typeof(PSCustomObject)) && !(isType == typeof(PSObject)))
+                        if (isType != typeof(PSCustomObject) && isType != typeof(PSObject))
                         {
                             lhs = lhs.Type.IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
                             if (binaryExpressionAst.Operator == TokenKind.Is)

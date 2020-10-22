@@ -130,7 +130,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _hasSetter | _hasSetterByRef;
+                return _hasSetter || _hasSetterByRef;
             }
         }
 

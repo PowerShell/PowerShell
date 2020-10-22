@@ -52,7 +52,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing">
         /// True if the TraceListener is being disposed, false otherwise.
         /// </param>
-        [SecurityPermission(SecurityAction.LinkDemand)]
         protected override void Dispose(bool disposing)
         {
             try
@@ -76,7 +75,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="output">
         /// The trace output to be written.
         /// </param>
-        [SecurityPermission(SecurityAction.LinkDemand)]
         public override void Write(string output)
         {
             try
@@ -98,7 +96,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="output">
         /// The trace output to be written.
         /// </param>
-        [SecurityPermission(SecurityAction.LinkDemand)]
         public override void WriteLine(string output)
         {
             try

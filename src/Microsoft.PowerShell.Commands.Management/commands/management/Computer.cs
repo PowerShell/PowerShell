@@ -45,12 +45,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Name of the computer that is restarting.
         /// </summary>
-        public string ComputerName { get; private set; }
+        public string ComputerName { get; }
 
         /// <summary>
         /// The timeout value specified by the user. It indicates the seconds to wait before timeout.
         /// </summary>
-        public int Timeout { get; private set; }
+        public int Timeout { get; }
 
         /// <summary>
         /// Construct a RestartComputerTimeoutException.
@@ -123,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">
         /// streaming context
         /// </param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)

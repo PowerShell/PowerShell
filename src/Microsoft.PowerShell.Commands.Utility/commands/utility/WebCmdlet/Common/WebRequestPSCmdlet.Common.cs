@@ -78,7 +78,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
         /// </summary>
-        Tls12 = SslProtocols.Tls12
+        Tls12 = SslProtocols.Tls12,
+
+        /// <summary>
+        /// Specifies the TLS 1.3 security protocol. The TLS protocol is defined in IETF RFC 8446.
+        /// </summary>
+        Tls13 = SslProtocols.Tls13
     }
 
     /// <summary>
@@ -873,7 +878,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// HTTP error response.
         /// </summary>
-        public HttpResponseMessage Response { get; private set; }
+        public HttpResponseMessage Response { get; }
     }
 
     /// <summary>

@@ -190,7 +190,7 @@ namespace System.Management.Automation
             this.RequestingCommandProcessor = requestingCommand.Context.CurrentCommandProcessor;
         }
 
-        public CommandProcessorBase RequestingCommandProcessor { get; private set; }
+        public CommandProcessorBase RequestingCommandProcessor { get; }
     }
 
     #endregion Flow Control Exceptions
@@ -1725,15 +1725,9 @@ namespace System.Management.Automation
             get { return Current; }
         }
 
-        internal char LowerBound
-        {
-            get; private set;
-        }
+        internal char LowerBound { get; }
 
-        internal char UpperBound
-        {
-            get; private set;
-        }
+        internal char UpperBound { get; }
 
         public char Current
         {

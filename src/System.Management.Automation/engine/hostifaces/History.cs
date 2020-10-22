@@ -1413,7 +1413,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert mshObject that has has the properties of an HistoryInfo
+        /// Convert mshObject that has the properties of an HistoryInfo
         /// object in to HistoryInfo object.
         /// </summary>
         /// <param name="mshObject">

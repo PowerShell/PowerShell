@@ -5395,7 +5395,7 @@ end {
 
             if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
             {
-                cmdlets.Add("Get-Subsystem", new SessionStateCmdletEntry("Get-Subsystem", typeof(Subsystem.GetSubsystemCommand), helpFile));
+                cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
             }
 
             foreach (var val in cmdlets.Values)
@@ -5482,7 +5482,7 @@ end {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HasDefaultConstructor(Type type)
         {
-            return !(type.GetConstructor(Type.EmptyTypes) == null);
+            return type.GetConstructor(Type.EmptyTypes) is not null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

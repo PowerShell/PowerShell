@@ -146,7 +146,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [ResourceExposure(ResourceScope.Machine)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CloseHandle(IntPtr handle);

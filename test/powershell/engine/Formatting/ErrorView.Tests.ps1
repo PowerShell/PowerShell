@@ -111,6 +111,31 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
             $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
+
+        It "Error shows for advanced function" {
+            # need to have it virtually interactive so that InvocationInfo.MyCommand is empty
+            $e = '[cmdletbinding()]param()$pscmdlet.writeerror([System.Management.Automation.ErrorRecord]::new(([System.NotImplementedException]::new("myTest")),"stub","notimplemented","command"))' | pwsh -noprofile -file - 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+
+            # need to see if ANSI escape sequences are in the output as ANSI is disabled for CI
+            if ($e.Contains("`e")) {
+                $e | Should -BeLike "*: `e*myTest*"
+            }
+            else {
+                $e | Should -BeLike "*: myTest*"
+            }
+        }
+
+        It "Error containing '<type>' are rendered correctly for scripts" -TestCases @(
+            @{ type = 'CRLF'; newline = "`r`n" }
+            @{ type = 'LF'  ; newline = "`n" }
+        ) {
+            param($newline)
+
+            Set-Content -path $testScriptPath -Value "throw 'hello${newline}there'"
+            $e = & "$PSHOME/pwsh" -noprofile -file $testScriptPath 2>&1 | Out-String
+            $e.Split("o${newline}t").Count | Should -Be 1 -Because "Error message should not contain newline"
+        }
     }
 
     Context 'NormalView tests' {
