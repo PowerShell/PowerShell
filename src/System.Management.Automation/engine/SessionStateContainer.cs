@@ -4793,8 +4793,8 @@ namespace System.Management.Automation
                 // Check to see if the remote PSSession is running in constrained or no language mode and if so
                 // then also if the path validation function already exists in the session (for the User drive
                 // custom endpoint case).  Otherwise error out.
-                if (languageMode.HasValue &&
-                    (languageMode.Value == PSLanguageMode.ConstrainedLanguage || languageMode.Value == PSLanguageMode.NoLanguage))
+                if (languageMode.GetValueOrDefault() == PSLanguageMode.ConstrainedLanguage || 
+                    languageMode.Value == PSLanguageMode.NoLanguage))
                 {
                     var psRemoteUtilsName = CopyFileRemoteUtils.PSCopyRemoteUtilsName;
                     ps.Runspace = session.Runspace;
