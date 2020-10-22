@@ -195,7 +195,7 @@ namespace System.Management.Automation
             var runspace = this.ExecutionContext.CurrentRunspace;
             if ((runspace != null) &&
                 (runspace.InNestedPrompt || (runspace.Debugger?.InBreakpoint == true)) &&
-                (fnInfo.DefiningLanguageMode.HasValue && (fnInfo.DefiningLanguageMode != this.ExecutionContext.LanguageMode)))
+                (fnInfo.DefiningLanguageMode.GetValueOrDefault() != this.ExecutionContext.LanguageMode))
             {
                 return false;
             }
