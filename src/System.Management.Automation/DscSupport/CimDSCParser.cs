@@ -1996,7 +1996,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         foreach (var psModuleInfo in moduleInfos)
                         {
-                            if ((moduleToImport.Guid.HasValue && moduleToImport.Guid.Equals(psModuleInfo.Guid)) ||
+                            if (moduleToImport.Guid.GetValueOrDefault().Equals(psModuleInfo.Guid)) ||
                                 (moduleToImport.Version != null &&
                                  moduleToImport.Version.Equals(psModuleInfo.Version)))
                             {
