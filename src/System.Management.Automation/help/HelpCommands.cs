@@ -733,30 +733,44 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class GetHelpCodeMethods
     {
+        private static bool TrySingle<TSource>(IEnumerable<TSource> source, out TSource element)
+        {
+            using (IEnumerator<TSource> e = source.GetEnumerator())
+            {
+                if (e.MoveNext())
+                {
+                    TSource result = e.Current;
+                    if (!e.MoveNext())
+                    {
+                        element = result;
+                        return true;
+                    }
+                }
+            }
+
+            element = default;
+            return false;
+        }
+
         /// <summary>
         /// Verifies if the InitialSessionState of the current process.
         /// </summary>
         /// <returns></returns>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
         {
-            InitialSessionState iss =
-                System.Management.Automation.Runspaces.Runspace.DefaultRunspace.InitialSessionState;
-            if (iss != null)
+            InitialSessionState iss = Runspace.DefaultRunspace.InitialSessionState;
+            if (iss is null)
             {
-                IEnumerable<SessionStateCommandEntry> publicGetHelpEntries = iss
-                    .Commands["Get-Help"]
-                    .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
-
-                using (var en = publicGetHelpEntries.GetEnumerator())
-                {
-                    // Return true when there is exactly one element and that element has an implementing type of GetHelpCommand.
-                    return en.MoveNext() // cardinality 0
-                        && ((en.Current as SessionStateCmdletEntry)?.ImplementingType.Equals(typeof(GetHelpCommand)) == true) // cardinality 1
-                        && !en.MoveNext(); // cardinality 2..*
-                }
+                return false;
             }
 
-            return false;
+            IEnumerable<SessionStateCommandEntry> publicGetHelpEntries = iss
+                .Commands["Get-Help"]
+                .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
+
+            return TrySingle(publicGetHelpEntries, out SessionStateCommandEntry entry)
+                && entry is SessionStateCmdletEntry getHelpCmdlet
+                && getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand));
         }
 
         /// <summary>
