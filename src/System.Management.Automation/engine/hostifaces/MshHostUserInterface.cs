@@ -1175,8 +1175,8 @@ namespace System.Management.Automation.Host
             {
                 try
                 {
-                    contentWriter.Flush();
-                    contentWriter.Dispose();
+                    _contentWriter.Flush();
+                    _contentWriter.Dispose();
                 }
                 catch (ObjectDisposedException)
                 {
