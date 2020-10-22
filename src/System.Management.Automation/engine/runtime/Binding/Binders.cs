@@ -1631,7 +1631,7 @@ namespace System.Management.Automation.Language
 
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
         {
-            Diagnostics.Assert(target.HasValue && target.Value is Type, "caller to verify arguments");
+            Diagnostics.Assert(target.GetValueOrDefault() is Type, "caller to verify arguments");
             var attributeType = (Type)target.Value;
             var ctorInfos = attributeType.GetConstructors();
             var newConstructors = DotNetAdapter.GetMethodInformationArray(ctorInfos);
