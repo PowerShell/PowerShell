@@ -1956,7 +1956,7 @@ namespace System.Management.Automation
 
                     // we have reached the end if either the collection is closed
                     // or no powershell instance is bound to this collection.
-                    if ((0 == _collToEnumerate.RefCount) || (!_collToEnumerate.IsOpen))
+                    if ((_collToEnumerate.RefCount == 0) || (!_collToEnumerate.IsOpen))
                     {
                         return false;
                     }

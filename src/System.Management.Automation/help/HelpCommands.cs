@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (0 == countOfHelpInfos)
+                    if (countOfHelpInfos == 0)
                     {
                         firstHelpInfoObject = helpInfo;
                     }
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 #endif
                 // Write full help as there is only one help info object
-                if (1 == countOfHelpInfos)
+                if (countOfHelpInfos == 1)
                 {
                     WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, true);
                 }

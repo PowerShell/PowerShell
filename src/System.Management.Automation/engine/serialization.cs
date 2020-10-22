@@ -2311,7 +2311,7 @@ namespace System.Management.Automation
                 return 1;
             }
 
-            if (0 != (_context.options & SerializationOptions.UseDepthFromTypes))
+            if ((_context.options & SerializationOptions.UseDepthFromTypes) != 0)
             {
                 // get the depth from the PSObject
                 // NOTE: we assume that the depth out of the PSObject is > 0
@@ -2331,7 +2331,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (0 != (_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal))
+            if ((_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal) != 0)
             {
                 if ((pso.IsDeserialized) && (depth <= 0))
                 {
@@ -4742,7 +4742,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(!string.IsNullOrEmpty(tag), "Caller should validate the parameter");
             return (_reader.LocalName == tag) &&
-                ((0 != (_context.options & DeserializationOptions.NoNamespace)) ||
+                (((_context.options & DeserializationOptions.NoNamespace) != 0) ||
                  (_reader.NamespaceURI == SerializationStrings.MonadNamespace));
         }
 

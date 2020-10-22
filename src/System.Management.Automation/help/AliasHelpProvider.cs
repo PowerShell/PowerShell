@@ -261,7 +261,7 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & helpInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & helpInfo.HelpCategory) == 0)
             {
                 return false;
             }

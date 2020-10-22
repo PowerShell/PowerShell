@@ -283,12 +283,12 @@ namespace System.Management.Automation
 
         internal bool MatchesOptions(MshMemberMatchOptions options)
         {
-            if (this.IsHidden && (0 == (options & MshMemberMatchOptions.IncludeHidden)))
+            if (this.IsHidden && ((options & MshMemberMatchOptions.IncludeHidden) == 0))
             {
                 return false;
             }
 
-            if (!this.ShouldSerialize && (0 != (options & MshMemberMatchOptions.OnlySerializable)))
+            if (!this.ShouldSerialize && ((options & MshMemberMatchOptions.OnlySerializable) != 0))
             {
                 return false;
             }

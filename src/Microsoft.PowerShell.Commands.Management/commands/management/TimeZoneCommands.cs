@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // lookup the time zone name and make sure we have one (and only one) match
                 TimeZoneInfo[] timeZones = TimeZoneHelper.LookupSystemTimeZoneInfoByName(Name);
-                if (0 == timeZones.Length)
+                if (timeZones.Length == 0)
                 {
                     string message = string.Format(CultureInfo.InvariantCulture,
                         TimeZoneResources.TimeZoneNameNotFound, Name);

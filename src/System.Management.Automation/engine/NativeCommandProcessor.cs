@@ -440,7 +440,7 @@ namespace System.Management.Automation
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    if (_isTranscribing && (true == s_supportScreenScrape))
+                    if (_isTranscribing && (s_supportScreenScrape == true))
                     {
                         _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         _startPosition.X = 0;
@@ -688,7 +688,7 @@ namespace System.Management.Automation
                     _nativeProcess.WaitForExit();
 
                     // Capture screen output if we are transcribing and running stand alone
-                    if (_isTranscribing && (true == s_supportScreenScrape) && _runStandAlone)
+                    if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
                     {
                         Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
 
                 // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
                 // as redirected output is always transcribed
-                if (_isTranscribing && (false == s_supportScreenScrape))
+                if (_isTranscribing && (s_supportScreenScrape == false))
                 {
                     redirectOutput = true;
                     redirectError = true;

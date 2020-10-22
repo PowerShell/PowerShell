@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
                                     && !IsValidGacAssembly(nestedModule.Name))
                                 {
                                     Collection<PSModuleInfo> modules = GetModuleIfAvailable(nestedModule);
-                                    if (0 == modules.Count)
+                                    if (modules.Count == 0)
                                     {
                                         string errorMsg = StringUtil.Format(Modules.InvalidNestedModuleinModuleManifest, nestedModule.Name, filePath);
                                         var errorRecord = new ErrorRecord(new DirectoryNotFoundException(errorMsg), "Modules_InvalidNestedModuleinModuleManifest",

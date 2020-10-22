@@ -1271,10 +1271,10 @@ namespace System.Management.Automation
 
             public CharacterNormalizer(WildcardOptions options)
             {
-                _caseInsensitive = 0 != (options & WildcardOptions.IgnoreCase);
+                _caseInsensitive = (options & WildcardOptions.IgnoreCase) != 0;
                 if (_caseInsensitive)
                 {
-                    _cultureInfo = 0 != (options & WildcardOptions.CultureInvariant)
+                    _cultureInfo = (options & WildcardOptions.CultureInvariant) != 0
                         ? CultureInfo.InvariantCulture
                         : CultureInfo.CurrentCulture;
                 }

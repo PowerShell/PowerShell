@@ -2480,8 +2480,8 @@ namespace System.Management.Automation.Remoting.Client
 
             // Now get the actual value
             int messageLength;
-            if (0 != WSManGetSessionOptionAsString(wsManAPIHandle,
-                    option, bufferSizeInBytes, msgBufferPtr, out messageLength))
+            if (WSManGetSessionOptionAsString(wsManAPIHandle,
+                    option, bufferSizeInBytes, msgBufferPtr, out messageLength) != 0)
             {
                 return returnval;
             }
@@ -2830,8 +2830,8 @@ namespace System.Management.Automation.Remoting.Client
 
             // Now get the actual value
             int messageLength;
-            if (0 != WSManGetErrorMessage(wsManAPIHandle,
-                    0, langCode, errorCode, bufferSizeInBytes, msgBufferPtr, out messageLength))
+            if (WSManGetErrorMessage(wsManAPIHandle,
+                    0, langCode, errorCode, bufferSizeInBytes, msgBufferPtr, out messageLength) != 0)
             {
                 return returnval;
             }
