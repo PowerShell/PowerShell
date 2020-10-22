@@ -219,8 +219,7 @@ namespace System.Management.Automation
             {
                 var scriptCmdletInfo = this.CommandInfo as IScriptCommandInfo;
                 if (scriptCmdletInfo != null &&
-                    scriptCmdletInfo.ScriptBlock.LanguageMode.HasValue &&
-                    scriptCmdletInfo.ScriptBlock.LanguageMode != Context.LanguageMode)
+                    scriptCmdletInfo.ScriptBlock.LanguageMode.GetValueOrDefault() != Context.LanguageMode)
                 {
                     // Set the language mode before parameter binding if it's necessary for a script cmdlet, so that the language
                     // mode is appropriately applied for evaluating parameter defaults and argument type conversion.
