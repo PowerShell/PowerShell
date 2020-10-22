@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <CodeAnalysisRuleset>$(MSBuildThisFileDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleset>
+    <RunAnalyzers>true</RunAnalyzers>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(RunAnalyzers)' != 'false'">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.0-rc2.20460.4" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\Analyzers.props" />
+
   <PropertyGroup>
     <Product>PowerShell Test</Product>
     <Company>Microsoft Corporation</Company>

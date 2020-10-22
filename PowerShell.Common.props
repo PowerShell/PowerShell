@@ -1,4 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Analyzers.props" />
 
   <!--
       The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
