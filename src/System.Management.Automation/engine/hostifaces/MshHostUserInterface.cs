@@ -1180,9 +1180,11 @@ namespace System.Management.Automation.Host
                 }
                 catch (ObjectDisposedException)
                 {
+                    // Do nothing
                 }
-                catch(IOException)
+                catch (IOException)
                 {
+                    // Do nothing
                 }
                 _contentWriter = null;
             }
