@@ -16,8 +16,11 @@ variables:
 
 # Set AzDevOps Agent to clean the machine after the end of the build
 resources:
-- repo: self
-  clean: true
+  repositories:
+    - repository: ComplianceRepo
+      type: github
+      endpoint: ComplianceGHRepo
+      name: PowerShell/compliance
 
 stages:
   - stage: prep

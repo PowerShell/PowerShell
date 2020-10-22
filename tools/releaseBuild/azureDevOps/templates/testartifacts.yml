@@ -6,6 +6,9 @@ jobs:
   condition: succeeded()
   pool: 'Hosted Ubuntu 1604'
   steps:
+  - checkout: self
+    clean: true
+
 
   - pwsh: |
       Import-Module ./build.psm1
