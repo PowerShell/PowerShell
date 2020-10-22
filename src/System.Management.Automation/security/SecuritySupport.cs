@@ -417,7 +417,7 @@ namespace System.Management.Automation.Internal
             // On OneCore SKUs like NanoServer/IoT, the API has a bug that makes it not able to find the
             // corresponding catalog file for a given product file, so it doesn't work properly.
             // In these cases, we just trust the 'isUnderProductFolder' check.
-            if (Signature.CatalogApiAvailable.HasValue && !Signature.CatalogApiAvailable.Value)
+            if (!Signature.CatalogApiAvailable.GetValueOrDefault())
             {
                 // When execution reaches here, we are sure the file is under product folder
                 return true;
