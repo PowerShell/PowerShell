@@ -140,6 +140,19 @@ Describe "Native Command Processor" -tags "Feature" {
             [Console]::OutputEncoding = $originalOutputEncoding
         }
     }
+
+    It '$ErrorActionPreference does not apply to redirected stderr output' -Skip:(!$EnabledExperimentalFeatures.Contains('PSNotApplyErrorActionToStderr')) {
+        pwsh -noprofile -command '$ErrorActionPreference = ''Stop''; testexe -stderr stop 2>$null; ''hello''; $error; $?' | Should -BeExactly 'hello','True'
+    }
+
+    It 'Can start an elevated associated process correctly' -Skip:(
+        !$IsWindows -or (!(Test-Path (Join-Path -Path $env:windir -ChildPath 'system32' -AdditionalChildPath 'diskmgmt.msc')))
+    ) {
+        # test bug https://github.com/PowerShell/PowerShell/issues/13744 where console is blocked
+        diskmgmt.msc
+        Wait-UntilTrue -sb { (Get-Process mmc).Count -gt 0 } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
+        Get-Process mmc | Stop-Process
+    }
 }
 
 Describe "Open a text file with NativeCommandProcessor" -tags @("Feature", "RequireAdminOnWindows") {

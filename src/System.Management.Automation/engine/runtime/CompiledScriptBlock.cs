@@ -340,7 +340,7 @@ namespace System.Management.Automation
 
         internal bool HasLogged { get; set; }
         internal bool SkipLogging { get; set; }
-        internal bool IsFilter { get; private set; }
+        internal bool IsFilter { get; }
 
         internal bool IsProductCode
         {
@@ -729,7 +729,7 @@ namespace System.Management.Automation
                 resourceString => { throw PSTraceSource.NewInvalidOperationException(resourceString); });
             Diagnostics.Assert(pipelineAst != null, "This should be checked by GetSimplePipeline");
 
-            if (!(pipelineAst.PipelineElements[0] is CommandAst))
+            if (pipelineAst.PipelineElements[0] is not CommandAst)
             {
                 throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.CantConvertEmptyPipeline);
             }

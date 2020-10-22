@@ -174,7 +174,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (cpi.ArgumentSplatted)
+                if (cpi.ArgumentToBeSplatted)
                 {
                     foreach (var splattedCpi in Splat(cpi.ArgumentValue, cpi.ArgumentAst))
                     {
@@ -338,8 +338,13 @@ namespace System.Management.Automation
                     }
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
-                        splatAst, parameterName, parameterText,
-                        splatAst, parameterValue, false);
+                        parameterAst: splatAst,
+                        parameterName: parameterName,
+                        parameterText: parameterText,
+                        argumentAst: splatAst,
+                        value: parameterValue,
+                        spaceAfterParameter: false,
+                        fromSplatting: true);
                 }
             }
             else
@@ -853,7 +858,7 @@ namespace System.Management.Automation
             this.FromStream = from;
         }
 
-        internal RedirectionStream FromStream { get; private set; }
+        internal RedirectionStream FromStream { get; }
 
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
@@ -1034,9 +1039,9 @@ namespace System.Management.Automation
                                  File);
         }
 
-        internal string File { get; private set; }
+        internal string File { get; }
 
-        internal bool Appending { get; private set; }
+        internal bool Appending { get; }
 
         private PipelineProcessor PipelineProcessor { get; set; }
 
@@ -1917,7 +1922,7 @@ namespace System.Management.Automation
             InterpreterError.UpdateExceptionErrorRecordPosition(rte, extent);
             ErrorRecord errRec = rte.ErrorRecord.WrapException(rte);
 
-            if (!(rte is PipelineStoppedException))
+            if (rte is not PipelineStoppedException)
             {
                 if (outputPipe != null)
                 {
@@ -3311,17 +3316,7 @@ namespace System.Management.Automation
             {
             }
 
-            // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
-            //   IEnumerator enumerator = targetValue as IEnumerator;
-            //   if (enumerator != null)
-            //   {
-            //       enumerable.MoveNext();
-            //       ...
-            //   }
-            // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
-            // See https://github.com/dotnet/runtime/issues/21690 for more information.
-            // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
-            return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
+            return targetValue as IEnumerator ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 
         internal static IEnumerator GetGenericEnumerator<T>(IEnumerable<T> enumerable)

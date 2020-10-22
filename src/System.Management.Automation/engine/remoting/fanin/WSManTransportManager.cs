@@ -1546,8 +1546,13 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
             }
 
-            // Allow HTTPS on Unix only if SkipCACheck and SkipCNCheck are selected, because OMI client does not support validating server certificates.
-            if (isSSLSpecified && (!connectionInfo.SkipCACheck || !connectionInfo.SkipCNCheck))
+            // The OMI client distributed with PowerShell does not support validating server certificates on Unix.
+            // Check if third-party psrpclient and MI support the verification.
+            // If WSManGetSessionOptionAsDword does not return 0 then it's not supported.
+            bool verificationAvailable = WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
+                WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SKIP_CA_CHECK, out _) == 0;
+
+            if (isSSLSpecified && !verificationAvailable && (!connectionInfo.SkipCACheck || !connectionInfo.SkipCNCheck))
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectSkipCheckFailed, RemotingErrorIdStrings.UnixOnlyHttpsWithoutSkipCACheckNotSupported);
             }
@@ -2280,7 +2285,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // process returned Xml
-            Dbg.Assert(data != null, "WSManConnectShell callback returned null data");
+            Dbg.Assert(data != IntPtr.Zero, "WSManConnectShell callback returned null data");
             WSManNativeApi.WSManConnectDataResult connectData = WSManNativeApi.WSManConnectDataResult.UnMarshal(data);
             if (connectData.data != null)
             {

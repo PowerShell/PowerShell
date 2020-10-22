@@ -14,26 +14,22 @@ namespace Microsoft.PowerShell
     /// Wraps Hitesh's xml serializer in such a way that it will select the proper serializer based on the data
     /// format.
     /// </summary>
-
     internal class Serialization
     {
         /// <summary>
         /// Describes the format of the data streamed between minishells, e.g. the allowed arguments to the minishell
         /// -outputformat and -inputformat command line parameters.
         /// </summary>
-
         internal enum DataFormat
         {
             /// <summary>
             /// Text format -- i.e. stream text just as out-default would display it.
             /// </summary>
-
             Text = 0,
 
             /// <summary>
             /// XML-serialized format.
             /// </summary>
-
             XML = 1,
 
             /// <summary>

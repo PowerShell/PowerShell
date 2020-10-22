@@ -360,6 +360,26 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Adds a <see cref="CommandParameter"/> instance to the last added command.
+        /// </summary>
+        internal PSCommand AddParameter(CommandParameter parameter)
+        {
+            if (_currentCommand == null)
+            {
+                throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
+                                                                 new object[] { "PSCommand" });
+            }
+
+            if (_owner != null)
+            {
+                _owner.AssertChangesAreAccepted();
+            }
+
+            _currentCommand.Parameters.Add(parameter);
+            return this;
+        }
+
+        /// <summary>
         /// Adds an argument to the last added command.
         /// For example, to construct a command string "get-process | select-object name"
         ///     <code>

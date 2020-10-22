@@ -250,7 +250,6 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="contextToCopyFrom"/> is null.
         /// </exception>
-
         internal CmdletProviderContext(
             CmdletProviderContext contextToCopyFrom)
         {

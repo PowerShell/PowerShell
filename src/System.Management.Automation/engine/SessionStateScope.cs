@@ -1852,7 +1852,6 @@ namespace System.Management.Automation
         /// table. The entries in this table are automatically propagated
         /// to new scopes.
         /// </summary>
-
         private readonly Dictionary<string, List<CmdletInfo>> _allScopeCmdlets = new Dictionary<string, List<CmdletInfo>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>

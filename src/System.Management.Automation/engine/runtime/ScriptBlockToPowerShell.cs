@@ -748,7 +748,7 @@ namespace System.Management.Automation
             foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst))
             {
                 CommandParameter publicParameter = CommandParameter.FromCommandParameterInternal(splattedParameter);
-                _powershell.AddParameter(publicParameter.Name, publicParameter.Value);
+                _powershell.AddParameter(publicParameter);
             }
         }
 

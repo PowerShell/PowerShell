@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell.Commands
     /// Base class for all variable commands.
     /// Because -Scope is defined in VariableCommandBase, all derived commands must implement -Scope.
     /// </summary>
-
     public abstract class VariableCommandBase : PSCmdlet
     {
         #region Parameters

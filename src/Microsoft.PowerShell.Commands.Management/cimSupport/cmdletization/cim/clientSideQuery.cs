@@ -55,11 +55,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public string PropertyName { get; private set; }
+            public string PropertyName { get; }
 
-            public object PropertyValue { get; private set; }
+            public object PropertyValue { get; }
 
-            public Func<string, string, string> ErrorMessageGenerator { get; private set; }
+            public Func<string, string, string> ErrorMessageGenerator { get; }
 
             private static string GetErrorMessageForNotFound(string queryDescription, string className)
             {
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private object ConvertActualValueToExpectedType(object actualPropertyValue, object expectedPropertyValue)
             {
-                if ((actualPropertyValue is string) && (!(expectedPropertyValue is string)))
+                if (actualPropertyValue is string && expectedPropertyValue is not string)
                 {
                     actualPropertyValue = LanguagePrimitives.ConvertTo(actualPropertyValue, expectedPropertyValue.GetType(), CultureInfo.InvariantCulture);
                 }

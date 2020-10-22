@@ -38,7 +38,9 @@ namespace System.Management.Automation
             { Default, ClrFacade.GetDefaultEncoding() },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
+#pragma warning disable SYSLIB0001
             { Utf7, System.Text.Encoding.UTF7 },
+#pragma warning restore SYSLIB0001
             { Utf8, ClrFacade.GetDefaultEncoding() },
             { Utf8Bom, System.Text.Encoding.UTF8 },
             { Utf8NoBom, ClrFacade.GetDefaultEncoding() },
@@ -63,6 +65,12 @@ namespace System.Management.Automation
             Encoding foundEncoding;
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
+                // Write a warning if using utf7 as it is obsolete in .NET5
+                if (string.Compare(encoding, Utf7, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+                }
+
                 return foundEncoding;
             }
 
@@ -80,6 +88,21 @@ namespace System.Management.Automation
             cmdlet.ThrowTerminatingError(errorRecord);
 
             return null;
+        }
+
+        /// <summary>
+        /// Warn if the encoding has been designated as obsolete.
+        /// </summary>
+        /// <param name="cmdlet">A cmdlet instance which is used to emit the warning.</param>
+        /// <param name="encoding">The encoding to check for obsolescence.</param>
+        internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
+        {
+            // Check for UTF-7 by checking for code page 65000
+            // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+            if (encoding != null && encoding.CodePage == 65000)
+            {
+                cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+            }
         }
     }
 

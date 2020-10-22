@@ -4206,7 +4206,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ValidRemoteSessionForScripting(Runspace runspace)
         {
-            if (!(runspace is RemoteRunspace))
+            if (runspace is not RemoteRunspace)
             {
                 return false;
             }
@@ -6744,7 +6744,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public object GetContentReaderDynamicParameters(string path)
         {
-            return new FileSystemContentReaderDynamicParameters();
+            return new FileSystemContentReaderDynamicParameters(this);
         }
 
         /// <summary>
@@ -6878,7 +6878,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public object GetContentWriterDynamicParameters(string path)
         {
-            return new FileSystemContentWriterDynamicParameters();
+            return new FileSystemContentWriterDynamicParameters(this);
         }
 
         /// <summary>
@@ -7120,7 +7120,7 @@ namespace Microsoft.PowerShell.Commands
             /// network resource.
             /// </summary>
             /// <param name="netResource">
-            /// The The netResource structure contains information
+            /// The netResource structure contains information
             /// about a network resource.</param>
             /// <param name="password">
             /// The password used to get connected to network resource.
@@ -7593,6 +7593,13 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentDynamicParametersBase
     {
+        internal FileSystemContentDynamicParametersBase(FileSystemProvider provider)
+        {
+            _provider = provider;
+        }
+
+        private FileSystemProvider _provider;
+
         /// <summary>
         /// Gets or sets the encoding method used when
         /// reading data from the file.
@@ -7610,6 +7617,12 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
+                // Check for UTF-7 by checking for code page 65000
+                // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+                if (value != null && value.CodePage == 65000)
+                {
+                    _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+                }
                 _encoding = value;
                 // If an encoding was explicitly set, be sure to capture that.
                 WasStreamTypeSpecified = true;
@@ -7659,6 +7672,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentWriterDynamicParameters : FileSystemContentDynamicParametersBase
     {
+        internal FileSystemContentWriterDynamicParameters(FileSystemProvider provider) : base(provider) { }
+
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
         /// </summary>
@@ -7684,6 +7699,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemContentReaderDynamicParameters : FileSystemContentDynamicParametersBase
     {
+        internal FileSystemContentReaderDynamicParameters(FileSystemProvider provider) : base (provider) { }
+
         /// <summary>
         /// Gets or sets the delimiter to use when reading the file.  Custom delimiters
         /// may not be used when the file is opened with a "Byte" encoding.
@@ -8056,16 +8073,7 @@ namespace Microsoft.PowerShell.Commands
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
 #if !UNIX
-                // We set accessMode parameter to zero because documentation says:
-                // If this parameter is zero, the application can query certain metadata
-                // such as file, directory, or device attributes without accessing
-                // that file or device, even if GENERIC_READ access would have been denied.
-                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericZero))
-                {
-                    string linkTarget = WinInternalGetTarget(handle);
-
-                    return linkTarget;
-                }
+                return WinInternalGetTarget(fileSysInfo.FullName);
 #else
                return UnixInternalGetTarget(fileSysInfo.FullName);
 #endif
@@ -8238,7 +8246,7 @@ namespace Microsoft.PowerShell.Commands
             bool isHardLink = false;
 
             // only check for hard link if the item is not directory
-            if (!((fileInfo.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory))
+            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
                 IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
                     fileInfo.FullName,
@@ -8365,6 +8373,19 @@ namespace Microsoft.PowerShell.Commands
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
 
+#if !UNIX
+        internal static string WinInternalGetTarget(string path)
+        {
+            // We set accessMode parameter to zero because documentation says:
+            // If this parameter is zero, the application can query certain metadata
+            // such as file, directory, or device attributes without accessing
+            // that file or device, even if GENERIC_READ access would have been denied.
+            using (SafeFileHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericZero))
+            {
+                return WinInternalGetTarget(handle);
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetTarget(SafeFileHandle handle)
         {
@@ -8439,6 +8460,7 @@ namespace Microsoft.PowerShell.Commands
                 Marshal.FreeHGlobal(outBuffer);
             }
         }
+#endif
 
         internal static bool CreateJunction(string path, string target)
         {

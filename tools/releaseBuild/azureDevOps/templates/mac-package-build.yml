@@ -1,0 +1,113 @@
+parameters:
+  parentJob: ''
+  jobName: 'package_macOS'
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Package macOS
+  dependsOn: ${{ parameters.parentJob }}
+  condition: succeeded()
+  pool: Hosted Mac Internal
+  variables:
+    # Turn off Homebrew analytics
+    HOMEBREW_NO_ANALYTICS: 1
+    runCodesignValidationInjection: false
+  steps:
+  - pwsh: |
+      # create folder
+      sudo mkdir /PowerShell
+
+      # make the current user the owner
+      sudo chown $env:USER /PowerShell
+    displayName: 'Create /PowerShell'
+
+  - pwsh: |
+      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
+      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
+    displayName: Clone PowerShell Repo to /PowerShell
+
+  - template: shouldSign.yml
+
+  #- task: <task type name>@<version>
+  #  inputs:
+  #    <task specific inputs>
+  #  displayName: '<display name of task>'
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+
+  - task: DownloadBuildArtifacts@0
+    displayName: Download macosBinResults
+    inputs:
+      artifactName: 'macosBinResults'
+      itemPattern: '**/*.zip'
+      downloadPath: '$(System.ArtifactsDirectory)/Symbols'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: Download signedMacOsBins
+    inputs:
+      artifactName: 'signedMacOsBins'
+      itemPattern: '**/*'
+      downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - pwsh: |
+      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip'
+      Write-Verbose -Verbose "Zip Path: $zipPath"
+
+      $expandedFolder = $zipPath.BaseName
+      Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+      Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+
+      Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
+    displayName: Expand symbols zip
+
+  - pwsh: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Import-Module $(PowerShellRoot)/tools/packaging -Force
+      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins/'
+      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+
+      Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+    displayName: Merge signed files with Build
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - pwsh: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Import-Module $(PowerShellRoot)/tools/packaging -Force
+
+      $destFolder = '$(System.ArtifactsDirectory)\signedZip'
+      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+
+      $null = New-Item -ItemType Directory -Path $destFolder -Force
+
+      $BuildPackagePath = New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $destFolder
+
+      Write-Verbose -Verbose "New-PSSignedBuildZip returned `$BuildPackagePath as: $BuildPackagePath"
+      Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$BuildPackagePath"
+
+      $vstsCommandString = "vso[task.setvariable variable=BuildPackagePath]$BuildPackagePath"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: Compress signed files
+
+  - pwsh: |
+      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+    displayName: 'Bootstrap VM'
+
+  - pwsh: |
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar"
+    displayName: 'Package'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

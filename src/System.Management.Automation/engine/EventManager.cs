@@ -2011,7 +2011,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether the event should be unregistered.
         /// </summary>
-        internal bool AutoUnregister { get; private set; }
+        internal bool AutoUnregister { get; }
 
         /// <summary>
         /// Indicate how many new should be added to the action queue.
@@ -2597,7 +2597,7 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 // Catch-all OK. This is a third-party call-out.
-                if (!(e is PipelineStoppedException))
+                if (e is not PipelineStoppedException)
                 {
                     LogErrorsAndOutput(results, actionState);
                     SetJobState(JobState.Failed);

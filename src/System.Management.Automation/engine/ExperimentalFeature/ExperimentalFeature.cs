@@ -115,14 +115,17 @@ namespace System.Management.Automation
                     description: "Provide unix permission information for files and directories"),
 #endif
                 new ExperimentalFeature(
-                    name: "PSNullConditionalOperators",
-                    description: "Support the null conditional member access operators in PowerShell language"),
-                new ExperimentalFeature(
                     name: "PSCultureInvariantReplaceOperator",
                     description: "Use culture invariant to-string convertor for lval in replace operator"),
                 new ExperimentalFeature(
                     name: "PSNativePSPathResolution",
                     description: "Convert PSPath to filesystem path, if possible, for native commands"),
+                new ExperimentalFeature(
+                    name: "PSNotApplyErrorActionToStderr",
+                    description: "Don't have $ErrorActionPreference affect stderr output"),
+                new ExperimentalFeature(
+                    name: "PSSubsystemPluginModel",
+                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

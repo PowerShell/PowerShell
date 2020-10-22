@@ -1178,7 +1178,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!(helpInfo is BaseCommandHelpInfo))
+            if (helpInfo is not BaseCommandHelpInfo)
                 return false;
 
             if (!Match(helpInfo.Component, helpRequest.Component))
@@ -1244,7 +1244,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process helpInfo forwarded over from other other providers, specificly AliasHelpProvider.
+        /// Process helpInfo forwarded over from other providers, specificly AliasHelpProvider.
         /// This can return more than 1 helpinfo object.
         /// </summary>
         /// <param name="helpInfo">HelpInfo that is forwarded over.</param>

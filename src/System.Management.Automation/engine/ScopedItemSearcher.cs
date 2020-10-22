@@ -111,7 +111,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the current scoped item.
         /// </summary>
-
         T IEnumerator<T>.Current
         {
             get

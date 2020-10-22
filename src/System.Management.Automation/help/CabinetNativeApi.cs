@@ -152,7 +152,7 @@ namespace System.Management.Automation.Internal
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (_fdiAllocHandle != null)
+            if (_fdiAllocHandle.IsAllocated)
             {
                 _fdiAllocHandle.Free();
                 _fdiFreeHandle.Free();

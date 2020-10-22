@@ -239,6 +239,8 @@ namespace System.Management.Automation
             DEFAULT
         }
 
+        private static string s_tempHomeDir = null;
+
         /// <summary>
         /// Function for choosing directory location of PowerShell for profile loading.
         /// </summary>
@@ -252,7 +254,8 @@ namespace System.Management.Automation
             string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
             if (envHome == null)
             {
-                envHome = GetTemporaryDirectory();
+                s_tempHomeDir ??= GetTemporaryDirectory();
+                envHome = s_tempHomeDir;
             }
 
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
@@ -1156,10 +1159,10 @@ namespace System.Management.Automation
                     /// <summary>This filesystem item is a socket.</summary>
                     internal int IsSocket;
 
-                    /// <summary>This filesystem item will run as the the owner if executed.</summary>
+                    /// <summary>This filesystem item will run as the owner if executed.</summary>
                     internal int IsSetUid;
 
-                    /// <summary>This filesystem item will run as the the group if executed.</summary>
+                    /// <summary>This filesystem item will run as the group if executed.</summary>
                     internal int IsSetGid;
 
                     /// <summary>Whether the sticky bit is set on the filesystem item.</summary>

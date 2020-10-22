@@ -9,7 +9,6 @@ namespace System.Management.Automation.Host
     /// Provides a description of a choice for use by <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>.
     /// <!--Used by the Msh engine to describe cmdlet parameters.-->
     /// </summary>
-
     public sealed
     class ChoiceDescription
     {
@@ -29,7 +28,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// <paramref name="label"/> is null or empty.
         /// </exception>
-
         public
         ChoiceDescription(string label)
         {
@@ -59,7 +57,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
         /// <paramref name="helpMessage"/> is null.
         /// </exception>
-
         public
         ChoiceDescription(string label, string helpMessage)
         {
@@ -92,7 +89,6 @@ namespace System.Management.Automation.Host
         ///
         /// For examples, a choice named "Yes to All" might have "Yes to &amp;All" as it's label.
         /// </remarks>
-
         public
         string
         Label
@@ -115,7 +111,6 @@ namespace System.Management.Automation.Host
         /// This should be a few sentences to describe the field, suitable for presentation as a tool tip.
         /// Avoid placing including formatting characters such as newline and tab.
         /// </remarks>
-
         public
         string
         HelpMessage

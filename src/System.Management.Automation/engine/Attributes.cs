@@ -492,7 +492,7 @@ namespace System.Management.Automation
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-        public PSTypeName[] Type { get; private set; }
+        public PSTypeName[] Type { get; }
 
         /// <summary>
         /// Attributes implemented by a provider can use:
@@ -752,7 +752,7 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// </summary>
-        public string PSTypeName { get; private set; }
+        public string PSTypeName { get; }
 
         /// <summary>
         /// Creates a new PSTypeNameAttribute.

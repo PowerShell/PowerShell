@@ -1087,6 +1087,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
 
                 _cimSensitiveValueConverter.Dispose();
+                _cancellationTokenSource.Dispose();
             }
         }
     }

@@ -63,7 +63,21 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [ArgumentEncodingCompletionsAttribute]
         [ArgumentToEncodingTransformationAttribute]
-        public Encoding Encoding { get; set; } = Encoding.ASCII;
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+
+            set
+            {
+                EncodingConversion.WarnIfObsolete(this, value);
+                _encoding = value;
+            }
+        }
+
+        private Encoding _encoding = Encoding.ASCII;
 
         /// <summary>
         /// Gets or sets the address collection that contains the

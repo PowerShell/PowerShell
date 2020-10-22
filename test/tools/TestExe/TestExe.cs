@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Threading;
 using System.Diagnostics;
@@ -24,6 +25,9 @@ namespace TestExe
                         // Used to test functionality depending on $LASTEXITCODE, like &&/|| operators
                         Console.WriteLine(args[1]);
                         return int.Parse(args[1]);
+                    case "-stderr":
+                        Console.Error.WriteLine(args[1]);
+                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;

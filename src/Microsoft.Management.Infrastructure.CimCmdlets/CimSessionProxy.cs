@@ -95,11 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual string ComputerName
-        {
-            get;
-            private set;
-        }
+        internal virtual string ComputerName { get; }
 
         /// <summary>
         /// <para>
@@ -109,11 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual CimInstance TargetCimInstance
-        {
-            get;
-            private set;
-        }
+        internal virtual CimInstance TargetCimInstance { get; }
     }
     #endregion
 
@@ -1055,7 +1047,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             PSObject pso = PSObject.AsPSObject(o);
-            if (!(pso.BaseObject is CimInstance))
+            if (pso.BaseObject is not CimInstance)
             {
                 return;
             }
@@ -2086,7 +2078,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (!(args.Action is CimWriteResultObject))
+            if (args.Action is not CimWriteResultObject)
             {
                 // allow all other actions
                 return true;
@@ -2240,7 +2232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (!(args.Action is CimWriteResultObject))
+            if (args.Action is not CimWriteResultObject)
             {
                 // allow all other actions
                 return true;

@@ -3,6 +3,8 @@ parameters:
 
 jobs:
 - job: json
+  variables:
+    runCodesignValidationInjection: false
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}

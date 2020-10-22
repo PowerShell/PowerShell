@@ -53,16 +53,16 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Gets the name of the parameter set.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets whether the parameter set is the default parameter set.
         /// </summary>
-        public bool IsDefault { get; private set; }
+        public bool IsDefault { get; }
 
         /// <summary>
         /// Gets the parameter information for the parameters in this parameter set.
         /// </summary>
-        public ICollection<ShowCommandParameterInfo> Parameters { get; private set; }
+        public ICollection<ShowCommandParameterInfo> Parameters { get; }
     }
 }

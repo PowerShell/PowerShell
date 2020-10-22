@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Retrieves input from the host virtual console and writes it to the pipeline output.
     /// </summary>
-
     [Cmdlet(VerbsCommunications.Read, "Host", DefaultParameterSetName = "AsString", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096610")]
     [OutputType(typeof(string), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
@@ -24,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-
         public
         ReadHostCommand()
         {
@@ -36,7 +34,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The objects to display on the host before collecting input.
         /// </summary>
-
         [Parameter(Position = 0, ValueFromRemainingArguments = true)]
         [AllowNull]
         public
@@ -55,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets to no echo the input as is is typed. If set then the cmdlet returns a secure string.
+        /// Gets or sets to no echo the input as is typed. If set then the cmdlet returns a secure string.
         /// </summary>
         [Parameter(ParameterSetName = "AsSecureString")]
         public
@@ -74,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets whether the console will echo the input as is is typed. If set then the cmdlet returns a regular string.
+        /// Gets or sets whether the console will echo the input as is typed. If set then the cmdlet returns a regular string.
         /// </summary>
         [Parameter(ParameterSetName = "AsString")]
         public
@@ -130,9 +127,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 FieldDescription fd = new FieldDescription(promptString);
-                if (AsSecureString)
+                if (AsSecureString || MaskInput)
                 {
-                    fd.SetParameterType(typeof(System.Security.SecureString));
+                    fd.SetParameterType(typeof(SecureString));
                 }
                 else
                 {
@@ -149,27 +146,37 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PSObject o in result.Values)
                     {
-                        WriteObject(o);
+                        if (MaskInput && o?.BaseObject is SecureString secureString)
+                        {
+                            WriteObject(Utils.GetStringFromSecureString(secureString));
+                        }
+                        else
+                        {
+                            WriteObject(o);
+                        }
                     }
                 }
             }
             else
             {
                 object result;
-                if (AsSecureString)
+                if (AsSecureString || MaskInput)
                 {
                     result = Host.UI.ReadLineAsSecureString();
-                }
-                else if (MaskInput)
-                {
-                    result = Host.UI.ReadLineMaskedAsString();
                 }
                 else
                 {
                     result = Host.UI.ReadLine();
                 }
 
-                WriteObject(result);
+                if (MaskInput)
+                {
+                    WriteObject(Utils.GetStringFromSecureString((SecureString)result));
+                }
+                else
+                {
+                    WriteObject(result);
+                }
             }
         }
 

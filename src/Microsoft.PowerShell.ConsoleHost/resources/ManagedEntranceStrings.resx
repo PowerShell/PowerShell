@@ -304,7 +304,7 @@ All parameters are case-insensitive.</value>
     does not change the PowerShell execution policy that is set in the
     registry.
 
--InputFormat | -in | -if
+-InputFormat | -inp | -if
 
     Describes the format of data sent to PowerShell. Valid values are "Text"
     (text strings) or "XML" (serialized CLIXML format).
@@ -335,7 +335,7 @@ All parameters are case-insensitive.</value>
 
 -NoLogo | -nol
 
-Hides the copyright banner at startup.
+    Hides the copyright banner at startup.
 
 -NonInteractive | -noni
 

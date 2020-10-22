@@ -93,7 +93,7 @@ namespace System.Management.Automation.Language
             if (baseValue != null && baseValue.GetType() == typeof(object[]))
             {
                 var effectiveArgType = Adapter.EffectiveArgumentType(obj.Value);
-                var methodInfo = !(effectiveArgType == typeof(object[]))
+                var methodInfo = effectiveArgType != typeof(object[])
                     ? CachedReflectionInfo.PSInvokeMemberBinder_IsHomogenousArray.MakeGenericMethod(effectiveArgType.GetElementType())
                     : CachedReflectionInfo.PSInvokeMemberBinder_IsHeterogeneousArray;
 
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression MaybeDebase(DynamicMetaObjectBinder binder, Func<Expression, Expression> generator, DynamicMetaObject target)
         {
-            if (!(target.Value is PSObject))
+            if (target.Value is not PSObject)
             {
                 return generator(target.Expression);
             }
@@ -1136,7 +1136,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(pipelineResult != null, "Pipeline result is always an IList");
 
             var ilistExpr = target.Expression;
-            if (!(typeof(IList) == ilistExpr.Type))
+            if (typeof(IList) != ilistExpr.Type)
             {
                 ilistExpr = Expression.Convert(ilistExpr, typeof(IList));
             }
@@ -2651,7 +2651,7 @@ namespace System.Management.Automation.Language
                 return new DynamicMetaObject(arg.Expression.Cast(typeof(object)), target.CombineRestrictions(arg));
             }
 
-            if (target.LimitType.IsNumericOrPrimitive() && !(target.LimitType == typeof(char)))
+            if (target.LimitType.IsNumericOrPrimitive() && target.LimitType != typeof(char))
             {
                 var numericArg = GetArgAsNumericOrPrimitive(arg, target.LimitType);
                 if (numericArg != null)
@@ -3075,7 +3075,7 @@ namespace System.Management.Automation.Language
                 var targetExpr = target.Expression.Cast(typeof(string));
 
                 // Doing a string comparison no matter what.
-                var argExpr = !(arg.LimitType == typeof(string))
+                var argExpr = arg.LimitType != typeof(string)
                                   ? DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
                                                               arg.Expression, ExpressionCache.GetExecutionContextFromTLS)
                                   : arg.Expression.Cast(typeof(string));
@@ -3253,7 +3253,7 @@ namespace System.Management.Automation.Language
                 var targetExpr = target.Expression.Cast(typeof(string));
 
                 // Doing a string comparison no matter what.
-                var argExpr = !(arg.LimitType == typeof(string))
+                var argExpr = arg.LimitType != typeof(string)
                                   ? DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
                                                               arg.Expression, ExpressionCache.GetExecutionContextFromTLS)
                                   : arg.Expression.Cast(typeof(string));
@@ -3811,7 +3811,7 @@ namespace System.Management.Automation.Language
                                               target.Expression.Cast(typeof(object)),
                                               Expression.Constant(toType, typeof(Type)));
 
-            if (!(binder.ReturnType == typeof(void)))
+            if (binder.ReturnType != typeof(void))
             {
                 expr = Expression.Block(expr, Expression.Default(binder.ReturnType));
             }
@@ -5163,7 +5163,7 @@ namespace System.Management.Automation.Language
 
             // Check if this is a COM Object
             DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindGetMember(this, target, out result))
+            if (ComInterop.ComBinder.TryBindGetMember(this, target, out result, delayInvocation: false))
             {
                 result = new DynamicMetaObject(WrapGetMemberInTry(result.Expression), result.Restrictions);
                 return result.WriteToDebugLog(this);
@@ -7135,7 +7135,7 @@ namespace System.Management.Automation.Language
                 {
                     if (parameterType.IsByRef)
                     {
-                        if (!(args[i].Value is PSReference))
+                        if (args[i].Value is not PSReference)
                         {
                             return Compiler.CreateThrow(typeof(object), typeof(MethodException),
                                      new[] { typeof(string), typeof(Exception), typeof(string), typeof(object[]) },

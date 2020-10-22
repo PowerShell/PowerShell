@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 var parameterSets = (other.Members["ParameterSets"].Value as PSObject).BaseObject as System.Collections.ArrayList;
                 this.ParameterSets = GetObjectEnumerable(parameterSets).Cast<PSObject>().Select(x => new ShowCommandParameterSetInfo(x)).ToList().AsReadOnly();
 
-                if (other.Members["Module"] != null && other.Members["Module"].Value as PSObject != null)
+                if (other.Members["Module"]?.Value is PSObject)
                 {
                     this.Module = new ShowCommandModuleInfo(other.Members["Module"].Value as PSObject);
                 }
@@ -116,31 +116,31 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// A string representing module the command belongs to.
         /// </summary>
-        public string ModuleName { get; private set; }
+        public string ModuleName { get; }
 
         /// <summary>
         /// A reference to the module the command came from.
         /// </summary>
-        public ShowCommandModuleInfo Module { get; private set; }
+        public ShowCommandModuleInfo Module { get; }
 
         /// <summary>
         /// An enumeration of the command types this command belongs to.
         /// </summary>
-        public CommandTypes CommandType { get; private set; }
+        public CommandTypes CommandType { get; }
 
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public string Definition { get; private set; }
+        public string Definition { get; }
 
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public ICollection<ShowCommandParameterSetInfo> ParameterSets { get; private set; }
+        public ICollection<ShowCommandParameterSetInfo> ParameterSets { get; }
     }
 }

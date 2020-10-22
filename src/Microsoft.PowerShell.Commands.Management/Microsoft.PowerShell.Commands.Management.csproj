@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Management project</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
   </PropertyGroup>
 
@@ -47,7 +47,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0-preview.7.20364.6" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0-rc.2.20475.5" />
   </ItemGroup>
 
 </Project>

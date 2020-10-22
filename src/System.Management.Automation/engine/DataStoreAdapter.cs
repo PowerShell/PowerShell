@@ -430,7 +430,7 @@ namespace System.Management.Automation
         /// If null, the current user credential is used.
         /// </param>
         /// <param name="persist">
-        /// It indicates if the the created PSDrive would be
+        /// It indicates if the created PSDrive would be
         /// persisted across PowerShell sessions.
         /// </param>
         /// <throws>

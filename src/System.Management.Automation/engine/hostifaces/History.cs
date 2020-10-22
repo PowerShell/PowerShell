@@ -109,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cleared status of an entry.
         /// </summary>
-
         internal bool Cleared { get; set; } = false;
 
         /// <summary>
@@ -167,7 +166,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs history store.
         /// </summary>
-
         internal History(ExecutionContext context)
         {
             // Create history size variable. Add ValidateRangeAttribute to
@@ -586,7 +584,6 @@ namespace Microsoft.PowerShell.Commands
         /// gets the total number of entries added
         ///</summary>
         ///<returns>count of total entries added.</returns>
-
         internal int Buffercapacity()
         {
             return _capacity;
@@ -604,7 +601,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Returns id for the entry. This id should be used to fetch
         /// the entry from the buffer.</returns>
         /// <remarks>Id starts from 1 and is incremented by 1 for each new entry</remarks>
-
         private long Add(HistoryInfo entry)
         {
             if (entry == null)
@@ -818,6 +814,31 @@ namespace Microsoft.PowerShell.Commands
         {
             return _countEntriesAdded + 1;
         }
+
+        #region invoke_loop_detection
+
+        /// <summary>
+        /// This is a set of HistoryInfo ids which are currently being executed in the
+        /// pipelines of the Runspace that is holding this 'History' instance.
+        /// </summary>
+        private HashSet<long> _invokeHistoryIds = new HashSet<long>();
+
+        internal bool PresentInInvokeHistoryEntrySet(HistoryInfo entry)
+        {
+            return _invokeHistoryIds.Contains(entry.Id);
+        }
+
+        internal void AddToInvokeHistoryEntrySet(HistoryInfo entry)
+        {
+            _invokeHistoryIds.Add(entry.Id);
+        }
+
+        internal void RemoveFromInvokeHistoryEntrySet(HistoryInfo entry)
+        {
+            _invokeHistoryIds.Remove(entry.Id);
+        }
+
+        #endregion invoke_loop_detection
     }
 
     /// <summary>
@@ -1021,67 +1042,44 @@ namespace Microsoft.PowerShell.Commands
             // ids were provided, throw exception
             if (_multipleIdProvided)
             {
-                Exception ex =
-                    new ArgumentException
-                    (
-                        StringUtil.Format(HistoryStrings.InvokeHistoryMultipleCommandsError)
-                    );
-
-                ThrowTerminatingError
-                (
-                    new ErrorRecord
-                    (
-                        ex,
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new ArgumentException(HistoryStrings.InvokeHistoryMultipleCommandsError),
                         "InvokeHistoryMultipleCommandsError",
                         ErrorCategory.InvalidArgument,
-                        null
-                    )
-                );
+                        targetObject: null));
             }
 
-            History history = ((LocalRunspace)Context.CurrentRunspace).History;
+            var ctxRunspace = (LocalRunspace)Context.CurrentRunspace;
+            History history = ctxRunspace.History;
             Dbg.Assert(history != null, "History should be non null");
 
             // Get the history entry to invoke
             HistoryInfo entry = GetHistoryEntryToInvoke(history);
-
-            // Check if there is a loop in invoke-history
-            LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-
-            if (pipeline.PresentInInvokeHistoryEntryList(entry) == false)
-            {
-                pipeline.AddToInvokeHistoryEntryList(entry);
-            }
-            else
-            {
-                Exception ex =
-                    new InvalidOperationException
-                    (
-                        StringUtil.Format(HistoryStrings.InvokeHistoryLoopDetected)
-                    );
-
-                ThrowTerminatingError
-                (
-                    new ErrorRecord
-                    (
-                        ex,
-                        "InvokeHistoryLoopDetected",
-                        ErrorCategory.InvalidOperation,
-                        null
-                    )
-                );
-            }
-
-            // Replace Invoke-History with string which is getting invoked
-            ReplaceHistoryString(entry);
-
-            // Now invoke the command
             string commandToInvoke = entry.CommandLine;
 
-            if (ShouldProcess(commandToInvoke) == false)
+            if (!ShouldProcess(commandToInvoke))
             {
                 return;
             }
+
+            // Check if there is a loop in invoke-history
+            if (history.PresentInInvokeHistoryEntrySet(entry))
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new InvalidOperationException(HistoryStrings.InvokeHistoryLoopDetected),
+                        "InvokeHistoryLoopDetected",
+                        ErrorCategory.InvalidOperation,
+                        targetObject: null));
+            }
+            else
+            {
+                history.AddToInvokeHistoryEntrySet(entry);
+            }
+
+            // Replace Invoke-History with string which is getting invoked
+            ReplaceHistoryString(entry, ctxRunspace);
 
             try
             {
@@ -1132,11 +1130,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(results, true);
                     }
-
-                    pipeline.RemoveFromInvokeHistoryEntryList(entry);
                 }
                 finally
                 {
+                    history.RemoveFromInvokeHistoryEntrySet(entry);
+
                     if (localRunspace != null)
                     {
                         localRunspace.InInternalNestedPrompt = false;
@@ -1317,10 +1315,9 @@ namespace Microsoft.PowerShell.Commands
         /// in the pipeline. If there are more than one element in pipeline
         /// (ex A | Invoke-History 2 | B) then we cannot do this replacement.
         /// </summary>
-        private void ReplaceHistoryString(HistoryInfo entry)
+        private void ReplaceHistoryString(HistoryInfo entry, LocalRunspace localRunspace)
         {
-            // Get the current pipeline
-            LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+            var pipeline = (LocalPipeline)localRunspace.GetCurrentlyRunningPipeline();
             if (pipeline.AddToHistory)
             {
                 pipeline.HistoryString = entry.CommandLine;
@@ -1416,7 +1413,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert mshObject that has has the properties of an HistoryInfo
+        /// Convert mshObject that has the properties of an HistoryInfo
         /// object in to HistoryInfo object.
         /// </summary>
         /// <param name="mshObject">
@@ -1459,7 +1456,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSObject serializedPipelineState = pipelineState as PSObject;
                     object baseObject = serializedPipelineState.BaseObject;
-                    if (!(baseObject is int))
+                    if (baseObject is not int)
                     {
                         break;
                     }
@@ -1586,7 +1583,6 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     /// This Class implements the Clear History cmdlet
     ///</summary>
-
     [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096691")]
     public class ClearHistoryCommand : PSCmdlet
     {
@@ -1616,13 +1612,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of a history entry.
         /// </summary>
-
         private int[] _id;
 
         /// <summary>
         /// Command line name of an entry in the session history.
         /// </summary>
-
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1642,7 +1636,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commandline parameter.
         /// </summary>
-
         private string[] _commandline = null;
 
         ///<summary>
@@ -1677,7 +1670,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies whether new entries to be cleared or the default old ones.
         /// </summary>
-
         [Parameter(Mandatory = false, HelpMessage = "Specifies whether new entries to be cleared or the default old ones.")]
         public SwitchParameter Newest
         {
@@ -1695,7 +1687,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Switch parameter on the history entries.
         /// </summary>
-
         private SwitchParameter _newest;
 
         #endregion Command Line Parameters
@@ -1703,7 +1694,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding Begin Processing.
         /// </summary>
-
         protected override void BeginProcessing()
         {
             _history = ((LocalRunspace)Context.CurrentRunspace).History;
@@ -1712,7 +1702,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding Process Record.
         /// </summary>
-
         protected override void ProcessRecord()
         {
             // case statement to identify the parameter set
@@ -1915,7 +1904,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newest" >Order of the entries.</param>
         /// <returns>Nothing.</returns>
         /// </summary>
-
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)
         {
             // if cmdline is null,use default parameter set notion.

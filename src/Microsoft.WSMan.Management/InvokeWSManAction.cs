@@ -23,7 +23,6 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-
     [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096843")]
     public class InvokeWSManActionCommand : AuthenticatingWSManCommand, IDisposable
     {
@@ -157,7 +156,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 2,

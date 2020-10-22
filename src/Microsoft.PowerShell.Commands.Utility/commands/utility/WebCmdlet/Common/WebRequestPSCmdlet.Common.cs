@@ -78,7 +78,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
         /// </summary>
-        Tls12 = SslProtocols.Tls12
+        Tls12 = SslProtocols.Tls12,
+
+        /// <summary>
+        /// Specifies the TLS 1.3 security protocol. The TLS protocol is defined in IETF RFC 8446.
+        /// </summary>
+        Tls13 = SslProtocols.Tls13
     }
 
     /// <summary>
@@ -667,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // null is not valid value for header.
                     // We silently ignore header if value is null.
-                    if (!(value is null))
+                    if (value is not null)
                     {
                         // add the header value (or overwrite it if already present)
                         WebSession.Headers[key] = value.ToString();
@@ -873,7 +878,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// HTTP error response.
         /// </summary>
-        public HttpResponseMessage Response { get; private set; }
+        public HttpResponseMessage Response { get; }
     }
 
     /// <summary>
@@ -1737,7 +1742,7 @@ namespace Microsoft.PowerShell.Commands
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
-            if (doc != null && (doc.FirstChild as XmlDeclaration) != null)
+            if (doc?.FirstChild is XmlDeclaration)
             {
                 XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);

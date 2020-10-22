@@ -783,7 +783,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         customDescriptor = PSObject.Base(methodInfo.Invoke());
 
-                        if (!(customDescriptor is FileSystemSecurity))
+                        if (customDescriptor is not FileSystemSecurity)
                         {
                             customDescriptor = new CommonSecurityDescriptor(false, false, customDescriptor.ToString());
                         }
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_isLiteralPath)
                         {
-                            pathsToProcess.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
+                            pathsToProcess.Add(p);
                         }
                         else
                         {
@@ -994,10 +994,7 @@ namespace Microsoft.PowerShell.Commands
         /// Parameter '-CentralAccessPolicy' is not supported in OneCore powershell,
         /// because function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
         /// </summary>
-        private string CentralAccessPolicy
-        {
-            get; set;
-        }
+        private string CentralAccessPolicy { get; }
 #else
         private string centralAccessPolicy;
 

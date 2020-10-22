@@ -198,7 +198,6 @@ namespace Microsoft.PowerShell.Commands
         /// to maintain two sets of MeasureInfo and constantly checking
         /// what mode we're in.
         /// </summary>
-
         [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
         private class Statistics
         {

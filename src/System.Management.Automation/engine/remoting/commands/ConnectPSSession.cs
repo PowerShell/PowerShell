@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     /// state and returns those PS session objects in the Opened state.  One or more
     /// session objects can be specified for connecting, or a remote computer name can
     /// be specified and in this case all disconnected remote runspaces found on the
-    /// remote computer will be be connected and PSSession objects created on the local
+    /// remote computer will be connected and PSSession objects created on the local
     /// machine.
     ///
     /// The cmdlet can be used in the following ways:

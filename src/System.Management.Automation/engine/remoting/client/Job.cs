@@ -371,7 +371,7 @@ namespace System.Management.Automation
             InstanceId = instanceId;
         }
 
-        internal int Id { get; private set; }
+        internal int Id { get; }
 
         internal Guid InstanceId { get; private set; }
     }
@@ -2316,7 +2316,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the status of remote command execution.
         /// </summary>
-
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void SetStatusMessage()
         {
@@ -4116,7 +4115,7 @@ namespace System.Management.Automation
         private Pipeline DrainAndBlockRemoteOutput()
         {
             // We only do this for remote runspaces.
-            if (!(_runspace is RemoteRunspace)) { return null; }
+            if (_runspace is not RemoteRunspace) { return null; }
 
             Pipeline runningCmd = _runspace.GetCurrentlyRunningPipeline();
             if (runningCmd != null)
@@ -4518,11 +4517,7 @@ namespace System.Management.Automation
 
     internal class OutputProcessingStateEventArgs : EventArgs
     {
-        internal bool ProcessingOutput
-        {
-            get;
-            private set;
-        }
+        internal bool ProcessingOutput { get; }
 
         internal OutputProcessingStateEventArgs(bool processingOutput)
         {

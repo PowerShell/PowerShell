@@ -1267,6 +1267,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Adds a <see cref="CommandParameter"/> instance to the last added command.
+        /// </summary>
+        internal PowerShell AddParameter(CommandParameter parameter)
+        {
+            lock (_syncObject)
+            {
+                if (_psCommand.Commands.Count == 0)
+                {
+                    throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
+                }
+
+                AssertChangesAreAccepted();
+                _psCommand.AddParameter(parameter);
+                return this;
+            }
+        }
+
+        /// <summary>
         /// Adds a set of parameters to the last added command.
         /// </summary>
         /// <param name="parameters">
@@ -3806,7 +3824,7 @@ namespace System.Management.Automation
         #region Event Handlers
 
         /// <summary>
-        /// Handler for state changed changed events for the currently running pipeline.
+        /// Handler for state changed events for the currently running pipeline.
         /// </summary>
         /// <param name="source">
         /// Source of the event.

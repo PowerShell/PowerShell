@@ -183,7 +183,7 @@ namespace System.Management.Automation
 
         internal void SetValueNoConversion(object setValue)
         {
-            if (!(this is PSProperty thisAsProperty))
+            if (this is not PSProperty thisAsProperty)
             {
                 this.Value = setValue;
                 return;
@@ -426,7 +426,7 @@ namespace System.Management.Automation
         internal PSMemberInfo ReferencedMember => this.LookupMember(ReferencedMemberName);
 
         /// <summary>
-        /// Gets the the type to convert the referenced member's value. It might be
+        /// Gets the type to convert the referenced member's value. It might be
         /// null when no conversion is done.
         /// </summary>
         public Type ConversionType { get; private set; }
@@ -552,7 +552,7 @@ namespace System.Management.Automation
                     name);
             }
 
-            if (!(member is PSAliasProperty aliasMember))
+            if (member is not PSAliasProperty aliasMember)
             {
                 hasCycle = false;
                 returnedMember = member;

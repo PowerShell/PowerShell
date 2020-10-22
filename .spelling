@@ -25,6 +25,7 @@ adhoc
 aditya
 adityapatwardhan
 ADOPTERS.md
+aetos382
 aiello
 alepauly
 alexandair
@@ -58,7 +59,9 @@ arm32
 arm64
 asp.net
 assemblyloadcontext
+AssemblyInfo
 assessibility
+authenticode
 authenticodesignature
 azdevops
 AzFileCopy
@@ -84,6 +87,7 @@ Bhaal22
 bjh7242
 bool
 bpayette
+brcrista
 breakpoint
 brianbunke
 britishben
@@ -106,6 +110,7 @@ channel9
 charset
 checkbox
 checksum
+chibi
 childitem
 ChrisLGardner
 cimsession
@@ -169,6 +174,7 @@ csmacnz
 csphysicallyinstalledmemory
 ctrl
 CurrentCulture
+CustomShellCommands.cs
 DamirAinullin
 darquewarrior
 darwinjs
@@ -194,6 +200,7 @@ devcontainer
 deviceguard
 devlead
 devops
+dgoldman-msft
 Dictionary.TryAdd
 diddledan
 disable-localuser
@@ -228,7 +235,7 @@ e.g.
 ebook
 ebooks
 ece-jacob-scott
-EditorConfig
+editorconfig
 edyoung
 enable-localuser
 enable-psbreakpoint
@@ -359,6 +366,7 @@ https
 hubuk
 hvitved
 i.e.
+ico
 idera
 IDictionary
 ifdef'ed
@@ -378,6 +386,7 @@ install-packageprovider
 interactivetesting
 interop
 interoperation
+interlocked.read
 invoke-cimmethod
 Invoke-DSCResource
 invoke-restmethod
@@ -475,6 +484,7 @@ Microsoft.CodeAnalysis.CSharp
 microsoft.com
 microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
+microsoft.net.test.sdk
 microsoft.powershell.archive
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
@@ -548,6 +558,7 @@ NoMoreFood
 non-22
 non-cim
 non-https
+non-nullable
 non-r2
 noresume
 notcontains
@@ -560,6 +571,7 @@ numberbytes
 numberOfPowershellRefAssemblies
 nupkg
 oauth
+object.ReferenceEquals
 offthewoll
 oising
 omi
@@ -635,6 +647,11 @@ preview.5.20272.6
 preview.6
 preview.6.20318.15
 preview.7
+preview.7.20356.2
+preview.7.20358.6
+preview.7.20364.3
+preview.7.20366.2
+preview.7.20366.15
 preview.4.20258.7
 preview.4.20229.10
 preview1-24530-04
@@ -682,6 +699,7 @@ rc.2
 rc.3
 rc2-24027
 rc3-24011
+rcedit
 readme
 readme.md
 readonly
@@ -744,10 +762,12 @@ runspaceinit
 runspaces
 runtime
 runtimes
+SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation
 Saancreed
 sample-dotnet1
 sample-dotnet2
 sarithsutha
+sarthakmalik
 savehelp
 sazonov
 sba923
@@ -783,6 +803,7 @@ ShaydeNofziger
 shellexecute
 shouldbeerrorid
 showcommandinfo
+Shriram0908
 silijon
 simonwahlin
 singleline
@@ -800,6 +821,7 @@ st0le
 stackoverflow
 stanzilla
 start-codecoveragerun
+start-pspester
 stdin
 stevel-msft
 stevend811
@@ -815,7 +837,9 @@ submodule
 submodules
 sudo
 superproject
+svg
 swarfegagit
+SwitchParameter
 sxs
 sydneyhsmith
 symlink
@@ -831,6 +855,7 @@ SytzeAndr
 tabcompletion
 tadas
 tandasat
+tasnimzotder
 TargetFramework
 test-modulemanifest
 test-pssessionconfigurationfile
@@ -877,6 +902,7 @@ typegen
 typematch
 t_
 ubuntu
+uint
 un-versioned
 unicode
 unregister-event
@@ -926,6 +952,7 @@ v6.2.2
 v6.2.3
 v6.2.4
 v7.0.0
+v7.0.3
 v7.1.0
 validatenotnullorempty
 versioned
@@ -957,6 +984,7 @@ windowspsmodulepath
 windowsversion
 winrm
 wix
+worrenb
 wpr
 wprui.exe
 writingpestertests.md
@@ -977,7 +1005,10 @@ yashrajbharti
 yecril71pl
 yml
 youtube
+Youssef1313
 zackjknight
+ComInterop
+runtime#33060
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1099,4 +1130,18 @@ ThomasNieto
 spongemike2
 davidseibel
 HumanEquivalentUnit
+hemisphera
+tamasvajk
+boolean
+bitwise
+StringUtil
+StringUtil.Format
+CommandLineParameterParser
+jackerr3
+preview.8.20407.11
+pre-check
+davidreis97
+soccypowa
+nologo
+InstallLocation
 jcotton42

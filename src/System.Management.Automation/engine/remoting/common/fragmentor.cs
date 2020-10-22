@@ -98,7 +98,7 @@ namespace System.Management.Automation.Remoting
         internal FragmentedRemoteObject(byte[] blob, long objectId, long fragmentId,
             bool isEndFragment)
         {
-            Dbg.Assert((blob != null) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
+            Dbg.Assert((blob != null) && (blob.Length != 0), "Cannot create a fragment for null or empty data.");
             Dbg.Assert(objectId >= 0, "Object Id cannot be < 0");
             Dbg.Assert(fragmentId >= 0, "Fragment Id cannot be < 0");
 
@@ -364,7 +364,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fragmentBytes"></param>
         /// <param name="startIndex"></param>
         /// <returns>
-        /// True if the the E-flag is set in the encoding. Otherwise false.
+        /// True if the E-flag is set in the encoding. Otherwise false.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If fragmentBytes is null.

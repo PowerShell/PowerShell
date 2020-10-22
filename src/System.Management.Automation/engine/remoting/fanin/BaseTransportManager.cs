@@ -1352,7 +1352,7 @@ namespace System.Management.Automation.Remoting.Server
                 (UInt32)_dataType,
                 (UInt32)_targetInterface);
 
-            SendDataToClient(dataToSend, (isEndFragment & _shouldFlushData) ? true : false, _reportAsPending, isEndFragment);
+            SendDataToClient(dataToSend, isEndFragment && _shouldFlushData, _reportAsPending, isEndFragment);
         }
 
         /// <summary>
