@@ -1173,8 +1173,17 @@ namespace System.Management.Automation.Host
 
             if (_contentWriter != null)
             {
-                _contentWriter.Flush();
-                _contentWriter.Dispose();
+                try
+                {
+                    contentWriter.Flush();
+                    contentWriter.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                catch(IOException)
+                {
+                }
                 _contentWriter = null;
             }
 
