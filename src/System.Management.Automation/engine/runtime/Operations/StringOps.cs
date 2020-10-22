@@ -82,13 +82,17 @@ namespace System.Management.Automation
             }
         }
 
-        // The following methods are used for the compatibility purpose between regular PowerShell and PowerShell on CSS
-
+        /// <summary>
+        /// This method is used for the compatibility purpose between regular PowerShell and PowerShell on CSS
+        /// </summary>
         internal static int Compare(string strA, string strB, CultureInfo culture, CompareOptions option)
         {
             return string.Compare(strA, strB, culture, option);
         }
 
+        /// <summary>
+        /// This method is used for the compatibility purpose between regular PowerShell and PowerShell on CSS
+        /// </summary>
         internal static bool Equals(string strA, string strB, CultureInfo culture, CompareOptions option)
         {
             return string.Compare(strA, strB, culture, option) == 0;
