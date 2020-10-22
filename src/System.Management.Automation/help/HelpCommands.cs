@@ -867,10 +867,10 @@ namespace Microsoft.PowerShell.Commands
 
                 using (var en = publicGetHelpEntries.GetEnumerator())
                 {
-                    // Returns false if the number of elements is not 1
-                    return en.MoveNext()
-                        && ((en.Current as SessionStateCmdletEntry)?.ImplementingType.Equals(typeof(GetHelpCommand)) == true)
-                        && !en.MoveNext();
+                    // Return true when there is exactly one element and that element has an implementing type of GetHelpCommand.
+                    return en.MoveNext() // cardinality 0
+                        && ((en.Current as SessionStateCmdletEntry)?.ImplementingType.Equals(typeof(GetHelpCommand)) == true) // cardinality 1
+                        && !en.MoveNext(); // cardinality 2..*
                 }
             }
 
