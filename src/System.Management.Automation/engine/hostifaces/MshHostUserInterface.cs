@@ -1186,6 +1186,7 @@ namespace System.Management.Automation.Host
                 {
                     // Do nothing
                 }
+
                 _contentWriter = null;
             }
 
