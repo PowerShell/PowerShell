@@ -1507,7 +1507,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
         $result.Count | Should -Be 3
     }
 
-    It 'ConvertTo-Json will output warning if depth is exceeded.' {
+    It 'ConvertTo-Json will output warning if depth is exceeded.' -Pending:($notNewConvertToJson) {
         $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
         $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warningMessage -WarningAction SilentlyContinue
         $json | Should -Not -BeNullOrEmpty
