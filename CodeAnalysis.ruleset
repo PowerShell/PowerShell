@@ -1,7 +1,7 @@
 <RuleSet Name="Microsoft.Analyzers.ManagedCodeAnalysis" Description="Microsoft.Analyzers.ManagedCodeAnalysis" ToolsVersion="15.0">
    <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
       <Rule Id="CA1000" Action="Hidden" />           <!-- Do not declare static members on generic types -->
-      <Rule Id="CA1001" Action="Hidden" />           <!-- Types that own disposable fields should be disposable -->
+      <Rule Id="CA1001" Action="Warning" />          <!-- Types that own disposable fields should be disposable -->
       <Rule Id="CA1002" Action="None" />             <!-- Do not expose generic lists -->
       <Rule Id="CA1003" Action="None" />             <!-- Use generic event handler instances -->
       <Rule Id="CA1005" Action="None" />             <!-- Avoid excessive parameters on generic types -->
