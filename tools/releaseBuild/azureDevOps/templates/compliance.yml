@@ -15,6 +15,9 @@ jobs:
   timeoutInMinutes: 180
 
   steps:
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

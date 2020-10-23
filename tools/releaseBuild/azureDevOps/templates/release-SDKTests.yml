@@ -9,6 +9,9 @@ jobs:
   pool:
     vmImage: ${{ parameters.imageName }}
   steps:
+    - checkout: self
+      clean: true
+
     - task: DownloadPipelineArtifact@2
       inputs:
         source: specific

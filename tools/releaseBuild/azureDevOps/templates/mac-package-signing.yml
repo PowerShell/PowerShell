@@ -13,6 +13,8 @@ jobs:
     BuildPlatform: any cpu
 
   steps:
+  - checkout: self
+    clean: true
 
   - template: shouldSign.yml
 

@@ -18,7 +18,6 @@ jobs:
 
   - checkout: self
     clean: true
-    persistCredentials: true
 
   - template: shouldSign.yml
   - template: SetVersionVariables.yml

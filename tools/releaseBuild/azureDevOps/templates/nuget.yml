@@ -20,6 +20,8 @@ jobs:
     linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
+  - checkout: self
+    clean: true
 
   - powershell: |
       $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
