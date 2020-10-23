@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
 using System.Text;
 
 namespace System.Management.Automation.Runspaces
