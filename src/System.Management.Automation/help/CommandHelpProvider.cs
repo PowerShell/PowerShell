@@ -14,7 +14,6 @@ using System.Xml;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Help;
-using System.Reflection;
 
 namespace System.Management.Automation
 {

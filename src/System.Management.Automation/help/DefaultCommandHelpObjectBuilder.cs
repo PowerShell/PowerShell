@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-using System.Reflection;
 using System.Text;
 
 namespace System.Management.Automation.Help

@@ -7,8 +7,6 @@
 using System;
 using System.Management.Automation;
 using System.Runtime.Serialization;
-using System.Reflection;
-using System.Security.Permissions;
 
 namespace Microsoft.PowerShell.Commands
 {

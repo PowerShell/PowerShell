@@ -14,7 +14,6 @@ using System.Management.Automation.Help;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
-using System.Net;
 
 namespace Microsoft.PowerShell.Commands
 {

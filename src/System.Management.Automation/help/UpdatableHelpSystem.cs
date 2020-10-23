@@ -3,17 +3,13 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +17,6 @@ using System.Xml;
 using System.Xml.Schema;
 
 using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
 
 namespace System.Management.Automation.Help
 {
