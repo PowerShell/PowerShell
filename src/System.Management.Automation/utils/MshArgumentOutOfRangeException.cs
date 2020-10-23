@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
