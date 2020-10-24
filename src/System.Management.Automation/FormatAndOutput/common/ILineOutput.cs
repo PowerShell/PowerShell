@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Text;
 
 // interfaces for host interaction
@@ -237,6 +238,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// implementation by overriding.
         /// </summary>
         protected static DisplayCells _displayCellsDefault = new DisplayCells();
+
+        internal string GetOutputString(string s, bool isHost, bool supportsVirtualTerminal)
+        {
+            var sd = new StringDecorated(s);
+
+            if (sd.IsDecorated)
+            {
+                var outputRendering = OutputRendering.PlainText;
+                ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+                if (context != null)
+                {
+                    PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
+                    if (psstyle != null) {
+                        switch (psstyle.OutputRendering) {
+                            case OutputRendering.Automatic:
+                                outputRendering = supportsVirtualTerminal ? OutputRendering.Ansi : OutputRendering.PlainText;
+                                break;
+                            case OutputRendering.Host:
+                                outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                                break;
+                            default:
+                                outputRendering = psstyle.OutputRendering;
+                                break;
+                        }
+                    }
+                }
+
+                s = sd.ToString(outputRendering);
+            }
+
+            return s;
+        }
     }
 
     /// <summary>
@@ -411,6 +444,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
+
+            s = GetOutputString(s, isHost: false, supportsVirtualTerminal: false);
+
             if (_suppressNewline)
             {
                 _writer.Write(s);

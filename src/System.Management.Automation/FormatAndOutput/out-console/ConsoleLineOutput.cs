@@ -222,6 +222,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
+
+            s = GetOutputString(s, isHost: true, supportsVirtualTerminal: _console.SupportsVirtualTerminal);
+
             // delegate the action to the helper,
             // that will properly break the string into
             // screen lines
@@ -304,12 +307,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
             s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
 #endif
-            var d = new StringDecorated(s);
-            if (d.IsDecorated)
-            {
-                s = d.ToString(OutputRendering.PlainText);
-            }
-
             // Do any default transcription.
             _console.TranscribeResult(s);
 
@@ -337,7 +334,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // then don't call the actual host API.
                     if (!_console.TranscribeOnly)
                     {
-                        _console.WriteLine(d.ToString());
+                        _console.WriteLine(s);
                     }
 
                     break;
@@ -357,11 +354,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
             s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
 #endif
-            var d = new StringDecorated(s);
-            if (d.IsDecorated)
-            {
-                s = d.ToString(OutputRendering.PlainText);
-            }
 
             switch (this.WriteStream)
             {
@@ -382,7 +374,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
 
                 default:
-                    _console.Write(d.ToString());
+                    _console.Write(s);
                     break;
             }
 

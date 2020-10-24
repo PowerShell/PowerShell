@@ -282,7 +282,6 @@ namespace System.Management.Automation
         Ansi = 2,
 
         /// <summary>Render ANSI only to host</summary>
-
         Host = 3,
     }
     #endregion OutputRendering
