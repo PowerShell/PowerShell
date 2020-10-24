@@ -256,11 +256,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             List<string>[] stringListArray = new List<string>[validColumnCount];
+            int length = stringListArray.Length;
             bool addPadding = true;
-            for (int k = 0; k < stringListArray.Length; k++)
+            for (int k = 0; k < length; k++)
             {
                 // for the last column, don't pad it with trailing spaces
-                if (k == stringListArray.Length - 1)
+                if (k == length - 1)
                 {
                     addPadding = false;
                 }
@@ -295,7 +296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // now we processed all the rows columns and we need to find the cell that occupies the most
             // rows
             int screenRows = 0;
-            for (int k = 0; k < stringListArray.Length; k++)
+            for (int k = 0; k < length; k++)
             {
                 if (stringListArray[k].Count > screenRows)
                     screenRows = stringListArray[k].Count;
@@ -314,7 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             System.Span<int> lastColWithContent = screenRows <= OutCommandInner.StackAllocThreshold ? stackalloc int[screenRows] : new int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
-                for (int col = 0; col < stringListArray.Length; col++)
+                for (int col = 0; col < length; col++)
                 {
                     if (stringListArray[col].Count > row)
                     {
@@ -324,12 +325,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // add padding for the columns that are shorter
-            for (int col = 0; col < stringListArray.Length; col++)
+            for (int col = 0; col < length; col++)
             {
                 int paddingBlanks = 0;
 
                 // don't pad if last column
-                if (col < stringListArray.Length - 1)
+                if (col < length - 1)
                 {
                     paddingBlanks = _si.columnInfo[validColumnArray[col]].width;
                     if (col > 0)
@@ -366,7 +367,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 StringBuilder sb = new StringBuilder();
                 // for a given row, walk the columns
-                for (int col = 0; col < stringListArray.Length; col++)
+                for (int col = 0; col < length; col++)
                 {
                     // if the column is the last column with content, we need to trim trailing whitespace, unless there is only one row
                     if (col == lastColWithContent[row] && screenRows > 1)
@@ -387,15 +388,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private List<string> GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc, bool addPadding)
         {
-            List<string> lines = StringManipulationHelper.GenerateLines(dc, val,
-                                        _si.columnInfo[k].width, _si.columnInfo[k].width);
+            int width = _si.columnInfo[k].width;
+            List<string> lines = StringManipulationHelper.GenerateLines(dc, val, width, width);
             if (addPadding || alignment == TextAlignment.Right || alignment == TextAlignment.Center)
             {
                 // if length is shorter, do some padding
                 for (int col = 0; col < lines.Count; col++)
                 {
-                    if (dc.Length(lines[col]) < _si.columnInfo[k].width)
-                        lines[col] = GenerateRowField(lines[col], _si.columnInfo[k].width, alignment, dc, addPadding);
+                    if (dc.Length(lines[col]) < width)
+                        lines[col] = GenerateRowField(lines[col], width, alignment, dc, addPadding);
                 }
             }
 
