@@ -17,8 +17,9 @@ namespace System.Management.Automation.Internal
         private static readonly Regex _ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>
-        /// Constructor for a decorated string requiring a string.
+        /// Initializes a new instance of the StringDecorated class.
         /// </summary>
+        /// <param name="text">The input string.</param>
         public StringDecorated(string text)
         {
             _text = text;
@@ -27,7 +28,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Return if the string contains decoration.
+        /// Gets a value indicating whether the string contains decoration.
         /// </summary>
         /// <returns>Boolean if the string contains decoration.</returns>
         public bool IsDecorated
@@ -39,7 +40,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Return the length of content sans escape sequences.
+        /// Gets the length of content sans escape sequences.
         /// </summary>
         /// <returns>Length of content sans escape sequences.</returns>
         public int ContentLength

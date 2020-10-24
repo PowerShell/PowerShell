@@ -272,16 +272,16 @@ namespace System.Management.Automation
     /// </summary>
     public enum OutputRendering
     {
-        /// <summary>Automatic by PowerShell</summary>
+        /// <summary>Automatic by PowerShell.</summary>
         Automatic = 0,
 
-        /// <summary>Render as plaintext</summary>
+        /// <summary>Render as plaintext.</summary>
         PlainText = 1,
 
-        /// <summary>Render as ANSI</summary>
+        /// <summary>Render as ANSI.</summary>
         Ansi = 2,
 
-        /// <summary>Render ANSI only to host</summary>
+        /// <summary>Render ANSI only to host.</summary>
         Host = 3,
     }
     #endregion OutputRendering
@@ -380,6 +380,10 @@ namespace System.Management.Automation
             /// <summary>
             /// Set as RGB (Red, Green, Blue).
             /// </summary>
+            /// <param name="red">Byte value representing red.</param>
+            /// <param name="green">Byte value representing green.</param>
+            /// <param name="blue">Byte value representing blue.</param>
+            /// <returns>String representing ANSI code for RGB value.</returns>
             public string Rgb(byte red, byte green, byte blue)
             {
                 return $"\x1b[38;2;{red};{green};{blue}m";
@@ -388,6 +392,8 @@ namespace System.Management.Automation
             /// <summary>
             /// The color set as RGB as a single number.
             /// </summary>
+            /// <param name="rgb">RGB value specified as an integer.</param>
+            /// <returns>String representing ANSI code for RGB value.</returns>
             public string Rgb(int rgb)
             {
                 byte red, green, blue;
@@ -465,6 +471,7 @@ namespace System.Management.Automation
             /// Gets or sets the color light yellow.
             /// </summary>
             public string LightYellow { get; set; } = "\x1b[103m";
+
             /// <summary>
             /// Gets or sets the color magenta.
             /// </summary>
@@ -488,6 +495,10 @@ namespace System.Management.Automation
             /// <summary>
             /// The color set as RGB (Red, Green, Blue).
             /// </summary>
+            /// <param name="red">Byte value representing red.</param>
+            /// <param name="green">Byte value representing green.</param>
+            /// <param name="blue">Byte value representing blue.</param>
+            /// <returns>String representing ANSI code for RGB value.</returns>
             public string Rgb(byte red, byte green, byte blue)
             {
                 return $"\x1b[48;2;{red};{green};{blue}m";
@@ -496,6 +507,8 @@ namespace System.Management.Automation
             /// <summary>
             /// The color set as RGB as a single number.
             /// </summary>
+            /// <param name="rgb">RGB value specified as an integer.</param>
+            /// <returns>String representing ANSI code for RGB value.</returns>
             public string Rgb(int rgb)
             {
                 byte red, green, blue;
@@ -515,37 +528,37 @@ namespace System.Management.Automation
         public class FormattingData
         {
             /// <summary>
-            /// Accent style for formatting.
+            /// Gets or sets the accent style for formatting.
             /// </summary>
             public string FormatAccent { get; set; } = "\x1b[32m";
 
             /// <summary>
-            /// Accent style for errors.
+            /// Gets or sets the accent style for errors.
             /// </summary>
             public string ErrorAccent { get; set; } = "\x1b[36m";
 
             /// <summary>
-            /// Style for error messages.
+            /// Gets or sets the style for error messages.
             /// </summary>
-            public string Error { get;set; } = "\x1b[31m";
+            public string Error { get; set; } = "\x1b[31m";
 
             /// <summary>
-            /// Style for warning messages.
+            /// Gets or sets the style for warning messages.
             /// </summary>
             public string Warning { get; set; } = "\x1b[33m";
 
             /// <summary>
-            /// Style for verbose messages.
+            /// Gets or sets the style for verbose messages.
             /// </summary>
             public string Verbose { get; set; } = "\x1b[33m";
 
             /// <summary>
-            /// Style for debug messages.
+            /// Gets or sets the style for debug messages.
             /// </summary>
             public string Debug { get; set; } = "\x1b[33m";
 
             /// <summary>
-            /// Style for progress messages.
+            /// Gets or sets the style for progress messages.
             /// </summary>
             public string Progress { get; set; } = "\x1b[30;43m";
         }
@@ -556,70 +569,69 @@ namespace System.Management.Automation
         public OutputRendering OutputRendering;
 
         /// <summary>
-        /// Turn off all attributes.
+        /// Gets or sets value to turn off all attributes.
         /// </summary>
-
         public string Reset { get; set; } = "\x1b[0m";
 
         /// <summary>
-        /// Turn off blink.
+        /// Gets or sets value to turn off blink.
         /// </summary>
         public string BlinkOff { get; set; } = "\x1b[5m";
 
         /// <summary>
-        /// Turn on blink.
+        /// Gets or sets value to turn on blink.
         /// </summary>
         public string Blink { get; set; } = "\x1b[25m";
 
         /// <summary>
-        /// Turn off bold.
+        /// Gets or sets value to turn off bold.
         /// </summary>
         public string BoldOff { get; set; } = "\x1b[22m";
 
         /// <summary>
-        /// Turn on blink.
+        /// Gets or sets value to turn on blink.
         /// </summary>
         public string Bold { get; set; } = "\x1b[1m";
 
         /// <summary>
-        /// Turn on hidden.
+        /// Gets or sets value to turn on hidden.
         /// </summary>
         public string Hidden { get; set; } = "\x1b[8m";
 
         /// <summary>
-        /// Turn off hidden.
+        /// Gets or sets value to turn off hidden.
         /// </summary>
         public string HiddenOff { get; set; } = "\x1b[28m";
 
         /// <summary>
-        /// Turn on reverse.
+        /// Gets or sets value to turn on reverse.
         /// </summary>
         public string Reverse { get; set; } = "\x1b[7m";
 
         /// <summary>
-        /// Turn off reverse.
+        /// Gets or sets value to turn off reverse.
         /// </summary>
         public string ReverseOff { get; set; } = "\x1b[27m";
 
         /// <summary>
-        /// Turn off standout.
+        /// Gets or sets value to turn off standout.
         /// </summary>
         public string ItalicOff { get; set; } = "\x1b[23m";
 
         /// <summary>
-        /// Turn on standout.
+        /// Gets or sets value to turn on standout.
         /// </summary>
         public string Italic { get; set; } = "\x1b[3m";
 
         /// <summary>
-        /// Turn off underlined.
+        /// Gets or sets value to turn off underlined.
         /// </summary>
         public string UnderlineOff { get; set; } = "\x1b[24m";
 
         /// <summary>
-        /// Turn on underlined.
+        /// Gets or sets value to turn on underlined.
         /// </summary>
-        public string Underline { get;set; } = "\x1b[4m";
+        public string Underline { get; set; } = "\x1b[4m";
 
         /// <summary>
         /// Contains current formatting rendering settings.
@@ -637,7 +649,7 @@ namespace System.Management.Automation
         public BackgroundColor Background;
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the PSStyle class.
         /// </summary>
         public PSStyle()
         {

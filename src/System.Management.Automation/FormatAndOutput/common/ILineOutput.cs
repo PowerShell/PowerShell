@@ -241,7 +241,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal string GetOutputString(string s, bool isHost, bool supportsVirtualTerminal)
         {
-
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
                 var sd = new StringDecorated(s);
@@ -253,8 +252,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (context != null)
                     {
                         PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
-                        if (psstyle != null) {
-                            switch (psstyle.OutputRendering) {
+                        if (psstyle != null)
+                        {
+                            switch (psstyle.OutputRendering)
+                            {
                                 case OutputRendering.Automatic:
                                     outputRendering = supportsVirtualTerminal ? OutputRendering.Ansi : OutputRendering.PlainText;
                                     break;
