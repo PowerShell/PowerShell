@@ -298,87 +298,87 @@ namespace System.Management.Automation
         public class ForegroundColor
         {
             /// <summary>
-            /// The color black.
+            /// Gets or sets the color black.
             /// </summary>
             public string Black { get; set; } = "\x1b[30m";
 
             /// <summary>
-            /// The color blue.
+            /// Gets or sets the color blue.
             /// </summary>
             public string Blue { get; set; } = "\x1b[34m";
 
             /// <summary>
-            /// The color cyan.
+            /// Gets or sets the color cyan.
             /// </summary>
             public string Cyan { get; set; } = "\x1b[36m";
 
             /// <summary>
-            /// The color dark gray.
+            /// Gets or sets the color dark gray.
             /// </summary>
             public string DarkGray { get; set; } = "\x1b[90m";
 
             /// <summary>
-            /// The color green.
+            /// Gets or sets the color green.
             /// </summary>
             public string Green { get; set; } = "\x1b[32m";
 
             /// <summary>
-            /// The color light blue.
+            /// Gets or sets the color light blue.
             /// </summary>
             public string LightBlue { get; set; } = "\x1b[94m";
 
             /// <summary>
-            /// The color light cyan.
+            /// Gets or sets the color light cyan.
             /// </summary>
             public string LightCyan { get; set; } = "\x1b[96m";
 
             /// <summary>
-            /// The color light gray.
+            /// Gets or sets the color light gray.
             /// </summary>
             public string LightGray { get; set; } = "\x1b[97m";
 
             /// <summary>
-            /// The color light green.
+            /// Gets or sets the color light green.
             /// </summary>
             public string LightGreen { get; set; } = "\x1b[92m";
 
             /// <summary>
-            /// The color light magenta.
+            /// Gets or sets the color light magenta.
             /// </summary>
             public string LightMagenta { get; set; } = "\x1b[95m";
 
             /// <summary>
-            /// The color light red.
+            /// Gets or sets the color light red.
             /// </summary>
             public string LightRed { get; set; } = "\x1b[91m";
 
             /// <summary>
-            /// The color light yellow.
+            /// Gets or sets the color light yellow.
             /// </summary>
             public string LightYellow { get; set; } = "\x1b[93m";
 
             /// <summary>
-            /// The color magenta.
+            /// Gets or sets the color magenta.
             /// </summary>
             public string Magenta { get; set; } = "\x1b[35m";
 
             /// <summary>
-            /// The color read.
+            /// Gets or sets the color read.
             /// </summary>
             public string Red { get; set; } = "\x1b[31m";
 
             /// <summary>
-            /// The color white.
+            /// Gets or sets the color white.
             /// </summary>
             public string White { get; set; } = "\x1b[37m";
 
             /// <summary>
-            /// The color yellow.
+            /// Gets or sets the color yellow.
             /// </summary>
             public string Yellow { get; set; } = "\x1b[33m";
 
             /// <summary>
-            /// The color set as RGB (Red, Green, Blue).
+            /// Set as RGB (Red, Green, Blue).
             /// </summary>
             public string Rgb(byte red, byte green, byte blue)
             {
@@ -407,81 +407,81 @@ namespace System.Management.Automation
         public class BackgroundColor
         {
             /// <summary>
-            /// The color black.
+            /// Gets or sets the color black.
             /// </summary>
             public string Black { get; set; } = "\x1b[40m";
 
             /// <summary>
-            /// The color blue.
+            /// Gets or sets the color blue.
             /// </summary>
             public string Blue { get; set; } = "\x1b[44m";
 
             /// <summary>
-            /// The color cyan.
+            /// Gets or sets the color cyan.
             /// </summary>
             public string Cyan { get; set; } = "\x1b[46m";
 
             /// <summary>
-            /// The color dark gray.
+            /// Gets or sets the color dark gray.
             /// </summary>
             public string DarkGray { get; set; } = "\x1b[100m";
 
             /// <summary>
-            /// The color green.
+            /// Gets or sets the color green.
             /// </summary>
             public string Green { get; set; } = "\x1b[42m";
 
             /// <summary>
-            /// The color light blue.
+            /// Gets or sets the color light blue.
             /// </summary>
             public string LightBlue { get; set; } = "\x1b[104m";
 
             /// <summary>
-            /// The color light cyan.
+            /// Gets or sets the color light cyan.
             /// </summary>
             public string LightCyan { get; set; } = "\x1b[106m";
 
             /// <summary>
-            /// The color light gray.
+            /// Gets or sets the color light gray.
             /// </summary>
             public string LightGray { get; set; } = "\x1b[107m";
 
             /// <summary>
-            /// The color light green.
+            /// Gets or sets the color light green.
             /// </summary>
             public string LightGreen { get; set; } = "\x1b[102m";
 
             /// <summary>
-            /// The color light magenta.
+            /// Gets or sets the color light magenta.
             /// </summary>
             public string LightMagenta { get; set; } = "\x1b[105m";
 
             /// <summary>
-            /// The color light red.
+            /// Gets or sets the color light red.
             /// </summary>
             public string LightRed { get; set; } = "\x1b[101m";
 
             /// <summary>
-            /// The color light yellow.
+            /// Gets or sets the color light yellow.
             /// </summary>
             public string LightYellow { get; set; } = "\x1b[103m";
             /// <summary>
-            /// The color magenta.
+            /// Gets or sets the color magenta.
             /// </summary>
             public string Magenta { get; set; } = "\x1b[45m";
 
             /// <summary>
-            /// The color read.
+            /// Gets or sets the color read.
             /// </summary>
             public string Red { get; set; } = "\x1b[41m";
 
             /// <summary>
-            /// The color white.
+            /// Gets or sets the color white.
             /// </summary>
             public string White { get; set; } = "\x1b[47m";
 
             /// <summary>
-            /// The color yellow.
+            /// Gets or sets the color yellow.
             /// </summary>
             public string Yellow { get; set; } = "\x1b[43m";
 

@@ -619,10 +619,14 @@ namespace System.Management.Automation.Host
                     }
 
                     resultText = resultText.TrimEnd();
-                    var text = new StringDecorated(resultText);
-                    if (text.IsDecorated)
+
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                     {
-                        resultText = text.ToString(OutputRendering.PlainText);
+                        var text = new StringDecorated(resultText);
+                        if (text.IsDecorated)
+                        {
+                            resultText = text.ToString(OutputRendering.PlainText);
+                        }
                     }
 
                     foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
