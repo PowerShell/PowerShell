@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // obtain a set of tokens for each field
-                stringListArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k],
+                stringListArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], _si.columnInfo[validColumnArray[k]].width,
                     alignment[validColumnArray[k]], ds, addPadding);
 
                 // NOTE: the following padding operations assume that we
@@ -386,9 +386,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return rows;
         }
 
-        private List<string> GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc, bool addPadding)
+        private static List<string> GenerateMultiLineRowField(string val, int width, int alignment, DisplayCells dc, bool addPadding)
         {
-            int width = _si.columnInfo[k].width;
             List<string> lines = StringManipulationHelper.GenerateLines(dc, val, width, width);
             if (addPadding || alignment == TextAlignment.Right || alignment == TextAlignment.Center)
             {
