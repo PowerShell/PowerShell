@@ -267,17 +267,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // obtain a set of tokens for each field
-                stringListArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], _si.columnInfo[validColumnArray[k]].width,
-                    alignment[validColumnArray[k]], ds, addPadding);
+                int pos = validColumnArray[k];
+                List<string> stringList = GenerateMultiLineRowField(
+                    values[pos], _si.columnInfo[pos].width, alignment[pos], ds, addPadding);
+
+                stringListArray[k] = stringList;
 
                 // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
                     // skipping the first ones, add a separator for concatenation
-                    for (int j = 0; j < stringListArray[k].Count; j++)
+                    for (int j = 0; j < stringList.Count; j++)
                     {
-                        stringListArray[k][j] = StringUtil.Padding(ScreenInfo.separatorCharacterCount) + stringListArray[k][j];
+                        stringList[j] = StringUtil.Padding(ScreenInfo.separatorCharacterCount) + stringList[j];
                     }
                 }
                 else
@@ -285,9 +288,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // add indentation padding if needed
                     if (_startColumn > 0)
                     {
-                        for (int j = 0; j < stringListArray[k].Count; j++)
+                        for (int j = 0; j < stringList.Count; j++)
                         {
-                            stringListArray[k][j] = StringUtil.Padding(_startColumn) + stringListArray[k][j];
+                            stringList[j] = StringUtil.Padding(_startColumn) + stringList[j];
                         }
                     }
                 }
