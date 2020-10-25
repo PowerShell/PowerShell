@@ -11,9 +11,9 @@ namespace System.Management.Automation.Internal
     public class StringDecorated
     {
         private const char ESC = '\x1b';
-        private bool _isDecorated = false;
-        private string _text;
-        private string _plaintext;
+        private readonly bool _isDecorated;
+        private readonly string _text;
+        private readonly string _plaintext;
         private static readonly Regex _ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>

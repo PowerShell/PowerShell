@@ -384,7 +384,7 @@ namespace System.Management.Automation
             /// <param name="green">Byte value representing green.</param>
             /// <param name="blue">Byte value representing blue.</param>
             /// <returns>String representing ANSI code for RGB value.</returns>
-            public string Rgb(byte red, byte green, byte blue)
+            public string FromRgb(byte red, byte green, byte blue)
             {
                 return $"\x1b[38;2;{red};{green};{blue}m";
             }
@@ -394,7 +394,7 @@ namespace System.Management.Automation
             /// </summary>
             /// <param name="rgb">RGB value specified as an integer.</param>
             /// <returns>String representing ANSI code for RGB value.</returns>
-            public string Rgb(int rgb)
+            public string FromRgb(int rgb)
             {
                 byte red, green, blue;
                 blue = (byte)(rgb & 0xFF);
@@ -403,7 +403,7 @@ namespace System.Management.Automation
                 rgb >>= 8;
                 red = (byte)(rgb & 0xFF);
 
-                return Rgb(red, green, blue);
+                return FromRgb(red, green, blue);
             }
         }
 
@@ -499,7 +499,7 @@ namespace System.Management.Automation
             /// <param name="green">Byte value representing green.</param>
             /// <param name="blue">Byte value representing blue.</param>
             /// <returns>String representing ANSI code for RGB value.</returns>
-            public string Rgb(byte red, byte green, byte blue)
+            public string FromRgb(byte red, byte green, byte blue)
             {
                 return $"\x1b[48;2;{red};{green};{blue}m";
             }
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             /// </summary>
             /// <param name="rgb">RGB value specified as an integer.</param>
             /// <returns>String representing ANSI code for RGB value.</returns>
-            public string Rgb(int rgb)
+            public string FromRgb(int rgb)
             {
                 byte red, green, blue;
                 blue = (byte)(rgb & 0xFF);
@@ -518,7 +518,7 @@ namespace System.Management.Automation
                 rgb >>= 8;
                 red = (byte)(rgb & 0xFF);
 
-                return Rgb(red, green, blue);
+                return FromRgb(red, green, blue);
             }
         }
 
@@ -564,9 +564,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The current rendering mode for output.
+        /// Gets or sets the rendering mode for output.
         /// </summary>
-        public OutputRendering OutputRendering;
+        public OutputRendering OutputRendering { get; set; }
 
         /// <summary>
         /// Gets or sets value to turn off all attributes.
@@ -634,19 +634,19 @@ namespace System.Management.Automation
         public string Underline { get; set; } = "\x1b[4m";
 
         /// <summary>
-        /// Contains current formatting rendering settings.
+        /// Gets or sets the formatting rendering settings.
         /// </summary>
-        public FormattingData Formatting;
+        public FormattingData Formatting { get; set; }
 
         /// <summary>
-        /// Contains foreground colors.
+        /// Gets or sets foreground colors.
         /// </summary>
-        public ForegroundColor Foreground;
+        public ForegroundColor Foreground { get; set; }
 
         /// <summary>
-        /// Contains background colors.
+        /// Gets or sets background colors.
         /// </summary>
-        public BackgroundColor Background;
+        public BackgroundColor Background { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the PSStyle class.
