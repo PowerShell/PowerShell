@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         protected static DisplayCells _displayCellsDefault = new DisplayCells();
 
-        internal string GetOutputString(string s, bool isHost, bool supportsVirtualTerminal)
+        internal string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal)
         {
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     var outputRendering = OutputRendering.PlainText;
                     ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                    if (context != null)
+                    if (supportsVirtualTerminal != false && context != null)
                     {
                         PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
                         if (psstyle != null)
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             switch (psstyle.OutputRendering)
                             {
                                 case OutputRendering.Automatic:
-                                    outputRendering = supportsVirtualTerminal ? OutputRendering.Ansi : OutputRendering.PlainText;
+                                    outputRendering = OutputRendering.Ansi;
                                     break;
                                 case OutputRendering.Host:
                                     outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             CheckStopProcessing();
 
-            s = GetOutputString(s, isHost: false, supportsVirtualTerminal: false);
+            s = GetOutputString(s, isHost: false, supportsVirtualTerminal: null);
 
             if (_suppressNewline)
             {
