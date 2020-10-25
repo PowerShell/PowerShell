@@ -957,9 +957,9 @@ namespace Microsoft.PowerShell.Commands
                     string.Format(CultureInfo.InvariantCulture, "Import-Module -Name '{0}'", moduleName));
                 remotelyImportedModules = RemoteDiscoveryHelper.InvokePowerShell(
                     powerShell,
-                    this.CancellationToken,
                     this,
-                    errorMessageTemplate).ToList();
+                    errorMessageTemplate,
+                    this.CancellationToken).ToList();
             }
 
             List<PSModuleInfo> result = new List<PSModuleInfo>();
@@ -1076,7 +1076,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.InvariantCulture,
                         Modules.RemoteDiscoveryFailedToGenerateProxyForRemoteModule,
                         remoteModuleName);
-                    int numberOfLocallyCreatedFiles = RemoteDiscoveryHelper.InvokePowerShell(powerShell, this.CancellationToken, this, errorMessageTemplate).Count();
+                    int numberOfLocallyCreatedFiles = RemoteDiscoveryHelper.InvokePowerShell(powerShell, this, errorMessageTemplate, this.CancellationToken).Count();
                     if (numberOfLocallyCreatedFiles == 0)
                     {
                         return null;

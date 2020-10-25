@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
-                : this(maxDepth, enumsAsStrings, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
+                : this(maxDepth, enumsAsStrings, compressOutput, StringEscapeHandling.Default, targetCmdlet: null, CancellationToken.None)
             {
             }
 
@@ -85,9 +85,9 @@ namespace Microsoft.PowerShell.Commands
                 int maxDepth,
                 bool enumsAsStrings,
                 bool compressOutput,
-                CancellationToken cancellationToken,
                 StringEscapeHandling stringEscapeHandling,
-                PSCmdlet targetCmdlet)
+                PSCmdlet targetCmdlet,
+                CancellationToken cancellationToken)
             {
                 this.MaxDepth = maxDepth;
                 this.CancellationToken = cancellationToken;
