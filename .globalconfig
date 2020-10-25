@@ -133,7 +133,7 @@ dotnet_diagnostic.CA1065.severity = none
 dotnet_diagnostic.CA1066.severity = none
 
 # CA1067: Override Object.Equals(object) when implementing IEquatable<T>
-dotnet_diagnostic.CA1067.severity = suggestion
+dotnet_diagnostic.CA1067.severity = warning
 
 # CA1068: CancellationToken parameters must come last
 dotnet_diagnostic.CA1068.severity = suggestion
