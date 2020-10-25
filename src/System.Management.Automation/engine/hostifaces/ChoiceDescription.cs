@@ -126,7 +126,7 @@ namespace System.Management.Automation.Host
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException(nameof(value));
                 }
 
                 this.helpMessage = value;

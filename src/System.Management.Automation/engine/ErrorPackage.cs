@@ -1204,10 +1204,10 @@ namespace System.Management.Automation
 
         private void ToPSObjectForRemoting(PSObject dest, bool serializeExtInfo)
         {
-            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", delegate () { return Exception; });
-            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", delegate () { return TargetObject; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", delegate () { return FullyQualifiedErrorId; });
-            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", delegate () { return InvocationInfo; });
+            RemotingEncoder.AddNoteProperty<Exception>(dest, nameof(Exception), delegate () { return Exception; });
+            RemotingEncoder.AddNoteProperty<object>(dest, nameof(TargetObject), delegate () { return TargetObject; });
+            RemotingEncoder.AddNoteProperty<string>(dest, nameof(FullyQualifiedErrorId), delegate () { return FullyQualifiedErrorId; });
+            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, nameof(InvocationInfo), delegate () { return InvocationInfo; });
             RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", delegate () { return (int)CategoryInfo.Category; });
             RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", delegate () { return CategoryInfo.Activity; });
             RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", delegate () { return CategoryInfo.Reason; });
@@ -1223,13 +1223,13 @@ namespace System.Management.Automation
 
             if (!serializeExtInfo || this.InvocationInfo == null)
             {
-                RemotingEncoder.AddNoteProperty(dest, "SerializeExtendedInfo", () => false);
+                RemotingEncoder.AddNoteProperty(dest, nameof(SerializeExtendedInfo), () => false);
             }
             else
             {
-                RemotingEncoder.AddNoteProperty(dest, "SerializeExtendedInfo", () => true);
+                RemotingEncoder.AddNoteProperty(dest, nameof(SerializeExtendedInfo), () => true);
                 this.InvocationInfo.ToPSObjectForRemoting(dest);
-                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", delegate () { return PipelineIterationInfo; });
+                RemotingEncoder.AddNoteProperty<object>(dest, nameof(PipelineIterationInfo), delegate () { return PipelineIterationInfo; });
             }
 
             if (!string.IsNullOrEmpty(this.ScriptStackTrace))
@@ -1291,10 +1291,10 @@ namespace System.Management.Automation
             }
 
             // Get Exception
-            PSObject serializedException = RemotingDecoder.GetPropertyValue<PSObject>(serializedErrorRecord, "Exception");
+            PSObject serializedException = RemotingDecoder.GetPropertyValue<PSObject>(serializedErrorRecord, nameof(Exception));
 
             // Get Target object
-            object targetObject = RemotingDecoder.GetPropertyValue<object>(serializedErrorRecord, "TargetObject");
+            object targetObject = RemotingDecoder.GetPropertyValue<object>(serializedErrorRecord, nameof(TargetObject));
 
             string exceptionMessage = null;
             if (serializedException != null)
@@ -1307,7 +1307,7 @@ namespace System.Management.Automation
             }
 
             // Get FullyQualifiedErrorId
-            string fullyQualifiedErrorId = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "FullyQualifiedErrorId") ??
+            string fullyQualifiedErrorId = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, nameof(FullyQualifiedErrorId)) ??
                                            "fullyQualifiedErrorId";
 
             // Get ErrorCategory...
@@ -1323,7 +1323,7 @@ namespace System.Management.Automation
             // Get InvocationInfo (optional property)
             PSObject invocationInfo = Microsoft.PowerShell.DeserializingTypeConverter.GetPropertyValue<PSObject>(
                 serializedErrorRecord,
-                "InvocationInfo",
+                nameof(InvocationInfo),
                 Microsoft.PowerShell.DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk);
 
             // Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
@@ -1359,13 +1359,13 @@ namespace System.Management.Automation
             //
             // Get the InvocationInfo
             //
-            _serializeExtendedInfo = RemotingDecoder.GetPropertyValue<bool>(serializedErrorRecord, "SerializeExtendedInfo");
+            _serializeExtendedInfo = RemotingDecoder.GetPropertyValue<bool>(serializedErrorRecord, nameof(SerializeExtendedInfo));
 
             if (_serializeExtendedInfo)
             {
                 _invocationInfo = new InvocationInfo(serializedErrorRecord);
 
-                ArrayList iterationInfo = RemotingDecoder.GetPropertyValue<ArrayList>(serializedErrorRecord, "PipelineIterationInfo");
+                ArrayList iterationInfo = RemotingDecoder.GetPropertyValue<ArrayList>(serializedErrorRecord, nameof(PipelineIterationInfo));
                 if (iterationInfo != null)
                 {
                     _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(Int32)));

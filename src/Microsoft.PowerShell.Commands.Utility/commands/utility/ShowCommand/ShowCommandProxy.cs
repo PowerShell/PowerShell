@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (bool)_graphicalHostReflectionWrapper.GetPropertyValue("HasHostWindow");
+                return (bool)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(HasHostWindow));
             }
         }
 
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("WindowClosed");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(WindowClosed));
             }
         }
 
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("HelpNeeded");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(HelpNeeded));
             }
         }
 
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("ImportModuleNeeded");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(ImportModuleNeeded));
             }
         }
 
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("WindowLoaded");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(WindowLoaded));
             }
         }
 
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (string)_graphicalHostReflectionWrapper.GetPropertyValue("CommandNeedingHelp");
+                return (string)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(CommandNeedingHelp));
             }
         }
 
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (string)_graphicalHostReflectionWrapper.GetPropertyValue("ParentModuleNeedingImportModule");
+                return (string)_graphicalHostReflectionWrapper.GetPropertyValue(nameof(ParentModuleNeedingImportModule));
             }
         }
 
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (double)_graphicalHostReflectionWrapper.GetStaticPropertyValue("ScreenWidth");
+                return (double)_graphicalHostReflectionWrapper.GetStaticPropertyValue(nameof(ScreenWidth));
             }
         }
 
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (double)_graphicalHostReflectionWrapper.GetStaticPropertyValue("ScreenHeight");
+                return (double)_graphicalHostReflectionWrapper.GetStaticPropertyValue(nameof(ScreenHeight));
             }
         }
     }

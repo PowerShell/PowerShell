@@ -179,22 +179,22 @@ namespace System.Management.Automation
         {
             InformationRecord informationRecord = new InformationRecord();
 
-            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, "MessageData");
-            informationRecord.Source = RemotingDecoder.GetPropertyValue<string>(inputObject, "Source");
-            informationRecord.TimeGenerated = RemotingDecoder.GetPropertyValue<DateTime>(inputObject, "TimeGenerated");
+            informationRecord.MessageData = RemotingDecoder.GetPropertyValue<object>(inputObject, nameof(MessageData));
+            informationRecord.Source = RemotingDecoder.GetPropertyValue<string>(inputObject, nameof(Source));
+            informationRecord.TimeGenerated = RemotingDecoder.GetPropertyValue<DateTime>(inputObject, nameof(TimeGenerated));
 
             informationRecord.Tags = new List<string>();
-            System.Collections.ArrayList tagsArrayList = RemotingDecoder.GetPropertyValue<System.Collections.ArrayList>(inputObject, "Tags");
+            System.Collections.ArrayList tagsArrayList = RemotingDecoder.GetPropertyValue<System.Collections.ArrayList>(inputObject, nameof(Tags));
             foreach (string tag in tagsArrayList)
             {
                 informationRecord.Tags.Add(tag);
             }
 
-            informationRecord.User = RemotingDecoder.GetPropertyValue<string>(inputObject, "User");
-            informationRecord.Computer = RemotingDecoder.GetPropertyValue<string>(inputObject, "Computer");
-            informationRecord.ProcessId = RemotingDecoder.GetPropertyValue<uint>(inputObject, "ProcessId");
-            informationRecord.NativeThreadId = RemotingDecoder.GetPropertyValue<uint>(inputObject, "NativeThreadId");
-            informationRecord.ManagedThreadId = RemotingDecoder.GetPropertyValue<uint>(inputObject, "ManagedThreadId");
+            informationRecord.User = RemotingDecoder.GetPropertyValue<string>(inputObject, nameof(User));
+            informationRecord.Computer = RemotingDecoder.GetPropertyValue<string>(inputObject, nameof(Computer));
+            informationRecord.ProcessId = RemotingDecoder.GetPropertyValue<uint>(inputObject, nameof(ProcessId));
+            informationRecord.NativeThreadId = RemotingDecoder.GetPropertyValue<uint>(inputObject, nameof(NativeThreadId));
+            informationRecord.ManagedThreadId = RemotingDecoder.GetPropertyValue<uint>(inputObject, nameof(ManagedThreadId));
 
             return informationRecord;
         }

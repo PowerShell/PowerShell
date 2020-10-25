@@ -119,7 +119,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return ExtractTextForHelpProperty(this.FullHelp, "Examples");
+                return ExtractTextForHelpProperty(this.FullHelp, nameof(Examples));
             }
         }
 
@@ -130,7 +130,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return ExtractTextForHelpProperty(this.FullHelp, "Parameters");
+                return ExtractTextForHelpProperty(this.FullHelp, nameof(Parameters));
             }
         }
 

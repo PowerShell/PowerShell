@@ -287,7 +287,7 @@ namespace System.Management.Automation
 
             if (credential == null)
             {
-                throw PSTraceSource.NewArgumentNullException("credential");
+                throw PSTraceSource.NewArgumentNullException(nameof(credential));
             }
 
             return credential.GetNetworkCredential();

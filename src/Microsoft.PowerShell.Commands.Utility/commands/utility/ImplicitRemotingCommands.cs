@@ -1331,7 +1331,7 @@ namespace Microsoft.PowerShell.Commands
 
             string name = GetPropertyValue<string>("Get-Command", deserializedCommandInfo, "Name");
 
-            CommandTypes commandType = GetPropertyValue<CommandTypes>("Get-Command", deserializedCommandInfo, "CommandType");
+            CommandTypes commandType = GetPropertyValue<CommandTypes>("Get-Command", deserializedCommandInfo, nameof(CommandType));
             if (commandType == CommandTypes.Alias)
             {
                 resolvedCommandName = GetPropertyValue<string>("Get-Command", deserializedCommandInfo, "ResolvedCommandName", true);

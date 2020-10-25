@@ -636,7 +636,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    var rawModuleName = GetPropertyValue<string>(_baseObject, "ModuleName", string.Empty);
+                    var rawModuleName = GetPropertyValue<string>(_baseObject, nameof(ModuleName), string.Empty);
                     return Path.GetFileName(rawModuleName);
                 }
             }
@@ -723,7 +723,7 @@ namespace System.Management.Automation
                 {
                     get
                     {
-                        string rawFileName = GetPropertyValue<string>(_baseObject, "FileName", string.Empty);
+                        string rawFileName = GetPropertyValue<string>(_baseObject, nameof(FileName), string.Empty);
                         return Path.GetFileName(rawFileName);
                     }
                 }

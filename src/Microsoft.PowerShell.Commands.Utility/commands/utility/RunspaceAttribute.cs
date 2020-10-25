@@ -33,7 +33,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (engineIntrinsics?.Host?.UI == null)
             {
-                throw PSTraceSource.NewArgumentNullException("engineIntrinsics");
+                throw PSTraceSource.NewArgumentNullException(nameof(engineIntrinsics));
             }
 
             if (inputData == null)

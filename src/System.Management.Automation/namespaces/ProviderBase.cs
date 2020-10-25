@@ -137,7 +137,7 @@ namespace System.Management.Automation.Provider
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException(nameof(value));
                 }
 
                 // Check that the provider supports the use of credentials

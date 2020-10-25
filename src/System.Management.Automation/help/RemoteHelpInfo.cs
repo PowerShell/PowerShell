@@ -99,7 +99,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.GetHelpProperty("Component");
+                return this.GetHelpProperty(nameof(Component));
             }
         }
 
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.GetHelpProperty("Functionality");
+                return this.GetHelpProperty(nameof(Functionality));
             }
         }
 
@@ -115,7 +115,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.GetHelpProperty("Role");
+                return this.GetHelpProperty(nameof(Role));
             }
         }
     }

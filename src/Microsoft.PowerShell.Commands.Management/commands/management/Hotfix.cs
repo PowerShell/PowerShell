@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string desc in Description)
                 {
                     WildcardPattern wildcardpattern = WildcardPattern.Get(desc, WildcardOptions.IgnoreCase);
-                    if (wildcardpattern.IsMatch((string)obj["Description"]))
+                    if (wildcardpattern.IsMatch((string)obj[nameof(Description)]))
                     {
                         return true;
                     }

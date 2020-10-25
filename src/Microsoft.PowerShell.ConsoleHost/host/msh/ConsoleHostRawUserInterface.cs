@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("value", ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
+                    throw PSTraceSource.NewArgumentException(nameof(value), ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
                 }
             }
         }
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("value", ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
+                    throw PSTraceSource.NewArgumentException(nameof(value), ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell
 
                 ConsoleHandle handle = GetBufferInfo(out bufferInfo);
 
-                CheckCoordinateWithinBuffer(ref value, ref bufferInfo, "value");
+                CheckCoordinateWithinBuffer(ref value, ref bufferInfo, nameof(value));
                 ConsoleControl.SetConsoleCursorPosition(handle, value);
             }
         }
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(value), value,
                         ConsoleHostRawUserInterfaceStrings.InvalidCursorSizeError);
                 }
             }
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell
                     if (win32exception != null &&
                         win32exception.NativeErrorCode == 0x57)
                     {
-                        throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
+                        throw PSTraceSource.NewArgumentOutOfRangeException(nameof(value), value,
                             ConsoleHostRawUserInterfaceStrings.InvalidBufferSizeError);
                     }
                     else
@@ -490,13 +490,13 @@ namespace Microsoft.PowerShell
 
                 if (r.Right < r.Left)
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(value), value,
                         ConsoleHostRawUserInterfaceStrings.WindowTooNarrowError);
                 }
 
                 if (r.Bottom < r.Top)
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(value), value,
                         ConsoleHostRawUserInterfaceStrings.WindowTooShortError);
                 }
 
@@ -819,11 +819,11 @@ namespace Microsoft.PowerShell
                     }
                     else if (value.Length < MinWindowTitleLength)
                     {
-                        throw PSTraceSource.NewArgumentException("value", ConsoleHostRawUserInterfaceStrings.WindowTitleTooShortError);
+                        throw PSTraceSource.NewArgumentException(nameof(value), ConsoleHostRawUserInterfaceStrings.WindowTitleTooShortError);
                     }
                     else
                     {
-                        throw PSTraceSource.NewArgumentException("value",
+                        throw PSTraceSource.NewArgumentException(nameof(value),
                                                                  ConsoleHostRawUserInterfaceStrings
                                                                      .WindowTitleTooLongErrorTemplate,
                                                                  MaxWindowTitleLength);
@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException(nameof(value));
                 }
             }
         }
@@ -1604,7 +1604,7 @@ namespace Microsoft.PowerShell
             // if there are no contents, there is nothing to set the buffer to
             if (contents == null)
             {
-                PSTraceSource.NewArgumentNullException("contents");
+                PSTraceSource.NewArgumentNullException(nameof(contents));
             }
             // if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)

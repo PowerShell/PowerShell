@@ -105,7 +105,7 @@ namespace System.Management.Automation
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException(nameof(value));
                 }
 
                 lock (_syncobject)
