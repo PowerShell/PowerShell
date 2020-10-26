@@ -9,7 +9,6 @@ using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
-using System.Reflection;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 using System.Security.AccessControl;

@@ -7,7 +7,6 @@
 #if !UNIX
 
 using System.Management.Automation.Internal;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
