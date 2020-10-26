@@ -296,7 +296,7 @@ namespace System.Management.Automation
 
             context = null;
 
-            DriveScopeItemSearcher searcher =
+            using DriveScopeItemSearcher searcher =
                 new DriveScopeItemSearcher(
                     this,
                     variablePath);
@@ -547,7 +547,7 @@ namespace System.Management.Automation
 
             Dbg.Diagnostics.Assert(variablePath.IsVariable, "Can't get variable w/ non-variable path");
 
-            VariableScopeItemSearcher searcher =
+            using VariableScopeItemSearcher searcher =
                 new VariableScopeItemSearcher(this, variablePath, origin);
 
             PSVariable result = null;
@@ -905,7 +905,7 @@ namespace System.Management.Automation
 
         internal object GetAutomaticVariableValue(AutomaticVariable variable)
         {
-            var scopeEnumerator = new SessionStateScopeEnumerator(CurrentScope);
+            using var scopeEnumerator = new SessionStateScopeEnumerator(CurrentScope);
             object result = AutomationNull.Value;
             foreach (var scope in scopeEnumerator)
             {
@@ -1802,7 +1802,7 @@ namespace System.Management.Automation
         /// </returns>
         internal IDictionary<string, PSVariable> GetVariableTable()
         {
-            SessionStateScopeEnumerator scopeEnumerator =
+            using SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
 
             Dictionary<string, PSVariable> result =
