@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
                     // If they didn't specify -Append, empty the file
                     if (!_shouldAppend)
                     {
-                        System.IO.File.WriteAllText(effectiveFilePath, string.Empty);
+                        System.IO.File.WriteAllText(effectiveFilePath, string.Empty, Utils.utf8NoBom);
                     }
                 }
 
