@@ -7,7 +7,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [master, source-depot]
+    branches: [master]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [master]
@@ -33,6 +33,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
