@@ -886,7 +886,7 @@ dotnet_diagnostic.IDE0052.severity = silent
 dotnet_diagnostic.IDE0053.severity = silent
 
 # UseCompoundAssignment
-dotnet_diagnostic.IDE0054.severity = silent
+dotnet_diagnostic.IDE0054.severity = warning
 
 # Formatting
 dotnet_diagnostic.IDE0055.severity = silent
