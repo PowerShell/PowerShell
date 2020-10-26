@@ -949,7 +949,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 if (propList.Length > 0)
                 {
-                    propList.Append(",");
+                    propList.Append(',');
                 }
 
                 propList.Append(property);

@@ -856,7 +856,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (parameters.Length > 0)
                     {
-                        parameters.Append(",");
+                        parameters.Append(',');
                     }
 
                     parameters.Append(string.Format(CultureInfo.CurrentUICulture, @"'{0}' = {1}", key, parameterList[key]));

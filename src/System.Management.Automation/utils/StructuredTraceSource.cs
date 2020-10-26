@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                     declaringType.Name,
                     callingMethod.Name);
 
-                methodAndParameters.Append(")");
+                methodAndParameters.Append(')');
             }
             catch
             {

@@ -871,9 +871,9 @@ namespace Microsoft.WSMan.Management
                 if (entry.Key != null && entry.Value != null)
                 {
                     filter.Append(entry.Key.ToString());
-                    filter.Append("=");
+                    filter.Append('=');
                     filter.Append(entry.Value.ToString());
-                    filter.Append("+");
+                    filter.Append('+');
                 }
             }
 
@@ -917,7 +917,7 @@ namespace Microsoft.WSMan.Management
         {
             StringBuilder sburi = new StringBuilder();
             sburi.Append(uri);
-            sburi.Append("?");
+            sburi.Append('?');
 
             if (operation.Equals("remove", StringComparison.OrdinalIgnoreCase))
             {

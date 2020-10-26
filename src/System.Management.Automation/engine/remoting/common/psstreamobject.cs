@@ -489,7 +489,7 @@ namespace System.Management.Automation.Remoting.Internal
         internal static string CreateInformationalMessage(Guid instanceId, string message)
         {
             var newMessage = new StringBuilder(instanceId.ToString());
-            newMessage.Append(":");
+            newMessage.Append(':');
             newMessage.Append(message);
             return newMessage.ToString();
         }

@@ -2667,7 +2667,7 @@ namespace System.Management.Automation
 
                 StringBuilder tooltipText = new StringBuilder();
                 tooltipText.Append(methodName);
-                tooltipText.Append("(");
+                tooltipText.Append('(');
                 bool gotFirstParameter = false;
                 foreach (var methodParameter in methodDeclaration.Parameters)
                 {
@@ -2688,7 +2688,7 @@ namespace System.Management.Automation
                     }
 
                     tooltipText.Append(CimInstanceAdapter.CimTypeToTypeNameDisplayString(methodParameter.CimType));
-                    tooltipText.Append(" ");
+                    tooltipText.Append(' ');
                     tooltipText.Append(methodParameter.Name);
 
                     if (outParameter)
@@ -2697,7 +2697,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                tooltipText.Append(")");
+                tooltipText.Append(')');
 
                 localResults.Add(new CompletionResult(methodName, methodName, CompletionResultType.Method, tooltipText.ToString()));
             }

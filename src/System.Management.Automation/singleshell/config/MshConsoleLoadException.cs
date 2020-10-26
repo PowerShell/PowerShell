@@ -78,7 +78,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (PSSnapInException e in PSSnapInExceptions)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(e.Message);
                 }
             }

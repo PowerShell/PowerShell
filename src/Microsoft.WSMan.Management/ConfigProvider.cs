@@ -2328,7 +2328,7 @@ namespace Microsoft.WSMan.Management
                 if (mshObject != null)
                 {
                     types.Append(mshObject.ImmediateBaseObject.GetType().FullName);
-                    types.Append("#");
+                    types.Append('#');
                     types.Append(ExtendedTypeName);
                     mshObject.TypeNames.Insert(0, types.ToString());
                 }
@@ -2426,16 +2426,16 @@ namespace Microsoft.WSMan.Management
                         sbvalues.Append(key);
                         if (value[key] == null)
                         {
-                            sbvalues.Append(" ");
+                            sbvalues.Append(' ');
                             sbvalues.Append(WSManStringLiterals.ATTR_NIL);
                             nilns = " " + WSManStringLiterals.NS_XSI;
                         }
 
-                        sbvalues.Append(">");
+                        sbvalues.Append('>');
                         sbvalues.Append(EscapeValuesForXML(((Hashtable)value)[key].ToString()));
                         sbvalues.Append("</p:");
                         sbvalues.Append(key);
-                        sbvalues.Append(">");
+                        sbvalues.Append('>');
                     }
                 }
             }
@@ -2942,17 +2942,17 @@ namespace Microsoft.WSMan.Management
             {
                 if (uri.Contains("Config/Listener"))
                 {
-                    sburi.Append("?");
+                    sburi.Append('?');
                     sburi.Append(GetFilterString(cmdlinevalues, PKeyListener));
                 }
                 else if (uri.Contains("Config/Service/certmapping"))
                 {
-                    sburi.Append("?");
+                    sburi.Append('?');
                     sburi.Append(GetFilterString(cmdlinevalues, PKeyCertMapping));
                 }
                 else if (uri.Contains("Config/Plugin"))
                 {
-                    sburi.Append("?");
+                    sburi.Append('?');
                     sburi.Append(GetFilterString(cmdlinevalues, PKeyPlugin));
                 }
             }
@@ -2968,9 +2968,9 @@ namespace Microsoft.WSMan.Management
                 if (cmdlinevalues.Contains(key))
                 {
                     filter.Append(key);
-                    filter.Append("=");
+                    filter.Append('=');
                     filter.Append(cmdlinevalues[key].ToString());
-                    filter.Append("+");
+                    filter.Append('+');
                 }
             }
 
@@ -3102,7 +3102,7 @@ namespace Microsoft.WSMan.Management
                     if (mshObject != null)
                     {
                         types.Append(mshObject.ImmediateBaseObject.GetType().FullName);
-                        types.Append("#");
+                        types.Append('#');
                         types.Append(ExtendedTypeName);
                         mshObject.TypeNames.Insert(0, types.ToString());
                     }
