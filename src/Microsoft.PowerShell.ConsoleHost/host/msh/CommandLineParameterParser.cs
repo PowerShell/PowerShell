@@ -1351,7 +1351,7 @@ namespace Microsoft.PowerShell
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
-        private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
+        private readonly Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string? _file;
         private string? _executionPolicy;
         private string? _settingsFile;
