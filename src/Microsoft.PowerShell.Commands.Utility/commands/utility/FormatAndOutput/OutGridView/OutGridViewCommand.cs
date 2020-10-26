@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal class ScalarTypeHeader : GridHeader
         {
-            private Type _originalScalarType;
+            private readonly Type _originalScalarType;
 
             internal ScalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal class NonscalarTypeHeader : GridHeader
         {
-            private AppliesTo _appliesTo = null;
+            private readonly AppliesTo _appliesTo = null;
 
             internal NonscalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
