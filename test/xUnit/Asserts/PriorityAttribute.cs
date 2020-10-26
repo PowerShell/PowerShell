@@ -3,13 +3,16 @@
 
 using System;
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class TestPriorityAttribute : Attribute
+namespace PSTests.Internal
 {
-    public TestPriorityAttribute(int priority)
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class PriorityAttribute : Attribute
     {
-        Priority = priority;
-    }
+        public PriorityAttribute(int priority)
+        {
+            Priority = priority;
+        }
 
-    public int Priority { get; }
+        public int Priority { get; }
+    }
 }
