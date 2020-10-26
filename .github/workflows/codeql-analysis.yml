@@ -12,6 +12,10 @@ on:
     # The branches below must be a subset of the branches above
     branches: [master]
 
+defaults:
+  run:
+    shell: pwsh
+
 jobs:
   analyze:
     name: Analyze
@@ -22,7 +26,7 @@ jobs:
       matrix:
         # Override automatic language detection by changing the below list
         # Supported options are ['csharp', 'cpp', 'go', 'java', 'javascript', 'python']
-        language: ['csharp', 'javascript']
+        language: ['csharp']
         # Learn more...
         # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
 
@@ -42,8 +46,23 @@ jobs:
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+    - run: |
+        Get-ChildItem -Path env:
+      name: Capture Environment
+
+    #- template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+    - run: |
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall -SkipUser
+      name: Bootstrap
+
+    - run: |
+        Import-Module .\tools\ci.psm1
+        Invoke-CIBuild
+      name: Build
+
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
