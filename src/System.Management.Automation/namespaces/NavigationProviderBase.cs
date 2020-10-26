@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
-using System.Text;
 
 namespace System.Management.Automation.Provider
 {

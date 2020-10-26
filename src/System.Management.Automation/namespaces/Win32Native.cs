@@ -16,16 +16,10 @@ namespace Microsoft.PowerShell.Commands.Internal
 {
     using System;
     using System.Security;
-    using System.Text;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Management.Automation;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.ConstrainedExecution;
-
-    using BOOL = System.Int32;
-    using DWORD = System.UInt32;
-    using ULONG = System.UInt32;
 
     /**
      * Win32 encapsulation for MSCORLIB.

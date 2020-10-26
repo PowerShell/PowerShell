@@ -12,6 +12,9 @@ jobs:
   pool:
     vmImage: ${{ parameters.imageName }}
   steps:
+    - checkout: self
+      clean: true
+
     - download: releasePipeline
       artifact: finalResults
       patterns: '**/*.nupkg'
