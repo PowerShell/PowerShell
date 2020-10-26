@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
                         var errors = new ConcurrentBag<string>();
                         this.Context.TypeTable.Update(type, errors, false);
                         // Write out errors...
-                        if (errors.Count > 0)
+                        if (!errors.IsEmpty)
                         {
                             foreach (string s in errors)
                             {
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
                     var errors = new ConcurrentBag<string>();
                     this.Context.TypeTable.Update(type, errors, false);
                     // Write out errors...
-                    if (errors.Count > 0)
+                    if (!errors.IsEmpty)
                     {
                         foreach (string s in errors)
                         {
@@ -862,7 +862,7 @@ namespace Microsoft.PowerShell.Commands
                     Context.InitialSessionState.Types.Add(sste);
 
                     // Write out any errors...
-                    if (errors.Count > 0)
+                    if (!errors.IsEmpty)
                     {
                         foreach (string s in errors)
                         {
@@ -1219,7 +1219,7 @@ namespace Microsoft.PowerShell.Commands
                     var errors = new ConcurrentBag<string>();
                     Context.TypeTable.Update(type, errors, true);
                     // Write out errors...
-                    if (errors.Count > 0)
+                    if (!errors.IsEmpty)
                     {
                         foreach (string s in errors)
                         {

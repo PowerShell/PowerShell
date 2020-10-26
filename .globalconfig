@@ -319,7 +319,7 @@ dotnet_diagnostic.CA1834.severity = suggestion
 dotnet_diagnostic.CA1835.severity = suggestion
 
 # CA1836: Prefer IsEmpty over Count
-dotnet_diagnostic.CA1836.severity = suggestion
+dotnet_diagnostic.CA1836.severity = warning
 
 # CA1837: Use 'Environment.ProcessId'
 dotnet_diagnostic.CA1837.severity = suggestion

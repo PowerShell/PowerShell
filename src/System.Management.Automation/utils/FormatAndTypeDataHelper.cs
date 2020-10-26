@@ -173,7 +173,7 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors,
             Category category)
         {
-            if (errors.Count == 0)
+            if (errors.IsEmpty)
             {
                 return;
             }
