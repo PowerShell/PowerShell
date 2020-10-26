@@ -187,7 +187,7 @@ namespace System.Management.Automation
                 // Note, all callers should have already verified the name before calling this
                 // API, so this exception should never be exposed to an end-user.
 
-                throw new ArgumentException("name");
+                throw new ArgumentException(null, nameof(name));
             }
 
             // Keep the fullName as it was passed, but truncate or pad

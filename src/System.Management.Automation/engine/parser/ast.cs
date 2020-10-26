@@ -5422,7 +5422,7 @@ namespace System.Management.Automation.Language
 
             if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
             {
-                throw new ArgumentException(nameof(chainOperator));
+                throw new ArgumentException(null, nameof(chainOperator));
             }
 
             LhsPipelineChain = lhsChain;
