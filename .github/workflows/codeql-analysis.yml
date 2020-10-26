@@ -16,10 +16,13 @@ defaults:
   run:
     shell: pwsh
 
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
 
     strategy:
       fail-fast: false
