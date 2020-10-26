@@ -91,7 +91,7 @@ dotnet_diagnostic.CA1046.severity = none
 dotnet_diagnostic.CA1047.severity = suggestion
 
 # CA1050: Declare types in namespaces
-dotnet_diagnostic.CA1050.severity = suggestion
+dotnet_diagnostic.CA1050.severity = warning
 
 # CA1051: Do not declare visible instance fields
 dotnet_diagnostic.CA1051.severity = silent
