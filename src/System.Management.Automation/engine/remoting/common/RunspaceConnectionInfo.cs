@@ -2493,48 +2493,58 @@ namespace System.Management.Automation.Runspaces
             SafePipeHandle stdErrPipeServer = null;
             try
             {
-                sshProcess = CreateProcessWithRedirectedStd(
-                    startInfo,
-                    out stdInPipeServer,
-                    out stdOutPipeServer,
-                    out stdErrPipeServer);
-            }
-            catch (InvalidOperationException e) { ex = e; }
-            catch (ArgumentException e) { ex = e; }
-            catch (FileNotFoundException e) { ex = e; }
-            catch (System.ComponentModel.Win32Exception e) { ex = e; }
+                try
+                {
+                    sshProcess = CreateProcessWithRedirectedStd(
+                        startInfo,
+                        out stdInPipeServer,
+                        out stdOutPipeServer,
+                        out stdErrPipeServer);
+                }
+                catch (InvalidOperationException e) { ex = e; }
+                catch (ArgumentException e) { ex = e; }
+                catch (FileNotFoundException e) { ex = e; }
+                catch (System.ComponentModel.Win32Exception e) { ex = e; }
 
-            if ((ex != null) ||
-                (sshProcess == null) ||
-                (sshProcess.HasExited))
+                if ((ex != null) ||
+                    (sshProcess == null) ||
+                    (sshProcess.HasExited))
+                {
+                    throw new InvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),
+                        ex);
+                }
+
+                // Create the std in writer/readers needed for communication with ssh.exe.
+                stdInWriterVar = null;
+                stdOutReaderVar = null;
+                stdErrReaderVar = null;
+                try
+                {
+                    stdInWriterVar = new StreamWriter(new NamedPipeServerStream(PipeDirection.Out, true, true, stdInPipeServer));
+                    stdOutReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdOutPipeServer));
+                    stdErrReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdErrPipeServer));
+                }
+                finally
+                {
+                    stdInWriterVar?.Dispose();
+                    stdOutReaderVar?.Dispose();
+                    stdErrReaderVar?.Dispose();
+                }
+
+                stdInPipeServer = null;
+                stdOutPipeServer = null;
+                stdErrPipeServer = null;
+
+                return sshProcess.Id;
+            }
+            finally
             {
-                throw new InvalidOperationException(
-                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),
-                    ex);
+                stdInPipeServer?.Dispose();
+                stdOutPipeServer?.Dispose();
+                stdErrPipeServer?.Dispose();
+                sshProcess?.Dispose();
             }
-
-            // Create the std in writer/readers needed for communication with ssh.exe.
-            stdInWriterVar = null;
-            stdOutReaderVar = null;
-            stdErrReaderVar = null;
-            try
-            {
-                stdInWriterVar = new StreamWriter(new NamedPipeServerStream(PipeDirection.Out, true, true, stdInPipeServer));
-                stdOutReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdOutPipeServer));
-                stdErrReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdErrPipeServer));
-            }
-            catch (Exception)
-            {
-                if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
-
-                if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
-
-                if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
-
-                throw;
-            }
-
-            return sshProcess.Id;
         }
 
         // Process creation flags
@@ -2577,102 +2587,86 @@ namespace System.Management.Automation.Runspaces
                 var stdErrPipeName = @"\\.\pipe\StdErr" + randomName;
                 stdErrPipeServer = CreateNamedPipe(stdErrPipeName, securityDesc);
                 stdErrPipeClient = GetNamedPipeHandle(stdErrPipeName);
-            }
-            catch (Exception)
-            {
-                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
 
-                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+                // Create process
+                PlatformInvokes.STARTUPINFO lpStartupInfo = new PlatformInvokes.STARTUPINFO();
+                PlatformInvokes.PROCESS_INFORMATION lpProcessInformation = new PlatformInvokes.PROCESS_INFORMATION();
+                int creationFlags = 0;
 
-                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
-
-                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
-
-                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
-
-                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
-
-                throw;
-            }
-
-            // Create process
-            PlatformInvokes.STARTUPINFO lpStartupInfo = new PlatformInvokes.STARTUPINFO();
-            PlatformInvokes.PROCESS_INFORMATION lpProcessInformation = new PlatformInvokes.PROCESS_INFORMATION();
-            int creationFlags = 0;
-
-            try
-            {
-                // Create process start command line with filename and argument list.
-                var cmdLine = string.Format(
-                    CultureInfo.InvariantCulture,
-                    @"""{0}"" {1}",
-                    startInfo.FileName,
-                    string.Join(' ', startInfo.ArgumentList));
-
-                lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
-                lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
-                lpStartupInfo.hStdError = new SafeFileHandle(stdErrPipeClient.DangerousGetHandle(), false);
-                lpStartupInfo.dwFlags = 0x100;
-
-                // No new window: Inherit the parent process's console window
-                creationFlags = 0x00000000;
-
-                // Create the new process in its own group, so that Ctrl+C is not sent to ssh.exe.  We want to handle this
-                // control signal internally so that it can be passed via PSRP to the remote session.
-                creationFlags |= CREATE_NEW_PROCESS_GROUP;
-
-                // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
-                creationFlags |= CREATE_SUSPENDED;
-
-                PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
-                PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
-                bool success = PlatformInvokes.CreateProcess(
-                    null,
-                    cmdLine,
-                    lpProcessAttributes,
-                    lpThreadAttributes,
-                    true,
-                    creationFlags,
-                    IntPtr.Zero,
-                    startInfo.WorkingDirectory,
-                    lpStartupInfo,
-                    lpProcessInformation);
-
-                if (!success)
+                try
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                    // Create process start command line with filename and argument list.
+                    var cmdLine = string.Format(
+                        CultureInfo.InvariantCulture,
+                        @"""{0}"" {1}",
+                        startInfo.FileName,
+                        string.Join(' ', startInfo.ArgumentList));
+
+                    lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
+                    lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
+                    lpStartupInfo.hStdError = new SafeFileHandle(stdErrPipeClient.DangerousGetHandle(), false);
+                    lpStartupInfo.dwFlags = 0x100;
+
+                    // No new window: Inherit the parent process's console window
+                    creationFlags = 0x00000000;
+
+                    // Create the new process in its own group, so that Ctrl+C is not sent to ssh.exe.  We want to handle this
+                    // control signal internally so that it can be passed via PSRP to the remote session.
+                    creationFlags |= CREATE_NEW_PROCESS_GROUP;
+
+                    // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
+                    creationFlags |= CREATE_SUSPENDED;
+
+                    PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                    PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                    bool success = PlatformInvokes.CreateProcess(
+                        null,
+                        cmdLine,
+                        lpProcessAttributes,
+                        lpThreadAttributes,
+                        true,
+                        creationFlags,
+                        IntPtr.Zero,
+                        startInfo.WorkingDirectory,
+                        lpStartupInfo,
+                        lpProcessInformation);
+
+                    if (!success)
+                    {
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
+
+                    // At this point, we should have a suspended process.  Get the .Net Process object, resume the process, and return.
+                    Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
+                    uint returnValue = PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
+
+                    if (returnValue == PlatformInvokes.RESUME_THREAD_FAILED)
+                    {
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
+
+                    stdInPipeServer = null;
+                    stdOutPipeServer = null;
+                    stdErrPipeServer = null;
+                    stdInPipeClient = null;
+                    stdOutPipeClient = null;
+                    stdErrPipeClient = null;
+
+                    return result;
                 }
-
-                // At this point, we should have a suspended process.  Get the .Net Process object, resume the process, and return.
-                Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
-                uint returnValue = PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
-
-                if (returnValue == PlatformInvokes.RESUME_THREAD_FAILED)
+                finally
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                    lpProcessInformation.Dispose();
                 }
-
-                return result;
-            }
-            catch (Exception)
-            {
-                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
-
-                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
-
-                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
-
-                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
-
-                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
-
-                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
-
-                throw;
             }
             finally
             {
-                lpProcessInformation.Dispose();
+                stdInPipeServer?.Dispose();
+                stdOutPipeServer?.Dispose();
+                stdErrPipeServer?.Dispose();
+                stdInPipeClient?.Dispose();
+                stdOutPipeClient?.Dispose();
+                stdErrPipeClient?.Dispose();
             }
         }
 
