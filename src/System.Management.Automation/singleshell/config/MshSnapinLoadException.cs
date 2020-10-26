@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool _warning = false;
+        private readonly bool _warning = false;
 
         private ErrorRecord _errorRecord;
         private bool _isErrorRecordOriginallyNull;
@@ -146,8 +146,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private string _PSSnapin = string.Empty;
-        private string _reason = string.Empty;
+        private readonly string _PSSnapin = string.Empty;
+        private readonly string _reason = string.Empty;
 
         /// <summary>
         /// Gets message for this exception.

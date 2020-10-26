@@ -857,7 +857,7 @@ dotnet_diagnostic.IDE0042.severity = silent
 dotnet_diagnostic.IDE0043.severity = silent
 
 # IDE0044: MakeFieldReadonly
-dotnet_diagnostic.IDE0044.severity = silent
+dotnet_diagnostic.IDE0044.severity = warning
 
 # IDE0045: UseConditionalExpressionForAssignment
 dotnet_diagnostic.IDE0045.severity = silent

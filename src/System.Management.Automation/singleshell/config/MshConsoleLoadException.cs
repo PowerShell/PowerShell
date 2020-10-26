@@ -86,7 +86,7 @@ namespace System.Management.Automation.Runspaces
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "ConsoleLoadFailure", ErrorCategory.ResourceUnavailable, null);
         }
 
-        private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
+        private readonly Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
 
         internal Collection<PSSnapInException> PSSnapInExceptions
         {
