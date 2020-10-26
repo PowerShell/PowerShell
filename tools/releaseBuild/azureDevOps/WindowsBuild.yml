@@ -32,7 +32,6 @@ jobs:
 
   - checkout: self
     clean: true
-    persistCredentials: true
 
   - task: PkgESSetupBuild@10
     displayName: 'Initialize build'
