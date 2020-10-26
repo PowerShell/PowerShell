@@ -49,7 +49,6 @@ jobs:
       name: Capture Environment
 
     - run: |
-        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
         Import-Module .\tools\ci.psm1
         Invoke-CIInstall -SkipUser
       name: Bootstrap
