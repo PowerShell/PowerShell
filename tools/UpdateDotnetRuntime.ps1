@@ -19,7 +19,10 @@ param (
     [string]$RuntimeSourceFeedKey,
 
     [Parameter()]
-    [switch]$InteractiveAuth
+    [switch]$InteractiveAuth,
+
+    [Parameter()]
+    [switch]$UseRTMFeed
 )
 
 <#
@@ -201,7 +204,13 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Find-Dotnet
 
-    $addDotnet5Source = (-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
+    $feedname = if ($UseRTMFeed) {
+        'dotnet5-rtm'
+    } else {
+        'dotnet5'
+    }
+
+    $addDotnet5Source = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
     $addDotnet5InternalSource = (-not (Get-PackageSource -Name 'dotnet5-internal' -ErrorAction SilentlyContinue))
 
     if (!$UseNuGetOrg -and ($addDotnet5Source -or $addDotnet5InternalSource)) {
