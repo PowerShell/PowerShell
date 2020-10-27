@@ -1406,7 +1406,7 @@ namespace System.Management.Automation
                     return sr.CurrentEncoding;
                 }
             }
-            catch (System.Exception)
+            catch (IOException)
             {
                 return ClrFacade.GetDefaultEncoding();
             }
