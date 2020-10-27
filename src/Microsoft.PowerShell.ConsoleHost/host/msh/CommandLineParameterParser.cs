@@ -1007,6 +1007,10 @@ namespace Microsoft.PowerShell
             DisplayBanner(hostUI, bannerText);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")] 
         private void SetCommandLineError(string msg, bool showHelp = false, bool showBanner = false)
         {
             if (_error != null)

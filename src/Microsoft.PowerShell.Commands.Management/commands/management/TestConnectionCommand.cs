@@ -478,6 +478,10 @@ namespace Microsoft.PowerShell.Commands
         #endregion TracerouteTest
 
         #region MTUSizeTest
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]
         private void ProcessMTUSize(string targetNameOrAddress)
         {
             PingReply? reply, replyResult = null;

@@ -349,6 +349,10 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
         /// <summary>
         /// Resolve the target file path.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]        
         private static string ResolveTargetFilePath(string path)
         {
             if (string.IsNullOrWhiteSpace(path))

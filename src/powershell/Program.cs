@@ -80,6 +80,10 @@ namespace Microsoft.PowerShell
         /// In the event of success, we use an exec() call, so this method never returns.
         /// </summary>
         /// <param name="args">The startup arguments to pwsh.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]
         private static void AttemptExecPwshLogin(string[] args)
         {
             // If the login environment variable is set, we have already done the login logic and have been exec'd

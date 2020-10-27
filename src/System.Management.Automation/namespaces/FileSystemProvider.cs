@@ -6557,6 +6557,10 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]        
         public IContentReader GetContentReader(string path)
         {
             if (string.IsNullOrEmpty(path))

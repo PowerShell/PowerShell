@@ -331,6 +331,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return fid;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]
         internal void VerifyDataNotNull(object obj, string name)
         {
             if (obj != null)

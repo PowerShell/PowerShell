@@ -119,6 +119,10 @@ namespace System.Management.Automation.InteropServices
             return false;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")] 
         public unsafe void CopyFromIndirect(object value)
         {
             VarEnum vt = (VarEnum)(((int)this.VariantType) & ~((int)VarEnum.VT_BYREF));

@@ -185,6 +185,10 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Usage",
+            "CA2208:Instantiate argument exceptions correctly",
+            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")] 
         private List<string> ResolvePath(string path, bool isLiteral)
         {
             ProviderInfo provider = null;
