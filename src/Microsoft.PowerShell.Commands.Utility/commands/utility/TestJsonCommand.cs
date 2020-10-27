@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (e is TargetInvocationException && e.InnerException != null)
             {
-                ExceptionDispatchInfo.Capture(e.InnerException).Throw();
+                ExceptionDispatchInfo.Throw(e.InnerException);
             }
             else
             {
