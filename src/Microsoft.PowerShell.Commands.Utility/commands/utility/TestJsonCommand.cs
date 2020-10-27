@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Return value is unreachable since we always rethrow.</returns>
         private static bool UnwrapException(Exception e)
         {
-            if (e is TargetInvocationException)
+            if (e.InnerException != null && e is TargetInvocationException)
             {
                 ExceptionDispatchInfo.Capture(e.InnerException).Throw();
             }
