@@ -1399,66 +1399,17 @@ namespace System.Management.Automation
                 return ClrFacade.GetDefaultEncoding();
             }
 
-            byte[] initialBytes = new byte[100];
-            int bytesRead = 0;
-
             try
             {
-                using (FileStream stream = System.IO.File.OpenRead(path))
+                using (StreamReader sr = new StreamReader(path, true))
                 {
-                    using (BinaryReader reader = new BinaryReader(stream))
-                    {
-                        bytesRead = reader.Read(initialBytes, 0, 100);
-                    }
+                    return sr.CurrentEncoding;
                 }
             }
-            catch (IOException)
+            catch (System.Exception)
             {
                 return ClrFacade.GetDefaultEncoding();
             }
-
-            // Test for four-byte preambles
-            string preamble = null;
-            Encoding foundEncoding = ClrFacade.GetDefaultEncoding();
-
-            if (bytesRead > 3)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
-
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Test for three-byte preambles
-            if (bytesRead > 2)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Test for two-byte preambles
-            if (bytesRead > 1)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1]);
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Check for binary
-            string initialBytesAsAscii = System.Text.Encoding.ASCII.GetString(initialBytes, 0, bytesRead);
-            if (initialBytesAsAscii.IndexOfAny(nonPrintableCharacters) >= 0)
-            {
-                return Encoding.Unicode;
-            }
-
-            return utf8NoBom;
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
