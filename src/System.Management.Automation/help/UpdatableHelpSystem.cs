@@ -626,36 +626,49 @@ namespace System.Management.Automation.Help
         private static XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
             bool helpInfo)
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
-
-            settings.Schemas.Add(ns, new XmlTextReader(new StringReader(schema)));
-            settings.ValidationType = ValidationType.Schema;
-
-            XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
-            XmlDocument document = new XmlDocument();
-
+            XmlReader reader = null;
+            XmlTextReader textReader = null;
             try
             {
-                document.Load(reader);
-                document.Validate(handler);
-            }
-            catch (XmlSchemaValidationException e)
-            {
-                if (helpInfo)
-                {
-                    throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
-                        StringUtil.Format(HelpDisplayStrings.HelpInfoXmlValidationFailure, e.Message),
-                        ErrorCategory.InvalidData, null, e);
-                }
-                else
-                {
-                    throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
-                        StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, e.Message),
-                        ErrorCategory.InvalidData, null, e);
-                }
-            }
+                textReader = new XmlTextReader(new StringReader(schema));
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.Schemas.Add(ns, textReader);
+                settings.ValidationType = ValidationType.Schema;
 
-            return document;
+                reader = XmlReader.Create(new StringReader(xml), settings);
+                XmlDocument document = new XmlDocument();
+
+                try
+                {
+                    document.Load(reader);
+                    document.Validate(handler);
+                }
+                catch (XmlSchemaValidationException e)
+                {
+                    if (helpInfo)
+                    {
+                        throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
+                            StringUtil.Format(HelpDisplayStrings.HelpInfoXmlValidationFailure, e.Message),
+                            ErrorCategory.InvalidData, null, e);
+                    }
+                    else
+                    {
+                        throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
+                            StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, e.Message),
+                            ErrorCategory.InvalidData, null, e);
+                    }
+                }
+
+                reader = null;
+                textReader = null;
+
+                return document;
+            }
+            finally
+            {
+                reader?.Dispose();
+                textReader?.Dispose();
+            }
         }
 
         /// <summary>
@@ -1260,96 +1273,106 @@ namespace System.Management.Automation.Help
                     {
                         string xml = LoadStringFromPath(_cmdlet, file, null);
 
-                        XmlReader documentReader = XmlReader.Create(new StringReader(xml));
-                        XmlDocument contentDocument = new XmlDocument();
-
-                        contentDocument.Load(documentReader);
-
-                        if (contentDocument.ChildNodes.Count != 1 && contentDocument.ChildNodes.Count != 2)
+                        XmlReader documentReader = null;
+                        try
                         {
-                            throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
-                                StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, HelpDisplayStrings.RootElementMustBeHelpItems),
-                                ErrorCategory.InvalidData, null, null);
-                        }
+                            documentReader = XmlReader.Create(new StringReader(xml));
+                            XmlDocument contentDocument = new XmlDocument();
 
-                        XmlNode helpItemsNode = null;
+                            contentDocument.Load(documentReader);
 
-                        if (contentDocument.DocumentElement != null &&
-                            contentDocument.DocumentElement.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
-                        {
-                            helpItemsNode = contentDocument;
-                        }
-                        else
-                        {
-                            if (contentDocument.ChildNodes.Count == 1)
+                            if (contentDocument.ChildNodes.Count != 1 && contentDocument.ChildNodes.Count != 2)
                             {
-                                if (!contentDocument.ChildNodes[0].LocalName.Equals("helpItems", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
-                                        StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, HelpDisplayStrings.RootElementMustBeHelpItems),
-                                        ErrorCategory.InvalidData, null, null);
-                                }
-                                else
-                                {
-                                    helpItemsNode = contentDocument.ChildNodes[0];
-                                }
+                                throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
+                                    StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, HelpDisplayStrings.RootElementMustBeHelpItems),
+                                    ErrorCategory.InvalidData, null, null);
                             }
-                            else if (contentDocument.ChildNodes.Count == 2)
+
+                            XmlNode helpItemsNode = null;
+
+                            if (contentDocument.DocumentElement != null &&
+                                contentDocument.DocumentElement.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
                             {
-                                if (!contentDocument.ChildNodes[1].LocalName.Equals("helpItems", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
-                                        StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, HelpDisplayStrings.RootElementMustBeHelpItems),
-                                        ErrorCategory.InvalidData, null, null);
-                                }
-                                else
-                                {
-                                    helpItemsNode = contentDocument.ChildNodes[1];
-                                }
+                                helpItemsNode = contentDocument;
                             }
-                        }
-
-                        Debug.Assert(helpItemsNode != null, "helpItemsNode must not be null");
-
-                        foreach (XmlNode node in helpItemsNode.ChildNodes)
-                        {
-                            if (node.NodeType == XmlNodeType.Element)
+                            else
                             {
-                                if (!node.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
+                                if (contentDocument.ChildNodes.Count == 1)
                                 {
-                                    if (node.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
+                                    if (!contentDocument.ChildNodes[0].LocalName.Equals("helpItems", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        if (!node.NamespaceURI.Equals(MamlXmlNamespace, StringComparison.OrdinalIgnoreCase))
+                                        throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
+                                            StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, HelpDisplayStrings.RootElementMustBeHelpItems),
+                                            ErrorCategory.InvalidData, null, null);
+                                    }
+                                    else
+                                    {
+                                        helpItemsNode = contentDocument.ChildNodes[0];
+                                    }
+                                }
+                                else if (contentDocument.ChildNodes.Count == 2)
+                                {
+                                    if (!contentDocument.ChildNodes[1].LocalName.Equals("helpItems", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
+                                            StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, HelpDisplayStrings.RootElementMustBeHelpItems),
+                                            ErrorCategory.InvalidData, null, null);
+                                    }
+                                    else
+                                    {
+                                        helpItemsNode = contentDocument.ChildNodes[1];
+                                    }
+                                }
+                            }
+
+                            Debug.Assert(helpItemsNode != null, "helpItemsNode must not be null");
+
+                            foreach (XmlNode node in helpItemsNode.ChildNodes)
+                            {
+                                if (node.NodeType == XmlNodeType.Element)
+                                {
+                                    if (!node.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (node.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            if (!node.NamespaceURI.Equals(MamlXmlNamespace, StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
+                                                    StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
+                                                    StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
+                                            }
+                                            else
+                                            {
+                                                continue;
+                                            }
+                                        }
+
+                                        if (!node.NamespaceURI.Equals(CommandXmlNamespace, StringComparison.OrdinalIgnoreCase) &&
+                                            !node.NamespaceURI.Equals(DscResourceXmlNamespace, StringComparison.OrdinalIgnoreCase))
                                         {
                                             throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
                                                 StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
                                                 StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
                                         }
-                                        else
-                                        {
-                                            continue;
-                                        }
                                     }
 
-                                    if (!node.NamespaceURI.Equals(CommandXmlNamespace, StringComparison.OrdinalIgnoreCase) &&
-                                        !node.NamespaceURI.Equals(DscResourceXmlNamespace, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
-                                            StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
-                                            StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
-                                    }
+                                    CreateValidXmlDocument(node.OuterXml, MamlXmlNamespace, xsd,
+                                        new ValidationEventHandler(HelpContentValidationHandler),
+                                        false);
                                 }
-
-                                CreateValidXmlDocument(node.OuterXml, MamlXmlNamespace, xsd,
-                                    new ValidationEventHandler(HelpContentValidationHandler),
-                                    false);
                             }
+
+                            documentReader = null;
+                        }
+                        finally
+                        {
+                            documentReader?.Dispose();
                         }
                     }
                 }
                 else if (string.Equals(Path.GetExtension(file), ".txt", StringComparison.OrdinalIgnoreCase))
                 {
-                    FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                    using FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
                     if (fileStream.Length > 2)
                     {
@@ -1447,7 +1470,7 @@ namespace System.Management.Automation.Help
             {
                 using (FileStream currentHelpInfoFile = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    StreamReader reader = new StreamReader(currentHelpInfoFile);
+                    using StreamReader reader = new StreamReader(currentHelpInfoFile);
 
                     return reader.ReadToEnd();
                 }
