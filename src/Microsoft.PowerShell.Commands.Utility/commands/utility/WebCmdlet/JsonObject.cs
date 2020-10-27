@@ -78,9 +78,9 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
-            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
             /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
             /// <param name="targetCmdlet">Specifies the cmdlet that is calling this method.</param>
+            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
             public ConvertToJsonContext(
                 int maxDepth,
                 bool enumsAsStrings,
