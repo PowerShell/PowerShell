@@ -1068,22 +1068,7 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// The path that this transcript is being logged to.
         /// </summary>
-        internal string Path
-        {
-            get
-            {
-                return _path;
-            }
-
-            set
-            {
-                _path = value;
-                // Get the encoding from the file, or default (UTF8-NoBom)
-                Encoding = Utils.GetEncoding(value);
-            }
-        }
-
-        private string _path;
+        internal string Path { get; set; }
 
         /// <summary>
         /// Any output to log for this transcript.
@@ -1100,12 +1085,6 @@ namespace System.Management.Automation.Host
         /// transcript output.
         /// </summary>
         internal bool IncludeInvocationHeader { get; set; }
-
-        /// <summary>
-        /// The encoding of this transcript, so that appending to it
-        /// can be done correctly.
-        /// </summary>
-        internal Encoding Encoding { get; private set; }
 
         /// <summary>
         /// Logs buffered content to disk. We use this instead of File.AppendAllLines
