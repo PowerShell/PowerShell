@@ -1101,7 +1101,7 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
-                            Encoding currentEncoding = Utils.utf8NoBom;
+                            Encoding currentEncoding;
 
                             using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
                             {
