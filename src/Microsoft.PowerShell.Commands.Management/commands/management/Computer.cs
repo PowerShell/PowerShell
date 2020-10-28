@@ -1810,7 +1810,7 @@ $result
                 }
                 else
                 {
-                    localUserName = computerName.Substring(0, dotIndex) + "\\" + psLocalCredential.UserName;
+                    localUserName = string.Concat(computerName.AsSpan().Slice(0, dotIndex), "\\", psLocalCredential.UserName);
                 }
             }
 

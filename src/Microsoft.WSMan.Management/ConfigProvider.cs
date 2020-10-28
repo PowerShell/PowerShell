@@ -3647,13 +3647,13 @@ namespace Microsoft.WSMan.Management
                 else
                 {
                     if (ChildName.StartsWith(WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerListener + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerListener, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerSingleResource, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerSingleResource + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerSingleResource, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerSecurity + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerSecurity, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerClientCertificate, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerClientCertificate + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerClientCertificate, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                 }
             }
 
