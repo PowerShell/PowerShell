@@ -991,7 +991,7 @@ dotnet_diagnostic.IDE1003.severity = silent
 dotnet_diagnostic.IDE1004.severity = silent
 
 # InvokeDelegateWithConditionalAccess
-dotnet_diagnostic.IDE1005.severity = silent
+dotnet_diagnostic.IDE1005.severity = warning
 
 # NamingRule
 dotnet_diagnostic.IDE1006.severity = silent

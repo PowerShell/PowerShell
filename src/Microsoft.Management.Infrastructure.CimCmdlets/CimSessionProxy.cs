@@ -779,11 +779,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             OperationEventArgs args = new OperationEventArgs(
                 cancelOperation, operation, false);
-            OperationEventHandler temp = this.OnOperationCreated;
-            if (temp != null)
-            {
-                temp(this.session, args);
-            }
+            this.OnOperationCreated?.Invoke(this.session, args);
 
             this.PostOperationCreateEvent(args);
         }
@@ -803,11 +799,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             OperationEventArgs args = new OperationEventArgs(
                 null, operation, success);
             PreOperationDeleteEvent(args);
-            OperationEventHandler temp = this.OnOperationDeleted;
-            if (temp != null)
-            {
-                temp(this.session, args);
-            }
+            this.OnOperationDeleted?.Invoke(this.session, args);
 
             this.PostOperationDeleteEvent(args);
             this.RemoveOperation(operation);
