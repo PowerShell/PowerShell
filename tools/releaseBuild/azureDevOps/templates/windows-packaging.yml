@@ -140,7 +140,7 @@ jobs:
       $dlls = Get-ChildItem $BuildPath\*.dll -Recurse
       $signatures = $dlls | Get-AuthenticodeSignature
       $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned'}| select-object -ExpandProperty Path
-      tools/releaseBuild/generatePackgeSigning.ps1 -ThirdPartyFiles $missingSignatures -path "$(System.ArtifactsDirectory)\thirtdparty.xml"
+      & "$env:REPOROOT/tools/releaseBuild/generatePackgeSigning.ps1 -ThirdPartyFiles $missingSignatures -path "$(System.ArtifactsDirectory)\thirtdparty.xml"
     displayName: Create ThirdParty Signing Xml
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 

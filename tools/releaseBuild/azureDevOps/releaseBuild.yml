@@ -10,6 +10,13 @@ pr:
     - master
     - release*
 
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
