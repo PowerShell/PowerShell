@@ -2265,11 +2265,8 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
             exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
-            if (generateRedirectExprs != null)
-            {
-                // Add merge redirection expressions if delegate is provided.
-                generateRedirectExprs(exprs, finallyExprs);
-            }
+            // Add merge redirection expressions if delegate is provided.
+            generateRedirectExprs?.Invoke(exprs, finallyExprs);
 
             exprs.Add(Compile(ast));
 

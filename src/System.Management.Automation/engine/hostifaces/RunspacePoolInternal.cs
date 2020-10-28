@@ -1640,12 +1640,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         protected virtual void OnForwardEvent(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = this.ForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            this.ForwardEvent?.Invoke(this, e);
         }
 
         /// <summary>

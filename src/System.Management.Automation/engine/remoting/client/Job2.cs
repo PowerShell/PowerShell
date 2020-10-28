@@ -342,10 +342,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                if (handler != null)
-                {
-                    handler(this, eventArgs);
-                }
+                handler?.Invoke(this, eventArgs);
             }
             catch (Exception exception)
             {
