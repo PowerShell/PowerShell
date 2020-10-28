@@ -668,7 +668,7 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        private struct KeyInfo
+        private readonly struct KeyInfo
         {
             internal readonly TValue Value;
             internal readonly LinkedListNode<TKey> List;

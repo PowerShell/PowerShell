@@ -904,7 +904,7 @@ namespace System.Management.Automation
     }
 
     [DebuggerDisplay("{PSTypeName} {Name}")]
-    internal struct PSMemberNameAndType
+    internal readonly struct PSMemberNameAndType
     {
         public readonly string Name;
 

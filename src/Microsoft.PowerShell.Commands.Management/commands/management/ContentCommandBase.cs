@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         /// A struct to hold the path information and the content readers/writers
         /// for an item.
         /// </summary>
-        internal struct ContentHolder
+        internal readonly struct ContentHolder
         {
             internal ContentHolder(
                 PathInfo pathInfo,

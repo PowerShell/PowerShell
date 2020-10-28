@@ -1955,7 +1955,7 @@ namespace System.Management.Automation.Security
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct CRYPTCATCDF
+        internal readonly struct CRYPTCATCDF
         {
             private readonly DWORD _cbStruct;
             private readonly IntPtr _hFile;

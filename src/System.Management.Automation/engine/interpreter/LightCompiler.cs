@@ -243,7 +243,7 @@ namespace System.Management.Automation.Interpreter
     // TODO:
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
     [Serializable]
-    internal struct InterpretedFrameInfo
+    internal readonly struct InterpretedFrameInfo
     {
         public readonly string MethodName;
 

@@ -68,7 +68,7 @@ namespace System.Management.Automation
     /// Type used to define a parameter on a cmdlet script of function that
     /// can only be used as a switch.
     /// </summary>
-    public struct SwitchParameter
+    public readonly struct SwitchParameter
     {
         private readonly bool _isPresent;
         /// <summary>

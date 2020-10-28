@@ -2748,11 +2748,11 @@ namespace System.Management.Automation
     {
     }
 
-    internal struct PSPointer<T>
+    internal readonly struct PSPointer<T>
     {
     }
 
-    internal struct PSTypedReference
+    internal readonly struct PSTypedReference
     {
     }
 

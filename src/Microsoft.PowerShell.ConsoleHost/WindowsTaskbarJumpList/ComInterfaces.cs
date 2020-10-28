@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell
         /// string fields at all, nothing is lost.
         /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct StartUpInfo
+        internal readonly struct StartUpInfo
         {
             public readonly UInt32 cb;
             private readonly IntPtr lpReserved;

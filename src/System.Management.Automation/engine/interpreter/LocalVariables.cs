@@ -78,7 +78,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal struct LocalDefinition
+    internal readonly struct LocalDefinition
     {
         private readonly int _index;
         private readonly ParameterExpression _parameter;
