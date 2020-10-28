@@ -16,6 +16,7 @@ resources:
     type: github
     endpoint: ComplianceGHRepo
     name: PowerShell/compliance
+    ref: revertNugetChanges
 
 variables:
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
