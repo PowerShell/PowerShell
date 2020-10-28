@@ -1101,10 +1101,11 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
-                            Encoding currentEncoding = null;
+                            Encoding currentEncoding = Utils.utf8NoBom;
 
-                            using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, true))
+                            using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
                             {
+                                _ = reader.Read();
                                 currentEncoding = reader.CurrentEncoding;
                             }
 
@@ -1112,7 +1113,7 @@ namespace System.Management.Automation.Host
                             // later.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read),
-                                currentEncoding ?? Utils.utf8NoBom);
+                                currentEncoding);
                             _contentWriter.BaseStream.Seek(0, SeekOrigin.End);
                         }
                         catch (IOException)
