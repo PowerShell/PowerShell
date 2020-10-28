@@ -1391,47 +1391,11 @@ namespace System.Management.Automation
             return hresult >= 0;
         }
 
-        // Attempt to determine the existing encoding
-        internal static Encoding GetEncoding(string path)
-        {
-            if (!File.Exists(path))
-            {
-                return ClrFacade.GetDefaultEncoding();
-            }
-
-            try
-            {
-                using (StreamReader sr = new StreamReader(path, true))
-                {
-                    return sr.CurrentEncoding;
-                }
-            }
-            catch (IOException)
-            {
-                return ClrFacade.GetDefaultEncoding();
-            }
-        }
-
         // BigEndianUTF32 encoding is possible, but requires creation
         internal static readonly Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static readonly Dictionary<string, Encoding> encodingMap =
-            new Dictionary<string, Encoding>()
-            {
-                { "255-254", Encoding.Unicode },
-                { "254-255", Encoding.BigEndianUnicode },
-                { "255-254-0-0", Encoding.UTF32 },
-                { "0-0-254-255", BigEndianUTF32Encoding },
-                { "239-187-191", Encoding.UTF8 },
-            };
-
-        internal static readonly char[] nonPrintableCharacters = {
-            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
-            (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
-            (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
-            (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
 
         internal static readonly UTF8Encoding utf8NoBom =
             new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);

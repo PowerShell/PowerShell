@@ -1099,14 +1099,20 @@ namespace System.Management.Automation.Host
                 {
                     if (_contentWriter == null)
                     {
-                        var encoding = Utils.GetEncoding(this.Path);
                         try
                         {
+                            Encoding currentEncoding = null;
+
+                            using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, true))
+                            {
+                                currentEncoding = reader.CurrentEncoding;
+                            }
+
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read),
-                                encoding);
+                                currentEncoding ?? Utils.utf8NoBom);
                             _contentWriter.BaseStream.Seek(0, SeekOrigin.End);
                         }
                         catch (IOException)
@@ -1115,7 +1121,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                encoding);
+                                Utils.utf8NoBom);
                         }
 
                         _contentWriter.AutoFlush = true;
