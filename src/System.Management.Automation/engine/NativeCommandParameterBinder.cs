@@ -528,7 +528,7 @@ namespace System.Management.Automation
             // The better solution might be using a different set of delims?
             if (sep == ":" && !ColonInitials.Contains(arg[0]))
             {
-                return (new string[] { arg }, "");
+                return (new[] { arg }, "");
             }
 
             return (pieces, sep);
