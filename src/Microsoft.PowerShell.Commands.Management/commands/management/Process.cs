@@ -1626,6 +1626,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// This option accepts an array of strings due to legacy concerns. Use
         /// ArgumentArray instead for properly-escaped arguments.
+        /// The use of multiple elements in the array is deprecated.
         /// </remarks>
         [Parameter(Position = 1)]
         [Alias("Args")]

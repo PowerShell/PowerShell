@@ -188,7 +188,8 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!ExperimentalFeature.IsEnabled("PSNativePSPathResolution") &&
+                // New behavior 1. Allow empty params.
+                if (!ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables") &&
                     !string.IsNullOrEmpty(arg))
                 {
                     continue;

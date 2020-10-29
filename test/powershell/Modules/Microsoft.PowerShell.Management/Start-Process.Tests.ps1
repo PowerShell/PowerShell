@@ -30,7 +30,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     # This has been fixed on Linux, but not on macOS
 
     It "Should process arguments without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process ping -Argv $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
@@ -38,7 +38,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should work correctly when used with full path name" {
-        $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
+        $process = Start-Process $pingCommand -Argv $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
@@ -46,7 +46,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should invoke correct path when used with FilePath argument" {
-        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process -FilePath $pingCommand -Argv $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
@@ -54,18 +54,18 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should invoke correct path when used with Path alias argument" {
-        $process = Start-Process -Path $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process -Path $pingCommand -Argv $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
         $process.Length | Should -Be 1
         $process.Id     | Should -BeGreaterThan 1
     }
 
     It "Should wait for command completion if used with Wait argument" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process ping -Argv $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
     }
 
     It "Should work correctly with WorkingDirectory argument" {
-        $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process ping -WorkingDirectory $pingDirectory -Argv $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
@@ -74,7 +74,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     It "Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" {
         Push-Location -LiteralPath $tempDirectory
-	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+	    $process = Start-Process ping -Argv $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should -Be "ping"
@@ -82,7 +82,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should handle stderr redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
+        $process = Start-Process ping -Argv $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
@@ -90,7 +90,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should handle stdout redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
+        $process = Start-Process ping -Argv $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
         $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
     }
@@ -132,12 +132,18 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     It "Should be able to use the -WhatIf switch without performing the actual action" {
         $pingOutput = Join-Path $TestDrive "pingOutput.txt"
-        { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop  @extraArgs} | Should -Not -Throw
+        { Start-Process -Wait $pingCommand -Argv $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop  @extraArgs} | Should -Not -Throw
         $pingOutput | Should -Not -Exist
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {
-        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
+        Start-Process $pingCommand -Argv $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
+    }
+
+    It 'Should run without errors when called with legacy -ArgumentList' {
+         $process = Start-Process $pingCommand -ArgumentList $pingParam
+         $process.Length      | Should -Be 1
+         $process.Id          | Should -BeGreaterThan 1
     }
 
     It 'Should run without errors when -ArgumentList is $null' {
@@ -194,13 +200,13 @@ Describe "Start-Process" -Tags "Feature" {
         $userName = $env:USERNAME
 
         try {
-            Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output "$($env:TestEnvVariable);$($env:USERNAME)"' -RedirectStandardOutput $outputFile -Wait
+            Start-Process $PWSH -Argv '-NoProfile','-Command Write-Output "$($env:TestEnvVariable);$($env:USERNAME)"' -RedirectStandardOutput $outputFile -Wait
             Get-Content -LiteralPath $outputFile | Should -BeExactly "1;$userName"
 
             # Check that:
             # 1. Environment variables is resetted (TestEnvVariable is removed)
             # 2. Environment variables comes from current user profile
-            Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output "$($env:TestEnvVariable);$($env:USERNAME)"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
+            Start-Process $PWSH -Argv '-NoProfile','-Command Write-Output "$($env:TestEnvVariable);$($env:USERNAME)"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
             Get-Content -LiteralPath $outputFile | Should -BeExactly ";$userName"
         } finally {
             $env:TestEnvVariable = $null
