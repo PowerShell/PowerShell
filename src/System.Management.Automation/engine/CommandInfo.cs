@@ -960,7 +960,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
+        private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
