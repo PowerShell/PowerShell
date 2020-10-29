@@ -59,20 +59,7 @@ jobs:
       itemPattern: '**/*$(PkgFilter).zip'
       downloadPath: '$(System.ArtifactsDirectory)\Symbols'
 
-  - powershell: |
-      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
-
-      if ((Test-Path "\PowerShell")) {
-        Remove-Item -Path "\PowerShell" -Force -Recurse -Verbose
-      }
-      else {
-        Write-Verbose -Verbose -Message "No cleanup required."
-      }
-
-      git clone --quiet $env:BUILD_REPOSITORY_LOCALPATH '\PowerShell'
-
-    displayName: Clone PowerShell Repo to /PowerShell
-    errorActionPreference: silentlycontinue
+  - template: cloneToOfficialPath.yml
 
   - powershell: |
       # cleanup previous install

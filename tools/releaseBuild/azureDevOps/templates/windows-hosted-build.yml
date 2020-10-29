@@ -33,11 +33,7 @@ jobs:
 
   - template: insert-nuget-config-azfeed.yml
 
-  - powershell: |
-      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
-      $null = New-Item -ItemType Directory -Path /Powershell -Force
-      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
-    displayName: Clone PowerShell Repo to /PowerShell
+  - template: cloneToOfficialPath.yml
 
   - powershell: |
 
