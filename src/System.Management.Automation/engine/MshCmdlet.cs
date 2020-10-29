@@ -70,7 +70,7 @@ namespace System.Management.Automation
     /// </summary>
     public struct SwitchParameter
     {
-        private bool _isPresent;
+        private readonly bool _isPresent;
         /// <summary>
         /// Returns true if the parameter was specified on the command line, false otherwise.
         /// </summary>

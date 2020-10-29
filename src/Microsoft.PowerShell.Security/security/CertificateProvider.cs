@@ -127,12 +127,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Punycode version of DNS name.
         /// </summary>
-        private string _punycodeName;
+        private readonly string _punycodeName;
 
         /// <summary>
         /// Unicode version of DNS name.
         /// </summary>
-        private string _unicodeName;
+        private readonly string _unicodeName;
 
         /// <summary>
         /// Ambiguous constructor of a DnsNameRepresentation.
@@ -3068,12 +3068,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Localized friendly name of EKU.
         /// </summary>
-        private string _friendlyName;
+        private readonly string _friendlyName;
 
         /// <summary>
         /// OID of EKU.
         /// </summary>
-        private string _oid;
+        private readonly string _oid;
 
         /// <summary>
         /// Constructor of an EnhancedKeyUsageRepresentation.

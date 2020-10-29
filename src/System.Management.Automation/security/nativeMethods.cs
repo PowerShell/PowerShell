@@ -1957,16 +1957,16 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATCDF
         {
-            private DWORD _cbStruct;
-            private IntPtr _hFile;
-            private DWORD _dwCurFilePos;
-            private DWORD _dwLastMemberOffset;
-            private BOOL _fEOF;
+            private readonly DWORD _cbStruct;
+            private readonly IntPtr _hFile;
+            private readonly DWORD _dwCurFilePos;
+            private readonly DWORD _dwLastMemberOffset;
+            private readonly BOOL _fEOF;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            private string _pwszResultDir;
+            private readonly string _pwszResultDir;
 
-            private IntPtr _hCATStore;
+            private readonly IntPtr _hCATStore;
         };
 
         [StructLayout(LayoutKind.Sequential)]
