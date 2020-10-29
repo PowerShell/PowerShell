@@ -238,7 +238,7 @@ All parameters are case-insensitive.</value>
     behave exactly as though you typed it at a typical PowerShell prompt,
     printing the contents of the script block back out to you.
 
-    A string passed to Command is still executed as PowerShell code, so the
+    A string passed to Command is still executed as PowerShell script, so the
     script block curly braces are often not required in the first place when
     running from cmd.exe. To execute an inline script block defined inside a
     string, the call operator "&amp;" can be used:
