@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         // We use a Dictionary to optimize the check whether the object
         // is already in the list.
         private List<Process> _matchingProcesses = new List<Process>();
-        private Dictionary<int, Process> _keys = new Dictionary<int, Process>();
+        private readonly Dictionary<int, Process> _keys = new Dictionary<int, Process>();
 
         /// <summary>
         /// Retrieve the list of all processes matching the Name, Id
@@ -956,7 +956,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
 
-        private List<Process> _processList = new List<Process>();
+        private readonly List<Process> _processList = new List<Process>();
 
         // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
@@ -2607,7 +2607,7 @@ namespace Microsoft.PowerShell.Commands
         /// JobObjectHandle is a reference to the job object used to track
         /// the child processes created by the main process hosted by the Start-Process cmdlet.
         /// </summary>
-        private Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
+        private readonly Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
 
         /// <summary>
         /// ProcessCollection constructor.
