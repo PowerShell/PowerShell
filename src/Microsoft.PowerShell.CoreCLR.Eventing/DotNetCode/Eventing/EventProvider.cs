@@ -488,7 +488,7 @@ namespace System.Diagnostics.Eventing
         /// </param>
         /// <param name="eventPayload">
         /// </param>
-        public bool WriteEvent(ref EventDescriptor eventDescriptor, params object[] eventPayload)
+        public bool WriteEvent(in EventDescriptor eventDescriptor, params object[] eventPayload)
         {
             return WriteTransferEvent(ref eventDescriptor, Guid.Empty, eventPayload);
         }
@@ -504,7 +504,7 @@ namespace System.Diagnostics.Eventing
         /// </param>
         [System.Security.SecurityCritical]
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        public bool WriteEvent(ref EventDescriptor eventDescriptor, string data)
+        public bool WriteEvent(in EventDescriptor eventDescriptor, string data)
         {
             uint status = 0;
 
@@ -565,7 +565,7 @@ namespace System.Diagnostics.Eventing
         /// pointer do the event data
         /// </param>
         [System.Security.SecurityCritical]
-        protected bool WriteEvent(ref EventDescriptor eventDescriptor, int dataCount, IntPtr data)
+        protected bool WriteEvent(in EventDescriptor eventDescriptor, int dataCount, IntPtr data)
         {
             uint status = 0;
 
@@ -602,7 +602,7 @@ namespace System.Diagnostics.Eventing
         /// <param name="eventPayload">
         /// </param>
         [System.Security.SecurityCritical]
-        public bool WriteTransferEvent(ref EventDescriptor eventDescriptor, Guid relatedActivityId, params object[] eventPayload)
+        public bool WriteTransferEvent(in EventDescriptor eventDescriptor, Guid relatedActivityId, params object[] eventPayload)
         {
             uint status = 0;
 
@@ -737,7 +737,7 @@ namespace System.Diagnostics.Eventing
         }
 
         [System.Security.SecurityCritical]
-        protected bool WriteTransferEvent(ref EventDescriptor eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
+        protected bool WriteTransferEvent(in EventDescriptor eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
         {
             uint status = 0;
 
