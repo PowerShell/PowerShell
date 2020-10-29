@@ -540,8 +540,8 @@ namespace System.Management.Automation
         private NativeCommand _nativeCommand;
         private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
         private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
-        private static const char[] OptionDeliminators = { ':', '=' };
-        private static const string ColonInitials = "-/";
+        private static readonly char[] OptionDeliminators = { ':', '=' };
+        private const string ColonInitials = "-/";
 
         #endregion private members
     }
