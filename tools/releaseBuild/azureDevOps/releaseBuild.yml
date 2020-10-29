@@ -18,8 +18,10 @@ resources:
     name: PowerShell/compliance
 
 variables:
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  POWERSHELL_TELEMETRY_OPTOUT: 1
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
 
 stages:
   - stage: prep
