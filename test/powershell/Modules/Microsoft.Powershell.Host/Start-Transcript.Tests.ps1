@@ -47,6 +47,17 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         }
         ## function ends here
 
+        $defaultEncoding = New-Object -TypeName System.Text.UTF8Encoding -ArgumentList $true
+        function GetFileEncoding {
+            param (
+                [string] $filePath
+            )
+
+            $reader = New-Object -TypeName System.IO.StreamReader -ArgumentList $filePath,$defaultEncoding,$true
+            $reader.Read() | Out-Null
+            return $reader.CurrentEncoding.BodyName
+        }
+
         $transcriptFilePath = Join-Path $TestDrive "transcriptdata.txt"
         Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
@@ -128,6 +139,35 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         # Nothing should have been returned by the FileSystemWatcher
         Receive-Job $job | Should -Be $null
+    }
+    It "Should keep the existing file's encoding if the 'Append' parameter is used"{
+        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
+        "Text" | Out-File -Encoding unicode $transcriptFilePath
+
+        Start-Transcript -Append -Path $transcriptFilePath
+        Get-Date | Out-Null
+        Stop-Transcript
+
+        GetFileEncoding $transcriptFilePath | Should -Be 'utf-16'
+    }
+    It "Should default to utf8 with 'Append' parameter and file doesn't exist"{
+        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
+
+        Start-Transcript -Append -Path $transcriptFilePath
+        Get-Date | Out-Null
+        Stop-Transcript
+
+        GetFileEncoding $transcriptFilePath | Should -Be 'utf-8'
+    }
+    It "Should create a new utf8 encoded file if no 'Append' parameter is set regardless of existing file's encoding"{
+        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
+        "Text" | Out-File -Encoding unicode $transcriptFilePath
+
+        Start-Transcript -Path $transcriptFilePath
+        Get-Date | Out-Null
+        Stop-Transcript
+
+        GetFileEncoding $transcriptFilePath | Should -Be 'utf-8'
     }
     It "Transcription should remain active if other runspace in the host get closed" {
         try {
