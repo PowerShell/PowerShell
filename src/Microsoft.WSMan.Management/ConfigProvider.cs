@@ -43,12 +43,12 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
-        private Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
+        private readonly Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
 
         /// <summary>
         /// Mapping of ResourceURI with the XML returned by the Get call.
         /// </summary>
-        private Dictionary<string, string> getMapping = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> getMapping = new Dictionary<string, string>();
 
         #region ICmdletProviderSupportsHelp Members
 

@@ -78,13 +78,13 @@ namespace Microsoft.WSMan.Management
         // string for operation
         internal string WSManOp = null;
 
-        private PSCmdlet cmdletname;
-        private NavigationCmdletProvider _provider;
+        private readonly PSCmdlet cmdletname;
+        private readonly NavigationCmdletProvider _provider;
 
         private FileStream _fs;
         private StreamReader _sr;
 
-        private static ResourceManager _resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
+        private static readonly ResourceManager _resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
 
         //
         //
@@ -1135,6 +1135,6 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// </summary>
-        private static Dictionary<string, string> ResourceValueCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> ResourceValueCache = new Dictionary<string, string>();
     }
 }
