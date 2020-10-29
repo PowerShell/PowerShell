@@ -1624,13 +1624,13 @@ namespace Microsoft.PowerShell.Commands
         /// Arguments for the process (non-escaped).
         /// </summary>
         /// <remarks>
-        /// This option accepts an array of strings due to legacy concerns. Use
-        /// ArgumentArray instead for properly-escaped arguments.
-        /// The use of multiple elements in the array is deprecated.
+        /// This option accepts an array of strings due to legacy concerns.
+        /// The use of multiple elements in the array is deprecated. Any
+        /// additional parameter is joined by space.
+        /// Use ArgumentArray instead for properly-escaped arguments.
         /// </remarks>
         [Parameter(Position = 1)]
-        [Alias("Args")]
-        [Alias("ArgumentList")]
+        [Alias("Args", "ArgumentList")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ArgumentString { get; set; }
 
