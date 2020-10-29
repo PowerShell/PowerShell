@@ -490,7 +490,7 @@ namespace System.Diagnostics.Eventing
         /// </param>
         public bool WriteEvent(in EventDescriptor eventDescriptor, params object[] eventPayload)
         {
-            return WriteTransferEvent(ref eventDescriptor, Guid.Empty, eventPayload);
+            return WriteTransferEvent(in eventDescriptor, Guid.Empty, eventPayload);
         }
 
         /// <summary>
@@ -534,7 +534,7 @@ namespace System.Diagnostics.Eventing
                         userData.DataPointer = (ulong)pdata;
 
                         status = UnsafeNativeMethods.EventWriteTransfer(_regHandle,
-                                                                        ref eventDescriptor,
+                                                                        in eventDescriptor,
                                                                         (activityId == Guid.Empty) ? null : &activityId,
                                                                         null,
                                                                         1,
@@ -575,7 +575,7 @@ namespace System.Diagnostics.Eventing
 
                 status = UnsafeNativeMethods.EventWriteTransfer(
                                     _regHandle,
-                                    ref eventDescriptor,
+                                    in eventDescriptor,
                                     (activityId == Guid.Empty) ? null : &activityId,
                                     null,
                                     (uint)dataCount,
@@ -719,7 +719,7 @@ namespace System.Diagnostics.Eventing
                     }
 
                     status = UnsafeNativeMethods.EventWriteTransfer(_regHandle,
-                                                                    ref eventDescriptor,
+                                                                    in eventDescriptor,
                                                                     (activityId == Guid.Empty) ? null : &activityId,
                                                                     (relatedActivityId == Guid.Empty) ? null : &relatedActivityId,
                                                                     (uint)argCount,
@@ -747,7 +747,7 @@ namespace System.Diagnostics.Eventing
             {
                 status = UnsafeNativeMethods.EventWriteTransfer(
                                                 _regHandle,
-                                                ref eventDescriptor,
+                                                in eventDescriptor,
                                                 (activityId == Guid.Empty) ? null : &activityId,
                                                 &relatedActivityId,
                                                 (uint)dataCount,
