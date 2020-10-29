@@ -3213,7 +3213,7 @@ namespace Microsoft.PowerShell.Commands
                     newManifestInfo.Prefix = resolvedCommandPrefix;
                 }
 
-                if (newManifestInfo.FileList == null || newManifestInfo.FileList.LongCount() == 0)
+                if (newManifestInfo.FileList == null || !newManifestInfo.FileList.Any())
                 {
                     if (fileList != null)
                     {
@@ -3224,7 +3224,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.ModuleList == null || newManifestInfo.ModuleList.LongCount() == 0)
+                if (newManifestInfo.ModuleList == null || !newManifestInfo.ModuleList.Any())
                 {
                     if (moduleList != null)
                     {
@@ -3235,7 +3235,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.CompatiblePSEditions == null || newManifestInfo.CompatiblePSEditions.LongCount() == 0)
+                if (newManifestInfo.CompatiblePSEditions == null || !newManifestInfo.CompatiblePSEditions.Any())
                 {
                     if (compatiblePSEditions != null)
                     {
@@ -3248,7 +3248,7 @@ namespace Microsoft.PowerShell.Commands
                     newManifestInfo.ProcessorArchitecture = requiredProcessorArchitecture;
                 }
 
-                if (newManifestInfo.RequiredAssemblies == null || newManifestInfo.RequiredAssemblies.LongCount() == 0)
+                if (newManifestInfo.RequiredAssemblies == null || !newManifestInfo.RequiredAssemblies.Any())
                 {
                     if (assemblyList != null)
                     {
@@ -3259,7 +3259,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.Scripts == null || newManifestInfo.Scripts.LongCount() == 0)
+                if (newManifestInfo.Scripts == null || !newManifestInfo.Scripts.Any())
                 {
                     if (scriptsToProcess != null)
                     {
