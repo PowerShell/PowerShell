@@ -340,13 +340,13 @@ dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2008.severity = none
 
 # CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-dotnet_diagnostic.CA2009.severity = suggestion
+dotnet_diagnostic.CA2009.severity = warning
 
 # CA2011: Avoid infinite recursion
-dotnet_diagnostic.CA2011.severity = suggestion
+dotnet_diagnostic.CA2011.severity = warning
 
 # CA2012: Use ValueTasks correctly
-dotnet_diagnostic.CA2012.severity = suggestion
+dotnet_diagnostic.CA2012.severity = warning
 
 # CA2013: Do not use ReferenceEquals with value types
 dotnet_diagnostic.CA2013.severity = warning
