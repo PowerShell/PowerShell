@@ -298,7 +298,7 @@ dotnet_diagnostic.CA1827.severity = suggestion
 dotnet_diagnostic.CA1828.severity = suggestion
 
 # CA1829: Use Length/Count property instead of Count() when available
-dotnet_diagnostic.CA1829.severity = suggestion
+dotnet_diagnostic.CA1829.severity = warning
 
 # CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
 dotnet_diagnostic.CA1830.severity = suggestion
