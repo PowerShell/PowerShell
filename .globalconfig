@@ -274,7 +274,7 @@ dotnet_diagnostic.CA1819.severity = none
 dotnet_diagnostic.CA1820.severity = none
 
 # CA1821: Remove empty Finalizers
-dotnet_diagnostic.CA1821.severity = suggestion
+dotnet_diagnostic.CA1821.severity = warning
 
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = suggestion
@@ -283,19 +283,19 @@ dotnet_diagnostic.CA1822.severity = suggestion
 dotnet_diagnostic.CA1823.severity = none
 
 # CA1824: Mark assemblies with NeutralResourcesLanguageAttribute
-dotnet_diagnostic.CA1824.severity = suggestion
+dotnet_diagnostic.CA1824.severity = warning
 
 # CA1825: Avoid zero-length array allocations
 dotnet_diagnostic.CA1825.severity = suggestion
 
 # CA1826: Do not use Enumerable methods on indexable collections
-dotnet_diagnostic.CA1826.severity = suggestion
+dotnet_diagnostic.CA1826.severity = warning
 
 # CA1827: Do not use Count() or LongCount() when Any() can be used
 dotnet_diagnostic.CA1827.severity = suggestion
 
 # CA1828: Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used
-dotnet_diagnostic.CA1828.severity = suggestion
+dotnet_diagnostic.CA1828.severity = warning
 
 # CA1829: Use Length/Count property instead of Count() when available
 dotnet_diagnostic.CA1829.severity = suggestion
@@ -307,10 +307,10 @@ dotnet_diagnostic.CA1830.severity = suggestion
 dotnet_diagnostic.CA1831.severity = warning
 
 # CA1832: Use AsSpan or AsMemory instead of Range-based indexers when appropriate
-dotnet_diagnostic.CA1832.severity = suggestion
+dotnet_diagnostic.CA1832.severity = warning
 
 # CA1833: Use AsSpan or AsMemory instead of Range-based indexers when appropriate
-dotnet_diagnostic.CA1833.severity = suggestion
+dotnet_diagnostic.CA1833.severity = warning
 
 # CA1834: Consider using 'StringBuilder.Append(char)' when applicable
 dotnet_diagnostic.CA1834.severity = suggestion
