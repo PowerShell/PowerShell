@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell
                     flags |= 0x00002000; // SLDF_RUNAS_USER
                     shellLinkDataList.SetFlags(flags);
                     var PKEY_TITLE = new PropertyKey(new Guid("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}"), 2);
-                    hResult = nativePropertyStore.SetValue(ref PKEY_TITLE, new PropVariant(title));
+                    hResult = nativePropertyStore.SetValue(in PKEY_TITLE, new PropVariant(title));
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();

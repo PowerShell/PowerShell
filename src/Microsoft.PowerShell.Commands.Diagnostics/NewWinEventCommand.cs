@@ -328,11 +328,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    provider.WriteEvent(ref ed, _payload);
+                    provider.WriteEvent(in ed, _payload);
                 }
                 else
                 {
-                    provider.WriteEvent(ref ed);
+                    provider.WriteEvent(in ed);
                 }
             }
 

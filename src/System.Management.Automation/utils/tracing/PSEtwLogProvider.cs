@@ -284,7 +284,7 @@ namespace System.Management.Automation.Tracing
             EventDescriptor desc = new EventDescriptor((int)id, (byte)PSEventVersion.One, (byte)channel,
                 (byte)level, (byte)opcode, (int)task, longKeyword);
 
-            etwProvider.WriteEvent(ref desc, args);
+            etwProvider.WriteEvent(in desc, args);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         internal void WriteTransferEvent(Guid parentActivityId)
         {
-            etwProvider.WriteTransferEvent(ref _xferEventDescriptor, parentActivityId, EtwActivity.GetActivityId(), parentActivityId);
+            etwProvider.WriteTransferEvent(in _xferEventDescriptor, parentActivityId, EtwActivity.GetActivityId(), parentActivityId);
         }
 
         /// <summary>
