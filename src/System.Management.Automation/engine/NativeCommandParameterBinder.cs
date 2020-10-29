@@ -520,7 +520,7 @@ namespace System.Management.Automation
             // Contains separator?
             if (pieces.Length > 1)
             {
-                sep = arg[pieces[0].Length];
+                sep = arg[pieces[0].Length].ToString();
             }
 
             // Special case: only accept : when starting with [/-].
