@@ -148,7 +148,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Get-Date | Out-Null
         Stop-Transcript
 
-        GetFileEncoding $transcriptFilePath | Should -Be 'utf-16'
+        GetFileEncoding $transcriptFilePath | Should -BeExactly 'utf-16'
     }
     It "Should default to utf8 with 'Append' parameter and file doesn't exist"{
         $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
@@ -157,7 +157,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Get-Date | Out-Null
         Stop-Transcript
 
-        GetFileEncoding $transcriptFilePath | Should -Be 'utf-8'
+        GetFileEncoding $transcriptFilePath | Should -BeExactly 'utf-8'
     }
     It "Should create a new utf8 encoded file if no 'Append' parameter is set regardless of existing file's encoding"{
         $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
@@ -167,7 +167,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Get-Date | Out-Null
         Stop-Transcript
 
-        GetFileEncoding $transcriptFilePath | Should -Be 'utf-8'
+        GetFileEncoding $transcriptFilePath | Should -BeExactly 'utf-8'
     }
     It "Transcription should remain active if other runspace in the host get closed" {
         try {
