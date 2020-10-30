@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            private System.Threading.ManualResetEvent _eventHandle = new System.Threading.ManualResetEvent(false);
+            private readonly System.Threading.ManualResetEvent _eventHandle = new System.Threading.ManualResetEvent(false);
         }
 
         internal void ExecuteCommandAsync(string command, out Exception exceptionThrown, ExecutionOptions options)
@@ -729,14 +729,14 @@ namespace Microsoft.PowerShell
         // to currentExecutor is guarded by staticStateLock, and static initializers are run by the CLR at program init time.
 
         private static Executor s_currentExecutor;
-        private static object s_staticStateLock = new object();
+        private static readonly object s_staticStateLock = new object();
 
-        private ConsoleHost _parent;
+        private readonly ConsoleHost _parent;
         private Pipeline _pipeline;
         private bool _cancelled;
         internal bool useNestedPipelines;
-        private object _instanceStateLock = new object();
-        private bool _isPromptFunctionExecutor;
+        private readonly object _instanceStateLock = new object();
+        private readonly bool _isPromptFunctionExecutor;
     }
 }   // namespace
 

@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell
         }
 
         internal TextWriter textWriter;
-        private XmlWriter _xmlWriter;
+        private readonly XmlWriter _xmlWriter;
         private Serializer _xmlSerializer;
         private bool _firstCall = true;
     }
@@ -267,8 +267,8 @@ namespace Microsoft.PowerShell
         }
 
         internal TextReader textReader;
-        private XmlReader _xmlReader;
-        private Deserializer _xmlDeserializer;
+        private readonly XmlReader _xmlReader;
+        private readonly Deserializer _xmlDeserializer;
         private string _firstLine;
         private bool _atEnd;
     }

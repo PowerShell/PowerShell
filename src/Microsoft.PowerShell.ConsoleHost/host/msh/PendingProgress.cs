@@ -399,8 +399,8 @@ namespace Microsoft.PowerShell
             int
             IndexWhereFound = -1;
 
-            private int _idToFind = -1;
-            private Int64 _sourceIdToFind;
+            private readonly int _idToFind = -1;
+            private readonly Int64 _sourceIdToFind;
         }
 
         /// <summary>
@@ -676,9 +676,9 @@ namespace Microsoft.PowerShell
                 return true;
             }
 
-            private PSHostRawUserInterface _rawUi;
-            private int _maxHeight;
-            private int _maxWidth;
+            private readonly PSHostRawUserInterface _rawUi;
+            private readonly int _maxHeight;
+            private readonly int _maxWidth;
 
             internal int Tally;
         }
@@ -1000,7 +1000,7 @@ namespace Microsoft.PowerShell
 
         #endregion
 
-        private ArrayList _topLevelNodes = new ArrayList();
+        private readonly ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
 
         private const int maxNodeCount = 128;
