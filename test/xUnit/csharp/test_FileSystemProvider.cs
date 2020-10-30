@@ -24,8 +24,8 @@ namespace PSTests.Parallel
 {
     public class FileSystemProviderTests : IDisposable
     {
-        private string testPath;
-        private string testContent;
+        private readonly string testPath;
+        private readonly string testContent;
 
         public FileSystemProviderTests()
         {

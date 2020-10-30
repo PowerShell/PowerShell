@@ -969,7 +969,7 @@ namespace PSTests.Parallel
 
         public class TestDataSettingsFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -1162,7 +1162,7 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
