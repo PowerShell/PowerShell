@@ -7842,6 +7842,8 @@ namespace Microsoft.PowerShell.Commands
 
         private const int ERROR_NOT_A_REPARSE_POINT = 4390;
 
+        private const int ERROR_INVALID_FUNCTION = 1;
+
         private const int FSCTL_GET_REPARSE_POINT = 0x000900A8;
 
         private const int FSCTL_SET_REPARSE_POINT = 0x000900A4;
@@ -8408,7 +8410,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!result)
                 {
                     int lastError = Marshal.GetLastWin32Error();
-                    if (lastError == ERROR_NOT_A_REPARSE_POINT)
+                    if (lastError == ERROR_NOT_A_REPARSE_POINT || lastError == ERROR_INVALID_FUNCTION)
                         return null;
 
                     throw new Win32Exception(lastError);
