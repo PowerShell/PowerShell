@@ -293,7 +293,7 @@ namespace System.Management.Automation.Tracing
         public void LogTransfer(Guid parentActivityId)
         {
             // NOTE: always log
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
             string message = string.Format(CultureInfo.InvariantCulture,
                                            "({0}:{1:X}:{2:X}) [Transfer]:{3} {4}",
                                            PSVersionInfo.GitCommitId, threadId, PSChannel.Operational,
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="activity">The Guid activity identifier.</param>
         public void SetActivity(Guid activity)
         {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
             Activity = activity;
 
             // NOTE: always log
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Tracing
         {
             if (ShouldLog(level, keyword, channel))
             {
-                int threadId = Thread.CurrentThread.ManagedThreadId;
+                int threadId = Environment.CurrentManagedThreadId;
 
                 StringBuilder sb = MessageBuilder;
                 sb.Clear();
