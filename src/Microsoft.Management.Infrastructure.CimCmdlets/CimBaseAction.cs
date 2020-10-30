@@ -19,7 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Constructor method.
         /// </summary>
-        public CimBaseAction()
+        protected CimBaseAction()
         {
         }
 

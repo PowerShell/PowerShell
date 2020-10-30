@@ -4197,7 +4197,7 @@ namespace System.Management.Automation
         /// <param name="runspace">Runspace.</param>
         /// <param name="runspaceType">Runspace type.</param>
         /// <param name="parentDebuggerId">Debugger Id of parent.</param>
-        public NestedRunspaceDebugger(
+        protected NestedRunspaceDebugger(
             Runspace runspace,
             PSMonitorRunspaceType runspaceType,
             Guid parentDebuggerId)

@@ -204,7 +204,7 @@ namespace System.Management.Automation.Interpreter
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex)
+        protected IndexedBranchInstruction(int labelIndex)
         {
             _labelIndex = labelIndex;
         }

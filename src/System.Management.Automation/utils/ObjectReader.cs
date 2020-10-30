@@ -23,7 +23,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public ObjectReaderBase([In, Out] ObjectStreamBase stream)
+        protected ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {

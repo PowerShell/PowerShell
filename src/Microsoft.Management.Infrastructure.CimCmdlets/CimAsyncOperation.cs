@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The constructor.
         /// </summary>
-        public CimAsyncOperation()
+        protected CimAsyncOperation()
         {
             this.moreActionEvent = new ManualResetEventSlim(false);
             this.actionQueue = new ConcurrentQueue<CimBaseAction>();
