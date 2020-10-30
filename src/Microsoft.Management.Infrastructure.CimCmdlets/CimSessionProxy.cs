@@ -95,11 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual string ComputerName
-        {
-            get;
-            private set;
-        }
+        internal virtual string ComputerName { get; }
 
         /// <summary>
         /// <para>
@@ -109,11 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual CimInstance TargetCimInstance
-        {
-            get;
-            private set;
-        }
+        internal virtual CimInstance TargetCimInstance { get; }
     }
     #endregion
 
@@ -787,11 +779,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             OperationEventArgs args = new OperationEventArgs(
                 cancelOperation, operation, false);
-            OperationEventHandler temp = this.OnOperationCreated;
-            if (temp != null)
-            {
-                temp(this.session, args);
-            }
+            this.OnOperationCreated?.Invoke(this.session, args);
 
             this.PostOperationCreateEvent(args);
         }
@@ -811,11 +799,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             OperationEventArgs args = new OperationEventArgs(
                 null, operation, success);
             PreOperationDeleteEvent(args);
-            OperationEventHandler temp = this.OnOperationDeleted;
-            if (temp != null)
-            {
-                temp(this.session, args);
-            }
+            this.OnOperationDeleted?.Invoke(this.session, args);
 
             this.PostOperationDeleteEvent(args);
             this.RemoveOperation(operation);
@@ -864,7 +848,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (parameters.Length > 0)
                     {
-                        parameters.Append(",");
+                        parameters.Append(',');
                     }
 
                     parameters.Append(string.Format(CultureInfo.CurrentUICulture, @"'{0}' = {1}", key, parameterList[key]));

@@ -712,6 +712,14 @@ namespace Microsoft.PowerShell
                 throw new InvalidOperationException("This instance has already been used. Create a new instance.");
             }
 
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is null)
+                {
+                    throw new ArgumentNullException(nameof(args), CommandLineParameterParserStrings.NullElementInArgs);
+                }
+            }
+
             // Indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
             _dirty = true;
@@ -1343,7 +1351,7 @@ namespace Microsoft.PowerShell
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
-        private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
+        private readonly Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string? _file;
         private string? _executionPolicy;
         private string? _settingsFile;

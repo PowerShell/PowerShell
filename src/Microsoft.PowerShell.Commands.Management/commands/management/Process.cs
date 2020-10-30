@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         // We use a Dictionary to optimize the check whether the object
         // is already in the list.
         private List<Process> _matchingProcesses = new List<Process>();
-        private Dictionary<int, Process> _keys = new Dictionary<int, Process>();
+        private readonly Dictionary<int, Process> _keys = new Dictionary<int, Process>();
 
         /// <summary>
         /// Retrieve the list of all processes matching the Name, Id
@@ -545,7 +545,6 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         /// To display the modules of a process.
         ///</summary>
-
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
@@ -785,8 +784,10 @@ namespace Microsoft.PowerShell.Commands
                     // The buffer length must be +1, last position is for a null string terminator.
                     int userNameLength = 257;
                     int domainNameLength = 16;
+#pragma warning disable CA2014
                     Span<char> userNameStr = stackalloc char[userNameLength];
                     Span<char> domainNameStr = stackalloc char[domainNameLength];
+#pragma warning restore CA2014
                     Win32Native.SID_NAME_USE accountType;
 
                     // userNameLength and domainNameLength will be set to actual lengths.
@@ -955,7 +956,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
 
-        private List<Process> _processList = new List<Process>();
+        private readonly List<Process> _processList = new List<Process>();
 
         // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
@@ -2606,7 +2607,7 @@ namespace Microsoft.PowerShell.Commands
         /// JobObjectHandle is a reference to the job object used to track
         /// the child processes created by the main process hosted by the Start-Process cmdlet.
         /// </summary>
-        private Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
+        private readonly Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
 
         /// <summary>
         /// ProcessCollection constructor.
@@ -2793,14 +2794,13 @@ namespace Microsoft.PowerShell.Commands
             {
             }
 
-            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
 
-            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
+            [DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
 
             protected override bool ReleaseHandle()
@@ -2876,7 +2876,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class SafeNativeMethods
     {
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
+        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
         public static extern bool CloseHandle(IntPtr handle);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2998,9 +2998,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(
-            SecurityAction.Demand,
-            SerializationFormatter = true)]
         public override void GetObjectData(
             SerializationInfo info,
             StreamingContext context)

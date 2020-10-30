@@ -190,7 +190,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         // The name of registry key must start with a predefined string,
         // like CLASSES_ROOT, CURRENT_USER, MACHINE, and USERS.  See
         // MSDN's help for SetNamedSecurityInfo for details.
-        [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
         internal TransactedRegistrySecurity(string name, AccessControlSections includeSections)
             : base(true, ResourceType.RegistryKey, HKeyNameToWindowsName(name), includeSections)
         {
@@ -198,7 +197,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
         */
 
-        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         // Suppressed because the passed name and hkey won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         internal TransactedRegistrySecurity(SafeRegistryHandle hKey, string name, AccessControlSections includeSections)
@@ -278,7 +276,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             return persistRules;
         }
 
-        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         // Suppressed because the passed keyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         internal void Persist(SafeRegistryHandle hKey, string keyName)

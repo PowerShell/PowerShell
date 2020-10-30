@@ -2271,7 +2271,7 @@ namespace System.Management.Automation.Language
                     else
                         argBuilder.Append(", ");
 
-                    argBuilder.Append("$");
+                    argBuilder.Append('$');
                     argBuilder.Append(varName);
                 }
 

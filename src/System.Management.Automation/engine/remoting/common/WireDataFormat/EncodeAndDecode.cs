@@ -1541,7 +1541,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <returns>
         /// ErrorRecord if exception is of type IContainsErrorRecord
-        /// Null if if exception is not of type IContainsErrorRecord
+        /// Null if exception is not of type IContainsErrorRecord
         /// </returns>
         internal static ErrorRecord GetErrorRecordFromException(Exception exception)
         {

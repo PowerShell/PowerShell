@@ -1793,8 +1793,8 @@ namespace Microsoft.PowerShell.Commands
         private void WriteProgress(string statusDescription, int? percentComplete, int? secondsRemaining)
         {
             ProgressRecordType recordType;
-            if (secondsRemaining.HasValue && secondsRemaining.Value == 0 &&
-                percentComplete.HasValue && percentComplete.Value == 100)
+            if (secondsRemaining.HasValue && secondsRemaining.GetValueOrDefault() == 0 &&
+                percentComplete.HasValue && percentComplete.GetValueOrDefault() == 100)
             {
                 recordType = ProgressRecordType.Completed;
             }
@@ -2316,7 +2316,7 @@ function Get-PSImplicitRemotingSessionOption
                 result.Append("-ApplicationArguments $(");
                 result.Append("& $script:ImportCliXml -Path $(");
                 result.Append("& $script:JoinPath -Path $PSScriptRoot -ChildPath ApplicationArguments.xml");
-                result.Append(")");
+                result.Append(')');
                 result.Append(") ");
             }
 
@@ -2953,7 +2953,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             arrayString.Insert(0, "@(");
-            arrayString.Append(")");
+            arrayString.Append(')');
 
             return arrayString.ToString();
         }

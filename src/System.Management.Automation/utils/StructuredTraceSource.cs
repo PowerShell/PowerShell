@@ -216,7 +216,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
-    /// that is used the the Monad components to produce trace output.
+    /// that is used in the Monad components to produce trace output.
     /// </summary>
     /// <!--
     /// The StructuredTraceSource class is derived from TraceSource to provide granular
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                     declaringType.Name,
                     callingMethod.Name);
 
-                methodAndParameters.Append(")");
+                methodAndParameters.Append(')');
             }
             catch
             {

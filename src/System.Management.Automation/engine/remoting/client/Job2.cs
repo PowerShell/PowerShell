@@ -342,10 +342,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                if (handler != null)
-                {
-                    handler(this, eventArgs);
-                }
+                handler?.Invoke(this, eventArgs);
             }
             catch (Exception exception)
             {
@@ -2058,7 +2055,7 @@ namespace System.Management.Automation
 
                 if (i < (ChildJobs.Count - 1))
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
             }
 

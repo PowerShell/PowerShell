@@ -14,11 +14,6 @@ variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
 
-# Set AzDevOps Agent to clean the machine after the end of the build
-resources:
-- repo: self
-  clean: true
-
 stages:
   - stage: prep
     jobs:

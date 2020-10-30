@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// This is a test hook for programmatically reading and writing ConsoleHost I/O.
         /// </summary>
-        private static PSHostUserInterface s_h = null;
+        private static readonly PSHostUserInterface s_h = null;
 
         /// <summary>
         /// Return true if the console supports a VT100 like virtual terminal.
@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="parent"></param>
         /// <exception/>
-
         internal ConsoleHostUserInterface(ConsoleHost parent)
         {
             Dbg.Assert(parent != null, "parent may not be null");
@@ -93,7 +92,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override PSHostRawUserInterface RawUI
         {
             get
@@ -131,7 +129,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// True if command completion is currently running.
         /// </summary>
-
         internal bool IsCommandCompletionRunning
         {
             get
@@ -144,13 +141,11 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// True if the Read* functions should read from the stdin stream instead of from the win32 console.
         /// </summary>
-
         internal bool ReadFromStdin { get; set; }
 
         /// <summary>
         /// True if the host shouldn't write out prompts.
         /// </summary>
-
         internal bool NoPrompt { get; set; }
 
         #region Line-oriented interaction
@@ -168,7 +163,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
         /// </exception>
-
         public override string ReadLine()
         {
             HandleThrowOnReadAndPrompt();
@@ -193,7 +187,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="PipelineStoppedException">
         /// If Ctrl-C is entered by user
         /// </exception>
-
         public override SecureString ReadLineAsSecureString()
         {
             HandleThrowOnReadAndPrompt();
@@ -245,7 +238,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="PipelineStoppedException">
         /// If Ctrl-C is entered by user
         /// </exception>
-
         private object ReadLineSafe(bool isSecureString, char? printToken)
         {
             // Don't lock (instanceLock) in here -- the caller needs to do that...
@@ -313,7 +305,9 @@ namespace Microsoft.PowerShell
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
                     const int CharactersToRead = 1;
+#pragma warning disable CA2014
                     Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+#pragma warning restore CA2014
                     string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 
@@ -439,7 +433,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
         /// </exception>
-
         private void WritePrintToken(
             string printToken,
             ref Coordinates originalCursorPosition)
@@ -476,7 +469,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
         /// </exception>
-
         private void WriteBackSpace(Coordinates originalCursorPosition)
         {
             Coordinates cursorPosition = _rawui.CursorPosition;
@@ -678,7 +670,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void Write(string value)
         {
             WriteImpl(value, newLine: false);
@@ -749,7 +740,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
             Write(foregroundColor, backgroundColor, value, newLine: false);
@@ -861,7 +851,6 @@ namespace Microsoft.PowerShell
         /// A list of strings representing the text broken into "lines" each of which are guaranteed not to exceed
         /// maxWidthInBufferCells.
         /// </returns>
-
         internal List<string> WrapText(string text, int maxWidthInBufferCells)
         {
             List<string> result = new List<string>();
@@ -953,7 +942,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Struct used by WrapText.
         /// </summary>
-
         [Flags]
         internal enum WordFlags
         {
@@ -988,7 +976,6 @@ namespace Microsoft.PowerShell
         /// This can be made faster by, instead of creating little strings for each word, creating indices of the start and end
         /// range of a word.  That would reduce the string allocations.
         /// </remarks>
-
         internal List<Word> ChopTextIntoWords(string text, int maxWidthInBufferCells)
         {
             List<Word> result = new List<Word>();
@@ -1096,7 +1083,6 @@ namespace Microsoft.PowerShell
         /// <param name="result">
         /// The list into which the words will be added.
         /// </param>
-
         internal void AddWord(string text, int startIndex, int endIndex,
             int maxWidthInBufferCells, bool isWhitespace, ref List<Word> result)
         {
@@ -1235,7 +1221,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void WriteVerboseLine(string message)
         {
             // don't lock here as WriteLine is already protected.
@@ -1273,7 +1258,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void WriteWarningLine(string message)
         {
             // don't lock here as WriteLine is already protected.
@@ -1297,7 +1281,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Invoked by CommandBase.WriteProgress to display a progress record.
         /// </summary>
-
         public override void WriteProgress(Int64 sourceId, ProgressRecord record)
         {
             if (record == null)
@@ -1436,7 +1419,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
         /// </exception>
-
         internal string ReadLine(bool endOnTab, string initialContent, out ReadLineResult result, bool calledFromPipeline, bool transcribeResult)
         {
             result = ReadLineResult.endedOnEnter;
@@ -2176,7 +2158,7 @@ namespace Microsoft.PowerShell
 
         // used to serialize access to instance data
 
-        private object _instanceLock = new object();
+        private readonly object _instanceLock = new object();
 
         // If this is true, class throws on read or prompt method which require
         // access to console.
@@ -2200,16 +2182,15 @@ namespace Microsoft.PowerShell
 
         // this is a test hook for the ConsoleInteractiveTestTool, which sets this field to true.
 
-        private bool _isInteractiveTestToolListening;
+        private readonly bool _isInteractiveTestToolListening;
 
         // This instance data is "read-only" and need not have access serialized.
 
-        private ConsoleHostRawUserInterface _rawui;
-        private ConsoleHost _parent;
+        private readonly ConsoleHostRawUserInterface _rawui;
+        private readonly ConsoleHost _parent;
 
         [TraceSourceAttribute("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
-        private static
-        PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
 }   // namespace
 

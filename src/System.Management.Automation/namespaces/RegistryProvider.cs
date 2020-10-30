@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 using System;
@@ -798,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
                     // This text element needs espacing
-                    result.Append("`");
+                    result.Append('`');
                 }
 
                 result.Append(textElement);
@@ -847,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
                     // This text element needs espacing
-                    result.Append("`");
+                    result.Append('`');
                 }
 
                 result.Append(textElement);

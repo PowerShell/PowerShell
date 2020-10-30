@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _defaultCounters = true;
 
-        private List<string> _accumulatedCounters = new List<string>();
+        private readonly List<string> _accumulatedCounters = new List<string>();
 
         //
         // SampleInterval parameter.
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
 
         private PdhHelper _pdhHelper = null;
 
-        private EventWaitHandle _cancelEventArrived = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private readonly EventWaitHandle _cancelEventArrived = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         // Culture identifier(s)
         private const string FrenchCultureId = "fr-FR";

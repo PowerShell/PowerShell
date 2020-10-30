@@ -107,7 +107,9 @@ namespace System.Management.Automation.Remoting
                     BinaryFormatter formatter = new BinaryFormatter();
                     using (MemoryStream stream = new MemoryStream())
                     {
+#pragma warning disable SYSLIB0011
                         formatter.Serialize(stream, TimeZoneInfo.Local);
+#pragma warning restore SYSLIB0011
                         stream.Seek(0, SeekOrigin.Begin);
                         byte[] result = new byte[stream.Length];
                         stream.Read(result, 0, (int)stream.Length);
@@ -174,7 +176,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Data.
         /// </summary>
-
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private Dictionary<HostDefaultDataId, object> data;

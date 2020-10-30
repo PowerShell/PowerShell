@@ -66,6 +66,15 @@ namespace PSTests.Parallel
         }
 
         [Theory]
+        [InlineData("arg1", null, "arg3")]
+        public static void Test_ARGS_With_Null(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            Assert.Throws<System.ArgumentNullException>(() => cpp.Parse(commandLine));
+        }
+
+        [Theory]
         [InlineData("noexistfilename")]
         public static void TestDefaultParameterIsFileName_Not_Exist(params string[] commandLine)
         {
@@ -960,7 +969,7 @@ namespace PSTests.Parallel
 
         public class TestDataSettingsFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -1153,7 +1162,7 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {

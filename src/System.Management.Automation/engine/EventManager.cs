@@ -1511,12 +1511,7 @@ namespace System.Management.Automation
         /// </summary>
         protected virtual void OnForwardEvent(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = ForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            ForwardEvent?.Invoke(this, e);
         }
 
         /// <summary>
@@ -1824,12 +1819,7 @@ namespace System.Management.Automation
         /// </summary>
         protected virtual void OnForwardEvent(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = ForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            ForwardEvent?.Invoke(this, e);
         }
     }
 
@@ -2011,7 +2001,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether the event should be unregistered.
         /// </summary>
-        internal bool AutoUnregister { get; private set; }
+        internal bool AutoUnregister { get; }
 
         /// <summary>
         /// Indicate how many new should be added to the action queue.
@@ -2067,10 +2057,7 @@ namespace System.Management.Automation
 
         internal void OnPSEventUnsubscribed(object sender, PSEventUnsubscribedEventArgs e)
         {
-            if (Unsubscribed != null)
-            {
-                Unsubscribed(sender, e);
-            }
+            Unsubscribed?.Invoke(sender, e);
         }
     }
 
@@ -2404,11 +2391,7 @@ namespace System.Management.Automation
 
         private void OnPSEventReceived(object sender, PSEventArgs e)
         {
-            PSEventReceivedEventHandler eventHandler = PSEventReceived;
-            if (eventHandler != null)
-            {
-                eventHandler(sender, e);
-            }
+            PSEventReceived?.Invoke(sender, e);
         }
 
         /// <summary>

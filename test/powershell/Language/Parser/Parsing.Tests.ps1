@@ -279,37 +279,18 @@ Describe 'null coalescing statement parsing' -Tag "CI" {
 }
 
 Describe 'null conditional member access statement parsing' -Tag 'CI' {
-    BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
+    ShouldBeParseError '[datetime]?::now' ExpectedValueExpression, UnexpectedToken 11, 11
+    ShouldBeParseError '$x ?.name' ExpectedValueExpression, UnexpectedToken 4, 4
+    ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
+    ShouldBeParseError '${x}?.' MissingPropertyName 6
+    ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
 
-        if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullConditionalOperators' to be enabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-    }
-
-    AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        }
-    }
-
-    # We need to add this check as parsing on script block is done before an `It` is called.
-    if (-not $skipTest) {
-        ShouldBeParseError '[datetime]?::now' ExpectedValueExpression, UnexpectedToken 11, 11
-        ShouldBeParseError '$x ?.name' ExpectedValueExpression, UnexpectedToken 4, 4
-        ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
-        ShouldBeParseError '${x}?.' MissingPropertyName 6
-        ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
-
-        ShouldBeParseError '[datetime]?[0]' MissingTypename, ExpectedValueExpression, UnexpectedToken 12, 11, 11
-        ShouldBeParseError '${x} ?[1]' MissingTypename, ExpectedValueExpression, UnexpectedToken 7, 6, 6
-        ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
-        ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
-        ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
-        ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
-    }
+    ShouldBeParseError '[datetime]?[0]' MissingTypename, ExpectedValueExpression, UnexpectedToken 12, 11, 11
+    ShouldBeParseError '${x} ?[1]' MissingTypename, ExpectedValueExpression, UnexpectedToken 7, 6, 6
+    ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
+    ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
+    ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
+    ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
 }
 
 Describe 'splatting parsing' -Tags "CI" {

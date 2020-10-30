@@ -2722,7 +2722,7 @@ namespace System.Management.Automation
 
                     definition.Append(" {");
                     definition.Append(extraDefinition);
-                    definition.Append("}");
+                    definition.Append('}');
                     definitionArray.Add(definition.ToString());
                 }
 
@@ -3995,7 +3995,7 @@ namespace System.Management.Automation
             }
 
             returnValue.Append(PropertyType(property, forDisplay: true));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(property.Name);
             returnValue.Append(" {");
             if (PropertyIsGettable(property))
@@ -4008,7 +4008,7 @@ namespace System.Management.Automation
                 returnValue.Append("set;");
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -4415,7 +4415,7 @@ namespace System.Management.Automation
             if (method != null)
             {
                 builder.Append(ToStringCodeMethods.Type(method.ReturnType));
-                builder.Append(" ");
+                builder.Append(' ');
             }
             else
             {
@@ -4423,20 +4423,20 @@ namespace System.Management.Automation
                 if (ctorInfo != null)
                 {
                     builder.Append(ToStringCodeMethods.Type(ctorInfo.DeclaringType));
-                    builder.Append(" ");
+                    builder.Append(' ');
                 }
             }
 
             if (methodEntry.DeclaringType.IsInterface)
             {
                 builder.Append(ToStringCodeMethods.Type(methodEntry.DeclaringType, dropNamespaces: true));
-                builder.Append(".");
+                builder.Append('.');
             }
 
             builder.Append(memberName ?? methodEntry.Name);
             if (methodEntry.IsGenericMethodDefinition)
             {
-                builder.Append("[");
+                builder.Append('[');
 
                 Type[] genericArgs = methodEntry.GetGenericArguments();
                 for (int i = 0; i < genericArgs.Length; i++)
@@ -4446,10 +4446,10 @@ namespace System.Management.Automation
                     builder.Append(ToStringCodeMethods.Type(genericArgs[i]));
                 }
 
-                builder.Append("]");
+                builder.Append(']');
             }
 
-            builder.Append("(");
+            builder.Append('(');
             System.Reflection.ParameterInfo[] parameters = methodEntry.GetParameters();
             int parametersLength = parameters.Length - parametersToIgnore;
             if (parametersLength > 0)
@@ -4478,7 +4478,7 @@ namespace System.Management.Automation
                     }
 
                     builder.Append(ToStringCodeMethods.Type(parameterType));
-                    builder.Append(" ");
+                    builder.Append(' ');
                     builder.Append(parameter.Name);
                     builder.Append(", ");
                 }
@@ -4486,7 +4486,7 @@ namespace System.Management.Automation
                 builder.Remove(builder.Length - 2, 2);
             }
 
-            builder.Append(")");
+            builder.Append(')');
 
             return builder.ToString();
         }
@@ -5256,9 +5256,9 @@ namespace System.Management.Automation
                     if (firstType == null)
                     {
                         firstType = new StringBuilder(baseType);
-                        firstType.Append("#");
+                        firstType.Append('#');
                         firstType.Append(node.NamespaceURI);
-                        firstType.Append("#");
+                        firstType.Append('#');
                         firstType.Append(node.LocalName);
                         yield return firstType.ToString();
                     }

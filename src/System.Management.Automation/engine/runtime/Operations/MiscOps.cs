@@ -407,7 +407,7 @@ namespace System.Management.Automation
             else
             {
                 string whitespaces = parameterName.Substring(endPosition);
-                parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
+                parameterText = string.Concat("-", parameterName.AsSpan().Slice(0, endPosition), ":", whitespaces);
             }
 
             return parameterText;
@@ -858,7 +858,7 @@ namespace System.Management.Automation
             this.FromStream = from;
         }
 
-        internal RedirectionStream FromStream { get; private set; }
+        internal RedirectionStream FromStream { get; }
 
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
@@ -1039,9 +1039,9 @@ namespace System.Management.Automation
                                  File);
         }
 
-        internal string File { get; private set; }
+        internal string File { get; }
 
-        internal bool Appending { get; private set; }
+        internal bool Appending { get; }
 
         private PipelineProcessor PipelineProcessor { get; set; }
 

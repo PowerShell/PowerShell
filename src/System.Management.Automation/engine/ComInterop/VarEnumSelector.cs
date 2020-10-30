@@ -245,7 +245,6 @@ namespace System.Management.Automation.ComInterop
                 typeNames += typeName;
             }
 
-
             throw Error.AmbiguousConversion(argumentType.Name, typeNames);
         }
 
@@ -314,13 +313,13 @@ namespace System.Management.Automation.ComInterop
 
             if (argumentType == typeof(IntPtr))
             {
-                primitiveVarEnum = VarEnum.VT_PTR;
+                primitiveVarEnum = VarEnum.VT_INT;
                 return true;
             }
 
             if (argumentType == typeof(UIntPtr))
             {
-                primitiveVarEnum = VarEnum.VT_PTR;
+                primitiveVarEnum = VarEnum.VT_UINT;
                 return true;
             }
 

@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.isShared = isShared;
 
             // check to see if there are any errors loading the format files
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new FormatTableLoadException(errors);
             }
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             LoadFromFile(filesToLoad, expressionFactory, false, null, null, false, out logEntries);
 
             // check to see if there are any errors loading the format files
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new FormatTableLoadException(errors);
             }
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Helper to to add any pre-load intrinsics to the db.
+        /// Helper to add any pre-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPreLoadIntrinsics(TypeInfoDataBase db)
@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Helper to to add any post-load intrinsics to the db.
+        /// Helper to add any post-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPostLoadIntrinsics(TypeInfoDataBase db)

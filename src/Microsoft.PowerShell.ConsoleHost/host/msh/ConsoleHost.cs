@@ -401,7 +401,6 @@ namespace Microsoft.PowerShell
         /// executing instance is stopped.
         ///
         ///</param>
-
         private static void SpinUpBreakHandlerThread(bool shouldEndSession)
         {
             ConsoleHost host = ConsoleHost.SingletonInstance;
@@ -533,7 +532,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override string Name
         {
             get
@@ -550,7 +548,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Version Version
         {
             get
@@ -565,7 +562,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override System.Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
@@ -743,7 +739,7 @@ namespace Microsoft.PowerShell
 
         public class ConsoleColorProxy
         {
-            private ConsoleHostUserInterface _ui;
+            private readonly ConsoleHostUserInterface _ui;
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
@@ -1621,7 +1617,6 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             Dbg.Assert(_runspaceRef == null, "runspace should be null");
@@ -2009,7 +2004,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-
         internal static string EscapeSingleQuotes(string str)
         {
             // worst case we have to escape every character, so capacity is twice as large as input length
@@ -2347,7 +2341,6 @@ namespace Microsoft.PowerShell
             /// <exception cref="InvalidOperationException">
             ///  when there is no instanceStack.Count == 0
             /// </exception>
-
             internal static bool ExitCurrentLoop()
             {
                 if (s_instanceStack.Count == 0)
@@ -2530,7 +2523,7 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 s_tracer.WriteLine("adding line to block");
-                                inputBlock.Append("\n");
+                                inputBlock.Append('\n');
                                 inputBlock.Append(line);
                                 continue;
                             }
@@ -2851,12 +2844,12 @@ namespace Microsoft.PowerShell
                 return promptString;
             }
 
-            private ConsoleHost _parent;
-            private bool _isNested;
+            private readonly ConsoleHost _parent;
+            private readonly bool _isNested;
             private bool _shouldExit;
-            private Executor _exec;
-            private Executor _promptExec;
-            private object _syncObject = new object();
+            private readonly Executor _exec;
+            private readonly Executor _promptExec;
+            private readonly object _syncObject = new object();
             private bool _isRunspacePushed = false;
             private bool _runspacePopped = false;
 
@@ -2865,7 +2858,7 @@ namespace Microsoft.PowerShell
 
             // threadsafety guaranteed by enclosing class
 
-            private static Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
+            private static readonly Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
         }
 
         [Serializable]
@@ -2920,7 +2913,7 @@ namespace Microsoft.PowerShell
 
         // Set to Unknown so that we avoid saving/restoring the console mode if we don't have a console.
         private ConsoleControl.ConsoleModes _savedConsoleMode = ConsoleControl.ConsoleModes.Unknown;
-        private ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
+        private readonly ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
 #endif
         private Thread _breakHandlerThread;
         private bool _isDisposed;
@@ -2929,7 +2922,7 @@ namespace Microsoft.PowerShell
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
         private string _savedWindowTitle = string.Empty;
-        private Version _ver = PSVersionInfo.PSVersion;
+        private readonly Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;
         private bool _setShouldExitCalled;
@@ -2949,7 +2942,7 @@ namespace Microsoft.PowerShell
         private bool _shouldEndSession;
         private int _beginApplicationNotifyCount;
 
-        private ConsoleTextWriter _consoleWriter;
+        private readonly ConsoleTextWriter _consoleWriter;
         private WrappedSerializer _outputSerializer;
         private WrappedSerializer _errorSerializer;
         private bool _displayDebuggerBanner;
@@ -2965,11 +2958,10 @@ namespace Microsoft.PowerShell
         internal static InitialSessionState DefaultInitialSessionState;
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
-        private static
-        PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost");
 
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
-        private static PSTraceSource s_runspaceInitTracer =
+        private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
     }
 

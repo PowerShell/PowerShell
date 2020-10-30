@@ -4243,7 +4243,7 @@ namespace System.Management.Automation.Language
                 return NewToken(TokenKind.LBracket);
             }
 
-            if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
+            if (c == '?')
             {
                 _tokenStart = _currentIndex;
                 SkipChar();
@@ -4563,7 +4563,7 @@ namespace System.Management.Automation.Language
                 if (PeekChar() == '=')
                 {
                     _tokenStart = _currentIndex;
-                    sb.Append("=");
+                    sb.Append('=');
                     SkipChar();
                     NewToken(TokenKind.Equals);
                     ScanAssemblyNameSpecToken(sb);

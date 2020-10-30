@@ -239,7 +239,7 @@ namespace System.Management.Automation.Language
             this.Root = root;
         }
 
-        private Ast Root { get; set; }
+        private Ast Root { get; }
 
         internal AstVisitAction CheckParent(Ast ast)
         {

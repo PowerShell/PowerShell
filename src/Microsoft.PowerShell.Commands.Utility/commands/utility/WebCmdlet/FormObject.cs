@@ -13,22 +13,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or private sets the Id property.
         /// </summary>
-        public string Id { get; private set; }
+        public string Id { get; }
 
         /// <summary>
         /// Gets or private sets the Method property.
         /// </summary>
-        public string Method { get; private set; }
+        public string Method { get; }
 
         /// <summary>
         /// Gets or private sets the Action property.
         /// </summary>
-        public string Action { get; private set; }
+        public string Action { get; }
 
         /// <summary>
         /// Gets or private sets the Fields property.
         /// </summary>
-        public Dictionary<string, string> Fields { get; private set; }
+        public Dictionary<string, string> Fields { get; }
 
         /// <summary>
         /// Constructor for FormObject.

@@ -1258,14 +1258,14 @@ namespace System.Management.Automation
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX
-            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL",
+            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL", "CONIN$", "CONOUT$",
                                              "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
                                              "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
             string compareName = Path.GetFileName(destinationPath);
             string noExtensionCompareName = Path.GetFileNameWithoutExtension(destinationPath);
 
-            if (((compareName.Length < 3) || (compareName.Length > 6)) &&
-                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 6)))
+            if (((compareName.Length < 3) || (compareName.Length > 7)) &&
+                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 7)))
             {
                 return false;
             }
@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
                 return Encoding.Unicode;
             }
 
-            return Encoding.ASCII;
+            return utf8NoBom;
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
@@ -2032,11 +2032,7 @@ namespace System.Management.Automation
 
     internal class ImplicitRemotingBatchingNotSupportedException : Exception
     {
-        internal string ErrorId
-        {
-            get;
-            private set;
-        }
+        internal string ErrorId { get; }
 
         internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(
             ParserStrings.ImplicitRemotingPipelineBatchingNotSupported)

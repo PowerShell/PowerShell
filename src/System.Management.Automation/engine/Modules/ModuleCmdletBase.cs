@@ -591,9 +591,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (badKeys.Length > 0)
                         badKeys.Append(", ");
-                    badKeys.Append("'");
+                    badKeys.Append('\'');
                     badKeys.Append(s);
-                    badKeys.Append("'");
+                    badKeys.Append('\'');
                 }
             }
 
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
                             validMembersString.Append(validMembers[i]);
                         }
 
-                        validMembersString.Append("'");
+                        validMembersString.Append('\'');
                         message = StringUtil.Format(Modules.InvalidModuleManifestMember, moduleManifestPath, validMembersString, badKeys);
                         InvalidOperationException ioe = new InvalidOperationException(message);
                         ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidManifestMember",
@@ -4214,9 +4214,9 @@ namespace Microsoft.PowerShell.Commands
             while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 StringBuilder stringBuilder = new StringBuilder(dir);
-                stringBuilder.Append("\\");
+                stringBuilder.Append('\\');
                 stringBuilder.Append(currentCulture.Name);
-                stringBuilder.Append("\\");
+                stringBuilder.Append('\\');
                 stringBuilder.Append(file);
 
                 string filePath = stringBuilder.ToString();
@@ -6493,7 +6493,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Load a binary module. A binary module is an assembly that should contain cmdlets.
         /// </summary>
-        /// <param name="trySnapInName">If true, then then the registered snapins will also be searched when loading.</param>
+        /// <param name="trySnapInName">If true, then the registered snapins will also be searched when loading.</param>
         /// <param name="moduleName">The name of the snapin or assembly to load.</param>
         /// <param name="fileName">The path to the assembly to load.</param>
         /// <param name="assemblyToLoad">The assembly to load so no lookup need be done.</param>
@@ -6523,7 +6523,7 @@ namespace Microsoft.PowerShell.Commands
         /// Load a binary module. A binary module is an assembly that should contain cmdlets.
         /// </summary>
         /// <param name="parentModule">The parent module for which this module is a nested module.</param>
-        /// <param name="trySnapInName">If true, then then the registered snapins will also be searched when loading.</param>
+        /// <param name="trySnapInName">If true, then the registered snapins will also be searched when loading.</param>
         /// <param name="moduleName">The name of the snapin or assembly to load.</param>
         /// <param name="fileName">The path to the assembly to load.</param>
         /// <param name="assemblyToLoad">The assembly to load so no lookup need be done.</param>

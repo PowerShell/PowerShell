@@ -10,6 +10,8 @@ jobs:
     name: Package ES Standard Build
 
   steps:
+  - checkout: self
+    clean: true
 
   - template: SetVersionVariables.yml
     parameters:

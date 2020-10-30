@@ -11,25 +11,25 @@ namespace System.Diagnostics.Eventing
     public struct EventDescriptor
     {
         [FieldOffset(0)]
-        private ushort _id;
+        private readonly ushort _id;
 
         [FieldOffset(2)]
-        private byte _version;
+        private readonly byte _version;
 
         [FieldOffset(3)]
-        private byte _channel;
+        private readonly byte _channel;
 
         [FieldOffset(4)]
-        private byte _level;
+        private readonly byte _level;
 
         [FieldOffset(5)]
-        private byte _opcode;
+        private readonly byte _opcode;
 
         [FieldOffset(6)]
-        private ushort _task;
+        private readonly ushort _task;
 
         [FieldOffset(8)]
-        private long _keywords;
+        private readonly long _keywords;
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
         public EventDescriptor(

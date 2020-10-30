@@ -340,7 +340,7 @@ namespace System.Management.Automation
 
         internal bool HasLogged { get; set; }
         internal bool SkipLogging { get; set; }
-        internal bool IsFilter { get; private set; }
+        internal bool IsFilter { get; }
 
         internal bool IsProductCode
         {
