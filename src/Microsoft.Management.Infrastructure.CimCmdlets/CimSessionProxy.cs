@@ -297,40 +297,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Event definitions
 
         /// <summary>
-        /// Define delegate that handles new cmdlet action come from
-        /// the operations related to the current CimSession object.
-        /// </summary>
-        /// <param name="cimSession">CimSession object, which raised the event.</param>
-        /// <param name="actionArgs">Event args.</param>
-        public delegate void NewCmdletActionHandler(
-            object cimSession,
-            CmdletActionEventArgs actionArgs);
-
-        /// <summary>
         /// Define an Event based on the NewActionHandler.
         /// </summary>
-        public event NewCmdletActionHandler OnNewCmdletAction;
-
-        /// <summary>
-        /// Define delegate that handles operation creation and complete
-        /// issued by the current CimSession object.
-        /// </summary>
-        /// <param name="cimSession">CimSession object, which raised the event.</param>
-        /// <param name="actionArgs">Event args.</param>
-        public delegate void OperationEventHandler(
-            object cimSession,
-            OperationEventArgs actionArgs);
+        public event EventHandler<CmdletActionEventArgs> OnNewCmdletAction;
 
         /// <summary>
         /// Event triggered when a new operation is started.
         /// </summary>
-        public event OperationEventHandler OnOperationCreated;
+        public event EventHandler<OperationEventArgs> OnOperationCreated;
 
         /// <summary>
         /// Event triggered when a new operation is completed,
         /// either success or failed.
         /// </summary>
-        public event OperationEventHandler OnOperationDeleted;
+        public event EventHandler<OperationEventArgs> OnOperationDeleted;
 
         #endregion
 
@@ -751,7 +731,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            NewCmdletActionHandler temp = this.OnNewCmdletAction;
+            EventHandler<CmdletActionEventArgs> temp = this.OnNewCmdletAction;
             if (temp != null)
             {
                 temp(this.session, actionArgs);

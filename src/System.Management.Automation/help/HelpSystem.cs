@@ -121,9 +121,7 @@ namespace System.Management.Automation
 
         #region Progress Callback
 
-        internal delegate void HelpProgressHandler(object sender, HelpProgressInfo arg);
-
-        internal event HelpProgressHandler OnProgress;
+        internal event EventHandler<HelpProgressEventArgs> OnProgress;
 
         #endregion
 
@@ -463,7 +461,7 @@ namespace System.Management.Automation
             bool searchInHelpContent = false;
             bool shouldBreak = false;
 
-            HelpProgressInfo progress = new HelpProgressInfo();
+            HelpProgressEventArgs progress = new HelpProgressEventArgs();
 
             progress.Activity = StringUtil.Format(HelpDisplayStrings.SearchingForHelpContent, helpRequest.Target);
             progress.Completed = false;
@@ -802,11 +800,11 @@ namespace System.Management.Automation
     /// <summary>
     /// Help progress info.
     /// </summary>
-    internal class HelpProgressInfo
+    internal class HelpProgressEventArgs : EventArgs
     {
-        internal bool Completed;
-        internal string Activity;
-        internal int PercentComplete;
+        internal bool Completed { get; set; }
+        internal string Activity { get; set; }
+        internal int PercentComplete { get; set; }
     }
 
     /// <summary>
