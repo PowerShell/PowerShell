@@ -1471,7 +1471,7 @@ namespace System.Management.Automation
                                                     {
                                                         StringBuilder sb = new StringBuilder("[", 50);
                                                         sb.Append(dynamicKeywordAst.Keyword.Keyword);
-                                                        sb.Append("]");
+                                                        sb.Append(']');
                                                         sb.Append(dynamicKeywordAst.ElementName);
                                                         var resource = sb.ToString();
                                                         if (!existingValues.Contains(resource, StringComparer.OrdinalIgnoreCase) &&

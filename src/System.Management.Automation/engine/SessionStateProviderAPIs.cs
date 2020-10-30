@@ -317,7 +317,7 @@ namespace System.Management.Automation
 
             foreach (ProviderInfo matchingProvider in matchingProviders)
             {
-                possibleMatches.Append(" ");
+                possibleMatches.Append(' ');
                 possibleMatches.Append(matchingProvider.FullName);
             }
 

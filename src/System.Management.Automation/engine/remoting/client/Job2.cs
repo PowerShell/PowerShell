@@ -2055,7 +2055,7 @@ namespace System.Management.Automation
 
                 if (i < (ChildJobs.Count - 1))
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
             }
 

@@ -2316,7 +2316,7 @@ function Get-PSImplicitRemotingSessionOption
                 result.Append("-ApplicationArguments $(");
                 result.Append("& $script:ImportCliXml -Path $(");
                 result.Append("& $script:JoinPath -Path $PSScriptRoot -ChildPath ApplicationArguments.xml");
-                result.Append(")");
+                result.Append(')');
                 result.Append(") ");
             }
 
@@ -2953,7 +2953,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             arrayString.Insert(0, "@(");
-            arrayString.Append(")");
+            arrayString.Append(')');
 
             return arrayString.ToString();
         }

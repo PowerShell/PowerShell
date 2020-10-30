@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'n':
-                            sb.Append("\n");
+                            sb.Append('\n');
                             break;
 
                         case 'p':
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 't':
-                            sb.Append("\t");
+                            sb.Append('\t');
                             break;
 
                         case 'U':

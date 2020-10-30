@@ -1105,7 +1105,7 @@ namespace Microsoft.PowerShell.Commands
                         SessionConfigurationUtils.CombineStringArray(_assembliesToLoad), streamWriter, isExample));
                 }
 
-                result.Append("}");
+                result.Append('}');
 
                 streamWriter.Write(result.ToString());
             }
@@ -1837,7 +1837,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AssembliesToLoad, RemotingErrorIdStrings.DISCAssembliesToLoadComment,
                     SessionConfigurationUtils.CombineStringArray(_assembliesToLoad), streamWriter, isExample));
 
-                result.Append("}");
+                result.Append('}');
 
                 streamWriter.Write(result.ToString());
             }

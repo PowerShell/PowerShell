@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (0 < bodyBuilder.Length)
                 {
-                    bodyBuilder.Append("&");
+                    bodyBuilder.Append('&');
                 }
 
                 object value = content[key];

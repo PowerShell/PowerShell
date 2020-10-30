@@ -2523,7 +2523,7 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 s_tracer.WriteLine("adding line to block");
-                                inputBlock.Append("\n");
+                                inputBlock.Append('\n');
                                 inputBlock.Append(line);
                                 continue;
                             }

@@ -97,12 +97,12 @@ namespace System.Management.Automation
                                      {
                                          if (result.Length > 0)
                                          {
-                                             result.Append(" ");
+                                             result.Append(' ');
                                          }
 
-                                         result.Append("[");
+                                         result.Append('[');
                                          result.Append(str);
-                                         result.Append("]");
+                                         result.Append(']');
                                      });
 
             return result.ToString();
@@ -233,7 +233,7 @@ namespace System.Management.Automation
             if (result.Length > 0)
             {
                 // Add a space between parameters
-                result.Append(" ");
+                result.Append(' ');
             }
 
             if (parameter.ParameterType == typeof(SwitchParameter))

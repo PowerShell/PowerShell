@@ -366,7 +366,7 @@ namespace System.Management.Automation
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(this.GetDefinition());
-            builder.Append(" ");
+            builder.Append(' ');
             if (IsGettable)
             {
                 builder.Append("{get} ");
