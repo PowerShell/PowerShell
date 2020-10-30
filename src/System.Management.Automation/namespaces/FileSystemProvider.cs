@@ -1323,7 +1323,8 @@ namespace Microsoft.PowerShell.Commands
                                 { continue; }
 
                                 string outputPath = result.FullName + ":" + stream.Stream;
-                                WriteItemObject(stream, outputPath, isContainer);
+                                // Alternate data streams can never be containers.
+                                WriteItemObject(stream, outputPath, false);
                                 foundStream = true;
                             }
 
