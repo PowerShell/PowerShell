@@ -8164,7 +8164,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!result)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        if (lastError == ERROR_NOT_A_REPARSE_POINT)
+                        if (lastError == ERROR_NOT_A_REPARSE_POINT || lastError == ERROR_INVALID_FUNCTION)
                             linkType = null;
                         else
                             throw new Win32Exception(lastError);
