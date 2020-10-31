@@ -868,7 +868,7 @@ dotnet_diagnostic.IDE0046.severity = silent
 dotnet_diagnostic.IDE0047.severity = silent
 
 # AddRequiredParentheses
-dotnet_diagnostic.IDE0048.severity = warning
+dotnet_diagnostic.IDE0048.severity = suggestion
 
 # PreferBuiltInOrFrameworkType
 dotnet_diagnostic.IDE0049.severity = silent
@@ -943,7 +943,7 @@ dotnet_diagnostic.IDE0071.severity = silent
 dotnet_diagnostic.IDE0072.severity = silent
 
 # FileHeaderMismatch
-dotnet_diagnostic.IDE0073.severity = warning
+dotnet_diagnostic.IDE0073.severity = suggestion
 
 # UseCoalesceCompoundAssignment
 dotnet_diagnostic.IDE0074.severity = silent
