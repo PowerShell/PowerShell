@@ -832,7 +832,7 @@ dotnet_diagnostic.IDE0034.severity = silent
 dotnet_diagnostic.IDE0035.severity = silent
 
 # OrderModifiers
-dotnet_diagnostic.IDE0036.severity = warning
+dotnet_diagnostic.IDE0036.severity = suggestion
 
 # UseInferredMemberName
 dotnet_diagnostic.IDE0037.severity = silent
