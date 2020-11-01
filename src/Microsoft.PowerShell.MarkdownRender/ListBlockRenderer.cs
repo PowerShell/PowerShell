@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.MarkdownRender
             renderer.WriteLine();
         }
 
-        private void RenderNumberedList(VT100Renderer renderer, ListItemBlock block, int index)
+        private static void RenderNumberedList(VT100Renderer renderer, ListItemBlock block, int index)
         {
             // For a numbered list, we need to make sure the index is incremented.
             foreach (var line in block)

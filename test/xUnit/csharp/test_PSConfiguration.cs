@@ -366,7 +366,7 @@ namespace PSTests.Sequential
             CreateEmptyFile(currentUserConfigFile);
         }
 
-        private void CreateEmptyFile(string fileName)
+        private static void CreateEmptyFile(string fileName)
         {
             File.Create(fileName).Dispose();
         }
