@@ -3228,7 +3228,7 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
-                return Array.Empty<object>(); // don't use Utils.EmptyArray, always return a new array
+                return Array.Empty<object>();
             }
 
             return ArrayOps.Multiply(originalList.ToArray(), times);
