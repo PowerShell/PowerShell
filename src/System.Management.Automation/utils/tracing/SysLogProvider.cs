@@ -80,12 +80,12 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         // Ensure the string pointer is not garbage collected.
-        static IntPtr _nativeSyslogIdent = IntPtr.Zero;
-        static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
+        private static IntPtr _nativeSyslogIdent = IntPtr.Zero;
+        private static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
 
-        byte _channelFilter;
-        ulong _keywordFilter;
-        byte _levelFilter;
+        private byte _channelFilter;
+        private ulong _keywordFilter;
+        private byte _levelFilter;
 
         /// <summary>
         /// Initializes a new instance of this class.
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Tracing
         /// to ensure correct thread initialization.
         /// </remarks>
         [ThreadStatic]
-        static Guid? t_activity;
+        private static Guid? t_activity;
 
         private static Guid Activity
         {
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Tracing
 #region logging
 
         // maps a LogLevel to an associated SysLogPriority.
-        static NativeMethods.SysLogPriority[] _levels =
+        private static NativeMethods.SysLogPriority[] _levels =
         {
             NativeMethods.SysLogPriority.Info,
             NativeMethods.SysLogPriority.Critical,
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Tracing
 
     internal static class NativeMethods
     {
-        const string libpslnative = "libpsl-native";
+        private const string libpslnative = "libpsl-native";
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
         /// See man 3 syslog for more info.

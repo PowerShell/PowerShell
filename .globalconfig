@@ -844,7 +844,7 @@ dotnet_diagnostic.IDE0038.severity = silent
 dotnet_diagnostic.IDE0039.severity = silent
 
 # IDE0040: AddAccessibilityModifiers
-dotnet_diagnostic.IDE0040.severity = silent
+dotnet_diagnostic.IDE0040.severity = warning
 
 # IDE0041: UseIsNullCheck
 dotnet_diagnostic.IDE0041.severity = silent
