@@ -1996,8 +1996,8 @@ namespace System.Management.Automation
             {
                 int result = 61;
 
-                result = result * 397 + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
-                result = result * 397 + ParameterTypes.SequenceGetHashCode();
+                result = (result * 397) + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
+                result = (result * 397) + ParameterTypes.SequenceGetHashCode();
 
                 return result;
             }

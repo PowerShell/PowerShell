@@ -63,7 +63,7 @@ namespace System.Management.Automation
                     // and disabled parameter attributes. We should ignore those attributes.
                     // When processing non-dynamic parameters, the experimental attributes and disabled parameter
                     // attributes have already been filtered out when constructing the RuntimeDefinedParameter.
-                    if (attribute is ExperimentalAttribute || attribute is ParameterAttribute param && param.ToHide)
+                    if (attribute is ExperimentalAttribute || (attribute is ParameterAttribute param && param.ToHide))
                     {
                         continue;
                     }

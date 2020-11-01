@@ -82,7 +82,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < length; i++)
             {
-                IntPtr currentVarPtr = variantArray + s_variantSize * i;
+                IntPtr currentVarPtr = variantArray + (s_variantSize * i);
                 var currentVar = (Variant*)currentVarPtr;
                 currentVar->_typeUnion._vt = (ushort)VarEnum.VT_EMPTY;
             }
@@ -157,7 +157,7 @@ namespace System.Management.Automation
                     {
                         // !! The arguments should be in REVERSED order!!
                         int actualIndex = argCount - i - 1;
-                        IntPtr varArgPtr = variantArgArray + s_variantSize * actualIndex;
+                        IntPtr varArgPtr = variantArgArray + (s_variantSize * actualIndex);
 
                         // If need to pass by ref, create a by-ref variant
                         if (byRef != null && byRef[i])
@@ -169,7 +169,7 @@ namespace System.Management.Automation
                             }
 
                             // Create a VARIANT that the by-ref VARIANT points to
-                            IntPtr tmpVarPtr = tmpVariants + s_variantSize * refIndex;
+                            IntPtr tmpVarPtr = tmpVariants + (s_variantSize * refIndex);
                             Marshal.GetNativeVariantForObject(args[i], tmpVarPtr);
 
                             // Create the by-ref VARIANT
@@ -266,7 +266,7 @@ namespace System.Management.Automation
                         // If need to pass by ref, back propagate
                         if (byRef != null && byRef[i])
                         {
-                            args[i] = Marshal.GetObjectForNativeVariant(variantArgArray + s_variantSize * actualIndex);
+                            args[i] = Marshal.GetObjectForNativeVariant(variantArgArray + (s_variantSize * actualIndex));
                         }
                     }
                 }
@@ -280,7 +280,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < argCount; i++)
                     {
-                        VariantClear(variantArgArray + s_variantSize * i);
+                        VariantClear(variantArgArray + (s_variantSize * i));
                     }
 
                     Marshal.FreeCoTaskMem(variantArgArray);
@@ -297,7 +297,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < refCount; i++)
                     {
-                        VariantClear(tmpVariants + s_variantSize * i);
+                        VariantClear(tmpVariants + (s_variantSize * i));
                     }
 
                     Marshal.FreeCoTaskMem(tmpVariants);

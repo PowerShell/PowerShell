@@ -230,7 +230,7 @@ namespace System.Management.Automation
                 return pattern;
             }
 
-            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length * 2 + 1] : new char[pattern.Length * 2 + 1];
+            Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[(pattern.Length * 2) + 1] : new char[(pattern.Length * 2) + 1];
             int tempIndex = 0;
 
             for (int i = 0; i < pattern.Length; i++)
@@ -790,7 +790,7 @@ namespace System.Management.Automation
 
         protected override void BeginWildcardPattern(WildcardPattern pattern)
         {
-            _regexPattern = new StringBuilder(pattern.Pattern.Length * 2 + 2);
+            _regexPattern = new StringBuilder((pattern.Pattern.Length * 2) + 2);
             _regexPattern.Append('^');
 
             _regexOptions = TranslateWildcardOptionsIntoRegexOptions(pattern.Options);

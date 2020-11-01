@@ -69,9 +69,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // STATE TRANSITION: we are processing and we stop
-            if (_processingGroup &&
+            if ((_processingGroup &&
                 ((o is GroupEndData) ||
-                (_objectCount > 0) && (_currentObjectCount >= _objectCount)) ||
+                ((_objectCount > 0) && (_currentObjectCount >= _objectCount)))) ||
                 ((_groupingTimer != null) && (_groupingTimer.Elapsed > _groupingDuration))
                 )
             {

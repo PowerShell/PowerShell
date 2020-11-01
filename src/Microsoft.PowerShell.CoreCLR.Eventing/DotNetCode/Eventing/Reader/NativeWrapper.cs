@@ -1419,7 +1419,7 @@ namespace System.Diagnostics.Eventing.Reader
                 for (int i = 0; i < val.Count; i++)
                 {
                     array[i] = DateTime.FromFileTime(Marshal.ReadInt64(ptr));
-                    ptr = new IntPtr((Int64)ptr + 8 * sizeof(byte)); // FILETIME values are 8 bytes
+                    ptr = new IntPtr((Int64)ptr + (8 * sizeof(byte))); // FILETIME values are 8 bytes
                 }
 
                 return array;
@@ -1441,7 +1441,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     UnsafeNativeMethods.SystemTime sysTime = Marshal.PtrToStructure<UnsafeNativeMethods.SystemTime>(ptr);
                     array[i] = new DateTime(sysTime.Year, sysTime.Month, sysTime.Day, sysTime.Hour, sysTime.Minute, sysTime.Second, sysTime.Milliseconds);
-                    ptr = new IntPtr((Int64)ptr + 16 * sizeof(byte)); // SystemTime values are 16 bytes
+                    ptr = new IntPtr((Int64)ptr + (16 * sizeof(byte))); // SystemTime values are 16 bytes
                 }
 
                 return array;

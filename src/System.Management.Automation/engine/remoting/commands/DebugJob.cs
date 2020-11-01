@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if ((jobs1.Count > 1) ||
-                (jobs1.Count == 1) && (job2 != null))
+                ((jobs1.Count == 1) && (job2 != null)))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(

@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     double r = Generator.NextDouble();
-                    randomNumber = minValue + r * maxValue - r * minValue;
+                    randomNumber = minValue + (r * maxValue) - (r * minValue);
                 }
                 while (randomNumber >= maxValue);
             }
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     double r = Generator.NextDouble();
-                    randomNumber = minValue + r * diff;
+                    randomNumber = minValue + (r * diff);
                     diff = diff * r;
                 }
                 while (randomNumber >= maxValue);
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
                 randomUint64 &= mask;
             } while (uint64Diff <= randomUint64);
 
-            double randomNumber = minValue * 1.0 + randomUint64 * 1.0;
+            double randomNumber = (minValue * 1.0) + (randomUint64 * 1.0);
             return (Int64)randomNumber;
         }
 

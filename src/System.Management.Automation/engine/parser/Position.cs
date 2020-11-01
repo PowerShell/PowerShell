@@ -177,7 +177,7 @@ namespace System.Management.Automation.Language
                 bool needsSuffixDots = false;
 
                 int lineLength = sourceLine.Length;
-                var sb = new StringBuilder(sourceLine.Length * 2 + 4);
+                var sb = new StringBuilder((sourceLine.Length * 2) + 4);
                 if (lineLength > maxLineLength)
                 {
                     // Need to truncate - include as much of the error as we can, but with

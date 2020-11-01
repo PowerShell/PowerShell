@@ -1627,17 +1627,17 @@ namespace System.Management.Automation
                     result = 23;
                     if (obj.Name != null)
                     {
-                        result = result * 17 + obj.Name.GetHashCode();
+                        result = (result * 17) + obj.Name.GetHashCode();
                     }
 
                     if (obj.Guid != Guid.Empty)
                     {
-                        result = result * 17 + obj.Guid.GetHashCode();
+                        result = (result * 17) + obj.Guid.GetHashCode();
                     }
 
                     if (obj.Version != null)
                     {
-                        result = result * 17 + obj.Version.GetHashCode();
+                        result = (result * 17) + obj.Version.GetHashCode();
                     }
                 }
 

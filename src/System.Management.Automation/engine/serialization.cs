@@ -2841,7 +2841,7 @@ namespace System.Management.Automation
             Dbg.Assert(indexOfFirstEncodableCharacter < s.Length, "Caller should verify validity of indexOfFirstEncodableCharacter");
 
             int slen = s.Length;
-            char[] result = new char[indexOfFirstEncodableCharacter + (slen - indexOfFirstEncodableCharacter) * 7];
+            char[] result = new char[indexOfFirstEncodableCharacter + ((slen - indexOfFirstEncodableCharacter) * 7)];
 
             s.CopyTo(0, result, 0, indexOfFirstEncodableCharacter);
             int rlen = indexOfFirstEncodableCharacter;
@@ -3802,7 +3802,7 @@ namespace System.Management.Automation
                 // allocating much more memory than the length of the xml string
                 // We have to account for that to limit that to remoting quota and protect against OOM.
                 _context.LogExtraMemoryUsage(
-                    typeNames.Key.Length * sizeof(char) // Key is shared among the cloned and original object
+                    (typeNames.Key.Length * sizeof(char)) // Key is shared among the cloned and original object
                                                         // but the list of strings isn't.  The expression to the left
                                                         // is roughly the size of memory the list of strings occupies
                     - 29 // size of <Obj><TNRef RefId="0"/></Obj> in UTF8 encoding
@@ -5710,7 +5710,7 @@ namespace System.Management.Automation
                 }
 
                 _dictionary = alive;
-                _cleanupTriggerSize = initialCleanupTriggerSize + this.Count * 2;
+                _cleanupTriggerSize = initialCleanupTriggerSize + (this.Count * 2);
             }
         }
 

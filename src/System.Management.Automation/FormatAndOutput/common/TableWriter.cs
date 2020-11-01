@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // would we fit with one more column?
                 int nextValue = columnNumber + 1;
                 // compute the width if we added the extra column
-                int width = stringLen * nextValue + (nextValue - 1) * ScreenInfo.separatorCharacterCount;
+                int width = (stringLen * nextValue) + ((nextValue - 1) * ScreenInfo.separatorCharacterCount);
 
                 if (width >= screenColumns)
                 {

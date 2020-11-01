@@ -805,7 +805,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = 0; i < bufferSize; i++)
             {
-                sendBuffer[i] = (byte)((int)'a' + i % 23);
+                sendBuffer[i] = (byte)((int)'a' + (i % 23));
             }
 
             if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer == null)

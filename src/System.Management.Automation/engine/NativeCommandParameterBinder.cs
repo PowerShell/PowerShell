@@ -169,7 +169,7 @@ namespace System.Management.Automation
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
-            Diagnostics.Assert((argArrayAst == null) || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count, "array argument and ArrayLiteralAst differ in number of elements");
+            Diagnostics.Assert((argArrayAst == null) || (obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count), "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
             string separator = string.Empty;

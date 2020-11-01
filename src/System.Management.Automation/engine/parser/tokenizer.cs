@@ -1593,8 +1593,8 @@ namespace System.Management.Automation.Language
             else
             {
                 Diagnostics.Assert((codepoint > 0x0000FFFF) && (codepoint <= 0x0010FFFF), "Codepoint is out of range for a surrogate pair");
-                lowSurrogate = (char)((codepoint - 0x00010000) % 0x0400 + 0xDC00);
-                return (char)((codepoint - 0x00010000) / 0x0400 + 0xD800);
+                lowSurrogate = (char)(((codepoint - 0x00010000) % 0x0400) + 0xDC00);
+                return (char)(((codepoint - 0x00010000) / 0x0400) + 0xD800);
             }
         }
 

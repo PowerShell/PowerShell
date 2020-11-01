@@ -2287,7 +2287,7 @@ namespace System.Management.Automation
         {
             if (this.PipelineProcessor == null
                 || _thisCommand != this.PipelineProcessor._permittedToWrite
-                || needsToWriteToPipeline && !this.PipelineProcessor._permittedToWriteToPipeline
+                || (needsToWriteToPipeline && !this.PipelineProcessor._permittedToWriteToPipeline)
                 || Thread.CurrentThread != this.PipelineProcessor._permittedToWriteThread
                )
             {

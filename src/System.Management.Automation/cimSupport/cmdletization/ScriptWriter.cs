@@ -908,7 +908,7 @@ function __cmdletization_BindCommonParameters
 
             if ((maxBeforePosition >= 0) && (minAfterPosition <= maxBeforePosition))
             {
-                int delta = (1001 - minAfterPosition % 1000);
+                int delta = (1001 - (minAfterPosition % 1000));
                 foreach (ParameterMetadata afterParameter in afterParameters.Values)
                 {
                     foreach (ParameterSetMetadata afterParameterSet in afterParameter.ParameterSets.Values)

@@ -4331,7 +4331,7 @@ namespace System.Management.Automation
                 {
                     // To prevent to/from == from/to, multiply and add rather than use
                     // an operation that won't overflow, like bitwise xor.
-                    return from.GetHashCode() + 37 * to.GetHashCode();
+                    return from.GetHashCode() + (37 * to.GetHashCode());
                 }
             }
 
@@ -5180,8 +5180,8 @@ namespace System.Management.Automation
                     var sourceTypeDef = sourceType.GetGenericTypeDefinition();
                     bool isOutParameter = matchContext == TypeMatchingContext.OutParameterType;
 
-                    if (targetType.IsByRef && sourceTypeDef == (isOutParameter ? typeof(PSOutParameter<>) : typeof(PSReference<>)) ||
-                        targetType.IsPointer && sourceTypeDef == typeof(PSPointer<>))
+                    if ((targetType.IsByRef && sourceTypeDef == (isOutParameter ? typeof(PSOutParameter<>) : typeof(PSReference<>))) ||
+                        (targetType.IsPointer && sourceTypeDef == typeof(PSPointer<>)))
                     {
                         // For ref/out parameter types and pointer types, the element types need to match exactly.
                         if (targetType.GetElementType() == sourceType.GenericTypeArguments[0])
@@ -5195,8 +5195,8 @@ namespace System.Management.Automation
                 }
 
                 if (targetType == sourceType ||
-                    targetType == typeof(void) && sourceType == typeof(VOID) ||
-                    targetType == typeof(TypedReference) && sourceType == typeof(PSTypedReference))
+                    (targetType == typeof(void) && sourceType == typeof(VOID)) ||
+                    (targetType == typeof(TypedReference) && sourceType == typeof(PSTypedReference)))
                 {
                     matchExactly = true;
                     return true;

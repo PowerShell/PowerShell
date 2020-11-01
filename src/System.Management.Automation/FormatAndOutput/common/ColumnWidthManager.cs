@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            return sum + _separatorWidth * (visibleColumns - 1);
+            return sum + (_separatorWidth * (visibleColumns - 1));
         }
 
         /// <summary>

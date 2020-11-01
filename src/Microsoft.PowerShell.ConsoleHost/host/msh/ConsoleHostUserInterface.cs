@@ -2006,8 +2006,8 @@ namespace Microsoft.PowerShell
                     // the user hit tab up to the current cursor position after writing the completed text.
 
                     int deltaInput =
-                        (endOfInputCursorPos.Y * screenBufferSize.Width + endOfInputCursorPos.X)
-                        - (endOfCompletionCursorPos.Y * screenBufferSize.Width + endOfCompletionCursorPos.X);
+                        ((endOfInputCursorPos.Y * screenBufferSize.Width) + endOfInputCursorPos.X)
+                        - ((endOfCompletionCursorPos.Y * screenBufferSize.Width) + endOfCompletionCursorPos.X);
 
                     if (deltaInput > 0)
                     {
@@ -2066,7 +2066,7 @@ namespace Microsoft.PowerShell
                 up.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 
                 inputs[2 * i] = down;
-                inputs[2 * i + 1] = up;
+                inputs[(2 * i) + 1] = up;
             }
 
             ConsoleControl.MimicKeyPress(inputs);

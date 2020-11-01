@@ -1364,7 +1364,7 @@ namespace System.Management.Automation.Language
 
         bool IParameterMetadataProvider.HasAnyScriptBlockAttributes()
         {
-            return Attributes.Count > 0 || ParamBlock != null && ParamBlock.Attributes.Count > 0;
+            return Attributes.Count > 0 || (ParamBlock != null && ParamBlock.Attributes.Count > 0);
         }
 
         RuntimeDefinedParameterDictionary IParameterMetadataProvider.GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding)

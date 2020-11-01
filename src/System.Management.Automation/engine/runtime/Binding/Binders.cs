@@ -4569,7 +4569,7 @@ namespace System.Management.Automation.Language
                 return Defer(indexes.Prepend(target).Append(value).ToArray()).WriteToDebugLog(this);
             }
 
-            if (target.Value is PSObject && (PSObject.Base(target.Value) != target.Value) ||
+            if ((target.Value is PSObject && (PSObject.Base(target.Value) != target.Value)) ||
                 indexes.Any(mo => mo.Value is PSObject && (PSObject.Base(mo.Value) != mo.Value)))
             {
                 return this.DeferForPSObject(indexes.Prepend(target).Append(value).ToArray()).WriteToDebugLog(this);
@@ -6909,8 +6909,8 @@ namespace System.Management.Automation.Language
                 // to wrap exceptions - this is very much a special case to help error
                 // propagation and ensure errors are attributed to the correct code (the
                 // cmdlet invoked, not the method call from some proxy.)
-                if (methodInfo.DeclaringType == typeof(SteppablePipeline)
-                    && (methodInfo.Name.Equals("Begin", StringComparison.Ordinal))
+                if ((methodInfo.DeclaringType == typeof(SteppablePipeline)
+                    && (methodInfo.Name.Equals("Begin", StringComparison.Ordinal)))
                         || methodInfo.Name.Equals("Process", StringComparison.Ordinal)
                         || methodInfo.Name.Equals("End", StringComparison.Ordinal))
                 {

@@ -778,7 +778,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (preLabel != null && !Regex.IsMatch(preLabel, LabelUnitRegEx) ||
+            if ((preLabel != null && !Regex.IsMatch(preLabel, LabelUnitRegEx)) ||
                (buildLabel != null && !Regex.IsMatch(buildLabel, LabelUnitRegEx)))
             {
                 result.SetFailure(ParseFailureKind.FormatException);

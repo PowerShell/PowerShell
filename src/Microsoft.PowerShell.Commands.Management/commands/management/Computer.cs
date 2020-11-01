@@ -1834,7 +1834,7 @@ $result
 
             for (int i = 0; i < passwordLength; i++)
             {
-                chars[i] = (char)(randomBytes[i] % allowedCharsCount + charMin);
+                chars[i] = (char)((randomBytes[i] % allowedCharsCount) + charMin);
             }
 
             return new string(chars);
@@ -2013,8 +2013,8 @@ $result
 
             foreach (char t in computerName)
             {
-                if (t >= 'A' && t <= 'Z' ||
-                    t >= 'a' && t <= 'z')
+                if ((t >= 'A' && t <= 'Z') ||
+                    (t >= 'a' && t <= 'z'))
                 {
                     allDigits = false;
                     continue;

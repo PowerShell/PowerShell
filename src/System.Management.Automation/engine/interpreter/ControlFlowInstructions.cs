@@ -291,7 +291,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (labelIndex < CacheSize)
             {
-                var index = Variants * labelIndex | (hasResult ? 2 : 0) | (hasValue ? 1 : 0);
+                var index = (Variants * labelIndex) | (hasResult ? 2 : 0) | (hasValue ? 1 : 0);
                 return s_cache[index] ?? (s_cache[index] = new GotoInstruction(labelIndex, hasResult, hasValue));
             }
 

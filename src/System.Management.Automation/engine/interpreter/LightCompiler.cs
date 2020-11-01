@@ -799,7 +799,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileEqual(Expression left, Expression right)
         {
             Debug.Assert(left.Type == right.Type ||
-                         !left.Type.IsValueType && !right.Type.IsValueType);
+                         (!left.Type.IsValueType && !right.Type.IsValueType));
             Compile(left);
             Compile(right);
             _instructions.EmitEqual(left.Type);
@@ -808,7 +808,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileNotEqual(Expression left, Expression right)
         {
             Debug.Assert(left.Type == right.Type ||
-                         !left.Type.IsValueType && !right.Type.IsValueType);
+                         (!left.Type.IsValueType && !right.Type.IsValueType));
             Compile(left);
             Compile(right);
             _instructions.EmitNotEqual(left.Type);

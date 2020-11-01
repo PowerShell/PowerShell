@@ -3626,7 +3626,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
 
                     var propVal = prop.Value;
-                    if (listKeyProperties && propVal.IsKey || !listKeyProperties && !propVal.IsKey)
+                    if ((listKeyProperties && propVal.IsKey) || (!listKeyProperties && !propVal.IsKey))
                     {
                         usageString.Append(propVal.Mandatory ? "    " : "    [ ");
                         usageString.Append(prop.Key);

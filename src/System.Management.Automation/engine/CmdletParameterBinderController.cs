@@ -2564,8 +2564,8 @@ namespace System.Management.Automation
                 // If the valid parameter set is the default parameter set, or if the default
                 // parameter set has been defined and one of the valid parameter sets is
                 // the default parameter set, then use the default parameter set.
-                else if (!prePipelineInput &&
-                    validSetIsDefault ||
+                else if ((!prePipelineInput &&
+                    validSetIsDefault) ||
                     (hasDefaultSetDefined && (_currentParameterSetFlag & defaultParameterSetFlag) != 0))
                 {
                     // NTRAID#Windows Out Of Band Releases-2006/02/14-928660-JonN

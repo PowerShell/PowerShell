@@ -2024,7 +2024,7 @@ namespace System.Management.Automation
                         // LCG comes from a trivial (bad) random number generator,
                         // but it's sufficient for us - the hashes for our patterns
                         // are unique, and processing of 2200 files found no false matches.
-                        runningHash[j] = LCG * runningHash[j - 1] + h;
+                        runningHash[j] = (LCG * runningHash[j - 1]) + h;
                     }
 
                     runningHash[0] = h;

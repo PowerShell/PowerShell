@@ -49,14 +49,14 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < len; i++)
             {
-                ch = (char)(data[2 * i + 1] * 256 + data[2 * i]);
+                ch = (char)((data[(2 * i) + 1] * 256) + data[2 * i]);
                 ss.AppendChar(ch);
 
                 //
                 // zero out the data slots as soon as we use them
                 //
                 data[2 * i] = 0;
-                data[2 * i + 1] = 0;
+                data[(2 * i) + 1] = 0;
             }
 
             return ss;

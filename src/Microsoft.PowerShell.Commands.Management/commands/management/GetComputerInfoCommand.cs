@@ -1159,13 +1159,13 @@ namespace Microsoft.PowerShell.Commands
             return DateTimeOffset.FromUnixTimeSeconds(seconds).DateTime;
 #else
             const int DaysPerYear = 365;
-            const int DaysPer4Years = DaysPerYear * 4 + 1;
-            const int DaysPer100Years = DaysPer4Years * 25 - 1;
-            const int DaysPer400Years = DaysPer100Years * 4 + 1;
-            const int DaysTo1970 = DaysPer400Years * 4 + DaysPer100Years * 3 + DaysPer4Years * 17 + DaysPerYear;
+            const int DaysPer4Years = (DaysPerYear * 4) + 1;
+            const int DaysPer100Years = (DaysPer4Years * 25) - 1;
+            const int DaysPer400Years = (DaysPer100Years * 4) + 1;
+            const int DaysTo1970 = (DaysPer400Years * 4) + (DaysPer100Years * 3) + (DaysPer4Years * 17) + DaysPerYear;
             const long UnixEpochTicks = TimeSpan.TicksPerDay * DaysTo1970;
 
-            long ticks = seconds * TimeSpan.TicksPerSecond + UnixEpochTicks;
+            long ticks = (seconds * TimeSpan.TicksPerSecond) + UnixEpochTicks;
 
             return new DateTimeOffset(ticks, TimeSpan.Zero).DateTime;
 #endif

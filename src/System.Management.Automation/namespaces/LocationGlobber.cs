@@ -3356,8 +3356,8 @@ namespace System.Management.Automation
 
             // Only loop through the child names if the leafElement contains a glob character
 
-            if (!string.IsNullOrEmpty(leafElement) &&
-                StringContainsGlobCharacters(leafElement) ||
+            if ((!string.IsNullOrEmpty(leafElement) &&
+                StringContainsGlobCharacters(leafElement)) ||
                 isLastLeaf)
             {
                 string regexEscapedLeafElement = ConvertMshEscapeToRegexEscape(leafElement);

@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 // Wait should wait until a job is in a persistent state, OR if the force parameter
                 // is specified, until the job is in a finished state, which is a subset of
                 // persistent states.
-                if (!Force && job.IsPersistentState(eventArgs.JobStateInfo.State) || (Force && job.IsFinishedState(eventArgs.JobStateInfo.State)))
+                if ((!Force && job.IsPersistentState(eventArgs.JobStateInfo.State)) || (Force && job.IsFinishedState(eventArgs.JobStateInfo.State)))
                 {
                     if (!job.IsFinishedState(eventArgs.JobStateInfo.State))
                     {

@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
                 var errorLineString = textLines[errorLineNumber].ToString();
                 var errorPosition = lineSpan.StartLinePosition.Character;
 
-                StringBuilder sb = new StringBuilder(diagnisticMessage.Length + errorLineString.Length * 2 + 4);
+                StringBuilder sb = new StringBuilder(diagnisticMessage.Length + (errorLineString.Length * 2) + 4);
 
                 sb.AppendLine(diagnisticMessage);
                 sb.AppendLine(errorLineString);

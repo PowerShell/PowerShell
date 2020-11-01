@@ -599,7 +599,7 @@ namespace System.Management.Automation
             uint crc = 0xFFFFFFFF;
             for (int i = 0; i < buffer.Length; ++i)
             {
-                var index = (byte)(crc ^ buffer[i] & 0xff);
+                var index = (byte)(crc ^ (buffer[i] & 0xff));
                 crc = (crc >> 8) ^ table[index];
             }
 

@@ -395,7 +395,7 @@ namespace System.Management.Automation.Remoting.Client
                                 int decimalIndex = timeoutString.IndexOf('.');
                                 try
                                 {
-                                    int timeout = Convert.ToInt32(timeoutString.Substring(2, decimalIndex - 2), NumberFormatInfo.InvariantInfo) * 1000 + Convert.ToInt32(timeoutString.Substring(decimalIndex + 1, 3), NumberFormatInfo.InvariantInfo);
+                                    int timeout = (Convert.ToInt32(timeoutString.Substring(2, decimalIndex - 2), NumberFormatInfo.InvariantInfo) * 1000) + Convert.ToInt32(timeoutString.Substring(decimalIndex + 1, 3), NumberFormatInfo.InvariantInfo);
                                     if (settingIdleTimeout)
                                     {
                                         ConnectionInfo.IdleTimeout = timeout;

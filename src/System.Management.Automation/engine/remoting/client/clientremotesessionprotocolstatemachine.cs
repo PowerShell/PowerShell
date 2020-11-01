@@ -359,8 +359,8 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs">Event args.</param>
         private void SetStateToClosedHandler(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
-            Dbg.Assert(_state == RemoteSessionState.NegotiationReceived &&
-                            eventArgs.StateEvent == RemoteSessionEvent.NegotiationFailed ||
+            Dbg.Assert((_state == RemoteSessionState.NegotiationReceived &&
+                            eventArgs.StateEvent == RemoteSessionEvent.NegotiationFailed) ||
                             eventArgs.StateEvent == RemoteSessionEvent.SendFailed ||
                             eventArgs.StateEvent == RemoteSessionEvent.ReceiveFailed ||
                             eventArgs.StateEvent == RemoteSessionEvent.NegotiationTimeout ||
