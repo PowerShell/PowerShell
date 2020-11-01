@@ -63,7 +63,7 @@ namespace PSTests.Parallel
             return executionContext;
         }
 
-        private ProviderInfo GetProvider()
+        private static ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
