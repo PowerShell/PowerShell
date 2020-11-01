@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces
 
             // Generate the shutdown event
             if (Events != null)
-                Events.GenerateEvent(PSEngineEvent.Exiting, null, new object[] { }, null, true, false);
+                Events.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
 
             // Stop all running pipelines
             // Note:Do not perform the Cancel in lock. Reason is

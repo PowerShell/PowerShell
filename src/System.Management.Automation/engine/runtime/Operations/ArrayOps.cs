@@ -52,7 +52,7 @@ namespace System.Management.Automation
 
             if (times == 0 || array.Length == 0)
             {
-                return new T[0]; // don't use Utils.EmptyArray, always return a new array
+                return Array.Empty<T>(); // don't use Utils.EmptyArray, always return a new array
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();

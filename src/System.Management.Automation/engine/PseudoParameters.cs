@@ -236,6 +236,6 @@ namespace System.Management.Automation
         /// </summary>
         public object Data { get; set; }
 
-        internal static readonly RuntimeDefinedParameter[] EmptyParameterArray = new RuntimeDefinedParameter[0];
+        internal static readonly RuntimeDefinedParameter[] EmptyParameterArray = Array.Empty<RuntimeDefinedParameter>();
     }
 }

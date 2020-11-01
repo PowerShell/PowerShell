@@ -6882,7 +6882,7 @@ namespace Microsoft.PowerShell.Commands
                     iss.Bind(Context, updateOnly: true, module, options.NoClobber, options.Local, setLocation: false);
 
                     // Scan all of the types in the assembly to register JobSourceAdapters.
-                    IEnumerable<Type> allTypes = new Type[] { };
+                    IEnumerable<Type> allTypes = Array.Empty<Type>();
                     if (assembly != null)
                     {
                         allTypes = assembly.ExportedTypes;

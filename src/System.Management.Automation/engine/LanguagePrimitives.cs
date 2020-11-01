@@ -384,7 +384,7 @@ namespace System.Management.Automation
 
                 emitter.Emit(OpCodes.Ldarg_0);
                 emitter.Emit(OpCodes.Castclass, _enumerableType);
-                MethodInfo methodInfo = _enumerableType.GetMethod("GetEnumerator", new Type[] { });
+                MethodInfo methodInfo = _enumerableType.GetMethod("GetEnumerator", Array.Empty<Type>());
                 emitter.Emit(OpCodes.Callvirt, methodInfo);
                 emitter.Emit(OpCodes.Ret);
             }

@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ModuleSpecification[] _moduleSpecifications = new ModuleSpecification[0];
+        private ModuleSpecification[] _moduleSpecifications = Array.Empty<ModuleSpecification>();
         internal bool IsFullyQualifiedModuleSpecified = false;
 
         private bool _commandParameterSpecified; // initialized to default value in the constructor

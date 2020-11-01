@@ -19,7 +19,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[0]);
+            cpp.Parse(System.Array.Empty<string>());
 
             Assert.False(cpp.AbortStartup);
             Assert.Empty(cpp.Args);
@@ -60,9 +60,9 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[0]);
+            cpp.Parse(System.Array.Empty<string>());
 
-            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(new string[0]));
+            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(System.Array.Empty<string>()));
         }
 
         [Theory]
