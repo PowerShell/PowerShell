@@ -733,29 +733,10 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class GetHelpCodeMethods
     {
-        private static bool TrySingle<TSource>(IEnumerable<TSource> source, out TSource element)
-        {
-            using (IEnumerator<TSource> e = source.GetEnumerator())
-            {
-                if (e.MoveNext())
-                {
-                    TSource result = e.Current;
-                    if (!e.MoveNext())
-                    {
-                        element = result;
-                        return true;
-                    }
-                }
-            }
-
-            element = default;
-            return false;
-        }
-
         /// <summary>
-        /// Verifies if the InitialSessionState of the current process.
-        /// </summary>
-        /// <returns></returns>
+        /// Checks whether the default runspace associated with the current thread has the standard Get-Help cmdlet.
+        /// <summary>
+        /// <return>True if Get-Help is found, false otherwise.</return>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
         {
             InitialSessionState iss = Runspace.DefaultRunspace.InitialSessionState;
@@ -764,13 +745,27 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            IEnumerable<SessionStateCommandEntry> publicGetHelpEntries = iss
-                .Commands["Get-Help"]
-                .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
+            Collection<SessionStateCommandEntry> getHelpEntries = iss.Commands["Get-Help"];
+            SessionStateCommandEntry getHelpEntry = null;
+            for (int i = 0; i < getHelpEntries.Count; ++i)
+            {
+                if (getHelpEntries[i].Visibility is not SessionStateEntryVisibility.Public)
+                {
+                    continue;
+                }
 
-            return TrySingle(publicGetHelpEntries, out SessionStateCommandEntry entry)
-                && entry is SessionStateCmdletEntry getHelpCmdlet
-                && getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand));
+                // If we have multiple entries for Get-Help,
+                // our assumption is that the standard Get-Help is not available.
+                if (getHelpEntry is not null)
+                {
+                    return false;
+                }
+
+                getHelpEntry = getHelpEntries[i];
+            }
+
+            return getHelpEntry is SessionStateCmdletEntry getHelpCmdlet
+                && getHelpCmdlet.ImplementingType == typeof(GetHelpCommand);
         }
 
         /// <summary>
