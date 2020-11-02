@@ -301,7 +301,7 @@ dotnet_diagnostic.CA1828.severity = suggestion
 dotnet_diagnostic.CA1829.severity = suggestion
 
 # CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
-dotnet_diagnostic.CA1830.severity = suggestion
+dotnet_diagnostic.CA1830.severity = warning
 
 # CA1831: Use AsSpan or AsMemory instead of Range-based indexers when appropriate
 dotnet_diagnostic.CA1831.severity = warning

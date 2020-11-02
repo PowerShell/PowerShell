@@ -441,7 +441,7 @@ namespace System.Management.Automation
                     if (exsb.Length > 0)
                     {
                         sb.Append("\n\n.EXAMPLE\n\n");
-                        sb.Append(exsb.ToString());
+                        sb.Append(exsb);
                     }
                 }
             }

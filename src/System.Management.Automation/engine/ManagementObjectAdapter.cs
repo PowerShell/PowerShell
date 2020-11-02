@@ -873,7 +873,7 @@ namespace System.Management.Automation
             builder.Append("System.Management.ManagementBaseObject ");
             builder.Append(mData.Name);
             builder.Append('(');
-            builder.Append(inParameterString.ToString());
+            builder.Append(inParameterString);
             builder.Append(')');
 
             string returnValue = builder.ToString();
