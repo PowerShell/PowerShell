@@ -53,7 +53,7 @@ namespace System.Management.Automation
             if (times == 0 || array.Length == 0)
             {
 #pragma warning disable CA1825 // Avoid zero-length array allocations
-                // Always return a new array.
+                // Don't use Array.Empty<T>(); always return a new instance.
                 return new T[0];
 #pragma warning restore CA1825 // Avoid zero-length array allocations
             }
