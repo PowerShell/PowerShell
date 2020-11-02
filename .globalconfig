@@ -1010,7 +1010,7 @@ dotnet_diagnostic.SA0001.severity = none
 dotnet_diagnostic.SA0002.severity = none
 
 # SA1000: Keywords should be spaced correctly
-dotnet_diagnostic.SA1000.severity = none
+dotnet_diagnostic.SA1000.severity = warning
 
 # SA1001: Commas should be spaced correctly
 dotnet_diagnostic.SA1001.severity = none
