@@ -25,7 +25,7 @@ namespace System.Management.Automation.Runspaces
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private TypeInfoDataBaseManager _formatDBMgr;
+        private readonly TypeInfoDataBaseManager _formatDBMgr;
 
         #endregion
 
