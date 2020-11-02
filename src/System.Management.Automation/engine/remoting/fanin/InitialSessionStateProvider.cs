@@ -785,10 +785,10 @@ namespace System.Management.Automation.Remoting
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
 
-        private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
+        private static readonly Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
 
         #endregion
     }
@@ -1686,8 +1686,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal sealed class DISCPowerShellConfiguration : PSSessionConfiguration
     {
-        private string _configFile;
-        private Hashtable _configHash;
+        private readonly string _configFile;
+        private readonly Hashtable _configHash;
 
         /// <summary>
         /// Gets the configuration hashtable that results from parsing the specified configuration file.

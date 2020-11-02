@@ -25,7 +25,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private OriginInfo _originInfo;
+        private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor.
@@ -302,7 +302,7 @@ namespace System.Management.Automation.Remoting
         }
 
         [DataMemberAttribute()]
-        private string _computerName;
+        private readonly string _computerName;
 
         /// <summary>
         /// Runspace instance ID.

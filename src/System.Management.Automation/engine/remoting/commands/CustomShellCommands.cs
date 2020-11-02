@@ -4168,7 +4168,7 @@ param(
 $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecified $args[2] -queryForSet $args[3] -captionForSet $args[4] -queryForQC $args[5] -captionForQC $args[6] -whatif:$args[7] -confirm:$args[8] -shouldProcessDescForQC $args[9] -setEnabledTarget $args[10] -setEnabledAction $args[11] -skipNetworkProfileCheck $args[12] -noServiceRestart $args[13]
 ";
 
-        private static ScriptBlock s_enablePluginSb;
+        private static readonly ScriptBlock s_enablePluginSb;
 
         #endregion
 
@@ -4196,7 +4196,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
-        private Collection<string> _shellsToEnable = new Collection<string>();
+        private readonly Collection<string> _shellsToEnable = new Collection<string>();
 
         /// <summary>
         /// Property that sets force parameter. This will allow
@@ -4455,7 +4455,7 @@ param(
 $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$args[2] -restartWinRMMessage $args[3] -setEnabledTarget $args[4] -setEnabledAction $args[5] -noServiceRestart $args[6]
 ";
 
-        private static ScriptBlock s_disablePluginSb;
+        private static readonly ScriptBlock s_disablePluginSb;
 
         #endregion
 
@@ -4483,7 +4483,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
-        private Collection<string> _shellsToDisable = new Collection<string>();
+        private readonly Collection<string> _shellsToDisable = new Collection<string>();
 
         /// <summary>
         /// Property that sets force parameter. This will allow
@@ -4860,7 +4860,7 @@ param(
 Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForRegisterDefault $args[2] -queryForSet $args[3] -captionForSet $args[4] -whatif:$args[5] -confirm:$args[6] -skipNetworkProfileCheck $args[7] -errorMsgUnableToInstallPlugin $args[8]
 ";
 
-        private static ScriptBlock s_enableRemotingSb;
+        private static readonly ScriptBlock s_enableRemotingSb;
 
         #endregion
 
@@ -5086,7 +5086,7 @@ param(
 Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2] -restartWinRMMessage $args[3] -whatif:$args[4] -confirm:$args[5]
 ";
 
-        private static ScriptBlock s_disableRemotingSb;
+        private static readonly ScriptBlock s_disableRemotingSb;
 
         #endregion Private Data
 
