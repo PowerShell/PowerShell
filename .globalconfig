@@ -868,7 +868,7 @@ dotnet_diagnostic.IDE0046.severity = silent
 dotnet_diagnostic.IDE0047.severity = silent
 
 # IDE0048: AddRequiredParentheses
-dotnet_diagnostic.IDE0048.severity = warning
+dotnet_diagnostic.IDE0048.severity = suggestion
 
 # IDE0049: PreferBuiltInOrFrameworkType
 dotnet_diagnostic.IDE0049.severity = silent
