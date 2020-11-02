@@ -50,7 +50,7 @@ namespace System.Management.Automation
             _helpSystem = helpSystem;
         }
 
-        private HelpSystem _helpSystem;
+        private readonly HelpSystem _helpSystem;
 
         internal HelpSystem HelpSystem
         {
