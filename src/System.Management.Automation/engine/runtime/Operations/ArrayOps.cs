@@ -56,6 +56,7 @@ namespace System.Management.Automation
 
             if (times == 0 || array.Length == 0)
             {
+                // Always return a new array.
                 return new T[0];
             }
 

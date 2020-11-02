@@ -3232,6 +3232,7 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
+                // Always return a new array.
                 return new object[0];
             }
 
