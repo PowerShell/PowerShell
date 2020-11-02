@@ -91,7 +91,7 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private RangeItemHeaderValue GetRange(string rangeHeader)
+        private static RangeItemHeaderValue GetRange(string rangeHeader)
         {
             return RangeHeaderValue.Parse(rangeHeader).Ranges.FirstOrDefault();
         }
