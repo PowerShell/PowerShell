@@ -3208,6 +3208,10 @@ namespace System.Management.Automation
             return result.ToArray();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1825:Avoid zero-length array allocations",
+            Justification = "Code from source-depot includes comment: 'don't use Utils.EmptyArray, always return a new array'.")]
         internal static object Multiply(IEnumerator enumerator, uint times)
         {
             var fakeEnumerator = enumerator as NonEnumerableObjectEnumerator;
@@ -3228,7 +3232,7 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
-                return Array.Empty<object>();
+                return new object[0];
             }
 
             return ArrayOps.Multiply(originalList.ToArray(), times);

@@ -41,6 +41,10 @@ namespace System.Management.Automation
         /// <param name="array">Collection to multiply.</param>
         /// <param name="times">Number of times the collection is to be multiplied/copied.</param>
         /// <returns>Collection multiplied by integer.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1825:Avoid zero-length array allocations",
+            Justification = "Code from source-depot includes comment: 'don't use Utils.EmptyArray, always return a new array'.")]
         internal static T[] Multiply<T>(T[] array, uint times)
         {
             Diagnostics.Assert(array != null, "Caller should verify the arguments for array multiplication");
@@ -52,7 +56,7 @@ namespace System.Management.Automation
 
             if (times == 0 || array.Length == 0)
             {
-                return Array.Empty<T>();
+                return new T[0];
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
