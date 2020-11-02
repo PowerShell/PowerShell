@@ -5,9 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Reflection;
 using System.Text;
 
 namespace System.Management.Automation.Runspaces

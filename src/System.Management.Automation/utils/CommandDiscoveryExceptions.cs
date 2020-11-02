@@ -4,7 +4,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 using System.Text;
 
 namespace System.Management.Automation
