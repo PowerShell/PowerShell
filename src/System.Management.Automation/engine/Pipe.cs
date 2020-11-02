@@ -28,7 +28,7 @@ namespace System.Management.Automation.Internal
     /// </remarks>
     internal class Pipe
     {
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         // If a pipeline object has been added, then
         // write objects to it, stepping one at a time...
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Internal
             _resultCollection = resultCollection;
         }
 
-        private System.Collections.ObjectModel.Collection<PSObject> _resultCollection;
+        private readonly System.Collections.ObjectModel.Collection<PSObject> _resultCollection;
 
         /// <summary>
         /// This pipe writes into another pipeline processor allowing
@@ -380,7 +380,7 @@ namespace System.Management.Automation.Internal
             _enumeratorToProcessIsEmpty = false;
         }
 
-        private IEnumerator _enumeratorToProcess;
+        private readonly IEnumerator _enumeratorToProcess;
         private bool _enumeratorToProcessIsEmpty;
 
         #endregion ctor

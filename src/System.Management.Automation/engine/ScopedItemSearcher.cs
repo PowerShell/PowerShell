@@ -230,7 +230,7 @@ namespace System.Management.Automation
 
         private T _current;
         protected SessionStateInternal sessionState;
-        private VariablePath _lookupPath;
+        private readonly VariablePath _lookupPath;
         private SessionStateScopeEnumerator _scopeEnumerable;
         private bool _isSingleScopeLookup;
         private bool _isInitialized;

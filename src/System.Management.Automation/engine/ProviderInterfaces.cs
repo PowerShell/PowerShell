@@ -160,7 +160,7 @@ namespace System.Management.Automation
 
         #region private data
 
-        private SessionStateInternal _sessionState;
+        private readonly SessionStateInternal _sessionState;
 
         #endregion private data
     }

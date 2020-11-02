@@ -363,8 +363,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
-        private static object s_debugPreferenceLockObject = new object();
+        private static readonly string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
+        private static readonly object s_debugPreferenceLockObject = new object();
 
         /// <summary>
         /// DebugPreference serves as a property bag to keep
@@ -1312,14 +1312,13 @@ namespace System.Management.Automation.Runspaces
         private History _history;
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
-        private static
-        PSTraceSource s_runspaceInitTracer =
+        private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
 
         /// <summary>
         /// This ensures all processes have a server/listener.
         /// </summary>
-        private static RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
+        private static readonly RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
 
         #endregion private fields
     }
@@ -1331,7 +1330,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class StopJobOperationHelper : IThrottleOperation
     {
-        private Job _job;
+        private readonly Job _job;
 
         /// <summary>
         /// Internal constructor.
@@ -1408,7 +1407,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class CloseOrDisconnectRunspaceOperationHelper : IThrottleOperation
     {
-        private RemoteRunspace _remoteRunspace;
+        private readonly RemoteRunspace _remoteRunspace;
 
         /// <summary>
         /// Internal constructor.
@@ -1569,7 +1568,7 @@ namespace System.Management.Automation.Runspaces
             get { return _errors; }
         }
 
-        private PSDataCollection<ErrorRecord> _errors;
+        private readonly PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
         /// <summary>

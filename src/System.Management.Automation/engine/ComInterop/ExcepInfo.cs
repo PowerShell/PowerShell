@@ -15,15 +15,15 @@ namespace System.Management.Automation.ComInterop
     [StructLayout(LayoutKind.Sequential)]
     internal struct ExcepInfo
     {
-        private short _wCode;
+        private readonly short _wCode;
         private short _wReserved;
         private IntPtr _bstrSource;
         private IntPtr _bstrDescription;
         private IntPtr _bstrHelpFile;
-        private int _dwHelpContext;
-        private IntPtr _pvReserved;
-        private IntPtr _pfnDeferredFillIn;
-        private int _scode;
+        private readonly int _dwHelpContext;
+        private readonly IntPtr _pvReserved;
+        private readonly IntPtr _pfnDeferredFillIn;
+        private readonly int _scode;
 
 #if DEBUG
         static ExcepInfo()

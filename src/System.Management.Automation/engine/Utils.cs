@@ -2234,7 +2234,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal sealed class ReadOnlyBag<T> : IEnumerable
     {
-        private HashSet<T> _hashset;
+        private readonly HashSet<T> _hashset;
 
         /// <summary>
         /// Constructor for the readonly Hashset.

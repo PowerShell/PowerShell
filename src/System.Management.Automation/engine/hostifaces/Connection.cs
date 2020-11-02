@@ -450,9 +450,9 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private static int s_globalId;
-        private Stack<PowerShell> _runningPowerShells;
+        private readonly Stack<PowerShell> _runningPowerShells;
         private PowerShell _baseRunningPowerShell;
-        private object _syncObject;
+        private readonly object _syncObject;
 
         #endregion
 
@@ -801,8 +801,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
-        private static object s_syncObject;
+        private static readonly SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
+        private static readonly object s_syncObject;
 
         /// <summary>
         /// Returns a read only list of runspaces.
@@ -1667,7 +1667,7 @@ namespace System.Management.Automation.Runspaces
         {
         }
 
-        private RunspaceBase _runspace;
+        private readonly RunspaceBase _runspace;
 
         internal SessionStateProxy(RunspaceBase runspace)
         {
