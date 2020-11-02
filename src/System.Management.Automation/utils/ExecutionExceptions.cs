@@ -274,7 +274,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ProviderInvocationException _providerInvocationException;
+        private readonly ProviderInvocationException _providerInvocationException;
 
         /// <summary>
         /// This is the ProviderInfo associated with the provider which

@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Lock object for the GetTracer method.
         /// </summary>
-        private static object s_getTracerLock = new object();
+        private static readonly object s_getTracerLock = new object();
 
         /// <summary>
         /// A helper to get an instance of the PSTraceSource class.
