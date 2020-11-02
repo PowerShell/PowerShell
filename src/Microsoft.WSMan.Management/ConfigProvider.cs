@@ -5434,14 +5434,14 @@ namespace Microsoft.WSMan.Management
         {
             GetChildItems,
             GetChildNames
-        };
+        }
 
         private enum WsManElementObjectTypes
         {
             WSManConfigElement,
             WSManConfigContainerElement,
             WSManConfigLeafElement
-        };
+        }
 
         #region def
         private static readonly string[] WinrmRootName = new string[] { "winrm/Config" };

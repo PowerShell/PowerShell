@@ -41,7 +41,7 @@ namespace System.Management.Automation.Language
         /// Name may be optionally present, expression or bare word.
         /// </summary>
         OptionalName = 4,
-    };
+    }
 
     /// <summary>
     /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body.

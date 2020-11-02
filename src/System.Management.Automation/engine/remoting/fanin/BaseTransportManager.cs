@@ -97,7 +97,7 @@ namespace System.Management.Automation.Remoting
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// ConnectionStatusEventArgs.

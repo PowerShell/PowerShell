@@ -556,7 +556,7 @@ namespace System.Management.Automation.Security
         {
             CRYPTUI_WIZ_NO_UI = 0x0001
             // other flags not used
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTUI_WIZ_DIGITAL_SIGN_INFO
@@ -575,14 +575,14 @@ namespace System.Management.Automation.Security
 
             internal DWORD dwAdditionalCertChoice;
             internal IntPtr pSignExtInfo; // PCCRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
-        };
+        }
 
         [Flags]
         internal enum SignInfoSubjectChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_FILE = 0x01
             // CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_BLOB = 0x02 NotUsed
-        };
+        }
 
         [Flags]
         internal enum SignInfoCertChoice
@@ -590,14 +590,14 @@ namespace System.Management.Automation.Security
             CRYPTUI_WIZ_DIGITAL_SIGN_CERT = 0x01
             // CRYPTUI_WIZ_DIGITAL_SIGN_STORE = 0x02, NotUsed
             // CRYPTUI_WIZ_DIGITAL_SIGN_PVK = 0x03, NotUsed
-        };
+        }
 
         [Flags]
         internal enum SignInfoAdditionalCertChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_ADD_CHAIN = 1,
             CRYPTUI_WIZ_DIGITAL_SIGN_ADD_CHAIN_NO_ROOT = 2
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
@@ -618,7 +618,7 @@ namespace System.Management.Automation.Security
             internal IntPtr hAdditionalCertStoreNotUsed; // HCERTSTORE
             internal IntPtr psAuthenticatedNotUsed;      // PCRYPT_ATTRIBUTES
             internal IntPtr psUnauthenticatedNotUsed;    // PCRYPT_ATTRIBUTES
-        };
+        }
 
         [ArchitectureSensitive]
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
@@ -806,7 +806,7 @@ namespace System.Management.Automation.Security
             internal IntPtr hFileNotUsed;          // optional, HANDLE to pcwszFilePath
             internal IntPtr pgKnownSubjectNotUsed; // optional: GUID* : fill if the
                                                    // subject type is known
-        };
+        }
 
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct WINTRUST_BLOB_INFO
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Security
             WTD_UI_NONE = 2,
             WTD_UI_NOBAD = 3,
             WTD_UI_NOGOOD = 4
-        };
+        }
 
         [Flags]
         internal enum WintrustUnionChoice
@@ -881,7 +881,7 @@ namespace System.Management.Automation.Security
             WTD_CHOICE_BLOB = 3,
             // WTD_CHOICE_SIGNER = 4,
             // WTD_CHOICE_CERT = 5,
-        };
+        }
 
         [Flags]
         internal enum WintrustProviderFlags
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Security
             WTD_USE_DEFAULT_OSVER_CHECK = 0x00000400,
             WTD_LIFETIME_SIGNING_FLAG = 0x00000800,
             WTD_CACHE_ONLY_URL_RETRIEVAL = 0x00001000
-        };
+        }
 
         [Flags]
         internal enum WintrustAction
@@ -909,7 +909,7 @@ namespace System.Management.Automation.Security
             WTD_STATEACTION_CLOSE = 0x00000002,
             WTD_STATEACTION_AUTO_CACHE = 0x00000003,
             WTD_STATEACTION_AUTO_CACHE_FLUSH = 0x00000004
-        };
+        }
 
         [StructLayoutAttribute(LayoutKind.Explicit)]
         internal struct WinTrust_Choice
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation.Security
             private DWORD _dwCtlError;
             private BOOL _fIsCyclic;
             private IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_SGNR
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation.Security
             internal DWORD csCounterSigners;
             internal IntPtr pasCounterSigners; // CRYPT_PROVIDER_SGNR*
             private IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
-        };
+        }
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
@@ -1210,7 +1210,7 @@ namespace System.Management.Automation.Security
             // [MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=0)]
             // internal string[] rgpszUsageIdentifier; // LPSTR*
             internal IntPtr rgpszUsageIdentifier;
-        };
+        }
 
         internal enum SIGNATURE_STATE
         {
@@ -1967,7 +1967,7 @@ namespace System.Management.Automation.Security
             private string _pwszResultDir;
 
             private IntPtr _hCATStore;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATMEMBER
@@ -1988,7 +1988,7 @@ namespace System.Management.Automation.Security
             internal IntPtr hReserved;
             internal CRYPT_ATTR_BLOB sEncodedIndirectData;
             internal CRYPT_ATTR_BLOB sEncodedMemberInfo;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATATTRIBUTE
@@ -2002,7 +2002,7 @@ namespace System.Management.Automation.Security
             internal DWORD cbValue;
             internal System.IntPtr pbValue;
             private DWORD _dwReserved;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATSTORE
@@ -2020,7 +2020,7 @@ namespace System.Management.Automation.Security
             private IntPtr _hAttrs;
             private IntPtr _hCryptMsg;
             private IntPtr _hSorted;
-        };
+        }
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CryptCATCDFOpen(

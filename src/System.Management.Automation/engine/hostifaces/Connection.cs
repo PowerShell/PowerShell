@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
         /// This option is not valid for asynchronous calls
         /// </remarks>
         UseCurrentThread = 3
-    };
+    }
 
     /// <summary>
     /// Defines type which has information about RunspaceState and

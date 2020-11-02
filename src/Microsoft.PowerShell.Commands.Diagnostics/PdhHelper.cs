@@ -225,7 +225,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             // [FieldOffset(4), MarshalAs(UnmanagedType.LPWStr)]
             // public string WideStringValue;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_FMT_COUNTERVALUE_DOUBLE
@@ -233,7 +233,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             public uint CStatus;
 
             public double doubleValue;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_FMT_COUNTERVALUE_UNICODE
@@ -242,7 +242,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             [MarshalAs(UnmanagedType.LPWStr)]
             public string WideStringValue;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_RAW_COUNTER

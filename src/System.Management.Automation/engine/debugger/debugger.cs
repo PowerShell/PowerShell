@@ -50,7 +50,7 @@ namespace System.Management.Automation
         /// Stop executing the script.
         /// </summary>
         Stop = 4,
-    };
+    }
 
     /// <summary>
     /// Arguments for the DebuggerStop event.
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// leave pending runspace debug sessions suspended until a debugger is attached.
         /// </summary>
         internal bool SuspendRemote { get; set; }
-    };
+    }
 
     /// <summary>
     /// Kinds of breakpoint updates.
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// A breakpoint was disabled.
         /// </summary>
         Disabled = 3
-    };
+    }
 
     /// <summary>
     /// Arguments for the BreakpointUpdated event.
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// Gets the current breakpoint count.
         /// </summary>
         public int BreakpointCount { get; }
-    };
+    }
 
     #region PSJobStartEventArgs
 
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         /// PowerShell remote script debugging.
         /// </summary>
         RemoteScript = 0x4
-    };
+    }
 
     /// <summary>
     /// Defines unhandled breakpoint processing behavior.
@@ -1589,7 +1589,7 @@ namespace System.Management.Automation
             internal bool IsFrameHidden { get; set; }
 
             internal bool TopFrameAtBreakpoint { get; set; }
-        };
+        }
 
         private struct CallStackList
         {

@@ -791,7 +791,7 @@ namespace System.Management.Automation
         List,
         Enumerable,
         None
-    };
+    }
 
     /// <summary>
     /// This internal helper class provides methods for serializing mshObject.
