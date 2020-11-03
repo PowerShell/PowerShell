@@ -560,11 +560,7 @@ namespace System.Management.Automation
 
                     // A temporary variable is used as the Completed may
                     // reach null (because of -='s) after the null check
-                    EventHandler tempCompleted = Completed;
-                    if (tempCompleted != null)
-                    {
-                        tempCompleted(this, EventArgs.Empty);
-                    }
+                    Completed?.Invoke(this, EventArgs.Empty);
                 }
 
                 if (raiseDataAdded)
@@ -1405,22 +1401,14 @@ namespace System.Management.Automation
         {
             // A temporary variable is used as the DataAdding may
             // reach null (because of -='s) after the null check
-            EventHandler<DataAddingEventArgs> tempDataAdding = DataAdding;
-            if (tempDataAdding != null)
-            {
-                tempDataAdding(this, new DataAddingEventArgs(psInstanceId, itemAdded));
-            }
+            DataAdding?.Invoke(this, new DataAddingEventArgs(psInstanceId, itemAdded));
         }
 
         private void RaiseDataAddedEvent(Guid psInstanceId, int index)
         {
             // A temporary variable is used as the DataAdded may
             // reach null (because of -='s) after the null check
-            EventHandler<DataAddedEventArgs> tempDataAdded = DataAdded;
-            if (tempDataAdded != null)
-            {
-                tempDataAdded(this, new DataAddedEventArgs(psInstanceId, index));
-            }
+            DataAdded?.Invoke(this, new DataAddedEventArgs(psInstanceId, index));
         }
 
         /// <summary>

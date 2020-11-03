@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// This is a test hook for programmatically reading and writing ConsoleHost I/O.
         /// </summary>
-        private static PSHostUserInterface s_h = null;
+        private static readonly PSHostUserInterface s_h = null;
 
         /// <summary>
         /// Return true if the console supports a VT100 like virtual terminal.
@@ -2158,7 +2158,7 @@ namespace Microsoft.PowerShell
 
         // used to serialize access to instance data
 
-        private object _instanceLock = new object();
+        private readonly object _instanceLock = new object();
 
         // If this is true, class throws on read or prompt method which require
         // access to console.
@@ -2182,16 +2182,15 @@ namespace Microsoft.PowerShell
 
         // this is a test hook for the ConsoleInteractiveTestTool, which sets this field to true.
 
-        private bool _isInteractiveTestToolListening;
+        private readonly bool _isInteractiveTestToolListening;
 
         // This instance data is "read-only" and need not have access serialized.
 
-        private ConsoleHostRawUserInterface _rawui;
-        private ConsoleHost _parent;
+        private readonly ConsoleHostRawUserInterface _rawui;
+        private readonly ConsoleHost _parent;
 
         [TraceSourceAttribute("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
-        private static
-        PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
 }   // namespace
 

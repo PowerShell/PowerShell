@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             }
         }
 
-        private string _counterSetName = string.Empty;
+        private readonly string _counterSetName = string.Empty;
 
         public string MachineName
         {
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             }
         }
 
-        private string _machineName = ".";
+        private readonly string _machineName = ".";
 
         public PerformanceCounterCategoryType CounterSetType
         {
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             }
         }
 
-        private PerformanceCounterCategoryType _counterSetType;
+        private readonly PerformanceCounterCategoryType _counterSetType;
 
         public string Description
         {
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             }
         }
 
-        private string _description = string.Empty;
+        private readonly string _description = string.Empty;
 
         internal Dictionary<string, string[]> CounterInstanceMapping
         {
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             }
         }
 
-        private Dictionary<string, string[]> _counterInstanceMapping;
+        private readonly Dictionary<string, string[]> _counterInstanceMapping;
 
         public StringCollection Paths
         {

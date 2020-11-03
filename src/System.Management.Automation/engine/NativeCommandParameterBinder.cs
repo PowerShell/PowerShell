@@ -308,9 +308,9 @@ namespace System.Management.Automation
                                 // If the path contains spaces, then add quotes around it.
                                 if (NeedQuotes(expandedPath))
                                 {
-                                    _arguments.Append("\"");
+                                    _arguments.Append('"');
                                     _arguments.Append(expandedPath);
-                                    _arguments.Append("\"");
+                                    _arguments.Append('"');
                                 }
                                 else
                                 {

@@ -3630,7 +3630,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 var allErrors = new StringBuilder();
                 allErrors.Append('\n');
@@ -3739,7 +3739,7 @@ namespace System.Management.Automation.Runspaces
                 // if this is the case...
                 foreach (PSSnapInTypeAndFormatErrors entry in entries)
                 {
-                    if (entry.Errors != null && entry.Errors.Count > 0)
+                    if (entry.Errors != null && !entry.Errors.IsEmpty)
                     {
                         foreach (string error in entry.Errors)
                         {

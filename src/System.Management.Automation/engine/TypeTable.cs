@@ -3937,7 +3937,7 @@ namespace System.Management.Automation.Runspaces
                 _typeFileList.Add(typefile);
             }
 
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new TypeTableLoadException(errors);
             }

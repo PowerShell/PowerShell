@@ -157,4 +157,8 @@
   <PropertyGroup>
     <Features>strict</Features>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
 </Project>

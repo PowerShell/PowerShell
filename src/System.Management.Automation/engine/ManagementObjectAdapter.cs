@@ -83,11 +83,11 @@ namespace System.Management.Automation
             StringBuilder type = new StringBuilder(200);
             // give the typename based on NameSpace and Class
             type.Append(dotnetBaseType);
-            type.Append("#");
+            type.Append('#');
             if (shouldIncludeNamespace)
             {
                 type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
-                type.Append("\\");
+                type.Append('\\');
             }
 
             type.Append(managementObj.SystemProperties["__CLASS"].Value);
@@ -112,11 +112,11 @@ namespace System.Management.Automation
                     {
                         type.Clear();
                         type.Append(dotnetBaseType);
-                        type.Append("#");
+                        type.Append('#');
                         if (shouldIncludeNamespace)
                         {
                             type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
-                            type.Append("\\");
+                            type.Append('\\');
                         }
 
                         type.Append(t);
@@ -412,7 +412,7 @@ namespace System.Management.Automation
             // }
 
             returnValue.Append(PropertyType(property, forDisplay: true));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(property.Name);
             returnValue.Append(" {");
             if (PropertyIsGettable(property))
@@ -425,7 +425,7 @@ namespace System.Management.Automation
                 returnValue.Append("set;");
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -856,7 +856,7 @@ namespace System.Management.Automation
                     }
 
                     inParameterString.Append(typeName);
-                    inParameterString.Append(" ");
+                    inParameterString.Append(' ');
                     inParameterString.Append(parameter.Name);
                     inParameterString.Append(", ");
                 }
@@ -872,9 +872,9 @@ namespace System.Management.Automation
 
             builder.Append("System.Management.ManagementBaseObject ");
             builder.Append(mData.Name);
-            builder.Append("(");
-            builder.Append(inParameterString.ToString());
-            builder.Append(")");
+            builder.Append('(');
+            builder.Append(inParameterString);
+            builder.Append(')');
 
             string returnValue = builder.ToString();
             tracer.WriteLine("Definition constructed: {0}", returnValue);

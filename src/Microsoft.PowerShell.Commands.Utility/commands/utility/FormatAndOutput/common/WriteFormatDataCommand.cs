@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isLiteralPath = false;
 
-        private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
+        private readonly List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
 
         private bool _force;
 

@@ -7,7 +7,6 @@
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
-using System.Security.Permissions;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 

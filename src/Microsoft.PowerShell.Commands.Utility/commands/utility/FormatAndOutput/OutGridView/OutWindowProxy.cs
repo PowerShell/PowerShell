@@ -28,15 +28,15 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isWindowStarted;
 
-        private string _title;
+        private readonly string _title;
 
-        private OutputModeOption _outputMode;
+        private readonly OutputModeOption _outputMode;
 
         private AutoResetEvent _closedEvent;
 
-        private OutGridViewCommand _parentCmdlet;
+        private readonly OutGridViewCommand _parentCmdlet;
 
-        private GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
+        private readonly GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
 
         /// <summary>
         /// Initializes a new instance of the OutWindowProxy class.

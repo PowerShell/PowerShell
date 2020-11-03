@@ -811,10 +811,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // call the callback since we have data available
-            if (_onDataAvailableCallback != null)
-            {
-                _onDataAvailableCallback(data, _currentFragment.IsEndFragment);
-            }
+            _onDataAvailableCallback?.Invoke(data, _currentFragment.IsEndFragment);
 
             // prepare a new fragment
             _currentFragment.FragmentId = ++_fragmentId;

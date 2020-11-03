@@ -574,7 +574,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         return
                             (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
-                            == Threading.Thread.CurrentThread.ManagedThreadId);
+                            == Environment.CurrentManagedThreadId);
                     }
                 }
 
