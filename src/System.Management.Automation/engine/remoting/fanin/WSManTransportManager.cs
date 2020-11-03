@@ -601,7 +601,6 @@ namespace System.Management.Automation.Remoting.Client
         /// dont set.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -629,7 +628,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Create operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -657,7 +655,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Close operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -685,7 +682,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for SendShellInput operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -713,7 +709,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Receive operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -741,7 +736,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Signal operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>

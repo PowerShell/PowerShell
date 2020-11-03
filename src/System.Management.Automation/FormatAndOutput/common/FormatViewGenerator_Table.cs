@@ -129,7 +129,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///
         /// This method filters and updates "activeAssociationList" instance property.
         /// </summary>
-        /// <returns>None.</returns>
         /// <remarks>This method updates "activeAssociationList" instance property.</remarks>
         private void FilterActiveAssociationList()
         {

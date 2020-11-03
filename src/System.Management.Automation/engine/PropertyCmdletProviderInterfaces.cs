@@ -181,11 +181,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject for each item that the path represents is written
-        /// to the context. Each PSObject should
-        /// contain a property for those in the providerSpecificPickList.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -382,9 +377,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject for the property that was set is written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="property"/> is null.
         /// </exception>
@@ -793,11 +785,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject for each item that the property was created on
-        /// is written to the context. Each PSObject
-        /// contains the properties that were created.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -1199,10 +1186,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject for each item that the property is renamed on is
-        /// written to the context. The Shellobject contains the new property after the rename.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/>, <paramref name="sourceProperty"/>,
         /// or <paramref name="destinationProperty"/> is null.
@@ -1446,10 +1429,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject for each item that the new property was copied to is
-        /// written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sourcePath"/>, <paramref name="sourceProperty"/>,
         /// <paramref name="destinationPath"/>, or <paramref name="destinationProperty"/>
@@ -1712,10 +1691,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject for each item that the property was moved to is written
-        /// to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sourcePath"/>, <paramref name="sourceProperty"/>,
         /// <paramref name="destinationPath"/>, or <paramref name="destinationProperty"/>

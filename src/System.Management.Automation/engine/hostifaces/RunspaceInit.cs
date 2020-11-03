@@ -15,7 +15,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initialize default values of preference vars.
         /// </summary>
-        /// <returns>Does not return a value.</returns>
         private void InitializeDefaults()
         {
             SessionStateInternal ss = _engine.Context.EngineSessionState;

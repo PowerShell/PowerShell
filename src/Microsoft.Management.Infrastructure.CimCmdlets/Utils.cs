@@ -309,7 +309,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="message"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         [Conditional("LOGENABLE")]
         private static void FormatLogMessage(ref string outMessage, string message, params object[] args)
         {

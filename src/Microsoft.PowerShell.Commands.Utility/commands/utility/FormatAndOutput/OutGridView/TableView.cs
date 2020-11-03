@@ -189,7 +189,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// This method filters and updates "activeAssociationList" instance property.
         /// </summary>
-        /// <returns>None.</returns>
         /// <remarks>This method updates "activeAssociationList" instance property.</remarks>
         private void FilterActiveAssociationList(List<MshResolvedExpressionParameterAssociation> activeAssociationList)
         {

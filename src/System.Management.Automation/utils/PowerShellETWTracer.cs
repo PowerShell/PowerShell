@@ -1130,7 +1130,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="workflowId"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, string message, params string[] parameters)
         {
             PSEtwLog.LogAnalyticVerbose(PSEventId.Engine_Trace,
@@ -1152,7 +1151,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="job"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, Job job, string message, params string[] parameters)
         {
             StringBuilder sb = new StringBuilder();
@@ -1451,7 +1449,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="activityId"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, string activityName, Guid activityId, string message, params string[] parameters)
         {
             PSEtwLog.LogAnalyticVerbose(PSEventId.Engine_Trace,

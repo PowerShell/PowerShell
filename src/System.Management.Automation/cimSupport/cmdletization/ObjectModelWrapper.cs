@@ -86,7 +86,6 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Queries for object instances in the object model.
         /// </summary>
         /// <param name="query">Query parameters.</param>
-        /// <returns>A lazy evaluated collection of object instances.</returns>
         public virtual void ProcessRecord(QueryBuilder query)
         {
             throw new NotImplementedException();

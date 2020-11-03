@@ -109,9 +109,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The property should be passed to the context as a PSObject.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>

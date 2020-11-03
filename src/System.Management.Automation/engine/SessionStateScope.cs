@@ -508,7 +508,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="variableToSet">PSVariable to set.</param>
         /// <param name="sessionState">SessionState for variable.</param>
-        /// <returns></returns>
         internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
         {
             if (Parent != null)

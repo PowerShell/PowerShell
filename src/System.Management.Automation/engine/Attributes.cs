@@ -120,7 +120,6 @@ namespace System.Management.Automation
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the prerequisite is being evaluated.
         /// </param>
-        /// <returns>True if the validation succeeded.</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validation.
         /// Additionally, all the system exceptions are wrapped in ValidationMetadataException.
@@ -1972,9 +1971,6 @@ namespace System.Management.Automation
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the validation is being evaluated.
         /// </param>
-        /// <returns>
-        /// true if the argument is valid.
-        /// </returns>
         /// <exception cref="ValidationMetadataException">
         /// if element is null or a collection with a null element
         /// </exception>

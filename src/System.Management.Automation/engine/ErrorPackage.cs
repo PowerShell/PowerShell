@@ -1196,7 +1196,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds the information about this error record to PSObject as notes.
         /// </summary>
-        /// <returns></returns>
         internal void ToPSObjectForRemoting(PSObject dest)
         {
             ToPSObjectForRemoting(dest, SerializeExtendedInfo);

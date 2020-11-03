@@ -127,9 +127,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which this command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The drive that is created is written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive"/> or <paramref name="context"/> is null.
         /// </exception>

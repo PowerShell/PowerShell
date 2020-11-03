@@ -1252,10 +1252,6 @@ namespace Microsoft.PowerShell.Commands
         /// A fully qualified path representing a file or directory in the
         /// file system.
         /// </param>
-        /// <returns>
-        /// Nothing.  FileInfo and DirectoryInfo objects are written to the
-        /// context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
@@ -1518,10 +1514,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="depth">
         /// Limits the depth of recursion; uint.MaxValue performs full recursion.
         /// </param>
-        /// <returns>
-        /// Nothing.  FileInfo and DirectoryInfo objects that match the filter are written to the
-        /// context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
@@ -1546,9 +1538,6 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        /// <returns>
-        /// Nothing.  Child names are written to the context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
@@ -2106,10 +2095,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newName">
         /// The new full path to the file or directory.
         /// </param>
-        /// <returns>
-        /// Nothing.  The renamed DirectoryInfo or FileInfo object is
-        /// written to the context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     newName is null or empty
@@ -2244,10 +2229,6 @@ namespace Microsoft.PowerShell.Commands
         /// If <paramref name="type" /> is "file" then this parameter becomes the content
         /// of the file to be created.
         /// </param>
-        /// <returns>
-        /// Nothing.  The new DirectoryInfo or FileInfo object is
-        /// written to the context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     type is null or empty.
@@ -3597,9 +3578,6 @@ namespace Microsoft.PowerShell.Commands
         ///     path is null or empty.
         ///     destination path is null or empty.
         /// </exception>
-        /// <returns>
-        /// Nothing.  Copied items are written to the context's pipeline.
-        /// </returns>
         protected override void CopyItem(
             string path,
             string destinationPath,
@@ -5761,9 +5739,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="destination">
         /// The path of the destination.
         /// </param>
-        /// <returns>
-        /// Nothing.  Moved items are written to the context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     destination is null or empty.

@@ -1860,7 +1860,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
         /// <param name="errorMessage">Pre-formatted localized string.</param>
-        /// <returns></returns>
         internal static void ReportOperationComplete(
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode,
@@ -1900,7 +1899,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
         /// <param name="errorMessage"></param>
-        /// <returns></returns>
         internal static void ReportOperationComplete(
             IntPtr requestDetails,
             WSManPluginErrorCodes errorCode,

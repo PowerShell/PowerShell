@@ -35,10 +35,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// <returns>
-        /// Nothing. An object that represents the security descriptor for the item
-        /// specified by path is written to the WriteSecurityDescriptorObject method.
-        /// </returns>
         public void GetSecurityDescriptor(string path,
                                           AccessControlSections sections)
         {

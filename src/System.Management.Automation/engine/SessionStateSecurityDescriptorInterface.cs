@@ -92,10 +92,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The security descriptor for the item at the specified path is
-        /// written to the context.
-        /// </returns>
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
@@ -229,10 +225,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The security descriptor that was set on the item at the specified path
-        /// is written to the context.
-        /// </returns>
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.

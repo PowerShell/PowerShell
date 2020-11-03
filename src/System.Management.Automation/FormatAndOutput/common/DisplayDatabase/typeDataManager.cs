@@ -273,7 +273,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// True if the format data has been pre-validated (build time, manual testing, etc) so that validation can be
         /// skipped at runtime.
         /// </param>
-        /// <returns>Database instance.</returns>
         internal void UpdateDataBase(
             Collection<PSSnapInTypeAndFormatErrors> mshsnapins,
             AuthorizationManager authorizationManager,

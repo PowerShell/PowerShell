@@ -590,7 +590,6 @@ namespace System.Management.Automation.Internal
         /// Throw if file does not exist.
         /// </summary>
         /// <param name="filePath">Path to file.</param>
-        /// <returns>Does not return a value.</returns>
         internal static void CheckIfFileExists(string filePath)
         {
             if (!File.Exists(filePath))

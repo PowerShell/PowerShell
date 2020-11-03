@@ -2535,7 +2535,6 @@ namespace System.Management.Automation.Remoting.Client
         /// An out parameter referencing a WSMan shell operation handle
         /// for this shell.
         /// </param>
-        /// <returns></returns>
         internal static void WSManCreateShellEx(IntPtr wsManSessionHandle,
             int flags,
             string resourceUri,
@@ -2792,7 +2791,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="operationHandle"></param>
         /// <param name="flags"></param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManCloseOperation(IntPtr operationHandle, int flags);
 
@@ -3004,7 +3002,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
         /// <param name="shutdownCallback">Callback to be executed on shutdown.</param>
         /// <param name="shutdownContext"></param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManPluginRegisterShutdownCallback(
             IntPtr requestDetails,

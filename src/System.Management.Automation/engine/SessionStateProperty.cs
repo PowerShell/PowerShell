@@ -85,10 +85,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject representing the properties should be written to the
-        /// context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -449,10 +445,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject is passed to the context for the properties on each item
-        /// that were modified.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="property"/> is null.
         /// </exception>

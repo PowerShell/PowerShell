@@ -709,7 +709,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="workflowId"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, string message, params string[] parameters)
         {
             return;
@@ -723,7 +722,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="job"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, Job job, string message, params string[] parameters)
         {
             return;

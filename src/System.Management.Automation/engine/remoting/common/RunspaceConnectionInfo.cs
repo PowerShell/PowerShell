@@ -1148,7 +1148,6 @@ namespace System.Management.Automation.Runspaces
         /// only when Port is updated. Usages that dont update port, should use null for this parameter.
         /// </param>
         /// <param name="appName"></param>
-        /// <returns></returns>
         internal void ConstructUri(string scheme, string computerName, int? port, string appName)
         {
             // Default scheme is http

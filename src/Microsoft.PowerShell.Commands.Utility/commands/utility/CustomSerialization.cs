@@ -696,7 +696,6 @@ namespace System.Management.Automation
         /// <param name="writeEnclosingMemberSetElementTag">
         /// if this is true, write an enclosing "<memberset></memberset>" tag.
         /// </param>
-        /// <returns></returns>
         private void WriteMemberInfoCollection(
             PSMemberInfoCollection<PSMemberInfo> me, int depth, bool writeEnclosingMemberSetElementTag)
         {

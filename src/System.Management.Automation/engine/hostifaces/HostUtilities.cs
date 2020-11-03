@@ -158,7 +158,6 @@ namespace System.Management.Automation
         /// <param name="allUsersCurrentHost">Path for all users current host.</param>
         /// <param name="currentUserCurrentHost">Path for current user and current host.</param>
         /// <param name="dollarProfile">The object that serves as a value to $profile.</param>
-        /// <returns></returns>
         internal static void GetProfileObjectData(string shellId, bool useTestProfile, out string allUsersAllHosts, out string allUsersCurrentHost, out string currentUserAllHosts, out string currentUserCurrentHost, out PSObject dollarProfile)
         {
             allUsersAllHosts = HostUtilities.GetFullProfileFileName(null, false, useTestProfile);

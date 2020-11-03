@@ -993,7 +993,6 @@ namespace System.Management.Automation.Runspaces
         /// under specified pipeline.
         /// </summary>
         /// <param name="pipeline"></param>
-        /// <returns></returns>
         internal void StopNestedPipelines(Pipeline pipeline)
         {
             List<Pipeline> nestedPipelines = null;

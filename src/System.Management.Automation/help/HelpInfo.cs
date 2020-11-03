@@ -195,7 +195,6 @@ namespace System.Management.Automation
         ///
         /// This function is normally called at the end of each child class constructor.
         /// </summary>
-        /// <returns></returns>
         protected void AddCommonHelpProperties()
         {
             if (this.FullHelp == null)

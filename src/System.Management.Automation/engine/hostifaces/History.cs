@@ -224,7 +224,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="status">Status to be updated.</param>
         /// <param name="endTime">EndTime to be updated.</param>
         /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked.</param>
-        /// <returns></returns>
         internal void UpdateEntry(long id, PipelineState status, DateTime endTime, bool skipIfLocked)
         {
             if (!System.Threading.Monitor.TryEnter(_syncRoot, skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
@@ -550,7 +549,6 @@ namespace Microsoft.PowerShell.Commands
         /// Clears the history entry from buffer for a given id.
         /// </summary>
         /// <param name="id">Id of the entry to be Cleared.</param>
-        /// <returns>Nothing.</returns>
         internal void ClearEntry(long id)
         {
             lock (_syncRoot)

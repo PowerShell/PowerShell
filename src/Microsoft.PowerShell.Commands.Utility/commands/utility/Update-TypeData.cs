@@ -523,7 +523,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the members for the TypeData.
         /// </summary>
-        /// <returns></returns>
         private void GetMembers(Dictionary<string, TypeMemberData> members)
         {
             if (!_isMemberTypeSet)

@@ -1398,7 +1398,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored.</param>
         /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names.</param>
         /// <param name="remoteCommandInfo">Remote (deserialized) CommandInfo object.</param>
-        /// <returns>CommandMetadata equivalents.</returns>
         private void AddRemoteCommandMetadata(
             Dictionary<string, CommandMetadata> name2commandMetadata,
             Dictionary<string, string> alias2resolvedCommandName,

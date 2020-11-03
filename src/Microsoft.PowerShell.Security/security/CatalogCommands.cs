@@ -171,9 +171,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="catalogFilePath">
         /// Path to Catalog
         /// </param>
-        /// <returns>
-        /// True if able to Create Catalog or else False
-        /// </returns>
         protected override void PerformAction(Collection<string> path, string catalogFilePath)
         {
             if (path.Count == 0)
@@ -267,9 +264,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="catalogFilePath">
         /// Path to Catalog
         /// </param>
-        /// <returns>
-        /// True if able to Validate the Catalog and its not tampered or else False
-        /// </returns>
         protected override void PerformAction(Collection<string> path, string catalogFilePath)
         {
             if (path.Count == 0)

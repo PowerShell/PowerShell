@@ -150,9 +150,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified command-line parameters to the target.
         /// </summary>
-        /// <returns>
-        /// true if encode succeeds otherwise false.
-        /// </returns>
         /// <exception cref="ParameterBindingException">
         /// If any parameters fail to bind,
         /// or

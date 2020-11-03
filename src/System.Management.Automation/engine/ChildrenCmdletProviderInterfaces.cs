@@ -240,9 +240,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The children of the container at the specified path are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="context"/> is null.
         /// </exception>
@@ -535,9 +532,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing.  The names of the children of the specified container are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>

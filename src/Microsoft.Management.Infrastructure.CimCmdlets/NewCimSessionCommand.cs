@@ -245,7 +245,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Build a CimSessionOptions, used to create CimSession.
         /// </summary>
-        /// <returns>Null means no prefer CimSessionOptions.</returns>
         internal void BuildSessionOptions(out CimSessionOptions outputOptions, out CimCredential outputCredential)
         {
             DebugHelper.WriteLogEx();

@@ -636,7 +636,6 @@ else
         /// <summary>
         /// </summary>
         /// <param name="tmpFileName"></param>
-        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// 1. New shell successfully registered. However cannot delete temporary plugin file {0}.
         ///    Reason for failure: {1}.

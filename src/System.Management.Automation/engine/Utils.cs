@@ -308,8 +308,7 @@ namespace System.Management.Automation
         /// Helper fn to check byte[] arg for null.
         /// </summary>
         ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        ///<param name="argName"> name of the arg </param>        ///
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
             if (arg == null)
@@ -335,8 +334,7 @@ namespace System.Management.Automation
         /// Throws ArgumentNullException on either condition.
         /// </summary>
         ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        ///<param name="argName"> name of the arg </param>        ///
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
             if (arg == null)
@@ -354,8 +352,7 @@ namespace System.Management.Automation
         /// Throws ArgumentNullException on either condition.
         /// </summary>
         ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        ///<param name="argName"> name of the arg </param>        ///
         internal static void CheckArgForNull(object arg, string argName)
         {
             if (arg == null)
@@ -368,8 +365,7 @@ namespace System.Management.Automation
         /// Helper fn to check arg for null.
         /// </summary>
         ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        ///<param name="argName"> name of the arg </param>        ///
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
             if (arg == null)

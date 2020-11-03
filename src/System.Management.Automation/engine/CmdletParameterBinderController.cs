@@ -346,7 +346,6 @@ namespace System.Management.Automation
         /// <param name="isDynamic">
         /// Special operation needed if the default binding happens at the dynamic binding stage
         /// </param>
-        /// <returns></returns>
         private void ApplyDefaultParameterBinding(string bindingStage, bool isDynamic)
         {
             if (!_useDefaultParameterBinding)

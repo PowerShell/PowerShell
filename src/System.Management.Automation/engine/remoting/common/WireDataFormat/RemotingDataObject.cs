@@ -196,7 +196,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="streamToWriteTo">
         /// place where the serialized data is stored into.
         /// </param>
-        /// <returns></returns>
         private void SerializeHeader(Stream streamToWriteTo)
         {
             Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");

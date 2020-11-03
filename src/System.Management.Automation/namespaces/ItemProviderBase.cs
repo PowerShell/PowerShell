@@ -34,9 +34,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all objects should be written to the WriteObject method.
-        /// </returns>
         internal void GetItem(string path, CmdletProviderContext context)
         {
             Context = context;
@@ -84,9 +81,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// The item that was set at the specified path.
-        /// </returns>
         internal void SetItem(
             string path,
             object value,
@@ -355,9 +349,6 @@ namespace System.Management.Automation.Provider
         /// <param name="path">
         /// The path to the item to retrieve.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all objects should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user access to the provider objects using
         /// the get-item and get-childitem cmdlets.
@@ -414,9 +405,6 @@ namespace System.Management.Automation.Provider
         /// <param name="value">
         /// The value of the item specified by the path.
         /// </param>
-        /// <returns>
-        /// Nothing.  The item that was set should be passed to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to modify provider objects using
         /// the set-item cmdlet.
@@ -475,9 +463,6 @@ namespace System.Management.Automation.Provider
         /// <param name="path">
         /// The path to the item to clear.
         /// </param>
-        /// <returns>
-        /// Nothing.  The item that was cleared should be passed to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to clear provider objects using
         /// the clear-item cmdlet.
@@ -532,9 +517,6 @@ namespace System.Management.Automation.Provider
         /// <param name="path">
         /// The path to the item to perform the default action on.
         /// </param>
-        /// <returns>
-        /// Nothing.  The item that was set should be passed to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// The default implementation does nothing.
         ///

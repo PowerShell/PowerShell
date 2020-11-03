@@ -37,9 +37,6 @@ namespace System.Management.Automation.Provider
         /// A list of properties that should be retrieved. If this parameter is null
         /// or empty, all properties should be retrieved.
         /// </param>
-        /// <returns>
-        /// Nothing.  The property that was retrieved should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to add properties to provider objects
         /// using the get-itemproperty cmdlet.
@@ -93,9 +90,6 @@ namespace System.Management.Automation.Provider
         /// A PSObject which contains a collection of the name, type, value
         /// of the properties to be set.
         /// </param>
-        /// <returns>
-        /// Nothing.  The property that was set should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to set the value of provider object properties
         /// using the set-itemproperty cmdlet.
@@ -150,9 +144,6 @@ namespace System.Management.Automation.Provider
         /// <param name="propertyToClear">
         /// The name of the property to clear.
         /// </param>
-        /// <returns>
-        /// Nothing.  The property that was cleared should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to clear the value of provider object properties
         /// using the clear-itemproperty cmdlet.

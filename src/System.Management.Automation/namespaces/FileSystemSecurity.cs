@@ -29,10 +29,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="sections">
         /// The sections of the security descriptor to include.
         /// </param>
-        /// <returns>
-        /// Nothing. An object that represents the security descriptor for the item
-        /// specified by path is written to the context's pipeline.
-        /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     path doesn't exist

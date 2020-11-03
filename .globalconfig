@@ -1465,7 +1465,7 @@ dotnet_diagnostic.SA1615.severity = none
 dotnet_diagnostic.SA1616.severity = none
 
 # SA1617: Void return value should not be documented
-dotnet_diagnostic.SA1617.severity = none
+dotnet_diagnostic.SA1617.severity = warning
 
 # SA1618: Generic type parameters should be documented
 dotnet_diagnostic.SA1618.severity = none

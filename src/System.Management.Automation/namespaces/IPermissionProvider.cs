@@ -32,11 +32,6 @@ namespace System.Management.Automation.Provider
         /// The sections of the security descriptor to retrieve, if your provider
         /// supports them.
         /// </param>
-        /// <returns>
-        /// Nothing.   Write the security descriptor to the context's pipeline for
-        /// the item specified by the path using the WriteSecurityDescriptorObject
-        /// method.
-        /// </returns>
         void GetSecurityDescriptor(
             string path,
             AccessControlSections includeSections);
@@ -51,11 +46,6 @@ namespace System.Management.Automation.Provider
         /// The new security descriptor for the item.  This should replace the
         /// previously existing security descriptor.
         /// </param>
-        /// <returns>
-        /// Nothing.   After setting the security descriptor to the value passed in,
-        /// write the new security descriptor to the context's pipeline for the
-        /// item specified by the path using the WriteSecurityDescriptorObject method.
-        /// </returns>
         void SetSecurityDescriptor(
             string path,
             ObjectSecurity securityDescriptor);

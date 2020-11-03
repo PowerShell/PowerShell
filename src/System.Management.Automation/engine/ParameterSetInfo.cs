@@ -120,7 +120,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="parameterAction"></param>
         /// <param name="commonParameterAction"></param>
-        /// <returns></returns>
         internal void GenerateParametersInDisplayOrder(
             Action<CommandParameterInfo> parameterAction,
             Action<string> commonParameterAction)

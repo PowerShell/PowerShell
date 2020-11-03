@@ -2280,9 +2280,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all names should be written to the context object.
-        /// </returns>
         /// <remarks>
         /// The child names are the leaf portion of the path. Example, for the file system
         /// the name for the path c:\windows\system32\foo.dll would be foo.dll or for
@@ -3001,9 +2998,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. All items that are renamed are written into the context object.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
@@ -3371,9 +3365,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The item created is written to the context object.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>

@@ -212,9 +212,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing. All objects that are moved should be written to the WriteObject method.
-        /// </returns>
         internal void MoveItem(
             string path,
             string destination,
@@ -790,9 +787,6 @@ namespace System.Management.Automation.Provider
         /// <param name="destination">
         /// The path of the destination container.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all the objects that were moved should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to move provider objects using
         /// the move-item cmdlet.

@@ -416,9 +416,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="callback">
         /// Callback to call once a complete deserialized object is available.
         /// </param>
-        /// <returns>
-        /// Defragmented Object if any, otherwise null.
-        /// </returns>
         /// <exception cref="PSRemotingTransportException">
         /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
@@ -836,9 +833,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="callback">
         /// Callback to call once a complete deserialized object is available.
         /// </param>
-        /// <returns>
-        /// Defragmented Object if any, otherwise null.
-        /// </returns>
         /// <exception cref="PSRemotingTransportException">
         /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match

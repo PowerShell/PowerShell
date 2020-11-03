@@ -71,9 +71,6 @@ namespace System.Management.Automation
         /// <param name="arguments">
         ///     The arguments to be bound.
         /// </param>
-        /// <returns>
-        /// True if binding was successful or false otherwise.
-        /// </returns>
         internal void BindCommandLineParameters(Collection<CommandParameterInternal> arguments)
         {
             // Add the passed in arguments to the unboundArguments collection

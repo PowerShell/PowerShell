@@ -1,3 +1,4 @@
+
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -205,7 +206,6 @@ namespace System.Management.Automation
         /// <param name="cdfHeaderContent">Content to be added in CatalogHeader section of cdf File.</param>
         /// <param name="cdfFilesContent">Content to be added in CatalogFiles section of cdf File.</param>
         /// <param name="catAttributeCount">Indicating the current no of catalog header level attributes.</param>
-        /// <returns>Void.</returns>
         internal static void ProcessFileToBeAddedInCatalogDefinitionFile(FileInfo fileToHash, DirectoryInfo dirInfo, ref HashSet<string> relativePaths, ref string cdfHeaderContent, ref string cdfFilesContent, ref int catAttributeCount)
         {
             string relativePath = string.Empty;
@@ -573,7 +573,6 @@ namespace System.Management.Automation
         /// <param name="fileHash">Hash of file found in catalog.</param>
         /// <param name="excludedPatterns">Skip file from validation if it matches these patterns.</param>
         /// <param name="catalogHashes">Collection of hashes of catalog.</param>
-        /// <returns>Void.</returns>
         internal static void ProcessCatalogFile(string relativePath, string fileHash, WildcardPattern[] excludedPatterns, ref Dictionary<string, string> catalogHashes)
         {
             // Found the attribute we are looking for
@@ -599,7 +598,6 @@ namespace System.Management.Automation
         /// <param name="hashAlgorithm">Used to calculate Hash.</param>
         /// <param name="excludedPatterns">Skip file if it matches these patterns.</param>
         /// <param name="fileHashes">Collection of hashes of files.</param>
-        /// <returns>Void.</returns>
         internal static void ProcessPathFile(FileInfo fileToHash, DirectoryInfo dirInfo, string hashAlgorithm, WildcardPattern[] excludedPatterns, ref Dictionary<string, string> fileHashes)
         {
             string relativePath = string.Empty;

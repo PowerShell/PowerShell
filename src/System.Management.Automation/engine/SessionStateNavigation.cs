@@ -1368,9 +1368,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. All items that are moved are written into the context object.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>

@@ -1776,10 +1776,6 @@ namespace Microsoft.PowerShell.Commands
         /// A list of properties that should be retrieved. If this parameter is null
         /// or empty, all properties should be retrieved.
         /// </param>
-        /// <returns>
-        /// Nothing. An instance of PSObject representing the properties that were retrieved
-        /// should be passed to the WriteObject() method.
-        /// </returns>
         public void GetProperty(
             string path,
             Collection<string> providerSpecificPickList)
@@ -1844,10 +1840,6 @@ namespace Microsoft.PowerShell.Commands
         /// A PSObject which contains a collection of the name, type, value
         /// of the properties to be set.
         /// </param>
-        /// <returns>
-        /// Nothing. An instance of PSObject representing the properties that were set
-        /// should be passed to the WriteObject() method.
-        /// </returns>
         public void SetProperty(
             string path,
             PSObject propertyValue)
@@ -2107,10 +2099,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">
         /// The new value of the property that should be created.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject representing the property that was created should
-        /// be passed to the WriteObject() method.
-        /// </returns>
         /// <!--
         /// Implement this method when you are providing access to a data store
         /// that allows dynamic creation of properties.
@@ -2327,10 +2315,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="destinationProperty">
         /// The new name of the property.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject that represents the property that was renamed should be
-        /// passed to the WriteObject() method.
-        /// </returns>
         public void RenameProperty(
             string path,
             string sourceProperty,
@@ -2415,10 +2399,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="destinationProperty">
         /// The destination property to copy to.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject that represents the property that was copied should be
-        /// passed to the WriteObject() method.
-        /// </returns>
         public void CopyProperty(
             string sourcePath,
             string sourceProperty,
@@ -2515,10 +2495,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="destinationProperty">
         /// The destination property to move to.
         /// </param>
-        /// <returns>
-        /// Nothing. A PSObject that represents the property that was moved should be
-        /// passed to the WriteObject() method.
-        /// </returns>
         public void MoveProperty(
             string sourcePath,
             string sourceProperty,

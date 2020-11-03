@@ -42,9 +42,6 @@ namespace System.Management.Automation.Provider
         /// <param name="value">
         /// The new value of the property that should be created.
         /// </param>
-        /// <returns>
-        /// Nothing.  The new property that was created should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to add properties to provider objects
         /// using the new-itemproperty cmdlet.
@@ -102,9 +99,6 @@ namespace System.Management.Automation.Provider
         /// <param name="propertyName">
         /// The name of the property to be removed.
         /// </param>
-        /// <returns>
-        /// Nothing.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to remove properties from provider objects
         /// using the remove-itemproperty cmdlet.
@@ -155,9 +149,6 @@ namespace System.Management.Automation.Provider
         /// <param name="destinationProperty">
         /// The new name of the property.
         /// </param>
-        /// <returns>
-        /// Nothing.  The new property that was renamed should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to rename properties of provider objects
         /// using the rename-itemproperty cmdlet.
@@ -217,9 +208,6 @@ namespace System.Management.Automation.Provider
         /// <param name="destinationProperty">
         /// The destination property to copy to.
         /// </param>
-        /// <returns>
-        /// Nothing.  The new property that was copied to should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to copy properties of provider objects
         /// using the copy-itemproperty cmdlet.
@@ -283,9 +271,6 @@ namespace System.Management.Automation.Provider
         /// <param name="destinationProperty">
         /// The destination property to move to.
         /// </param>
-        /// <returns>
-        /// Nothing.  The new property that was created should be passed to the WritePropertyObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to move properties from one provider object
         /// to another using the move-itemproperty cmdlet.

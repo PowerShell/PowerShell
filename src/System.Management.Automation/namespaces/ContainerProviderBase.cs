@@ -50,10 +50,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all children should be written to the Write*Object or
-        /// Write*Objects method.
-        /// </returns>
         internal void GetChildItems(
             string path,
             bool recurse,
@@ -114,10 +110,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all names should be written to the Write*Object or
-        /// Write*Objects method.
-        /// </returns>
         /// <remarks>
         /// The child names are the leaf portion of the path. Example, for the file system
         /// the name for the path c:\windows\system32\foo.dll would be foo.dll or for
@@ -228,10 +220,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all renamed items should be written to the Write*Object or
-        /// Write*Objects.
-        /// </returns>
         internal void RenameItem(
             string path,
             string newName,
@@ -290,10 +278,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all new items should be written to the Write*Object or
-        /// Write*Objects.
-        /// </returns>
         internal void NewItem(
             string path,
             string type,
@@ -442,10 +426,6 @@ namespace System.Management.Automation.Provider
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// <returns>
-        /// Nothing. All objects that are copied should be written to the Write*Object or
-        /// Write*Objects methods.
-        /// </returns>
         internal void CopyItem(
             string path,
             string copyPath,
@@ -505,9 +485,6 @@ namespace System.Management.Automation.Provider
         /// level of children should be retrieved. This parameter should only be true for
         /// the NavigationCmdletProvider derived class.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all objects should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user access to the provider objects using
         /// the get-childitem cmdlets.
@@ -552,9 +529,6 @@ namespace System.Management.Automation.Provider
         /// <param name="depth">
         /// Limits the depth of recursion; uint.MaxValue performs full recursion.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all objects should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user access to the provider objects using
         /// the get-childitem cmdlets.
@@ -631,9 +605,6 @@ namespace System.Management.Automation.Provider
         /// Determines if all containers should be returned or only those containers that match the
         /// filter(s).
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all objects should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user access to the provider objects using
         /// the get-childitem  -name cmdlet.
@@ -750,9 +721,6 @@ namespace System.Management.Automation.Provider
         /// The name to which the item should be renamed. This name should always be
         /// relative to the parent container.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but the renamed items should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to rename provider objects using
         /// the rename-item cmdlet.
@@ -823,9 +791,6 @@ namespace System.Management.Automation.Provider
         /// This is a provider specific type that the provider can use to create a new
         /// instance of an item at the specified path.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but the renamed items should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to create new provider objects using
         /// the new-item cmdlet.
@@ -902,9 +867,6 @@ namespace System.Management.Automation.Provider
         /// level of children should be removed. This parameter should only be true for
         /// NavigationCmdletProvider and its derived classes.
         /// </param>
-        /// <returns>
-        /// Nothing should be returned or written from this method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to allow the user the ability to remove provider objects using
         /// the remove-item cmdlet.
@@ -1010,9 +972,6 @@ namespace System.Management.Automation.Provider
         /// <param name="recurse">
         /// Tells the provider to recurse sub-containers when copying.
         /// </param>
-        /// <returns>
-        /// Nothing is returned, but all the objects that were copied should be written to the WriteItemObject method.
-        /// </returns>
         /// <remarks>
         /// Providers override this method to give the user the ability to copy provider objects using
         /// the copy-item cmdlet.

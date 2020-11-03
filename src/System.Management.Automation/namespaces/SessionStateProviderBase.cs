@@ -179,10 +179,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">
         /// The value to which to set the item
         /// </param>
-        /// <returns>
-        /// Nothing. The item that was set is written to the
-        /// WriteObject method.
-        /// </returns>
         protected override void SetItem(
             string name,
             object value)

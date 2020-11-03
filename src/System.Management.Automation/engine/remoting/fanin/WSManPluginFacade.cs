@@ -709,7 +709,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="operationContext">PVOID.</param>
         /// <param name="timedOut">BOOLEAN.</param>
-        /// <returns></returns>
         public static void PSPluginOperationShutdownCallback(
             object operationContext,
             bool timedOut)

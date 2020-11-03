@@ -104,9 +104,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The object(s) at the specified path are written to the context.
-        /// </returns>
         internal void Get(string path,
                         AccessControlSections includeSections,
                         CmdletProviderContext context)
@@ -161,9 +158,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The object(s) set at the specified path are written to the context.
-        /// </returns>
         internal void Set(string path, ObjectSecurity sd, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(

@@ -2181,7 +2181,6 @@ namespace System.Management.Automation
         /// <param name="invokeMustRun">True if PowerShell Invoke must run regardless
         /// of whether debugger handles the command.
         /// </param>
-        /// <returns>DebuggerCommandResults.</returns>
         internal void InvokeWithDebugger(
             IEnumerable<object> input,
             IList<PSObject> output,

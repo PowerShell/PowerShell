@@ -136,7 +136,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiate internal regex member if not already done.
         /// </summary>
-        /// <returns>True on success, false otherwise.</returns>
         private void Init()
         {
             StringComparison GetStringComparison()

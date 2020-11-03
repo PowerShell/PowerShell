@@ -168,9 +168,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The object(s) at the specified path are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -354,9 +351,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The object(s) set at the specified path are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -537,9 +531,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The object(s) cleared at the specified path are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -885,9 +876,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing.  The item(s) that get renamed are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
@@ -1104,9 +1092,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing.  The new item is written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
@@ -1527,9 +1512,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The item(s) that were copied are written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -1744,9 +1726,6 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// <returns>
-        /// Nothing. The object that is moved is written to the context.
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
