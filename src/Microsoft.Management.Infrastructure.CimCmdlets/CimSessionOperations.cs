@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private uint sessionId;
+        private readonly uint sessionId;
 
         /// <summary>
         /// InstanceId of the cimsession.
@@ -58,7 +58,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private string name;
+        private readonly string name;
 
         /// <summary>
         /// Computer name of the cimsession.
@@ -71,7 +71,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private string computerName;
+        private readonly string computerName;
 
         /// <summary>
         /// Wrapped cimsession object.
@@ -84,7 +84,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private CimSession cimSession;
+        private readonly CimSession cimSession;
 
         /// <summary>
         /// Computer name of the cimsession.
@@ -110,7 +110,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return protocol;
         }
 
-        private ProtocolType protocol;
+        private readonly ProtocolType protocol;
 
         /// <summary>
         /// PSObject that wrapped the cimSession.
@@ -231,35 +231,35 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Dictionary used to holds all CimSessions in current runspace by session name.
         /// </para>
         /// </summary>
-        private Dictionary<string, HashSet<CimSessionWrapper>> curCimSessionsByName;
+        private readonly Dictionary<string, HashSet<CimSessionWrapper>> curCimSessionsByName;
 
         /// <summary>
         /// <para>
         /// Dictionary used to holds all CimSessions in current runspace by computer name.
         /// </para>
         /// </summary>
-        private Dictionary<string, HashSet<CimSessionWrapper>> curCimSessionsByComputerName;
+        private readonly Dictionary<string, HashSet<CimSessionWrapper>> curCimSessionsByComputerName;
 
         /// <summary>
         /// <para>
         /// Dictionary used to holds all CimSessions in current runspace by instance ID.
         /// </para>
         /// </summary>
-        private Dictionary<Guid, CimSessionWrapper> curCimSessionsByInstanceId;
+        private readonly Dictionary<Guid, CimSessionWrapper> curCimSessionsByInstanceId;
 
         /// <summary>
         /// <para>
         /// Dictionary used to holds all CimSessions in current runspace by session id.
         /// </para>
         /// </summary>
-        private Dictionary<uint, CimSessionWrapper> curCimSessionsById;
+        private readonly Dictionary<uint, CimSessionWrapper> curCimSessionsById;
 
         /// <summary>
         /// <para>
         /// Dictionary used to link CimSession object with PSObject.
         /// </para>
         /// </summary>
-        private Dictionary<CimSession, CimSessionWrapper> curCimSessionWrapper;
+        private readonly Dictionary<CimSession, CimSessionWrapper> curCimSessionWrapper;
 
         #endregion
 
@@ -934,7 +934,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private CimSessionWrapper cimSessionWrapper;
+            private readonly CimSessionWrapper cimSessionWrapper;
         }
 
         /// <summary>
@@ -1052,7 +1052,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <see cref="CimTestSession"/> object.
         /// </para>
         /// </summary>
-        private CimTestSession cimTestSession;
+        private readonly CimTestSession cimTestSession;
         #endregion // private members
 
         #region IDisposable

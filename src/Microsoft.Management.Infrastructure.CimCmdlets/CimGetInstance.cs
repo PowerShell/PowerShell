@@ -306,7 +306,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 StringBuilder propertyList = new StringBuilder();
                 if (cmd.SelectProperties == null)
                 {
-                    propertyList.Append("*");
+                    propertyList.Append('*');
                 }
                 else
                 {
@@ -314,7 +314,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         if (propertyList.Length > 0)
                         {
-                            propertyList.Append(",");
+                            propertyList.Append(',');
                         }
 
                         propertyList.Append(property);

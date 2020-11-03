@@ -318,7 +318,7 @@ $result
         /// <summary>
         /// The indicator to use when show progress.
         /// </summary>
-        private string[] _indicator = { "|", "/", "-", "\\" };
+        private readonly string[] _indicator = { "|", "/", "-", "\\" };
 
         /// <summary>
         /// The activity id.
@@ -1810,7 +1810,7 @@ $result
                 }
                 else
                 {
-                    localUserName = computerName.Substring(0, dotIndex) + "\\" + psLocalCredential.UserName;
+                    localUserName = string.Concat(computerName.AsSpan().Slice(0, dotIndex), "\\", psLocalCredential.UserName);
                 }
             }
 

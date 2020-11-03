@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (e != null)
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("{");
+                    sb.Append('{');
 
                     bool first = true;
                     int enumCount = 0;
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    sb.Append("}");
+                    sb.Append('}');
                     return sb.ToString();
                 }
 

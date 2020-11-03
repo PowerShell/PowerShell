@@ -837,12 +837,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void OnEventForwarded(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = InternalForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            InternalForwardEvent?.Invoke(this, e);
         }
 
         /// <summary>

@@ -16,6 +16,10 @@
     <Features>strict</Features>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>

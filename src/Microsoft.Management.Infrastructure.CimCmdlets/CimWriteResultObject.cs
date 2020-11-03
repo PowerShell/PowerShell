@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private object result;
+        private readonly object result;
         #endregion
     }
 }

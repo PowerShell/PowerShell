@@ -511,7 +511,7 @@ namespace System.Management.Automation
                 && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith('-'))
             {
                 var lastAst = context.RelatedAsts.Last();
-                var wordToMatch = context.WordToComplete.Substring(1) + "*";
+                var wordToMatch = string.Concat(context.WordToComplete.AsSpan().Slice(1), "*");
                 var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
                 var parameterNames = keywordAst.CommandElements.Where(ast => ast is CommandParameterAst).Select(ast => (ast as CommandParameterAst).ParameterName);
                 foreach (var parameterName in s_parameterNamesOfImportDSCResource)
@@ -2667,7 +2667,7 @@ namespace System.Management.Automation
 
                 StringBuilder tooltipText = new StringBuilder();
                 tooltipText.Append(methodName);
-                tooltipText.Append("(");
+                tooltipText.Append('(');
                 bool gotFirstParameter = false;
                 foreach (var methodParameter in methodDeclaration.Parameters)
                 {
@@ -2688,7 +2688,7 @@ namespace System.Management.Automation
                     }
 
                     tooltipText.Append(CimInstanceAdapter.CimTypeToTypeNameDisplayString(methodParameter.CimType));
-                    tooltipText.Append(" ");
+                    tooltipText.Append(' ');
                     tooltipText.Append(methodParameter.Name);
 
                     if (outParameter)
@@ -2697,7 +2697,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                tooltipText.Append(")");
+                tooltipText.Append(')');
 
                 localResults.Add(new CompletionResult(methodName, methodName, CompletionResultType.Method, tooltipText.ToString()));
             }
@@ -4708,7 +4708,7 @@ namespace System.Management.Automation
                 provider = wordToComplete.Substring(0, colon + 1);
                 if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
                 {
-                    pattern = "variable:" + wordToComplete.Substring(colon + 1) + "*";
+                    pattern = string.Concat("variable:", wordToComplete.AsSpan().Slice(colon + 1), "*");
                 }
                 else
                 {

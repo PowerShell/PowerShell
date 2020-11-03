@@ -591,9 +591,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (badKeys.Length > 0)
                         badKeys.Append(", ");
-                    badKeys.Append("'");
+                    badKeys.Append('\'');
                     badKeys.Append(s);
-                    badKeys.Append("'");
+                    badKeys.Append('\'');
                 }
             }
 
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
                             validMembersString.Append(validMembers[i]);
                         }
 
-                        validMembersString.Append("'");
+                        validMembersString.Append('\'');
                         message = StringUtil.Format(Modules.InvalidModuleManifestMember, moduleManifestPath, validMembersString, badKeys);
                         InvalidOperationException ioe = new InvalidOperationException(message);
                         ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidManifestMember",
@@ -4214,9 +4214,9 @@ namespace Microsoft.PowerShell.Commands
             while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 StringBuilder stringBuilder = new StringBuilder(dir);
-                stringBuilder.Append("\\");
+                stringBuilder.Append('\\');
                 stringBuilder.Append(currentCulture.Name);
-                stringBuilder.Append("\\");
+                stringBuilder.Append('\\');
                 stringBuilder.Append(file);
 
                 string filePath = stringBuilder.ToString();

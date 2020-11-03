@@ -51,7 +51,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private IDictionary property;
+        private readonly IDictionary property;
 
         /// <summary>
         /// <para>parameter set name</para>
@@ -64,7 +64,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private string parameterSetName;
+        private readonly string parameterSetName;
 
         /// <summary>
         /// <para>PassThru value</para>
@@ -77,7 +77,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private bool passThru;
+        private readonly bool passThru;
     }
 
     /// <summary>

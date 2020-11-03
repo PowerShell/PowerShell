@@ -407,7 +407,7 @@ namespace System.Management.Automation
             else
             {
                 string whitespaces = parameterName.Substring(endPosition);
-                parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
+                parameterText = string.Concat("-", parameterName.AsSpan().Slice(0, endPosition), ":", whitespaces);
             }
 
             return parameterText;

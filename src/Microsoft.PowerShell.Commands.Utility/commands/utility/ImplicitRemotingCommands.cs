@@ -806,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
+        private readonly List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
 
         private void ReportSkippedCommands()
         {
@@ -1919,9 +1919,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor and shared private data
 
-        private PSSession _remoteRunspaceInfo;
+        private readonly PSSession _remoteRunspaceInfo;
         private Guid _moduleGuid;
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
 
         internal ImplicitRemotingCodeGenerator(
             PSSession remoteRunspaceInfo,
@@ -2316,7 +2316,7 @@ function Get-PSImplicitRemotingSessionOption
                 result.Append("-ApplicationArguments $(");
                 result.Append("& $script:ImportCliXml -Path $(");
                 result.Append("& $script:JoinPath -Path $PSScriptRoot -ChildPath ApplicationArguments.xml");
-                result.Append(")");
+                result.Append(')');
                 result.Append(") ");
             }
 
@@ -2953,7 +2953,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             arrayString.Insert(0, "@(");
-            arrayString.Append(")");
+            arrayString.Append(')');
 
             return arrayString.ToString();
         }

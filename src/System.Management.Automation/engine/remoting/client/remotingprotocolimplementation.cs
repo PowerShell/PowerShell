@@ -444,10 +444,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // raise warning to report the redirection
-                if (_uriRedirectionHandler != null)
-                {
-                    _uriRedirectionHandler(newURI);
-                }
+                _uriRedirectionHandler?.Invoke(newURI);
 
                 // start a new connection
                 _transportManager.Redirect(newURI, _connectionInfo);

@@ -897,7 +897,7 @@ end
                     decl.Append(separator);
                     decl.Append("DefaultParameterSetName='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(_defaultParameterSetName));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -909,7 +909,7 @@ end
                     decl.Append(separator);
                     decl.Append("ConfirmImpact='");
                     decl.Append(ConfirmImpact);
-                    decl.Append("'");
+                    decl.Append('\'');
                 }
 
                 if (SupportsPaging)
@@ -938,7 +938,7 @@ end
                     decl.Append(separator);
                     decl.Append("HelpUri='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(HelpUri));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -947,7 +947,7 @@ end
                     decl.Append(separator);
                     decl.Append("RemotingCapability='");
                     decl.Append(_remotingCapability);
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 

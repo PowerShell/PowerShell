@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
 
         internal override bool IsPushed
         {
-            get { return (_activeDebuggers.Count > 0); }
+            get { return (!_activeDebuggers.IsEmpty); }
         }
 
         /// <summary>
@@ -2000,7 +2000,7 @@ namespace System.Management.Automation
 
         private void SetPendingBreakpoints(FunctionContext functionContext)
         {
-            if (_pendingBreakpoints.Count == 0)
+            if (_pendingBreakpoints.IsEmpty)
                 return;
 
             var newPendingBreakpoints = new Dictionary<int, LineBreakpoint>();
@@ -2133,7 +2133,7 @@ namespace System.Management.Automation
             {
                 // The debugger can be disbled if there are no breakpoints
                 // left and if we are not currently stepping in the debugger.
-                return _idToBreakpoint.Count == 0 &&
+                return _idToBreakpoint.IsEmpty &&
                        _currentDebuggerAction != DebuggerResumeAction.StepInto &&
                        _currentDebuggerAction != DebuggerResumeAction.StepOver &&
                        _currentDebuggerAction != DebuggerResumeAction.StepOut;
@@ -2244,7 +2244,7 @@ namespace System.Management.Automation
 
         private void RestoreInternalDebugMode()
         {
-            InternalDebugMode restoreMode = ((DebugMode != DebugModes.None) && (_idToBreakpoint.Count > 0)) ? InternalDebugMode.Enabled : InternalDebugMode.Disabled;
+            InternalDebugMode restoreMode = ((DebugMode != DebugModes.None) && (!_idToBreakpoint.IsEmpty)) ? InternalDebugMode.Enabled : InternalDebugMode.Disabled;
             SetInternalDebugMode(restoreMode);
         }
 
@@ -2421,7 +2421,7 @@ namespace System.Management.Automation
                 {
                     SetInternalDebugMode(InternalDebugMode.Disabled);
                 }
-                else if ((_idToBreakpoint.Count > 0) && (_context._debuggingMode == 0))
+                else if ((!_idToBreakpoint.IsEmpty) && (_context._debuggingMode == 0))
                 {
                     // Set internal debugger to active.
                     SetInternalDebugMode(InternalDebugMode.Enabled);
@@ -3920,7 +3920,7 @@ namespace System.Management.Automation
 
             Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 0, 1);
 
-            if (_runspaceDebugQueue.Value.Count > 0)
+            if (!_runspaceDebugQueue.Value.IsEmpty)
             {
                 StartRunspaceForDebugQueueProcessing();
             }

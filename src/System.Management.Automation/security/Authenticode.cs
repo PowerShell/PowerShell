@@ -292,7 +292,7 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static Signature GetSignatureFromCatalog(string filename)
         {
-            if (Signature.CatalogApiAvailable.HasValue && !Signature.CatalogApiAvailable.Value)
+            if (Signature.CatalogApiAvailable.HasValue && !Signature.CatalogApiAvailable.GetValueOrDefault())
             {
                 // Signature.CatalogApiAvailable would be set to false the first time it is detected that
                 // WTGetSignatureInfo API does not exist on the platform, or if the API is not functional on the target platform.

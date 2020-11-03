@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static readonly ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
         internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
-        private bool _caseSensitive;
+        private readonly bool _caseSensitive;
         internal CultureInfo cultureInfo = null;
 
         /// <summary>
@@ -225,11 +225,11 @@ namespace Microsoft.PowerShell.Commands
             return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
         }
 
-        private CultureInfo _cultureInfo = null;
+        private readonly CultureInfo _cultureInfo = null;
 
-        private bool _ascendingOrder = true;
+        private readonly bool _ascendingOrder = true;
 
-        private bool _caseSensitive = false;
+        private readonly bool _caseSensitive = false;
     }
     #endregion
 }

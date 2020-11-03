@@ -2585,7 +2585,7 @@ namespace System.Management.Automation
                 foreach (PSRemotingChildJob job in ChildJobs)
                 {
                     location.Append(job.Location);
-                    location.Append(",");
+                    location.Append(',');
                 }
 
                 location.Remove(location.Length - 1, 1);

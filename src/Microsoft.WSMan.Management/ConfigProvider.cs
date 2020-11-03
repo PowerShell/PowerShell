@@ -43,12 +43,12 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
-        private Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
+        private readonly Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
 
         /// <summary>
         /// Mapping of ResourceURI with the XML returned by the Get call.
         /// </summary>
-        private Dictionary<string, string> getMapping = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> getMapping = new Dictionary<string, string>();
 
         #region ICmdletProviderSupportsHelp Members
 
@@ -2328,7 +2328,7 @@ namespace Microsoft.WSMan.Management
                 if (mshObject != null)
                 {
                     types.Append(mshObject.ImmediateBaseObject.GetType().FullName);
-                    types.Append("#");
+                    types.Append('#');
                     types.Append(ExtendedTypeName);
                     mshObject.TypeNames.Insert(0, types.ToString());
                 }
@@ -2426,16 +2426,16 @@ namespace Microsoft.WSMan.Management
                         sbvalues.Append(key);
                         if (value[key] == null)
                         {
-                            sbvalues.Append(" ");
+                            sbvalues.Append(' ');
                             sbvalues.Append(WSManStringLiterals.ATTR_NIL);
                             nilns = " " + WSManStringLiterals.NS_XSI;
                         }
 
-                        sbvalues.Append(">");
+                        sbvalues.Append('>');
                         sbvalues.Append(EscapeValuesForXML(((Hashtable)value)[key].ToString()));
                         sbvalues.Append("</p:");
                         sbvalues.Append(key);
-                        sbvalues.Append(">");
+                        sbvalues.Append('>');
                     }
                 }
             }
@@ -2942,17 +2942,17 @@ namespace Microsoft.WSMan.Management
             {
                 if (uri.Contains("Config/Listener"))
                 {
-                    sburi.Append("?");
+                    sburi.Append('?');
                     sburi.Append(GetFilterString(cmdlinevalues, PKeyListener));
                 }
                 else if (uri.Contains("Config/Service/certmapping"))
                 {
-                    sburi.Append("?");
+                    sburi.Append('?');
                     sburi.Append(GetFilterString(cmdlinevalues, PKeyCertMapping));
                 }
                 else if (uri.Contains("Config/Plugin"))
                 {
-                    sburi.Append("?");
+                    sburi.Append('?');
                     sburi.Append(GetFilterString(cmdlinevalues, PKeyPlugin));
                 }
             }
@@ -2968,9 +2968,9 @@ namespace Microsoft.WSMan.Management
                 if (cmdlinevalues.Contains(key))
                 {
                     filter.Append(key);
-                    filter.Append("=");
+                    filter.Append('=');
                     filter.Append(cmdlinevalues[key].ToString());
-                    filter.Append("+");
+                    filter.Append('+');
                 }
             }
 
@@ -3102,7 +3102,7 @@ namespace Microsoft.WSMan.Management
                     if (mshObject != null)
                     {
                         types.Append(mshObject.ImmediateBaseObject.GetType().FullName);
-                        types.Append("#");
+                        types.Append('#');
                         types.Append(ExtendedTypeName);
                         mshObject.TypeNames.Insert(0, types.ToString());
                     }
@@ -3647,13 +3647,13 @@ namespace Microsoft.WSMan.Management
                 else
                 {
                     if (ChildName.StartsWith(WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerListener + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerListener, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerSingleResource, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerSingleResource + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerSingleResource, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerSecurity + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerSecurity, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerClientCertificate, StringComparison.OrdinalIgnoreCase))
-                        result = WSManStringLiterals.containerClientCertificate + "_" + ChildName.Substring(ChildName.IndexOf('_') + 1);
+                        result = string.Concat(WSManStringLiterals.containerClientCertificate, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
                 }
             }
 

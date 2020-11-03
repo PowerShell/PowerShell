@@ -55,7 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private CimSubscriptionResult result;
+        private readonly CimSubscriptionResult result;
 
         /// <summary>
         /// <para>Constructor</para>
@@ -89,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private Exception exception;
+        private readonly Exception exception;
 
         /// <summary>
         /// <para>Constructor</para>
