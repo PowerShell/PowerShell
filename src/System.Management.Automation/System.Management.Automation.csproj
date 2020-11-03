@@ -28,7 +28,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-rc.2.20475.5" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.1.0-rc.2" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.1.0" />
   </ItemGroup>
 
   <PropertyGroup>
