@@ -161,21 +161,6 @@ jobs:
           **\*.ps1
         useMinimatch: true
 
-  # - task: PkgESCodeSign@10
-  #   displayName: 'CodeSign $(Architecture)'
-  #   env:
-  #     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-  #   inputs:
-  #     signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
-  #     inPathRoot: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
-  #     outPathRoot: '$(System.ArtifactsDirectory)\signed'
-  #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
-
-  # - pwsh: |
-  #      New-Item -ItemType Directory -Path $(System.ArtifactsDirectory)\signed -Force
-  #   displayName: 'Create empty signed folder'
-  #   condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
-
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
