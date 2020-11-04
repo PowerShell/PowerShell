@@ -37,6 +37,10 @@ PrivateData = @{
         Name        = 'Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'
         Description = 'Enables -BreakAll parameter on Debug-Runspace and Debug-Job cmdlets to allow users to decide if they want PowerShell to break immediately in the current location when they attach a debugger. Enables -Runspace parameter on *-PSBreakpoint cmdlets to support management of breakpoints in another runspace.'
       }
+      @{
+        Name        = 'Microsoft.PowerShell.Utility.PSConvertToJsonRaw'
+        Description = 'Enables -Raw switch on ConvertTo-Json cmdlet to remote ETS members before serialization'
+      }
     )
   }
 }

@@ -78,6 +78,15 @@ namespace Microsoft.PowerShell.Commands
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
 
         /// <summary>
+        /// Gets or sets the Raw property.
+        /// If the Raw property is set to true, ETS (Extended Type System) members will be
+        /// removed from the InputObject so that only the .NET members will be serialized.
+        /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.PSConvertToJsonRaw", ExperimentAction.Show)]
+        [Parameter]
+        public SwitchParameter Raw { get; set; }
+
+        /// <summary>
         /// Prerequisite checks.
         /// </summary>
         protected override void BeginProcessing()
@@ -100,7 +109,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            _inputObjects.Add(InputObject);
+            if (ExperimentalFeature.IsEnabled("Microsoft.PowerShell.Utility.PSConvertToJsonRaw") && Raw && InputObject is PSObject)
+            {
+                _inputObjects.Add(((PSObject)InputObject).BaseObject);
+            }
+            else
+            {
+                _inputObjects.Add(InputObject);
+            }
         }
 
         /// <summary>

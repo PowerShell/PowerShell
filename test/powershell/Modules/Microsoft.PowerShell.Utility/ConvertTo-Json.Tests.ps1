@@ -103,4 +103,15 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $p2.psobject.Properties.Remove('nullstr')
         }
     }
+
+    It "-Raw works to serialize object with ETS members" -Skip:(!$EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSConvertToJsonRaw')) {
+        $script = {
+            Update-TypeData -TypeName System.String -MemberType ScriptProperty -MemberName Foo -Value { $this.ToUpper() }
+            $a = 'hello world' | Add-Member -NotePropertyName test -NotePropertyValue hello -PassThru
+            $a | ConvertTo-Json -Raw
+        }
+
+        $out = pwsh -noprofile -c $script
+        $out | Should -BeExactly '"hello world"'
+    }
 }
