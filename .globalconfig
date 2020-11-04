@@ -286,7 +286,7 @@ dotnet_diagnostic.CA1823.severity = none
 dotnet_diagnostic.CA1824.severity = suggestion
 
 # CA1825: Avoid zero-length array allocations
-dotnet_diagnostic.CA1825.severity = suggestion
+dotnet_diagnostic.CA1825.severity = warning
 
 # CA1826: Do not use Enumerable methods on indexable collections
 dotnet_diagnostic.CA1826.severity = suggestion

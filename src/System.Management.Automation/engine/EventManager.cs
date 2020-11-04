@@ -599,7 +599,7 @@ namespace System.Management.Automation
                     if (_engineEventSubscribers.TryGetValue(PSEngineEvent.OnIdle, out subscribers) && subscribers.Count > 0)
                     {
                         // We send out on-idle event and keep enabling the timer only if there still are subscribers to the on-idle event
-                        GenerateEvent(PSEngineEvent.OnIdle, null, new object[] { }, null, false, false);
+                        GenerateEvent(PSEngineEvent.OnIdle, null, Array.Empty<object>(), null, false, false);
                         EnableTimer();
                     }
                     else

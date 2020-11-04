@@ -1559,7 +1559,7 @@ namespace System.Management.Automation
                                 toType,
                                 0,
                                 null,
-                                new object[] { },
+                                Array.Empty<object>(),
                                 System.Globalization.CultureInfo.InvariantCulture);
                         if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                             resultAsIList = (IList)resultCollection;

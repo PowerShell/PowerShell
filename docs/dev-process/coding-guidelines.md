@@ -111,9 +111,6 @@ Some general guidelines:
 * Avoid using string interpolations and overloads with implicit parameters such as `Culture` and `StringComparison`.
   Instead, use overloads with more explicit parameters such as `String.Format(IFormatProvider, String, Object[])` and `Equals(String, String, StringComparison)`.
 
-* Avoid creating empty arrays.
-  Instead, reuse the static ones via `Utils.EmptyArray<T>`.
-
 * Avoid unnecessary memory allocation in a loop.
   Move the memory allocation outside the loop if possible.
 

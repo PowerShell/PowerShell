@@ -3814,7 +3814,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(byte[]),
                             CultureInfo.CurrentCulture)
-                        : new byte[] { };
+                        : Array.Empty<byte>();
                     break;
 
                 case RegistryValueKind.DWord:
@@ -3851,7 +3851,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string[]),
                             CultureInfo.CurrentCulture)
-                        : new string[] { };
+                        : Array.Empty<string>();
                     break;
 
                 case RegistryValueKind.QWord:

@@ -3228,7 +3228,10 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
-                return new object[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<object>(); always return a new instance.
+                return new object[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             return ArrayOps.Multiply(originalList.ToArray(), times);
