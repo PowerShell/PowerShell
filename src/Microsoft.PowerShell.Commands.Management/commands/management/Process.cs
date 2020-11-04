@@ -2351,82 +2351,82 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
-                // RedirectionStandardInput
-                if (_redirectstandardinput != null)
-                {
-                    startinfo.RedirectStandardInput = true;
-                    _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
-                    lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, ProcessNativeMethods.OPEN_EXISTING);
-                }
-                else
-                {
-                    lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
-                }
+            // RedirectionStandardInput
+            if (_redirectstandardinput != null)
+            {
+                startinfo.RedirectStandardInput = true;
+                _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
+                lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, ProcessNativeMethods.OPEN_EXISTING);
+            }
+            else
+            {
+                lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
+            }
 
-                // RedirectionStandardOutput
-                if (_redirectstandardoutput != null)
-                {
-                    startinfo.RedirectStandardOutput = true;
-                    _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, ProcessNativeMethods.CREATE_ALWAYS);
-                }
-                else
-                {
-                    lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
-                }
+            // RedirectionStandardOutput
+            if (_redirectstandardoutput != null)
+            {
+                startinfo.RedirectStandardOutput = true;
+                _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
+                lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, ProcessNativeMethods.CREATE_ALWAYS);
+            }
+            else
+            {
+                lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
+            }
 
-                // RedirectionStandardError
-                if (_redirectstandarderror != null)
+            // RedirectionStandardError
+            if (_redirectstandarderror != null)
+            {
+                startinfo.RedirectStandardError = true;
+                _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
+                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, ProcessNativeMethods.CREATE_ALWAYS);
+            }
+            else
+            {
+                lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
+            }
+
+            // STARTF_USESTDHANDLES
+            lpStartupInfo.dwFlags = 0x100;
+
+            if (startinfo.CreateNoWindow)
+            {
+                // No new window: Inherit the parent process's console window
+                creationFlags = 0x00000000;
+            }
+            else
+            {
+                // CREATE_NEW_CONSOLE
+                creationFlags |= 0x00000010;
+
+                // STARTF_USESHOWWINDOW
+                lpStartupInfo.dwFlags |= 0x00000001;
+
+                // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
+                switch (startinfo.WindowStyle)
                 {
-                    startinfo.RedirectStandardError = true;
-                    _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                    lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, ProcessNativeMethods.CREATE_ALWAYS);
+                    case ProcessWindowStyle.Normal:
+                        // SW_SHOWNORMAL
+                        lpStartupInfo.wShowWindow = 1;
+                        break;
+                    case ProcessWindowStyle.Minimized:
+                        // SW_SHOWMINIMIZED
+                        lpStartupInfo.wShowWindow = 2;
+                        break;
+                    case ProcessWindowStyle.Maximized:
+                        // SW_SHOWMAXIMIZED
+                        lpStartupInfo.wShowWindow = 3;
+                        break;
+                    case ProcessWindowStyle.Hidden:
+                        // SW_HIDE
+                        lpStartupInfo.wShowWindow = 0;
+                        break;
                 }
-                else
-                {
-                    lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
-                }
+            }
 
-                // STARTF_USESTDHANDLES
-                lpStartupInfo.dwFlags = 0x100;
-
-                if (startinfo.CreateNoWindow)
-                {
-                    // No new window: Inherit the parent process's console window
-                    creationFlags = 0x00000000;
-                }
-                else
-                {
-                    // CREATE_NEW_CONSOLE
-                    creationFlags |= 0x00000010;
-
-                    // STARTF_USESHOWWINDOW
-                    lpStartupInfo.dwFlags |= 0x00000001;
-
-                    // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
-                    switch (startinfo.WindowStyle)
-                    {
-                        case ProcessWindowStyle.Normal:
-                            // SW_SHOWNORMAL
-                            lpStartupInfo.wShowWindow = 1;
-                            break;
-                        case ProcessWindowStyle.Minimized:
-                            // SW_SHOWMINIMIZED
-                            lpStartupInfo.wShowWindow = 2;
-                            break;
-                        case ProcessWindowStyle.Maximized:
-                            // SW_SHOWMAXIMIZED
-                            lpStartupInfo.wShowWindow = 3;
-                            break;
-                        case ProcessWindowStyle.Hidden:
-                            // SW_HIDE
-                            lpStartupInfo.wShowWindow = 0;
-                            break;
-                    }
-                }
-
-                // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
-                creationFlags |= 0x00000004;
+            // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
+            creationFlags |= 0x00000004;
         }
 
         /// <summary>

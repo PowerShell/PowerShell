@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell
         /// Length of the passed in argument array.
         /// </param>
         [Obsolete("Callers should now use UnmanagedPSEntry.Start(string[], int)", error: true)]
-        public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
+        public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)] string[] args, int argc)
         {
             return Start(args, argc);
         }
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell
         /// <param name="argc">
         /// Length of the passed in argument array.
         /// </param>
-        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)]string[] args, int argc)
+        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc)
         {
             if (args == null)
             {

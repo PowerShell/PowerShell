@@ -2024,7 +2024,7 @@ namespace Microsoft.PowerShell.Commands
             // perform necessary preparations if module has to be imported with NoClobber mode
             if (filteredModuleNames != null)
             {
-                foreach(string moduleName in filteredModuleNames)
+                foreach (string moduleName in filteredModuleNames)
                 {
                     PrepareNoClobberWinCompatModuleImport(moduleName, null, ref importModuleOptions);
                 }
@@ -2032,7 +2032,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (filteredModuleFullyQualifiedNames != null)
             {
-                foreach(var moduleSpec in filteredModuleFullyQualifiedNames)
+                foreach (var moduleSpec in filteredModuleFullyQualifiedNames)
                 {
                     PrepareNoClobberWinCompatModuleImport(null, moduleSpec, ref importModuleOptions);
                 }

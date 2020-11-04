@@ -306,10 +306,10 @@ namespace System.Management.Automation.Remoting
                     PSOpcode.Connect, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                     requestDetails.ToString(), senderInfo.UserInfo.Identity.Name, requestDetails.resourceUri);
-                    ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                    requestDetails.resourceUri,
-                    extraInfo,
-                    serverTransportMgr);
+                ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
+                requestDetails.resourceUri,
+                extraInfo,
+                serverTransportMgr);
 
                 if (remoteShellSession == null)
                 {
