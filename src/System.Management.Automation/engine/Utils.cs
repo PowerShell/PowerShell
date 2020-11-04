@@ -1787,6 +1787,43 @@ namespace System.Management.Automation
             return true;
         }
 
+        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal)
+        {
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                var sd = new StringDecorated(s);
+
+                if (sd.IsDecorated)
+                {
+                    var outputRendering = OutputRendering.PlainText;
+                    ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+                    if (supportsVirtualTerminal != false && context != null)
+                    {
+                        PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
+                        if (psstyle != null)
+                        {
+                            switch (psstyle.OutputRendering)
+                            {
+                                case OutputRendering.Automatic:
+                                    outputRendering = OutputRendering.Ansi;
+                                    break;
+                                case OutputRendering.Host:
+                                    outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                                    break;
+                                default:
+                                    outputRendering = psstyle.OutputRendering;
+                                    break;
+                            }
+                        }
+                    }
+
+                    s = sd.ToString(outputRendering);
+                }
+            }
+
+            return s;
+        }
+
         #endregion
     }
 
