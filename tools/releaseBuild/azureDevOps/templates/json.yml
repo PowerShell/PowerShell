@@ -3,6 +3,8 @@ parameters:
 
 jobs:
 - job: json
+  variables:
+    runCodesignValidationInjection: false
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -15,6 +17,10 @@ jobs:
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
+    fetchDepth: 1
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

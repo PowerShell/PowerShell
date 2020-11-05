@@ -17,11 +17,6 @@ variables:
     value: 1
   - group: Azure Blob variable group
 
-# Set AzDevOps Agent to clean the machine after the end of the build
-resources:
-- repo: self
-  clean: true
-
 jobs:
 - job: rename
   displayName: Name the build
@@ -29,6 +24,9 @@ jobs:
   pool:
     vmImage: 'windows-latest'
   steps:
+  - checkout: self
+    clean: true
+    fetchDepth: 1
 
   - template: ./templates/SetVersionVariables.yml
     parameters:

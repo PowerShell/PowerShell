@@ -3,6 +3,8 @@ parameters:
 
 jobs:
 - job: compliance
+  variables:
+    runCodesignValidationInjection: false
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -13,6 +15,9 @@ jobs:
   timeoutInMinutes: 180
 
   steps:
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
