@@ -6,7 +6,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9", "debian.10", "debian.11")
+$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "ubuntu.20.04", "debian.9", "debian.10", "debian.11")
 $RedhatDistributions = @("rhel.7","centos.8")
 $script:netCoreRuntime = 'net5.0'
 $script:iconFileName = "Powershell_black_64.png"
@@ -1274,6 +1274,7 @@ function Get-PackageDependencies
             switch -regex ($Distribution) {
                 "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
+                "ubuntu\.20\.04" { $Dependencies += @("libssl1.1", "libicu66") }
                 "debian\.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 "debian\.(10|11)" { $Dependencies += @("libssl1.1", "libicu63") }
                 default { throw "Debian distro '$Distribution' is not supported." }
