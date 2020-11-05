@@ -230,10 +230,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        private PSPropertyExpressionFactory _expressionFactory;
-        private TypeInfoDataBase _db;
-        private Collection<string> _typeNameHierarchy;
-        private bool _useInheritance;
+        private readonly PSPropertyExpressionFactory _expressionFactory;
+        private readonly TypeInfoDataBase _db;
+        private readonly Collection<string> _typeNameHierarchy;
+        private readonly bool _useInheritance;
 
         private int _bestMatchIndex = BestMatchIndexUndefined;
         private TypeMatchItem _bestMatchItem;
