@@ -655,9 +655,8 @@ namespace System.Management.Automation
                 return false; // first is not null
             }
 
-            string firstString = first as string;
             string secondString;
-            if (firstString != null)
+            if (first is string firstString)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
                 return (culture.CompareInfo.Compare(firstString, secondString,
@@ -804,8 +803,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                string secondString = second as string;
-                if (secondString == null)
+                if (second is not string secondString)
                 {
                     try
                     {
@@ -1014,8 +1012,7 @@ namespace System.Management.Automation
             if (objType == typeof(SwitchParameter))
                 return ((SwitchParameter)obj).ToBool();
 
-            IList objectArray = obj as IList;
-            if (objectArray != null)
+            if (obj is IList objectArray)
             {
                 return IsTrue(objectArray);
             }
@@ -1195,8 +1192,7 @@ namespace System.Management.Automation
             T returnType = default(T);
 
             // First, see if we can cast the direct type
-            PSObject wrapperObject = castObject as PSObject;
-            if (wrapperObject == null)
+            if (castObject is not PSObject wrapperObject)
             {
                 try
                 {
@@ -1529,8 +1525,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                TargetInvocationException inner = e as TargetInvocationException;
-                string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
+                string message = (e is not TargetInvocationException inner) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
                 typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
                 return null;
             }
@@ -2582,8 +2577,7 @@ namespace System.Management.Automation
 
                 if ((valueConverter != null))
                 {
-                    TypeConverter valueTypeConverter = valueConverter as TypeConverter;
-                    if (valueTypeConverter != null)
+                    if (valueConverter is TypeConverter valueTypeConverter)
                     {
                         typeConversion.WriteLine("Original type's converter is TypeConverter.");
                         if (valueTypeConverter.CanConvertTo(resultType))
@@ -2608,8 +2602,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
-                    if (valuePSTypeConverter != null)
+                    if (valueConverter is PSTypeConverter valuePSTypeConverter)
                     {
                         typeConversion.WriteLine("Original type's converter is PSTypeConverter.");
                         PSObject psValueToConvert = PSObject.AsPSObject(valueToConvert);
@@ -2642,8 +2635,7 @@ namespace System.Management.Automation
                 valueConverter = GetConverter(resultType, backupTypeTable);
                 if (valueConverter != null)
                 {
-                    TypeConverter valueTypeConverter = valueConverter as TypeConverter;
-                    if (valueTypeConverter != null)
+                    if (valueConverter is TypeConverter valueTypeConverter)
                     {
                         typeConversion.WriteLine("Destination type's converter is TypeConverter that can convert from originalType.");
                         if (valueTypeConverter.CanConvertFrom(originalType))
@@ -2668,8 +2660,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    PSTypeConverter valuePSTypeConverter = valueConverter as PSTypeConverter;
-                    if (valuePSTypeConverter != null)
+                    if (valueConverter is PSTypeConverter valuePSTypeConverter)
                     {
                         typeConversion.WriteLine("Destination type's converter is PSTypeConverter.");
                         PSObject psValueToConvert = PSObject.AsPSObject(valueToConvert);
@@ -3987,8 +3978,7 @@ namespace System.Management.Automation
                     if (ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding))
                     {
                         result = _constructor();
-                        var psobject = valueToConvert as PSObject;
-                        if (psobject != null)
+                        if (valueToConvert is PSObject psobject)
                         {
                             // Use PSObject properties to perform conversion.
                             SetObjectProperties(result, psobject, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, formatProvider, recursion, ignoreUnknownMembers);
@@ -4604,8 +4594,7 @@ namespace System.Management.Automation
             else
             {
                 object baseObj = PSObject.Base(psObject);
-                var dictionary = baseObj as IDictionary;
-                if (dictionary != null)
+                if (baseObj is IDictionary dictionary)
                 {
                     // Win8:649519
                     return SetObjectProperties(o, dictionary, resultType, memberNotFoundErrorAction, memberSetValueErrorAction, enableMethodCall: false);
@@ -4613,8 +4602,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Support PSObject to Strong type conversion.
-                    PSObject psBaseObject = baseObj as PSObject;
-                    if (psBaseObject != null)
+                    if (baseObj is PSObject psBaseObject)
                     {
                         Dictionary<string, object> properties = new Dictionary<string, object>();
                         foreach (var item in psBaseObject.Properties)
@@ -4675,8 +4663,7 @@ namespace System.Management.Automation
 
                                         try
                                         {
-                                            PSObject propertyValue = prop.Value as PSObject;
-                                            if (propertyValue != null)
+                                            if (prop.Value is PSObject propertyValue)
                                             {
                                                 propValue = LanguagePrimitives.ConvertPSObjectToType(propertyValue, propType, recursion, formatProvider, ignoreUnknownMembers);
                                             }
@@ -4702,9 +4689,7 @@ namespace System.Management.Automation
                             {
                                 if (pso.BaseObject is PSCustomObject)
                                 {
-                                    var key = prop.Key as string;
-                                    var value = prop.Value as string;
-                                    if (key != null && value != null && key.Equals("PSTypeName", StringComparison.OrdinalIgnoreCase))
+                                    if (prop.Key is string key && prop.Value is string value && key.Equals("PSTypeName", StringComparison.OrdinalIgnoreCase))
                                     {
                                         pso.TypeNames.Insert(0, value);
                                     }

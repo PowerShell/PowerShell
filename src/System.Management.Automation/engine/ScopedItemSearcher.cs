@@ -397,8 +397,7 @@ namespace System.Management.Automation
             if (script != null)
             {
                 bool isPrivate;
-                FilterInfo filterInfo = script as FilterInfo;
-                if (filterInfo != null)
+                if (script is FilterInfo filterInfo)
                 {
                     isPrivate = (filterInfo.Options & ScopedItemOptions.Private) != 0;
                 }

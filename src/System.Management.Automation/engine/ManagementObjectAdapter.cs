@@ -105,8 +105,7 @@ namespace System.Management.Automation
                 Dbg.Assert(derivationData.IsArray, "__Derivation must be a string array as per MSDN documentation");
 
                 // give the typenames based on NameSpace + __Derivation
-                string[] typeHierarchy = PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) as string[];
-                if (typeHierarchy != null)
+                if (PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) is string[] typeHierarchy)
                 {
                     foreach (string t in typeHierarchy)
                     {
@@ -534,16 +533,14 @@ namespace System.Management.Automation
         private static ManagementClass CreateClassFrmObject(ManagementBaseObject mgmtBaseObject)
         {
             // Construct a ManagementClass object for this object to get the member metadata
-            ManagementClass mgmtClass = mgmtBaseObject as ManagementClass;
 
             // try to use the actual object sent to this method..otherwise construct one
-            if (mgmtClass == null)
+            if (mgmtBaseObject is not ManagementClass mgmtClass)
             {
                 mgmtClass = new ManagementClass(mgmtBaseObject.ClassPath);
 
                 // inherit ManagementObject properties
-                ManagementObject mgmtObject = mgmtBaseObject as ManagementObject;
-                if (mgmtObject != null)
+                if (mgmtBaseObject is ManagementObject mgmtObject)
                 {
                     mgmtClass.Scope = mgmtObject.Scope;
                     mgmtClass.Options = mgmtObject.Options;

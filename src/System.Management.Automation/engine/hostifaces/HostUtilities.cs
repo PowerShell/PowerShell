@@ -411,8 +411,7 @@ namespace System.Management.Automation
                 {
                     object result = null;
 
-                    ScriptBlock evaluator = suggestion["Rule"] as ScriptBlock;
-                    if (evaluator == null)
+                    if (suggestion["Rule"] is not ScriptBlock evaluator)
                     {
                         suggestion["Enabled"] = false;
 
@@ -463,8 +462,7 @@ namespace System.Management.Automation
                     {
                         if (lastError != null)
                         {
-                            Exception lastException = lastError as Exception;
-                            if (lastException != null)
+                            if (lastError is Exception lastException)
                             {
                                 matchText = lastException.Message;
                             }
@@ -689,10 +687,9 @@ namespace System.Management.Automation
                 return basePrompt;
             }
 
-            SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
 
             // Usernames are case-sensitive on Unix systems
-            if (sshConnectionInfo != null &&
+            if (runspace.ConnectionInfo is SSHConnectionInfo sshConnectionInfo &&
                 !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
                 !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal))
             {

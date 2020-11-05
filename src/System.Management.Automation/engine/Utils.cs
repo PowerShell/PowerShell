@@ -1507,11 +1507,10 @@ namespace System.Management.Automation
         private static void WorkItemCallback(object callBackArgs)
         {
             object[] args = callBackArgs as object[];
-            WindowsIdentity identityToImpersonate = args[0] as WindowsIdentity;
             WaitCallback callback = args[1] as WaitCallback;
             object state = args[2];
 
-            if (identityToImpersonate != null)
+            if (args[0] is WindowsIdentity identityToImpersonate)
             {
                 WindowsIdentity.RunImpersonated(
                     identityToImpersonate.AccessToken,

@@ -39,14 +39,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Debug.Assert(inner != null, "Caller should verify inner != null");
 
-            CimException cimException = inner as CimException;
-            if (cimException != null)
+            if (inner is CimException cimException)
             {
                 return CreateFromCimException(context, cimException, cimResultContext);
             }
 
-            var containsErrorRecord = inner as IContainsErrorRecord;
-            if (containsErrorRecord != null)
+            if (inner is IContainsErrorRecord containsErrorRecord)
             {
                 return InitializeErrorRecord(context,
                     exception: inner,

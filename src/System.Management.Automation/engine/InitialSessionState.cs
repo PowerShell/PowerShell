@@ -1293,8 +1293,7 @@ namespace System.Management.Automation.Runspaces
                 string entryName = nameGetter(entry);
 
                 // Aliases to allowed commands are OK
-                SessionStateAliasEntry aliasEntry = entry as SessionStateAliasEntry;
-                if (aliasEntry != null)
+                if (entry is SessionStateAliasEntry aliasEntry)
                 {
                     if (allowedNames.Exists(allowedName => allowedName.Equals(aliasEntry.Definition, StringComparison.OrdinalIgnoreCase)))
                     {
@@ -2340,8 +2339,7 @@ namespace System.Management.Automation.Runspaces
                     RunspaceEventSource.Log.LoadCommandStart(cmd.Name);
                 }
 
-                SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
-                if (ssce != null)
+                if (cmd is SessionStateCmdletEntry ssce)
                 {
                     if (noClobber && ModuleCmdletBase.CommandFound(ssce.Name, ss))
                     {
@@ -2357,22 +2355,19 @@ namespace System.Management.Automation.Runspaces
 
                 cmd.SetModule(module);
 
-                SessionStateFunctionEntry ssfe = cmd as SessionStateFunctionEntry;
-                if (ssfe != null)
+                if (cmd is SessionStateFunctionEntry ssfe)
                 {
                     ss.AddSessionStateEntry(ssfe);
                     continue;
                 }
 
-                SessionStateAliasEntry ssae = cmd as SessionStateAliasEntry;
-                if (ssae != null)
+                if (cmd is SessionStateAliasEntry ssae)
                 {
                     ss.AddSessionStateEntry(ssae, StringLiterals.Local);
                     continue;
                 }
 
-                SessionStateApplicationEntry ssappe = cmd as SessionStateApplicationEntry;
-                if (ssappe != null)
+                if (cmd is SessionStateApplicationEntry ssappe)
                 {
                     if (ssappe.Visibility == SessionStateEntryVisibility.Public)
                     {
@@ -2382,8 +2377,7 @@ namespace System.Management.Automation.Runspaces
                     continue;
                 }
 
-                SessionStateScriptEntry ssse = cmd as SessionStateScriptEntry;
-                if (ssse != null)
+                if (cmd is SessionStateScriptEntry ssse)
                 {
                     if (ssse.Visibility == SessionStateEntryVisibility.Public)
                     {
@@ -2663,8 +2657,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 // If we are wrapping a function, rename it.
-                FunctionInfo commandAsFunction = existingCommand as FunctionInfo;
-                if (commandAsFunction != null)
+                if (existingCommand is FunctionInfo commandAsFunction)
                 {
                     string newCommandName = commandAsFunction.Name + "_" + Guid.NewGuid().ToString("N");
                     commandAsFunction.Rename(newCommandName);
@@ -2758,9 +2751,8 @@ namespace System.Management.Automation.Runspaces
                 if (variable.ContainsKey("Name"))
                 {
                     string name = variable["Name"].ToString();
-                    ScriptBlock sb = variable["Value"] as ScriptBlock;
 
-                    if (!string.IsNullOrEmpty(name) && (sb != null))
+                    if (!string.IsNullOrEmpty(name) && (variable["Value"] is ScriptBlock sb))
                     {
                         sb.SessionStateInternal = initializedRunspace.ExecutionContext.EngineSessionState;
 
@@ -2918,15 +2910,13 @@ namespace System.Management.Automation.Runspaces
                 ArrayList errorList = (ArrayList)initializedRunspace.GetExecutionContext.DollarErrorVariable;
                 if (errorList.Count > 0)
                 {
-                    ErrorRecord lastErrorRecord = errorList[0] as ErrorRecord;
-                    if (lastErrorRecord != null)
+                    if (errorList[0] is ErrorRecord lastErrorRecord)
                     {
                         return new Exception(lastErrorRecord.ToString());
                     }
                     else
                     {
-                        Exception lastException = errorList[0] as Exception;
-                        if (lastException != null)
+                        if (errorList[0] is Exception lastException)
                         {
                             return lastException;
                         }
@@ -2952,15 +2942,13 @@ namespace System.Management.Automation.Runspaces
 
             foreach (object module in moduleList)
             {
-                string moduleName = module as string;
-                if (moduleName != null)
+                if (module is string moduleName)
                 {
                     exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
                 }
                 else
                 {
-                    ModuleSpecification moduleSpecification = module as ModuleSpecification;
-                    if (moduleSpecification != null)
+                    if (module is ModuleSpecification moduleSpecification)
                     {
                         if ((moduleSpecification.RequiredVersion == null) && (moduleSpecification.Version == null) && (moduleSpecification.MaximumVersion == null) && (moduleSpecification.Guid == null))
                         {
@@ -3409,8 +3397,7 @@ namespace System.Management.Automation.Runspaces
                 // Remove all of the commands from the top-level session state.
                 foreach (SessionStateCommandEntry cmd in Commands)
                 {
-                    SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
-                    if (ssce != null)
+                    if (cmd is SessionStateCmdletEntry ssce)
                     {
                         List<CmdletInfo> matches;
                         if (context.TopLevelSessionState.GetCmdletTable().TryGetValue(ssce.Name, out matches))

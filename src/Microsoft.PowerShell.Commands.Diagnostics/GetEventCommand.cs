@@ -1282,8 +1282,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // Build xpath for <Suppress>
                 //
-                Hashtable suppresshash = hash[hashkey_supress_lc] as Hashtable;
-                if (suppresshash != null)
+                if (hash[hashkey_supress_lc] is Hashtable suppresshash)
                 {
                     xpathStringSuppress = BuildXPathFromHashTable(suppresshash);
                 }
@@ -1350,8 +1349,7 @@ namespace Microsoft.PowerShell.Commands
         private string HandleEventIdHashValue(object value)
         {
             StringBuilder ret = new StringBuilder();
-            Array idsArray = value as Array;
-            if (idsArray != null)
+            if (value is Array idsArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < idsArray.Length; i++)
@@ -1380,8 +1378,7 @@ namespace Microsoft.PowerShell.Commands
         private string HandleLevelHashValue(object value)
         {
             StringBuilder ret = new StringBuilder();
-            Array levelsArray = value as Array;
-            if (levelsArray != null)
+            if (value is Array levelsArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < levelsArray.Length; i++)
@@ -1412,8 +1409,7 @@ namespace Microsoft.PowerShell.Commands
             Int64 keywordsMask = 0;
             Int64 keywordLong = 0;
 
-            Array keywordArray = value as Array;
-            if (keywordArray != null)
+            if (value is Array keywordArray)
             {
                 foreach (object keyword in keywordArray)
                 {
@@ -1568,8 +1564,7 @@ namespace Microsoft.PowerShell.Commands
         private string HandleDataHashValue(object value)
         {
             StringBuilder ret = new StringBuilder();
-            Array dataArray = value as Array;
-            if (dataArray != null)
+            if (value is Array dataArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < dataArray.Length; i++)
@@ -1599,8 +1594,7 @@ namespace Microsoft.PowerShell.Commands
         private string HandleNamedDataHashValue(string key, object value)
         {
             StringBuilder ret = new StringBuilder();
-            Array dataArray = value as Array;
-            if (dataArray != null)
+            if (value is Array dataArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < dataArray.Length; i++)
@@ -1847,8 +1841,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Array eltArray = value as Array;
-                        if (eltArray != null)
+                        if (value is Array eltArray)
                         {
                             foreach (object elt in eltArray)
                             {

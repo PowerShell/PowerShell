@@ -273,8 +273,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            CimIndicationWatcher watcher = sender as CimIndicationWatcher;
-            if (watcher != null)
+            if (sender is CimIndicationWatcher watcher)
             {
                 watcher.Stop();
             }

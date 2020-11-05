@@ -367,8 +367,7 @@ namespace System.Management.Automation.ComInterop
 
             public override bool Equals(object obj)
             {
-                ComInvokeMemberBinder other = obj as ComInvokeMemberBinder;
-                return other != null &&
+                return obj is ComInvokeMemberBinder other &&
                     IsPropertySet == other.IsPropertySet &&
                     _originalBinder.Equals(other._originalBinder);
             }

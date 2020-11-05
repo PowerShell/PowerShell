@@ -213,8 +213,7 @@ namespace System.Management.Automation
         {
             string syntax = name, listItem = name;
 
-            var commandInfo = command as CommandInfo;
-            if (commandInfo != null)
+            if (command is CommandInfo commandInfo)
             {
                 try
                 {
@@ -279,11 +278,11 @@ namespace System.Management.Automation
                 object baseObj = PSObject.Base(psobj);
                 string name = null;
 
-                var commandInfo = baseObj as CommandInfo;
-                if (commandInfo != null)
+                if (baseObj is CommandInfo commandInfo)
                 {
                     // Skip the private commands
-                    if (commandInfo.Visibility == SessionStateEntryVisibility.Private) { continue; }
+                    if (commandInfo.Visibility == SessionStateEntryVisibility.Private)
+                    { continue; }
 
                     name = commandInfo.Name;
                     if (includeModulePrefix && !string.IsNullOrEmpty(commandInfo.ModuleName))
@@ -303,7 +302,8 @@ namespace System.Management.Automation
                 else
                 {
                     name = baseObj as string;
-                    if (name == null) { continue; }
+                    if (name == null)
+                    { continue; }
                 }
 
                 object value;
@@ -313,8 +313,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    var list = value as List<object>;
-                    if (list != null)
+                    if (value is List<object> list)
                     {
                         list.Add(baseObj);
                     }
@@ -329,8 +328,7 @@ namespace System.Management.Automation
             List<CompletionResult> endResults = null;
             foreach (var keyValuePair in commandTable)
             {
-                var commandList = keyValuePair.Value as List<object>;
-                if (commandList != null)
+                if (keyValuePair.Value is List<object> commandList)
                 {
                     if (endResults == null)
                     {
@@ -343,8 +341,7 @@ namespace System.Management.Automation
                     string completionName = keyValuePair.Key;
                     if (!includeModulePrefix)
                     {
-                        var commandInfo = commandList[0] as CommandInfo;
-                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
+                        if (commandList[0] is CommandInfo commandInfo && !string.IsNullOrEmpty(commandInfo.Prefix))
                         {
                             Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
                             if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
@@ -384,8 +381,7 @@ namespace System.Management.Automation
                     string completionName = keyValuePair.Key;
                     if (!includeModulePrefix)
                     {
-                        var commandInfo = keyValuePair.Value as CommandInfo;
-                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
+                        if (keyValuePair.Value is CommandInfo commandInfo && !string.IsNullOrEmpty(commandInfo.Prefix))
                         {
                             Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
                             if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
@@ -761,8 +757,7 @@ namespace System.Management.Automation
                     {
                         foreach (var attr in compiledAttributes)
                         {
-                            var pattr = attr as ParameterAttribute;
-                            if (pattr != null && pattr.DontShow)
+                            if (attr is ParameterAttribute pattr && pattr.DontShow)
                             {
                                 showToUser = false;
                                 addCommonParameters = false;
@@ -873,8 +868,7 @@ namespace System.Management.Automation
                             secondToLastMemberAst = secondToLastAst as MemberExpressionAst;
                         }
 
-                        var partialPathAst = expressionAst as StringConstantExpressionAst;
-                        if (partialPathAst != null && secondToLastAst != null &&
+                        if (expressionAst is StringConstantExpressionAst partialPathAst && secondToLastAst != null &&
                             partialPathAst.StringConstantType == StringConstantType.BareWord &&
                             secondToLastAst.Extent.EndLineNumber == partialPathAst.Extent.StartLineNumber &&
                             secondToLastAst.Extent.EndColumnNumber == partialPathAst.Extent.StartColumnNumber &&
@@ -882,8 +876,6 @@ namespace System.Management.Automation
                         {
                             var secondToLastStringConstantAst = secondToLastAst as StringConstantExpressionAst;
                             var secondToLastExpandableStringAst = secondToLastAst as ExpandableStringExpressionAst;
-                            var secondToLastArrayAst = secondToLastAst as ArrayLiteralAst;
-                            var secondToLastParamAst = secondToLastAst as CommandParameterAst;
 
                             if (secondToLastStringConstantAst != null || secondToLastExpandableStringAst != null)
                             {
@@ -897,7 +889,7 @@ namespace System.Management.Automation
                                 context.WordToComplete = fullPath;
                                 // context.CursorPosition = secondToLastAst.Extent.StartScriptPosition;
                             }
-                            else if (secondToLastArrayAst != null)
+                            else if (secondToLastAst is ArrayLiteralAst secondToLastArrayAst)
                             {
                                 // Handle cases like: dir -Path .\cd, 'a b'\new<tab>
                                 var lastArrayElement = secondToLastArrayAst.Elements.LastOrDefault();
@@ -911,7 +903,7 @@ namespace System.Management.Automation
                                     context.WordToComplete = fullPath;
                                 }
                             }
-                            else if (secondToLastParamAst != null)
+                            else if (secondToLastAst is CommandParameterAst secondToLastParamAst)
                             {
                                 // Handle cases like: dir -Path: .\cd, 'a b'\new<tab> || dir -Path: 'a b'\new<tab>
                                 var fullPath = ConcatenateStringPathArguments(secondToLastParamAst.Argument, partialPathAst.Value, context);
@@ -925,8 +917,7 @@ namespace System.Management.Automation
                                 }
                                 else
                                 {
-                                    var arrayArgAst = secondToLastParamAst.Argument as ArrayLiteralAst;
-                                    if (arrayArgAst != null)
+                                    if (secondToLastParamAst.Argument is ArrayLiteralAst arrayArgAst)
                                     {
                                         var lastArrayElement = arrayArgAst.Elements.LastOrDefault();
                                         fullPath = ConcatenateStringPathArguments(lastArrayElement, partialPathAst.Value, context);
@@ -993,8 +984,7 @@ namespace System.Management.Automation
             }
             else
             {
-                var paramAst = lastAst as CommandParameterAst;
-                if (paramAst != null)
+                if (lastAst is CommandParameterAst paramAst)
                 {
                     commandAst = paramAst.Parent as CommandAst;
                 }
@@ -1029,8 +1019,7 @@ namespace System.Management.Automation
                     if (expressionAst != null)
                     {
                         treatAsExpression = true;
-                        var dashExp = expressionAst as StringConstantExpressionAst;
-                        if (dashExp != null && dashExp.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        if (expressionAst is StringConstantExpressionAst dashExp && dashExp.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
                         {
                             // "-" is represented as StringConstantExpressionAst. Most likely the user is typing a <tab>
                             // after it, so in the pseudo binder, we ignore it to avoid treating it as an argument.
@@ -1341,8 +1330,7 @@ namespace System.Management.Automation
 
         internal static string ConcatenateStringPathArguments(CommandElementAst stringAst, string partialPath, CompletionContext completionContext)
         {
-            var constantPathAst = stringAst as StringConstantExpressionAst;
-            if (constantPathAst != null)
+            if (stringAst is StringConstantExpressionAst constantPathAst)
             {
                 string quote = string.Empty;
                 switch (constantPathAst.StringConstantType)
@@ -1361,9 +1349,8 @@ namespace System.Management.Automation
             }
             else
             {
-                var expandablePathAst = stringAst as ExpandableStringExpressionAst;
                 string fullPath = null;
-                if (expandablePathAst != null &&
+                if (stringAst is ExpandableStringExpressionAst expandablePathAst &&
                     IsPathSafelyExpandable(expandableStringAst: expandablePathAst,
                                            extraText: partialPath,
                                            executionContext: completionContext.ExecutionContext,
@@ -1836,8 +1823,7 @@ namespace System.Management.Automation
 
                 case AstParameterArgumentType.PipeObject:
                     {
-                        var pipelineAst = commandAst.Parent as PipelineAst;
-                        if (pipelineAst != null)
+                        if (commandAst.Parent is PipelineAst pipelineAst)
                         {
                             int i;
                             for (i = 0; i < pipelineAst.PipelineElements.Count; i++)
@@ -1867,8 +1853,7 @@ namespace System.Management.Automation
             ExpressionAst argumentExpressionAst = argumentAst as ExpressionAst;
             if (argumentExpressionAst == null)
             {
-                CommandExpressionAst argumentCommandExpressionAst = argumentAst as CommandExpressionAst;
-                if (argumentCommandExpressionAst != null)
+                if (argumentAst is CommandExpressionAst argumentCommandExpressionAst)
                 {
                     argumentExpressionAst = argumentCommandExpressionAst.Expression;
                 }
@@ -1942,8 +1927,7 @@ namespace System.Management.Automation
                             var argument = (ArrayLiteralAst)value.Argument;
                             foreach (ExpressionAst entry in argument.Elements)
                             {
-                                var entryAsString = entry as StringConstantExpressionAst;
-                                if (entryAsString != null)
+                                if (entry is StringConstantExpressionAst entryAsString)
                                 {
                                     result.Add(entryAsString.Value);
                                 }
@@ -1964,8 +1948,7 @@ namespace System.Management.Automation
 
                         foreach (ExpressionAst entry in argument)
                         {
-                            var entryAsString = entry as StringConstantExpressionAst;
-                            if (entryAsString != null)
+                            if (entry is StringConstantExpressionAst entryAsString)
                             {
                                 result.Add(entryAsString.Value);
                             }
@@ -2032,8 +2015,7 @@ namespace System.Management.Automation
                 {
                     if (argumentCompleterAttribute.Type != null)
                     {
-                        var completer = Activator.CreateInstance(argumentCompleterAttribute.Type) as IArgumentCompleter;
-                        if (completer != null)
+                        if (Activator.CreateInstance(argumentCompleterAttribute.Type) is IArgumentCompleter completer)
                         {
                             var customResults = completer.CompleteArgument(commandName, parameterName,
                                 context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
@@ -2347,11 +2329,9 @@ namespace System.Management.Automation
                 {
                     foreach (var boundArgument in boundArguments)
                     {
-                        var astPair = boundArgument.Value as AstPair;
-                        if (astPair != null)
+                        if (boundArgument.Value is AstPair astPair)
                         {
-                            var parameterAst = astPair.Argument as CommandParameterAst;
-                            var exprAst = parameterAst != null
+                            var exprAst = astPair.Argument is CommandParameterAst parameterAst
                                               ? parameterAst.Argument
                                               : astPair.Argument as ExpressionAst;
                             object value;
@@ -2363,8 +2343,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        var switchPair = boundArgument.Value as SwitchPair;
-                        if (switchPair != null)
+                        if (boundArgument.Value is SwitchPair switchPair)
                         {
                             result[boundArgument.Key] = switchPair.Argument;
                             continue;
@@ -2389,8 +2368,7 @@ namespace System.Management.Automation
             var options = context.Options;
             if (options != null)
             {
-                var customCompleters = options[optionKey] as Hashtable;
-                if (customCompleters != null)
+                if (options[optionKey] is Hashtable customCompleters)
                 {
                     foreach (var key in keys)
                     {
@@ -2464,8 +2442,7 @@ namespace System.Management.Automation
 
             foreach (var customResult in customResults)
             {
-                var resultAsCompletion = customResult.BaseObject as CompletionResult;
-                if (resultAsCompletion != null)
+                if (customResult.BaseObject is CompletionResult resultAsCompletion)
                 {
                     result.Add(resultAsCompletion);
                     continue;
@@ -3811,8 +3788,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                var astPair = pair as AstPair;
-                if (astPair == null || astPair.Argument == null)
+                if (pair is not AstPair astPair || astPair.Argument == null)
                 {
                     return;
                 }
@@ -4188,8 +4164,7 @@ namespace System.Management.Automation
                     if (psobjs.Count > 0)
                     {
                         dynamic firstObj = psobjs[0];
-                        var provider = firstObj.Provider as ProviderInfo;
-                        isFileSystem = provider != null &&
+                        isFileSystem = firstObj.Provider is ProviderInfo provider &&
                                        provider.Name.Equals(FileSystemProvider.ProviderName,
                                                             StringComparison.OrdinalIgnoreCase);
                     }
@@ -4333,8 +4308,7 @@ namespace System.Management.Automation
                         // 1. a PathInfo object -- results of Resolve-Path
                         // 2. a FileSystemInfo Object -- results of Get-ChildItem
                         // 3. a string -- the path results return by the direct .NET API invocation
-                        var baseObjAsPathInfo = baseObj as PathInfo;
-                        if (baseObjAsPathInfo != null)
+                        if (baseObj is PathInfo baseObjAsPathInfo)
                         {
                             path = baseObjAsPathInfo.Path;
                             providerPath = baseObjAsPathInfo.ProviderPath;
@@ -4348,8 +4322,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            var baseObjAsString = baseObj as string;
-                            if (baseObjAsString != null)
+                            if (baseObj is string baseObjAsString)
                             {
                                 // The target provider is the FileSystem
                                 providerPath = baseObjAsString;
@@ -4593,8 +4566,7 @@ namespace System.Management.Automation
             var colon = wordToComplete.IndexOf(':');
 
             var lastAst = context.RelatedAsts?.Last();
-            var variableAst = lastAst as VariableExpressionAst;
-            var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
+            var prefix = lastAst is VariableExpressionAst variableAst && variableAst.Splatted ? "@" : "$";
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -4619,16 +4591,14 @@ namespace System.Management.Automation
                     Ast astTarget = null;
                     string userPath = null;
 
-                    VariableExpressionAst variableDefinitionAst = varAst.Item2 as VariableExpressionAst;
-                    if (variableDefinitionAst != null)
+                    if (varAst.Item2 is VariableExpressionAst variableDefinitionAst)
                     {
                         userPath = varAst.Item1;
                         astTarget = varAst.Item2.Parent;
                     }
                     else
                     {
-                        CommandAst commandParameterAst = varAst.Item2 as CommandAst;
-                        if (commandParameterAst != null)
+                        if (varAst.Item2 is CommandAst commandParameterAst)
                         {
                             userPath = varAst.Item1;
                             astTarget = varAst.Item2;
@@ -4650,8 +4620,7 @@ namespace System.Management.Automation
 
                         while (ast != null)
                         {
-                            var parameterAst = ast as ParameterAst;
-                            if (parameterAst != null)
+                            if (ast is ParameterAst parameterAst)
                             {
                                 var typeConstraint = parameterAst.Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
                                 if (typeConstraint != null)
@@ -4662,8 +4631,7 @@ namespace System.Management.Automation
                                 break;
                             }
 
-                            var assignmentAst = ast.Parent as AssignmentStatementAst;
-                            if (assignmentAst != null)
+                            if (ast.Parent is AssignmentStatementAst assignmentAst)
                             {
                                 if (assignmentAst.Left == ast)
                                 {
@@ -4673,8 +4641,7 @@ namespace System.Management.Automation
                                 break;
                             }
 
-                            var commandAst = ast as CommandAst;
-                            if (commandAst != null)
+                            if (ast is CommandAst commandAst)
                             {
                                 PSTypeName discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).FirstOrDefault<PSTypeName>();
                                 if (discoveredType != null)
@@ -4728,8 +4695,7 @@ namespace System.Management.Automation
                     if (!string.IsNullOrEmpty(name))
                     {
                         var tooltip = name;
-                        var variable = PSObject.Base(psobj) as PSVariable;
-                        if (variable != null)
+                        if (PSObject.Base(psobj) is PSVariable variable)
                         {
                             var value = variable.Value;
                             if (value != null)
@@ -4940,8 +4906,7 @@ namespace System.Management.Automation
 
                 if (psobjs != null && psobjs.Count == 1)
                 {
-                    var historyInfo = PSObject.Base(psobjs[0]) as HistoryInfo;
-                    if (historyInfo != null)
+                    if (PSObject.Base(psobjs[0]) is HistoryInfo historyInfo)
                     {
                         var commandLine = historyInfo.CommandLine;
                         if (!string.IsNullOrEmpty(commandLine))
@@ -5016,10 +4981,9 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
 
             var lastAst = context.RelatedAsts.Last();
-            var lastAstAsMemberExpr = lastAst as MemberExpressionAst;
             Ast memberNameCandidateAst = null;
             ExpressionAst targetExpr = null;
-            if (lastAstAsMemberExpr != null)
+            if (lastAst is MemberExpressionAst lastAstAsMemberExpr)
             {
                 // If the cursor is not inside the member name in the member expression, assume
                 // that the user had incomplete input, but the parser got lucky and succeeded parsing anyway.
@@ -5035,10 +4999,9 @@ namespace System.Management.Automation
                 memberNameCandidateAst = lastAst;
             }
 
-            var memberNameAst = memberNameCandidateAst as StringConstantExpressionAst;
 
             var memberName = "*";
-            if (memberNameAst != null)
+            if (memberNameCandidateAst is StringConstantExpressionAst memberNameAst)
             {
                 // Make sure to correctly handle: echo $foo.
                 if (!memberNameAst.Value.Equals(".", StringComparison.OrdinalIgnoreCase) && !memberNameAst.Value.Equals("::", StringComparison.OrdinalIgnoreCase))
@@ -5052,8 +5015,7 @@ namespace System.Management.Automation
                 return results;
             }
 
-            var commandAst = lastAst.Parent as CommandAst;
-            if (commandAst != null)
+            if (lastAst.Parent is CommandAst commandAst)
             {
                 int i;
                 for (i = commandAst.CommandElements.Count - 1; i >= 0; --i)
@@ -5092,8 +5054,7 @@ namespace System.Management.Automation
             }
             else if (lastAst.Parent is BinaryExpressionAst && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
             {
-                var memberExprAst = ((BinaryExpressionAst)lastAst.Parent).Left as MemberExpressionAst;
-                if (memberExprAst != null)
+                if (((BinaryExpressionAst)lastAst.Parent).Left is MemberExpressionAst memberExprAst)
                 {
                     targetExpr = memberExprAst.Expression;
                     if (memberExprAst.Member is StringConstantExpressionAst)
@@ -5123,8 +5084,7 @@ namespace System.Management.Automation
 
                 if (@static)
                 {
-                    var typeExpr = targetExpr as TypeExpressionAst;
-                    if (typeExpr != null)
+                    if (targetExpr is TypeExpressionAst typeExpr)
                     {
                         inferredTypes = new[] { new PSTypeName(typeExpr.TypeName) };
                     }
@@ -5141,15 +5101,11 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // Handle special DSC collection variables to complete the extension methods 'Where' and 'ForEach'
-                    // e.g. Configuration foo { node $AllNodes.<tab> --> $AllNodes.Where(
-                    var variableAst = targetExpr as VariableExpressionAst;
-                    var memberExprAst = targetExpr as MemberExpressionAst;
                     bool shouldAddExtensionMethods = false;
 
                     // We complete against extension methods 'Where' and 'ForEach' for the following DSC variables
                     // $SelectedNodes, $AllNodes, $ConfigurationData.AllNodes
-                    if (variableAst != null)
+                    if (targetExpr is VariableExpressionAst variableAst)
                     {
                         // Handle $SelectedNodes and $AllNodes
                         var variablePath = variableAst.VariablePath;
@@ -5158,11 +5114,10 @@ namespace System.Management.Automation
                             shouldAddExtensionMethods = true;
                         }
                     }
-                    else if (memberExprAst != null)
+                    else if (targetExpr is MemberExpressionAst memberExprAst)
                     {
                         // Handle $ConfigurationData.AllNodes
-                        var member = memberExprAst.Member as StringConstantExpressionAst;
-                        if (IsConfigurationDataVariable(memberExprAst.Expression) && member != null &&
+                        if (IsConfigurationDataVariable(memberExprAst.Expression) && memberExprAst.Member is StringConstantExpressionAst member &&
                             string.Equals("AllNodes", member.Value, StringComparison.OrdinalIgnoreCase) &&
                             IsInDscContext(memberExprAst))
                         {
@@ -5219,8 +5174,7 @@ namespace System.Management.Automation
         /// </summary>
         private static bool IsConfigurationDataVariable(ExpressionAst targetExpr)
         {
-            var variableExpr = targetExpr as VariableExpressionAst;
-            if (variableExpr != null)
+            if (targetExpr is VariableExpressionAst variableExpr)
             {
                 var varPath = variableExpr.VariablePath;
                 if (varPath.IsVariable &&
@@ -5305,32 +5259,28 @@ namespace System.Management.Automation
                 getToolTip = () => ToStringCodeMethods.Type(fieldInfo.FieldType) + " " + memberName;
             }
 
-            var methodCacheEntry = member as DotNetAdapter.MethodCacheEntry;
-            if (methodCacheEntry != null)
+            if (member is DotNetAdapter.MethodCacheEntry methodCacheEntry)
             {
                 memberName = methodCacheEntry[0].method.Name;
                 isMethod = true;
                 getToolTip = () => string.Join("\n", methodCacheEntry.methodInformationStructures.Select(m => m.methodDefinition));
             }
 
-            var psMemberInfo = member as PSMemberInfo;
-            if (psMemberInfo != null)
+            if (member is PSMemberInfo psMemberInfo)
             {
                 memberName = psMemberInfo.Name;
                 isMethod = member is PSMethodInfo;
                 getToolTip = psMemberInfo.ToString;
             }
 
-            var cimProperty = member as CimPropertyDeclaration;
-            if (cimProperty != null)
+            if (member is CimPropertyDeclaration cimProperty)
             {
                 memberName = cimProperty.Name;
                 isMethod = false;
                 getToolTip = () => GetCimPropertyToString(cimProperty);
             }
 
-            var memberAst = member as MemberAst;
-            if (memberAst != null)
+            if (member is MemberAst memberAst)
             {
                 memberName = memberAst is CompilerGeneratedMemberFunctionAst ? "new" : memberAst.Name;
                 isMethod = memberAst is FunctionMemberAst || memberAst is CompilerGeneratedMemberFunctionAst;
@@ -5379,8 +5329,7 @@ namespace System.Management.Automation
                 return propertyInfo.CanWrite;
             }
 
-            var psPropertyInfo = member as PSPropertyInfo;
-            if (psPropertyInfo != null)
+            if (member is PSPropertyInfo psPropertyInfo)
             {
                 return psPropertyInfo.IsSettable;
             }
@@ -5399,20 +5348,17 @@ namespace System.Management.Automation
 
         private static bool IsMemberHidden(object member)
         {
-            var psMemberInfo = member as PSMemberInfo;
-            if (psMemberInfo != null)
+            if (member is PSMemberInfo psMemberInfo)
                 return psMemberInfo.IsHidden;
 
             var memberInfo = member as MemberInfo;
             if (memberInfo != null)
                 return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Length > 0;
 
-            var propertyMemberAst = member as PropertyMemberAst;
-            if (propertyMemberAst != null)
+            if (member is PropertyMemberAst propertyMemberAst)
                 return propertyMemberAst.IsHidden;
 
-            var functionMemberAst = member as FunctionMemberAst;
-            if (functionMemberAst != null)
+            if (member is FunctionMemberAst functionMemberAst)
                 return functionMemberAst.IsHidden;
 
             return false;
@@ -5420,11 +5366,9 @@ namespace System.Management.Automation
 
         private static bool IsConstructor(object member)
         {
-            var psMethod = member as PSMethod;
-            if (psMethod != null)
+            if (member is PSMethod psMethod)
             {
-                var methodCacheEntry = psMethod.adapterData as DotNetAdapter.MethodCacheEntry;
-                if (methodCacheEntry != null)
+                if (psMethod.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
                 {
                     return methodCacheEntry.methodInformationStructures[0].method.IsConstructor;
                 }
@@ -5737,8 +5681,7 @@ namespace System.Management.Automation
                     bool typeAlreadyIncluded = entry.Completions.Any(
                         item =>
                             {
-                                var typeCompletion = item as TypeCompletion;
-                                return typeCompletion != null && typeCompletion.Type == acceleratorType;
+                                return item is TypeCompletion typeCompletion && typeCompletion.Type == acceleratorType;
                             });
 
                     // If it's already included, skip it.
@@ -6038,8 +5981,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var typeCompletion = completion as TypeCompletion;
-            string typeNameSpace = typeCompletion != null
+            string typeNameSpace = completion is TypeCompletion typeCompletion
                                        ? typeCompletion.Type.Namespace
                                        : ((TypeCompletionInStringFormat)completion).Namespace;
 
@@ -6232,9 +6174,8 @@ namespace System.Management.Automation
             int cursorOffset = completionContext.CursorPosition.Offset;
             foreach (var keyValueTuple in hashtableAst.KeyValuePairs)
             {
-                var propName = keyValueTuple.Item1 as StringConstantExpressionAst;
                 // Exclude the property name at cursor
-                if (propName != null && propName.Extent.EndOffset != cursorOffset)
+                if (keyValueTuple.Item1 is StringConstantExpressionAst propName && propName.Extent.EndOffset != cursorOffset)
                 {
                     propertiesName.Add(propName.Value);
                 }
@@ -6283,8 +6224,7 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHashtableKey(CompletionContext completionContext, HashtableAst hashtableAst)
         {
-            var typeAst = hashtableAst.Parent as ConvertExpressionAst;
-            if (typeAst != null)
+            if (hashtableAst.Parent is ConvertExpressionAst typeAst)
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
@@ -6326,8 +6266,7 @@ namespace System.Management.Automation
             var ast = hashtableAst.Parent;
 
             // Handle completion for hashtable within DynamicKeyword statement
-            var dynamicKeywordStatementAst = ast as DynamicKeywordStatementAst;
-            if (dynamicKeywordStatementAst != null)
+            if (ast is DynamicKeywordStatementAst dynamicKeywordStatementAst)
             {
                 return CompleteHashtableKeyForDynamicKeyword(completionContext, dynamicKeywordStatementAst, hashtableAst);
             }
@@ -6342,8 +6281,7 @@ namespace System.Management.Automation
                 ast = ast.Parent;
             }
 
-            var commandAst = ast as CommandAst;
-            if (commandAst != null)
+            if (ast is CommandAst commandAst)
             {
                 var binding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, bindingType: PseudoParameterBinder.BindingType.ArgumentCompletion);
                 if (binding == null)
@@ -6354,8 +6292,7 @@ namespace System.Management.Automation
                 string parameterName = null;
                 foreach (var boundArg in binding.BoundArguments)
                 {
-                    var astPair = boundArg.Value as AstPair;
-                    if (astPair != null)
+                    if (boundArg.Value is AstPair astPair)
                     {
                         if (astPair.Argument == hashtableAst)
                         {
@@ -6366,8 +6303,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var astArrayPair = boundArg.Value as AstArrayPair;
-                    if (astArrayPair != null)
+                    if (boundArg.Value is AstArrayPair astArrayPair)
                     {
                         if (astArrayPair.Argument.Contains(hashtableAst))
                         {
@@ -6641,8 +6577,7 @@ namespace System.Management.Automation
                                              tooltip));
                 }
 
-                var dictionary = PSObject.Base(value) as IDictionary;
-                if (dictionary != null)
+                if (PSObject.Base(value) is IDictionary dictionary)
                 {
                     var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
                     foreach (DictionaryEntry entry in dictionary)
@@ -6786,9 +6721,8 @@ namespace System.Management.Automation
             if (context.RelatedAsts != null && !string.IsNullOrEmpty(context.WordToComplete))
             {
                 var lastAst = context.RelatedAsts.Last();
-                var parent = lastAst.Parent as CommandAst;
 
-                if (parent != null && parent.CommandElements.Count == 1 &&
+                if (lastAst.Parent is CommandAst parent && parent.CommandElements.Count == 1 &&
                     ((!defaultChoice && parent.InvocationOperator == TokenKind.Unknown) ||
                      (defaultChoice && parent.InvocationOperator != TokenKind.Unknown)))
                 {
@@ -6807,28 +6741,20 @@ namespace System.Management.Automation
         {
             public int Compare(PSObject x, PSObject y)
             {
-                var xPathInfo = PSObject.Base(x) as PathInfo;
-                var xFileInfo = PSObject.Base(x) as IO.FileSystemInfo;
-                var xPathStr = PSObject.Base(x) as string;
-
-                var yPathInfo = PSObject.Base(y) as PathInfo;
-                var yFileInfo = PSObject.Base(y) as IO.FileSystemInfo;
-                var yPathStr = PSObject.Base(y) as string;
-
                 string xPath = null, yPath = null;
 
-                if (xPathInfo != null)
+                if (PSObject.Base(x) is PathInfo xPathInfo)
                     xPath = xPathInfo.ProviderPath;
-                else if (xFileInfo != null)
+                else if (PSObject.Base(x) is IO.FileSystemInfo xFileInfo)
                     xPath = xFileInfo.FullName;
-                else if (xPathStr != null)
+                else if (PSObject.Base(x) is string xPathStr)
                     xPath = xPathStr;
 
-                if (yPathInfo != null)
+                if (PSObject.Base(y) is PathInfo yPathInfo)
                     yPath = yPathInfo.ProviderPath;
-                else if (yFileInfo != null)
+                else if (PSObject.Base(y) is IO.FileSystemInfo yFileInfo)
                     yPath = yFileInfo.FullName;
-                else if (yPathStr != null)
+                else if (PSObject.Base(y) is string yPathStr)
                     yPath = yPathStr;
 
                 if (string.IsNullOrEmpty(xPath) || string.IsNullOrEmpty(yPath))
@@ -6848,11 +6774,9 @@ namespace System.Management.Automation
                 object xObj = PSObject.Base(x);
                 object yObj = PSObject.Base(y);
 
-                var xCommandInfo = xObj as CommandInfo;
-                xName = xCommandInfo != null ? xCommandInfo.Name : xObj as string;
+                xName = xObj is CommandInfo xCommandInfo ? xCommandInfo.Name : xObj as string;
 
-                var yCommandInfo = yObj as CommandInfo;
-                yName = yCommandInfo != null ? yCommandInfo.Name : yObj as string;
+                yName = yObj is CommandInfo yCommandInfo ? yCommandInfo.Name : yObj as string;
 
                 if (xName == null || yName == null)
                     Diagnostics.Assert(false, "Base object of Command PSObject should be either CommandInfo or string");

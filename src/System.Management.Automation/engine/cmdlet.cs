@@ -135,9 +135,7 @@ namespace System.Management.Automation
         /// </exception>
         internal override void DoBeginProcessing()
         {
-            MshCommandRuntime mshRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshRuntime)
             {
                 if (mshRuntime.UseTransaction &&
                    (!this.Context.TransactionManager.HasTransaction))
@@ -678,8 +676,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                ICommandRuntime2 commandRuntime2 = commandRuntime as ICommandRuntime2;
-                if (commandRuntime2 != null)
+                if (commandRuntime is ICommandRuntime2 commandRuntime2)
                 {
                     string source = this.MyInvocation.PSCommandPath;
                     if (string.IsNullOrEmpty(source))
@@ -736,8 +733,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                ICommandRuntime2 commandRuntime2 = commandRuntime as ICommandRuntime2;
-                if (commandRuntime2 != null)
+                if (commandRuntime is ICommandRuntime2 commandRuntime2)
                 {
                     commandRuntime2.WriteInformation(informationRecord);
                 }
@@ -1565,8 +1561,7 @@ namespace System.Management.Automation
             {
                 if (commandRuntime != null)
                 {
-                    ICommandRuntime2 runtime2 = commandRuntime as ICommandRuntime2;
-                    if (runtime2 != null)
+                    if (commandRuntime is ICommandRuntime2 runtime2)
                     {
                         return runtime2.ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
                     }

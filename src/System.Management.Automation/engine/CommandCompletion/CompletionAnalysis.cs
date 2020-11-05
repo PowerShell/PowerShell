@@ -228,8 +228,7 @@ namespace System.Management.Automation
         {
             Tuple<Token, Ast> fileConditionTuple;
 
-            var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
+            if (lastAst is ErrorStatementAst errorStatement && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
                 errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
@@ -277,8 +276,7 @@ namespace System.Management.Automation
             kind = TokenKind.Unknown;
 
             // Handle "switch -f<tab>"
-            var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Kind != null)
+            if (lastAst is ErrorStatementAst errorStatement && errorStatement.Kind != null)
             {
                 switch (errorStatement.Kind.Kind)
                 {
@@ -291,8 +289,7 @@ namespace System.Management.Automation
             }
 
             // Handle "switch -<tab>". Skip cases like "switch ($a) {} -<tab> "
-            var scriptBlockAst = scriptAst as ScriptBlockAst;
-            if (token != null && token.Kind == TokenKind.Minus && scriptBlockAst != null)
+            if (token != null && token.Kind == TokenKind.Minus && scriptAst is ScriptBlockAst scriptBlockAst)
             {
                 var asts = AstSearcher.FindAll(scriptBlockAst, ast => IsCursorAfterExtent(token.Extent.StartScriptPosition, ast.Extent), searchNestedScriptBlocks: true);
 
@@ -302,7 +299,8 @@ namespace System.Management.Automation
                 while (last != null)
                 {
                     errorStatement = last as ErrorStatementAst;
-                    if (errorStatement != null) { break; }
+                    if (errorStatement != null)
+                    { break; }
 
                     last = last.Parent;
                 }
@@ -412,8 +410,7 @@ namespace System.Management.Automation
                             break;
 
                         completionContext.WordToComplete = tokenAtCursor.Text;
-                        var cmdAst = lastAst.Parent as CommandAst;
-                        if (lastAst is StringConstantExpressionAst && cmdAst != null && cmdAst.CommandElements.Count == 1)
+                        if (lastAst is StringConstantExpressionAst && lastAst.Parent is CommandAst cmdAst && cmdAst.CommandElements.Count == 1)
                         {
                             result = CompleteFileNameAsCommand(completionContext);
                             break;
@@ -930,8 +927,7 @@ namespace System.Management.Automation
             var lastAst = completionContext.RelatedAsts.Last();
             HashtableAst tempHashtableAst = null;
             IScriptPosition cursor = completionContext.CursorPosition;
-            var hashTableAst = lastAst as HashtableAst;
-            if (hashTableAst != null)
+            if (lastAst is HashtableAst hashTableAst)
             {
                 // Check if the cursor within the hashtable
                 if (cursor.Offset < hashTableAst.Extent.EndOffset)
@@ -1002,8 +998,7 @@ namespace System.Management.Automation
 
         internal static TypeName FindTypeNameToComplete(ITypeName type, IScriptPosition cursor)
         {
-            var typeName = type as TypeName;
-            if (typeName != null)
+            if (type is TypeName typeName)
             {
                 // If the cursor is at the start offset, it's not really inside, so return null.
                 // If the cursor is at the end offset, it's not really inside, but it's just before the cursor,
@@ -1013,8 +1008,7 @@ namespace System.Management.Automation
                            : null;
             }
 
-            var genericTypeName = type as GenericTypeName;
-            if (genericTypeName != null)
+            if (type is GenericTypeName genericTypeName)
             {
                 typeName = FindTypeNameToComplete(genericTypeName.TypeName, cursor);
                 if (typeName != null)
@@ -1029,8 +1023,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var arrayTypeName = type as ArrayTypeName;
-            if (arrayTypeName != null)
+            if (type is ArrayTypeName arrayTypeName)
             {
                 return FindTypeNameToComplete(arrayTypeName.ElementType, cursor) ?? null;
             }
@@ -1369,8 +1362,7 @@ namespace System.Management.Automation
                     var keyValuePairWithCursor = GetHashEntryContainsCursor(cursor, hashTableAst, isCursorInString);
                     if (keyValuePairWithCursor != null)
                     {
-                        var propertyNameAst = keyValuePairWithCursor.Item1 as StringConstantExpressionAst;
-                        if (propertyNameAst != null)
+                        if (keyValuePairWithCursor.Item1 is StringConstantExpressionAst propertyNameAst)
                         {
                             DynamicKeywordProperty property;
                             if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
@@ -1395,8 +1387,7 @@ namespace System.Management.Automation
                                                 // stringAst can be null in following case
                                                 //      DependsOn='[user]x',|
                                                 //
-                                                var stringAst = expression as StringConstantExpressionAst;
-                                                if (stringAst != null && IsCursorOutsideOfExtent(cursor, expression.Extent))
+                                                if (expression is StringConstantExpressionAst stringAst && IsCursorOutsideOfExtent(cursor, expression.Extent))
                                                 {
                                                     existingValues.Add(stringAst.Value);
                                                 }
@@ -1461,8 +1452,7 @@ namespace System.Management.Automation
                                             List<string> allResources = new List<string>();
                                             foreach (var statementAst in namedBlockAst.Statements)
                                             {
-                                                var dynamicKeywordAst = statementAst as DynamicKeywordStatementAst;
-                                                if (dynamicKeywordAst != null &&
+                                                if (statementAst is DynamicKeywordStatementAst dynamicKeywordAst &&
                                                     dynamicKeywordAst != keywordAst &&
                                                     !string.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
                                                 {
@@ -1746,8 +1736,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    UsingStatementAst usingState = strConst.Parent as UsingStatementAst;
-                    if (usingState != null)
+                    if (strConst.Parent is UsingStatementAst usingState)
                     {
                         completionContext.ReplacementIndex = strConst.Extent.StartOffset;
                         completionContext.ReplacementLength = strConst.Extent.EndOffset - replacementIndex;
@@ -1831,8 +1820,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                var variableAst = cursorAst as VariableExpressionAst;
-                                string fullPath = variableAst != null
+                                string fullPath = cursorAst is VariableExpressionAst variableAst
                                     ? CompletionCompleters.CombineVariableWithPartialPath(
                                         variableAst: variableAst,
                                         extraText: tokenAtCursorText,
@@ -1862,8 +1850,7 @@ namespace System.Management.Automation
                 if (isQuotedString) { return result; }
 
                 // Handle the StringExpandableToken;
-                var strToken = tokenAtCursor as StringExpandableToken;
-                if (strToken != null && strToken.NestedTokens != null && strConst != null)
+                if (tokenAtCursor is StringExpandableToken strToken && strToken.NestedTokens != null && strConst != null)
                 {
                     try
                     {
@@ -1967,10 +1954,9 @@ namespace System.Management.Automation
                 {
                     // Handle member completion with wildcard(wildcard is at the end): $a.p*
                     var binaryExpressionAst = (BinaryExpressionAst)lastAst;
-                    var memberExpressionAst = binaryExpressionAst.Left as MemberExpressionAst;
                     var errorPosition = binaryExpressionAst.ErrorPosition;
 
-                    if (memberExpressionAst != null && binaryExpressionAst.Operator == TokenKind.Multiply &&
+                    if (binaryExpressionAst.Left is MemberExpressionAst memberExpressionAst && binaryExpressionAst.Operator == TokenKind.Multiply &&
                         errorPosition.StartOffset == memberExpressionAst.Member.Extent.EndOffset)
                     {
                         isStatic = memberExpressionAst.Static;
@@ -1983,8 +1969,7 @@ namespace System.Management.Automation
                         completionContext.RelatedAsts.Remove(binaryExpressionAst);
                         completionContext.RelatedAsts.Add(memberExpressionAst);
 
-                        var memberAst = memberExpressionAst.Member as StringConstantExpressionAst;
-                        if (memberAst != null)
+                        if (memberExpressionAst.Member is StringConstantExpressionAst memberAst)
                         {
                             replacementIndex = memberAst.Extent.StartScriptPosition.Offset;
                             replacementLength += memberAst.Extent.Text.Length;
@@ -2037,11 +2022,9 @@ namespace System.Management.Automation
             }
             else if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
             {
-                var command = lastAst.Parent as CommandBaseAst;
-                if (command != null && command.Redirections.Count > 0)
+                if (lastAst.Parent is CommandBaseAst command && command.Redirections.Count > 0)
                 {
-                    var fileRedirection = command.Redirections[0] as FileRedirectionAst;
-                    if (fileRedirection != null &&
+                    if (command.Redirections[0] is FileRedirectionAst fileRedirection &&
                         fileRedirection.Extent.EndLineNumber == lastAst.Extent.StartLineNumber &&
                         fileRedirection.Extent.EndColumnNumber == lastAst.Extent.StartColumnNumber)
                     {
@@ -2088,8 +2071,7 @@ namespace System.Management.Automation
             Type attributeType = null;
             string argName = string.Empty;
             Ast argAst = completionContext.RelatedAsts.Find(ast => ast is NamedAttributeArgumentAst);
-            NamedAttributeArgumentAst namedArgAst = argAst as NamedAttributeArgumentAst;
-            if (argAst != null && namedArgAst != null)
+            if (argAst != null && argAst is NamedAttributeArgumentAst namedArgAst)
             {
                 attributeType = ((AttributeAst)namedArgAst.Parent).TypeName.GetReflectionAttributeType();
                 argName = namedArgAst.ArgumentName;
@@ -2099,8 +2081,7 @@ namespace System.Management.Automation
             else
             {
                 Ast astAtt = completionContext.RelatedAsts.Find(ast => ast is AttributeAst);
-                AttributeAst attAst = astAtt as AttributeAst;
-                if (astAtt != null && attAst != null)
+                if (astAtt != null && astAtt is AttributeAst attAst)
                 {
                     attributeType = attAst.TypeName.GetReflectionAttributeType();
                 }

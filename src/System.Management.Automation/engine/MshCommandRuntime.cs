@@ -781,8 +781,7 @@ namespace System.Management.Automation
                     if ((record.Tags.Contains("PSHOST") && (!record.Tags.Contains("FORWARDED")))
                         || (preference == ActionPreference.Continue))
                     {
-                        HostInformationMessage hostOutput = record.MessageData as HostInformationMessage;
-                        if (hostOutput != null)
+                        if (record.MessageData is HostInformationMessage hostOutput)
                         {
                             string message = hostOutput.Message;
                             ConsoleColor? foregroundColor = null;
@@ -890,9 +889,7 @@ namespace System.Management.Automation
 
         private bool InitShouldLogPipelineExecutionDetail()
         {
-            CmdletInfo cmdletInfo = _commandInfo as CmdletInfo;
-
-            if (cmdletInfo != null)
+            if (_commandInfo is CmdletInfo cmdletInfo)
             {
                 if (string.Equals("Add-Type", cmdletInfo.Name, StringComparison.OrdinalIgnoreCase))
                 {
@@ -913,8 +910,7 @@ namespace System.Management.Automation
             }
 
             // Logging should be enabled for functions from modules also
-            FunctionInfo functionInfo = _commandInfo as FunctionInfo;
-            if (functionInfo != null && functionInfo.Module != null)
+            if (_commandInfo is FunctionInfo functionInfo && functionInfo.Module != null)
             {
                 return functionInfo.Module.LogPipelineExecutionDetails;
             }

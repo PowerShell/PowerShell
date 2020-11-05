@@ -115,21 +115,17 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewNotSupportedException();
                 }
             }
-
-            CmdletInfo cmdletInfo;
-            ExternalScriptInfo scriptInfo;
-            FunctionInfo funcInfo;
-            if ((cmdletInfo = commandInfo as CmdletInfo) != null)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
                 Init(commandInfo.Name, cmdletInfo.FullName, cmdletInfo.ImplementingType, shouldGenerateCommonParameters);
             }
-            else if ((scriptInfo = commandInfo as ExternalScriptInfo) != null)
+            else if (commandInfo is ExternalScriptInfo scriptInfo)
             {
                 // Accessing the script block property here reads and parses the script
                 Init(scriptInfo.ScriptBlock, scriptInfo.Path, shouldGenerateCommonParameters);
                 _wrappedCommandType = CommandTypes.ExternalScript;
             }
-            else if ((funcInfo = commandInfo as FunctionInfo) != null)
+            else if (commandInfo is FunctionInfo funcInfo)
             {
                 Init(funcInfo.ScriptBlock, funcInfo.Name, shouldGenerateCommonParameters);
                 _wrappedCommandType = commandInfo.CommandType;
@@ -693,8 +689,7 @@ namespace System.Management.Automation
 
             foreach (Attribute attribute in customAttributes)
             {
-                CmdletAttribute cmdletAttribute = attribute as CmdletAttribute;
-                if (cmdletAttribute != null)
+                if (attribute is CmdletAttribute cmdletAttribute)
                 {
                     ProcessCmdletAttribute(cmdletAttribute);
                     this.Name = cmdletAttribute.VerbName + "-" + cmdletAttribute.NounName;
@@ -751,8 +746,7 @@ namespace System.Management.Automation
             _remotingCapability = attribute.RemotingCapability;
 
             // Check to see if the cmdlet uses positional binding
-            var cmdletBindingAttribute = attribute as CmdletBindingAttribute;
-            if (cmdletBindingAttribute != null)
+            if (attribute is CmdletBindingAttribute cmdletBindingAttribute)
             {
                 PositionalBinding = cmdletBindingAttribute.PositionalBinding;
             }

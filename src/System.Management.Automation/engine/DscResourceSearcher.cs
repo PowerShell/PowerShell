@@ -151,9 +151,8 @@ namespace System.Management.Automation
 
                             resourceInfo.CompanyName = resource.CompanyName;
 
-                            PSModuleInfo psMod = resource.Module as PSModuleInfo;
 
-                            if (psMod != null)
+                            if (resource.Module is PSModuleInfo psMod)
                                 resourceInfo.Module = psMod;
 
                             if (resource.ImplementedAs != null)
@@ -163,9 +162,8 @@ namespace System.Management.Automation
                                     resourceInfo.ImplementedAs = impType;
                             }
 
-                            var properties = resource.Properties as IList;
 
-                            if (properties != null)
+                            if (resource.Properties is IList properties)
                             {
                                 List<DscResourcePropertyInfo> propertyList = new List<DscResourcePropertyInfo>();
 

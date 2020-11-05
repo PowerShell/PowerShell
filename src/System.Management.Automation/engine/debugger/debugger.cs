@@ -1147,8 +1147,7 @@ namespace System.Management.Automation
 
             if (_context._debuggingMode > 0)
             {
-                var scriptCommandInfo = invocationInfo.MyCommand as ExternalScriptInfo;
-                if (scriptCommandInfo != null)
+                if (invocationInfo.MyCommand is ExternalScriptInfo scriptCommandInfo)
                 {
                     RegisterScriptFile(scriptCommandInfo);
                 }
@@ -1263,22 +1262,19 @@ namespace System.Management.Automation
 
         private void AddNewBreakpoint(Breakpoint breakpoint)
         {
-            LineBreakpoint lineBreakpoint = breakpoint as LineBreakpoint;
-            if (lineBreakpoint != null)
+            if (breakpoint is LineBreakpoint lineBreakpoint)
             {
                 AddLineBreakpoint(lineBreakpoint);
                 return;
             }
 
-            CommandBreakpoint cmdBreakpoint = breakpoint as CommandBreakpoint;
-            if (cmdBreakpoint != null)
+            if (breakpoint is CommandBreakpoint cmdBreakpoint)
             {
                 AddCommandBreakpoint(cmdBreakpoint);
                 return;
             }
 
-            VariableBreakpoint varBreakpoint = breakpoint as VariableBreakpoint;
-            if (varBreakpoint != null)
+            if (breakpoint is VariableBreakpoint varBreakpoint)
             {
                 AddVariableBreakpoint(varBreakpoint);
             }
@@ -2352,8 +2348,7 @@ namespace System.Management.Automation
                             {
                                 if (item == null) { continue; }
 
-                                DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
-                                if (dbgCmd != null)
+                                if (item.BaseObject is DebuggerCommand dbgCmd)
                                 {
                                     bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
                                     results = new DebuggerCommandResults(dbgCmd.ResumeAction, executedByDebugger);
@@ -2930,8 +2925,7 @@ namespace System.Management.Automation
 
         private bool TryAddDebugJob(Job job, bool breakAll)
         {
-            IJobDebugger debuggableJob = job as IJobDebugger;
-            if ((debuggableJob != null) && (debuggableJob.Debugger != null) &&
+            if ((job is IJobDebugger debuggableJob) && (debuggableJob.Debugger != null) &&
                 ((job.JobStateInfo.State == JobState.Running) || (job.JobStateInfo.State == JobState.AtBreakpoint)))
             {
                 // Check to see if job is already stopped in debugger.
@@ -2946,8 +2940,7 @@ namespace System.Management.Automation
                 // Raise debug stop event if job is already in stopped state.
                 if (jobDebugAlreadyStopped)
                 {
-                    RemotingJobDebugger remoteJobDebugger = debuggableJob.Debugger as RemotingJobDebugger;
-                    if (remoteJobDebugger != null)
+                    if (debuggableJob.Debugger is RemotingJobDebugger remoteJobDebugger)
                     {
                         remoteJobDebugger.CheckStateAndRaiseStopEvent();
                     }
@@ -3107,8 +3100,7 @@ namespace System.Management.Automation
 
         private void ReleaseInternalRunspaceDebugProcessing(object sender, bool emptyQueue = false)
         {
-            Runspace runspace = sender as Runspace;
-            if (runspace != null)
+            if (sender is Runspace runspace)
             {
                 runspace.StateChanged -= RunspaceStateChangedHandler;
                 runspace.AvailabilityChanged -= RunspaceAvailabilityChangedHandler;
@@ -4525,8 +4517,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
         {
-            RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
+            if (_wrappedDebugger is RemoteDebugger remoteDebugger)
             {
                 // Have remote debugger raise existing debugger stop event.
                 remoteDebugger.CheckStateAndRaiseStopEvent();
@@ -4540,8 +4531,7 @@ namespace System.Management.Automation
             {
                 // If this is a remote server debugger then we want to convert the pending remote
                 // debugger stop to a local debugger stop event for this Debug-Runspace to handle.
-                ServerRemoteDebugger serverRemoteDebugger = this._wrappedDebugger as ServerRemoteDebugger;
-                if (serverRemoteDebugger != null)
+                if (this._wrappedDebugger is ServerRemoteDebugger serverRemoteDebugger)
                 {
                     serverRemoteDebugger.ReleaseAndRaiseDebugStopLocal();
                 }
@@ -4651,8 +4641,7 @@ namespace System.Management.Automation
         {
             if (runningCmd == null) { return; }
 
-            var runningPowerShell = runningCmd as PowerShell;
-            if (runningPowerShell != null)
+            if (runningCmd is PowerShell runningPowerShell)
             {
                 runningPowerShell.ResumeIncomingData();
             }
@@ -4860,17 +4849,15 @@ namespace System.Management.Automation
                 int callingLineNumber = parentStackFrame.ScriptLineNumber;
 
                 StatementAst debugStatement = null;
-                StatementAst callingStatement = _parentScriptBlockAst.Find(
+
+                if (_parentScriptBlockAst.Find(
                     ast =>
                     { return ((ast is StatementAst) && (ast.Extent.StartLineNumber == callingLineNumber)); }
 
-                    , true) as StatementAst;
-
-                if (callingStatement != null)
+                    , true) is StatementAst callingStatement)
                 {
                     // Find first statement in calling statement.
-                    StatementAst firstStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber > callingLineNumber); }, true) as StatementAst;
-                    if (firstStatement != null)
+                    if (callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber > callingLineNumber); }, true) is StatementAst firstStatement)
                     {
                         int adjustedLineNumber = firstStatement.Extent.StartLineNumber + debugLineNumber - 1;
                         debugStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber == adjustedLineNumber); }, true) as StatementAst;
@@ -4949,15 +4936,13 @@ namespace System.Management.Automation
         {
             if (runningCmd == null) { return; }
 
-            PowerShell command = runningCmd as PowerShell;
-            if (command != null)
+            if (runningCmd is PowerShell command)
             {
                 command.ResumeIncomingData();
             }
             else
             {
-                Pipeline pipelineCommand = runningCmd as Pipeline;
-                if (pipelineCommand != null)
+                if (runningCmd is Pipeline pipelineCommand)
                 {
                     pipelineCommand.ResumeIncomingData();
                 }

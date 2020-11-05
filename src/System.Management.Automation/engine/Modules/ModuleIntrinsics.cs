@@ -190,8 +190,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        var sbText = moduleCode as string;
-                        if (sbText != null)
+                        if (moduleCode is string sbText)
                             sb = ScriptBlock.Create(_context, sbText);
                     }
                 }

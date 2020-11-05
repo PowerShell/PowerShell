@@ -369,8 +369,7 @@ namespace System.Management.Automation.ComInterop
             ComTypes.ITypeInfo classTypeInfo;
             Dictionary<string, ComEventDesc> events;
 
-            var cpc = RuntimeCallableWrapper as ComTypes.IConnectionPointContainer;
-            if (cpc == null)
+            if (RuntimeCallableWrapper is not ComTypes.IConnectionPointContainer cpc)
             {
                 // No ICPC - this object does not support events
                 events = ComTypeDesc.EmptyEvents;

@@ -114,8 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // we try to fall back and see if we have an un-resolved PSPropertyExpression
                     FormatToken token = listItem.formatTokenList[0];
-                    FieldPropertyToken fpt = token as FieldPropertyToken;
-                    if (fpt != null)
+                    if (token is FieldPropertyToken fpt)
                     {
                         PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
 
@@ -124,8 +123,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        TextToken tt = token as TextToken;
-                        if (tt != null)
+                        if (token is TextToken tt)
                             // we had a text token, use it as a label (last resort...)
                             lvf.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                     }

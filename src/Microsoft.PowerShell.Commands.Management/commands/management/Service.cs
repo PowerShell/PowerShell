@@ -913,8 +913,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || NativeMethods.ERROR_SERVICE_ALREADY_RUNNING != eInner.NativeErrorCode)
                 {
                     exception = e;
@@ -1030,9 +1029,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner =
-                    e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || NativeMethods.ERROR_SERVICE_NOT_ACTIVE != eInner.NativeErrorCode)
                 {
                     exception = e;
@@ -1127,8 +1124,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
                 {
                     serviceNotRunning = true;
@@ -1208,8 +1204,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
                 {
                     serviceNotRunning = true;

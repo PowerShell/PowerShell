@@ -107,8 +107,7 @@ namespace System.Management.Automation
             }
 
             ParameterBinderBase parameterBinder;
-            IScriptCommandInfo scriptCommandInfo = CommandInfo as IScriptCommandInfo;
-            if (scriptCommandInfo != null)
+            if (CommandInfo is IScriptCommandInfo scriptCommandInfo)
             {
                 parameterBinder = new ScriptParameterBinder(scriptCommandInfo.ScriptBlock, cmdlet.MyInvocation, this._context, cmdlet, CommandScope);
             }
@@ -216,8 +215,7 @@ namespace System.Management.Automation
             bool? oldLangModeTransitionStatus = null;
             try
             {
-                var scriptCmdletInfo = this.CommandInfo as IScriptCommandInfo;
-                if (scriptCmdletInfo != null &&
+                if (this.CommandInfo is IScriptCommandInfo scriptCmdletInfo &&
                     scriptCmdletInfo.ScriptBlock.LanguageMode.HasValue &&
                     scriptCmdletInfo.ScriptBlock.LanguageMode != Context.LanguageMode)
                 {
@@ -256,8 +254,7 @@ namespace System.Management.Automation
         {
             // When dotting a script cmdlet, push the locals of automatic variables to
             // the 'DottedScopes' of the current scope.
-            PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
-            if (scriptCmdlet != null && !UseLocalScope)
+            if (this.Command is PSScriptCmdlet scriptCmdlet && !UseLocalScope)
             {
                 scriptCmdlet.PushDottedScope(CommandSessionState.CurrentScope);
             }
@@ -267,8 +264,7 @@ namespace System.Management.Automation
         {
             // When dotting a script cmdlet, pop the locals of automatic variables from
             // the 'DottedScopes' of the current scope.
-            PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
-            if (scriptCmdlet != null && !UseLocalScope)
+            if (this.Command is PSScriptCmdlet scriptCmdlet && !UseLocalScope)
             {
                 scriptCmdlet.PopDottedScope(CommandSessionState.CurrentScope);
             }

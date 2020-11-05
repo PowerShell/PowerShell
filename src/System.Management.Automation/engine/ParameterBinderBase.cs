@@ -390,9 +390,7 @@ namespace System.Management.Automation
                         {
                             try
                             {
-                                ArgumentTypeConverterAttribute argumentTypeConverter = dma as ArgumentTypeConverterAttribute;
-
-                                if (argumentTypeConverter != null)
+                                if (dma is ArgumentTypeConverterAttribute argumentTypeConverter)
                                 {
                                     if (coerceTypeIfNeeded)
                                     {
@@ -558,8 +556,7 @@ namespace System.Management.Automation
                             parameterMetadata.Name,
                             parameterMetadata.ObsoleteAttribute.Message);
 
-                        var mshCommandRuntime = this.Command.commandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (this.Command.commandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             // Write out warning only if we are in the context of MshCommandRuntime.
                             // This is because
@@ -619,8 +616,7 @@ namespace System.Management.Automation
                         this.CommandLineParameters.Add(parameter.ParameterName, parameterValue);
                     }
 
-                    MshCommandRuntime cmdRuntime = this.Command.commandRuntime as MshCommandRuntime;
-                    if ((cmdRuntime != null) &&
+                    if ((this.Command.commandRuntime is MshCommandRuntime cmdRuntime) &&
                         (cmdRuntime.LogPipelineExecutionDetail || _isTranscribing) &&
                         (cmdRuntime.PipelineProcessor != null))
                     {
@@ -851,8 +847,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            var psobj = parameterValue as PSObject;
-            if (psobj != null && !psobj.ImmediateBaseObjectIsEmpty)
+            if (parameterValue is PSObject psobj && !psobj.ImmediateBaseObjectIsEmpty)
             {
                 // See if the base object is of the same type or
                 // as subclass of the parameter
@@ -2025,8 +2020,7 @@ namespace System.Management.Automation
             if (_dictionary.ImplicitUsingParameters == null)
             {
                 // Handle downlevel V4 case where using parameters are passed as an array list.
-                IList implicitArrayUsingParameters = PSObject.Base(obj) as IList;
-                if ((implicitArrayUsingParameters != null) && (implicitArrayUsingParameters.Count > 0))
+                if ((PSObject.Base(obj) is IList implicitArrayUsingParameters) && (implicitArrayUsingParameters.Count > 0))
                 {
                     // Convert array to hash table.
                     _dictionary.ImplicitUsingParameters = new Hashtable();

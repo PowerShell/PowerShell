@@ -979,8 +979,7 @@ namespace System.Management.Automation
                         Metadata.ValidateNotNullFailure);
             }
 
-            var o = element as PSObject;
-            if (o != null)
+            if (element is PSObject o)
             {
                 element = o.BaseObject;
             }

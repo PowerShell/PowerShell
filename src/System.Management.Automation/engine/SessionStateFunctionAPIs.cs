@@ -773,8 +773,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(module != null, "Caller should verify that module parameter is not null");
 
-            FunctionInfo func = GetFunction(name) as FunctionInfo;
-            if (func != null && func.ScriptBlock != null
+            if (GetFunction(name) is FunctionInfo func && func.ScriptBlock != null
                 && func.ScriptBlock.File != null
                 && func.ScriptBlock.File.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
             {

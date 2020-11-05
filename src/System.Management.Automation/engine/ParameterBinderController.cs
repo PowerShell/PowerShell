@@ -343,8 +343,7 @@ namespace System.Management.Automation
         {
             if ((arguments != null) && (arguments.Length > 0))
             {
-                PSBoundParametersDictionary boundParameters = arguments[0] as PSBoundParametersDictionary;
-                if ((boundParameters != null) && (arguments.Length == 1))
+                if ((arguments[0] is PSBoundParametersDictionary boundParameters) && (arguments.Length == 1))
                 {
                     // If they are supplying a dictionary of parameters, use those directly
                     foreach (KeyValuePair<string, object> boundParameter in boundParameters)

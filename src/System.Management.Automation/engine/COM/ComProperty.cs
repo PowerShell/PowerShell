@@ -152,8 +152,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException te)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (te.InnerException is not COMException innerCom || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }
@@ -196,8 +195,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException te)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (te.InnerException is not COMException innerCom || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }
@@ -230,8 +228,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException te)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (te.InnerException is not COMException innerCom || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }
@@ -279,8 +276,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException te)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
+                if (te.InnerException is not COMException innerCom || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
                     throw;
                 }

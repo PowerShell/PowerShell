@@ -28,8 +28,7 @@ namespace System.Management.Automation.ComInterop
             ComMethodDesc method = null;
 
             // See if this is actually a property set
-            ComBinder.ComInvokeMemberBinder comInvokeBinder = binder as ComBinder.ComInvokeMemberBinder;
-            if ((comInvokeBinder != null) && (comInvokeBinder.IsPropertySet))
+            if ((binder is ComBinder.ComInvokeMemberBinder comInvokeBinder) && (comInvokeBinder.IsPropertySet))
             {
                 DynamicMetaObject value = args[args.Length - 1];
 

@@ -324,8 +324,7 @@ namespace System.Management.Automation
 
         private static ErrorRecord GetErrorRecordForRemoteDiscoveryProvider(Exception innerException)
         {
-            CimException cimException = innerException as CimException;
-            if ((cimException != null) &&
+            if ((innerException is CimException cimException) &&
                 ((cimException.NativeErrorCode == NativeErrorCode.InvalidNamespace) ||
                  (cimException.NativeErrorCode == NativeErrorCode.InvalidClass) ||
                  (cimException.NativeErrorCode == NativeErrorCode.MethodNotFound) ||
@@ -359,8 +358,7 @@ namespace System.Management.Automation
                 innerException.Message);
             Exception outerException = new InvalidOperationException(errorMessage, innerException);
 
-            RemoteException remoteException = innerException as RemoteException;
-            ErrorRecord remoteErrorRecord = remoteException != null ? remoteException.ErrorRecord : null;
+            ErrorRecord remoteErrorRecord = innerException is RemoteException remoteException ? remoteException.ErrorRecord : null;
             string errorId = remoteErrorRecord != null ? remoteErrorRecord.FullyQualifiedErrorId : innerException.GetType().Name;
             ErrorCategory errorCategory = remoteErrorRecord != null ? remoteErrorRecord.CategoryInfo.Category : ErrorCategory.NotSpecified;
             ErrorRecord errorRecord = new ErrorRecord(outerException, errorId, errorCategory, null);
@@ -1082,15 +1080,13 @@ namespace System.Management.Automation
                 return;
             }
 
-            Tuple<CimSession, Uri, string> cimSessionInfo = weaklyTypeSession as Tuple<CimSession, Uri, string>;
-            if (cimSessionInfo != null)
+            if (weaklyTypeSession is Tuple<CimSession, Uri, string> cimSessionInfo)
             {
                 cimSessionAction(cimSessionInfo.Item1, cimSessionInfo.Item2, cimSessionInfo.Item3);
                 return;
             }
 
-            PSSession psSession = weaklyTypeSession as PSSession;
-            if (psSession != null)
+            if (weaklyTypeSession is PSSession psSession)
             {
                 psSessionAction(psSession);
                 return;

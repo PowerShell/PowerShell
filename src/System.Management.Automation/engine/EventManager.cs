@@ -572,9 +572,7 @@ namespace System.Management.Automation
         /// </summary>
         private void OnElapsedEvent(object source)
         {
-            var localRunspace = _context.CurrentRunspace as LocalRunspace;
-
-            if (localRunspace == null)
+            if (_context.CurrentRunspace is not LocalRunspace localRunspace)
             {
                 // This should never happen, the context should always reference to the local runspace
                 _consecutiveIdleSamples = 0;
@@ -2205,8 +2203,7 @@ namespace System.Management.Automation
             {
                 foreach (object argument in originalArgs)
                 {
-                    EventArgs sourceEventArgs = argument as EventArgs;
-                    if (sourceEventArgs != null)
+                    if (argument is EventArgs sourceEventArgs)
                     {
                         SourceEventArgs = sourceEventArgs;
                         break;

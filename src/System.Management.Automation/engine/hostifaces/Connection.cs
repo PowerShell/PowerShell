@@ -565,12 +565,10 @@ namespace System.Management.Automation.Runspaces
 
             get
             {
-                RunspaceBase runspace = Runspace.DefaultRunspace as RunspaceBase;
-                if (runspace != null)
+                if (Runspace.DefaultRunspace is RunspaceBase runspace)
                 {
                     Pipeline currentPipeline = runspace.GetCurrentlyRunningPipeline();
-                    LocalPipeline localPipeline = currentPipeline as LocalPipeline;
-                    if ((localPipeline != null) && (localPipeline.NestedPipelineExecutionThread != null))
+                    if ((currentPipeline is LocalPipeline localPipeline) && (localPipeline.NestedPipelineExecutionThread != null))
                     {
                         return
                             (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
@@ -972,8 +970,7 @@ namespace System.Management.Automation.Runspaces
                                 }
 
                                 Pipeline currentPipeline = this.GetCurrentlyRunningPipeline();
-                                RemotePipeline remotePipeline = currentPipeline as RemotePipeline;
-                                Guid? pipeLineCmdInstance = (remotePipeline != null && remotePipeline.PowerShell != null) ? remotePipeline.PowerShell.InstanceId : (Guid?)null;
+                                Guid? pipeLineCmdInstance = (currentPipeline is RemotePipeline remotePipeline && remotePipeline.PowerShell != null) ? remotePipeline.PowerShell.InstanceId : (Guid?)null;
                                 if (currentPipeline == null)
                                 {
                                     // A runspace is available:
@@ -1116,15 +1113,13 @@ namespace System.Management.Automation.Runspaces
         protected void UpdateRunspaceAvailability(RunspaceState runspaceState, bool raiseEvent)
         {
             RunspaceAvailability oldAvailability = this.RunspaceAvailability;
-            RemoteRunspace remoteRunspace = this as RemoteRunspace;
             Internal.ConnectCommandInfo remoteCommand = null;
             bool remoteDebug = false;
 
-            if (remoteRunspace != null)
+            if (this is RemoteRunspace remoteRunspace)
             {
                 remoteCommand = remoteRunspace.RemoteCommand;
-                RemoteDebugger remoteDebugger = remoteRunspace.Debugger as RemoteDebugger;
-                remoteDebug = (remoteDebugger != null) && remoteDebugger.IsRemoteDebug;
+                remoteDebug = (remoteRunspace.Debugger is RemoteDebugger remoteDebugger) && remoteDebugger.IsRemoteDebug;
             }
 
             switch (oldAvailability)

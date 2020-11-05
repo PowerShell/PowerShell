@@ -197,8 +197,7 @@ namespace System.Management.Automation
                     {
                         foreach (ExpressionAst aliasAst in attribute.PositionalArguments)
                         {
-                            var aliasExpression = aliasAst as StringConstantExpressionAst;
-                            if (aliasExpression != null)
+                            if (aliasAst is StringConstantExpressionAst aliasExpression)
                             {
                                 string alias = aliasExpression.Value;
 
@@ -429,15 +428,13 @@ namespace System.Management.Automation
         {
             if (value == null) return;
 
-            var commandName = value as string;
-            if (commandName != null)
+            if (value is string commandName)
             {
                 onEachArgument(commandName);
                 return;
             }
 
-            var names = value as object[];
-            if (names != null)
+            if (value is object[] names)
             {
                 foreach (var n in names)
                 {
@@ -465,8 +462,7 @@ namespace System.Management.Automation
             for (int i = 1; i < commandAst.CommandElements.Count; i++)
             {
                 var element = commandAst.CommandElements[i];
-                var specifiedParameter = element as CommandParameterAst;
-                if (specifiedParameter != null)
+                if (element is CommandParameterAst specifiedParameter)
                 {
                     bool boundParameter = false;
                     var specifiedParamName = specifiedParameter.ParameterName;

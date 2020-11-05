@@ -215,8 +215,7 @@ namespace System.Management.Automation
         {
             // If you use the PSObjectTypeDescriptor directly as your object, it will be the component
             // if you use a provider, the PSObject will be the component.
-            PSObject mshObj = component as PSObject;
-            if (mshObj == null)
+            if (component is not PSObject mshObj)
             {
                 if (!(component is PSObjectTypeDescriptor descriptor))
                 {
@@ -275,8 +274,7 @@ namespace System.Management.Automation
             PSObject mshObj = GetComponentPSObject(component);
             try
             {
-                PSPropertyInfo property = mshObj.Properties[this.Name] as PSPropertyInfo;
-                if (property == null)
+                if (mshObj.Properties[this.Name] is not PSPropertyInfo property)
                 {
                     PSObjectTypeDescriptor.typeDescriptor.WriteLine("Could not find property \"{0}\" to set its value.", this.Name);
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorSetValue",
@@ -379,11 +377,9 @@ namespace System.Management.Automation
                 Type propertyType = typeof(object);
                 if (attributes != null && attributes.Length != 0)
                 {
-                    PSProperty property = propertyInfo as PSProperty;
-                    if (property != null)
+                    if (propertyInfo is PSProperty property)
                     {
-                        DotNetAdapter.PropertyCacheEntry propertyEntry = property.adapterData as DotNetAdapter.PropertyCacheEntry;
-                        if (propertyEntry == null)
+                        if (property.adapterData is not DotNetAdapter.PropertyCacheEntry propertyEntry)
                         {
                             typeDescriptor.WriteLine("Skipping attribute check for property \"{0}\" because it is an adapted property (not a .NET property).", property.Name);
                         }
@@ -508,8 +504,7 @@ namespace System.Management.Automation
             PSMemberSet standardMembers = this.Instance.PSStandardMembers;
             if (standardMembers != null)
             {
-                PSNoteProperty note = standardMembers.Properties[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (note != null)
+                if (standardMembers.Properties[TypeTable.DefaultDisplayProperty] is PSNoteProperty note)
                 {
                     defaultProperty = note.Value as string;
                 }
@@ -520,8 +515,7 @@ namespace System.Management.Automation
                 object[] defaultPropertyAttributes = this.Instance.BaseObject.GetType().GetCustomAttributes(typeof(DefaultPropertyAttribute), true);
                 if (defaultPropertyAttributes.Length == 1)
                 {
-                    DefaultPropertyAttribute defaultPropertyAttribute = defaultPropertyAttributes[0] as DefaultPropertyAttribute;
-                    if (defaultPropertyAttribute != null)
+                    if (defaultPropertyAttributes[0] is DefaultPropertyAttribute defaultPropertyAttribute)
                     {
                         defaultProperty = defaultPropertyAttribute.Name;
                     }

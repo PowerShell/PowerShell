@@ -899,8 +899,7 @@ namespace System.Management.Automation
         {
             string result;
 
-            ValidateLengthAttribute validLengthAttrib = attrib as ValidateLengthAttribute;
-            if (validLengthAttrib != null)
+            if (attrib is ValidateLengthAttribute validLengthAttrib)
             {
                 result = string.Format(
                     CultureInfo.InvariantCulture,
@@ -910,8 +909,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateRangeAttribute validRangeAttrib = attrib as ValidateRangeAttribute;
-            if (validRangeAttrib != null)
+            if (attrib is ValidateRangeAttribute validRangeAttrib)
             {
                 if (validRangeAttrib.RangeKind.HasValue)
                 {
@@ -946,32 +944,28 @@ namespace System.Management.Automation
                 }
             }
 
-            AllowNullAttribute allowNullAttrib = attrib as AllowNullAttribute;
-            if (allowNullAttrib != null)
+            if (attrib is AllowNullAttribute allowNullAttrib)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     AllowNullFormat, prefix);
                 return result;
             }
 
-            AllowEmptyStringAttribute allowEmptyStringAttrib = attrib as AllowEmptyStringAttribute;
-            if (allowEmptyStringAttrib != null)
+            if (attrib is AllowEmptyStringAttribute allowEmptyStringAttrib)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     AllowEmptyStringFormat, prefix);
                 return result;
             }
 
-            AllowEmptyCollectionAttribute allowEmptyColAttrib = attrib as AllowEmptyCollectionAttribute;
-            if (allowEmptyColAttrib != null)
+            if (attrib is AllowEmptyCollectionAttribute allowEmptyColAttrib)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     AllowEmptyCollectionFormat, prefix);
                 return result;
             }
 
-            ValidatePatternAttribute patternAttrib = attrib as ValidatePatternAttribute;
-            if (patternAttrib != null)
+            if (attrib is ValidatePatternAttribute patternAttrib)
             {
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
@@ -1001,32 +995,28 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateCountAttribute countAttrib = attrib as ValidateCountAttribute;
-            if (countAttrib != null)
+            if (attrib is ValidateCountAttribute countAttrib)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateCountFormat, prefix, countAttrib.MinLength, countAttrib.MaxLength);
                 return result;
             }
 
-            ValidateNotNullAttribute notNullAttrib = attrib as ValidateNotNullAttribute;
-            if (notNullAttrib != null)
+            if (attrib is ValidateNotNullAttribute notNullAttrib)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullFormat, prefix);
                 return result;
             }
 
-            ValidateNotNullOrEmptyAttribute notNullEmptyAttrib = attrib as ValidateNotNullOrEmptyAttribute;
-            if (notNullEmptyAttrib != null)
+            if (attrib is ValidateNotNullOrEmptyAttribute notNullEmptyAttrib)
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullOrEmptyFormat, prefix);
                 return result;
             }
 
-            ValidateSetAttribute setAttrib = attrib as ValidateSetAttribute;
-            if (setAttrib != null)
+            if (attrib is ValidateSetAttribute setAttrib)
             {
                 Text.StringBuilder values = new System.Text.StringBuilder();
                 string comma = string.Empty;
@@ -1045,8 +1035,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ValidateScriptAttribute scriptAttrib = attrib as ValidateScriptAttribute;
-            if (scriptAttrib != null)
+            if (attrib is ValidateScriptAttribute scriptAttrib)
             {
                 // Talked with others and I think it is okay to use *unescaped* value from sb.ToString()
                 // 1. implicit remoting is not bringing validation scripts across
@@ -1057,8 +1046,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            PSTypeNameAttribute psTypeNameAttrib = attrib as PSTypeNameAttribute;
-            if (psTypeNameAttrib != null)
+            if (attrib is PSTypeNameAttribute psTypeNameAttrib)
             {
                 result = string.Format(
                     CultureInfo.InvariantCulture,
@@ -1068,8 +1056,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            ObsoleteAttribute obsoleteAttrib = attrib as ObsoleteAttribute;
-            if (obsoleteAttrib != null)
+            if (attrib is ObsoleteAttribute obsoleteAttrib)
             {
                 string parameters = string.Empty;
                 if (obsoleteAttrib.IsError)

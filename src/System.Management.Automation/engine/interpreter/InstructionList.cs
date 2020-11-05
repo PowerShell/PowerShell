@@ -419,9 +419,7 @@ namespace System.Management.Automation.Interpreter
 
         internal void SwitchToBoxed(int index, int instructionIndex)
         {
-            var instruction = _instructions[instructionIndex] as IBoxableInstruction;
-
-            if (instruction != null)
+            if (_instructions[instructionIndex] is IBoxableInstruction instruction)
             {
                 var newInstruction = instruction.BoxIfIndexMatches(index);
                 if (newInstruction != null)

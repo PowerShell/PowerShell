@@ -146,8 +146,7 @@ namespace System.Management.Automation
         internal static ComTypeInfo GetDispatchTypeInfo(object comObject)
         {
             ComTypeInfo result = null;
-            IDispatch disp = comObject as IDispatch;
-            if (disp != null)
+            if (comObject is IDispatch disp)
             {
                 COM.ITypeInfo typeinfo = null;
                 disp.GetTypeInfo(0, 0, out typeinfo);

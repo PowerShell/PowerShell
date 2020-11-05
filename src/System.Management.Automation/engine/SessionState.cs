@@ -520,8 +520,7 @@ namespace System.Management.Automation
             //  ProviderBase.ThrowTerminatingError, it is already a
             //  ProviderInvocationException, and we don't want to
             //  re-wrap it.
-            ProviderInvocationException pie = e as ProviderInvocationException;
-            if (pie != null)
+            if (e is ProviderInvocationException pie)
             {
                 pie._providerInfo = provider;
                 return pie;

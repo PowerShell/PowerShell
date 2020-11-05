@@ -256,8 +256,7 @@ namespace System.Management.Automation.Runspaces
 
         private void CheckStandardNote<T>(TypeMemberData member, TypeData typeData, Action<TypeData, T> setter, Func<object, string, T> converter)
         {
-            var note = member as NotePropertyData;
-            if (note != null)
+            if (member is NotePropertyData note)
             {
                 T value;
                 if (note.Value.GetType() != typeof(T))
@@ -279,8 +278,7 @@ namespace System.Management.Automation.Runspaces
 
         private bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
         {
-            var propertySet = member as PropertySetData;
-            if (propertySet != null)
+            if (member is PropertySetData propertySet)
             {
                 setter(typeData, propertySet);
                 return true;
@@ -485,8 +483,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else if (m.Name.Equals(TypeTable.StringSerializationSource, StringComparison.OrdinalIgnoreCase))
                     {
-                        var aliasData = m as AliasPropertyData;
-                        if (aliasData != null)
+                        if (m is AliasPropertyData aliasData)
                         {
                             typeData.StringSerializationSource = aliasData.ReferencedMemberName;
                         }
@@ -2968,8 +2965,7 @@ namespace System.Management.Automation.Runspaces
             object sourceValue = note.Value;
             if (noteType.GetTypeCode().Equals(TypeCode.Boolean))
             {
-                string sourceValueAsString = sourceValue as string;
-                if (sourceValueAsString != null)
+                if (sourceValue is string sourceValueAsString)
                 {
                     if (sourceValueAsString.Length == 0)
                     {
@@ -3643,9 +3639,7 @@ namespace System.Management.Automation.Runspaces
             PSObject.AdapterSet adapterSet = null;
             if (CreateInstance(errors, typeName, adapterType, TypesXmlStrings.UnableToInstantiateTypeAdapter, out object instance))
             {
-                PSPropertyAdapter psPropertyAdapter = instance as PSPropertyAdapter;
-
-                if (psPropertyAdapter == null)
+                if (instance is not PSPropertyAdapter psPropertyAdapter)
                 {
                     AddError(errors, typeName, TypesXmlStrings.TypeIsNotTypeAdapter, adapterType.FullName);
                 }
@@ -4051,13 +4045,9 @@ namespace System.Management.Automation.Runspaces
                         continue;
                     }
 
-                    // There was a currentMember with the same name as typeMember
-                    PSMemberSet currentMemberAsMemberSet = currentMember as PSMemberSet;
-                    PSMemberSet typeMemberAsMemberSet = typeMember as PSMemberSet;
-
                     // if we are not in a memberset inherit members situation we just replace
                     // the current member with the new more specific member
-                    if (currentMemberAsMemberSet == null || typeMemberAsMemberSet == null ||
+                    if (currentMember is not PSMemberSet currentMemberAsMemberSet || typeMember is not PSMemberSet typeMemberAsMemberSet ||
                         !typeMemberAsMemberSet.InheritMembers)
                     {
                         retValue.Remove(typeMember.Name);
@@ -4148,48 +4138,41 @@ namespace System.Management.Automation.Runspaces
 
         private TypeMemberData GetTypeMemberDataFromPSMemberInfo(PSMemberInfo member)
         {
-            var note = member as PSNoteProperty;
-            if (note != null)
+            if (member is PSNoteProperty note)
             {
                 return new NotePropertyData(note.Name, note.Value);
             }
 
-            var alias = member as PSAliasProperty;
-            if (alias != null)
+            if (member is PSAliasProperty alias)
             {
                 return new AliasPropertyData(alias.Name, alias.ReferencedMemberName);
             }
 
-            var scriptProperty = member as PSScriptProperty;
-            if (scriptProperty != null)
+            if (member is PSScriptProperty scriptProperty)
             {
                 ScriptBlock getter = scriptProperty.IsGettable ? scriptProperty.GetterScript : null;
                 ScriptBlock setter = scriptProperty.IsSettable ? scriptProperty.SetterScript : null;
                 return new ScriptPropertyData(scriptProperty.Name, getter, setter);
             }
 
-            var codeProperty = member as PSCodeProperty;
-            if (codeProperty != null)
+            if (member is PSCodeProperty codeProperty)
             {
                 MethodInfo getter = codeProperty.IsGettable ? codeProperty.GetterCodeReference : null;
                 MethodInfo setter = codeProperty.IsSettable ? codeProperty.SetterCodeReference : null;
                 return new CodePropertyData(codeProperty.Name, getter, setter);
             }
 
-            var scriptMethod = member as PSScriptMethod;
-            if (scriptMethod != null)
+            if (member is PSScriptMethod scriptMethod)
             {
                 return new ScriptMethodData(scriptMethod.Name, scriptMethod.Script);
             }
 
-            var codeMethod = member as PSCodeMethod;
-            if (codeMethod != null)
+            if (member is PSCodeMethod codeMethod)
             {
                 return new CodeMethodData(codeMethod.Name, codeMethod.CodeReference);
             }
 
-            var memberSet = member as PSMemberSet;
-            if (memberSet != null)
+            if (member is PSMemberSet memberSet)
             {
                 if (memberSet.Name.Equals(PSStandardMembers, StringComparison.OrdinalIgnoreCase))
                 {
@@ -4225,8 +4208,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            var memberSet = member as PSMemberSet;
-            if (memberSet != null)
+            if (member is PSMemberSet memberSet)
             {
                 if (memberSet.Name.Equals(PSStandardMembers, StringComparison.OrdinalIgnoreCase))
                 {
@@ -4281,8 +4263,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else if (memberName.Equals(StringSerializationSource, StringComparison.OrdinalIgnoreCase))
                 {
-                    var aliasProperty = standardMember as PSAliasProperty;
-                    if (aliasProperty != null)
+                    if (standardMember is PSAliasProperty aliasProperty)
                     {
                         typeData.StringSerializationSource = aliasProperty.ReferencedMemberName;
                     }

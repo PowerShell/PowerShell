@@ -629,8 +629,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else
             {
-                CimJobException cje = exception as CimJobException;
-                if ((cje != null) && (cje.IsTerminatingError))
+                if ((exception is CimJobException cje) && (cje.IsTerminatingError))
                 {
                     terminatingErrorTracker.MarkSessionAsTerminated(this.JobContext.Session, out sessionWasAlreadyTerminated);
                     isThisTerminatingError = true;
@@ -1019,8 +1018,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static void AddShowComputerNameMarker(PSObject pso)
         {
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty != null)
+            if (pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty)
             {
                 psShowComputerNameProperty.Value = true;
             }

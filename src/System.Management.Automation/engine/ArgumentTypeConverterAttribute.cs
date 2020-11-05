@@ -61,8 +61,7 @@ namespace System.Management.Automation
                         if (_convertTypes[i].Equals(typeof(System.Management.Automation.PSReference)))
                         {
                             object temp;
-                            PSObject mshObject = result as PSObject;
-                            if (mshObject != null)
+                            if (result is PSObject mshObject)
                                 temp = mshObject.BaseObject;
                             else
                                 temp = result;
@@ -76,16 +75,14 @@ namespace System.Management.Automation
                         else
                         {
                             object temp;
-                            PSObject mshObject = result as PSObject;
-                            if (mshObject != null)
+                            if (result is PSObject mshObject)
                                 temp = mshObject.BaseObject;
                             else
                                 temp = result;
 
                             // If a non-ref type is expected but currently passed in is a ref, do an implicit dereference.
-                            PSReference reference = temp as PSReference;
 
-                            if (reference != null)
+                            if (temp is PSReference reference)
                             {
                                 result = reference.Value;
                             }

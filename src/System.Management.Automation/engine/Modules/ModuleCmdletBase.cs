@@ -534,8 +534,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Hashtable data = result as Hashtable;
-            if (data == null)
+            if (result is not Hashtable data)
             {
                 if (writingErrors)
                 {
@@ -2602,8 +2601,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     using (TextReader reader = File.OpenText(psgetItemInfoXml))
                     {
-                        PSObject xml = PSSerializer.Deserialize(reader.ReadToEnd()) as PSObject;
-                        if (xml != null && xml.Properties["RepositorySourceLocation"] != null)
+                        if (PSSerializer.Deserialize(reader.ReadToEnd()) is PSObject xml && xml.Properties["RepositorySourceLocation"] != null)
                         {
                             var repositorySourceLocation = xml.Properties["RepositorySourceLocation"].Value.ToString();
                             Uri repositorySourceLocationUri;
@@ -5174,8 +5172,7 @@ namespace Microsoft.PowerShell.Commands
                         Context.Modules.IsImplicitRemotingModuleLoaded = false;
                         foreach (var modInfo in Context.Modules.ModuleTable.Values)
                         {
-                            var privateData = modInfo.PrivateData as Hashtable;
-                            if ((privateData != null) && privateData.ContainsKey("ImplicitRemoting"))
+                            if ((modInfo.PrivateData is Hashtable privateData) && privateData.ContainsKey("ImplicitRemoting"))
                             {
                                 Context.Modules.IsImplicitRemotingModuleLoaded = true;
                                 break;
@@ -7086,9 +7083,8 @@ namespace Microsoft.PowerShell.Commands
                 targetSessionState.Module.AddNestedModule(module);
             }
 
-            var privateDataHashTable = module.PrivateData as Hashtable;
             if (context.Modules.IsImplicitRemotingModuleLoaded == false &&
-                privateDataHashTable != null && privateDataHashTable.ContainsKey("ImplicitRemoting"))
+                module.PrivateData is Hashtable privateDataHashTable && privateDataHashTable.ContainsKey("ImplicitRemoting"))
             {
                 context.Modules.IsImplicitRemotingModuleLoaded = true;
             }

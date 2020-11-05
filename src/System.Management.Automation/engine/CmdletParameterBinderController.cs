@@ -201,8 +201,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void BindCommandLineParametersNoValidation(Collection<CommandParameterInternal> arguments)
         {
-            var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
-            if (psCompiledScriptCmdlet != null)
+            if (this.Command is PSScriptCmdlet psCompiledScriptCmdlet)
             {
                 psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
             }
@@ -402,8 +401,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    ScriptBlock scriptBlockArg = argumentValue as ScriptBlock;
-                    if (scriptBlockArg != null)
+                    if (argumentValue is ScriptBlock scriptBlockArg)
                     {
                         // Get the current binding state, and pass it to the ScriptBlock as the argument
                         // The 'arg' includes HashSet properties 'BoundParameters', 'BoundPositionalParameters',
@@ -1611,9 +1609,8 @@ namespace System.Management.Automation
                 {
                     s_tracer.WriteLine("The Cmdlet supports the dynamic parameter interface");
 
-                    IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
 
-                    if (dynamicParameterCmdlet != null)
+                    if (this.Command is IDynamicParameters dynamicParameterCmdlet)
                     {
                         if (_dynamicParameterBinder == null)
                         {
@@ -1628,7 +1625,8 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
                             {
-                                if (e is ProviderInvocationException) { throw; }
+                                if (e is ProviderInvocationException)
+                                { throw; }
 
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(
@@ -1658,8 +1656,7 @@ namespace System.Management.Automation
 
                                 InternalParameterMetadata dynamicParameterMetadata;
 
-                                RuntimeDefinedParameterDictionary runtimeParamDictionary = dynamicParamBindableObject as RuntimeDefinedParameterDictionary;
-                                if (runtimeParamDictionary != null)
+                                if (dynamicParamBindableObject is RuntimeDefinedParameterDictionary runtimeParamDictionary)
                                 {
                                     // Generate the type metadata for the runtime-defined parameters
                                     dynamicParameterMetadata =
@@ -4321,8 +4318,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in dictionary)
             {
-                var entryKey = entry.Key as string;
-                if (entryKey != null)
+                if (entry.Key is string entryKey)
                 {
                     string key = entryKey.Trim();
                     string cmdletName = null;

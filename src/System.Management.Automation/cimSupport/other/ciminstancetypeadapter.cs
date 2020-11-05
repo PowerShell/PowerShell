@@ -63,8 +63,7 @@ namespace Microsoft.PowerShell.Cim
         public override System.Collections.ObjectModel.Collection<PSAdaptedProperty> GetProperties(object baseObject)
         {
             // baseObject should never be null
-            CimInstance cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (baseObject is not CimInstance cimInstance)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
                     CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
@@ -109,8 +108,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             // baseObject should never be null
-            CimInstance cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (baseObject is not CimInstance cimInstance)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
                     CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
@@ -144,8 +142,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             // baseObject should never be null
-            CimInstance cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (baseObject is not CimInstance cimInstance)
             {
                 string msg = string.Format(
                     CultureInfo.InvariantCulture,
@@ -202,8 +199,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty != null)
+            if (adaptedProperty.Tag is CimProperty cimProperty)
             {
                 return CimTypeToTypeNameDisplayString(cimProperty.CimType);
             }
@@ -227,8 +223,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new ArgumentNullException(nameof(adaptedProperty));
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty != null)
+            if (adaptedProperty.Tag is CimProperty cimProperty)
             {
                 return cimProperty.Value;
             }

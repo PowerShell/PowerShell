@@ -459,9 +459,8 @@ else
             RemotingCommandUtil.CheckRemotingCmdletPrerequisites();
             PSSessionConfigurationCommandUtilities.ThrowIfNotAdministrator();
 
-            WSManConfigurationOption wsmanOption = transportOption as WSManConfigurationOption;
 
-            if (wsmanOption != null)
+            if (transportOption is WSManConfigurationOption wsmanOption)
             {
                 if (wsmanOption.ProcessIdleTimeoutSec != null && !isUseSharedProcessSpecified)
                 {
@@ -1331,8 +1330,7 @@ else
             whatIf = false;
             // confirm is always true to start with
             confirm = false;
-            MshCommandRuntime cmdRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-            if (cmdRuntime != null)
+            if (cmdlet.CommandRuntime is MshCommandRuntime cmdRuntime)
             {
                 whatIf = cmdRuntime.WhatIf;
                 // take the value of confirm only if it is explicitly set by the user
@@ -1413,16 +1411,14 @@ else
                 StringBuilder sb = new StringBuilder();
                 foreach (object s in modulePath)
                 {
-                    var module = s as string;
-                    if (module != null)
+                    if (s is string module)
                     {
                         sb.Append(s);
                         sb.Append(',');
                     }
                     else
                     {
-                        var moduleSpec = s as ModuleSpecification;
-                        if (moduleSpec != null)
+                        if (s is ModuleSpecification moduleSpec)
                         {
                             // Double escaping on ModuleSpecification string is required to treat it as a single value along with module names/paths in SessionConfigurationData
                             sb.Append(SecurityElement.Escape(SecurityElement.Escape(moduleSpec.ToString())));
@@ -1815,8 +1811,7 @@ else
             //  Mixed
             //      @{ Or = 'Group1', @{ And = 'Group2','Group3' } }
             //      (Member_of {SID(Group1)} || (Member_of {SID(Group2)} && Member_of {SID(Group3)}))
-            object[] values = keyValue as object[];
-            if (values != null)
+            if (keyValue is object[] values)
             {
                 int count = values.Length;
                 for (int i = 0; i < count;)
@@ -1843,8 +1838,7 @@ else
             object inValue)
         {
             // Value to parse can be a single object or an array of objects
-            object[] values = inValue as object[];
-            if (values != null)
+            if (inValue is object[] values)
             {
                 foreach (object value in values)
                 {
@@ -1862,8 +1856,7 @@ else
             object value)
         {
             // Single value objects can be either a group name or a new logical hash table
-            string groupName = value as string;
-            if (groupName != null)
+            if (value is string groupName)
             {
                 // Resolve group name to SID
                 NTAccount ntAccount = new NTAccount(groupName);
@@ -1872,8 +1865,7 @@ else
             }
             else
             {
-                Hashtable recurseCondition = value as Hashtable;
-                if (recurseCondition != null)
+                if (value is Hashtable recurseCondition)
                 {
                     // Recurse to handle logical hash table
                     AddCondition(sb, recurseCondition);
@@ -2355,9 +2347,7 @@ else
                 {
                     foreach (var s in value)
                     {
-                        var hashtable = s as Hashtable;
-
-                        if (hashtable != null)
+                        if (s is Hashtable hashtable)
                         {
                             var moduleSpec = new ModuleSpecification(hashtable);
                             if (moduleSpec != null)
@@ -3395,8 +3385,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
                     ps.AddScript(string.Format(CultureInfo.InvariantCulture, getSessionTypeFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                    Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                    if (psObjectCollection == null || psObjectCollection.Count != 1)
+                    if (ps.Invoke(new object[] { Name }) is not Collection<PSObject> psObjectCollection || psObjectCollection.Count != 1)
                     {
                         Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
                     }

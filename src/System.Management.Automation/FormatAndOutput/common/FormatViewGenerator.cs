@@ -143,8 +143,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if we have a view with autosize checked
             if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
             {
-                ControlBody controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
-                if (controlBody != null && controlBody.autosize.HasValue)
+                if (this.dataBaseInfo.view.mainControl is ControlBody controlBody && controlBody.autosize.HasValue)
                 {
                     _autosize = controlBody.autosize.Value;
                 }
@@ -439,16 +438,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (formatTokenList.Count != 0)
             {
                 FormatToken token = formatTokenList[0];
-                FieldPropertyToken fpt = token as FieldPropertyToken;
-                if (fpt != null)
+                if (token is FieldPropertyToken fpt)
                 {
                     PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
                     fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
                 }
                 else
                 {
-                    TextToken tt = token as TextToken;
-                    if (tt != null)
+                    if (token is TextToken tt)
                         fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                 }
             }

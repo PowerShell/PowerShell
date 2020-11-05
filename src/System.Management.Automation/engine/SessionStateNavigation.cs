@@ -696,8 +696,7 @@ namespace System.Management.Automation
 
             Provider.CmdletProvider providerInstance = GetProviderInstance(provider);
 
-            NavigationCmdletProvider navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
-            if (navigationCmdletProvider != null)
+            if (providerInstance is NavigationCmdletProvider navigationCmdletProvider)
             {
                 try
                 {
@@ -971,9 +970,8 @@ namespace System.Management.Automation
 
             string result = null;
 
-            NavigationCmdletProvider navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
 
-            if (navigationCmdletProvider != null)
+            if (providerInstance is NavigationCmdletProvider navigationCmdletProvider)
             {
                 try
                 {

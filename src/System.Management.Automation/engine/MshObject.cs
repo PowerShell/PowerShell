@@ -1302,10 +1302,9 @@ namespace System.Management.Automation
                 return true;
             }
 
-            PSObject mshObj = obj as PSObject;
 
             #region plain object
-            if (mshObj == null)
+            if (obj is not PSObject mshObj)
             {
                 if (obj == null)
                 {
@@ -1349,14 +1348,16 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
+                #endregion recurse
+                #region object ToString
                 #endregion recurse
 
                 #region object ToString
 
-                IFormattable objFormattable = obj as IFormattable;
                 try
                 {
-                    if (objFormattable == null)
+                    if (obj is not IFormattable objFormattable)
                     {
                         Type type = obj as Type;
                         if (type != null)
@@ -1495,10 +1496,9 @@ namespace System.Management.Automation
                 return baseObjString;
             }
 
-            IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {
-                var result = msjObjFormattable == null ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
+                var result = baseObject is not IFormattable msjObjFormattable ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
 
                 return result ?? string.Empty;
             }

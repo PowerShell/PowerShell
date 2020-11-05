@@ -1818,8 +1818,7 @@ namespace System.Management.Automation
 
                         foreach (PSObject filteredChildName in filteredChildNameObjects)
                         {
-                            string filteredName = filteredChildName.BaseObject as string;
-                            if (filteredName != null)
+                            if (filteredChildName.BaseObject is string filteredName)
                             {
                                 filteredChildNameDictionary[filteredName] = true;
                             }

@@ -881,9 +881,7 @@ namespace System.Management.Automation
 
             if (resultItem != null)
             {
-                PSVariable variable = resultItem as PSVariable;
-
-                if (variable != null)
+                if (resultItem is PSVariable variable)
                 {
                     resultItem = variable.Value;
                 }

@@ -250,8 +250,7 @@ namespace System.Management.Automation
             var nestedModules = moduleManifestProperties["NestedModules"];
             if (nestedModules != null)
             {
-                var nestedModule = nestedModules as string;
-                if (nestedModule != null)
+                if (nestedModules is string nestedModule)
                 {
                     return ModuleAnalysisViaGetModuleRequired(nestedModule, hadCmdlets, hadFunctions, hadAliases);
                 }
@@ -298,14 +297,12 @@ namespace System.Management.Automation
 
         private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
         {
-            string command = value as string;
-            if (command != null)
+            if (value is string command)
             {
                 return AddPsd1EntryToResult(result, command, commandTypeToAdd, ref sawWildcard);
             }
 
-            object[] commands = value as object[];
-            if (commands != null)
+            if (value is object[] commands)
             {
                 foreach (var o in commands)
                 {

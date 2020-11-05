@@ -661,8 +661,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                CommandInfo commandInfo = ((IEnumerator)searcher).Current as CommandInfo;
-                if (commandInfo != null)
+                if (((IEnumerator)searcher).Current is CommandInfo commandInfo)
                 {
                     yield return commandInfo;
                 }
@@ -853,8 +852,7 @@ namespace System.Management.Automation
             }
 
             // If the result is already a collection of PSObjects, just return it...
-            Collection<PSObject> result = rawResult as Collection<PSObject>;
-            if (result != null)
+            if (rawResult is Collection<PSObject> result)
                 return result;
 
             result = new Collection<PSObject>();
@@ -971,8 +969,7 @@ namespace System.Management.Automation
 
                     if (_pagingParameters == null)
                     {
-                        MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
+                        if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
                         {
                             _pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);
                         }
