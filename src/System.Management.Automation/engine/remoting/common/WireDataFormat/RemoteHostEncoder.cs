@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static T SafelyGetBaseObject<T>(PSObject psObject)
         {
-            if (psObject == null || psObject.BaseObject == null || !(psObject.BaseObject is T))
+            if (psObject == null || psObject.BaseObject == null || psObject.BaseObject is not T)
             {
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Remoting
         private static T SafelyGetPropertyValue<T>(PSObject psObject, string key)
         {
             PSPropertyInfo propertyInfo = psObject.Properties[key];
-            if (propertyInfo == null || propertyInfo.Value == null || !(propertyInfo.Value is T))
+            if (propertyInfo == null || propertyInfo.Value == null || propertyInfo.Value is not T)
             {
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }

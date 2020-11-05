@@ -319,7 +319,7 @@ namespace System.Management.Automation
                     // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
-                        if (Context._debuggingMode > 0 && !(Command is PSScriptCmdlet))
+                        if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                         {
                             Context.Debugger.CheckCommand(this.Command.MyInvocation);
                         }

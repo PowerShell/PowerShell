@@ -650,7 +650,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return !(this is LocalRunspace || ConnectionInfo == null);
+                return this is not LocalRunspace && ConnectionInfo != null;
             }
         }
 
@@ -943,7 +943,8 @@ namespace System.Management.Automation.Runspaces
                         case PipelineState.Completed:
                         case PipelineState.Stopped:
                         case PipelineState.Failed:
-                            if (this.InNestedPrompt || !(this is RemoteRunspace) && this.Debugger.InBreakpoint)
+                            if (this.InNestedPrompt
+                                || (this is not RemoteRunspace && this.Debugger.InBreakpoint))
                             {
                                 this.RunspaceAvailability = RunspaceAvailability.AvailableForNestedCommand;
                             }

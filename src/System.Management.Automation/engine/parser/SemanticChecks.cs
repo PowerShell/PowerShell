@@ -197,7 +197,8 @@ namespace System.Management.Automation.Language
                         var members = attributeType.GetMember(name, MemberTypes.Field | MemberTypes.Property,
                             BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance |
                             BindingFlags.FlattenHierarchy);
-                        if (members.Length != 1 || !(members[0] is PropertyInfo || members[0] is FieldInfo))
+                        if (members.Length != 1
+                            || (members[0] is not PropertyInfo && members[0] is not FieldInfo))
                         {
                             _parser.ReportError(namedArg.Extent,
                                 nameof(ParserStrings.PropertyNotFoundForAttribute),
@@ -348,7 +349,7 @@ namespace System.Management.Automation.Language
         {
             int count = 0;
             ITypeName type = typeName;
-            while ((type is TypeName) == false)
+            while (type is not TypeName)
             {
                 count++;
                 if (count > 200)
@@ -1026,7 +1027,9 @@ namespace System.Management.Automation.Language
             }
 
             var memberExpr = exprAst as MemberExpressionAst;
-            if (memberExpr != null && !(memberExpr is InvokeMemberExpressionAst) && (memberExpr.Member is StringConstantExpressionAst))
+            if (memberExpr != null
+                && memberExpr is not InvokeMemberExpressionAst
+                && memberExpr.Member is StringConstantExpressionAst)
             {
                 return CheckUsingExpression(memberExpr.Expression);
             }
@@ -1047,7 +1050,9 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
         {
-            if (variableExpressionAst.Splatted && !(variableExpressionAst.Parent is CommandAst) && !(variableExpressionAst.Parent is UsingExpressionAst))
+            if (variableExpressionAst.Splatted
+                && variableExpressionAst.Parent is not CommandAst
+                && variableExpressionAst.Parent is not UsingExpressionAst)
             {
                 if (variableExpressionAst.Parent is ArrayLiteralAst && variableExpressionAst.Parent.Parent is CommandAst)
                 {
@@ -1214,7 +1219,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
             _scopeStack.Push(scriptBlockAst);
-            if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
+            if (scriptBlockAst.Parent == null
+                || scriptBlockAst.Parent is ScriptBlockExpressionAst
+                || scriptBlockAst.Parent.Parent is not FunctionMemberAst)
             {
                 _memberScopeStack.Push(null);
             }
@@ -1446,7 +1453,9 @@ namespace System.Management.Automation.Language
             var scriptBlockAst = ast as ScriptBlockAst;
             if (scriptBlockAst != null)
             {
-                if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
+                if (scriptBlockAst.Parent == null
+                    || scriptBlockAst.Parent is ScriptBlockExpressionAst
+                    || scriptBlockAst.Parent.Parent is not FunctionMemberAst)
                 {
                     _memberScopeStack.Pop();
                 }

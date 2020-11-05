@@ -1868,7 +1868,7 @@ namespace Microsoft.PowerShell
 
                 // If we're not going to continue, then get the exit code out of the runspace and
                 // and indicate that it should be returned...
-                if (!_noExit && !(this.Runspace is RemoteRunspace))
+                if (!_noExit && this.Runspace is not RemoteRunspace)
                 {
                     this.Runspace.ExecutionContext.ScriptCommandProcessorShouldRethrowExit = true;
                 }

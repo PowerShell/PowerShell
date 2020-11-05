@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell.Commands
                     _propertyOrMethodName,
                     possibleMatches));
             }
-            else if (methods.Count == 0 || !(methods[0] is PSMethodInfo))
+            else if (methods.Count == 0 || methods[0] is not PSMethodInfo)
             {
                 // write error record: method no found
                 WriteError(GenerateNameParameterError(

@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
                 try
                 {
                     // Only copy simple mutable variables...
-                    if (v.Options == ScopedItemOptions.None && !(v is NullVariable))
+                    if (v.Options == ScopedItemOptions.None && v is not NullVariable)
                     {
                         PSVariable newVar = new PSVariable(v.Name, v.Value, v.Options, v.Description);
                         // The variable is already defined/set in the scope, and that means the attributes
