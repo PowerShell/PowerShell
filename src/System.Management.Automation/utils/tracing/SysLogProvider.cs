@@ -81,11 +81,10 @@ namespace System.Management.Automation.Tracing
     {
         // Ensure the string pointer is not garbage collected.
         static IntPtr _nativeSyslogIdent = IntPtr.Zero;
-        static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
-
-        byte _channelFilter;
-        ulong _keywordFilter;
-        byte _levelFilter;
+        static readonly NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
+        readonly byte _channelFilter;
+        readonly ulong _keywordFilter;
+        readonly byte _levelFilter;
 
         /// <summary>
         /// Initializes a new instance of this class.
@@ -276,7 +275,7 @@ namespace System.Management.Automation.Tracing
 #region logging
 
         // maps a LogLevel to an associated SysLogPriority.
-        static NativeMethods.SysLogPriority[] _levels =
+        static readonly NativeMethods.SysLogPriority[] _levels =
         {
             NativeMethods.SysLogPriority.Info,
             NativeMethods.SysLogPriority.Critical,
@@ -293,7 +292,7 @@ namespace System.Management.Automation.Tracing
         public void LogTransfer(Guid parentActivityId)
         {
             // NOTE: always log
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
             string message = string.Format(CultureInfo.InvariantCulture,
                                            "({0}:{1:X}:{2:X}) [Transfer]:{3} {4}",
                                            PSVersionInfo.GitCommitId, threadId, PSChannel.Operational,
@@ -309,7 +308,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="activity">The Guid activity identifier.</param>
         public void SetActivity(Guid activity)
         {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
             Activity = activity;
 
             // NOTE: always log
@@ -333,7 +332,7 @@ namespace System.Management.Automation.Tracing
         {
             if (ShouldLog(level, keyword, channel))
             {
-                int threadId = Thread.CurrentThread.ManagedThreadId;
+                int threadId = Environment.CurrentManagedThreadId;
 
                 StringBuilder sb = MessageBuilder;
                 sb.Clear();

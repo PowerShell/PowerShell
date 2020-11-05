@@ -1008,11 +1008,11 @@ namespace System.Management.Automation
                 internal static extern int GetPPid(int pid);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
+                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)] string filePath, out int linkCount);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)] string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
@@ -1069,16 +1069,16 @@ namespace System.Management.Automation
                 internal static extern unsafe int SetDate(UnixTm* tm);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                         [MarshalAs(UnmanagedType.LPStr)]string target);
+                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
+                                                         [MarshalAs(UnmanagedType.LPStr)] string target);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)]string target);
+                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
+                                                          [MarshalAs(UnmanagedType.LPStr)] string target);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
@@ -1086,11 +1086,11 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)]string filePathOne,
-                                                                 [MarshalAs(UnmanagedType.LPStr)]string filePathTwo);
+                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)] string filePathOne,
+                                                                 [MarshalAs(UnmanagedType.LPStr)] string filePathTwo);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)]string path,
+                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)] string path,
                                                         out UInt64 device, out UInt64 inode);
 
                 /// <summary>

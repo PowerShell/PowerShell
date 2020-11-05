@@ -1635,14 +1635,14 @@ namespace System.Management.Automation
     /// </summary>
     internal class RangeEnumerator : IEnumerator
     {
-        private int _lowerBound;
+        private readonly int _lowerBound;
 
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
-        private int _upperBound;
+        private readonly int _upperBound;
 
         internal int UpperBound
         {
@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
             get { return _current; }
         }
 
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1707,7 +1707,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CharRangeEnumerator : IEnumerator
     {
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1812,7 +1812,7 @@ namespace System.Management.Automation
             try
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args == null || args.Length == 0)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;
@@ -1973,7 +1973,7 @@ namespace System.Management.Automation
             if (context.PSDebugTraceLevel > level)
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args == null || args.Length == 0)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;

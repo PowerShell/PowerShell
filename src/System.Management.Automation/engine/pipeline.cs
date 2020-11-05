@@ -344,9 +344,9 @@ namespace System.Management.Automation.Internal
                     PipelineStrings.CommandProcessorAlreadyUsed);
             }
 
-            if (0 == _commands.Count)
+            if (_commands.Count == 0)
             {
-                if (0 != readFromCommand)
+                if (readFromCommand != 0)
                 {
                     // "First command cannot have input"
                     throw PSTraceSource.NewArgumentException(
@@ -945,7 +945,7 @@ namespace System.Management.Automation.Internal
             if (_executionStarted)
                 return;
 
-            if (_commands == null || 0 == _commands.Count)
+            if (_commands == null || _commands.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation.Internal
             _redirectionPipes = null;
         }
 
-        private object _stopReasonLock = new object();
+        private readonly object _stopReasonLock = new object();
         /// <summary>
         /// Makes an internal note of the exception, but only if this is
         /// the first error.

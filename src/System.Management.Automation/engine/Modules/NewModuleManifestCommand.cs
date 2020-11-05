@@ -717,12 +717,12 @@ namespace Microsoft.PowerShell.Commands
                             result.Append("; ");
                         }
 
-                        result.Append("}");
+                        result.Append('}');
                     }
                 }
             }
 
-            result.Append(")");
+            result.Append(')');
             return result.ToString();
         }
 
@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(DefaultCommandPrefix), Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
-                    result.Append("}");
+                    result.Append('}');
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
                     string strResult = result.ToString();

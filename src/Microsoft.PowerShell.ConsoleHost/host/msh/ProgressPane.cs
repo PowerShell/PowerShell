@@ -234,8 +234,8 @@ namespace Microsoft.PowerShell
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;
-        private PSHostRawUserInterface _rawui;
-        private ConsoleHostUserInterface _ui;
+        private readonly PSHostRawUserInterface _rawui;
+        private readonly ConsoleHostUserInterface _ui;
     }
 }   // namespace
 

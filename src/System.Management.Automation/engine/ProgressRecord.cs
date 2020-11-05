@@ -418,7 +418,7 @@ namespace System.Management.Automation
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         [DataMemberAttribute()]
-        private int id;
+        private readonly int id;
 
         [DataMemberAttribute()]
         private int parentId = -1;

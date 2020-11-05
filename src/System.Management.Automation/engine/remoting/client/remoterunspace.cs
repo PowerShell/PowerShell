@@ -156,8 +156,8 @@ namespace System.Management.Automation
         {
             // The RemoteRunspace object can only be constructed this way with a RunspacePool that
             // is in the disconnected state.
-            if ((runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected) ||
-                 !(runspacePool.ConnectionInfo is WSManConnectionInfo))
+            if (runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected
+                || runspacePool.ConnectionInfo is not WSManConnectionInfo)
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.InvalidRunspacePool);
             }
@@ -2491,8 +2491,8 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsRemoteDebug
         {
-            private set;
             get;
+            private set;
         }
 
         /// <summary>

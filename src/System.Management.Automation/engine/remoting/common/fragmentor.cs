@@ -578,7 +578,7 @@ namespace System.Management.Automation.Remoting
                 if (dataLeftInTheFragment > 0)
                 {
                     int amountToWriteIntoFragment = (amountLeft > dataLeftInTheFragment) ? dataLeftInTheFragment : amountLeft;
-                    amountLeft = amountLeft - amountToWriteIntoFragment;
+                    amountLeft -= amountToWriteIntoFragment;
 
                     // Write data into fragment
                     Array.Copy(buffer, offsetToReadFrom, _currentFragment.Blob, _currentFragment.BlobLength, amountToWriteIntoFragment);
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         int amountToWriteIntoStream = (amountLeft > dataLeftInWriteStream) ? dataLeftInWriteStream : amountLeft;
-                        amountLeft = amountLeft - amountToWriteIntoStream;
+                        amountLeft -= amountToWriteIntoStream;
                         // write data
                         _writeStream.Position = _writeOffset;
                         _writeStream.Write(data, offSetToReadFrom, amountToWriteIntoStream);
@@ -811,10 +811,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // call the callback since we have data available
-            if (_onDataAvailableCallback != null)
-            {
-                _onDataAvailableCallback(data, _currentFragment.IsEndFragment);
-            }
+            _onDataAvailableCallback?.Invoke(data, _currentFragment.IsEndFragment);
 
             // prepare a new fragment
             _currentFragment.FragmentId = ++_fragmentId;

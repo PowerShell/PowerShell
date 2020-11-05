@@ -1752,7 +1752,7 @@ namespace System.Management.Automation.Runspaces
     [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
@@ -1838,7 +1838,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -3938,7 +3937,7 @@ namespace System.Management.Automation.Runspaces
                 _typeFileList.Add(typefile);
             }
 
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new TypeTableLoadException(errors);
             }

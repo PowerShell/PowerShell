@@ -137,10 +137,10 @@ namespace System.Management.Automation
 
         private static IEnumerable<PSObject> InvokeTopLevelPowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             using (var mergedOutput = new BlockingCollection<Func<PSCmdlet, IEnumerable<PSObject>>>(s_blockingCollectionCapacity))
             {
@@ -256,10 +256,10 @@ namespace System.Management.Automation
 
         private static IEnumerable<PSObject> InvokeNestedPowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
                 (ErrorRecord errorRecord) =>
@@ -467,9 +467,9 @@ namespace System.Management.Automation
 
         internal static IEnumerable<PSObject> InvokePowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "ErrorAction");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "WarningAction");
@@ -481,8 +481,8 @@ namespace System.Management.Automation
 
             // TODO/FIXME: ETW events for the output stream
             IEnumerable<PSObject> outputStream = powerShell.IsNested
-                ? InvokeNestedPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate)
-                : InvokeTopLevelPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate);
+                ? InvokeNestedPowerShell(powerShell, cmdlet, invocationSettings, errorMessageTemplate, cancellationToken)
+                : InvokeTopLevelPowerShell(powerShell, cmdlet, invocationSettings, errorMessageTemplate, cancellationToken);
 
             return EnumerateWithCatch(
                 outputStream,
@@ -744,7 +744,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet,
             CancellationToken cancellationToken)
         {
-            moduleNamePatterns = moduleNamePatterns ?? new[] { "*" };
+            moduleNamePatterns ??= new[] { "*" };
             HashSet<string> alreadyEmittedNamesOfCimModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             IEnumerable<CimModule> remoteModules = moduleNamePatterns
@@ -855,9 +855,9 @@ namespace System.Management.Automation
             IEnumerable<string> typesToProcess,
             IEnumerable<string> formatsToProcess)
         {
-            nestedModules = nestedModules ?? Array.Empty<string>();
-            typesToProcess = typesToProcess ?? Array.Empty<string>();
-            formatsToProcess = formatsToProcess ?? Array.Empty<string>();
+            nestedModules ??= Array.Empty<string>();
+            typesToProcess ??= Array.Empty<string>();
+            formatsToProcess ??= Array.Empty<string>();
 
             var newManifest = new Hashtable(StringComparer.OrdinalIgnoreCase);
             newManifest["NestedModules"] = nestedModules;
@@ -980,8 +980,8 @@ namespace System.Management.Automation
             PSCredential credential,
             string authentication,
             bool isLocalHost,
-            CancellationToken cancellationToken,
-            PSCmdlet cmdlet)
+            PSCmdlet cmdlet,
+            CancellationToken cancellationToken)
         {
             if (isLocalHost)
             {
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation
 
         internal static string GetModulePath(string remoteModuleName, Version remoteModuleVersion, string computerName, Runspace localRunspace)
         {
-            computerName = computerName ?? string.Empty;
+            computerName ??= string.Empty;
 
             string sanitizedRemoteModuleName = Regex.Replace(remoteModuleName, "[^a-zA-Z0-9]", string.Empty);
             string sanitizedComputerName = Regex.Replace(computerName, "[^a-zA-Z0-9]", string.Empty);

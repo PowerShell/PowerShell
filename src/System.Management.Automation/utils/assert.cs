@@ -72,7 +72,7 @@ namespace System.Management.Automation
             return frameString.ToString();
         }
 
-        private static object s_throwInsteadOfAssertLock = 1;
+        private static readonly object s_throwInsteadOfAssertLock = 1;
 
         private static bool s_throwInsteadOfAssert = false;
         /// <summary>

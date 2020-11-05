@@ -17,6 +17,14 @@ steps:
 
 - pwsh: |
     $metadata = Get-Content -Path "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" -Raw | ConvertFrom-Json
-    Write-Verbose -Verbose "$(releaseTag) $(PackagesRepoPassword) $(AzureVersion) $($metadata.LTSRelease)"
-    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/upload.ps1' -ReleaseTag "$(releaseTag)" -Secret "$(PackagesRepoPassword)" -BlobFolderName "$(AzureVersion)" -LTS:($metadata.LTSRelease)
+    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease)"
+    $params = @{
+        ReleaseTag = "$(ReleaseTag)"
+        AadClientId = "$(RepoClientCliClientID)"
+        AadClientSecret = "$(RepoClientCliSecret)"
+        BlobFolderName = "$(AzureVersion)"
+        LTS = $metadata.LTSRelease
+        ForProduction = $true
+    }
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' @params
   displayName: Run release script

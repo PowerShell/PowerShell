@@ -566,7 +566,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is the managed entry point for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll.
     /// </summary>
-    public class PowerShellAssemblyLoadContextInitializer
+    public static class PowerShellAssemblyLoadContextInitializer
     {
         /// <summary>
         /// Create a singleton of PowerShellAssemblyLoadContext.
@@ -580,7 +580,7 @@ namespace System.Management.Automation
         /// Base directory paths that are separated by semicolon ';'.
         /// They will be the default paths to probe assemblies.
         /// </param>
-        public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)]string basePaths)
+        public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)] string basePaths)
         {
             if (string.IsNullOrEmpty(basePaths))
                 throw new ArgumentNullException(nameof(basePaths));

@@ -247,10 +247,7 @@ namespace Microsoft.PowerShell.Cmdletization
                             return;
                         }
 
-                        if (outputAction != null)
-                        {
-                            outputAction(pso);
-                        }
+                        outputAction?.Invoke(pso);
                     };
 
             job.Output.DataAdded +=

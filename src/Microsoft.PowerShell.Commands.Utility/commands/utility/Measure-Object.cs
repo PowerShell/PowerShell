@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Properties to be examined.
@@ -959,7 +959,7 @@ namespace Microsoft.PowerShell.Commands
         /// The observed statistics keyed by property name.
         /// If Property is not set, then the key used will be the value of thisObject.
         /// </summary>
-        private MeasureObjectDictionary<Statistics> _statistics = new MeasureObjectDictionary<Statistics>();
+        private readonly MeasureObjectDictionary<Statistics> _statistics = new MeasureObjectDictionary<Statistics>();
 
         /// <summary>
         /// Whether or not a numeric conversion error occurred.

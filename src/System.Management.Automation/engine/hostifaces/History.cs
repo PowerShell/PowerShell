@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of the pipeline corresponding to this history entry.
         /// </summary>
-        private long _pipelineId;
+        private readonly long _pipelineId;
 
         /// <summary>
         /// Returns a clone of this object.
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Private object for synchronization.
         /// </summary>
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 
         #endregion private
 
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
         /// This is a set of HistoryInfo ids which are currently being executed in the
         /// pipelines of the Runspace that is holding this 'History' instance.
         /// </summary>
-        private HashSet<long> _invokeHistoryIds = new HashSet<long>();
+        private readonly HashSet<long> _invokeHistoryIds = new HashSet<long>();
 
         internal bool PresentInInvokeHistoryEntrySet(HistoryInfo entry)
         {
@@ -1338,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        public PSObject[] InputObject { set; get; }
+        public PSObject[] InputObject { get; set; }
 
         private bool _passthru;
         /// <summary>

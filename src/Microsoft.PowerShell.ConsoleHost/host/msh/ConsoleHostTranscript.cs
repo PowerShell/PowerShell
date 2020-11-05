@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell
             }
         }
         */
-        private string _transcriptFileName = string.Empty;
+        private readonly string _transcriptFileName = string.Empty;
 
         internal string StopTranscribing()
         {
@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell
         }
 
         private StreamWriter _transcriptionWriter;
-        private object _transcriptionStateLock = new object();
+        private readonly object _transcriptionStateLock = new object();
     }
 }   // namespace
 

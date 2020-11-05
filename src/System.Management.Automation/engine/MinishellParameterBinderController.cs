@@ -99,7 +99,7 @@ namespace System.Management.Automation
                         // Value of -Command parameter must be scriptblock
                         var scriptBlockArgument = parameters[i];
                         var argumentValue = PSObject.Base(scriptBlockArgument.ArgumentValue);
-                        if (!scriptBlockArgument.ArgumentSpecified || !(argumentValue is ScriptBlock))
+                        if (!scriptBlockArgument.ArgumentSpecified || argumentValue is not ScriptBlock)
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, CommandParameter,
                                                                typeof(ScriptBlock), argumentValue.GetType(),
@@ -271,7 +271,7 @@ namespace System.Management.Automation
             }
             else
             {
-                seen = seen | parameter;
+                seen |= parameter;
             }
         }
 

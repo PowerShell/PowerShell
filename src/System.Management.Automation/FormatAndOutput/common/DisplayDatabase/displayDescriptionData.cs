@@ -102,19 +102,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal bool MultilineTables
         {
+            get
+            {
+                if (_multilineTables.HasValue)
+                    return _multilineTables.Value;
+                return false;
+            }
+
             set
             {
                 if (!_multilineTables.HasValue)
                 {
                     _multilineTables = value;
                 }
-            }
-
-            get
-            {
-                if (_multilineTables.HasValue)
-                    return _multilineTables.Value;
-                return false;
             }
         }
 
@@ -132,19 +132,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal bool ShowErrorsAsMessages
         {
+            get
+            {
+                if (_showErrorsAsMessages.HasValue)
+                    return _showErrorsAsMessages.Value;
+                return false;
+            }
+
             set
             {
                 if (!_showErrorsAsMessages.HasValue)
                 {
                     _showErrorsAsMessages = value;
                 }
-            }
-
-            get
-            {
-                if (_showErrorsAsMessages.HasValue)
-                    return _showErrorsAsMessages.Value;
-                return false;
             }
         }
 
@@ -156,19 +156,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal bool ShowErrorsInFormattedOutput
         {
+            get
+            {
+                if (_showErrorsInFormattedOutput.HasValue)
+                    return _showErrorsInFormattedOutput.Value;
+                return false;
+            }
+
             set
             {
                 if (!_showErrorsInFormattedOutput.HasValue)
                 {
                     _showErrorsInFormattedOutput = value;
                 }
-            }
-
-            get
-            {
-                if (_showErrorsInFormattedOutput.HasValue)
-                    return _showErrorsInFormattedOutput.Value;
-                return false;
             }
         }
 
@@ -191,19 +191,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal int PropertyCountForTable
         {
+            get
+            {
+                if (_propertyCountForTable.HasValue)
+                    return _propertyCountForTable.Value;
+                return 4;
+            }
+
             set
             {
                 if (!_propertyCountForTable.HasValue)
                 {
                     _propertyCountForTable = value;
                 }
-            }
-
-            get
-            {
-                if (_propertyCountForTable.HasValue)
-                    return _propertyCountForTable.Value;
-                return 4;
             }
         }
 

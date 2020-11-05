@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Utility project</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
   </PropertyGroup>
 
@@ -32,9 +32,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="5.0.0-preview.8.20365.6" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0-preview.8.20365.6" />
-    <PackageReference Include="NJsonSchema" Version="10.1.24" />
+    <PackageReference Include="System.Threading.AccessControl" Version="5.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="NJsonSchema" Version="10.2.2" />
   </ItemGroup>
 
 </Project>

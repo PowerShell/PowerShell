@@ -247,7 +247,7 @@ namespace System.Management.Automation.Remoting
                 "CreateShell: NULL checks being performed",
                 string.Empty);
 
-            if ((0 == startupInfo.inputStreamSet.streamIDsCount) || (0 == startupInfo.outputStreamSet.streamIDsCount))
+            if ((startupInfo.inputStreamSet.streamIDsCount == 0) || (startupInfo.outputStreamSet.streamIDsCount == 0))
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -306,10 +306,10 @@ namespace System.Management.Automation.Remoting
                     PSOpcode.Connect, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                     requestDetails.ToString(), senderInfo.UserInfo.Identity.Name, requestDetails.resourceUri);
-                    ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                    requestDetails.resourceUri,
-                    extraInfo,
-                    serverTransportMgr);
+                ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
+                requestDetails.resourceUri,
+                extraInfo,
+                serverTransportMgr);
 
                 if (remoteShellSession == null)
                 {
@@ -1211,7 +1211,7 @@ namespace System.Management.Automation.Remoting
                     isProtocolVersionDeclared = true;
                 }
 
-                if (0 == string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal))
+                if (string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal) == 0)
                 {
                     if (option.mustComply)
                     {
@@ -1785,7 +1785,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
             // ref nativeLocaleData);
-            bool retrievingLocaleSucceeded = (0 == hResult);
+            bool retrievingLocaleSucceeded = (hResult == 0);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
             // IntPtr nativeDataLocaleData = IntPtr.Zero;

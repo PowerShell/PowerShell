@@ -626,7 +626,7 @@ namespace System.Management.Automation.Language
                         var varName = GetUnaliasedVariableName(variablePath);
                         var details = _variables[varName];
                         details.Assigned = true;
-                        type = type ?? details.Type ?? typeof(object);
+                        type ??= details.Type ?? typeof(object);
 
                         // automatic and preference variables are pre-allocated, so they can't be unallocated
                         // and forced to be dynamic.

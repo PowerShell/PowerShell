@@ -271,8 +271,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal bool IsRemoteDebugStop
         {
-            set;
             get;
+            set;
         }
 
         #endregion

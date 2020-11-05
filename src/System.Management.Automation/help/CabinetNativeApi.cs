@@ -175,7 +175,7 @@ namespace System.Management.Automation.Internal
 
         internal static CabinetExtractorLoader GetInstance()
         {
-            if (0 == System.Threading.Interlocked.CompareExchange(ref s_created, 1, 0))
+            if (System.Threading.Interlocked.CompareExchange(ref s_created, 1, 0) == 0)
             {
                 s_instance = new CabinetExtractorLoader();
                 s_extractorInstance = new CabinetExtractor();
@@ -466,19 +466,19 @@ namespace System.Management.Automation.Internal
             {
                 return FileMode.OpenOrCreate;
             }
-            else if (0 != (oflag & (int)OpFlags.Append))
+            else if ((oflag & (int)OpFlags.Append) != 0)
             {
                 return FileMode.Append;
             }
-            else if (0 != (oflag & (int)OpFlags.Create))
+            else if ((oflag & (int)OpFlags.Create) != 0)
             {
                 return FileMode.Create;
             }
-            else if (0 != (oflag & (int)OpFlags.RdWr))
+            else if ((oflag & (int)OpFlags.RdWr) != 0)
             {
                 return FileMode.Open;
             }
-            else if (0 != (oflag & (int)OpFlags.Truncate))
+            else if ((oflag & (int)OpFlags.Truncate) != 0)
             {
                 return FileMode.Truncate;
             }
@@ -501,11 +501,11 @@ namespace System.Management.Automation.Internal
             {
                 return FileAccess.ReadWrite;
             }
-            else if (0 != (pmode & (int)PermissionMode.Read))
+            else if ((pmode & (int)PermissionMode.Read) != 0)
             {
                 return FileAccess.Read;
             }
-            else if (0 != (pmode & (int)PermissionMode.Write))
+            else if ((pmode & (int)PermissionMode.Write) != 0)
             {
                 return FileAccess.Write;
             }
@@ -528,11 +528,11 @@ namespace System.Management.Automation.Internal
             {
                 return FileShare.ReadWrite;
             }
-            else if (0 != (pmode & (int)PermissionMode.Read))
+            else if ((pmode & (int)PermissionMode.Read) != 0)
             {
                 return FileShare.Read;
             }
-            else if (0 != (pmode & (int)PermissionMode.Write))
+            else if ((pmode & (int)PermissionMode.Write) != 0)
             {
                 return FileShare.Write;
             }

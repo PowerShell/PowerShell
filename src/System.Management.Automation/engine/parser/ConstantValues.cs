@@ -261,7 +261,7 @@ namespace System.Management.Automation.Language
 
         public object VisitMemberExpression(MemberExpressionAst memberExpressionAst)
         {
-            if (!memberExpressionAst.Static || !(memberExpressionAst.Expression is TypeExpressionAst))
+            if (!memberExpressionAst.Static || memberExpressionAst.Expression is not TypeExpressionAst)
             {
                 return false;
             }
