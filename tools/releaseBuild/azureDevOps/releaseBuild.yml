@@ -155,7 +155,7 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
-        - checkout: self	
+        - checkout: self
           clean: true
         - template: templates/SetVersionVariables.yml
           parameters:
