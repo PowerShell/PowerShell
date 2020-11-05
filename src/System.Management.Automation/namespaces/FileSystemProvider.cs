@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// using "FileSystemProvider" as the category.
         /// </summary>
         [Dbg.TraceSourceAttribute("FileSystemProvider", "The namespace navigation provider for the file system")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("FileSystemProvider", "The namespace navigation provider for the file system");
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<WildcardPattern> _excludeMatcher = null;
 
-        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchType = MatchType.Win32,
             MatchCasing = MatchCasing.CaseInsensitive,
@@ -7374,7 +7374,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private class InodeTracker
         {
-            private HashSet<(UInt64, UInt64)> _visitations;
+            private readonly HashSet<(UInt64, UInt64)> _visitations;
 
             /// <summary>
             /// Construct a new InodeTracker with an initial path.
@@ -7598,7 +7598,7 @@ namespace Microsoft.PowerShell.Commands
             _provider = provider;
         }
 
-        private FileSystemProvider _provider;
+        private readonly FileSystemProvider _provider;
 
         /// <summary>
         /// Gets or sets the encoding method used when
@@ -8830,9 +8830,9 @@ namespace System.Management.Automation.Internal
 
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
 
-        private static string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
-        private static string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
-        private static string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
+        private static readonly string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
+        private static readonly string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
+        private static readonly string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
 
         private const string PSCopyToSessionHelperDefinitionFormat = @"
         param (
@@ -9281,13 +9281,13 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        private static string s_PSCopyToSessionHelper = functionToken + PSCopyToSessionHelperName + @"
+        private static readonly string s_PSCopyToSessionHelper = functionToken + PSCopyToSessionHelperName + @"
         {
         " + s_PSCopyToSessionHelperDefinition + @"
         }
         ";
 
-        private static Hashtable s_PSCopyToSessionHelperFunction = new Hashtable() {
+        private static readonly Hashtable s_PSCopyToSessionHelperFunction = new Hashtable() {
             {nameToken, PSCopyToSessionHelperName},
             {definitionToken, s_PSCopyToSessionHelperDefinitionRestricted}
         };
@@ -9298,8 +9298,8 @@ namespace System.Management.Automation.Internal
 
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
 
-        private static string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
-        private static string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
+        private static readonly string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
+        private static readonly string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
 
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
         param (
@@ -9778,7 +9778,7 @@ namespace System.Management.Automation.Internal
         }
         ";
 
-        private static Hashtable s_PSCopyFromSessionHelperFunction = new Hashtable() {
+        private static readonly Hashtable s_PSCopyFromSessionHelperFunction = new Hashtable() {
             {nameToken, PSCopyFromSessionHelperName},
             {definitionToken, s_PSCopyFromSessionHelperDefinitionRestricted}
         };
@@ -9790,7 +9790,7 @@ namespace System.Management.Automation.Internal
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
 
         internal static readonly string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
-        private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
+        private static readonly string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
 
         private const string PSCopyRemoteUtilsDefinitionFormat = @"
         param (
