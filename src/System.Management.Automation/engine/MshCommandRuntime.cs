@@ -353,7 +353,7 @@ namespace System.Management.Automation
             // WriteProgress. The following logic ensures that
             // there is a unique id for each Cmdlet instance.
 
-            if (0 == _sourceId)
+            if (_sourceId == 0)
             {
                 _sourceId = Interlocked.Increment(ref s_lastUsedSourceId);
             }

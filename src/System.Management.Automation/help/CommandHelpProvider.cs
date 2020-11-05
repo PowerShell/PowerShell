@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & commandInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & commandInfo.HelpCategory) == 0)
             {
                 return false;
             }

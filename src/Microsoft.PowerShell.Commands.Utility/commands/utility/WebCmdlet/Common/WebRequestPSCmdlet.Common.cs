@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((Credential != null || null != Token) && Authentication != WebAuthenticationType.None)
+            else if ((Credential != null || Token != null) && Authentication != WebAuthenticationType.None)
             {
                 ProcessAuthentication();
             }

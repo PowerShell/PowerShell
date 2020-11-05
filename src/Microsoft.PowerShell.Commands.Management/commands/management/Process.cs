@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
                 StringComparison.OrdinalIgnoreCase);
-            if (0 != diff)
+            if (diff != 0)
                 return diff;
             return SafeGetProcessId(x) - SafeGetProcessId(y);
         }
@@ -943,7 +943,7 @@ namespace Microsoft.PowerShell.Commands
         // Handle Exited event and display process information.
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            if (0 == System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor))
+            if (System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0)
             {
                 if (_waitHandle != null)
                 {

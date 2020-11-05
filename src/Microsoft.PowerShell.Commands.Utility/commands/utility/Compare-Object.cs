@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
             // 2005/07/19 Switched order of referenceEntry and differenceEntry
             //   so that we cast differenceEntry to the type of referenceEntry.
             if (referenceEntry != null && differenceEntry != null &&
-                0 == _comparer.Compare(referenceEntry, differenceEntry))
+                _comparer.Compare(referenceEntry, differenceEntry) == 0)
             {
                 EmitMatch(referenceEntry);
                 return;
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 OrderByPropertyEntry listEntry = list[i];
                 Diagnostics.Assert(listEntry != null, "null listEntry " + i);
-                if (0 == _comparer.Compare(match, listEntry))
+                if (_comparer.Compare(match, listEntry) == 0)
                 {
                     list.RemoveAt(i);
                     return listEntry;
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 mshobj = new PSObject();
-                if (Property == null || 0 == Property.Length)
+                if (Property == null || Property.Length == 0)
                 {
                     PSNoteProperty inputNote = new PSNoteProperty(
                         InputObjectPropertyName, entry.inputObject);

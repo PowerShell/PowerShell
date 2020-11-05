@@ -4989,7 +4989,7 @@ namespace System.Management.Automation
 
             lock (_syncObject)
             {
-                if ((_psCommand == null) || (_psCommand.Commands == null) || (0 == _psCommand.Commands.Count))
+                if ((_psCommand == null) || (_psCommand.Commands == null) || (_psCommand.Commands.Count == 0))
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }

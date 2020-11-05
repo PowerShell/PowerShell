@@ -1703,7 +1703,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowErrorRemoting(stat);
                     }
 
-                    if (0 != (cngKeyFlag & (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG))
+                    if ((cngKeyFlag & (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG) != 0)
                     {
                         unsafe
                         {

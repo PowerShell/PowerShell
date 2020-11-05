@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
                         true); // case-sensitive
                 }
 
-                isUnique = (0 != _comparer.Compare(InputObject, _lastObject));
+                isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }
 
             if (isUnique)
