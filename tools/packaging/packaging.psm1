@@ -780,6 +780,8 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
                     $DebDistro = "ubuntu.18.04"
+                } elseif ($Environment.IsUbuntu20) {
+                    $DebDistro = "ubuntu.20.04"
                 } elseif ($Environment.IsDebian9) {
                     $DebDistro = "debian.9"
                 } else {
