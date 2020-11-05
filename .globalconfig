@@ -916,7 +916,7 @@ dotnet_diagnostic.IDE0062.severity = silent
 dotnet_diagnostic.IDE0063.severity = silent
 
 # IDE0064: MakeStructFieldsWritable
-dotnet_diagnostic.IDE0064.severity = silent
+dotnet_diagnostic.IDE0064.severity = warning
 
 # IDE0065: MoveMisplacedUsingDirectives
 dotnet_diagnostic.IDE0065.severity = silent
