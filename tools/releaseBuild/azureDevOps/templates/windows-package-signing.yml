@@ -16,6 +16,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    fetchDepth: 1
 
   - template: shouldSign.yml
   - template: SetVersionVariables.yml

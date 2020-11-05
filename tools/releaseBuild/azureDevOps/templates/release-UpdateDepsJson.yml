@@ -8,6 +8,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    fetchDepth: 1
 
   - task: DownloadPipelineArtifact@2
     inputs:
