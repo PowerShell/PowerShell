@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                         memberCount++;
                     }
 
-                    memberCountHelper = memberCountHelper >> 1;
+                    memberCountHelper >>= 1;
                 }
 
                 if (memberCount != 1)

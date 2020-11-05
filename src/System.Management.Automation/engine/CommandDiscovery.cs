@@ -652,7 +652,7 @@ namespace System.Management.Automation
 
         private static CommandProcessorBase CreateCommandProcessorForScript(ScriptInfo scriptInfo, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(scriptInfo, context, useNewScope, true, sessionState);
             if (scriptAsCmdletProcessor != null)
             {
@@ -664,7 +664,7 @@ namespace System.Management.Automation
 
         private static CommandProcessorBase CreateCommandProcessorForScript(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(scriptInfo, context, useNewScope, true, sessionState);
             if (scriptAsCmdletProcessor != null)
             {
@@ -676,7 +676,7 @@ namespace System.Management.Automation
 
         internal static CommandProcessorBase CreateCommandProcessorForScript(FunctionInfo functionInfo, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? functionInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= functionInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(functionInfo, context, useNewScope, false, sessionState);
             if (scriptAsCmdletProcessor != null)
             {
@@ -688,7 +688,7 @@ namespace System.Management.Automation
 
         internal static CommandProcessorBase CreateCommandProcessorForScript(ScriptBlock scriptblock, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? scriptblock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptblock.SessionStateInternal ?? context.EngineSessionState;
 
             if (scriptblock.UsesCmdletBinding)
             {
@@ -706,7 +706,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            sessionState = sessionState ?? scriptCommandInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptCommandInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
 
             return new CommandProcessor(scriptCommandInfo, context, useNewScope, fromScriptFile, sessionState);
         }

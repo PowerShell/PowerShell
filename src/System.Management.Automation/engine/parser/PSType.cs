@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Language
             {
                 if (parent is IParameterMetadataProvider)
                 {
-                    nameParts = nameParts ?? new List<string>();
+                    nameParts ??= new List<string>();
                     var fnDefn = parent.Parent as FunctionDefinitionAst;
                     if (fnDefn != null)
                     {

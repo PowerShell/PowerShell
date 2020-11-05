@@ -5244,12 +5244,12 @@ end {
                         cmdlet.SetModule(moduleInfo);
                     }
 
-                    cmdlets = cmdlets ?? new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
+                    cmdlets ??= new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
                     cmdlets.Add(cmdletName, cmdlet);
 
                     if (TryGetCustomAttribute(type, out AliasAttribute aliasAttribute))
                     {
-                        aliases = aliases ?? new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
+                        aliases ??= new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
 
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in aliasAttribute.AliasNames)
@@ -5302,7 +5302,7 @@ end {
                         provider.SetModule(moduleInfo);
                     }
 
-                    providers = providers ?? new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
+                    providers ??= new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
                     providers.Add(providerName, provider);
 
                     s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a provider. ", providerName, type.FullName);

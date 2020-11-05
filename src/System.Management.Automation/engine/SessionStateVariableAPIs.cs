@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
 
                 if (variablePath.IsPrivate && varResult != null)
                 {
-                    varResult.Options = varResult.Options | ScopedItemOptions.Private;
+                    varResult.Options |= ScopedItemOptions.Private;
                 }
 
                 result = varResult;

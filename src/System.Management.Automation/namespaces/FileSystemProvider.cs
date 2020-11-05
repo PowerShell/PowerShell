@@ -3267,7 +3267,7 @@ namespace Microsoft.PowerShell.Commands
                 // if they've specified force.
                 if (force)
                 {
-                    fileSystemInfo.Attributes = fileSystemInfo.Attributes & ~(FileAttributes.Hidden | FileAttributes.ReadOnly | FileAttributes.System);
+                    fileSystemInfo.Attributes &= ~(FileAttributes.Hidden | FileAttributes.ReadOnly | FileAttributes.System);
                     attributeRecoveryRequired = true;
                 }
 
@@ -3999,8 +3999,7 @@ namespace Microsoft.PowerShell.Commands
                                     // try again
                                     FileInfo destinationItem = new FileInfo(destinationPath);
 
-                                    destinationItem.Attributes =
-                                        destinationItem.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                                    destinationItem.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                                 }
                                 else
                                 {
@@ -4256,19 +4255,19 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (string.Equals(value, "ReadOnly", StringComparison.OrdinalIgnoreCase))
                         {
-                            destinationFile.Attributes = destinationFile.Attributes | FileAttributes.ReadOnly;
+                            destinationFile.Attributes |= FileAttributes.ReadOnly;
                         }
                         else if (string.Equals(value, "Hidden", StringComparison.OrdinalIgnoreCase))
                         {
-                            destinationFile.Attributes = destinationFile.Attributes | FileAttributes.Hidden;
+                            destinationFile.Attributes |= FileAttributes.Hidden;
                         }
                         else if (string.Equals(value, "Archive", StringComparison.OrdinalIgnoreCase))
                         {
-                            destinationFile.Attributes = destinationFile.Attributes | FileAttributes.Archive;
+                            destinationFile.Attributes |= FileAttributes.Archive;
                         }
                         else if (string.Equals(value, "System", StringComparison.OrdinalIgnoreCase))
                         {
-                            destinationFile.Attributes = destinationFile.Attributes | FileAttributes.System;
+                            destinationFile.Attributes |= FileAttributes.System;
                         }
                     }
                 }
@@ -4361,7 +4360,7 @@ namespace Microsoft.PowerShell.Commands
                     // If force is specified, and the file already exist at the destination, mask of the readonly, hidden, and system attributes
                     if (force && File.Exists(destinationFile.FullName))
                     {
-                        destinationFile.Attributes = destinationFile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System);
+                        destinationFile.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden | FileAttributes.System);
                     }
 
                     wStream = new FileStream(destinationFile.FullName, FileMode.Create);
@@ -5410,7 +5409,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             if (!string.IsNullOrEmpty(alternateDataStream))
             {
-                result = result + alternateDataStream;
+                result += alternateDataStream;
             }
 #endif
 
@@ -5901,8 +5900,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // mask off the readonly and hidden bits and try again
-                        file.Attributes =
-                            file.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                        file.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
 
                         file.MoveTo(destination);
 
@@ -5950,7 +5948,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             // Make sure the file is not read only
-                            destfile.Attributes = destfile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                            destfile.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                             destfile.Delete();
                             file.MoveTo(destination);
 
@@ -6022,8 +6020,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // mask off the readonly and hidden bits and try again
-                        directory.Attributes =
-                            directory.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                        directory.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
 
                         MoveDirectoryInfoUnchecked(directory, destination, force);
 

@@ -265,13 +265,13 @@ namespace System.Management.Automation
             get
             {
                 ParameterFlags flags = 0;
-                if (IsMandatory) { flags = flags | ParameterFlags.Mandatory; }
+                if (IsMandatory) { flags |= ParameterFlags.Mandatory; }
 
-                if (ValueFromPipeline) { flags = flags | ParameterFlags.ValueFromPipeline; }
+                if (ValueFromPipeline) { flags |= ParameterFlags.ValueFromPipeline; }
 
-                if (ValueFromPipelineByPropertyName) { flags = flags | ParameterFlags.ValueFromPipelineByPropertyName; }
+                if (ValueFromPipelineByPropertyName) { flags |= ParameterFlags.ValueFromPipelineByPropertyName; }
 
-                if (ValueFromRemainingArguments) { flags = flags | ParameterFlags.ValueFromRemainingArguments; }
+                if (ValueFromRemainingArguments) { flags |= ParameterFlags.ValueFromRemainingArguments; }
 
                 return flags;
             }

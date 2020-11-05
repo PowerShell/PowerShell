@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (postContext != null)
                 {
-                    resultString = resultString + postContext;
+                    resultString += postContext;
                 }
             }
 

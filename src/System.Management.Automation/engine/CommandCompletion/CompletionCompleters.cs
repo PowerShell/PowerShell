@@ -3630,7 +3630,7 @@ namespace System.Management.Automation
 
             RemoveLastNullCompletionResult(result);
 
-            context.WordToComplete = context.WordToComplete ?? string.Empty;
+            context.WordToComplete ??= string.Empty;
             var clearLiteralPath = false;
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
@@ -3736,7 +3736,7 @@ namespace System.Management.Automation
                 // The parameter Destination for Move-Item and Copy-Item takes literal path
                 RemoveLastNullCompletionResult(result);
 
-                context.WordToComplete = context.WordToComplete ?? string.Empty;
+                context.WordToComplete ??= string.Empty;
                 var clearLiteralPath = TurnOnLiteralPathOption(context);
 
                 try
@@ -3767,7 +3767,7 @@ namespace System.Management.Automation
 
             RemoveLastNullCompletionResult(result);
 
-            context.WordToComplete = context.WordToComplete ?? string.Empty;
+            context.WordToComplete ??= string.Empty;
             var clearLiteralPath = false;
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
@@ -4259,7 +4259,7 @@ namespace System.Management.Automation
 
                             if (leaf != null)
                             {
-                                leaf = leaf + "*";
+                                leaf += "*";
                                 var parentPath = Path.GetDirectoryName(providerPath);
 
                                 // ProviderPath should be absolute path for FileSystem entries

@@ -744,7 +744,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet,
             CancellationToken cancellationToken)
         {
-            moduleNamePatterns = moduleNamePatterns ?? new[] { "*" };
+            moduleNamePatterns ??= new[] { "*" };
             HashSet<string> alreadyEmittedNamesOfCimModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             IEnumerable<CimModule> remoteModules = moduleNamePatterns
@@ -855,9 +855,9 @@ namespace System.Management.Automation
             IEnumerable<string> typesToProcess,
             IEnumerable<string> formatsToProcess)
         {
-            nestedModules = nestedModules ?? Array.Empty<string>();
-            typesToProcess = typesToProcess ?? Array.Empty<string>();
-            formatsToProcess = formatsToProcess ?? Array.Empty<string>();
+            nestedModules ??= Array.Empty<string>();
+            typesToProcess ??= Array.Empty<string>();
+            formatsToProcess ??= Array.Empty<string>();
 
             var newManifest = new Hashtable(StringComparer.OrdinalIgnoreCase);
             newManifest["NestedModules"] = nestedModules;
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation
 
         internal static string GetModulePath(string remoteModuleName, Version remoteModuleVersion, string computerName, Runspace localRunspace)
         {
-            computerName = computerName ?? string.Empty;
+            computerName ??= string.Empty;
 
             string sanitizedRemoteModuleName = Regex.Replace(remoteModuleName, "[^a-zA-Z0-9]", string.Empty);
             string sanitizedComputerName = Regex.Replace(computerName, "[^a-zA-Z0-9]", string.Empty);

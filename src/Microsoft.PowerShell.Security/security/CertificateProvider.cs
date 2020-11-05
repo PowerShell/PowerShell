@@ -2670,19 +2670,19 @@ namespace Microsoft.PowerShell.Commands
 
                     if (dp.DocumentEncryptionCert)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.Purpose = CertificatePurpose.DocumentEncryption;
                     }
 
                     if (dp.DnsName != null)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
                     }
 
                     if (dp.Eku != null)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.Eku = new List<WildcardPattern>();
                         foreach (var pattern in dp.Eku)
                         {
@@ -2692,13 +2692,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (dp.ExpiringInDays >= 0)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
                     }
 
                     if (dp.SSLServerAuthentication)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.SSLServerAuthentication = true;
                     }
                 }

@@ -2505,7 +2505,7 @@ namespace Microsoft.PowerShell.Commands
                                 message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
                             }
 
-                            er = er ?? new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                            er ??= new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                             ThrowTerminatingError(er);
                         }
 

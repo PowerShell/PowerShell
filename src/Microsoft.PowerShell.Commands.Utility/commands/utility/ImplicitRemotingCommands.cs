@@ -2430,7 +2430,7 @@ function Get-PSImplicitRemotingSession
                 out hashString,
                 ImplicitRemotingCommandBase.ImplicitRemotingKey,
                 ImplicitRemotingCommandBase.ImplicitRemotingHashKey);
-            hashString = hashString ?? string.Empty;
+            hashString ??= string.Empty;
 
             writer.Write(
                 HelperFunctionsGetImplicitRunspaceTemplate,

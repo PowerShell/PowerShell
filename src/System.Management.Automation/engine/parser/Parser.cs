@@ -2550,7 +2550,7 @@ namespace System.Management.Automation.Language
             {
                 SkipToken();
                 endErrorStatement = switchParameterToken.Extent;
-                specifiedFlags = specifiedFlags ?? new Dictionary<string, Tuple<Token, Ast>>();
+                specifiedFlags ??= new Dictionary<string, Tuple<Token, Ast>>();
 
                 if (IsSpecificParameter(switchParameterToken, "regex"))
                 {
@@ -2647,7 +2647,7 @@ namespace System.Management.Automation.Language
 
             if (switchParameterToken.Kind == TokenKind.Minus)
             {
-                specifiedFlags = specifiedFlags ?? new Dictionary<string, Tuple<Token, Ast>>();
+                specifiedFlags ??= new Dictionary<string, Tuple<Token, Ast>>();
                 specifiedFlags.Add(VERBATIM_ARGUMENT, new Tuple<Token, Ast>(switchParameterToken, null));
             }
 

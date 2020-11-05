@@ -1144,7 +1144,7 @@ namespace Microsoft.PowerShell.Commands
                 if (stringVersion[stringVersion.Length - 1] == '*')
                 {
                     stringVersion = stringVersion.Substring(0, stringVersion.Length - 1);
-                    stringVersion = stringVersion + maxRange;
+                    stringVersion += maxRange;
                     int starNum = stringVersion.Count(x => x == '.');
                     for (int i = 0; i < (3 - starNum); i++)
                     {
