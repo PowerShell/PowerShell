@@ -155,6 +155,8 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
+        - checkout: self	
+          clean: true
         - template: templates/SetVersionVariables.yml
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)
