@@ -781,7 +781,7 @@ dotnet_diagnostic.IDE0017.severity = silent
 dotnet_diagnostic.IDE0018.severity = silent
 
 # IDE0019: InlineAsTypeCheck
-dotnet_diagnostic.IDE0019.severity = silent
+dotnet_diagnostic.IDE0019.severity = warning
 
 # IDE0020: InlineIsTypeCheck
 dotnet_diagnostic.IDE0020.severity = silent
