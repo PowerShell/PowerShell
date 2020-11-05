@@ -14,7 +14,6 @@ jobs:
   steps:
     - checkout: self
       clean: true
-      fetchDepth: 1
 
     - download: releasePipeline
       artifact: finalResults
