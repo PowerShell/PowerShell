@@ -257,9 +257,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public new string Prefix
         {
-            set { base.Prefix = value; }
-
             get { return base.Prefix; }
+
+            set { base.Prefix = value; }
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ModuleSpecification[] _moduleSpecifications = new ModuleSpecification[0];
+        private ModuleSpecification[] _moduleSpecifications = Array.Empty<ModuleSpecification>();
         internal bool IsFullyQualifiedModuleSpecified = false;
 
         private bool _commandParameterSpecified; // initialized to default value in the constructor
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
-        internal string Prefix { set; get; } = string.Empty;
+        internal string Prefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the certificate with which to sign the format file and psm1 file.
@@ -806,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
+        private readonly List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
 
         private void ReportSkippedCommands()
         {
@@ -1919,9 +1919,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor and shared private data
 
-        private PSSession _remoteRunspaceInfo;
+        private readonly PSSession _remoteRunspaceInfo;
         private Guid _moduleGuid;
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
 
         internal ImplicitRemotingCodeGenerator(
             PSSession remoteRunspaceInfo,
@@ -2316,7 +2316,7 @@ function Get-PSImplicitRemotingSessionOption
                 result.Append("-ApplicationArguments $(");
                 result.Append("& $script:ImportCliXml -Path $(");
                 result.Append("& $script:JoinPath -Path $PSScriptRoot -ChildPath ApplicationArguments.xml");
-                result.Append(")");
+                result.Append(')');
                 result.Append(") ");
             }
 
@@ -2430,7 +2430,7 @@ function Get-PSImplicitRemotingSession
                 out hashString,
                 ImplicitRemotingCommandBase.ImplicitRemotingKey,
                 ImplicitRemotingCommandBase.ImplicitRemotingHashKey);
-            hashString = hashString ?? string.Empty;
+            hashString ??= string.Empty;
 
             writer.Write(
                 HelperFunctionsGetImplicitRunspaceTemplate,
@@ -2953,7 +2953,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             arrayString.Insert(0, "@(");
-            arrayString.Append(")");
+            arrayString.Append(')');
 
             return arrayString.ToString();
         }

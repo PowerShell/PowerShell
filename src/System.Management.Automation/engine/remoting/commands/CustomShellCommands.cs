@@ -708,7 +708,7 @@ else
                     try
                     {
                         // Make sure the file is not read only
-                        destfile.Attributes = destfile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                        destfile.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                         destfile.Delete();
                     }
                     catch (FileNotFoundException fnf)

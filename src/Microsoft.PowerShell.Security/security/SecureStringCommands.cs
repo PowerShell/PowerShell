@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string _commandName;
+        private readonly string _commandName;
 
         /// <summary>
         /// Initializes a new instance of the SecureStringCommandBase

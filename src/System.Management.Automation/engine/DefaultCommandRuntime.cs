@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DefaultCommandRuntime : ICommandRuntime2
     {
-        private List<object> _output;
+        private readonly List<object> _output;
         /// <summary>
         /// Constructs an instance of the default ICommandRuntime object
         /// that will write objects into the list that was passed.
@@ -30,7 +30,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the instance of PSHost - null by default.
         /// </summary>
-        public PSHost Host { set; get; }
+        public PSHost Host { get; set; }
 
         #region Write
         /// <summary>

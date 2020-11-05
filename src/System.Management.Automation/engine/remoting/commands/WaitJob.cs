@@ -105,10 +105,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Invoke action outside lock.
-            if (endProcessingAction != null)
-            {
-                endProcessingAction();
-            }
+            endProcessingAction?.Invoke();
         }
 
         private void CleanUpEndProcessing()

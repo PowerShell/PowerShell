@@ -375,7 +375,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private static extern uint PdhValidatePath(string szFullPathBuffer);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)]bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
+        private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)] bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetCounterTimeBase(IntPtr hCounter, out UInt64 pTimeBase);
@@ -423,7 +423,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         // m_ConsumerPathToHandleAndInstanceMap map is used for reading counter date (live or from files).
         //
-        private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
+        private readonly Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
         /// <summary>
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
@@ -456,7 +456,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
         {
-            uint res = 0;
             counterType = 0;
             defaultScale = 0;
             timeBase = 0;
@@ -464,7 +463,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             Debug.Assert(hCounter != IntPtr.Zero);
 
             IntPtr pBufferSize = new IntPtr(0);
-            res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
+            uint res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
             if (res != PdhResults.PDH_MORE_DATA)
             {
                 return res;
@@ -476,7 +475,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, bufCounterInfo);
-                if (res == 0 && bufCounterInfo != IntPtr.Zero)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA && bufCounterInfo != IntPtr.Zero)
                 {
                     PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
                     counterType = pdhCounterInfo.dwType;
@@ -489,7 +488,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             res = PdhGetCounterTimeBase(hCounter, out timeBase);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -505,13 +504,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             uint res = PdhHelper.PdhBindInputDataSource(out _hDataSource, null);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhBindInputDataSource: " + res);
                 return res;
             }
 
-            return 0;
+            return PdhResults.PDH_CSTATUS_VALID_DATA;
         }
         /// <summary>
         /// Connects to a single named datasource, initializing m_hDataSource variable.
@@ -526,7 +525,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             uint res = PdhHelper.PdhBindInputDataSource(out _hDataSource, dataSourceName);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhBindInputDataSource: " + res);
             }
@@ -556,7 +555,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             uint res = PdhOpenQueryH(_hDataSource, IntPtr.Zero, out _hQuery);
 
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhOpenQueryH: " + res);
             }
@@ -624,7 +623,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhHelper.PdhEnumMachinesH(_hDataSource, (IntPtr)strMachineList, ref MachineListTcharSizePtr);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     ReadPdhMultiString(ref strMachineList, MachineListTcharSizePtr.ToInt32(), ref machineNames);
                 }
@@ -652,7 +651,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhEnumObjectsH(_hDataSource, machineName, (IntPtr)strObjectList, ref pBufferSize, PerfDetail.PERF_DETAIL_WIZARD, false);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     ReadPdhMultiString(ref strObjectList, pBufferSize.ToInt32(), ref objectNames);
                 }
@@ -677,12 +676,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             if (res == PdhResults.PDH_CSTATUS_NO_INSTANCE)
             {
                 instanceNames.Clear();
-                return 0; // masking the error
+                return PdhResults.PDH_CSTATUS_VALID_DATA; // masking the error
             }
             else if (res == PdhResults.PDH_CSTATUS_NO_OBJECT)
             {
                 counterNames.Clear();
-                return 0; // masking the error
+                return PdhResults.PDH_CSTATUS_VALID_DATA; // masking the error
             }
             else if (res != PdhResults.PDH_MORE_DATA)
             {
@@ -715,7 +714,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                         strCountersList, ref pCounterBufferSize,
                                         strInstancesList, ref pInstanceBufferSize,
                                         PerfDetail.PERF_DETAIL_WIZARD, 0);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     // Console.WriteLine("error in PdhEnumObjectItemsH 2nd call: " + res + "\n Counter buffer size is  "
                     //    + pCounterBufferSize.ToInt32() + "\n Instance buffer size is  " + pInstanceBufferSize.ToInt32());
@@ -751,7 +750,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             StringCollection machineNames = new StringCollection();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -760,7 +759,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 StringCollection counterSets = new StringCollection();
                 res = this.EnumObjects(machine, ref counterSets);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     return res;
                 }
@@ -773,13 +772,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     StringCollection counterSetInstances = new StringCollection();
 
                     res = this.EnumObjectItems(machine, counterSet, ref counterSetCounters, ref counterSetInstances);
-                    if (res != 0)
+                    if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         return res;
                     }
 
                     res = this.GetValidPaths(machine, counterSet, ref counterSetCounters, ref counterSetInstances, ref validPaths);
-                    if (res != 0)
+                    if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         return res;
                     }
@@ -807,11 +806,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhMakeCounterPath(ref pathElts, strPath, ref pPathBufferSize, 0);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
 
-                    ret = (PdhValidatePathEx(_hDataSource, outPath) == 0);
+                    ret = (PdhValidatePathEx(_hDataSource, outPath) == PdhResults.PDH_CSTATUS_VALID_DATA);
                 }
             }
             finally
@@ -824,7 +823,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public bool IsPathValid(string path)
         {
-            return (PdhValidatePathEx(_hDataSource, path) == 0);
+            return (PdhValidatePathEx(_hDataSource, path) == PdhResults.PDH_CSTATUS_VALID_DATA);
         }
 
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
@@ -851,7 +850,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhMakeCounterPath(ref pathElts, strPath, ref pPathBufferSize, 0);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
                 }
@@ -871,7 +870,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             PDH_COUNTER_PATH_ELEMENTS elts = new PDH_COUNTER_PATH_ELEMENTS();
 
             uint res = ParsePath(origPath, ref elts);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -887,7 +886,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            IntPtr.Zero,
                                            ref bufSize,
                                            0);
-            if (res != PdhResults.PDH_MORE_DATA && res != 0)
+            if (res != PdhResults.PDH_MORE_DATA && res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhParseCounterPath: " + res);
                 return res;
@@ -901,7 +900,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                           structPtr,
                                           ref bufSize,
                                           0);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     //
                     // Marshal.PtrToStructure will allocate managed memory for the object,
@@ -932,11 +931,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
         {
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             localizedPath = string.Empty;
             PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
             res = ParsePath(englishPath, ref pathElts);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -996,7 +995,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             // Now, call retrieve the localized names of the object and the counter by index:
             string objNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)objIndex, out objNameLocalized);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -1005,7 +1004,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             string ctrNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)counterIndex, out ctrNameLocalized);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -1030,7 +1029,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             int strSize = 256;
             IntPtr localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
             locName = string.Empty;
-            uint res = 0;
+            uint res;
             try
             {
                 res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
@@ -1041,7 +1040,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
                 }
 
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     locName = Marshal.PtrToStringUni(localizedPathPtr);
                 }
@@ -1060,7 +1059,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                    ref StringCollection instances,
                                    ref StringCollection validPaths)
         {
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
             pathElts.MachineName = machineName;
@@ -1107,13 +1106,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             bool bAtLeastOneAdded = false;
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             foreach (string counterPath in validPaths)
             {
                 IntPtr counterHandle;
                 res = PdhAddCounter(_hQuery, counterPath, IntPtr.Zero, out counterHandle);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     CounterHandleNInstance chi = new CounterHandleNInstance();
                     chi.hCounter = counterHandle;
@@ -1121,7 +1120,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                     PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
                     res = ParsePath(counterPath, ref pathElts);
-                    if (res == 0 && pathElts.InstanceName != null)
+                    if (res == PdhResults.PDH_CSTATUS_VALID_DATA && pathElts.InstanceName != null)
                     {
                         chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
@@ -1135,7 +1134,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 }
             }
 
-            return bAtLeastOneAdded ? 0 : res;
+            return bAtLeastOneAdded ? PdhResults.PDH_CSTATUS_VALID_DATA : res;
         }
 
         public string GetCounterSetHelp(string szMachineName, string szObjectName)
@@ -1148,7 +1147,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
 
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             nextSet = null;
 
             Int64 batchTimeStampFT = 0;
@@ -1159,7 +1158,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            if (res != 0 && res != PdhResults.PDH_NO_DATA)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA && res != PdhResults.PDH_NO_DATA)
             {
                 return res;
             }
@@ -1179,7 +1178,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             PerformanceCounterSample[] samplesArr = new PerformanceCounterSample[_consumerPathToHandleAndInstanceMap.Count];
             uint sampleIndex = 0;
             uint numInvalidDataSamples = 0;
-            uint lastErr = 0;
+            uint lastErr = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             foreach (string path in _consumerPathToHandleAndInstanceMap.Keys)
             {
@@ -1192,14 +1191,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 Debug.Assert(hCounter != IntPtr.Zero);
 
                 res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     // Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
                 }
 
                 PDH_RAW_COUNTER rawValue;
                 res = PdhGetRawCounterValue(hCounter, out counterTypePtr, out rawValue);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
                                            _consumerPathToHandleAndInstanceMap[path].InstanceName,
@@ -1212,7 +1211,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            timeBase,
                                            batchStamp,
                                            (UInt64)batchStamp.ToFileTime(),
-                                           (rawValue.CStatus == 0) ? res : rawValue.CStatus);
+                                           (rawValue.CStatus == PdhResults.PDH_CSTATUS_VALID_DATA) ? res : rawValue.CStatus);
 
                     numInvalidDataSamples++;
                     lastErr = res;
@@ -1229,7 +1228,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                   PdhFormat.PDH_FMT_DOUBLE | PdhFormat.PDH_FMT_NOCAP100,
                                                   out counterTypePtr,
                                                   out fmtValueDouble);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
                                            _consumerPathToHandleAndInstanceMap[path].InstanceName,
@@ -1242,7 +1241,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            timeBase,
                                            dt,
                                            (UInt64)dtFT,
-                                           (fmtValueDouble.CStatus == 0) ? res : rawValue.CStatus);
+                                           (fmtValueDouble.CStatus == PdhResults.PDH_CSTATUS_VALID_DATA) ? res : rawValue.CStatus);
 
                     numInvalidDataSamples++;
                     lastErr = res;
@@ -1275,7 +1274,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 //
                 // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
                 //
-                res = 0;
+                res = PdhResults.PDH_CSTATUS_VALID_DATA;
             }
 
             return res;
@@ -1303,7 +1302,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhExpandWildCardPathH(_hDataSource, path, strPathList, ref pcchPathListLength, PdhWildCardFlag.PDH_REFRESHCOUNTERS);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     ReadPdhMultiString(ref strPathList, pcchPathListLength.ToInt32(), ref expandedPaths);
                 }

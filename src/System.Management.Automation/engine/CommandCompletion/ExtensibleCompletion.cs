@@ -164,7 +164,7 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ArgumentCompletionsAttribute : Attribute
     {
-        private string[] _completions;
+        private readonly string[] _completions;
 
         /// <summary>
         /// Initializes a new instance of the ArgumentCompletionsAttribute class.

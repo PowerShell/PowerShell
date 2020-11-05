@@ -559,14 +559,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Event to notify ps thread that more action is available.
         /// </summary>
-        private ManualResetEventSlim moreActionEvent;
+        private readonly ManualResetEventSlim moreActionEvent;
 
         /// <summary>
         /// The following is the definition of action queue.
         /// The queue holding all actions to be executed in the context of either
         /// ProcessRecord or EndProcessing.
         /// </summary>
-        private ConcurrentQueue<CimBaseAction> actionQueue;
+        private readonly ConcurrentQueue<CimBaseAction> actionQueue;
 
         /// <summary>
         /// Lock object.

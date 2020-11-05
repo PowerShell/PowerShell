@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (propValuePropertyValue is ICollection propertyValueItems)
                     {
-                        sb.Append("{");
+                        sb.Append('{');
                         var length = sb.Length;
 
                         foreach (object item in propertyValueItems)

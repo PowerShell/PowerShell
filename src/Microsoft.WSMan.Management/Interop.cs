@@ -734,19 +734,18 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         string ResourceUri
         {
-            // IDL: HRESULT resourceUri (BSTR value);
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
-            [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-            [DispId(1)]
-            set;
-
             // IDL: HRESULT resourceUri ([out, retval] BSTR* ReturnValue);
-
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
             [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
             [DispId(1)]
             [return: MarshalAs(UnmanagedType.BStr)]
             get;
+
+            // IDL: HRESULT resourceUri (BSTR value);
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
+            [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+            [DispId(1)]
+            set;
         }
 
         /// <summary><para><c>AddSelector</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add selector to resource locator</para></summary>

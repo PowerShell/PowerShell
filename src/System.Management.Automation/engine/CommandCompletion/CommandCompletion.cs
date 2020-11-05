@@ -891,7 +891,7 @@ namespace System.Management.Automation
 
                 // Determine if we need to quote the paths we parse
 
-                lastWord = lastWord ?? string.Empty;
+                lastWord ??= string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);

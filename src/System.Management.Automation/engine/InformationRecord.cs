@@ -29,7 +29,7 @@ namespace System.Management.Automation
 
             this.TimeGenerated = DateTime.Now;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
-            this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
+            this.ManagedThreadId = (uint)Environment.CurrentManagedThreadId;
         }
 
         private InformationRecord() { }

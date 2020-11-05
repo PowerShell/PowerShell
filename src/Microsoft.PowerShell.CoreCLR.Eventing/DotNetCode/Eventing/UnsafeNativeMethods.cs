@@ -121,9 +121,9 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern unsafe uint EventRegister(
                     [In] ref Guid providerId,
-                    [In]EtwEnableCallback enableCallback,
-                    [In]void* callbackContext,
-                    [In][Out]ref long registrationHandle
+                    [In] EtwEnableCallback enableCallback,
+                    [In] void* callbackContext,
+                    [In][Out] ref long registrationHandle
                     );
 
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventUnregister", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
@@ -553,8 +553,8 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern EventLogHandle EvtQuery(
                             EventLogHandle session,
-                            [MarshalAs(UnmanagedType.LPWStr)]string path,
-                            [MarshalAs(UnmanagedType.LPWStr)]string query,
+                            [MarshalAs(UnmanagedType.LPWStr)] string path,
+                            [MarshalAs(UnmanagedType.LPWStr)] string query,
                             int flags);
 
         // SEEK
@@ -566,7 +566,7 @@ namespace System.Diagnostics.Eventing
                             long position,
                             EventLogHandle bookmark,
                             int timeout,
-                            [MarshalAs(UnmanagedType.I4)]EvtSeekFlags flags
+                            [MarshalAs(UnmanagedType.I4)] EvtSeekFlags flags
                                         );
 
         [DllImport(WEVTAPI, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
@@ -603,7 +603,7 @@ namespace System.Diagnostics.Eventing
         internal static extern bool EvtGetEventInfo(
                             EventLogHandle eventHandle,
                             // int propertyId
-                            [MarshalAs(UnmanagedType.I4)]EvtEventPropertyId propertyId,
+                            [MarshalAs(UnmanagedType.I4)] EvtEventPropertyId propertyId,
                             int bufferSize,
                             IntPtr bufferPtr,
                             out int bufferUsed
@@ -614,7 +614,7 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetQueryInfo(
                             EventLogHandle queryHandle,
-                            [MarshalAs(UnmanagedType.I4)]EvtQueryPropertyId propertyId,
+                            [MarshalAs(UnmanagedType.I4)] EvtQueryPropertyId propertyId,
                             int bufferSize,
                             IntPtr buffer,
                             ref int bufferRequired
@@ -686,7 +686,7 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetEventMetadataProperty(
                             EventLogHandle eventMetadata,
-                            [MarshalAs(UnmanagedType.I4)]  EvtEventMetadataPropertyId propertyId,
+                            [MarshalAs(UnmanagedType.I4)] EvtEventMetadataPropertyId propertyId,
                             int flags,
                             int eventMetadataPropertyBufferSize,
                             IntPtr eventMetadataPropertyBuffer,
@@ -708,7 +708,7 @@ namespace System.Diagnostics.Eventing
                             EventLogHandle channelEnum,
                             int channelPathBufferSize,
                             // StringBuilder channelPathBuffer,
-                            [Out, MarshalAs(UnmanagedType.LPWStr)]StringBuilder channelPathBuffer,
+                            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder channelPathBuffer,
                             out int channelPathBufferUsed
                                     );
 
@@ -725,7 +725,7 @@ namespace System.Diagnostics.Eventing
         internal static extern bool EvtNextPublisherId(
                             EventLogHandle publisherEnum,
                             int publisherIdBufferSize,
-                            [Out, MarshalAs(UnmanagedType.LPWStr)]StringBuilder publisherIdBuffer,
+                            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder publisherIdBuffer,
                             out int publisherIdBufferUsed
                                     );
 
@@ -733,7 +733,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern EventLogHandle EvtOpenChannelConfig(
                             EventLogHandle session,
-                            [MarshalAs(UnmanagedType.LPWStr)]String channelPath,
+                            [MarshalAs(UnmanagedType.LPWStr)] String channelPath,
                             int flags
                                     );
 
@@ -750,7 +750,7 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtSetChannelConfigProperty(
                             EventLogHandle channelConfig,
-                            [MarshalAs(UnmanagedType.I4)]EvtChannelConfigPropertyId propertyId,
+                            [MarshalAs(UnmanagedType.I4)] EvtChannelConfigPropertyId propertyId,
                             int flags,
                             ref EvtVariant propertyValue
                                     );
@@ -760,7 +760,7 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetChannelConfigProperty(
                             EventLogHandle channelConfig,
-                            [MarshalAs(UnmanagedType.I4)]EvtChannelConfigPropertyId propertyId,
+                            [MarshalAs(UnmanagedType.I4)] EvtChannelConfigPropertyId propertyId,
                             int flags,
                             int propertyValueBufferSize,
                             IntPtr propertyValueBuffer,
@@ -773,7 +773,7 @@ namespace System.Diagnostics.Eventing
         internal static extern EventLogHandle EvtOpenLog(
                             EventLogHandle session,
                             [MarshalAs(UnmanagedType.LPWStr)] string path,
-                            [MarshalAs(UnmanagedType.I4)]PathType flags
+                            [MarshalAs(UnmanagedType.I4)] PathType flags
                                     );
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -781,7 +781,7 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtGetLogInfo(
                             EventLogHandle log,
-                            [MarshalAs(UnmanagedType.I4)]EvtLogPropertyId propertyId,
+                            [MarshalAs(UnmanagedType.I4)] EvtLogPropertyId propertyId,
                             int propertyValueBufferSize,
                             IntPtr propertyValueBuffer,
                             out int propertyValueBufferUsed
@@ -793,9 +793,9 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtExportLog(
                             EventLogHandle session,
-                            [MarshalAs(UnmanagedType.LPWStr)]string channelPath,
-                            [MarshalAs(UnmanagedType.LPWStr)]string query,
-                            [MarshalAs(UnmanagedType.LPWStr)]string targetFilePath,
+                            [MarshalAs(UnmanagedType.LPWStr)] string channelPath,
+                            [MarshalAs(UnmanagedType.LPWStr)] string query,
+                            [MarshalAs(UnmanagedType.LPWStr)] string targetFilePath,
                             int flags
                                         );
 
@@ -804,7 +804,7 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtArchiveExportedLog(
                             EventLogHandle session,
-                            [MarshalAs(UnmanagedType.LPWStr)]string logFilePath,
+                            [MarshalAs(UnmanagedType.LPWStr)] string logFilePath,
                             int locale,
                             int flags
                                         );
@@ -814,8 +814,8 @@ namespace System.Diagnostics.Eventing
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool EvtClearLog(
                             EventLogHandle session,
-                            [MarshalAs(UnmanagedType.LPWStr)]string channelPath,
-                            [MarshalAs(UnmanagedType.LPWStr)]string targetFilePath,
+                            [MarshalAs(UnmanagedType.LPWStr)] string channelPath,
+                            [MarshalAs(UnmanagedType.LPWStr)] string targetFilePath,
                             int flags
                                         );
 
@@ -826,7 +826,7 @@ namespace System.Diagnostics.Eventing
                             Int32 valuePathsCount,
                             [MarshalAs(UnmanagedType.LPArray,ArraySubType = UnmanagedType.LPWStr)]
                                 string[] valuePaths,
-                            [MarshalAs(UnmanagedType.I4)]EvtRenderContextFlags flags
+                            [MarshalAs(UnmanagedType.I4)] EvtRenderContextFlags flags
                                     );
 
         [DllImport(WEVTAPI, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
@@ -837,7 +837,7 @@ namespace System.Diagnostics.Eventing
                             EventLogHandle eventHandle,
                             EvtRenderFlags flags,
                             int buffSize,
-                            [Out, MarshalAs(UnmanagedType.LPWStr)]StringBuilder buffer,
+                            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder buffer,
                             out int buffUsed,
                             out int propCount
                                         );
@@ -877,9 +877,9 @@ namespace System.Diagnostics.Eventing
                              uint messageId,
                              int valueCount,
                              EvtStringVariant[] values,
-                             [MarshalAs(UnmanagedType.I4)]EvtFormatMessageFlags flags,
+                             [MarshalAs(UnmanagedType.I4)] EvtFormatMessageFlags flags,
                              int bufferSize,
-                             [Out, MarshalAs(UnmanagedType.LPWStr)]StringBuilder buffer,
+                             [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder buffer,
                              out int bufferUsed
                                         );
 
@@ -892,7 +892,7 @@ namespace System.Diagnostics.Eventing
                              uint messageId,
                              int valueCount,
                              IntPtr values,
-                             [MarshalAs(UnmanagedType.I4)]EvtFormatMessageFlags flags,
+                             [MarshalAs(UnmanagedType.I4)] EvtFormatMessageFlags flags,
                              int bufferSize,
                              IntPtr buffer,
                              out int bufferUsed
@@ -902,7 +902,7 @@ namespace System.Diagnostics.Eventing
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         internal static extern EventLogHandle EvtOpenSession(
-                            [MarshalAs(UnmanagedType.I4)]EvtLoginClass loginClass,
+                            [MarshalAs(UnmanagedType.I4)] EvtLoginClass loginClass,
                             ref EvtRpcLogin login,
                             int timeout,
                             int flags

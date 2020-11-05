@@ -261,7 +261,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Parameter names list.
         /// </summary>
-        private List<string> parameterNamesList = new List<string>();
+        private readonly List<string> parameterNamesList = new List<string>();
 
         /// <summary>
         /// <para>
@@ -275,7 +275,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Parameter names list before begin process.
         /// </summary>
-        private List<string> parameterNamesListAtBeginProcess = new List<string>();
+        private readonly List<string> parameterNamesListAtBeginProcess = new List<string>();
 
         /// <summary>
         /// <para>
@@ -675,7 +675,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Parameter binder used to resolve parameter set name.
         /// </summary>
-        private ParameterBinder parameterBinder;
+        private readonly ParameterBinder parameterBinder;
 
         /// <summary>
         /// <para>
@@ -727,6 +727,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal CimAsyncOperation AsyncOperation
         {
+            get
+            {
+                return this.operation;
+            }
+
             set
             {
                 lock (this.myLock)
@@ -734,11 +739,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     Debug.Assert(this.operation == null, "Caller should verify that operation is null");
                     this.operation = value;
                 }
-            }
-
-            get
-            {
-                return this.operation;
             }
         }
 
@@ -949,7 +949,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 if (propList.Length > 0)
                 {
-                    propList.Append(",");
+                    propList.Append(',');
                 }
 
                 propList.Append(property);

@@ -283,12 +283,12 @@ namespace System.Management.Automation
 
         internal bool MatchesOptions(MshMemberMatchOptions options)
         {
-            if (this.IsHidden && (0 == (options & MshMemberMatchOptions.IncludeHidden)))
+            if (this.IsHidden && ((options & MshMemberMatchOptions.IncludeHidden) == 0))
             {
                 return false;
             }
 
-            if (!this.ShouldSerialize && (0 != (options & MshMemberMatchOptions.OnlySerializable)))
+            if (!this.ShouldSerialize && ((options & MshMemberMatchOptions.OnlySerializable) != 0))
             {
                 return false;
             }
@@ -356,9 +356,9 @@ namespace System.Management.Automation
             returnValue.Append(" = ");
             if (ConversionType != null)
             {
-                returnValue.Append("(");
+                returnValue.Append('(');
                 returnValue.Append(ConversionType);
-                returnValue.Append(")");
+                returnValue.Append(')');
             }
 
             returnValue.Append(ReferencedMemberName);
@@ -616,24 +616,24 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
-            returnValue.Append("{");
+            returnValue.Append('{');
             if (this.IsGettable)
             {
                 returnValue.Append("get=");
                 returnValue.Append(GetterCodeReference.Name);
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(SetterCodeReference.Name);
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -1274,9 +1274,9 @@ namespace System.Management.Automation
             StringBuilder returnValue = new StringBuilder();
 
             returnValue.Append(GetDisplayTypeNameOfValue(this.Value));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
-            returnValue.Append("=");
+            returnValue.Append('=');
             returnValue.Append(this.noteValue == null ? "null" : this.noteValue.ToString());
             return returnValue.ToString();
         }
@@ -1421,9 +1421,9 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(GetDisplayTypeNameOfValue(_variable.Value));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(_variable.Name);
-            returnValue.Append("=");
+            returnValue.Append('=');
             returnValue.Append(_variable.Value ?? "null");
             return returnValue.ToString();
         }
@@ -1541,24 +1541,24 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
             returnValue.Append(" {");
             if (this.IsGettable)
             {
                 returnValue.Append("get=");
                 returnValue.Append(this.GetterScript.ToString());
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(this.SetterScript.ToString());
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -2283,7 +2283,7 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
             returnValue.Append("();");
             return returnValue.ToString();
@@ -3038,7 +3038,7 @@ namespace System.Management.Automation
             }
 
             returnValue.Insert(0, this.Name);
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -3441,7 +3441,7 @@ namespace System.Management.Automation
                 returnValue.Remove(returnValue.Length - 2, 2);
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -3554,7 +3554,7 @@ namespace System.Management.Automation
             StringBuilder eventDefinition = new StringBuilder();
             eventDefinition.Append(this.baseEvent.ToString());
 
-            eventDefinition.Append("(");
+            eventDefinition.Append('(');
 
             int loopCounter = 0;
             foreach (ParameterInfo parameter in baseEvent.EventHandlerType.GetMethod("Invoke").GetParameters())
@@ -3567,7 +3567,7 @@ namespace System.Management.Automation
                 loopCounter++;
             }
 
-            eventDefinition.Append(")");
+            eventDefinition.Append(')');
 
             return eventDefinition.ToString();
         }

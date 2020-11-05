@@ -4,7 +4,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 using System.Text;
 
 namespace System.Management.Automation
@@ -152,8 +151,8 @@ namespace System.Management.Automation
         #endregion Properties
 
         #region Private
-        private string _errorId = "CommandNotFoundException";
-        private ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
+        private readonly string _errorId = "CommandNotFoundException";
+        private readonly ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
 
         private static string BuildMessage(
             string commandName,
@@ -414,7 +413,7 @@ namespace System.Management.Automation
             get { return _commandName; }
         }
 
-        private string _commandName = string.Empty;
+        private readonly string _commandName = string.Empty;
 
         /// <summary>
         /// Gets the PSVersion that the script requires.
@@ -424,7 +423,7 @@ namespace System.Management.Automation
             get { return _requiresPSVersion; }
         }
 
-        private Version _requiresPSVersion;
+        private readonly Version _requiresPSVersion;
 
         /// <summary>
         /// Gets the missing snap-ins that the script requires.
@@ -434,7 +433,7 @@ namespace System.Management.Automation
             get { return _missingPSSnapIns; }
         }
 
-        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
+        private readonly ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
 
         /// <summary>
         /// Gets or sets the ID of the shell.
@@ -444,7 +443,7 @@ namespace System.Management.Automation
             get { return _requiresShellId; }
         }
 
-        private string _requiresShellId;
+        private readonly string _requiresShellId;
 
         /// <summary>
         /// Gets or sets the path to the incompatible shell.
@@ -454,7 +453,7 @@ namespace System.Management.Automation
             get { return _requiresShellPath; }
         }
 
-        private string _requiresShellPath;
+        private readonly string _requiresShellPath;
 
         #endregion Properties
 

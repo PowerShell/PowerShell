@@ -1113,8 +1113,8 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private PipelineProcessor _pipeline;
-        private ExecutionContext _context;
+        private readonly PipelineProcessor _pipeline;
+        private readonly ExecutionContext _context;
         private bool _expectInput;
 
         /// <summary>

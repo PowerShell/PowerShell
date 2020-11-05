@@ -981,7 +981,7 @@ namespace System.Management.Automation
             {
                 if (!IsPSTypeName(m))
                 {
-                    builder.Append(m.Name).Append(":");
+                    builder.Append(m.Name).Append(':');
                 }
             }
 

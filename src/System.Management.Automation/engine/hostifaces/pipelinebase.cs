@@ -491,7 +491,9 @@ namespace System.Management.Automation.Runspaces
                     throw e;
                 }
 
-                if (syncCall && !(InputStream is PSDataCollectionStream<PSObject> || InputStream is PSDataCollectionStream<object>))
+                if (syncCall
+                    && InputStream is not PSDataCollectionStream<PSObject>
+                    && InputStream is not PSDataCollectionStream<object>)
                 {
                     // Method is called from synchronous invoke.
                     if (input != null)

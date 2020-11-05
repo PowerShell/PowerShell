@@ -347,14 +347,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         public override int ThrottleLimit
         {
-            set
-            {
-                base.ThrottleLimit = value;
-            }
-
             get
             {
                 return base.ThrottleLimit;
+            }
+
+            set
+            {
+                base.ThrottleLimit = value;
             }
         }
 

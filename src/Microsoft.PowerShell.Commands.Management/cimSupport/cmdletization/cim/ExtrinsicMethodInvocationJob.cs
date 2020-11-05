@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             Dbg.Assert(methodResult != null, "Caller should verify methodResult != null");
             Dbg.Assert(methodParameter != null, "Caller should verify methodParameter != null");
-            Dbg.Assert(0 != (methodParameter.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)), "Caller should verify that this is an out parameter");
+            Dbg.Assert((methodParameter.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)) != 0, "Caller should verify that this is an out parameter");
             Dbg.Assert(cmdletOutput != null, "Caller should verify cmdletOutput != null");
 
             Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");

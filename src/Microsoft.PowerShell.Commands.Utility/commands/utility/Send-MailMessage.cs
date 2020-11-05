@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private variables and methods
 
         // Instantiate a new instance of MailMessage
-        private MailMessage _mMailMessage = new MailMessage();
+        private readonly MailMessage _mMailMessage = new MailMessage();
 
         private SmtpClient _mSmtpClient = null;
 

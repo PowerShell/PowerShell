@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((Credential != null || null != Token) && Authentication != WebAuthenticationType.None)
+            else if ((Credential != null || Token != null) && Authentication != WebAuthenticationType.None)
             {
                 ProcessAuthentication();
             }
@@ -739,7 +739,7 @@ namespace Microsoft.PowerShell.Commands
                 UriBuilder uriBuilder = new UriBuilder(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
                 {
-                    uriBuilder.Query = uriBuilder.Query.Substring(1) + "&" + FormatDictionary(bodyAsDictionary);
+                    uriBuilder.Query = string.Concat(uriBuilder.Query.AsSpan().Slice(1), "&", FormatDictionary(bodyAsDictionary));
                 }
                 else
                 {
@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (0 < bodyBuilder.Length)
                 {
-                    bodyBuilder.Append("&");
+                    bodyBuilder.Append('&');
                 }
 
                 object value = content[key];
@@ -1897,7 +1897,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (enumerate == false || fieldValue is string || !(fieldValue is IEnumerable))
+            if (enumerate == false || fieldValue is string || fieldValue is not IEnumerable)
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;
