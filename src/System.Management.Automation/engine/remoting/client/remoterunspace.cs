@@ -2491,8 +2491,8 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsRemoteDebug
         {
-            private set;
             get;
+            private set;
         }
 
         /// <summary>

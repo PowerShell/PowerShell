@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// This parameter specifies that objects should be converted to

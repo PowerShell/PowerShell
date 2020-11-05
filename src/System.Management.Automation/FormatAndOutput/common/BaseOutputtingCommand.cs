@@ -596,9 +596,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal LineOutput LineOutput
         {
-            set { _lo = value; }
-
             get { return _lo; }
+
+            set { _lo = value; }
         }
 
         private ShapeInfo ShapeInfoOnFormatContext

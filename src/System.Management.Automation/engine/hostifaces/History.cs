@@ -1338,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        public PSObject[] InputObject { set; get; }
+        public PSObject[] InputObject { get; set; }
 
         private bool _passthru;
         /// <summary>

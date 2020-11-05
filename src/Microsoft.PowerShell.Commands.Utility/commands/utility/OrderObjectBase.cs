@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Gets or Sets the Properties that would be used for Grouping, Sorting and Comparison.

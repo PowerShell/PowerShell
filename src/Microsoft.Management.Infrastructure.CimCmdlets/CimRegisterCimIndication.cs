@@ -309,8 +309,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"></param>
         internal Cmdlet Cmdlet
         {
-            set;
             get;
+            set;
         }
 
         /// <summary>
@@ -318,8 +318,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal string TargetComputerName
         {
-            set;
             get;
+            set;
         }
 
         #endregion

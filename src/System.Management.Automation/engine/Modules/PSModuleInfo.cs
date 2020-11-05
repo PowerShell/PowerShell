@@ -28,7 +28,7 @@ namespace System.Management.Automation
             new ReadOnlyDictionary<string, TypeDefinitionAst>(new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase));
 
         // This dictionary doesn't include ExportedTypes from nested modules.
-        private ReadOnlyDictionary<string, TypeDefinitionAst> _exportedTypeDefinitionsNoNested { set; get; }
+        private ReadOnlyDictionary<string, TypeDefinitionAst> _exportedTypeDefinitionsNoNested { get; set; }
 
         private static readonly HashSet<string> s_scriptModuleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {

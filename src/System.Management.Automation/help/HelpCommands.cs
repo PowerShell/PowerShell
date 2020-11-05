@@ -185,6 +185,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Online", Mandatory = true)]
         public SwitchParameter Online
         {
+            get
+            {
+                return _showOnlineHelp;
+            }
+
             set
             {
                 _showOnlineHelp = value;
@@ -192,11 +197,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     VerifyParameterForbiddenInRemoteRunspace(this, "Online");
                 }
-            }
-
-            get
-            {
-                return _showOnlineHelp;
             }
         }
 

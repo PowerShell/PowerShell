@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
-        internal string BasePrefix { set; get; } = string.Empty;
+        internal string BasePrefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Flags -force operations.
