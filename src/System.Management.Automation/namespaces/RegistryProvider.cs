@@ -3062,7 +3062,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (
                         expandAll ||
-                        ((Context.SuppressWildcardExpansion == false) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
+                        ((!Context.SuppressWildcardExpansion) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
                        ((Context.SuppressWildcardExpansion) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (string.IsNullOrEmpty(valueNameToMatch))

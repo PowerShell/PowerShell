@@ -1205,7 +1205,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Dbg.Assert(commandMetadata.CommandType == null, "CommandType shouldn't get rehydrated");
-            Dbg.Assert(commandMetadata.ImplementsDynamicParameters == false, "Proxies shouldn't do dynamic parameters");
+            Dbg.Assert(!commandMetadata.ImplementsDynamicParameters, "Proxies shouldn't do dynamic parameters");
 
             if (commandMetadata.Parameters != null)
             {

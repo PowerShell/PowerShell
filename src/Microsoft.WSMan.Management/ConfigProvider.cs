@@ -193,7 +193,7 @@ namespace Microsoft.WSMan.Management
                 return null;
             }
 
-            if (string.IsNullOrEmpty(drive.Root) == false)
+            if (!string.IsNullOrEmpty(drive.Root))
             {
                 AssertError(helper.GetResourceMsgFromResourcetext("NewDriveRootDoesNotExist"), false);
                 return null;
@@ -1237,7 +1237,7 @@ namespace Microsoft.WSMan.Management
                             pluginConfiguration.PutConfigurationOnServer(resourceUri);
 
                             // Show Win RM service restart warning only when the changed setting is not picked up dynamically
-                            if (settingPickedUpDynamically == false)
+                            if (!settingPickedUpDynamically)
                             {
                                 if (IsPathLocalMachine(host))
                                 {
@@ -4089,7 +4089,7 @@ namespace Microsoft.WSMan.Management
                 CurrentNode = RemainingPath.Substring(0, pos);
             }
 
-            if (objcache.Contains(CurrentNode) == false)
+            if (!objcache.Contains(CurrentNode))
             {
                 return false;
             }

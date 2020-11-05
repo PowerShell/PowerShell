@@ -1897,7 +1897,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (enumerate == false || fieldValue is string || fieldValue is not IEnumerable)
+            if (!enumerate || fieldValue is string || fieldValue is not IEnumerable)
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;
