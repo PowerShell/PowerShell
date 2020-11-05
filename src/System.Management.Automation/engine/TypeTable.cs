@@ -4045,6 +4045,8 @@ namespace System.Management.Automation.Runspaces
                         continue;
                     }
 
+                    // There was a currentMember with the same name as typeMember
+
                     // if we are not in a memberset inherit members situation we just replace
                     // the current member with the new more specific member
                     if (currentMember is not PSMemberSet currentMemberAsMemberSet || typeMember is not PSMemberSet typeMemberAsMemberSet ||

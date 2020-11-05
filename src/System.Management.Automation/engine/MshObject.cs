@@ -1348,9 +1348,6 @@ namespace System.Management.Automation
                         }
                     }
                 }
-
-                #endregion recurse
-                #region object ToString
                 #endregion recurse
 
                 #region object ToString

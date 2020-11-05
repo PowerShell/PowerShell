@@ -5101,6 +5101,9 @@ namespace System.Management.Automation
                 }
                 else
                 {
+                    // Handle special DSC collection variables to complete the extension methods 'Where' and 'ForEach'
+                    // e.g. Configuration foo { node $AllNodes.<tab> --> $AllNodes.Where(
+
                     bool shouldAddExtensionMethods = false;
 
                     // We complete against extension methods 'Where' and 'ForEach' for the following DSC variables
