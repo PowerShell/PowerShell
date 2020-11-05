@@ -172,7 +172,7 @@ namespace System.Management.Automation
         /// trace flag.
         /// </summary>
         /// <value>The current state of the IgnoreScriptDebug flag.</value>
-        internal bool IgnoreScriptDebug { set; get; } = true;
+        internal bool IgnoreScriptDebug { get; set; } = true;
 
         /// <summary>
         /// Gets the automation engine instance.
@@ -772,11 +772,11 @@ namespace System.Management.Automation
 
         internal class SavedContextData
         {
-            private bool _stepScript;
-            private bool _ignoreScriptDebug;
-            private int _PSDebug;
+            private readonly bool _stepScript;
+            private readonly bool _ignoreScriptDebug;
+            private readonly int _PSDebug;
 
-            private Pipe _shellFunctionErrorOutputPipe;
+            private readonly Pipe _shellFunctionErrorOutputPipe;
 
             public SavedContextData(ExecutionContext context)
             {
@@ -875,7 +875,7 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord == null && !(obj is Exception))
+            if (objAsErrorRecord == null && obj is not Exception)
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
-        private static object lockObject = new object();
+        private static readonly object lockObject = new object();
 
 #if !CORECLR // System.AppDomain is not in CoreCLR
         private static bool _assemblyEventHandlerSet = false;

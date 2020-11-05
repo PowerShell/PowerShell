@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     double r = Generator.NextDouble();
                     randomNumber = minValue + r * diff;
-                    diff = diff * r;
+                    diff *= r;
                 }
                 while (randomNumber >= maxValue);
             }

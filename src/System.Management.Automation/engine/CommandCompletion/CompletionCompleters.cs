@@ -480,7 +480,7 @@ namespace System.Management.Automation
         #endregion Module Names
 
         #region Command Parameters
-        private static string[] s_parameterNamesOfImportDSCResource = { "Name", "ModuleName", "ModuleVersion" };
+        private static readonly string[] s_parameterNamesOfImportDSCResource = { "Name", "ModuleName", "ModuleVersion" };
 
         internal static List<CompletionResult> CompleteCommandParameter(CompletionContext context)
         {
@@ -2570,7 +2570,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceAndClassNameToAssociationResultClassNames =
+        private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceAndClassNameToAssociationResultClassNames =
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimAssociationResultClassName_GetResultClassNames(
@@ -2705,7 +2705,7 @@ namespace System.Management.Automation
             result.AddRange(localResults.OrderBy(x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
         }
 
-        private static ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
+        private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimClassName_GetClassNames(string targetNamespace)
@@ -3630,7 +3630,7 @@ namespace System.Management.Automation
 
             RemoveLastNullCompletionResult(result);
 
-            context.WordToComplete = context.WordToComplete ?? string.Empty;
+            context.WordToComplete ??= string.Empty;
             var clearLiteralPath = false;
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
@@ -3736,7 +3736,7 @@ namespace System.Management.Automation
                 // The parameter Destination for Move-Item and Copy-Item takes literal path
                 RemoveLastNullCompletionResult(result);
 
-                context.WordToComplete = context.WordToComplete ?? string.Empty;
+                context.WordToComplete ??= string.Empty;
                 var clearLiteralPath = TurnOnLiteralPathOption(context);
 
                 try
@@ -3767,7 +3767,7 @@ namespace System.Management.Automation
 
             RemoveLastNullCompletionResult(result);
 
-            context.WordToComplete = context.WordToComplete ?? string.Empty;
+            context.WordToComplete ??= string.Empty;
             var clearLiteralPath = false;
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
@@ -4259,7 +4259,7 @@ namespace System.Management.Automation
 
                             if (leaf != null)
                             {
-                                leaf = leaf + "*";
+                                leaf += "*";
                                 var parentPath = Path.GetDirectoryName(providerPath);
 
                                 // ProviderPath should be absolute path for FileSystem entries
@@ -4507,7 +4507,7 @@ namespace System.Management.Automation
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
 
-        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
@@ -5050,7 +5050,7 @@ namespace System.Management.Automation
                     memberName = memberNameAst.Value + "*";
                 }
             }
-            else if (!(lastAst is ErrorExpressionAst) && targetExpr == null)
+            else if (lastAst is not ErrorExpressionAst && targetExpr == null)
             {
                 // I don't think we can complete anything interesting
                 return results;
@@ -6567,7 +6567,7 @@ namespace System.Management.Automation
             object value;
             if (SafeExprEvaluator.TrySafeEval(targetExpr, context.ExecutionContext, out value) && value != null)
             {
-                if (targetExpr is ArrayExpressionAst && !(value is object[]))
+                if (targetExpr is ArrayExpressionAst && value is not object[])
                 {
                     // When the array contains only one element, the evaluation result would be that element. We wrap it into an array
                     value = new[] { value };

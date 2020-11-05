@@ -190,17 +190,20 @@ namespace System.Management.Automation
             s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "FullyQualifiedName"), (o, v) => ((GetModuleCommand)o).FullyQualifiedName = (ModuleSpecification[])v);
 
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorAction"),
-                (o, v) => {
+                (o, v) =>
+                {
                     v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
                     ((CommonParameters)o).ErrorAction = (ActionPreference)v;
                 });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningAction"),
-                (o, v) => {
+                (o, v) =>
+                {
                     v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
                     ((CommonParameters)o).WarningAction = (ActionPreference)v;
                 });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationAction"),
-                (o, v) => {
+                (o, v) =>
+                {
                     v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
                     ((CommonParameters)o).InformationAction = (ActionPreference)v;
                 });

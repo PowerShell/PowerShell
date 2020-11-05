@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Default depth of serialization.
         /// </summary>
-        private static int s_mshDefaultSerializationDepth = 1;
+        private static readonly int s_mshDefaultSerializationDepth = 1;
     }
 
     /// <summary>
@@ -322,7 +322,7 @@ namespace System.Management.Automation
         /// is used by PriorityReceivedDataCollection (remoting) to process incoming data from the
         /// remote end. A value of Null means that the max memory is unlimited.
         /// </summary>
-        internal int? MaximumAllowedMemory { set; get; }
+        internal int? MaximumAllowedMemory { get; set; }
 
         /// <summary>
         /// Logs that memory used by deserialized objects is not related to the size of input xml.
@@ -346,7 +346,7 @@ namespace System.Management.Automation
                     throw new XmlException(message);
                 }
 
-                _totalDataProcessedSoFar = _totalDataProcessedSoFar + amountOfExtraMemory;
+                _totalDataProcessedSoFar += amountOfExtraMemory;
             }
         }
 
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
             _writer.WriteEndElement();
         }
 
-        private static Lazy<CimSerializer> s_cimSerializer = new Lazy<CimSerializer>(CimSerializer.Create);
+        private static readonly Lazy<CimSerializer> s_cimSerializer = new Lazy<CimSerializer>(CimSerializer.Create);
 
         private void PrepareCimInstanceForSerialization(PSObject psObject, CimInstance cimInstance)
         {
@@ -2309,7 +2309,7 @@ namespace System.Management.Automation
                 return 1;
             }
 
-            if (0 != (_context.options & SerializationOptions.UseDepthFromTypes))
+            if ((_context.options & SerializationOptions.UseDepthFromTypes) != 0)
             {
                 // get the depth from the PSObject
                 // NOTE: we assume that the depth out of the PSObject is > 0
@@ -2329,7 +2329,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (0 != (_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal))
+            if ((_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal) != 0)
             {
                 if ((pso.IsDeserialized) && (depth <= 0))
                 {
@@ -3004,7 +3004,7 @@ namespace System.Management.Automation
 
         #region Known CIMTypes
 
-        private static Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
+        private static readonly Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
             () =>
                 new HashSet<Type>
                 {
@@ -3296,7 +3296,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
+        private static readonly Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
 
         private CimClass RehydrateCimClass(PSPropertyInfo classMetadataProperty)
         {
@@ -4740,7 +4740,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(!string.IsNullOrEmpty(tag), "Caller should validate the parameter");
             return (_reader.LocalName == tag) &&
-                ((0 != (_context.options & DeserializationOptions.NoNamespace)) ||
+                (((_context.options & DeserializationOptions.NoNamespace) != 0) ||
                  (_reader.NamespaceURI == SerializationStrings.MonadNamespace));
         }
 

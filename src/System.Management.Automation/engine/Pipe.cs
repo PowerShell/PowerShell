@@ -28,7 +28,7 @@ namespace System.Management.Automation.Internal
     /// </remarks>
     internal class Pipe
     {
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         // If a pipeline object has been added, then
         // write objects to it, stepping one at a time...
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Internal
             _resultCollection = resultCollection;
         }
 
-        private System.Collections.ObjectModel.Collection<PSObject> _resultCollection;
+        private readonly System.Collections.ObjectModel.Collection<PSObject> _resultCollection;
 
         /// <summary>
         /// This pipe writes into another pipeline processor allowing
@@ -380,7 +380,7 @@ namespace System.Management.Automation.Internal
             _enumeratorToProcessIsEmpty = false;
         }
 
-        private IEnumerator _enumeratorToProcess;
+        private readonly IEnumerator _enumeratorToProcess;
         private bool _enumeratorToProcessIsEmpty;
 
         #endregion ctor
@@ -510,7 +510,7 @@ namespace System.Management.Automation.Internal
                 // If our object came from GetEnumerator (and hence is not IEnumerator), then we need to dispose
                 // Otherwise, we don't own the object, so don't dispose.
                 var disposable = ie as IDisposable;
-                if (disposable != null && !(objects is IEnumerator))
+                if (disposable != null && objects is not IEnumerator)
                 {
                     disposable.Dispose();
                 }

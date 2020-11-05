@@ -279,14 +279,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [ValidateNotNull]
         public SwitchParameter PassThru
         {
-            set
-            {
-                this.passThru = value;
-            }
-
             get
             {
                 return this.passThru;
+            }
+
+            set
+            {
+                this.passThru = value;
             }
         }
 

@@ -369,7 +369,7 @@ namespace System.Management.Automation.Language
                 // Nested function isn't really a member of the type so stop looking
                 // Anonymous script blocks are though
                 var functionDefinitionAst = ast as FunctionDefinitionAst;
-                if (functionDefinitionAst != null && !(functionDefinitionAst.Parent is FunctionMemberAst))
+                if (functionDefinitionAst != null && functionDefinitionAst.Parent is not FunctionMemberAst)
                     break;
                 ast = ast.Parent;
             }
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation.Language
             }
 
             // Make sure all statements are pipelines.
-            if (EndBlock.Statements.Any(ast => !(ast is PipelineAst)))
+            if (EndBlock.Statements.Any(ast => ast is not PipelineAst))
             {
                 errorId = "CanOnlyConvertOnePipeline";
                 errorMsg = AutomationExceptions.CanOnlyConvertOnePipeline;
@@ -2375,7 +2375,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class StatementBlockAst : Ast
     {
-        private static ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
+        private static readonly ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
 
         /// <summary>
         /// Construct a statement block.
@@ -4019,7 +4019,7 @@ namespace System.Management.Automation.Language
             {
                 this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(commandsAllowed.ToArray());
                 SetParents(CommandsAllowed);
-                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(ast => !(ast is StringConstantExpressionAst));
+                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(ast => ast is not StringConstantExpressionAst);
             }
             else
             {

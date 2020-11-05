@@ -537,7 +537,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -593,7 +593,7 @@ $result
             {
                 try
                 {
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -663,7 +663,7 @@ $result
 
         #region "Internal Methods"
 
-        internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, CancellationToken token, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet)
+        internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet, CancellationToken token)
         {
             // Check if the WMI service "Winmgmt" is started
             const string wmiServiceQuery = "Select * from " + ComputerWMIHelper.WMI_Class_Service + " Where name = 'Winmgmt'";
@@ -679,7 +679,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, token, cmdlet))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, cmdlet, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -964,7 +964,7 @@ $result
                                         WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                     }
 
-                                    wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, _cancel.Token, Credential, WsmanAuthentication, this);
+                                    wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, Credential, WsmanAuthentication, this, _cancel.Token);
                                 }
                             }
 
@@ -1435,7 +1435,7 @@ $result
             try
             {
                 using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource())
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, cancelTokenSource.Token, this))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, this, cancelTokenSource.Token))
                 {
                     var operationOptions = new CimOperationOptions
                     {
@@ -2110,7 +2110,7 @@ $result
                     return false;
                 }
 
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cancelToken, cmdlet))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cmdlet, cancelToken))
                 {
                     var methodParameters = new CimMethodParametersCollection();
                     int retVal;

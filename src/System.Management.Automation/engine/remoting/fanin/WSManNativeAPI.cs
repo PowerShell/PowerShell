@@ -2357,7 +2357,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManInitialize(int flags,
-          [In, Out]  ref IntPtr wsManAPIHandle);
+          [In, Out] ref IntPtr wsManAPIHandle);
 
         /// <summary>
         /// This API deinitializes the Winrm client stack; all operations will
@@ -2390,11 +2390,11 @@ namespace System.Management.Automation.Remoting.Client
         /// <returns></returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManCreateSession(IntPtr wsManAPIHandle,
-            [MarshalAs(UnmanagedType.LPWStr)]string connection,
+            [MarshalAs(UnmanagedType.LPWStr)] string connection,
             int flags,
             IntPtr authenticationCredentials,
             IntPtr proxyInfo,
-            [In, Out]  ref IntPtr wsManSessionHandle);
+            [In, Out] ref IntPtr wsManSessionHandle);
 
         /// <summary>
         /// Frees memory of session and closes all related operations before returning;
@@ -2480,8 +2480,8 @@ namespace System.Management.Automation.Remoting.Client
 
             // Now get the actual value
             int messageLength;
-            if (0 != WSManGetSessionOptionAsString(wsManAPIHandle,
-                    option, bufferSizeInBytes, msgBufferPtr, out messageLength))
+            if (WSManGetSessionOptionAsString(wsManAPIHandle,
+                    option, bufferSizeInBytes, msgBufferPtr, out messageLength) != 0)
             {
                 return returnval;
             }
@@ -2553,13 +2553,13 @@ namespace System.Management.Automation.Remoting.Client
         [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManCreateShellEx", SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern void WSManCreateShellExInternal(IntPtr wsManSessionHandle,
             int flags,
-            [MarshalAs(UnmanagedType.LPWStr)]string resourceUri,
-            [MarshalAs(UnmanagedType.LPWStr)]string shellId,
+            [MarshalAs(UnmanagedType.LPWStr)] string resourceUri,
+            [MarshalAs(UnmanagedType.LPWStr)] string shellId,
             IntPtr startupInfo,
             IntPtr optionSet,
             IntPtr openContent,
             IntPtr asyncCallback,
-            [In, Out]  ref IntPtr shellOperationHandle);
+            [In, Out] ref IntPtr shellOperationHandle);
 
         /// <summary>
         /// </summary>
@@ -2574,12 +2574,12 @@ namespace System.Management.Automation.Remoting.Client
         [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManConnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManConnectShellEx(IntPtr wsManSessionHandle,
             int flags,
-            [MarshalAs(UnmanagedType.LPWStr)]string resourceUri,
-            [MarshalAs(UnmanagedType.LPWStr)]string shellId,
+            [MarshalAs(UnmanagedType.LPWStr)] string resourceUri,
+            [MarshalAs(UnmanagedType.LPWStr)] string shellId,
             IntPtr optionSet,
             IntPtr connectXml,
             IntPtr asyncCallback,
-            [In, Out]  ref IntPtr shellOperationHandle);
+            [In, Out] ref IntPtr shellOperationHandle);
 
         /// <summary>
         /// </summary>
@@ -2685,7 +2685,7 @@ namespace System.Management.Automation.Remoting.Client
             int flags,
             IntPtr desiredStreamSet,
             IntPtr asyncCallback,
-            [In, Out]  ref IntPtr receiveOperationHandle);
+            [In, Out] ref IntPtr receiveOperationHandle);
 
         /// <summary>
         /// Send data to the remote end.
@@ -2726,7 +2726,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr streamData,
             bool endOfStream,
             IntPtr asyncCallback,
-            [In, Out]  ref IntPtr sendOperationHandle);
+            [In, Out] ref IntPtr sendOperationHandle);
 
         /// <summary>
         /// Closes a shell or a command; if the callback associated with the operation
@@ -2830,8 +2830,8 @@ namespace System.Management.Automation.Remoting.Client
 
             // Now get the actual value
             int messageLength;
-            if (0 != WSManGetErrorMessage(wsManAPIHandle,
-                    0, langCode, errorCode, bufferSizeInBytes, msgBufferPtr, out messageLength))
+            if (WSManGetErrorMessage(wsManAPIHandle,
+                    0, langCode, errorCode, bufferSizeInBytes, msgBufferPtr, out messageLength) != 0)
             {
                 return returnval;
             }

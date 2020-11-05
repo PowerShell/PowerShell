@@ -279,7 +279,7 @@ namespace System.Management.Automation
             return propertyTypeName ?? "System.Object";
         }
 
-        private PSPropertyAdapter _externalAdapter;
+        private readonly PSPropertyAdapter _externalAdapter;
     }
 
     /// <summary>

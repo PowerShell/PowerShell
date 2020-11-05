@@ -4118,7 +4118,7 @@ namespace System.Management.Automation
                     /*argumentAst*/null, parameterValue,
                     false);
 
-                flags = flags & ~ParameterBindingFlags.DelayBindScriptBlock;
+                flags &= ~ParameterBindingFlags.DelayBindScriptBlock;
                 result = BindParameter(_currentParameterSetFlag, param, parameter, flags);
 
                 if (result)

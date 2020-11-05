@@ -737,7 +737,11 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !Marshal.IsComObject(obj))
+            if (obj is not PSObject
+                && obj is not IEnumerable
+                && obj is not IEnumerator
+                && obj is not DataTable
+                && !Marshal.IsComObject(obj))
             {
                 return null;
             }
@@ -885,7 +889,7 @@ namespace System.Management.Automation.Language
                     restrictions)).WriteToDebugLog(this);
             }
 
-            bool needsToDispose = !(PSObject.Base(target.Value) is IEnumerator);
+            bool needsToDispose = PSObject.Base(target.Value) is not IEnumerator;
             return (new DynamicMetaObject(
                 Expression.Call(CachedReflectionInfo.EnumerableOps_WriteEnumerableToPipe,
                                 enumerable.Expression,
@@ -1722,7 +1726,8 @@ namespace System.Management.Automation.Language
                 {
                     var members = attributeType.GetMember(name, MemberTypes.Field | MemberTypes.Property,
                         BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                    if (members.Length != 1 || !(members[0] is PropertyInfo || members[0] is FieldInfo))
+                    if (members.Length != 1
+                        || (members[0] is not PropertyInfo && members[0] is not FieldInfo))
                     {
                         return target.ThrowRuntimeError(args, BindingRestrictions.Empty, "PropertyNotFoundForType",
                                                         ParserStrings.PropertyNotFoundForType, Expression.Constant(name),
@@ -2011,7 +2016,7 @@ namespace System.Management.Automation.Language
 
         private static object ObjectRule(CallSite site, object obj)
         {
-            if (!(obj is ValueType) && !(obj is PSObject)) { return obj; }
+            if (obj is not ValueType && obj is not PSObject) { return obj; }
 
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
@@ -3836,7 +3841,7 @@ namespace System.Management.Automation.Language
             var baseObject = PSObject.Base(argument.Value);
 
             // Source value cannot be null or AutomationNull, and it cannot be a pure PSObject.
-            if (baseObject != null && !(baseObject is PSObject))
+            if (baseObject != null && baseObject is not PSObject)
             {
                 Type fromType = baseObject.GetType();
                 ConversionRank rank = ConversionRank.None;
@@ -4673,7 +4678,9 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (paramLength == 2 && setterParams[0].ParameterType == typeof(int) && !(target.Value is IDictionary))
+            if (paramLength == 2
+                && setterParams[0].ParameterType == typeof(int)
+                && target.Value is not IDictionary)
             {
                 // PowerShell supports negative indexing for some types (specifically, those with a single
                 // int parameter to the indexer, and also have either a Length or Count property.)  For

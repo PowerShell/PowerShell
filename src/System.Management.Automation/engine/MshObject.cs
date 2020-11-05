@@ -2150,7 +2150,7 @@ namespace System.Management.Automation
             private bool MustDeferIDMOP()
             {
                 var baseObject = PSObject.Base(Value);
-                return baseObject is IDynamicMetaObjectProvider && !(baseObject is PSObject);
+                return baseObject is IDynamicMetaObjectProvider && baseObject is not PSObject;
             }
 
             private DynamicMetaObject DeferForIDMOP(DynamicMetaObjectBinder binder, params DynamicMetaObject[] args)

@@ -1326,7 +1326,7 @@ namespace System.Management.Automation.Remoting
 
         private static bool IntegerTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            if (!(obj is int) && !(obj is long))
+            if (obj is not int && obj is not long)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeInteger, key, path));
                 return false;

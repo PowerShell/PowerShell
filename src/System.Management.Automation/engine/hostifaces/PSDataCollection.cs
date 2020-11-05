@@ -121,7 +121,7 @@ namespace System.Management.Automation
     {
         #region Private Data
 
-        private IList<T> _data;
+        private readonly IList<T> _data;
         private ManualResetEvent _readWaitHandle;
         private bool _isOpen = true;
         private bool _releaseOnEnumeration;
@@ -1831,8 +1831,8 @@ namespace System.Management.Automation
 
         private W _currentElement;
         private int _index;
-        private PSDataCollection<W> _collToEnumerate;
-        private bool _neverBlock;
+        private readonly PSDataCollection<W> _collToEnumerate;
+        private readonly bool _neverBlock;
 
         #endregion
 
@@ -1944,7 +1944,7 @@ namespace System.Management.Automation
 
                     // we have reached the end if either the collection is closed
                     // or no powershell instance is bound to this collection.
-                    if ((0 == _collToEnumerate.RefCount) || (!_collToEnumerate.IsOpen))
+                    if ((_collToEnumerate.RefCount == 0) || (!_collToEnumerate.IsOpen))
                     {
                         return false;
                     }

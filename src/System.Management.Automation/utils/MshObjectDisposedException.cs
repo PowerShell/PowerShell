@@ -118,7 +118,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "ObjectDisposed";
+        private readonly string _errorId = "ObjectDisposed";
     }
 }
 

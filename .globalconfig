@@ -28,13 +28,13 @@ dotnet_diagnostic.CA1012.severity = none
 dotnet_diagnostic.CA1014.severity = none
 
 # CA1016: Mark assemblies with assembly version
-dotnet_diagnostic.CA1016.severity = suggestion
+dotnet_diagnostic.CA1016.severity = warning
 
 # CA1017: Mark assemblies with ComVisible
 dotnet_diagnostic.CA1017.severity = none
 
 # CA1018: Mark attributes with AttributeUsageAttribute
-dotnet_diagnostic.CA1018.severity = suggestion
+dotnet_diagnostic.CA1018.severity = warning
 
 # CA1019: Define accessors for attribute arguments
 dotnet_diagnostic.CA1019.severity = none
@@ -73,7 +73,7 @@ dotnet_diagnostic.CA1036.severity = silent
 dotnet_diagnostic.CA1040.severity = none
 
 # CA1041: Provide ObsoleteAttribute message
-dotnet_diagnostic.CA1041.severity = suggestion
+dotnet_diagnostic.CA1041.severity = warning
 
 # CA1043: Use Integral Or String Argument For Indexers
 dotnet_diagnostic.CA1043.severity = none
@@ -88,7 +88,7 @@ dotnet_diagnostic.CA1045.severity = none
 dotnet_diagnostic.CA1046.severity = none
 
 # CA1047: Do not declare protected member in sealed type
-dotnet_diagnostic.CA1047.severity = suggestion
+dotnet_diagnostic.CA1047.severity = warning
 
 # CA1050: Declare types in namespaces
 dotnet_diagnostic.CA1050.severity = warning
@@ -115,7 +115,7 @@ dotnet_diagnostic.CA1058.severity = none
 dotnet_diagnostic.CA1060.severity = none
 
 # CA1061: Do not hide base class methods
-dotnet_diagnostic.CA1061.severity = suggestion
+dotnet_diagnostic.CA1061.severity = warning
 
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
@@ -136,13 +136,13 @@ dotnet_diagnostic.CA1066.severity = none
 dotnet_diagnostic.CA1067.severity = suggestion
 
 # CA1068: CancellationToken parameters must come last
-dotnet_diagnostic.CA1068.severity = suggestion
+dotnet_diagnostic.CA1068.severity = warning
 
 # CA1069: Enums values should not be duplicated
 dotnet_diagnostic.CA1069.severity = suggestion
 
 # CA1070: Do not declare event fields as virtual
-dotnet_diagnostic.CA1070.severity = suggestion
+dotnet_diagnostic.CA1070.severity = warning
 
 # CA1200: Avoid using cref tags with a prefix
 dotnet_diagnostic.CA1200.severity = silent
@@ -274,7 +274,7 @@ dotnet_diagnostic.CA1819.severity = none
 dotnet_diagnostic.CA1820.severity = none
 
 # CA1821: Remove empty Finalizers
-dotnet_diagnostic.CA1821.severity = suggestion
+dotnet_diagnostic.CA1821.severity = warning
 
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = suggestion
@@ -283,19 +283,19 @@ dotnet_diagnostic.CA1822.severity = suggestion
 dotnet_diagnostic.CA1823.severity = none
 
 # CA1824: Mark assemblies with NeutralResourcesLanguageAttribute
-dotnet_diagnostic.CA1824.severity = suggestion
+dotnet_diagnostic.CA1824.severity = warning
 
 # CA1825: Avoid zero-length array allocations
-dotnet_diagnostic.CA1825.severity = suggestion
+dotnet_diagnostic.CA1825.severity = warning
 
 # CA1826: Do not use Enumerable methods on indexable collections
-dotnet_diagnostic.CA1826.severity = suggestion
+dotnet_diagnostic.CA1826.severity = warning
 
 # CA1827: Do not use Count() or LongCount() when Any() can be used
 dotnet_diagnostic.CA1827.severity = suggestion
 
 # CA1828: Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used
-dotnet_diagnostic.CA1828.severity = suggestion
+dotnet_diagnostic.CA1828.severity = warning
 
 # CA1829: Use Length/Count property instead of Count() when available
 dotnet_diagnostic.CA1829.severity = suggestion
@@ -307,10 +307,10 @@ dotnet_diagnostic.CA1830.severity = warning
 dotnet_diagnostic.CA1831.severity = warning
 
 # CA1832: Use AsSpan or AsMemory instead of Range-based indexers when appropriate
-dotnet_diagnostic.CA1832.severity = suggestion
+dotnet_diagnostic.CA1832.severity = warning
 
 # CA1833: Use AsSpan or AsMemory instead of Range-based indexers when appropriate
-dotnet_diagnostic.CA1833.severity = suggestion
+dotnet_diagnostic.CA1833.severity = warning
 
 # CA1834: Consider using 'StringBuilder.Append(char)' when applicable
 dotnet_diagnostic.CA1834.severity = warning
@@ -340,13 +340,13 @@ dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2008.severity = none
 
 # CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-dotnet_diagnostic.CA2009.severity = suggestion
+dotnet_diagnostic.CA2009.severity = warning
 
 # CA2011: Avoid infinite recursion
-dotnet_diagnostic.CA2011.severity = suggestion
+dotnet_diagnostic.CA2011.severity = warning
 
 # CA2012: Use ValueTasks correctly
-dotnet_diagnostic.CA2012.severity = suggestion
+dotnet_diagnostic.CA2012.severity = warning
 
 # CA2013: Do not use ReferenceEquals with value types
 dotnet_diagnostic.CA2013.severity = warning
@@ -886,7 +886,7 @@ dotnet_diagnostic.IDE0052.severity = silent
 dotnet_diagnostic.IDE0053.severity = silent
 
 # IDE0054: UseCompoundAssignment
-dotnet_diagnostic.IDE0054.severity = silent
+dotnet_diagnostic.IDE0054.severity = warning
 
 # IDE0055: Formatting
 dotnet_diagnostic.IDE0055.severity = silent
@@ -916,7 +916,7 @@ dotnet_diagnostic.IDE0062.severity = silent
 dotnet_diagnostic.IDE0063.severity = silent
 
 # IDE0064: MakeStructFieldsWritable
-dotnet_diagnostic.IDE0064.severity = silent
+dotnet_diagnostic.IDE0064.severity = warning
 
 # IDE0065: MoveMisplacedUsingDirectives
 dotnet_diagnostic.IDE0065.severity = silent

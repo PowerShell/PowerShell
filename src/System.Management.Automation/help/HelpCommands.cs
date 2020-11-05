@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        private string _provider = string.Empty;
+        private readonly string _provider = string.Empty;
 
         /// <summary>
         /// Changes the view of HelpObject returned.
@@ -185,6 +185,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Online", Mandatory = true)]
         public SwitchParameter Online
         {
+            get
+            {
+                return _showOnlineHelp;
+            }
+
             set
             {
                 _showOnlineHelp = value;
@@ -192,11 +197,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     VerifyParameterForbiddenInRemoteRunspace(this, "Online");
                 }
-            }
-
-            get
-            {
-                return _showOnlineHelp;
             }
         }
 
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (0 == countOfHelpInfos)
+                    if (countOfHelpInfos == 0)
                     {
                         firstHelpInfoObject = helpInfo;
                     }
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 #endif
                 // Write full help as there is only one help info object
-                if (1 == countOfHelpInfos)
+                if (countOfHelpInfos == 1)
                 {
                     WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, true);
                 }
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
         #region trace
 
         [TraceSourceAttribute("GetHelpCommand ", "GetHelpCommand ")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
 
         #endregion
     }

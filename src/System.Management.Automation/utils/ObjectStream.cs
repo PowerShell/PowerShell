@@ -401,7 +401,7 @@ namespace System.Management.Automation.Internal
         // PERF-2003/08/22-JonN We should probably use Queue instead
         // PERF-2004/06/30-JonN Probably more efficient to use type
         //  Collection<object> as the underlying store
-        private List<object> _objects;
+        private readonly List<object> _objects;
 
         /// <summary>
         /// Is the stream open or closed for writing?
@@ -420,7 +420,7 @@ namespace System.Management.Automation.Internal
         /// the stream is closed for reading.  Instead, use WaitAny on
         /// this handle and also _readClosedHandle.
         /// </remarks>
-        private AutoResetEvent _readHandle;
+        private readonly AutoResetEvent _readHandle;
 
         /// <summary>
         /// Handle returned to callers for blocking on data ready.
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Internal
         /// When this handle is set, the stream is closed for reading,
         /// so all blocked readers should be released.
         /// </summary>
-        private ManualResetEvent _readClosedHandle;
+        private readonly ManualResetEvent _readClosedHandle;
 
         /// <summary>
         /// Write handle - signaled with the number of objects in the
@@ -446,7 +446,7 @@ namespace System.Management.Automation.Internal
         /// the stream is closed for writing.  Instead, use WaitAny on
         /// this handle and also _writeClosedHandle.
         /// </remarks>
-        private AutoResetEvent _writeHandle;
+        private readonly AutoResetEvent _writeHandle;
 
         /// <summary>
         /// Handle returned to callers for blocking until buffer space
@@ -458,7 +458,7 @@ namespace System.Management.Automation.Internal
         /// When this handle is set, the stream is closed for writing,
         /// so all blocked readers should be released.
         /// </summary>
-        private ManualResetEvent _writeClosedHandle;
+        private readonly ManualResetEvent _writeClosedHandle;
         #endregion Synchronization handles
 
         /// <summary>
@@ -493,7 +493,7 @@ namespace System.Management.Automation.Internal
         /// Note that this is not permitted to be more than Int32.MaxValue,
         /// since the underlying list has this limitation.
         /// </summary>
-        private int _capacity = Int32.MaxValue;
+        private readonly int _capacity = Int32.MaxValue;
 
         /// <summary>
         /// This object is used to acquire an exclusive lock on the stream.
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Internal
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private object _monitorObject = new object();
+        private readonly object _monitorObject = new object();
 
         /// <summary>
         /// Indicates if this stream has already been disposed.
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation.Internal
     {
         #region Private Fields
 
-        private PSDataCollection<T> _objects;
+        private readonly PSDataCollection<T> _objects;
         private Guid _psInstanceId;
         private bool _isOpen;
         private PipelineWriter _writer;
@@ -1559,7 +1559,7 @@ namespace System.Management.Automation.Internal
         private PipelineReader<PSObject> _psobjectReader;
         private PipelineReader<object> _objectReaderForPipeline;
         private PipelineReader<PSObject> _psobjectReaderForPipeline;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         private bool _disposed = false;
 
         #endregion

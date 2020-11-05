@@ -32,9 +32,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Name
         {
-            set { _name = value; }
-
             get { return _name; }
+
+            set { _name = value; }
         }
 
         private string[] _name = Array.Empty<string>();
@@ -53,9 +53,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public PSModuleInfo[] ModuleInfo
         {
-            set { _moduleInfo = value; }
-
             get { return _moduleInfo; }
+
+            set { _moduleInfo = value; }
         }
 
         private PSModuleInfo[] _moduleInfo = Array.Empty<PSModuleInfo>();

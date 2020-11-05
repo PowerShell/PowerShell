@@ -627,7 +627,7 @@ namespace System.Management.Automation
                                 completionContext.ReplacementLength = replacementLength = 0;
                                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                             }
-                            else if (lastAst is HashtableAst hashTableAst && !(lastAst.Parent is DynamicKeywordStatementAst) && CheckForPendingAssignment(hashTableAst))
+                            else if (lastAst is HashtableAst hashTableAst && lastAst.Parent is not DynamicKeywordStatementAst && CheckForPendingAssignment(hashTableAst))
                             {
                                 // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
                                 return null;
@@ -1443,7 +1443,7 @@ namespace System.Management.Automation
                                     {
                                         string completionText = isCursorInString ? value : stringQuote + value + stringQuote;
                                         if (hasNewLine)
-                                            completionText = completionText + stringQuote;
+                                            completionText += stringQuote;
                                         result.Add(new CompletionResult(
                                             completionText,
                                             value,
@@ -1494,7 +1494,7 @@ namespace System.Management.Automation
                                             {
                                                 string completionText = isCursorInString ? resource : stringQuote + resource + stringQuote;
                                                 if (hasNewLine)
-                                                    completionText = completionText + stringQuote;
+                                                    completionText += stringQuote;
                                                 result.Add(new CompletionResult(
                                                     completionText,
                                                     resource,
