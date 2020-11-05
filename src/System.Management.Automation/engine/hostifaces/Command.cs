@@ -568,7 +568,7 @@ namespace System.Management.Automation.Runspaces
         /// property is bool, not bool? (from V1), so it should probably
         /// be deprecated, at least for internal use.
         /// </summary>
-        private bool? _useLocalScope;
+        private readonly bool? _useLocalScope;
 
         #endregion Private fields
 

@@ -1250,10 +1250,10 @@ namespace System.Management.Automation.Runspaces
             return _internalCollection.GetEnumerator();
         }
 
-        private Collection<T> _internalCollection;
+        private readonly Collection<T> _internalCollection;
 
         // object to use for locking
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
     }
 
     /// <summary>
@@ -1438,7 +1438,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         // Porting note: moved to Platform so we have one list to maintain
-        private static string[] s_PSCoreFormatFileNames = Platform.FormatFileNames.ToArray();
+        private static readonly string[] s_PSCoreFormatFileNames = Platform.FormatFileNames.ToArray();
 
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
@@ -2118,7 +2118,7 @@ namespace System.Management.Automation.Runspaces
 
         private HashSet<string> _startupScripts = new HashSet<string>();
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local, bool setLocation)
         {
@@ -4100,7 +4100,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// This is the default function to use for tab expansion.
         /// </summary>
-        private static string s_tabExpansionFunctionText = @"
+        private static readonly string s_tabExpansionFunctionText = @"
 <# Options include:
      RelativeFilePaths - [bool]
          Always resolve file paths using Resolve-Path -Relative.
@@ -4774,7 +4774,7 @@ end {
 
         internal static readonly ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
-        private static PSLanguageMode systemLanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+        private static readonly PSLanguageMode systemLanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
 
         internal static readonly SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
@@ -4841,7 +4841,7 @@ end {
             }
         }
 
-        private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
 
         internal static readonly string CoreSnapin = "Microsoft.PowerShell.Core";
         internal static readonly string CoreModule = "Microsoft.PowerShell.Core";
@@ -5492,7 +5492,7 @@ end {
             return Path.GetFileName(assemblyPath).Replace(".ni.dll", ".dll") + StringLiterals.HelpFileExtension;
         }
 
-        private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
     }
 
     // Guid is {15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}

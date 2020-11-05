@@ -377,7 +377,7 @@ namespace System.Management.Automation.Language
                     (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
         }
 
-        private static Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+        private static readonly Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
         {
             {@"Node", new List<string> {@"Node"}},
         };

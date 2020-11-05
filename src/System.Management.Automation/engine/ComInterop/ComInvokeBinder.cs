@@ -23,7 +23,7 @@ namespace System.Management.Automation.ComInterop
         private readonly bool[] _isByRef;
         private readonly Expression _instance;
 
-        private BindingRestrictions _restrictions;
+        private readonly BindingRestrictions _restrictions;
 
         private VarEnumSelector _varEnumSelector;
         private string[] _keywordArgNames;

@@ -772,11 +772,11 @@ namespace System.Management.Automation
 
         internal class SavedContextData
         {
-            private bool _stepScript;
-            private bool _ignoreScriptDebug;
-            private int _PSDebug;
+            private readonly bool _stepScript;
+            private readonly bool _ignoreScriptDebug;
+            private readonly int _PSDebug;
 
-            private Pipe _shellFunctionErrorOutputPipe;
+            private readonly Pipe _shellFunctionErrorOutputPipe;
 
             public SavedContextData(ExecutionContext context)
             {
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
-        private static object lockObject = new object();
+        private static readonly object lockObject = new object();
 
 #if !CORECLR // System.AppDomain is not in CoreCLR
         private static bool _assemblyEventHandlerSet = false;
