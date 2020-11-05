@@ -32,7 +32,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "CmdletProviderContext",
              "The context under which a core command is being run.")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("CmdletProviderContext",
              "The context under which a core command is being run.");
 
@@ -250,7 +250,6 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="contextToCopyFrom"/> is null.
         /// </exception>
-
         internal CmdletProviderContext(
             CmdletProviderContext contextToCopyFrom)
         {
@@ -295,12 +294,12 @@ namespace System.Management.Automation
         /// If the constructor that takes a context to copy is
         /// called, this will be set to the context being copied.
         /// </summary>
-        private CmdletProviderContext _copiedContext;
+        private readonly CmdletProviderContext _copiedContext;
 
         /// <summary>
         /// The credentials under which the operation should run.
         /// </summary>
-        private PSCredential _credentials = PSCredential.Empty;
+        private readonly PSCredential _credentials = PSCredential.Empty;
 
         /// <summary>
         /// The force parameter gives guidance to providers on how vigorously they
@@ -313,7 +312,7 @@ namespace System.Management.Automation
         /// made visible to anyone and should only be set through the
         /// constructor.
         /// </summary>
-        private Cmdlet _command;
+        private readonly Cmdlet _command;
 
         /// <summary>
         /// This makes the origin of the provider request visible to the internals.
@@ -328,7 +327,7 @@ namespace System.Management.Automation
         /// If it is false, the objects will be accumulated until the
         /// GetErrorObjects method is called.
         /// </summary>
-        private bool _streamErrors;
+        private readonly bool _streamErrors;
 
         /// <summary>
         /// A collection in which objects that are written using the WriteObject(s)

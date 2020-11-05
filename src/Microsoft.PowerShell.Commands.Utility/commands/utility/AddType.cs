@@ -551,7 +551,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType), "CannotDefineNewType", ErrorCategory.PermissionDenied, null));
+                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
+                        nameof(AddTypeStrings.CannotDefineNewType),
+                        ErrorCategory.PermissionDenied,
+                        targetObject: null));
+            }
+
+            // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core
+            if (OutputType != OutputAssemblyType.Library)
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new PSNotSupportedException(AddTypeStrings.AssemblyTypeNotSupported),
+                        nameof(AddTypeStrings.AssemblyTypeNotSupported),
+                        ErrorCategory.NotImplemented,
+                        targetObject: OutputType));
             }
         }
 
@@ -890,12 +904,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 case OutputAssemblyType.Library:
                     return OutputKind.DynamicallyLinkedLibrary;
-                case OutputAssemblyType.ConsoleApplication:
-                    return OutputKind.ConsoleApplication;
-                case OutputAssemblyType.WindowsApplication:
-                    return OutputKind.WindowsApplication;
+
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(outputType));
+                    throw PSTraceSource.NewNotSupportedException();
             }
         }
 
@@ -1078,7 +1089,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(errorRecord);
             }
 
-            if (visitor.DuplicateSymbols.Count > 0)
+            if (!visitor.DuplicateSymbols.IsEmpty)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new InvalidOperationException(AddTypeStrings.CompilerErrors),

@@ -68,37 +68,37 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <remarks>
         /// True if the parameter is dynamic, or false otherwise.
         /// </remarks>
-        public bool IsMandatory { get; private set; }
+        public bool IsMandatory { get; }
 
         /// <summary>
         /// Gets whether the parameter can take values from the incoming pipeline object.
         /// </summary>
-        public bool ValueFromPipeline { get; private set; }
+        public bool ValueFromPipeline { get; }
 
         /// <summary>
         /// Gets the type of the parameter.
         /// </summary>
-        public ShowCommandParameterType ParameterType { get; private set; }
+        public ShowCommandParameterType ParameterType { get; }
 
         /// <summary>
         /// The possible values of this parameter.
         /// </summary>
-        public IList<string> ValidParamSetValues { get; private set; }
+        public IList<string> ValidParamSetValues { get; }
 
         /// <summary>
         /// Gets whether the parameter has a parameter set.
         /// </summary>
-        public bool HasParameterSet { get; private set; }
+        public bool HasParameterSet { get; }
 
         /// <summary>
         /// Gets the position in which the parameter can be specified on the command line
         /// if not named. If the returned value is int.MinValue then the parameter must be named.
         /// </summary>
-        public int Position { get; private set; }
+        public int Position { get; }
     }
 }

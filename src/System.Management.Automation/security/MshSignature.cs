@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography.X509Certificates;
 
-using Dbg = System.Management.Automation;
 using DWORD = System.UInt32;
 
 namespace System.Management.Automation

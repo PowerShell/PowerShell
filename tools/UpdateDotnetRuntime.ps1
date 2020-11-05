@@ -7,7 +7,22 @@ param (
     [string]$SDKVersionOverride,
 
     [Parameter()]
-    [switch]$UpdateMSIPackaging
+    [switch]$UseNuGetOrg,
+
+    [Parameter()]
+    [switch]$UpdateMSIPackaging,
+
+    [Parameter()]
+    [string]$RuntimeSourceFeed,
+
+    [Parameter()]
+    [string]$RuntimeSourceFeedKey,
+
+    [Parameter()]
+    [switch]$InteractiveAuth,
+
+    [Parameter()]
+    [switch]$UseRTMFeed
 )
 
 <#
@@ -82,14 +97,21 @@ function Update-PackageVersion {
 
     $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
+    $source = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseRTMFeed) { 'dotnet5-rtm' } else { 'dotnet5' }
     $packages.GetEnumerator() | ForEach-Object {
-        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source 'dotnet5'
+        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
 
         foreach ($v in $_.Value) {
             $version = $v.Version
 
             foreach ($p in $pkgs) {
-                if ($p.Version -like "$versionPattern*") {
+                if ($UseRTMFeed -and $p.Version -eq $versionPattern) {
+                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                        $v.NewVersion = $p.Version
+                        break
+                    }
+                }
+                elseif ($p.Version -like "$versionPattern*") {
                     if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
                         $v.NewVersion = $p.Version
                         break
@@ -130,6 +152,14 @@ function Update-CsprojFile([string] $path, $values) {
 }
 
 function Get-DotnetUpdate {
+    if ($SDKVersionOverride) {
+        return @{
+            ShouldUpdate = $true
+            NewVersion   = $SDKVersionOverride
+            Message      = $null
+        }
+    }
+
     try {
         $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
         $nextChannel = (Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json).sdk.nextChannel
@@ -180,17 +210,45 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Find-Dotnet
 
-    if (-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue)) {
-        $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-        Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-        Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
+    $feedname = if ($UseRTMFeed) {
+        'dotnet5-rtm'
+    } elseif ($UseNuGetOrg) {
+        'dotnet5'
+    } else {
+        'dotnet-internal'
+    }
+
+    $addDotnet5Source = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
+
+    if (!$UseNuGetOrg -and ($addDotnet5Source -or $addDotnet5InternalSource)) {
+        $nugetFileSources = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add
+
+        if ($addDotnet5Source -and $feedname -ne 'dotnet-internal') {
+            $dotnet5Feed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name $feedname -Location $dotnet5Feed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source $feedname" -verbose
+        }
+
+        if ($addDotnet5Source -and $InteractiveAuth -and $feedname -eq 'dotnet-internal') {
+            # This NuGet feed is for internal to Microsoft use only.
+            $dotnet5InternalFeed = 'https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet5-internal/nuget/v3/index.json'
+            $updatedNugetFile = (Get-Content .\nuget.config -Raw) -replace "</packageSources>", "  <add key=`"dotnet5-internal`" value=`"$dotnet5InternalFeed`" />`r`n  </packageSources>"
+            $updatedNugetFile | Out-File .\nuget.config -Force
+            Register-PackageSource -Name 'dotnet5-internal' -Location $dotnet5InternalFeed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source 'dotnet5-internal'" -verbose
+        }
     }
 
     ## Install latest version from the channel
 
     $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { $dotnetUpdate.NewVersion }
 
-    Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+    if (-not $RuntimeSourceFeed) {
+        Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+    }
+    else {
+        Install-Dotnet -Channel "$Channel" -Version $sdkVersion -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey
+    }
 
     Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
@@ -224,7 +282,7 @@ if ($dotnetUpdate.ShouldUpdate) {
         Import-Module "$PSScriptRoot/../build.psm1" -Force
         Import-Module "$PSScriptRoot/packaging" -Force
         Start-PSBootstrap -Package
-        Start-PSBuild -Clean -Configuration Release -CrossGen
+        Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:$InteractiveAuth
 
         try {
             Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData

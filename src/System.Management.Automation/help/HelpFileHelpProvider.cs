@@ -415,7 +415,7 @@ namespace System.Management.Automation
         ///
         /// This will avoid one help file getting loaded again and again.
         /// </summary>
-        private Hashtable _helpFiles = new Hashtable();
+        private readonly Hashtable _helpFiles = new Hashtable();
 
         #endregion
     }

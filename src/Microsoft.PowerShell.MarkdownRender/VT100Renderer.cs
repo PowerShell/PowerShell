@@ -41,6 +41,6 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <summary>
         /// Gets the current escape sequences.
         /// </summary>
-        public VT100EscapeSequences EscapeSequences { get; private set; }
+        public VT100EscapeSequences EscapeSequences { get; }
     }
 }

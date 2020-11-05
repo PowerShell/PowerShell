@@ -127,12 +127,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Punycode version of DNS name.
         /// </summary>
-        private string _punycodeName;
+        private readonly string _punycodeName;
 
         /// <summary>
         /// Unicode version of DNS name.
         /// </summary>
-        private string _unicodeName;
+        private readonly string _unicodeName;
 
         /// <summary>
         /// Ambiguous constructor of a DnsNameRepresentation.
@@ -469,7 +469,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Native IntPtr store handle.
         /// </summary>
-
         public IntPtr StoreHandle
         {
             get
@@ -503,7 +502,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// True if a real store is open.
         /// </summary>
-
         public bool Valid
         {
             get
@@ -513,8 +511,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _archivedCerts = false;
-        private X509StoreLocation _storeLocation = null;
-        private string _storeName = null;
+        private readonly X509StoreLocation _storeLocation = null;
+        private readonly string _storeName = null;
         private CertificateStoreHandle _storeHandle = null;
         private bool _valid = false;
         private bool _open = false;
@@ -583,7 +581,7 @@ namespace Microsoft.PowerShell.Commands
         /// -- storeLocations
         /// -- pathCache.
         /// </summary>
-        private static object s_staticLock = new object();
+        private static readonly object s_staticLock = new object();
 
         /// <summary>
         /// List of store locations. They do not change once initialized.
@@ -701,7 +699,6 @@ namespace Microsoft.PowerShell.Commands
         ///     path is null or empty.
         ///     destination is null or empty.
         /// </exception>
-
         protected override void RemoveItem(
                                 string path,
                                 bool recurse)
@@ -808,7 +805,6 @@ namespace Microsoft.PowerShell.Commands
         ///     path is null or empty.
         ///     destination is null or empty.
         /// </exception>
-
         protected override void MoveItem(
                                 string path,
                                 string destination)
@@ -1620,7 +1616,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="pProvInfo">Key prov info.</param>
         /// <returns>No return.</returns>
-
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptSetProperty(System.IntPtr,System.String,System.Void*,System.Int32,System.Int32)")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptFreeObject(System.IntPtr)")]
         private void DoDeleteKey(IntPtr pProvInfo)
@@ -1708,7 +1703,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowErrorRemoting(stat);
                     }
 
-                    if (0 != (cngKeyFlag & (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG))
+                    if ((cngKeyFlag & (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG) != 0)
                     {
                         unsafe
                         {
@@ -1749,7 +1744,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
         /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
-
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
         {
             // if recurse is true, remove every cert in the store
@@ -1847,7 +1841,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fMachine">Machine context or user.</param>
         /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoRemove(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
@@ -2677,19 +2670,19 @@ namespace Microsoft.PowerShell.Commands
 
                     if (dp.DocumentEncryptionCert)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.Purpose = CertificatePurpose.DocumentEncryption;
                     }
 
                     if (dp.DnsName != null)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
                     }
 
                     if (dp.Eku != null)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.Eku = new List<WildcardPattern>();
                         foreach (var pattern in dp.Eku)
                         {
@@ -2699,13 +2692,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (dp.ExpiringInDays >= 0)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
                     }
 
                     if (dp.SSLServerAuthentication)
                     {
-                        filter = filter ?? new CertificateFilterInfo();
+                        filter ??= new CertificateFilterInfo();
                         filter.SSLServerAuthentication = true;
                     }
                 }
@@ -3075,17 +3068,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Localized friendly name of EKU.
         /// </summary>
-        private string _friendlyName;
+        private readonly string _friendlyName;
 
         /// <summary>
         /// OID of EKU.
         /// </summary>
-        private string _oid;
+        private readonly string _oid;
 
         /// <summary>
         /// Constructor of an EnhancedKeyUsageRepresentation.
         /// </summary>
-
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Oid")]
 
         public EnhancedKeyUsageRepresentation(string inputFriendlyName, string inputOid)
@@ -3154,14 +3146,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for SendAsTrustedIssuer.
     /// </summary>
-
     [SuppressMessage("Microsoft.Design", "CA1053:StaticHolderTypesShouldNotHaveConstructors")]
     public sealed class SendAsTrustedIssuerProperty
     {
         /// <summary>
         /// Get property of SendAsTrustedIssuer.
         /// </summary>
-
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static bool ReadSendAsTrustedIssuerProperty(X509Certificate2 cert)
         {
@@ -3197,7 +3187,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set property of SendAsTrustedIssuer.
         /// </summary>
-
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static void WriteSendAsTrustedIssuerProperty(X509Certificate2 cert, string certPath, bool addProperty)
         {
@@ -3311,10 +3300,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for ekulist.
     /// </summary>
-
     public sealed class EnhancedKeyUsageProperty
     {
-        private List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
+        private readonly List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
 
         /// <summary>
         /// Get property of EKUList.
@@ -3355,11 +3343,10 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for DNSNameList.
     /// </summary>
-
     public sealed class DnsNameProperty
     {
-        private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
-        private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+        private readonly List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
+        private readonly System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
 
         private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
@@ -3565,7 +3552,7 @@ namespace Microsoft.PowerShell.Commands
         /// Lock that guards access to the following static members
         /// -- storeNames.
         /// </summary>
-        private static object s_staticLock = new object();
+        private static readonly object s_staticLock = new object();
 
         internal static readonly List<string> storeNames = new List<string>();
 

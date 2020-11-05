@@ -29,10 +29,10 @@ namespace System.Management.Automation
     /// </summary>
     internal class AnalysisCache
     {
-        private static AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
+        private static readonly AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
         // This dictionary shouldn't see much use, so low concurrency and capacity
-        private static ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
+        private static readonly ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new ConcurrentDictionary<string, string>( /*concurrency*/1, /*capacity*/2, StringComparer.OrdinalIgnoreCase);
 
         internal static readonly char[] InvalidCommandNameCharacters = new[]

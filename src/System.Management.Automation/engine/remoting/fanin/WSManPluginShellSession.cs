@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
@@ -201,7 +202,7 @@ namespace System.Management.Automation.Remoting
             }
 
             if ((streamSet == null) ||
-                (1 != streamSet.streamIDsCount))
+                (streamSet.streamIDsCount != 1))
             {
                 // only "stdout" is the supported output stream.
                 WSManPluginInstance.ReportOperationComplete(
@@ -755,7 +756,7 @@ namespace System.Management.Automation.Remoting
         internal bool ProcessArguments(
             WSManNativeApi.WSManCommandArgSet arguments)
         {
-            if (1 != arguments.argsCount)
+            if (arguments.argsCount != 1)
             {
                 return false;
             }

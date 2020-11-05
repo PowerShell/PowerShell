@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Helper object to manage the frame-based indentation and margins.
         /// </summary>
-        private IndentationManager _indentationManager = new IndentationManager();
+        private readonly IndentationManager _indentationManager = new IndentationManager();
 
         /// <summary>
         /// Buffer to accumulate partially constructed text.
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            private IndentationManager _mgr;
+            private readonly IndentationManager _mgr;
         }
 
         internal void Clear()
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return val;
         }
 
-        private Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
+        private readonly Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
     }
 
     /// <summary>
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly char s_softHyphen = '\u00AD';
         private static readonly char s_hardHyphen = '\u2011';
         private static readonly char s_nonBreakingSpace = '\u00A0';
-        private static Collection<string> s_cultureCollection = new Collection<string>();
+        private static readonly Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
         {
@@ -510,10 +510,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            private StringCollection _retVal;
+            private readonly StringCollection _retVal;
             private bool _addedFirstLine;
-            private int _firstLineLen;
-            private int _followingLinesLen;
+            private readonly int _firstLineLen;
+            private readonly int _followingLinesLen;
         }
 
         private static StringCollection GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)

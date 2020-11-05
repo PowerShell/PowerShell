@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private PSDataCollection<PSObject> _inputObjects = new PSDataCollection<PSObject>();
+        private readonly PSDataCollection<PSObject> _inputObjects = new PSDataCollection<PSObject>();
 
         /// <summary>
         /// Gets or sets the content of the CMS Message by path.
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private StringBuilder _contentBuffer = new StringBuilder();
+        private readonly StringBuilder _contentBuffer = new StringBuilder();
 
         /// <summary>
         /// Gets or sets the CMS Message by path.
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private StringBuilder _contentBuffer = new StringBuilder();
+        private readonly StringBuilder _contentBuffer = new StringBuilder();
 
         /// <summary>
         /// Gets or sets the Windows Event Log Message with contents to be decrypted.
@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (postContext != null)
                 {
-                    resultString = resultString + postContext;
+                    resultString += postContext;
                 }
             }
 

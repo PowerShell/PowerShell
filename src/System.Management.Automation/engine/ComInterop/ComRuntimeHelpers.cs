@@ -336,7 +336,7 @@ namespace System.Management.Automation.ComInterop
         // This method is intended for use through reflection and should only be used directly by IUnknownReleaseNotZero
         public static unsafe int IUnknownRelease(IntPtr interfacePointer)
         {
-            return ((delegate* stdcall<IntPtr, int>)(*(*(void***)interfacePointer + 2 /* IUnknown.Release slot */)))(interfacePointer);
+            return ((delegate* unmanaged<IntPtr, int>)(*(*(void***)interfacePointer + 2 /* IUnknown.Release slot */)))(interfacePointer);
         }
 
         // This method is intended for use through reflection and should not be used directly
@@ -365,7 +365,7 @@ namespace System.Management.Automation.ComInterop
             fixed (ExcepInfo* pExcepInfo = &excepInfo)
             fixed (uint* pArgErr = &argErr)
             {
-                var pfnIDispatchInvoke = (delegate* stdcall <IntPtr, int, Guid*, int, ushort, ComTypes.DISPPARAMS*, Variant*, ExcepInfo*, uint*, int>)
+                var pfnIDispatchInvoke = (delegate* unmanaged<IntPtr, int, Guid*, int, ushort, ComTypes.DISPPARAMS*, Variant*, ExcepInfo*, uint*, int>)
                     (*(*(void***)dispatchPointer + 6 /* IDispatch.Invoke slot */));
 
                 int hresult = pfnIDispatchInvoke(dispatchPointer,

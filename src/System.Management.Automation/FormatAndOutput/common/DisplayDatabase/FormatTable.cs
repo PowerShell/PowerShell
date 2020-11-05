@@ -25,7 +25,7 @@ namespace System.Management.Automation.Runspaces
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
@@ -109,7 +109,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -161,7 +160,7 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private TypeInfoDataBaseManager _formatDBMgr;
+        private readonly TypeInfoDataBaseManager _formatDBMgr;
 
         #endregion
 

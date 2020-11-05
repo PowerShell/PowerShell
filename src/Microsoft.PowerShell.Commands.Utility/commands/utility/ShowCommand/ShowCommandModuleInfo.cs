@@ -46,6 +46,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Gets the name of this module.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
     }
 }

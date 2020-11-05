@@ -511,7 +511,7 @@ namespace System.Management.Automation
             int res = 1;
             while (value > res)
             {
-                res = res << 1;
+                res <<= 1;
             }
 
             return res;

@@ -2082,8 +2082,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private Cmdlet _cmdlet;
-        private SessionStateInternal _sessionState;
+        private readonly Cmdlet _cmdlet;
+        private readonly SessionStateInternal _sessionState;
 
         #endregion private data
     }

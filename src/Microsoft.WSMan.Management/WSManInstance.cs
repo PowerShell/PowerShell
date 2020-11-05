@@ -28,7 +28,6 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-
     [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096627")]
     public class GetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
@@ -102,7 +101,6 @@ namespace Microsoft.WSMan.Management
         /// remote machine. The format of this string is:
         /// transport://server:port/Prefix.
         /// </summary>
-
         [Parameter(
                   ParameterSetName = "GetInstance")]
         [Parameter(
@@ -143,7 +141,6 @@ namespace Microsoft.WSMan.Management
         /// Switch indicates list all instances of a management resource. Equivalent to
         /// WSManagement Enumerate.
         /// </summary>
-
         [Parameter(Mandatory = true,
                   ParameterSetName = "Enumerate")]
         public SwitchParameter Enumerate
@@ -181,7 +178,6 @@ namespace Microsoft.WSMan.Management
         /// Specifies a section inside the instance that is to be updated or retrieved
         /// for the given operation.
         /// </summary>
-
         [Parameter(ParameterSetName = "GetInstance")]
         [ValidateNotNullOrEmpty]
         public string Fragment
@@ -242,7 +238,6 @@ namespace Microsoft.WSMan.Management
         /// associated instances. This can only be used when specifying the Dialect as
         /// Association.
         /// </summary>
-
         [Parameter(ParameterSetName = "Enumerate")]
         public SwitchParameter Associations
         {
@@ -311,7 +306,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(
@@ -418,7 +413,7 @@ namespace Microsoft.WSMan.Management
                 filter = filter + "<wsman:Selector Name='" + name + "'>" + value + "</wsman:Selector>";
             }
 
-            filter = filter + "</wsman:SelectorSet>";
+            filter += "</wsman:SelectorSet>";
             return (filter);
         }
 
@@ -754,7 +749,6 @@ namespace Microsoft.WSMan.Management
         /// request. These are similar to switches used in command line shells in that
         /// they are service-specific.
         /// </summary>
-
         [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("os")]
@@ -788,7 +782,6 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ResourceURI".
         /// URI of the resource class/instance representation.
         /// </summary>
-
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Resourceuri")]
 
@@ -807,7 +800,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 1,
@@ -1077,7 +1070,6 @@ namespace Microsoft.WSMan.Management
         /// request. These are similar to switches used in command line shells in that
         /// they are service-specific.
         /// </summary>
-
         [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("os")]
@@ -1111,7 +1103,6 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ResourceURI".
         /// URI of the resource class/instance representation.
         /// </summary>
-
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Resourceuri")]
 
@@ -1130,7 +1121,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true,
@@ -1275,7 +1266,6 @@ namespace Microsoft.WSMan.Management
     /// Creates an instance of a management resource identified by the resource URI
     /// using specified ValueSet or input File.
     /// </summary>
-
     [Cmdlet(VerbsCommon.New, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096933")]
     public class NewWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
@@ -1408,7 +1398,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1,
@@ -1475,7 +1465,7 @@ namespace Microsoft.WSMan.Management
         private Hashtable valueset;
 
         private WSManHelper helper;
-        private IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+        private readonly IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
         private IWSManSession m_session = null;
         private string connectionStr = string.Empty;
 

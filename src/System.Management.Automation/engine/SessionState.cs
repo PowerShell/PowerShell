@@ -18,7 +18,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Holds the state of a Monad Shell session.
     /// </summary>
-
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is a bridge class between internal classes and a public interface. It requires this much coupling.")]
     internal sealed partial class SessionStateInternal
     {
@@ -31,7 +30,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "SessionState",
              "SessionState Class")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("SessionState",
              "SessionState Class");
 

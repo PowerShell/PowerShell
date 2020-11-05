@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the ScriptBlock that represents the implementation of the script.
         /// </summary>
-        public ScriptBlock ScriptBlock { get; private set; }
+        public ScriptBlock ScriptBlock { get; }
 
         // Path
 

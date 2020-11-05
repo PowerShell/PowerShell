@@ -17,92 +17,92 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 {
     internal static class PdhResults
     {
-        public const long PDH_CSTATUS_VALID_DATA = 0x0L;
-        public const long PDH_CSTATUS_NEW_DATA = 0x1L;
-        public const long PDH_CSTATUS_NO_MACHINE = 0x800007D0L;
-        public const long PDH_CSTATUS_NO_INSTANCE = 0x800007D1L;
-        public const long PDH_MORE_DATA = 0x800007D2L;
-        public const long PDH_CSTATUS_ITEM_NOT_VALIDATED = 0x800007D3L;
-        public const long PDH_RETRY = 0x800007D4L;
-        public const long PDH_NO_DATA = 0x800007D5L;
-        public const long PDH_CALC_NEGATIVE_DENOMINATOR = 0x800007D6L;
-        public const long PDH_CALC_NEGATIVE_TIMEBASE = 0x800007D7L;
-        public const long PDH_CALC_NEGATIVE_VALUE = 0x800007D8L;
-        public const long PDH_DIALOG_CANCELLED = 0x800007D9L;
-        public const long PDH_END_OF_LOG_FILE = 0x800007DAL;
-        public const long PDH_ASYNC_QUERY_TIMEOUT = 0x800007DBL;
-        public const long PDH_CANNOT_SET_DEFAULT_REALTIME_DATASOURCE = 0x800007DCL;
-        public const long PDH_UNABLE_MAP_NAME_FILES = 0x80000BD5L;
-        public const long PDH_PLA_VALIDATION_WARNING = 0x80000BF3L;
-        public const long PDH_CSTATUS_NO_OBJECT = 0xC0000BB8L;
-        public const long PDH_CSTATUS_NO_COUNTER = 0xC0000BB9L;
-        public const long PDH_CSTATUS_INVALID_DATA = 0xC0000BBAL;
-        public const long PDH_MEMORY_ALLOCATION_FAILURE = 0xC0000BBBL;
-        public const long PDH_INVALID_HANDLE = 0xC0000BBCL;
-        public const long PDH_INVALID_ARGUMENT = 0xC0000BBDL;
-        public const long PDH_FUNCTION_NOT_FOUND = 0xC0000BBEL;
-        public const long PDH_CSTATUS_NO_COUNTERNAME = 0xC0000BBFL;
-        public const long PDH_CSTATUS_BAD_COUNTERNAME = 0xC0000BC0L;
-        public const long PDH_INVALID_BUFFER = 0xC0000BC1L;
-        public const long PDH_INSUFFICIENT_BUFFER = 0xC0000BC2L;
-        public const long PDH_CANNOT_CONNECT_MACHINE = 0xC0000BC3L;
-        public const long PDH_INVALID_PATH = 0xC0000BC4L;
-        public const long PDH_INVALID_INSTANCE = 0xC0000BC5L;
-        public const long PDH_INVALID_DATA = 0xC0000BC6L;
-        public const long PDH_NO_DIALOG_DATA = 0xC0000BC7L;
-        public const long PDH_CANNOT_READ_NAME_STRINGS = 0xC0000BC8L;
-        public const long PDH_LOG_FILE_CREATE_ERROR = 0xC0000BC9L;
-        public const long PDH_LOG_FILE_OPEN_ERROR = 0xC0000BCAL;
-        public const long PDH_LOG_TYPE_NOT_FOUND = 0xC0000BCBL;
-        public const long PDH_NO_MORE_DATA = 0xC0000BCCL;
-        public const long PDH_ENTRY_NOT_IN_LOG_FILE = 0xC0000BCDL;
-        public const long PDH_DATA_SOURCE_IS_LOG_FILE = 0xC0000BCEL;
-        public const long PDH_DATA_SOURCE_IS_REAL_TIME = 0xC0000BCFL;
-        public const long PDH_UNABLE_READ_LOG_HEADER = 0xC0000BD0L;
-        public const long PDH_FILE_NOT_FOUND = 0xC0000BD1L;
-        public const long PDH_FILE_ALREADY_EXISTS = 0xC0000BD2L;
-        public const long PDH_NOT_IMPLEMENTED = 0xC0000BD3L;
-        public const long PDH_STRING_NOT_FOUND = 0xC0000BD4L;
-        public const long PDH_UNKNOWN_LOG_FORMAT = 0xC0000BD6L;
-        public const long PDH_UNKNOWN_LOGSVC_COMMAND = 0xC0000BD7L;
-        public const long PDH_LOGSVC_QUERY_NOT_FOUND = 0xC0000BD8L;
-        public const long PDH_LOGSVC_NOT_OPENED = 0xC0000BD9L;
-        public const long PDH_WBEM_ERROR = 0xC0000BDAL;
-        public const long PDH_ACCESS_DENIED = 0xC0000BDBL;
-        public const long PDH_LOG_FILE_TOO_SMALL = 0xC0000BDCL;
-        public const long PDH_INVALID_DATASOURCE = 0xC0000BDDL;
-        public const long PDH_INVALID_SQLDB = 0xC0000BDEL;
-        public const long PDH_NO_COUNTERS = 0xC0000BDFL;
-        public const long PDH_SQL_ALLOC_FAILED = 0xC0000BE0L;
-        public const long PDH_SQL_ALLOCCON_FAILED = 0xC0000BE1L;
-        public const long PDH_SQL_EXEC_DIRECT_FAILED = 0xC0000BE2L;
-        public const long PDH_SQL_FETCH_FAILED = 0xC0000BE3L;
-        public const long PDH_SQL_ROWCOUNT_FAILED = 0xC0000BE4L;
-        public const long PDH_SQL_MORE_RESULTS_FAILED = 0xC0000BE5L;
-        public const long PDH_SQL_CONNECT_FAILED = 0xC0000BE6L;
-        public const long PDH_SQL_BIND_FAILED = 0xC0000BE7L;
-        public const long PDH_CANNOT_CONNECT_WMI_SERVER = 0xC0000BE8L;
-        public const long PDH_PLA_COLLECTION_ALREADY_RUNNING = 0xC0000BE9L;
-        public const long PDH_PLA_ERROR_SCHEDULE_OVERLAP = 0xC0000BEAL;
-        public const long PDH_PLA_COLLECTION_NOT_FOUND = 0xC0000BEBL;
-        public const long PDH_PLA_ERROR_SCHEDULE_ELAPSED = 0xC0000BECL;
-        public const long PDH_PLA_ERROR_NOSTART = 0xC0000BEDL;
-        public const long PDH_PLA_ERROR_ALREADY_EXISTS = 0xC0000BEEL;
-        public const long PDH_PLA_ERROR_TYPE_MISMATCH = 0xC0000BEFL;
-        public const long PDH_PLA_ERROR_FILEPATH = 0xC0000BF0L;
-        public const long PDH_PLA_SERVICE_ERROR = 0xC0000BF1L;
-        public const long PDH_PLA_VALIDATION_ERROR = 0xC0000BF2L;
-        public const long PDH_PLA_ERROR_NAME_TOO_LONG = 0xC0000BF4L;
-        public const long PDH_INVALID_SQL_LOG_FORMAT = 0xC0000BF5L;
-        public const long PDH_COUNTER_ALREADY_IN_QUERY = 0xC0000BF6L;
-        public const long PDH_BINARY_LOG_CORRUPT = 0xC0000BF7L;
-        public const long PDH_LOG_SAMPLE_TOO_SMALL = 0xC0000BF8L;
-        public const long PDH_OS_LATER_VERSION = 0xC0000BF9L;
-        public const long PDH_OS_EARLIER_VERSION = 0xC0000BFAL;
-        public const long PDH_INCORRECT_APPEND_TIME = 0xC0000BFBL;
-        public const long PDH_UNMATCHED_APPEND_COUNTER = 0xC0000BFCL;
-        public const long PDH_SQL_ALTER_DETAIL_FAILED = 0xC0000BFDL;
-        public const long PDH_QUERY_PERF_DATA_TIMEOUT = 0xC0000BFEL;
+        public const uint PDH_CSTATUS_VALID_DATA = 0x0;
+        public const uint PDH_CSTATUS_NEW_DATA = 0x1;
+        public const uint PDH_CSTATUS_NO_MACHINE = 0x800007D0;
+        public const uint PDH_CSTATUS_NO_INSTANCE = 0x800007D1;
+        public const uint PDH_MORE_DATA = 0x800007D2;
+        public const uint PDH_CSTATUS_ITEM_NOT_VALIDATED = 0x800007D3;
+        public const uint PDH_RETRY = 0x800007D4;
+        public const uint PDH_NO_DATA = 0x800007D5;
+        public const uint PDH_CALC_NEGATIVE_DENOMINATOR = 0x800007D6;
+        public const uint PDH_CALC_NEGATIVE_TIMEBASE = 0x800007D7;
+        public const uint PDH_CALC_NEGATIVE_VALUE = 0x800007D8;
+        public const uint PDH_DIALOG_CANCELLED = 0x800007D9;
+        public const uint PDH_END_OF_LOG_FILE = 0x800007DA;
+        public const uint PDH_ASYNC_QUERY_TIMEOUT = 0x800007DB;
+        public const uint PDH_CANNOT_SET_DEFAULT_REALTIME_DATASOURCE = 0x800007DC;
+        public const uint PDH_UNABLE_MAP_NAME_FILES = 0x80000BD5;
+        public const uint PDH_PLA_VALIDATION_WARNING = 0x80000BF3;
+        public const uint PDH_CSTATUS_NO_OBJECT = 0xC0000BB8;
+        public const uint PDH_CSTATUS_NO_COUNTER = 0xC0000BB9;
+        public const uint PDH_CSTATUS_INVALID_DATA = 0xC0000BBA;
+        public const uint PDH_MEMORY_ALLOCATION_FAILURE = 0xC0000BBB;
+        public const uint PDH_INVALID_HANDLE = 0xC0000BBC;
+        public const uint PDH_INVALID_ARGUMENT = 0xC0000BBD;
+        public const uint PDH_FUNCTION_NOT_FOUND = 0xC0000BBE;
+        public const uint PDH_CSTATUS_NO_COUNTERNAME = 0xC0000BBF;
+        public const uint PDH_CSTATUS_BAD_COUNTERNAME = 0xC0000BC0;
+        public const uint PDH_INVALID_BUFFER = 0xC0000BC1;
+        public const uint PDH_INSUFFICIENT_BUFFER = 0xC0000BC2;
+        public const uint PDH_CANNOT_CONNECT_MACHINE = 0xC0000BC3;
+        public const uint PDH_INVALID_PATH = 0xC0000BC4;
+        public const uint PDH_INVALID_INSTANCE = 0xC0000BC5;
+        public const uint PDH_INVALID_DATA = 0xC0000BC6;
+        public const uint PDH_NO_DIALOG_DATA = 0xC0000BC7;
+        public const uint PDH_CANNOT_READ_NAME_STRINGS = 0xC0000BC8;
+        public const uint PDH_LOG_FILE_CREATE_ERROR = 0xC0000BC9;
+        public const uint PDH_LOG_FILE_OPEN_ERROR = 0xC0000BCA;
+        public const uint PDH_LOG_TYPE_NOT_FOUND = 0xC0000BCB;
+        public const uint PDH_NO_MORE_DATA = 0xC0000BCC;
+        public const uint PDH_ENTRY_NOT_IN_LOG_FILE = 0xC0000BCD;
+        public const uint PDH_DATA_SOURCE_IS_LOG_FILE = 0xC0000BCE;
+        public const uint PDH_DATA_SOURCE_IS_REAL_TIME = 0xC0000BCF;
+        public const uint PDH_UNABLE_READ_LOG_HEADER = 0xC0000BD0;
+        public const uint PDH_FILE_NOT_FOUND = 0xC0000BD1;
+        public const uint PDH_FILE_ALREADY_EXISTS = 0xC0000BD2;
+        public const uint PDH_NOT_IMPLEMENTED = 0xC0000BD3;
+        public const uint PDH_STRING_NOT_FOUND = 0xC0000BD4;
+        public const uint PDH_UNKNOWN_LOG_FORMAT = 0xC0000BD6;
+        public const uint PDH_UNKNOWN_LOGSVC_COMMAND = 0xC0000BD7;
+        public const uint PDH_LOGSVC_QUERY_NOT_FOUND = 0xC0000BD8;
+        public const uint PDH_LOGSVC_NOT_OPENED = 0xC0000BD9;
+        public const uint PDH_WBEM_ERROR = 0xC0000BDA;
+        public const uint PDH_ACCESS_DENIED = 0xC0000BDB;
+        public const uint PDH_LOG_FILE_TOO_SMALL = 0xC0000BDC;
+        public const uint PDH_INVALID_DATASOURCE = 0xC0000BDD;
+        public const uint PDH_INVALID_SQLDB = 0xC0000BDE;
+        public const uint PDH_NO_COUNTERS = 0xC0000BDF;
+        public const uint PDH_SQL_ALLOC_FAILED = 0xC0000BE0;
+        public const uint PDH_SQL_ALLOCCON_FAILED = 0xC0000BE1;
+        public const uint PDH_SQL_EXEC_DIRECT_FAILED = 0xC0000BE2;
+        public const uint PDH_SQL_FETCH_FAILED = 0xC0000BE3;
+        public const uint PDH_SQL_ROWCOUNT_FAILED = 0xC0000BE4;
+        public const uint PDH_SQL_MORE_RESULTS_FAILED = 0xC0000BE5;
+        public const uint PDH_SQL_CONNECT_FAILED = 0xC0000BE6;
+        public const uint PDH_SQL_BIND_FAILED = 0xC0000BE7;
+        public const uint PDH_CANNOT_CONNECT_WMI_SERVER = 0xC0000BE8;
+        public const uint PDH_PLA_COLLECTION_ALREADY_RUNNING = 0xC0000BE9;
+        public const uint PDH_PLA_ERROR_SCHEDULE_OVERLAP = 0xC0000BEA;
+        public const uint PDH_PLA_COLLECTION_NOT_FOUND = 0xC0000BEB;
+        public const uint PDH_PLA_ERROR_SCHEDULE_ELAPSED = 0xC0000BEC;
+        public const uint PDH_PLA_ERROR_NOSTART = 0xC0000BED;
+        public const uint PDH_PLA_ERROR_ALREADY_EXISTS = 0xC0000BEE;
+        public const uint PDH_PLA_ERROR_TYPE_MISMATCH = 0xC0000BEF;
+        public const uint PDH_PLA_ERROR_FILEPATH = 0xC0000BF0;
+        public const uint PDH_PLA_SERVICE_ERROR = 0xC0000BF1;
+        public const uint PDH_PLA_VALIDATION_ERROR = 0xC0000BF2;
+        public const uint PDH_PLA_ERROR_NAME_TOO_LONG = 0xC0000BF4;
+        public const uint PDH_INVALID_SQL_LOG_FORMAT = 0xC0000BF5;
+        public const uint PDH_COUNTER_ALREADY_IN_QUERY = 0xC0000BF6;
+        public const uint PDH_BINARY_LOG_CORRUPT = 0xC0000BF7;
+        public const uint PDH_LOG_SAMPLE_TOO_SMALL = 0xC0000BF8;
+        public const uint PDH_OS_LATER_VERSION = 0xC0000BF9;
+        public const uint PDH_OS_EARLIER_VERSION = 0xC0000BFA;
+        public const uint PDH_INCORRECT_APPEND_TIME = 0xC0000BFB;
+        public const uint PDH_UNMATCHED_APPEND_COUNTER = 0xC0000BFC;
+        public const uint PDH_SQL_ALTER_DETAIL_FAILED = 0xC0000BFD;
+        public const uint PDH_QUERY_PERF_DATA_TIMEOUT = 0xC0000BFE;
     }
 
     internal static class PerfDetail
@@ -375,7 +375,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private static extern uint PdhValidatePath(string szFullPathBuffer);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)]bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
+        private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)] bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetCounterTimeBase(IntPtr hCounter, out UInt64 pTimeBase);
@@ -423,7 +423,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         // m_ConsumerPathToHandleAndInstanceMap map is used for reading counter date (live or from files).
         //
-        private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
+        private readonly Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
         /// <summary>
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
@@ -431,7 +431,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// <param name="strNative"></param>
         /// <param name="strSize"></param>
         /// <param name="strColl"></param>
-
         private void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)
         {
             Debug.Assert(strSize >= 2);
@@ -457,7 +456,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
         {
-            uint res = 0;
             counterType = 0;
             defaultScale = 0;
             timeBase = 0;
@@ -465,7 +463,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             Debug.Assert(hCounter != IntPtr.Zero);
 
             IntPtr pBufferSize = new IntPtr(0);
-            res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
+            uint res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
             if (res != PdhResults.PDH_MORE_DATA)
             {
                 return res;
@@ -477,7 +475,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, bufCounterInfo);
-                if (res == 0 && bufCounterInfo != IntPtr.Zero)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA && bufCounterInfo != IntPtr.Zero)
                 {
                     PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
                     counterType = pdhCounterInfo.dwType;
@@ -490,7 +488,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             res = PdhGetCounterTimeBase(hCounter, out timeBase);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -506,13 +504,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             uint res = PdhHelper.PdhBindInputDataSource(out _hDataSource, null);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhBindInputDataSource: " + res);
                 return res;
             }
 
-            return 0;
+            return PdhResults.PDH_CSTATUS_VALID_DATA;
         }
         /// <summary>
         /// Connects to a single named datasource, initializing m_hDataSource variable.
@@ -527,7 +525,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             uint res = PdhHelper.PdhBindInputDataSource(out _hDataSource, dataSourceName);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhBindInputDataSource: " + res);
             }
@@ -557,7 +555,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             uint res = PdhOpenQueryH(_hDataSource, IntPtr.Zero, out _hQuery);
 
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhOpenQueryH: " + res);
             }
@@ -625,7 +623,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhHelper.PdhEnumMachinesH(_hDataSource, (IntPtr)strMachineList, ref MachineListTcharSizePtr);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     ReadPdhMultiString(ref strMachineList, MachineListTcharSizePtr.ToInt32(), ref machineNames);
                 }
@@ -653,7 +651,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhEnumObjectsH(_hDataSource, machineName, (IntPtr)strObjectList, ref pBufferSize, PerfDetail.PERF_DETAIL_WIZARD, false);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     ReadPdhMultiString(ref strObjectList, pBufferSize.ToInt32(), ref objectNames);
                 }
@@ -678,12 +676,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             if (res == PdhResults.PDH_CSTATUS_NO_INSTANCE)
             {
                 instanceNames.Clear();
-                return 0; // masking the error
+                return PdhResults.PDH_CSTATUS_VALID_DATA; // masking the error
             }
             else if (res == PdhResults.PDH_CSTATUS_NO_OBJECT)
             {
                 counterNames.Clear();
-                return 0; // masking the error
+                return PdhResults.PDH_CSTATUS_VALID_DATA; // masking the error
             }
             else if (res != PdhResults.PDH_MORE_DATA)
             {
@@ -716,7 +714,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                         strCountersList, ref pCounterBufferSize,
                                         strInstancesList, ref pInstanceBufferSize,
                                         PerfDetail.PERF_DETAIL_WIZARD, 0);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     // Console.WriteLine("error in PdhEnumObjectItemsH 2nd call: " + res + "\n Counter buffer size is  "
                     //    + pCounterBufferSize.ToInt32() + "\n Instance buffer size is  " + pInstanceBufferSize.ToInt32());
@@ -752,7 +750,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             StringCollection machineNames = new StringCollection();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -761,7 +759,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 StringCollection counterSets = new StringCollection();
                 res = this.EnumObjects(machine, ref counterSets);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     return res;
                 }
@@ -774,13 +772,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     StringCollection counterSetInstances = new StringCollection();
 
                     res = this.EnumObjectItems(machine, counterSet, ref counterSetCounters, ref counterSetInstances);
-                    if (res != 0)
+                    if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         return res;
                     }
 
                     res = this.GetValidPaths(machine, counterSet, ref counterSetCounters, ref counterSetInstances, ref validPaths);
-                    if (res != 0)
+                    if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         return res;
                     }
@@ -808,11 +806,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhMakeCounterPath(ref pathElts, strPath, ref pPathBufferSize, 0);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
 
-                    ret = (PdhValidatePathEx(_hDataSource, outPath) == 0);
+                    ret = (PdhValidatePathEx(_hDataSource, outPath) == PdhResults.PDH_CSTATUS_VALID_DATA);
                 }
             }
             finally
@@ -825,7 +823,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public bool IsPathValid(string path)
         {
-            return (PdhValidatePathEx(_hDataSource, path) == 0);
+            return (PdhValidatePathEx(_hDataSource, path) == PdhResults.PDH_CSTATUS_VALID_DATA);
         }
 
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
@@ -852,7 +850,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhMakeCounterPath(ref pathElts, strPath, ref pPathBufferSize, 0);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
                 }
@@ -872,7 +870,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             PDH_COUNTER_PATH_ELEMENTS elts = new PDH_COUNTER_PATH_ELEMENTS();
 
             uint res = ParsePath(origPath, ref elts);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -888,7 +886,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            IntPtr.Zero,
                                            ref bufSize,
                                            0);
-            if (res != PdhResults.PDH_MORE_DATA && res != 0)
+            if (res != PdhResults.PDH_MORE_DATA && res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // Console.WriteLine("error in PdhParseCounterPath: " + res);
                 return res;
@@ -902,7 +900,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                           structPtr,
                                           ref bufSize,
                                           0);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     //
                     // Marshal.PtrToStructure will allocate managed memory for the object,
@@ -933,11 +931,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
         {
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             localizedPath = string.Empty;
             PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
             res = ParsePath(englishPath, ref pathElts);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -968,7 +966,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     }
                     catch (Exception)
                     {
-                        return (uint)PdhResults.PDH_INVALID_PATH;
+                        return PdhResults.PDH_INVALID_PATH;
                     }
                 }
                 else if (regString.ToLowerInvariant() == lowerEngObjectName)
@@ -979,7 +977,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     }
                     catch (Exception)
                     {
-                        return (uint)PdhResults.PDH_INVALID_PATH;
+                        return PdhResults.PDH_INVALID_PATH;
                     }
                 }
 
@@ -991,13 +989,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             if (counterIndex == -1 || objIndex == -1)
             {
-                return (uint)PdhResults.PDH_INVALID_PATH;
+                return PdhResults.PDH_INVALID_PATH;
             }
 
             // Now, call retrieve the localized names of the object and the counter by index:
             string objNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)objIndex, out objNameLocalized);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -1006,7 +1004,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             string ctrNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)counterIndex, out ctrNameLocalized);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 return res;
             }
@@ -1031,7 +1029,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             int strSize = 256;
             IntPtr localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
             locName = string.Empty;
-            uint res = 0;
+            uint res;
             try
             {
                 res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
@@ -1042,7 +1040,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
                 }
 
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     locName = Marshal.PtrToStringUni(localizedPathPtr);
                 }
@@ -1061,7 +1059,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                    ref StringCollection instances,
                                    ref StringCollection validPaths)
         {
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
             pathElts.MachineName = machineName;
@@ -1108,13 +1106,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             bool bAtLeastOneAdded = false;
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             foreach (string counterPath in validPaths)
             {
                 IntPtr counterHandle;
                 res = PdhAddCounter(_hQuery, counterPath, IntPtr.Zero, out counterHandle);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     CounterHandleNInstance chi = new CounterHandleNInstance();
                     chi.hCounter = counterHandle;
@@ -1122,7 +1120,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                     PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
                     res = ParsePath(counterPath, ref pathElts);
-                    if (res == 0 && pathElts.InstanceName != null)
+                    if (res == PdhResults.PDH_CSTATUS_VALID_DATA && pathElts.InstanceName != null)
                     {
                         chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
@@ -1136,7 +1134,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 }
             }
 
-            return bAtLeastOneAdded ? 0 : res;
+            return bAtLeastOneAdded ? PdhResults.PDH_CSTATUS_VALID_DATA : res;
         }
 
         public string GetCounterSetHelp(string szMachineName, string szObjectName)
@@ -1149,7 +1147,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
 
-            uint res = 0;
+            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             nextSet = null;
 
             Int64 batchTimeStampFT = 0;
@@ -1160,7 +1158,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            if (res != 0 && res != PdhResults.PDH_NO_DATA)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA && res != PdhResults.PDH_NO_DATA)
             {
                 return res;
             }
@@ -1180,7 +1178,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             PerformanceCounterSample[] samplesArr = new PerformanceCounterSample[_consumerPathToHandleAndInstanceMap.Count];
             uint sampleIndex = 0;
             uint numInvalidDataSamples = 0;
-            uint lastErr = 0;
+            uint lastErr = PdhResults.PDH_CSTATUS_VALID_DATA;
 
             foreach (string path in _consumerPathToHandleAndInstanceMap.Keys)
             {
@@ -1193,14 +1191,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 Debug.Assert(hCounter != IntPtr.Zero);
 
                 res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     // Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
                 }
 
                 PDH_RAW_COUNTER rawValue;
                 res = PdhGetRawCounterValue(hCounter, out counterTypePtr, out rawValue);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
                                            _consumerPathToHandleAndInstanceMap[path].InstanceName,
@@ -1213,7 +1211,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            timeBase,
                                            batchStamp,
                                            (UInt64)batchStamp.ToFileTime(),
-                                           (rawValue.CStatus == 0) ? res : rawValue.CStatus);
+                                           (rawValue.CStatus == PdhResults.PDH_CSTATUS_VALID_DATA) ? res : rawValue.CStatus);
 
                     numInvalidDataSamples++;
                     lastErr = res;
@@ -1230,7 +1228,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                   PdhFormat.PDH_FMT_DOUBLE | PdhFormat.PDH_FMT_NOCAP100,
                                                   out counterTypePtr,
                                                   out fmtValueDouble);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
                                            _consumerPathToHandleAndInstanceMap[path].InstanceName,
@@ -1243,7 +1241,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            timeBase,
                                            dt,
                                            (UInt64)dtFT,
-                                           (fmtValueDouble.CStatus == 0) ? res : rawValue.CStatus);
+                                           (fmtValueDouble.CStatus == PdhResults.PDH_CSTATUS_VALID_DATA) ? res : rawValue.CStatus);
 
                     numInvalidDataSamples++;
                     lastErr = res;
@@ -1276,7 +1274,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 //
                 // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
                 //
-                res = 0;
+                res = PdhResults.PDH_CSTATUS_VALID_DATA;
             }
 
             return res;
@@ -1304,7 +1302,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             try
             {
                 res = PdhExpandWildCardPathH(_hDataSource, path, strPathList, ref pcchPathListLength, PdhWildCardFlag.PDH_REFRESHCOUNTERS);
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     ReadPdhMultiString(ref strPathList, pcchPathListLength.ToInt32(), ref expandedPaths);
                 }

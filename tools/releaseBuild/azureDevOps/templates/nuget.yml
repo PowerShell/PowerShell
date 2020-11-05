@@ -20,6 +20,8 @@ jobs:
     linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
+  - checkout: self
+    clean: true
 
   - powershell: |
       $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
@@ -137,10 +139,18 @@ jobs:
       binVersionOverride: $(SigningVersionOverride)
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
+  - pwsh: |
+      if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
+      Copy-Item -Path '$(PackagePath)\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
+      Copy-Item -Path '$(PackagePath)\globaltool\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
+    displayName: Fake copy when not signing
+    condition: eq(variables['SHOULD_SIGN'], 'false')
+
   - powershell: |
       Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
+    condition: eq(variables['SHOULD_SIGN'], 'true')
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run MpCmdRun.exe'
@@ -156,7 +166,11 @@ jobs:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
   - powershell: |
-      $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
+      if (-not (Test-Path "$(System.ArtifactsDirectory)\signed\globaltool"))
+      {
+        $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory -Force
+      }
+
       Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
     displayName: Move global tool packages to subfolder and capture

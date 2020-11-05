@@ -383,7 +383,9 @@ namespace Microsoft.PowerShell
                     {
                         TrustPublisher(signature);
                         policyCheckPassed = true;
-                    } break;
+                    }
+
+                    break;
                 case RunPromptDecision.DoNotRun:
                     policyCheckPassed = false;
                     reasonMessage = StringUtil.Format(Authenticode.Reason_DoNotRun, path);
@@ -395,7 +397,9 @@ namespace Microsoft.PowerShell
                         reasonMessage = StringUtil.Format(Authenticode.Reason_NeverRun, path);
                         reason = new UnauthorizedAccessException(reasonMessage);
                         policyCheckPassed = false;
-                    } break;
+                    }
+                    
+                    break;
             }
 
             return policyCheckPassed;

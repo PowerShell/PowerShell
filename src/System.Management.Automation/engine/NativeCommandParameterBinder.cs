@@ -308,9 +308,9 @@ namespace System.Management.Automation
                                 // If the path contains spaces, then add quotes around it.
                                 if (NeedQuotes(expandedPath))
                                 {
-                                    _arguments.Append("\"");
+                                    _arguments.Append('"');
                                     _arguments.Append(expandedPath);
-                                    _arguments.Append("\"");
+                                    _arguments.Append('"');
                                 }
                                 else
                                 {
@@ -472,7 +472,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The native command to bind to.
         /// </summary>
-        private NativeCommand _nativeCommand;
+        private readonly NativeCommand _nativeCommand;
         private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
         private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
 

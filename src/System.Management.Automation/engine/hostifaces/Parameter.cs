@@ -101,7 +101,7 @@ namespace System.Management.Automation.Runspaces
                 name = internalParameter.ParameterText;
                 if (internalParameter.SpaceAfterParameter)
                 {
-                    name = name + " ";
+                    name += " ";
                 }
 
                 Diagnostics.Assert(name != null, "'name' variable should be initialized at this point");

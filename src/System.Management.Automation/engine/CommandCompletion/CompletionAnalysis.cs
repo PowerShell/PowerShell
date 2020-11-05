@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,6 +95,58 @@ namespace System.Management.Automation
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
 
+        internal readonly struct AstAnalysisContext
+        {
+            internal AstAnalysisContext(Token tokenAtCursor, Token tokenBeforeCursor, List<Ast> relatedAsts, int replacementIndex)
+            {
+                TokenAtCursor = tokenAtCursor;
+                TokenBeforeCursor = tokenBeforeCursor;
+                RelatedAsts = relatedAsts;
+                ReplacementIndex = replacementIndex;
+            }
+
+            internal readonly Token TokenAtCursor;
+            internal readonly Token TokenBeforeCursor;
+            internal readonly List<Ast> RelatedAsts;
+            internal readonly int ReplacementIndex;
+        }
+
+        internal static AstAnalysisContext ExtractAstContext(Ast inputAst, Token[] inputTokens, IScriptPosition cursor)
+        {
+            bool adjustLineAndColumn = false;
+            IScriptPosition positionForAstSearch = cursor;
+
+            Token tokenBeforeCursor = null;
+            Token tokenAtCursor = InterstingTokenAtCursorOrDefault(inputTokens, cursor);
+            if (tokenAtCursor == null)
+            {
+                tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(inputTokens, cursor);
+                if (tokenBeforeCursor != null)
+                {
+                    positionForAstSearch = tokenBeforeCursor.Extent.EndScriptPosition;
+                    adjustLineAndColumn = true;
+                }
+            }
+            else
+            {
+                var stringExpandableToken = tokenAtCursor as StringExpandableToken;
+                if (stringExpandableToken?.NestedTokens != null)
+                {
+                    tokenAtCursor = InterstingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, cursor) ?? stringExpandableToken;
+                }
+            }
+
+            int replacementIndex = adjustLineAndColumn ? cursor.Offset : 0;
+            List<Ast> relatedAsts = AstSearcher.FindAll(
+                inputAst,
+                ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
+                searchNestedScriptBlocks: true).ToList();
+
+            Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+
+            return new AstAnalysisContext(tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
+        }
+
         internal CompletionContext CreateCompletionContext(PowerShell powerShell)
         {
             var typeInferenceContext = new TypeInferenceContext(powerShell);
@@ -107,48 +160,24 @@ namespace System.Management.Automation
 
         private CompletionContext InitializeCompletionContext(TypeInferenceContext typeInferenceContext)
         {
-            Token tokenBeforeCursor = null;
-            IScriptPosition positionForAstSearch = _cursorPosition;
-            var adjustLineAndColumn = false;
-            var tokenAtCursor = InterstingTokenAtCursorOrDefault(_tokens, _cursorPosition);
-            if (tokenAtCursor == null)
-            {
-                tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(_tokens, _cursorPosition);
-                if (tokenBeforeCursor != null)
-                {
-                    positionForAstSearch = tokenBeforeCursor.Extent.EndScriptPosition;
-                    adjustLineAndColumn = true;
-                }
-            }
-            else
-            {
-                var stringExpandableToken = tokenAtCursor as StringExpandableToken;
-                if (stringExpandableToken?.NestedTokens != null)
-                {
-                    tokenAtCursor = InterstingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, _cursorPosition) ?? stringExpandableToken;
-                }
-            }
-
-            var asts = AstSearcher.FindAll(_ast, ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent), searchNestedScriptBlocks: true).ToList();
-
-            Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+            var astContext = ExtractAstContext(_ast, _tokens, _cursorPosition);
 
             if (typeInferenceContext.CurrentTypeDefinitionAst == null)
             {
-                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last());
+                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(astContext.RelatedAsts.Last());
             }
 
             ExecutionContext executionContext = typeInferenceContext.ExecutionContext;
 
             return new CompletionContext
             {
-                TokenAtCursor = tokenAtCursor,
-                TokenBeforeCursor = tokenBeforeCursor,
-                CursorPosition = _cursorPosition,
-                RelatedAsts = asts,
                 Options = _options,
+                CursorPosition = _cursorPosition,
+                TokenAtCursor = astContext.TokenAtCursor,
+                TokenBeforeCursor = astContext.TokenBeforeCursor,
+                RelatedAsts = astContext.RelatedAsts,
+                ReplacementIndex = astContext.ReplacementIndex,
                 ExecutionContext = executionContext,
-                ReplacementIndex = adjustLineAndColumn ? _cursorPosition.Offset : 0,
                 TypeInferenceContext = typeInferenceContext,
                 Helper = typeInferenceContext.Helper,
                 CustomArgumentCompleters = executionContext.CustomArgumentCompleters,
@@ -156,14 +185,32 @@ namespace System.Management.Automation
             };
         }
 
-        private static Token InterstingTokenAtCursorOrDefault(IEnumerable<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterstingTokenAtCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
         {
-            return tokens.LastOrDefault(token => IsCursorWithinOrJustAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token));
+            for (int i = tokens.Count - 1; i >= 0; --i)
+            {
+                Token token = tokens[i];
+                if (IsCursorWithinOrJustAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token))
+                {
+                    return token;
+                }
+            }
+
+            return null;
         }
 
-        private static Token InterstingTokenBeforeCursorOrDefault(IEnumerable<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterstingTokenBeforeCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
         {
-            return tokens.LastOrDefault(token => IsCursorAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token));
+            for (int i = tokens.Count - 1; i >= 0; --i)
+            {
+                Token token = tokens[i];
+                if (IsCursorAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token))
+                {
+                    return token;
+                }
+            }
+
+            return null;
         }
 
         private static Ast GetLastAstAtCursor(ScriptBlockAst scriptBlockAst, IScriptPosition cursorPosition)
@@ -580,7 +627,7 @@ namespace System.Management.Automation
                                 completionContext.ReplacementLength = replacementLength = 0;
                                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                             }
-                            else if (lastAst is HashtableAst hashTableAst && !(lastAst.Parent is DynamicKeywordStatementAst) && CheckForPendingAssignment(hashTableAst))
+                            else if (lastAst is HashtableAst hashTableAst && lastAst.Parent is not DynamicKeywordStatementAst && CheckForPendingAssignment(hashTableAst))
                             {
                                 // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
                                 return null;
@@ -1396,7 +1443,7 @@ namespace System.Management.Automation
                                     {
                                         string completionText = isCursorInString ? value : stringQuote + value + stringQuote;
                                         if (hasNewLine)
-                                            completionText = completionText + stringQuote;
+                                            completionText += stringQuote;
                                         result.Add(new CompletionResult(
                                             completionText,
                                             value,
@@ -1424,7 +1471,7 @@ namespace System.Management.Automation
                                                     {
                                                         StringBuilder sb = new StringBuilder("[", 50);
                                                         sb.Append(dynamicKeywordAst.Keyword.Keyword);
-                                                        sb.Append("]");
+                                                        sb.Append(']');
                                                         sb.Append(dynamicKeywordAst.ElementName);
                                                         var resource = sb.ToString();
                                                         if (!existingValues.Contains(resource, StringComparer.OrdinalIgnoreCase) &&
@@ -1447,7 +1494,7 @@ namespace System.Management.Automation
                                             {
                                                 string completionText = isCursorInString ? resource : stringQuote + resource + stringQuote;
                                                 if (hasNewLine)
-                                                    completionText = completionText + stringQuote;
+                                                    completionText += stringQuote;
                                                 result.Add(new CompletionResult(
                                                     completionText,
                                                     resource,

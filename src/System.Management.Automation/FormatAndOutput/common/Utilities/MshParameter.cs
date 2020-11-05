@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static string CatenateStringArray(string[] arr)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("{");
+            sb.Append('{');
             for (int k = 0; k < arr.Length; k++)
             {
                 if (k > 0)
@@ -518,13 +518,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 sb.Append(arr[k]);
             }
 
-            sb.Append("}");
+            sb.Append('}');
             return sb.ToString();
         }
 
         #endregion
 
-        private CommandParameterDefinition _paramDef = null;
+        private readonly CommandParameterDefinition _paramDef = null;
     }
 }
 

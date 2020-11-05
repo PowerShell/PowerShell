@@ -246,4 +246,12 @@ public class AttributeTest$guid : PSCmdlet
         param ($assemblyName, $errorid)
         { Add-Type -AssemblyName $assemblyName } | Should -Throw -ErrorId $errorid
     }
+
+    It "Throw terminating error when '-OutputType' is '<outputType>'" -TestCases @(
+        @{ outputType = 'ConsoleApplication' }
+        @{ outputType = 'WindowsApplication' }
+    ) {
+        param($outputType)
+        { Add-Type -TypeDefinition "Hello" -OutputType $outputType } | Should -Throw -ErrorId 'AssemblyTypeNotSupported,Microsoft.PowerShell.Commands.AddTypeCommand'
+    }
 }

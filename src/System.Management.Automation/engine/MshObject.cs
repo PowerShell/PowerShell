@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
 
                 isFirst = false;
                 returnValue.Append(property.Name);
-                returnValue.Append("=");
+                returnValue.Append('=');
 
                 // Don't evaluate script properties during a ToString() operation.
                 var propertyValue = property is PSScriptProperty ? property.GetType().FullName : property.Value;
@@ -1188,7 +1188,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -2150,7 +2150,7 @@ namespace System.Management.Automation
             private bool MustDeferIDMOP()
             {
                 var baseObject = PSObject.Base(Value);
-                return baseObject is IDynamicMetaObjectProvider && !(baseObject is PSObject);
+                return baseObject is IDynamicMetaObjectProvider && baseObject is not PSObject;
             }
 
             private DynamicMetaObject DeferForIDMOP(DynamicMetaObjectBinder binder, params DynamicMetaObject[] args)
@@ -2538,13 +2538,13 @@ namespace Microsoft.PowerShell
             {
                 string elementDefinition = Type(type.GetElementType(), dropNamespaces);
                 var sb = new StringBuilder(elementDefinition, elementDefinition.Length + 10);
-                sb.Append("[");
+                sb.Append('[');
                 for (int i = 0; i < type.GetArrayRank() - 1; ++i)
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
 
-                sb.Append("]");
+                sb.Append(']');
                 result = sb.ToString();
             }
             else

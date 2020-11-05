@@ -30,9 +30,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Member variables.
         /// </summary>
-        private Dictionary<string, ComProperty> _properties = null;
-        private Dictionary<string, ComMethod> _methods = null;
-        private COM.ITypeInfo _typeinfo = null;
+        private readonly Dictionary<string, ComProperty> _properties = null;
+        private readonly Dictionary<string, ComMethod> _methods = null;
+        private readonly COM.ITypeInfo _typeinfo = null;
         private Guid _guid = Guid.Empty;
 
         /// <summary>

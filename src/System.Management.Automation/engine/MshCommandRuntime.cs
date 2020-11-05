@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Collections;
@@ -91,8 +92,8 @@ namespace System.Management.Automation
 
         internal PipelineProcessor PipelineProcessor { get; set; }
 
-        private CommandInfo _commandInfo;
-        private InternalCommand _thisCommand;
+        private readonly CommandInfo _commandInfo;
+        private readonly InternalCommand _thisCommand;
 
         #endregion private_members
 
@@ -352,7 +353,7 @@ namespace System.Management.Automation
             // WriteProgress. The following logic ensures that
             // there is a unique id for each Cmdlet instance.
 
-            if (0 == _sourceId)
+            if (_sourceId == 0)
             {
                 _sourceId = Interlocked.Increment(ref s_lastUsedSourceId);
             }
@@ -2351,10 +2352,10 @@ namespace System.Management.Automation
             // There is no finalizer, by design.  This class relies on always
             // being disposed and always following stack semantics.
 
-            private PipelineProcessor _pp = null;
-            private InternalCommand _wasPermittedToWrite = null;
-            private bool _wasPermittedToWriteToPipeline = false;
-            private Thread _wasPermittedToWriteThread = null;
+            private readonly PipelineProcessor _pp = null;
+            private readonly InternalCommand _wasPermittedToWrite = null;
+            private readonly bool _wasPermittedToWriteToPipeline = false;
+            private readonly Thread _wasPermittedToWriteThread = null;
         }
 
         /// <summary>
@@ -2383,7 +2384,10 @@ namespace System.Management.Automation
             // PipelineStoppedException should not get added to $Error
             // 2008/06/25 - narrieta: ExistNestedPromptException should not be added to $error either
             // 2019/10/18 - StopUpstreamCommandsException should not be added either
-            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException) && !(e is StopUpstreamCommandsException))
+            if (e is not HaltCommandException
+                && e is not PipelineStoppedException
+                && e is not ExitNestedPromptException
+                && e is not StopUpstreamCommandsException)
             {
                 try
                 {
@@ -2825,7 +2829,6 @@ namespace System.Management.Automation
                     Severity.Warning);
             }
 
-            this.PipelineProcessor.ExecutionFailed = true;
             if (LogPipelineExecutionDetail)
             {
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
@@ -2833,6 +2836,8 @@ namespace System.Management.Automation
 
             if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
             {
+                this.PipelineProcessor.ExecutionFailed = true;
+
                 ActionPreference preference = ErrorAction;
                 if (actionPreference.HasValue)
                 {
@@ -3022,7 +3027,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isVerbosePreferenceCached = false;
+        private readonly bool _isVerbosePreferenceCached = false;
         private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
@@ -3071,7 +3076,7 @@ namespace System.Management.Automation
 
         internal bool IsWarningActionSet { get; private set; } = false;
 
-        private bool _isWarningPreferenceCached = false;
+        private readonly bool _isWarningPreferenceCached = false;
         private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.

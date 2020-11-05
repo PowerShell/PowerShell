@@ -371,7 +371,7 @@ namespace System.Management.Automation
             InstanceId = instanceId;
         }
 
-        internal int Id { get; private set; }
+        internal int Id { get; }
 
         internal Guid InstanceId { get; private set; }
     }
@@ -2316,7 +2316,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the status of remote command execution.
         /// </summary>
-
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void SetStatusMessage()
         {
@@ -2586,7 +2585,7 @@ namespace System.Management.Automation
                 foreach (PSRemotingChildJob job in ChildJobs)
                 {
                     location.Append(job.Location);
-                    location.Append(",");
+                    location.Append(',');
                 }
 
                 location.Remove(location.Length - 1, 1);
@@ -3383,9 +3382,10 @@ namespace System.Management.Automation
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
                                 null, null, null, null, null, errorDetails, null);
             }
-            else if ((pipeline.PipelineStateInfo.State == PipelineState.Failed) ||
-                     ((pipeline.PipelineStateInfo.State == PipelineState.Stopped) &&
-                      (pipeline.PipelineStateInfo.Reason != null && !(pipeline.PipelineStateInfo.Reason is PipelineStoppedException))))
+            else if (pipeline.PipelineStateInfo.State == PipelineState.Failed
+                || (pipeline.PipelineStateInfo.State == PipelineState.Stopped
+                    && pipeline.PipelineStateInfo.Reason != null
+                    && pipeline.PipelineStateInfo.Reason is not PipelineStoppedException))
             {
                 // Pipeline stopped state is also an error condition if the associated exception is not 'PipelineStoppedException'.
                 object targetObject = runspace.ConnectionInfo.ComputerName;
@@ -4518,11 +4518,7 @@ namespace System.Management.Automation
 
     internal class OutputProcessingStateEventArgs : EventArgs
     {
-        internal bool ProcessingOutput
-        {
-            get;
-            private set;
-        }
+        internal bool ProcessingOutput { get; }
 
         internal OutputProcessingStateEventArgs(bool processingOutput)
         {

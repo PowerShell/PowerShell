@@ -949,9 +949,20 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        private IEnumerable<Expression> CompileInvocationArguments(IEnumerable<ExpressionAst> arguments)
+        private IEnumerable<Expression> CompileInvocationArguments(IReadOnlyList<ExpressionAst> arguments)
         {
-            return arguments == null ? Array.Empty<Expression>() : arguments.Select(CompileExpressionOperand);
+            if (arguments is null || arguments.Count == 0)
+            {
+                return Array.Empty<Expression>();
+            }
+
+            var result = new Expression[arguments.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = CompileExpressionOperand(arguments[i]);
+            }
+
+            return result;
         }
 
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
@@ -1244,7 +1255,7 @@ namespace System.Management.Automation.Language
                 {
                     var rdp = runtimeDefinedParamList[index];
                     var paramAttribute = (ParameterAttribute)rdp.Attributes.First(attr => attr is ParameterAttribute);
-                    if (!(rdp.ParameterType == typeof(SwitchParameter)))
+                    if (rdp.ParameterType != typeof(SwitchParameter))
                     {
                         paramAttribute.Position = pos++;
                     }
@@ -2195,11 +2206,11 @@ namespace System.Management.Automation.Language
                 this.ContinueLabel = continueLabel;
             }
 
-            internal string Label { get; private set; }
+            internal string Label { get; }
 
-            internal LabelTarget ContinueLabel { get; private set; }
+            internal LabelTarget ContinueLabel { get; }
 
-            internal LabelTarget BreakLabel { get; private set; }
+            internal LabelTarget BreakLabel { get; }
         }
 
         private LabelTarget _returnTarget;
@@ -2254,11 +2265,9 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
             exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
-            if (generateRedirectExprs != null)
-            {
-                // Add merge redirection expressions if delegate is provided.
-                generateRedirectExprs(exprs, finallyExprs);
-            }
+
+            // Add merge redirection expressions if delegate is provided.
+            generateRedirectExprs?.Invoke(exprs, finallyExprs);
 
             exprs.Add(Compile(ast));
 
@@ -2447,7 +2456,7 @@ namespace System.Management.Automation.Language
             {
                 if (!scriptBlockAst.EndBlock.Unnamed)
                 {
-                    funcName = funcName + "<End>";
+                    funcName += "<End>";
                 }
 
                 _endBlockLambda = CompileNamedBlock(scriptBlockAst.EndBlock, funcName, rootForDefiningTypesAndUsings);
@@ -5491,7 +5500,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                labelExpr = labelExpr ?? ExpressionCache.ConstEmptyString;
+                labelExpr ??= ExpressionCache.ConstEmptyString;
                 result = Expression.Throw(Expression.New(nonLocalExceptionCtor, labelExpr.Convert(typeof(string))));
             }
 
@@ -5653,7 +5662,7 @@ namespace System.Management.Automation.Language
                     if (rhs is ConstantExpression && rhs.Type == typeof(Type))
                     {
                         var isType = (Type)((ConstantExpression)rhs).Value;
-                        if (!(isType == typeof(PSCustomObject)) && !(isType == typeof(PSObject)))
+                        if (isType != typeof(PSCustomObject) && isType != typeof(PSObject))
                         {
                             lhs = lhs.Type.IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
                             if (binaryExpressionAst.Operator == TokenKind.Is)
@@ -6419,7 +6428,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            values = values ?? CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
+            values ??= CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
 
             if (pureExprAst is ArrayLiteralAst)
             {
@@ -6669,9 +6678,20 @@ namespace System.Management.Automation.Language
                 return _argExprTemps;
             }
 
-            return InvokeMemberExpressionAst.Arguments == null
-               ? Array.Empty<Expression>()
-               : InvokeMemberExpressionAst.Arguments.Select(compiler.Compile).ToArray();
+            ReadOnlyCollection<ExpressionAst> arguments = InvokeMemberExpressionAst.Arguments;
+
+            if (arguments is null || arguments.Count == 0)
+            {
+                return Array.Empty<Expression>();
+            }
+
+            var result = new Expression[arguments.Count];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = compiler.Compile(arguments[i]);
+            }
+
+            return result;
         }
 
         public Expression GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps)

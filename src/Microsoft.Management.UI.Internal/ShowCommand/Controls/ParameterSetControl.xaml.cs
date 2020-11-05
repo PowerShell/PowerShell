@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="uiControl">Will adding UIControl.</param>
         private void AddControlToMainGrid(UIElement uiControl)
         {
-            if (this.firstFocusableElement == null && !(uiControl is Label))
+            if (this.firstFocusableElement == null && uiControl is not Label)
             {
                 this.firstFocusableElement = uiControl;
             }

@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
-using System.Text;
 
 namespace System.Management.Automation.Provider
 {
@@ -651,7 +650,7 @@ namespace System.Management.Automation.Provider
 
             if (originalPathHadTrailingSlash)
             {
-                result = result + StringLiterals.DefaultPathSeparator;
+                result += StringLiterals.DefaultPathSeparator;
             }
 
             return result;

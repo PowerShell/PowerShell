@@ -23,7 +23,6 @@ namespace System.Management.Automation.Host
     /// </summary>
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>
-
     public abstract class PSHostUserInterface
     {
         /// <summary>
@@ -399,7 +398,7 @@ namespace System.Management.Automation.Host
 
         private sealed class TranscribeOnlyCookie : IDisposable
         {
-            private PSHostUserInterface _ui;
+            private readonly PSHostUserInterface _ui;
             private bool _disposed = false;
 
             public TranscribeOnlyCookie(PSHostUserInterface ui)
@@ -954,9 +953,9 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new object();
+        private static readonly object s_systemTranscriptLock = new object();
 
-        private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
+        private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
@@ -1049,11 +1048,7 @@ namespace System.Management.Automation.Host
             PromptText = "PS>";
         }
 
-        internal List<TranscriptionOption> Transcripts
-        {
-            get;
-            private set;
-        }
+        internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
         internal string CommandBeingIgnored { get; set; }
@@ -1093,12 +1088,12 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Any output to log for this transcript.
         /// </summary>
-        internal List<string> OutputToLog { get; private set; }
+        internal List<string> OutputToLog { get; }
 
         /// <summary>
         /// Any output currently being logged for this transcript.
         /// </summary>
-        internal List<string> OutputBeingLogged { get; private set; }
+        internal List<string> OutputBeingLogged { get; }
 
         /// <summary>
         /// Whether to include time stamp / command separators in
@@ -1178,8 +1173,20 @@ namespace System.Management.Automation.Host
 
             if (_contentWriter != null)
             {
-                _contentWriter.Flush();
-                _contentWriter.Dispose();
+                try
+                {
+                    _contentWriter.Flush();
+                    _contentWriter.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Do nothing
+                }
+                catch (IOException)
+                {
+                    // Do nothing
+                }
+
                 _contentWriter = null;
             }
 

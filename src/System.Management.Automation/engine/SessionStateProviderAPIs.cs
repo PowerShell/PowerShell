@@ -52,7 +52,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Dictionary<ProviderInfo, PSDriveInfo> _providersCurrentWorkingDrive = new Dictionary<ProviderInfo, PSDriveInfo>();
+        private readonly Dictionary<ProviderInfo, PSDriveInfo> _providersCurrentWorkingDrive = new Dictionary<ProviderInfo, PSDriveInfo>();
 
         /// <summary>
         /// Entrypoint used by to add a provider to the current session state
@@ -317,7 +317,7 @@ namespace System.Management.Automation
 
             foreach (ProviderInfo matchingProvider in matchingProviders)
             {
-                possibleMatches.Append(" ");
+                possibleMatches.Append(' ');
                 possibleMatches.Append(matchingProvider.FullName);
             }
 

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if UNIX
 
 using System.Diagnostics.Eventing;
@@ -15,7 +16,7 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal class PSSysLogProvider : LogProvider
     {
-        private static SysLogProvider s_provider;
+        private static readonly SysLogProvider s_provider;
 
         // by default, do not include channel bits
         internal const PSKeyword DefaultKeywords = (PSKeyword) (0x00FFFFFFFFFFFFFF);

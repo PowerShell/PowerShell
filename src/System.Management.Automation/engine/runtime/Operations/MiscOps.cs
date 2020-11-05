@@ -104,7 +104,7 @@ namespace System.Management.Automation
                 else
                 {
                     var commandName = command as string ?? PSObject.ToStringParser(context, command);
-                    invocationName = invocationName ?? commandName;
+                    invocationName ??= commandName;
 
                     if (string.IsNullOrEmpty(commandName))
                     {
@@ -407,7 +407,7 @@ namespace System.Management.Automation
             else
             {
                 string whitespaces = parameterName.Substring(endPosition);
-                parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
+                parameterText = string.Concat("-", parameterName.AsSpan().Slice(0, endPosition), ":", whitespaces);
             }
 
             return parameterText;
@@ -858,7 +858,7 @@ namespace System.Management.Automation
             this.FromStream = from;
         }
 
-        internal RedirectionStream FromStream { get; private set; }
+        internal RedirectionStream FromStream { get; }
 
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
@@ -1039,9 +1039,9 @@ namespace System.Management.Automation
                                  File);
         }
 
-        internal string File { get; private set; }
+        internal string File { get; }
 
-        internal bool Appending { get; private set; }
+        internal bool Appending { get; }
 
         private PipelineProcessor PipelineProcessor { get; set; }
 
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
             if (types[length - 1].Equals(typeof(CatchAll)))
             {
                 ranks[length - 1] = length - 1;
-                length = length - 1;
+                length -= 1;
             }
 
             // For each type check if it's a sub-class of any types after it.
@@ -3228,7 +3228,10 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
-                return new object[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<object>(); always return a new instance.
+                return new object[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             return ArrayOps.Multiply(originalList.ToArray(), times);

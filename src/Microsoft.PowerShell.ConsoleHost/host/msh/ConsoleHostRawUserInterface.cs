@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// Implementation of RawConsole for powershell.
     /// </summary>
-
     internal sealed
     class ConsoleHostRawUserInterface : System.Management.Automation.Host.PSHostRawUserInterface
     {
@@ -31,7 +30,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If obtaining the buffer's foreground and background color failed
         /// </exception>
-
         internal
         ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
@@ -78,7 +76,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleTextAttribute
         /// </exception>
-
         public override
         ConsoleColor
         ForegroundColor
@@ -129,7 +126,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleTextAttribute
         /// </exception>
-
         public override
         ConsoleColor
         BackgroundColor
@@ -222,7 +218,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleCursorInfo failed
         /// </exception>
-
         public override
         int
         CursorSize
@@ -278,7 +273,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
         /// </exception>
-
         public override
         Coordinates
         WindowPosition
@@ -345,7 +339,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleScreenBufferSize failed
         /// </exception>
-
         public override
         Size
         BufferSize
@@ -398,7 +391,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
         /// </exception>
-
         public override
         Size
         WindowSize
@@ -519,7 +511,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If obtaining information about the buffer failed
         /// </exception>
-
         public override
         Size
         MaxWindowSize
@@ -543,7 +534,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's GetLargestConsoleWindowSize failed
         /// </exception>
-
         public override
         Size
         MaxPhysicalWindowSize
@@ -602,7 +592,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's ReadConsoleInput failed
         /// </exception>
-
         public override
         KeyInfo
         ReadKey(ReadKeyOptions options)
@@ -730,7 +719,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's FlushConsoleInputBuffer failed
         /// </exception>
-
         public override
         void
         FlushInputBuffer()
@@ -752,7 +740,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's PeekConsoleInput failed
         /// </exception>
-
         public override
         bool
         KeyAvailable
@@ -873,7 +860,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    there is not enough memory to complete calls to Win32's WriteConsoleOutput
         /// </exception>
-
         public override
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents)
@@ -1084,7 +1070,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    there is not enough memory to complete calls to Win32's ReadConsoleOutput
         /// </exception>
-
         public override
         BufferCell[,] GetBufferContents(Rectangle region)
         {
@@ -1208,7 +1193,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
-
         public override
         int LengthInBufferCells(string s)
         {
@@ -1224,7 +1208,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
-
         public override
         int LengthInBufferCells(string s, int offset)
         {
@@ -1244,7 +1227,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
-
         public override
         int LengthInBufferCells(char c)
         {
@@ -1317,17 +1299,16 @@ namespace Microsoft.PowerShell
 
         #endregion helpers
 
-        private ConsoleColor defaultForeground = ConsoleColor.Gray;
+        private readonly ConsoleColor defaultForeground = ConsoleColor.Gray;
 
-        private ConsoleColor defaultBackground = ConsoleColor.Black;
+        private readonly ConsoleColor defaultBackground = ConsoleColor.Black;
 
-        private ConsoleHostUserInterface parent = null;
+        private readonly ConsoleHostUserInterface parent = null;
 
         private ConsoleControl.KEY_EVENT_RECORD cachedKeyEvent;
 
         [TraceSourceAttribute("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole")]
-        private static
-        PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
+        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
     }
 }   // namespace
 
@@ -1354,7 +1335,7 @@ namespace Microsoft.PowerShell
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
 
-        private ConsoleHostUserInterface _parent = null;
+        private readonly ConsoleHostUserInterface _parent = null;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {

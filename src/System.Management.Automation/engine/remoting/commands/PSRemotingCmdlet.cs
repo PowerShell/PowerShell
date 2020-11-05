@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        public virtual int ThrottleLimit { set; get; } = 0;
+        public virtual int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -3257,8 +3257,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal Runspace PipelineRunspace
         {
-            set;
             get;
+            set;
         }
 
         #region Runspace Debug

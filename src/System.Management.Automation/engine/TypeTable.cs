@@ -1752,7 +1752,7 @@ namespace System.Management.Automation.Runspaces
     [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
@@ -1838,7 +1838,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -1936,18 +1935,18 @@ namespace System.Management.Automation.Runspaces
             this.TypeName = type.FullName;
         }
 
-        internal bool fromTypesXmlFile { get; private set; }
+        internal bool fromTypesXmlFile { get; }
 
         /// <summary>
         /// Get the TypeName.
         /// </summary>
-        public string TypeName { get; private set; }
+        public string TypeName { get; }
 
         /// <summary>
         /// Get the members of this TypeData instance.
         /// The Key of the dictionary is the member's name, and the Value is a TypeMemberData instance.
         /// </summary>
-        public Dictionary<string, TypeMemberData> Members { get; private set; }
+        public Dictionary<string, TypeMemberData> Members { get; }
 
         /// <summary>
         /// The type converter.
@@ -1966,7 +1965,7 @@ namespace System.Management.Automation.Runspaces
 
         #region StandardMember
 
-        internal Dictionary<string, TypeMemberData> StandardMembers { get; private set; }
+        internal Dictionary<string, TypeMemberData> StandardMembers { get; }
 
         /// <summary>
         /// The serializationMethod.
@@ -2725,7 +2724,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The referenced properties.
         /// </summary>
-        public Collection<string> ReferencedProperties { get; private set; }
+        public Collection<string> ReferencedProperties { get; }
 
         /// <summary>
         /// The PropertySet name.
@@ -2777,7 +2776,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The members of the MemberSet.
         /// </summary>
-        public Collection<TypeMemberData> Members { get; private set; }
+        public Collection<TypeMemberData> Members { get; }
 
         /// <summary>
         /// Set true if the member is supposed to be hidden.
@@ -3938,7 +3937,7 @@ namespace System.Management.Automation.Runspaces
                 _typeFileList.Add(typefile);
             }
 
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new TypeTableLoadException(errors);
             }

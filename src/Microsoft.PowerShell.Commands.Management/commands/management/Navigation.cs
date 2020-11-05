@@ -654,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the path path property, when bound from the pipeline.
+        /// Gets or sets the path property, when bound from the pipeline.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -2536,7 +2536,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
-                        if (true == SuppressWildcardExpansion && 0 == resolvedPSPaths.Count)
+                        if (SuppressWildcardExpansion == true && resolvedPSPaths.Count == 0)
                         {
                             ItemNotFoundException pathNotFound =
                                 new ItemNotFoundException(

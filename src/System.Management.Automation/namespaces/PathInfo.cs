@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Dbg = System.Management.Automation;
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -78,7 +76,7 @@ namespace System.Management.Automation
         }
 
         private string _providerPath;
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         /// <summary>
         /// Gets the MSH path that this object represents.
@@ -91,9 +89,9 @@ namespace System.Management.Automation
             }
         }
 
-        private PSDriveInfo _drive;
-        private ProviderInfo _provider;
-        private string _path = string.Empty;
+        private readonly PSDriveInfo _drive;
+        private readonly ProviderInfo _provider;
+        private readonly string _path = string.Empty;
 
         /// <summary>
         /// Gets a string representing the MSH path.

@@ -31,7 +31,7 @@ namespace System.Management.Automation.Language
         public bool Automatic { get; set; }
         public bool PreferenceVariable { get; set; }
         public bool Assigned { get; set; }
-        public List<Ast> AssociatedAsts { get; private set; }
+        public List<Ast> AssociatedAsts { get; }
     }
 
     internal class FindAllVariablesVisitor : AstVisitor
@@ -340,11 +340,11 @@ namespace System.Management.Automation.Language
                 this.ContinueTarget = continueTarget;
             }
 
-            internal string Label { get; private set; }
+            internal string Label { get; }
 
-            internal Block BreakTarget { get; private set; }
+            internal Block BreakTarget { get; }
 
-            internal Block ContinueTarget { get; private set; }
+            internal Block ContinueTarget { get; }
         }
 
         private class Block
@@ -626,7 +626,7 @@ namespace System.Management.Automation.Language
                         var varName = GetUnaliasedVariableName(variablePath);
                         var details = _variables[varName];
                         details.Assigned = true;
-                        type = type ?? details.Type ?? typeof(object);
+                        type ??= details.Type ?? typeof(object);
 
                         // automatic and preference variables are pre-allocated, so they can't be unallocated
                         // and forced to be dynamic.

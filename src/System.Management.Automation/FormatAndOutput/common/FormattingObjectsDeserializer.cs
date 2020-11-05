@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class FormatObjectDeserializer
     {
-        internal TerminatingErrorContext TerminatingErrorContext { get; private set; }
+        internal TerminatingErrorContext TerminatingErrorContext { get; }
 
         /// <summary>
         /// Expansion of TAB character to the following string.
