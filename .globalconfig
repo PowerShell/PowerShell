@@ -136,7 +136,7 @@ dotnet_diagnostic.CA1066.severity = none
 dotnet_diagnostic.CA1067.severity = suggestion
 
 # CA1068: CancellationToken parameters must come last
-dotnet_diagnostic.CA1068.severity = suggestion
+dotnet_diagnostic.CA1068.severity = warning
 
 # CA1069: Enums values should not be duplicated
 dotnet_diagnostic.CA1069.severity = suggestion

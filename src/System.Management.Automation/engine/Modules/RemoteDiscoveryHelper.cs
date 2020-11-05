@@ -137,10 +137,10 @@ namespace System.Management.Automation
 
         private static IEnumerable<PSObject> InvokeTopLevelPowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             using (var mergedOutput = new BlockingCollection<Func<PSCmdlet, IEnumerable<PSObject>>>(s_blockingCollectionCapacity))
             {
@@ -256,10 +256,10 @@ namespace System.Management.Automation
 
         private static IEnumerable<PSObject> InvokeNestedPowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
                 delegate (ErrorRecord errorRecord)
@@ -467,9 +467,9 @@ namespace System.Management.Automation
 
         internal static IEnumerable<PSObject> InvokePowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "ErrorAction");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "WarningAction");
@@ -481,8 +481,8 @@ namespace System.Management.Automation
 
             // TODO/FIXME: ETW events for the output stream
             IEnumerable<PSObject> outputStream = powerShell.IsNested
-                ? InvokeNestedPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate)
-                : InvokeTopLevelPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate);
+                ? InvokeNestedPowerShell(powerShell, cmdlet, invocationSettings, errorMessageTemplate, cancellationToken)
+                : InvokeTopLevelPowerShell(powerShell, cmdlet, invocationSettings, errorMessageTemplate, cancellationToken);
 
             return EnumerateWithCatch(
                 outputStream,
@@ -980,8 +980,8 @@ namespace System.Management.Automation
             PSCredential credential,
             string authentication,
             bool isLocalHost,
-            CancellationToken cancellationToken,
-            PSCmdlet cmdlet)
+            PSCmdlet cmdlet,
+            CancellationToken cancellationToken)
         {
             if (isLocalHost)
             {
