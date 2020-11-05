@@ -615,9 +615,7 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            var other = obj as TypeResolutionState;
-
-            if (other == null)
+            if (!(obj is TypeResolutionState other))
                 return false;
 
             if (this.attribute != other.attribute)

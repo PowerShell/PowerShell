@@ -1982,8 +1982,7 @@ namespace System.Management.Automation
 
             foreach (PSMemberInfo info in propertyCollection)
             {
-                PSProperty prop = info as PSProperty;
-                if (prop == null)
+                if (!(info is PSProperty prop))
                 {
                     continue;
                 }
@@ -3331,32 +3330,28 @@ namespace System.Management.Automation
 
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
-                PSPropertyInfo namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
-                if (namespaceProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] is PSPropertyInfo namespaceProperty))
                 {
                     return null;
                 }
 
                 string cimNamespace = namespaceProperty.Value as string;
 
-                PSPropertyInfo classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
-                if (classNameProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] is PSPropertyInfo classNameProperty))
                 {
                     return null;
                 }
 
                 string cimClassName = classNameProperty.Value as string;
 
-                PSPropertyInfo computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
-                if (computerNameProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] is PSPropertyInfo computerNameProperty))
                 {
                     return null;
                 }
 
                 string computerName = computerNameProperty.Value as string;
 
-                PSPropertyInfo hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
-                if (hashCodeProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] is PSPropertyInfo hashCodeProperty))
                 {
                     return null;
                 }
@@ -3473,8 +3468,7 @@ namespace System.Management.Automation
             {
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
-                    PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                    if (deserializedProperty == null)
+                    if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
                     {
                         continue;
                     }
@@ -3494,8 +3488,7 @@ namespace System.Management.Automation
             // process properties that were originally "extended" properties
             foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.InstanceMembers)
             {
-                PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                if (deserializedProperty == null)
+                if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
                 {
                     continue;
                 }
@@ -7279,8 +7272,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
-            if (parameterSetMetadata == null)
+            if (!(instance.BaseObject is ParameterSetMetadata parameterSetMetadata))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7301,8 +7293,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
-            if (dbgStopEventArgs == null)
+            if (!(instance.BaseObject is DebuggerStopEventArgs dbgStopEventArgs))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7561,8 +7552,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
-            if (formatViewDefinition == null)
+            if (!(instance.BaseObject is FormatViewDefinition formatViewDefinition))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }

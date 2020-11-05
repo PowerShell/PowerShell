@@ -7213,8 +7213,7 @@ namespace System.Management.Automation.Language
                 PSTraceSource.NewInvalidOperationException();
             }
 
-            var commandExpr = this.Parent as CommandExpressionAst;
-            if (commandExpr == null)
+            if (!(this.Parent is CommandExpressionAst commandExpr))
             {
                 return false;
             }
@@ -7726,8 +7725,7 @@ namespace System.Management.Automation.Language
             var attributes = GetAttributes();
             var assignableValue = GetActualAssignableAst().GetAssignableValue();
 
-            var variableExpr = assignableValue as VariableExpressionAst;
-            if (variableExpr == null)
+            if (!(assignableValue is VariableExpressionAst variableExpr))
             {
                 return assignableValue.SetValue(compiler, Compiler.ConvertValue(rhs, attributes));
             }
@@ -8371,8 +8369,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as TypeName;
-            if (other == null)
+            if (!(obj is TypeName other))
                 return false;
 
             if (!_name.Equals(other._name, StringComparison.OrdinalIgnoreCase))
@@ -8690,8 +8687,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as GenericTypeName;
-            if (other == null)
+            if (!(obj is GenericTypeName other))
                 return false;
 
             if (!TypeName.Equals(other.TypeName))
@@ -8916,8 +8912,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ArrayTypeName;
-            if (other == null)
+            if (!(obj is ArrayTypeName other))
                 return false;
 
             return ElementType.Equals(other.ElementType) && Rank == other.Rank;
@@ -9018,8 +9013,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ReflectionTypeName;
-            if (other == null)
+            if (!(obj is ReflectionTypeName other))
                 return false;
             return _type == other._type;
         }

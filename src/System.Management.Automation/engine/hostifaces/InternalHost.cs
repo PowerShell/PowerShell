@@ -448,8 +448,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         private IHostSupportsInteractiveSession GetIHostSupportsInteractiveSession()
         {
-            IHostSupportsInteractiveSession host = _externalHostRef.Value as IHostSupportsInteractiveSession;
-            if (host == null)
+            if (!(_externalHostRef.Value is IHostSupportsInteractiveSession host))
             {
                 throw new PSNotImplementedException();
             }

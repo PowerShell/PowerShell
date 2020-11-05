@@ -2623,8 +2623,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateAllowRedirectionParameter()
         {
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo == null)
+            if (!(_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo))
             {
                 return string.Empty;
             }
@@ -2650,8 +2649,7 @@ function Get-PSImplicitRemotingSession
                 return string.Empty;
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo == null)
+            if (!(_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo))
             {
                 return string.Empty;
             }

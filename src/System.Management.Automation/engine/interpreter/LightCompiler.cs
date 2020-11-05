@@ -1297,8 +1297,7 @@ namespace System.Management.Automation.Interpreter
 
         private void DefineBlockLabels(Expression node)
         {
-            var block = node as BlockExpression;
-            if (block == null)
+            if (!(node is BlockExpression block))
             {
                 return;
             }

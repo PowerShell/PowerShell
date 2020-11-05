@@ -101,8 +101,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            Cmdlet cmdlet = command as Cmdlet;
-            if (cmdlet == null)
+            if (!(command is Cmdlet cmdlet))
             {
                 throw PSTraceSource.NewArgumentException(nameof(command));
             }

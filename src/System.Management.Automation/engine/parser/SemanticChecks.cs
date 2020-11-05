@@ -693,8 +693,7 @@ namespace System.Management.Automation.Language
 
         private void CheckForReturnStatement(ReturnStatementAst ast)
         {
-            var functionMemberAst = _memberScopeStack.Peek() as FunctionMemberAst;
-            if (functionMemberAst == null)
+            if (!(_memberScopeStack.Peek() is FunctionMemberAst functionMemberAst))
             {
                 return;
             }
@@ -1592,8 +1591,7 @@ namespace System.Management.Automation.Language
 
             foreach (var baseType in typeDefinitionAst.BaseTypes)
             {
-                var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName == null)
+                if (!(baseType.TypeName is TypeName baseTypeName))
                 {
                     continue;
                 }

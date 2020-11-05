@@ -240,8 +240,7 @@ namespace System.Management.Automation
             if (e == null)
                 return string.Empty;
 
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (icer == null)
+            if (!(e is IContainsErrorRecord icer))
                 return e.Message;
             ErrorRecord er = icer.ErrorRecord;
             if (er == null)

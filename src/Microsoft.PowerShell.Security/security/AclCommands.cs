@@ -208,8 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -248,8 +247,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -588,8 +586,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }

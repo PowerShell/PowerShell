@@ -1466,8 +1466,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj.GetType().FullName;
             }
@@ -1571,9 +1570,7 @@ namespace System.Management.Automation
                 // not really a method call.
                 if (valueToSet != AutomationNull.Value)
                 {
-                    PSParameterizedProperty propertyToSet = targetMethod as PSParameterizedProperty;
-
-                    if (propertyToSet == null)
+                    if (!(targetMethod is PSParameterizedProperty propertyToSet))
                     {
                         throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition,
                                                                        "ParameterizedPropertyAssignmentFailed", ParserStrings.ParameterizedPropertyAssignmentFailed, GetTypeFullName(target), methodName);

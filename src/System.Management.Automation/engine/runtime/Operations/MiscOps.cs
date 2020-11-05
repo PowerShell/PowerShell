@@ -1280,8 +1280,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                var rte = exception as RuntimeException;
-                if (rte == null)
+                if (!(exception is RuntimeException rte))
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }

@@ -2319,8 +2319,7 @@ namespace System.Management.Automation
             //
             // Otherwise let root script debugger handle it.
             //
-            LocalRunspace localRunspace = _context.CurrentRunspace as LocalRunspace;
-            if (localRunspace == null)
+            if (!(_context.CurrentRunspace is LocalRunspace localRunspace))
             {
                 throw new PSInvalidOperationException(
                     DebuggerStrings.CannotProcessDebuggerCommandNotStopped,
@@ -3765,8 +3764,7 @@ namespace System.Management.Automation
                 }
 
                 // Get nested debugger runspace info.
-                NestedRunspaceDebugger nestedDebugger = senderDebugger as NestedRunspaceDebugger;
-                if (nestedDebugger == null) { return; }
+                if (!(senderDebugger is NestedRunspaceDebugger nestedDebugger)) { return; }
 
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
 
@@ -4626,8 +4624,7 @@ namespace System.Management.Automation
         private object DrainAndBlockRemoteOutput()
         {
             // We do this only for remote runspaces.
-            RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
-            if (remoteRunspace == null) { return null; }
+            if (!(_runspace is RemoteRunspace remoteRunspace)) { return null; }
 
             var runningPowerShell = remoteRunspace.GetCurrentBasePowerShell();
             if (runningPowerShell != null)

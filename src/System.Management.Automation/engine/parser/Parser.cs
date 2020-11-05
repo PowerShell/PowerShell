@@ -732,8 +732,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var pipelineAst = statements[0] as PipelineAst;
-            if (pipelineAst == null)
+            if (!(statements[0] is PipelineAst pipelineAst))
             {
                 return false;
             }
@@ -744,8 +743,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var hashTableAst = expr as HashtableAst;
-            if (hashTableAst == null)
+            if (!(expr is HashtableAst hashTableAst))
             {
                 return false;
             }

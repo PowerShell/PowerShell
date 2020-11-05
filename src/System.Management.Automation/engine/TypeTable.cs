@@ -3970,8 +3970,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
-                    PSPropertySet typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
-                    if (typeProperties == null)
+                    if (!(settings?.Members[PropertySerializationSet] is PSPropertySet typeProperties))
                     {
                         continue;
                     }
