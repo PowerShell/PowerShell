@@ -4,8 +4,8 @@ steps:
       $nativePath = "${dirSeparatorChar}PowerShell"
       Write-Host "##vso[task.setvariable variable=PowerShellRoot]$nativePath"
 
-      if ((Test-Path "\PowerShell")) {
-        Remove-Item -Path "\PowerShell" -Force -Recurse -Verbose -ErrorAction ignore
+      if ((Test-Path "$nativePath")) {
+        Remove-Item -Path "$nativePath" -Force -Recurse -Verbose -ErrorAction ignore
       }
       else {
         Write-Verbose -Verbose -Message "No cleanup required."
