@@ -135,7 +135,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "Argument";
+        private readonly string _errorId = "Argument";
 
         /// <summary>
         /// See <see cref="System.Exception.Message"/>
@@ -150,7 +150,7 @@ namespace System.Management.Automation
             get { return string.IsNullOrEmpty(_message) ? base.Message : _message; }
         }
 
-        private string _message;
+        private readonly string _message;
     }
 }
 

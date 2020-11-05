@@ -278,7 +278,7 @@ namespace System.Management.Automation.Internal
     {
         #region Private Members
 
-        private uint _errorCode;
+        private readonly uint _errorCode;
 
         #endregion Private Members
 
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Internal
         // bool indicating if session key was generated before
         private bool _sessionKeyGenerated = false;
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
 
         #endregion Private Members
 

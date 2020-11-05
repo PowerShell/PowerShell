@@ -112,7 +112,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "NotImplemented";
+        private readonly string _errorId = "NotImplemented";
     }
 }
 

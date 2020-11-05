@@ -96,9 +96,9 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         private class CorrelatedCallback
         {
-            private CallbackNoParameter callbackNoParam;
-            private CallbackWithState callbackWithState;
-            private AsyncCallback asyncCallback;
+            private readonly CallbackNoParameter callbackNoParam;
+            private readonly CallbackWithState callbackWithState;
+            private readonly AsyncCallback asyncCallback;
 
             /// <summary>
             /// ParentActivityId.
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// It is to be used in System.Timers.Timer scenarios.
             /// </summary>
-            private CallbackWithStateAndArgs callbackWithStateAndArgs;
+            private readonly CallbackWithStateAndArgs callbackWithStateAndArgs;
 
             /// <summary>
             /// EtwCorrelator Constructor.
@@ -252,8 +252,8 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-        private static Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
-        private static object syncLock = new object();
+        private static readonly Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
+        private static readonly object syncLock = new object();
 
         private static EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
