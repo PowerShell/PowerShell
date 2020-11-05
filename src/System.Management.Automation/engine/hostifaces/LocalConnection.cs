@@ -950,10 +950,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
-                {
-                    remoteRunspaceCloseCompleted.Set();
-                };
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) => remoteRunspaceCloseCompleted.Set();
 
                 foreach (RemoteRunspace remoteRunspace in runspaces)
                 {
@@ -979,10 +976,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
-                {
-                    jobsStopCompleted.Set();
-                };
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) => jobsStopCompleted.Set();
 
                 foreach (Job job in this.JobRepository.Jobs)
                 {
@@ -1016,10 +1010,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Disconnect all disconnectable job runspaces found.
-            CloseOrDisconnectAllRemoteRunspaces(() =>
-                {
-                    return disconnectRunspaces;
-                });
+            CloseOrDisconnectAllRemoteRunspaces(() => disconnectRunspaces);
         }
 
         internal void ReleaseDebugger()

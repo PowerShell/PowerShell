@@ -983,10 +983,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 // wait for the close to be completed and then release the resources.
-                this.CloseCompleted += delegate (object source, EventArgs args)
-                {
-                    Dispose(false);
-                };
+                this.CloseCompleted += (object source, EventArgs args) => Dispose(false);
 
                 try
                 {
@@ -1391,7 +1388,7 @@ namespace System.Management.Automation.Remoting.Server
             // Use thread-pool thread to raise the error handler..see explanation
             // in the method summary
             ThreadPool.QueueUserWorkItem(new WaitCallback(
-                delegate (object state)
+                (object state) =>
                 {
                     TransportErrorOccuredEventArgs eventArgs = new TransportErrorOccuredEventArgs(e,
                         TransportMethodEnum.Unknown);

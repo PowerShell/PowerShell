@@ -4861,19 +4861,18 @@ namespace System.Management.Automation
 
                 StatementAst debugStatement = null;
                 StatementAst callingStatement = _parentScriptBlockAst.Find(
-                    ast =>
-                    { return ((ast is StatementAst) && (ast.Extent.StartLineNumber == callingLineNumber)); }
-
-                    , true) as StatementAst;
+                    ast => ast is StatementAst && (ast.Extent.StartLineNumber == callingLineNumber), true) as StatementAst;
 
                 if (callingStatement != null)
                 {
                     // Find first statement in calling statement.
-                    StatementAst firstStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber > callingLineNumber); }, true) as StatementAst;
+                    StatementAst firstStatement = callingStatement.Find(
+                        ast => ast is StatementAst && ast.Extent.StartLineNumber > callingLineNumber, true) as StatementAst;
                     if (firstStatement != null)
                     {
                         int adjustedLineNumber = firstStatement.Extent.StartLineNumber + debugLineNumber - 1;
-                        debugStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber == adjustedLineNumber); }, true) as StatementAst;
+                        debugStatement = callingStatement.Find(
+                            ast => ast is StatementAst && ast.Extent.StartLineNumber == adjustedLineNumber, true) as StatementAst;
                     }
                 }
 

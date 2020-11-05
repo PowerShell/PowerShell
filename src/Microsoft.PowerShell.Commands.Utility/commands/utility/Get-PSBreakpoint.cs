@@ -107,18 +107,14 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Id,
-                    delegate (Breakpoint breakpoint, int id)
-                    {
-                        return breakpoint.Id == id;
-                    }
-                );
+                    (Breakpoint breakpoint, int id) => breakpoint.Id == id);
             }
             else if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 breakpoints = Filter(
                     breakpoints,
                     Command,
-                    delegate (Breakpoint breakpoint, string command)
+                    (Breakpoint breakpoint, string command) =>
                     {
                         if (!(breakpoint is CommandBreakpoint commandBreakpoint))
                         {
@@ -133,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Variable,
-                    delegate (Breakpoint breakpoint, string variable)
+                    (Breakpoint breakpoint, string variable) =>
                     {
                         if (!(breakpoint is VariableBreakpoint variableBreakpoint))
                         {
@@ -148,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Type,
-                    delegate (Breakpoint breakpoint, BreakpointType type)
+                    (Breakpoint breakpoint, BreakpointType type) =>
                     {
                         switch (type)
                         {
@@ -191,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Script,
-                    delegate (Breakpoint breakpoint, string script)
+                    (Breakpoint breakpoint, string script) =>
                     {
                         if (breakpoint.Script == null)
                         {

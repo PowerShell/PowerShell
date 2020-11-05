@@ -903,8 +903,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorEventArgs errorEventArgs = null;
                 var tcs = new TaskCompletionSource<FileSystemEventArgs>();
-                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => { tcs.TrySetResult(e); };
-                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => { tcs.TrySetResult(e); };
+                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => tcs.TrySetResult(e);
+                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => tcs.TrySetResult(e);
                 ErrorEventHandler onErrorHandler = (object source, ErrorEventArgs e) =>
                 {
                     errorEventArgs = e;

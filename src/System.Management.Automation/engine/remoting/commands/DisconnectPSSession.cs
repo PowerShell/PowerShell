@@ -481,10 +481,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_writeStream.ObjectWriter.IsOpen)
                 {
-                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteObject(_remoteSession);
-                    };
+                    Action<Cmdlet> outputWriter = (Cmdlet cmdlet) => cmdlet.WriteObject(_remoteSession);
                     _writeStream.ObjectWriter.Write(outputWriter);
                 }
             }
@@ -506,10 +503,7 @@ namespace Microsoft.PowerShell.Commands
 
                     Exception reason = new RuntimeException(msg, e);
                     ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
-                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteError(errorRecord);
-                    };
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                     _writeStream.ObjectWriter.Write(errorWriter);
                 }
             }

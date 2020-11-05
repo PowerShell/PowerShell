@@ -1823,11 +1823,11 @@ namespace Microsoft.PowerShell.Commands
                     ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, module.Name);
                     RemoteDiscoveryHelper.DispatchModuleInfoProcessing(
                         module,
-                        localAction: delegate ()
-                                         {
-                                             ImportModule_ViaLocalModuleInfo(importModuleOptions, module);
-                                             SetModuleBaseForEngineModules(module.Name, this.Context);
-                                         },
+                        localAction: () =>
+                        {
+                            ImportModule_ViaLocalModuleInfo(importModuleOptions, module);
+                            SetModuleBaseForEngineModules(module.Name, this.Context);
+                        },
 
                         cimSessionAction: (cimSession, resourceUri, cimNamespace) => ImportModule_RemotelyViaCimSession(
                             importModuleOptions,

@@ -785,12 +785,12 @@ namespace System.Management.Automation
         {
             this.Error.Add(errorRecord);
             this.InvokeCmdletMethodAndWaitForResults<object>(
-                    delegate (Cmdlet cmdlet)
-                    {
-                        this.WriteError(cmdlet, errorRecord);
-                        return null;
-                    },
-                    out exceptionThrownOnCmdletThread);
+                (Cmdlet cmdlet) =>
+                {
+                    this.WriteError(cmdlet, errorRecord);
+                    return null;
+                },
+                out exceptionThrownOnCmdletThread);
         }
 
         internal virtual void WriteWarning(string message)
@@ -856,15 +856,15 @@ namespace System.Management.Automation
             string caption)
         {
             InvokeCmdletMethodAndIgnoreResults(
-                    delegate (Cmdlet cmdlet)
-                    {
-                        ShouldProcessReason throwAwayProcessReason;
-                        cmdlet.ShouldProcess(
-                            verboseDescription,
-                            verboseWarning,
-                            caption,
-                            out throwAwayProcessReason);
-                    });
+                (Cmdlet cmdlet) =>
+                {
+                    ShouldProcessReason throwAwayProcessReason;
+                    cmdlet.ShouldProcess(
+                        verboseDescription,
+                        verboseWarning,
+                        caption,
+                        out throwAwayProcessReason);
+                });
         }
 
         internal virtual bool ShouldProcess(
@@ -893,7 +893,7 @@ namespace System.Management.Automation
             object resultsLock = new object();
             CmdletMethodInvoker<object> methodInvoker = new CmdletMethodInvoker<object>
             {
-                Action = delegate (Cmdlet cmdlet) { invokeCmdletMethod(cmdlet); return null; },
+                Action = (Cmdlet cmdlet) => { invokeCmdletMethod(cmdlet); return null; },
                 Finished = null,
                 SyncObject = resultsLock
             };
@@ -910,18 +910,18 @@ namespace System.Management.Automation
             using (var gotResultEvent = new ManualResetEventSlim(false))
             {
                 EventHandler<JobStateEventArgs> stateChangedEventHandler =
-                    delegate (object sender, JobStateEventArgs eventArgs)
+                    (object sender, JobStateEventArgs eventArgs) =>
+                    {
+                        if (IsFinishedState(eventArgs.JobStateInfo.State) || eventArgs.JobStateInfo.State == JobState.Stopping)
                         {
-                            if (IsFinishedState(eventArgs.JobStateInfo.State) || eventArgs.JobStateInfo.State == JobState.Stopping)
+                            lock (resultsLock)
                             {
-                                lock (resultsLock)
-                                {
-                                    closureSafeExceptionThrownOnCmdletThread = new OperationCanceledException();
-                                }
-
-                                gotResultEvent.Set();
+                                closureSafeExceptionThrownOnCmdletThread = new OperationCanceledException();
                             }
-                        };
+
+                            gotResultEvent.Set();
+                        }
+                    };
                 this.StateChanged += stateChangedEventHandler;
                 Interlocked.MemoryBarrier();
                 try
@@ -2023,10 +2023,7 @@ namespace System.Management.Automation
                 using (ManualResetEvent connectResult = new ManualResetEvent(false))
                 {
                     EventHandler<EventArgs> throttleCompleteEventHandler =
-                            delegate (object sender, EventArgs eventArgs)
-                            {
-                                connectResult.Set();
-                            };
+                        (object sender, EventArgs eventArgs) => connectResult.Set();
 
                     connectThrottleManager.ThrottleComplete += throttleCompleteEventHandler;
                     try

@@ -45,10 +45,7 @@ namespace System.Management.Automation.Runspaces
             // We shouldn't create too many tasks.
 #if !UNIX
             // Amsi initialize can be a little slow
-            Task.Run(() =>
-            {
-                AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true);
-            });
+            Task.Run(() => AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true));
 #endif
 
             // One other task for other stuff that's faster, but still a little slow.

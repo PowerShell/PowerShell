@@ -691,10 +691,7 @@ namespace Microsoft.PowerShell.Commands
                     // and this particular method may be called on a thread that
                     // is different from Pipeline Execution Thread. Hence using
                     // a delegate to perform the WriteObject.
-                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteObject(outSession);
-                    };
+                    Action<Cmdlet> outputWriter = (Cmdlet cmdlet) => cmdlet.WriteObject(outSession);
                     _writeStream.ObjectWriter.Write(outputWriter);
                 }
             }
@@ -728,10 +725,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
-                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteError(errorRecord);
-                    };
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                     _writeStream.ObjectWriter.Write(errorWriter);
                 }
             }

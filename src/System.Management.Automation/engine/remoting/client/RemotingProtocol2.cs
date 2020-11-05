@@ -1373,7 +1373,7 @@ namespace System.Management.Automation.Internal
             _sessionClosedReason = sessionCloseReason;
 
             // wait for the close to complete and then dispose the transport manager
-            TransportManager.CloseCompleted += delegate (object source, EventArgs args)
+            TransportManager.CloseCompleted += (object source, EventArgs args) =>
             {
                 if (CloseCompleted != null)
                 {

@@ -1046,7 +1046,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (itemRehydrator == null)
             {
-                itemRehydrator = delegate (PSObject pso) { return ConvertTo<T>(commandName, pso); };
+                itemRehydrator = (PSObject pso) => ConvertTo<T>(commandName, pso);
             }
 
             List<T> result = null;
@@ -1073,7 +1073,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (valueRehydrator == null)
             {
-                valueRehydrator = delegate (PSObject pso) { return ConvertTo<V>(commandName, pso); };
+                valueRehydrator = (PSObject pso) => ConvertTo<V>(commandName, pso);
             }
 
             Dictionary<K, V> result = new Dictionary<K, V>();

@@ -156,7 +156,7 @@ namespace System.Management.Automation.Remoting
             // If error-stream is null or we are in pushed-runspace - then write error directly to console.
             if (errorStream == null || IsRunspacePushed(_clientHost))
             {
-                writeErrorAction = delegate (ErrorRecord errorRecord)
+                writeErrorAction = (ErrorRecord errorRecord) =>
                 {
                     try
                     {
@@ -175,10 +175,7 @@ namespace System.Management.Automation.Remoting
             // Otherwise write it to error-stream.
             else
             {
-                writeErrorAction = delegate (ErrorRecord errorRecord)
-                {
-                    errorStream.Write(errorRecord);
-                };
+                writeErrorAction = (ErrorRecord errorRecord) => errorStream.Write(errorRecord);
             }
 
             this.Execute(writeErrorAction);
