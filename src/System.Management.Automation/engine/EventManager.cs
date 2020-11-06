@@ -1563,7 +1563,7 @@ namespace System.Management.Automation
         private readonly string _computerName;
 
         /// <summary>Runspace on which the event was generated</summary>
-        private Guid _runspaceId;
+        private readonly Guid _runspaceId;
 
         /// <summary>
         /// Creates an event manager for the given runspace.

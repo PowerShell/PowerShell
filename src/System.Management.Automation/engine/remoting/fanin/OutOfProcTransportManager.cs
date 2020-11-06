@@ -1426,7 +1426,7 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private Guid _vmGuid;
+        private readonly Guid _vmGuid;
         private string _configurationName;
         private VMConnectionInfo _connectionInfo;
         private NetworkCredential _networkCredential;
@@ -1512,7 +1512,7 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private Guid _targetGuid; // currently this is the utility vm guid in HyperV container scenario
+        private readonly Guid _targetGuid; // currently this is the utility vm guid in HyperV container scenario
         private ContainerConnectionInfo _connectionInfo;
 
         #endregion
@@ -2525,7 +2525,7 @@ namespace System.Management.Automation.Remoting.Server
 
         private OutOfProcessTextWriter _stdOutWriter;
         private OutOfProcessTextWriter _stdErrWriter;
-        private Guid _powershellInstanceId;
+        private readonly Guid _powershellInstanceId;
         private bool _isDataAckSendPending;
 
         #endregion

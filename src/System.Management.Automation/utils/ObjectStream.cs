@@ -1552,7 +1552,7 @@ namespace System.Management.Automation.Internal
         #region Private Fields
 
         private readonly PSDataCollection<T> _objects;
-        private Guid _psInstanceId;
+        private readonly Guid _psInstanceId;
         private bool _isOpen;
         private PipelineWriter _writer;
         private PipelineReader<object> _objectReader;

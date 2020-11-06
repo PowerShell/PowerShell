@@ -161,7 +161,7 @@ namespace System.Management.Automation.Remoting
         /// Unique identifier for this state machine. Used
         /// in tracing.
         /// </summary>
-        private Guid _id;
+        private readonly Guid _id;
 
         /// <summary>
         /// Handler to be used in cases, where setting the state is the

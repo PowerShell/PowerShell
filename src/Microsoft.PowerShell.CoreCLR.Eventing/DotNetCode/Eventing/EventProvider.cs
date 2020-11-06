@@ -20,7 +20,7 @@ namespace System.Diagnostics.Eventing
         private long _anyKeywordMask;                  // Trace Enable Flags
         private long _allKeywordMask;                  // Match all keyword
         private int _enabled;                           // Enabled flag from Trace callback
-        private Guid _providerId;                       // Control Guid
+        private readonly Guid _providerId;              // Control Guid
         private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]

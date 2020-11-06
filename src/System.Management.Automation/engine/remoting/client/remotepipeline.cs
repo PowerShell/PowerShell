@@ -30,7 +30,7 @@ namespace System.Management.Automation
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
         private CommandCollection _commands = new CommandCollection();
         private string _computerName;
-        private Guid _runspaceId;
+        private readonly Guid _runspaceId;
         private ConnectCommandInfo _connectCmdInfo = null;
 
         /// <summary>

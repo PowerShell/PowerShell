@@ -21,12 +21,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Client runspace pool id.
         /// </summary>
-        private Guid _clientRunspacePoolId;
+        private readonly Guid _clientRunspacePoolId;
 
         /// <summary>
         /// Client power shell id.
         /// </summary>
-        private Guid _clientPowerShellId;
+        private readonly Guid _clientPowerShellId;
 
         /// <summary>
         /// Server dispatch table.
