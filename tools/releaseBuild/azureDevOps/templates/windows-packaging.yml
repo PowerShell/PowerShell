@@ -171,29 +171,50 @@ jobs:
       $dlls = Get-ChildItem $BuildPath\*.dll -Recurse
       $signatures = $dlls | Get-AuthenticodeSignature
       $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned'}| select-object -ExpandProperty Path
-      & "${env:REPOROOT}/tools/releaseBuild/generatePackgeSigning.ps1" -ThirdPartyFiles $missingSignatures -path "$(System.ArtifactsDirectory)\thirtdparty.xml"
-    displayName: Create ThirdParty Signing Xml
+
+      Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
+
+      $filesToSignDirectory = "$(System.ArtifactsDirectory)\thirdPartyToBeSigned"
+      $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force
+
+      $signedFilesDirectory = "$(System.ArtifactsDirectory)\thirdPartySigned"
+      $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force
+
+      $missingSignatures | %{
+        Copy-Item -Path $_ -Destination $filesToSignDirectory
+      }
+
+    displayName: Create ThirdParty Signing Folder
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign ThirdParty $(Architecture)'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\thirtdparty.xml'
-      inPathRoot: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
-      outPathRoot: '$(System.ArtifactsDirectory)\signedThirdParty'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\thirdPartyToBeSigned
+        signOutputPath: $(System.ArtifactsDirectory)\thirdPartySigned
+        certificateId: "CP-231522"
+        pattern: |
+          **\*.dll
+        useMinimatch: true
+
+  # - task: PkgESCodeSign@10
+  #   displayName: 'CodeSign ThirdParty $(Architecture)'
+  #   env:
+  #     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  #   inputs:
+  #     signConfigXml: '$(System.ArtifactsDirectory)\thirtdparty.xml'
+  #     inPathRoot: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+  #     outPathRoot: '$(System.ArtifactsDirectory)\signedThirdParty'
+  #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
-      Get-ChildItem '$(System.ArtifactsDirectory)\signedThirdParty\*'
+      Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartySigned\*'
     displayName: Captrue ThirdParty Signed files
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
-      $signedFilesPath = '$(System.ArtifactsDirectory)\signedThirdParty\'
+      $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartySigned'
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
       Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
