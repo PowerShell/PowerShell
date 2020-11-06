@@ -120,7 +120,7 @@ namespace System.Diagnostics.Eventing
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventRegister", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern unsafe uint EventRegister(
-                    [In] ref Guid providerId,
+                    [In] in Guid providerId,
                     [In] EtwEnableCallback enableCallback,
                     [In] void* callbackContext,
                     [In][Out] ref long registrationHandle

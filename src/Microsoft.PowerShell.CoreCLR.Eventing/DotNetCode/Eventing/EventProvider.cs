@@ -99,7 +99,7 @@ namespace System.Diagnostics.Eventing
 
             _etwCallback = new UnsafeNativeMethods.EtwEnableCallback(EtwEnableCallBack);
 
-            status = UnsafeNativeMethods.EventRegister(ref _providerId, _etwCallback, null, ref _regHandle);
+            status = UnsafeNativeMethods.EventRegister(in _providerId, _etwCallback, null, ref _regHandle);
             if (status != 0)
             {
                 throw new Win32Exception((int)status);
