@@ -81,11 +81,11 @@ namespace System.Management.Automation.Tracing
     {
         // Ensure the string pointer is not garbage collected.
         private static IntPtr _nativeSyslogIdent = IntPtr.Zero;
-        private static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
-
-        private byte _channelFilter;
-        private ulong _keywordFilter;
-        private byte _levelFilter;
+        private static readonly NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
+      
+        private readonly byte _channelFilter;
+        private readonly ulong _keywordFilter;
+        private readonly byte _levelFilter;
 
         /// <summary>
         /// Initializes a new instance of this class.
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Tracing
 #region logging
 
         // maps a LogLevel to an associated SysLogPriority.
-        private static NativeMethods.SysLogPriority[] _levels =
+        private static readonly NativeMethods.SysLogPriority[] _levels =
         {
             NativeMethods.SysLogPriority.Info,
             NativeMethods.SysLogPriority.Critical,

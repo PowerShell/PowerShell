@@ -1690,20 +1690,20 @@ namespace System.Management.Automation
 
         // Job debugger integration.
         private bool _nestedDebuggerStop;
-        private Dictionary<Guid, PSJobStartEventArgs> _runningJobs;
-        private ConcurrentStack<Debugger> _activeDebuggers;
-        private ConcurrentStack<DebuggerStopEventArgs> _debuggerStopEventArgs;
+        private readonly Dictionary<Guid, PSJobStartEventArgs> _runningJobs;
+        private readonly ConcurrentStack<Debugger> _activeDebuggers;
+        private readonly ConcurrentStack<DebuggerStopEventArgs> _debuggerStopEventArgs;
         private DebuggerResumeAction _lastActiveDebuggerAction;
         private DebuggerResumeAction _currentDebuggerAction;
         private DebuggerResumeAction _previousDebuggerAction;
         private CallStackInfo _nestedRunningFrame;
-        private object _syncObject;
-        private object _syncActiveDebuggerStopObject;
+        private readonly object _syncObject;
+        private readonly object _syncActiveDebuggerStopObject;
         private int _processingOutputCount;
         private ManualResetEventSlim _processingOutputCompleteEvent = new ManualResetEventSlim(true);
 
         // Runspace debugger integration.
-        private Dictionary<Guid, PSMonitorRunspaceInfo> _runningRunspaces;
+        private readonly Dictionary<Guid, PSMonitorRunspaceInfo> _runningRunspaces;
 
         private const int _jobCallStackOffset = 2;
         private const int _runspaceCallStackOffset = 1;
@@ -1712,7 +1712,7 @@ namespace System.Management.Automation
         private ManualResetEventSlim _preserveDebugStopEvent;
 
         // Process runspace debugger
-        private Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
+        private readonly Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
         private volatile int _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
@@ -2319,8 +2319,7 @@ namespace System.Management.Automation
             //
             // Otherwise let root script debugger handle it.
             //
-            LocalRunspace localRunspace = _context.CurrentRunspace as LocalRunspace;
-            if (localRunspace == null)
+            if (!(_context.CurrentRunspace is LocalRunspace localRunspace))
             {
                 throw new PSInvalidOperationException(
                     DebuggerStrings.CannotProcessDebuggerCommandNotStopped,
@@ -3765,8 +3764,7 @@ namespace System.Management.Automation
                 }
 
                 // Get nested debugger runspace info.
-                NestedRunspaceDebugger nestedDebugger = senderDebugger as NestedRunspaceDebugger;
-                if (nestedDebugger == null) { return; }
+                if (!(senderDebugger is NestedRunspaceDebugger nestedDebugger)) { return; }
 
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
 
@@ -4626,8 +4624,7 @@ namespace System.Management.Automation
         private object DrainAndBlockRemoteOutput()
         {
             // We do this only for remote runspaces.
-            RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
-            if (remoteRunspace == null) { return null; }
+            if (!(_runspace is RemoteRunspace remoteRunspace)) { return null; }
 
             var runningPowerShell = remoteRunspace.GetCurrentBasePowerShell();
             if (runningPowerShell != null)
@@ -4864,19 +4861,18 @@ namespace System.Management.Automation
 
                 StatementAst debugStatement = null;
                 StatementAst callingStatement = _parentScriptBlockAst.Find(
-                    ast =>
-                    { return ((ast is StatementAst) && (ast.Extent.StartLineNumber == callingLineNumber)); }
-
-                    , true) as StatementAst;
+                    ast => ast is StatementAst && (ast.Extent.StartLineNumber == callingLineNumber), true) as StatementAst;
 
                 if (callingStatement != null)
                 {
                     // Find first statement in calling statement.
-                    StatementAst firstStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber > callingLineNumber); }, true) as StatementAst;
+                    StatementAst firstStatement = callingStatement.Find(
+                        ast => ast is StatementAst && ast.Extent.StartLineNumber > callingLineNumber, true) as StatementAst;
                     if (firstStatement != null)
                     {
                         int adjustedLineNumber = firstStatement.Extent.StartLineNumber + debugLineNumber - 1;
-                        debugStatement = callingStatement.Find(ast => { return ((ast is StatementAst) && ast.Extent.StartLineNumber == adjustedLineNumber); }, true) as StatementAst;
+                        debugStatement = callingStatement.Find(
+                            ast => ast is StatementAst && ast.Extent.StartLineNumber == adjustedLineNumber, true) as StatementAst;
                     }
                 }
 
@@ -5052,13 +5048,13 @@ namespace System.Management.Automation
         private const int DefaultListLineCount = 16;
 
         // table of debugger commands
-        private Dictionary<string, DebuggerCommand> _commandTable;
+        private readonly Dictionary<string, DebuggerCommand> _commandTable;
 
         // the Help command
-        private DebuggerCommand _helpCommand;
+        private readonly DebuggerCommand _helpCommand;
 
         // the List command
-        private DebuggerCommand _listCommand;
+        private readonly DebuggerCommand _listCommand;
 
         // last command processed
         private DebuggerCommand _lastCommand;
@@ -5638,7 +5634,7 @@ namespace System.Management.Automation.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed Internal use only")]
     public static class DebuggerUtils
     {
-        private static SortedSet<string> s_noHistoryCommandNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly SortedSet<string> s_noHistoryCommandNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "prompt",
             "Set-PSDebuggerAction",

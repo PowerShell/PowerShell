@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 if (_waitHandle != null)
                 {
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_syncObject)
             {
-                if (_stopping == false)
+                if (!_stopping)
                 {
                     _waitHandle = new ManualResetEvent(false);
                 }

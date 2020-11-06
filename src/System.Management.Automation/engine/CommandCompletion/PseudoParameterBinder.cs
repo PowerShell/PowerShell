@@ -1151,12 +1151,12 @@ namespace System.Management.Automation.Language
             _bindableParameters = null;
 
             // reuse the collections/dictionaries
-            _arguments = _arguments ?? new Collection<AstParameterArgumentPair>();
-            _boundParameters = _boundParameters ?? new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
-            _boundArguments = _boundArguments ?? new Dictionary<string, AstParameterArgumentPair>(StringComparer.OrdinalIgnoreCase);
-            _unboundParameters = _unboundParameters ?? new List<MergedCompiledCommandParameter>();
-            _boundPositionalParameter = _boundPositionalParameter ?? new Collection<string>();
-            _bindingExceptions = _bindingExceptions ?? new Dictionary<CommandParameterAst, ParameterBindingException>();
+            _arguments ??= new Collection<AstParameterArgumentPair>();
+            _boundParameters ??= new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
+            _boundArguments ??= new Dictionary<string, AstParameterArgumentPair>(StringComparer.OrdinalIgnoreCase);
+            _unboundParameters ??= new List<MergedCompiledCommandParameter>();
+            _boundPositionalParameter ??= new Collection<string>();
+            _bindingExceptions ??= new Dictionary<CommandParameterAst, ParameterBindingException>();
 
             _arguments.Clear();
             _boundParameters.Clear();
@@ -1171,9 +1171,9 @@ namespace System.Management.Automation.Language
             _isPipelineInputExpected = false;
 
             // reuse the collections
-            _parametersNotFound = _parametersNotFound ?? new Collection<CommandParameterAst>();
-            _ambiguousParameters = _ambiguousParameters ?? new Collection<CommandParameterAst>();
-            _duplicateParameters = _duplicateParameters ?? new Collection<AstParameterArgumentPair>();
+            _parametersNotFound ??= new Collection<CommandParameterAst>();
+            _ambiguousParameters ??= new Collection<CommandParameterAst>();
+            _duplicateParameters ??= new Collection<AstParameterArgumentPair>();
 
             _parametersNotFound.Clear();
             _ambiguousParameters.Clear();

@@ -596,9 +596,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal LineOutput LineOutput
         {
-            set { _lo = value; }
-
             get { return _lo; }
+
+            set { _lo = value; }
         }
 
         private ShapeInfo ShapeInfoOnFormatContext
@@ -637,7 +637,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Context manager instance to guide the message traversal.
         /// </summary>
-        private FormatMessagesContextManager _ctxManager = new FormatMessagesContextManager();
+        private readonly FormatMessagesContextManager _ctxManager = new FormatMessagesContextManager();
 
         private FormattedObjectsCache _cache = null;
 
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Helper class to properly write a table using text output.
             /// </summary>
-            private TableWriter _tableWriter = new TableWriter();
+            private readonly TableWriter _tableWriter = new TableWriter();
         }
 
         private sealed class TableOutputContext : TableOutputContextBase
@@ -951,7 +951,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             private const int WhitespaceAndPagerLineCount = 2;
 
-            private bool _repeatHeader = false;
+            private readonly bool _repeatHeader = false;
 
             /// <summary>
             /// Construct a context to push on the stack.
@@ -1174,7 +1174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Writer to do the actual formatting.
             /// </summary>
-            private ListWriter _listWriter = new ListWriter();
+            private readonly ListWriter _listWriter = new ListWriter();
         }
 
         private sealed class WideOutputContext : TableOutputContextBase
@@ -1357,7 +1357,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         _arr[k] = null;
                 }
 
-                private string[] _arr;
+                private readonly string[] _arr;
                 private int _lastEmptySpot;
             }
         }
@@ -1395,7 +1395,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _writer.WriteObject(cve.formatValueList);
             }
 
-            private ComplexWriter _writer = new ComplexWriter();
+            private readonly ComplexWriter _writer = new ComplexWriter();
         }
     }
 }

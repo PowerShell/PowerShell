@@ -386,7 +386,7 @@ namespace System.Management.Automation.Language
             Type type = ast.TypeName.GetReflectionType();
             if (type != null)
             {
-                Diagnostics.Assert(!(type is TypeBuilder), "ReflectionType can never be TypeBuilder");
+                Diagnostics.Assert(type is not TypeBuilder, "ReflectionType can never be TypeBuilder");
             }
 
             return AstVisitAction.Continue;

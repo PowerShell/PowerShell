@@ -540,16 +540,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         public UInt32 OperationTimeout
         {
+            get
+            {
+                return (UInt32)this.options.Timeout.TotalSeconds;
+            }
+
             set
             {
                 DebugHelper.WriteLogEx("OperationTimeout {0},", 0, value);
 
                 this.options.Timeout = TimeSpan.FromSeconds((double)value);
-            }
-
-            get
-            {
-                return (UInt32)this.options.Timeout.TotalSeconds;
             }
         }
 
@@ -558,16 +558,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         public Uri ResourceUri
         {
+            get
+            {
+                return this.options.ResourceUri;
+            }
+
             set
             {
                 DebugHelper.WriteLogEx("ResourceUri {0},", 0, value);
 
                 this.options.ResourceUri = value;
-            }
-
-            get
-            {
-                return this.options.ResourceUri;
             }
         }
 
@@ -1587,16 +1587,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private IDisposable CancelOperation
         {
+            get
+            {
+                return this._cancelOperation;
+            }
+
             set
             {
                 DebugHelper.WriteLogEx();
                 this._cancelOperation = value;
                 Interlocked.Exchange(ref this._cancelOperationDisposed, 0);
-            }
-
-            get
-            {
-                return this._cancelOperation;
             }
         }
 
@@ -1619,14 +1619,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal XOperationContextBase ContextObject
         {
-            set
-            {
-                this.contextObject = value;
-            }
-
             get
             {
                 return this.contextObject;
+            }
+
+            set
+            {
+                this.contextObject = value;
             }
         }
 
@@ -1643,14 +1643,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal IObjectPreProcess ObjectPreProcess
         {
-            set
-            {
-                this.objectPreprocess = value;
-            }
-
             get
             {
                 return this.objectPreprocess;
+            }
+
+            set
+            {
+                this.objectPreprocess = value;
             }
         }
 
@@ -2077,8 +2077,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimClass cimClass = writeResultObject.Result as CimClass;
-            if (cimClass == null)
+            if (!(writeResultObject.Result is CimClass cimClass))
             {
                 return true;
             }
@@ -2231,8 +2230,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimInstance cimInstance = writeResultObject.Result as CimInstance;
-            if (cimInstance == null)
+            if (!(writeResultObject.Result is CimInstance cimInstance))
             {
                 return true;
             }

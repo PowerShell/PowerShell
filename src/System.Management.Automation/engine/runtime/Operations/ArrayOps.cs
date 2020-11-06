@@ -52,7 +52,10 @@ namespace System.Management.Automation
 
             if (times == 0 || array.Length == 0)
             {
-                return new T[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<T>(); always return a new instance.
+                return new T[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();

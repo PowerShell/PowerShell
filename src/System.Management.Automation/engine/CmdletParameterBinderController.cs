@@ -626,8 +626,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in DefaultParameterValues)
             {
-                string key = entry.Key as string;
-                if (key == null)
+                if (!(entry.Key is string key))
                 {
                     continue;
                 }
@@ -4119,7 +4118,7 @@ namespace System.Management.Automation
                     /*argumentAst*/null, parameterValue,
                     false);
 
-                flags = flags & ~ParameterBindingFlags.DelayBindScriptBlock;
+                flags &= ~ParameterBindingFlags.DelayBindScriptBlock;
                 result = BindParameter(_currentParameterSetFlag, param, parameter, flags);
 
                 if (result)
@@ -4389,8 +4388,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            var strKey = key as string;
-            if (strKey == null) { return false; }
+            if (!(key is string strKey)) { return false; }
 
             string keyAfterTrim = strKey.Trim();
             return base.ContainsKey(keyAfterTrim);
@@ -4416,8 +4414,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            var strKey = key as string;
-            if (strKey == null)
+            if (!(key is string strKey))
             {
                 throw PSTraceSource.NewArgumentException(nameof(key), ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
             }
@@ -4462,8 +4459,7 @@ namespace System.Management.Automation
             {
                 if (key == null) { throw PSTraceSource.NewArgumentNullException(nameof(key)); }
 
-                var strKey = key as string;
-                if (strKey == null) { return null; }
+                if (!(key is string strKey)) { return null; }
 
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
@@ -4486,8 +4482,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            var strKey = key as string;
-            if (strKey == null) { return; }
+            if (!(key is string strKey)) { return; }
 
             string keyAfterTrim = strKey.Trim();
             if (base.ContainsKey(keyAfterTrim))

@@ -337,7 +337,7 @@ namespace System.Management.Automation
             {
                 // Generate Path for Catalog Definition File
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
-                cdfFilePath = cdfFilePath + ".cdf";
+                cdfFilePath += ".cdf";
                 try
                 {
                     cdfFilePath = GenerateCDFFile(Path, catalogFilePath, cdfFilePath, catalogVersion, hashAlgorithm);

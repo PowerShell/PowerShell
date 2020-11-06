@@ -134,9 +134,9 @@ namespace PSTests.Parallel
                 maxDepth: 1,
                 enumsAsStrings: true,
                 compressOutput: false,
-                source.Token,
                 Newtonsoft.Json.StringEscapeHandling.Default,
-                targetCmdlet: null);
+                targetCmdlet: null,
+                source.Token);
 
             source.Cancel();
             Hashtable hash = new Hashtable {

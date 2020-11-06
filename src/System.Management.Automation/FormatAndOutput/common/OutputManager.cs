@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Lock object.
         /// </summary>
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Ordered list of ETS type names this object is handling.
             /// </summary>
-            private StringCollection _applicableTypes = new StringCollection();
+            private readonly StringCollection _applicableTypes = new StringCollection();
         }
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// List of command entries, each with a set of applicable types.
         /// </summary>
-        private List<CommandEntry> _commandEntryList = new List<CommandEntry>();
+        private readonly List<CommandEntry> _commandEntryList = new List<CommandEntry>();
 
         /// <summary>
         /// Default command entry to be executed when all type matches fail.

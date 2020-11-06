@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
                 if (verboseString.Length >= 20)
                 {
                     verboseString = verboseString.Substring(0, 20);
-                    verboseString = verboseString + " ...";
+                    verboseString += " ...";
                 }
             }
 

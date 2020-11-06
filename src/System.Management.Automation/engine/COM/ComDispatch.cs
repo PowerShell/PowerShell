@@ -33,7 +33,7 @@ namespace System.Management.Automation
             [MarshalAs(UnmanagedType.LPStruct)] Guid iid,
             int lcid,
             COM.INVOKEKIND wFlags,
-            [In, Out] [MarshalAs(UnmanagedType.LPArray)] COM.DISPPARAMS[] paramArray,
+            [In, Out][MarshalAs(UnmanagedType.LPArray)] COM.DISPPARAMS[] paramArray,
             out object pVarResult,
             out ComInvoker.EXCEPINFO pExcepInfo,
             out uint puArgErr);

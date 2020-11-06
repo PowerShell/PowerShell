@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Default depth of serialization.
         /// </summary>
-        private static int s_mshDefaultSerializationDepth = 1;
+        private static readonly int s_mshDefaultSerializationDepth = 1;
     }
 
     /// <summary>
@@ -322,7 +322,7 @@ namespace System.Management.Automation
         /// is used by PriorityReceivedDataCollection (remoting) to process incoming data from the
         /// remote end. A value of Null means that the max memory is unlimited.
         /// </summary>
-        internal int? MaximumAllowedMemory { set; get; }
+        internal int? MaximumAllowedMemory { get; set; }
 
         /// <summary>
         /// Logs that memory used by deserialized objects is not related to the size of input xml.
@@ -346,7 +346,7 @@ namespace System.Management.Automation
                     throw new XmlException(message);
                 }
 
-                _totalDataProcessedSoFar = _totalDataProcessedSoFar + amountOfExtraMemory;
+                _totalDataProcessedSoFar += amountOfExtraMemory;
             }
         }
 
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
             _writer.WriteEndElement();
         }
 
-        private static Lazy<CimSerializer> s_cimSerializer = new Lazy<CimSerializer>(CimSerializer.Create);
+        private static readonly Lazy<CimSerializer> s_cimSerializer = new Lazy<CimSerializer>(CimSerializer.Create);
 
         private void PrepareCimInstanceForSerialization(PSObject psObject, CimInstance cimInstance)
         {
@@ -1982,8 +1982,7 @@ namespace System.Management.Automation
 
             foreach (PSMemberInfo info in propertyCollection)
             {
-                PSProperty prop = info as PSProperty;
-                if (prop == null)
+                if (!(info is PSProperty prop))
                 {
                     continue;
                 }
@@ -2311,7 +2310,7 @@ namespace System.Management.Automation
                 return 1;
             }
 
-            if (0 != (_context.options & SerializationOptions.UseDepthFromTypes))
+            if ((_context.options & SerializationOptions.UseDepthFromTypes) != 0)
             {
                 // get the depth from the PSObject
                 // NOTE: we assume that the depth out of the PSObject is > 0
@@ -2331,7 +2330,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (0 != (_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal))
+            if ((_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal) != 0)
             {
                 if ((pso.IsDeserialized) && (depth <= 0))
                 {
@@ -3006,7 +3005,7 @@ namespace System.Management.Automation
 
         #region Known CIMTypes
 
-        private static Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
+        private static readonly Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
             () =>
                 new HashSet<Type>
                 {
@@ -3298,7 +3297,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
+        private static readonly Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
 
         private CimClass RehydrateCimClass(PSPropertyInfo classMetadataProperty)
         {
@@ -3331,32 +3330,28 @@ namespace System.Management.Automation
 
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
-                PSPropertyInfo namespaceProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] as PSPropertyInfo;
-                if (namespaceProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] is PSPropertyInfo namespaceProperty))
                 {
                     return null;
                 }
 
                 string cimNamespace = namespaceProperty.Value as string;
 
-                PSPropertyInfo classNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] as PSPropertyInfo;
-                if (classNameProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] is PSPropertyInfo classNameProperty))
                 {
                     return null;
                 }
 
                 string cimClassName = classNameProperty.Value as string;
 
-                PSPropertyInfo computerNameProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] as PSPropertyInfo;
-                if (computerNameProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] is PSPropertyInfo computerNameProperty))
                 {
                     return null;
                 }
 
                 string computerName = computerNameProperty.Value as string;
 
-                PSPropertyInfo hashCodeProperty = psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] as PSPropertyInfo;
-                if (hashCodeProperty == null)
+                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] is PSPropertyInfo hashCodeProperty))
                 {
                     return null;
                 }
@@ -3473,8 +3468,7 @@ namespace System.Management.Automation
             {
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
-                    PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                    if (deserializedProperty == null)
+                    if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
                     {
                         continue;
                     }
@@ -3494,8 +3488,7 @@ namespace System.Management.Automation
             // process properties that were originally "extended" properties
             foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.InstanceMembers)
             {
-                PSPropertyInfo deserializedProperty = deserializedMemberInfo as PSPropertyInfo;
-                if (deserializedProperty == null)
+                if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
                 {
                     continue;
                 }
@@ -4742,7 +4735,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(!string.IsNullOrEmpty(tag), "Caller should validate the parameter");
             return (_reader.LocalName == tag) &&
-                ((0 != (_context.options & DeserializationOptions.NoNamespace)) ||
+                (((_context.options & DeserializationOptions.NoNamespace) != 0) ||
                  (_reader.NamespaceURI == SerializationStrings.MonadNamespace));
         }
 
@@ -7279,8 +7272,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
-            if (parameterSetMetadata == null)
+            if (!(instance.BaseObject is ParameterSetMetadata parameterSetMetadata))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7301,8 +7293,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
-            if (dbgStopEventArgs == null)
+            if (!(instance.BaseObject is DebuggerStopEventArgs dbgStopEventArgs))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7561,8 +7552,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
-            if (formatViewDefinition == null)
+            if (!(instance.BaseObject is FormatViewDefinition formatViewDefinition))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }

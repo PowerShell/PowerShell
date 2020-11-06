@@ -38,33 +38,33 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
             "FileSystemContentStream",
             "The provider content reader and writer for the file system")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("FileSystemContentStream",
             "The provider content reader and writer for the file system");
 
         #endregion tracer
 
-        private string _path;
-        private string _streamName;
-        private FileMode _mode;
-        private FileAccess _access;
-        private FileShare _share;
-        private Encoding _encoding;
-        private CmdletProvider _provider;
+        private readonly string _path;
+        private readonly string _streamName;
+        private readonly FileMode _mode;
+        private readonly FileAccess _access;
+        private readonly FileShare _share;
+        private readonly Encoding _encoding;
+        private readonly CmdletProvider _provider;
 
         private FileStream _stream;
         private StreamReader _reader;
         private StreamWriter _writer;
-        private bool _usingByteEncoding;
+        private readonly bool _usingByteEncoding;
 
         private const char DefaultDelimiter = '\n';
 
-        private string _delimiter = $"{DefaultDelimiter}";
-        private int[] _offsetDictionary;
-        private bool _usingDelimiter;
-        private StringBuilder _currentLineContent;
+        private readonly string _delimiter = $"{DefaultDelimiter}";
+        private readonly int[] _offsetDictionary;
+        private readonly bool _usingDelimiter;
+        private readonly StringBuilder _currentLineContent;
         private bool _waitForChanges;
-        private bool _isRawStream;
+        private readonly bool _isRawStream;
         private long _fileOffset;
 
         private FileAttributes _oldAttributes;
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _alreadyDetectEncoding = false;
 
         // False to add a newline to the end of the output string, true if not.
-        private bool _suppressNewline = false;
+        private readonly bool _suppressNewline = false;
 
         /// <summary>
         /// Constructor for the content stream.
@@ -903,8 +903,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorEventArgs errorEventArgs = null;
                 var tcs = new TaskCompletionSource<FileSystemEventArgs>();
-                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => { tcs.TrySetResult(e); };
-                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => { tcs.TrySetResult(e); };
+                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => tcs.TrySetResult(e);
+                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => tcs.TrySetResult(e);
                 ErrorEventHandler onErrorHandler = (object source, ErrorEventArgs e) =>
                 {
                     errorEventArgs = e;

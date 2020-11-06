@@ -48,7 +48,7 @@ namespace System.Management.Automation
             s_engineModuleHelpFileCache.Add("Microsoft.WSMan.Management", "Microsoft.Wsman.Management.dll-Help.xml");
         }
 
-        private static Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
 
         private readonly ExecutionContext _context;
 
@@ -765,9 +765,7 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
-
-            if (commandHelpInfo == null)
+            if (!(helpInfo is MamlCommandHelpInfo commandHelpInfo))
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);
@@ -1173,7 +1171,7 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & commandInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & commandInfo.HelpCategory) == 0)
             {
                 return false;
             }

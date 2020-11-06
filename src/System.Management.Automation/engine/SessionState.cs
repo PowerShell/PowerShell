@@ -30,7 +30,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "SessionState",
              "SessionState Class")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("SessionState",
              "SessionState Class");
 

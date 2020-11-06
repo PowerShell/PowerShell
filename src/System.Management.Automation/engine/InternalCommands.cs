@@ -80,9 +80,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public PSObject InputObject
         {
-            set { _inputObject = value; }
-
             get { return _inputObject; }
+
+            set { _inputObject = value; }
         }
 
         private PSObject _inputObject = AutomationNull.Value;
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region ScriptBlockSet
 
-        private List<ScriptBlock> _scripts = new List<ScriptBlock>();
+        private readonly List<ScriptBlock> _scripts = new List<ScriptBlock>();
 
         /// <summary>
         /// Gets or sets the script block to apply in begin processing.
@@ -220,9 +220,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Args")]
         public object[] ArgumentList
         {
-            set { _arguments = value; }
-
             get { return _arguments; }
+
+            set { _arguments = value; }
         }
 
         private object[] _arguments;
@@ -455,10 +455,7 @@ namespace Microsoft.PowerShell.Commands
             _taskCollection = new PSDataCollection<System.Management.Automation.PSTasks.PSTask>();
             _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
             _taskPool = new PSTaskPool(ThrottleLimit, UseNewRunspace);
-            _taskPool.PoolComplete += (sender, args) =>
-            {
-                _taskDataStreamWriter.Close();
-            };
+            _taskPool.PoolComplete += (sender, args) => _taskDataStreamWriter.Close();
 
             // Create timeout timer if requested.
             if (TimeoutSeconds != 0)
@@ -1035,7 +1032,7 @@ namespace Microsoft.PowerShell.Commands
                     _propertyOrMethodName,
                     possibleMatches));
             }
-            else if (methods.Count == 0 || !(methods[0] is PSMethodInfo))
+            else if (methods.Count == 0 || methods[0] is not PSMethodInfo)
             {
                 // write error record: method no found
                 WriteError(GenerateNameParameterError(
@@ -1235,7 +1232,7 @@ namespace Microsoft.PowerShell.Commands
         internal static ErrorRecord GenerateNameParameterError(string paraName, string resourceString, string errorId, object target, params object[] args)
         {
             string message;
-            if (args == null || 0 == args.Length)
+            if (args == null || args.Length == 0)
             {
                 // Don't format in case the string contains literal curly braces
                 message = resourceString;
@@ -2008,8 +2005,7 @@ namespace Microsoft.PowerShell.Commands
 
         private object GetLikeRHSOperand(object operand)
         {
-            var val = operand as string;
-            if (val == null)
+            if (!(operand is string val))
             {
                 return operand;
             }

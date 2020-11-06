@@ -59,13 +59,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Last")]
         public int Tail
         {
+            get { return _backCount; }
+
             set
             {
                 _backCount = value;
                 _tailSpecified = true;
             }
-
-            get { return _backCount; }
         }
 
         private int _backCount = -1;
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                         holder.Reader != null,
                         "All holders should have a reader assigned");
 
-                    if (_tailSpecified && !(holder.Reader is FileSystemContentReaderWriter))
+                    if (_tailSpecified && holder.Reader is not FileSystemContentReaderWriter)
                     {
                         string errMsg = SessionStateStrings.GetContent_TailNotSupported;
                         ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "TailNotSupported", ErrorCategory.InvalidOperation, Tail);

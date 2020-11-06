@@ -204,17 +204,17 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal int ThrottleLimit
         {
+            get
+            {
+                return _throttleLimit;
+            }
+
             set
             {
                 if (value > 0 && value <= s_THROTTLE_LIMIT_MAX)
                 {
                     _throttleLimit = value;
                 }
-            }
-
-            get
-            {
-                return _throttleLimit;
             }
         }
 

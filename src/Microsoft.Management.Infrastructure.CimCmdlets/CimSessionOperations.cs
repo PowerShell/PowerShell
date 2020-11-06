@@ -791,7 +791,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.sessionState = cimSessions.GetOrAdd(
                 CurrentRunspaceId,
-                delegate (Guid instanceId)
+                (Guid instanceId) =>
                 {
                     if (Runspace.DefaultRunspace != null)
                     {

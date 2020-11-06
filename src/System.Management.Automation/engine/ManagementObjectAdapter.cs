@@ -172,9 +172,7 @@ namespace System.Management.Automation
         {
             tracer.WriteLine("Getting member with name {0}", memberName);
 
-            ManagementBaseObject mgmtObject = obj as ManagementBaseObject;
-
-            if (mgmtObject == null)
+            if (!(obj is ManagementBaseObject mgmtObject))
             {
                 return null;
             }
@@ -366,8 +364,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
-            if (mObj == null)
+            if (!(property.baseObject is ManagementBaseObject mObj))
             {
                 throw new SetValueInvocationException("CannotSetNonManagementObjectMsg",
                     null,
@@ -946,7 +943,7 @@ namespace System.Management.Automation
 
         #region Private Data
 
-        private static HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
+        private static readonly HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
 
         #endregion
     }

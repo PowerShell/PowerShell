@@ -271,8 +271,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal bool IsRemoteDebugStop
         {
-            set;
             get;
+            set;
         }
 
         #endregion
@@ -1237,11 +1237,9 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            WSManConnectionInfo wsmanConnectionInfoParam = connectionInfo as WSManConnectionInfo;
-
-            // Disconnect-Connect currently only supported by WSMan.
-            if (wsmanConnectionInfoParam == null)
+            if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
             {
+                // Disconnect-Connect currently only supported by WSMan.
                 throw new NotSupportedException();
             }
 

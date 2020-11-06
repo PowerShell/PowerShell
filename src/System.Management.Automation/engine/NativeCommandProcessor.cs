@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// Information about application which is invoked by this instance of
         /// NativeCommandProcessor.
         /// </summary>
-        private ApplicationInfo _applicationInfo;
+        private readonly ApplicationInfo _applicationInfo;
 
         /// <summary>
         /// Initializes the new instance of NativeCommandProcessor class.
@@ -341,7 +341,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used for writing input to the process.
         /// </summary>
-        private ProcessInputWriter _inputWriter = null;
+        private readonly ProcessInputWriter _inputWriter = null;
 
         /// <summary>
         /// Is true if this command is to be run "standalone" - that is, with
@@ -369,14 +369,14 @@ namespace System.Management.Automation
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
         private static bool? s_supportScreenScrape = null;
-        private bool _isTranscribing;
+        private readonly bool _isTranscribing;
         private Host.Coordinates _startPosition;
 
         /// <summary>
         /// Object used for synchronization between StopProcessing thread and
         /// Pipeline thread.
         /// </summary>
-        private object _sync = new object();
+        private readonly object _sync = new object();
 
         /// <summary>
         /// Executes the native command once all of the input has been gathered.
@@ -440,7 +440,7 @@ namespace System.Management.Automation
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    if (_isTranscribing && (true == s_supportScreenScrape))
+                    if (_isTranscribing && (s_supportScreenScrape == true))
                     {
                         _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         _startPosition.X = 0;
@@ -688,7 +688,7 @@ namespace System.Management.Automation
                     _nativeProcess.WaitForExit();
 
                     // Capture screen output if we are transcribing and running stand alone
-                    if (_isTranscribing && (true == s_supportScreenScrape) && _runStandAlone)
+                    if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
                     {
                         Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
 
                 // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
                 // as redirected output is always transcribed
-                if (_isTranscribing && (false == s_supportScreenScrape))
+                if (_isTranscribing && (s_supportScreenScrape == false))
                 {
                     redirectOutput = true;
                     redirectError = true;
@@ -1467,12 +1467,12 @@ namespace System.Management.Automation
         internal const string XmlCliTag = "#< CLIXML";
 
         private int _refCount;
-        private BlockingCollection<ProcessOutputObject> _queue;
+        private readonly BlockingCollection<ProcessOutputObject> _queue;
         private bool _isFirstOutput;
         private bool _isFirstError;
         private bool _isXmlCliOutput;
         private bool _isXmlCliError;
-        private string _processFileName;
+        private readonly string _processFileName;
 
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
         {
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
     {
         #region constructor
 
-        private InternalCommand _command;
+        private readonly InternalCommand _command;
         /// <summary>
         /// Creates an instance of ProcessInputWriter.
         /// </summary>
@@ -2146,10 +2146,10 @@ namespace System.Management.Automation
         #endregion
 
         [NonSerialized]
-        private PSObject _serializedRemoteException;
+        private readonly PSObject _serializedRemoteException;
 
         [NonSerialized]
-        private PSObject _serializedRemoteInvocationInfo;
+        private readonly PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
         /// Original Serialized Exception from remote msh.

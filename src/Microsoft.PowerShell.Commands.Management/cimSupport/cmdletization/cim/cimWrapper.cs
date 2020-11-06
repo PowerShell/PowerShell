@@ -172,8 +172,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.</returns>
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
-            CimQuery query = baseQuery as CimQuery;
-            if (query == null)
+            if (!(baseQuery is CimQuery query))
             {
                 throw new ArgumentNullException(nameof(baseQuery));
             }

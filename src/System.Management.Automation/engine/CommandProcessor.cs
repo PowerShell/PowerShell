@@ -101,8 +101,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            Cmdlet cmdlet = command as Cmdlet;
-            if (cmdlet == null)
+            if (!(command is Cmdlet cmdlet))
             {
                 throw PSTraceSource.NewArgumentException(nameof(command));
             }
@@ -319,7 +318,7 @@ namespace System.Management.Automation
                     // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
-                        if (Context._debuggingMode > 0 && !(Command is PSScriptCmdlet))
+                        if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                         {
                             Context.Debugger.CheckCommand(this.Command.MyInvocation);
                         }
@@ -528,7 +527,7 @@ namespace System.Management.Automation
                 try
                 {
                     // Process the input pipeline object
-                    if (false == ProcessInputPipelineObject(inputObject))
+                    if (ProcessInputPipelineObject(inputObject) == false)
                     {
                         // The input object was not bound to any parameters of the cmdlet.
                         // Write a non-terminating error and continue with the next input

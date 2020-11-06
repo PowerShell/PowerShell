@@ -1658,8 +1658,7 @@ namespace System.Management.Automation
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        PSObject originalArgumentObj = originalArgument as PSObject;
-                        if (originalArgumentObj == null)
+                        if (!(originalArgument is PSObject originalArgumentObj))
                         {
                             continue;
                         }
@@ -2014,7 +2013,7 @@ namespace System.Management.Automation
         /// <see cref="DotNetAdapter.PopulateMethodReflectionTable(Type, CacheTable, BindingFlags)"/>.
         /// </summary>
         internal Collection<object> memberCollection;
-        private Dictionary<string, int> _indexes;
+        private readonly Dictionary<string, int> _indexes;
 
         internal CacheTable()
         {
@@ -2217,7 +2216,7 @@ namespace System.Management.Automation
             return method.Invoke(target, arguments);
         }
 
-        private static OpCode[] s_ldc = new OpCode[] {
+        private static readonly OpCode[] s_ldc = new OpCode[] {
             OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4,
             OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8
         };
@@ -2562,7 +2561,7 @@ namespace System.Management.Automation
         private const BindingFlags staticBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
                                                               BindingFlags.IgnoreCase | BindingFlags.Static);
 
-        private bool _isStatic;
+        private readonly bool _isStatic;
 
         internal DotNetAdapter() { }
 
@@ -2575,25 +2574,25 @@ namespace System.Management.Automation
         /// <summary>
         /// CLR reflection property cache for instance properties.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_instancePropertyCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_instancePropertyCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetStaticPropertyReflectionTable
         /// <summary>
         /// CLR reflection property cache for static properties.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_staticPropertyCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_staticPropertyCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetInstanceMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for instance methods.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_instanceMethodCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_instanceMethodCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetStaticMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for static methods.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_staticMethodCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_staticMethodCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetInstanceMethodReflectionTable
         /// <summary>
@@ -3878,8 +3877,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            PropertyCacheEntry entry = property.adapterData as PropertyCacheEntry;
-            if (entry == null)
+            if (!(property.adapterData is PropertyCacheEntry entry))
             {
                 return false;
             }
@@ -3895,7 +3893,7 @@ namespace System.Management.Automation
 
         internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return true; }
 
-        private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
+        private static readonly ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
 
         internal static ConsolidatedString GetInternedTypeNameHierarchy(Type type)
@@ -4756,7 +4754,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DotNetAdapterWithComTypeName : DotNetAdapter
     {
-        private ComTypeInfo _comTypeInfo;
+        private readonly ComTypeInfo _comTypeInfo;
 
         internal DotNetAdapterWithComTypeName(ComTypeInfo comTypeInfo)
         {

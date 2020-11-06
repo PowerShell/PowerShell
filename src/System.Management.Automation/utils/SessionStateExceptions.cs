@@ -322,7 +322,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private string _message /* = null */;
+        private readonly string _message /* = null */;
 
         #endregion Private/Internal
     }
@@ -520,7 +520,7 @@ namespace System.Management.Automation
             get { return _itemName; }
         }
 
-        private string _itemName = string.Empty;
+        private readonly string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.
@@ -530,12 +530,12 @@ namespace System.Management.Automation
             get { return _sessionStateCategory; }
         }
 
-        private SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
+        private readonly SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
         #endregion Properties
 
         #region Private
-        private string _errorId = "SessionStateException";
-        private ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
+        private readonly string _errorId = "SessionStateException";
+        private readonly ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
 
         private static string BuildMessage(
             string itemName,
@@ -853,7 +853,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ReadOnlyCollection<ProviderInfo> _possibleMatches;
+        private readonly ReadOnlyCollection<ProviderInfo> _possibleMatches;
 
         #endregion public properties
     }

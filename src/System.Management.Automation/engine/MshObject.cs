@@ -588,9 +588,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            string serializedData = info.GetValue("CliXml", typeof(string)) as string;
-
-            if (serializedData == null)
+            if (!(info.GetValue("CliXml", typeof(string)) is string serializedData))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -988,8 +986,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object Base(object obj)
         {
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj;
             }
@@ -1073,8 +1070,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object GetKeyForResurrectionTables(object obj)
         {
-            var pso = obj as PSObject;
-            if (pso == null)
+            if (!(obj is PSObject pso))
             {
                 return obj;
             }
@@ -1861,8 +1857,7 @@ namespace System.Management.Automation
                 settings.ReplicateInstance(ownerObject);
             }
 
-            PSNoteProperty note = settings.Members[noteName] as PSNoteProperty;
-            if (note == null)
+            if (!(settings.Members[noteName] is PSNoteProperty note))
             {
                 return defaultValue;
             }
@@ -2150,7 +2145,7 @@ namespace System.Management.Automation
             private bool MustDeferIDMOP()
             {
                 var baseObject = PSObject.Base(Value);
-                return baseObject is IDynamicMetaObjectProvider && !(baseObject is PSObject);
+                return baseObject is IDynamicMetaObjectProvider && baseObject is not PSObject;
             }
 
             private DynamicMetaObject DeferForIDMOP(DynamicMetaObjectBinder binder, params DynamicMetaObject[] args)
