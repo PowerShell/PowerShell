@@ -19,7 +19,6 @@ jobs:
   #  displayName: '<display name of task>'
   - checkout: self
     clean: true
-    fetchDepth: 1
 
   - template: SetVersionVariables.yml
     parameters:
