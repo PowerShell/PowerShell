@@ -82,7 +82,7 @@ namespace System.Management.Automation.Tracing
         // Ensure the string pointer is not garbage collected.
         private static IntPtr _nativeSyslogIdent = IntPtr.Zero;
         private static readonly NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
-      
+
         private readonly byte _channelFilter;
         private readonly ulong _keywordFilter;
         private readonly byte _levelFilter;
