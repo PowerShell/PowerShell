@@ -8,7 +8,7 @@ jobs:
   displayName: Build Windows - ${{ parameters.Architecture }}
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    name: Package ES CodeHub Lab E
   variables:
     BuildConfiguration: ${{ parameters.BuildConfiguration }}
     BuildPlatform: ${{ parameters.BuildPlatform }}

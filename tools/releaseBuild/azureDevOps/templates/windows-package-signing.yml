@@ -8,7 +8,7 @@ jobs:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    name: Package ES CodeHub Lab E
   variables:
     BuildConfiguration: release
     BuildPlatform: any cpu

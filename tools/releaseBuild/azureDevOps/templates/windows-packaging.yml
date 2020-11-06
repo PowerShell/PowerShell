@@ -10,7 +10,7 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
-    name: Package ES Standard Build
+    name: Package ES CodeHub Lab E
   variables:
     BuildConfiguration: ${{ parameters.BuildConfiguration }}
     BuildPlatform: ${{ parameters.BuildPlatform }}

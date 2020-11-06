@@ -4,7 +4,7 @@ jobs:
   displayName: Build
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    name: Package ES CodeHub Lab E
   strategy:
     matrix:
       Build (x64,release):
@@ -177,7 +177,7 @@ jobs:
   dependsOn: BuildJob
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    name: Package ES CodeHub Lab E
   strategy:
     matrix:
       release-anycpu:
@@ -247,7 +247,7 @@ jobs:
   dependsOn: BuildJob
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    name: Package ES CodeHub Lab E
   strategy:
     matrix:
       release-anycpu:
