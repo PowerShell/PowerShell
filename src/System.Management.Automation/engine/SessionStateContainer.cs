@@ -628,7 +628,7 @@ namespace System.Management.Automation
                 foreach (string providerPath in providerPaths)
                 {
                     result = IsItemContainer(providerInstance, providerPath, context);
-                    if (result == false)
+                    if (!result)
                     {
                         break;
                     }

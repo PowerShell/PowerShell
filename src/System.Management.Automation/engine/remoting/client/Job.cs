@@ -3469,11 +3469,11 @@ namespace System.Management.Automation
         protected virtual void DoCleanupOnFinished()
         {
             bool doCleanup = false;
-            if (_cleanupDone == false)
+            if (!_cleanupDone)
             {
                 lock (SyncObject)
                 {
-                    if (_cleanupDone == false)
+                    if (!_cleanupDone)
                     {
                         _cleanupDone = true;
                         doCleanup = true;
@@ -4225,11 +4225,11 @@ namespace System.Management.Automation
         protected override void DoCleanupOnFinished()
         {
             bool doCleanup = false;
-            if (_cleanupDone == false)
+            if (!_cleanupDone)
             {
                 lock (SyncObject)
                 {
-                    if (_cleanupDone == false)
+                    if (!_cleanupDone)
                     {
                         _cleanupDone = true;
                         doCleanup = true;

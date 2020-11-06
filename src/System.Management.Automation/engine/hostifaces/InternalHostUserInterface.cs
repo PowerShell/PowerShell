@@ -517,7 +517,7 @@ namespace System.Management.Automation.Internal.Host
                         endLoop = false;
                         break;
                 }
-            } while (endLoop != true);
+            } while (!endLoop);
 
             return shouldContinue;
         }
