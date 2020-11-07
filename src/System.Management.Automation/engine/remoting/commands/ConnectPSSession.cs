@@ -476,11 +476,11 @@ namespace Microsoft.PowerShell.Commands
         {
             private PSSession _session;
             private PSSession _oldSession;
-            private ObjectStream _writeStream;
-            private Collection<PSSession> _retryList;
-            private PSHost _host;
-            private QueryRunspaces _queryRunspaces;
-            private static object s_LockObject = new object();
+            private readonly ObjectStream _writeStream;
+            private readonly Collection<PSSession> _retryList;
+            private readonly PSHost _host;
+            private readonly QueryRunspaces _queryRunspaces;
+            private static readonly object s_LockObject = new object();
 
             internal ConnectRunspaceOperation(
                 PSSession session,
@@ -1078,24 +1078,24 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Collection of PSSessions to be connected.
-        private Collection<PSSession> _allSessions = new Collection<PSSession>();
+        private readonly Collection<PSSession> _allSessions = new Collection<PSSession>();
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager _throttleManager = new ThrottleManager();
+        private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Object used for querying remote runspaces.
-        private QueryRunspaces _queryRunspaces = new QueryRunspaces();
+        private readonly QueryRunspaces _queryRunspaces = new QueryRunspaces();
 
         // Object to collect output data from multiple threads.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         // Support for connection retry on failure.
-        private ThrottleManager _retryThrottleManager = new ThrottleManager();
-        private Collection<PSSession> _failedSessions = new Collection<PSSession>();
+        private readonly ThrottleManager _retryThrottleManager = new ThrottleManager();
+        private readonly Collection<PSSession> _failedSessions = new Collection<PSSession>();
 
         #endregion
     }

@@ -1253,10 +1253,10 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         private ThrottleManager _throttleManager = new ThrottleManager();
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
         // event that signals that all operations are
         // complete (including closing if any)
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
         // the initial state is true because when no
         // operations actually take place as in case of a
         // parameter binding exception, then Dispose is
@@ -1265,13 +1265,13 @@ namespace Microsoft.PowerShell.Commands
         // BeginProcessing()
 
         // list of runspaces to dispose
-        private List<RemoteRunspace> _toDispose = new List<RemoteRunspace>();
+        private readonly List<RemoteRunspace> _toDispose = new List<RemoteRunspace>();
 
         // List of runspace connect operations.  Need to keep for cleanup.
-        private Collection<List<IThrottleOperation>> _allOperations = new Collection<List<IThrottleOperation>>();
+        private readonly Collection<List<IThrottleOperation>> _allOperations = new Collection<List<IThrottleOperation>>();
 
         // Default FQEID.
-        private string _defaultFQEID = "PSSessionOpenFailed";
+        private readonly string _defaultFQEID = "PSSessionOpenFailed";
 
         #endregion Private Members
     }
@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _startComplete;
         private bool _stopComplete;
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         internal RemoteRunspace OperatedRunspace { get; }
 
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
         //  b) To ensure all callbacks are fired by manually invoking callbacks and handling
         //     any exceptions thrown on this thread. (ThrottleManager will not respond if it doesn't
         //     get a start/stop complete callback).
-        private List<EventHandler<OperationStateEventArgs>> _internalCallbacks = new List<EventHandler<OperationStateEventArgs>>();
+        private readonly List<EventHandler<OperationStateEventArgs>> _internalCallbacks = new List<EventHandler<OperationStateEventArgs>>();
 
         internal override event EventHandler<OperationStateEventArgs> OperationComplete
         {

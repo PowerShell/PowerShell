@@ -20,12 +20,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Remote host user interface.
         /// </summary>
-        private ServerRemoteHostUserInterface _remoteHostUserInterface;
+        private readonly ServerRemoteHostUserInterface _remoteHostUserInterface;
 
         /// <summary>
         /// Server method executor.
         /// </summary>
-        private ServerMethodExecutor _serverMethodExecutor;
+        private readonly ServerMethodExecutor _serverMethodExecutor;
 
         /// <summary>
         /// Client runspace pool id.
@@ -45,7 +45,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// ServerDriverRemoteHost.
         /// </summary>
-        private ServerDriverRemoteHost _serverDriverRemoteHost;
+        private readonly ServerDriverRemoteHost _serverDriverRemoteHost;
 
         #endregion
 

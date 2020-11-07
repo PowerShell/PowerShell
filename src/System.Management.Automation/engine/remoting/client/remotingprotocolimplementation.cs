@@ -16,22 +16,22 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
     {
         [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
 
         private const string resBaseName = "remotingerroridstrings";
 
-        private BaseClientSessionTransportManager _transportManager;
-        private ClientRemoteSessionDSHandlerStateMachine _stateMachine;
-        private ClientRemoteSession _session;
-        private RunspaceConnectionInfo _connectionInfo;
+        private readonly BaseClientSessionTransportManager _transportManager;
+        private readonly ClientRemoteSessionDSHandlerStateMachine _stateMachine;
+        private readonly ClientRemoteSession _session;
+        private readonly RunspaceConnectionInfo _connectionInfo;
         // used for connection redirection.
         private Uri _redirectUri;
         private int _maxUriRedirectionCount;
         private bool _isCloseCalled;
-        private object _syncObject = new object();
-        private PSRemotingCryptoHelper _cryptoHelper;
+        private readonly object _syncObject = new object();
+        private readonly PSRemotingCryptoHelper _cryptoHelper;
 
-        private ClientRemoteSession.URIDirectionReported _uriRedirectionHandler;
+        private readonly ClientRemoteSession.URIDirectionReported _uriRedirectionHandler;
 
         internal override BaseClientSessionTransportManager TransportManager
         {

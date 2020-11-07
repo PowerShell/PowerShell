@@ -635,7 +635,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal class WSManData_ManToUn : IDisposable
         {
-            private WSManDataStruct _internalData;
+            private readonly WSManDataStruct _internalData;
 
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledObject = IntPtr.Zero;
@@ -885,7 +885,7 @@ namespace System.Management.Automation.Remoting.Client
         [StructLayout(LayoutKind.Sequential)]
         internal struct WSManDataDWord
         {
-            private WSManDataType _type;
+            private readonly WSManDataType _type;
             private WSManDWordDataInternal _dwordData;
 
             /// <summary>
@@ -1738,7 +1738,7 @@ namespace System.Management.Automation.Remoting.Client
             private GCHandle _gcHandle;
 
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-            private IntPtr _asyncCallback;
+            private readonly IntPtr _asyncCallback;
 
             internal WSManShellAsyncCallback(WSManShellCompletionFunction callback)
             {

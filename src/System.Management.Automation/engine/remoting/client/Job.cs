@@ -214,7 +214,7 @@ namespace System.Management.Automation
         /// State of job when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private JobState _currState = 0;
+        private readonly JobState _currState = 0;
     }
 
     /// <summary>
@@ -2047,7 +2047,7 @@ namespace System.Management.Automation
         /// </summary>
         private class ConnectJobOperation : IThrottleOperation
         {
-            private PSRemotingChildJob _psRemoteChildJob;
+            private readonly PSRemotingChildJob _psRemoteChildJob;
 
             internal ConnectJobOperation(PSRemotingChildJob job)
             {
@@ -2658,7 +2658,7 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        private ThrottleManager _throttleManager = new ThrottleManager();
+        private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
         private readonly object _syncObject = new object();           // sync object
 
@@ -3817,7 +3817,7 @@ namespace System.Management.Automation
         #region Private Members
 
         // helper associated with this job object
-        private RemotePipeline _remotePipeline = null;
+        private readonly RemotePipeline _remotePipeline = null;
 
         // object used for synchronization
         protected object SyncObject = new object();
@@ -3842,9 +3842,9 @@ namespace System.Management.Automation
     {
         #region Members
 
-        private Debugger _wrappedDebugger;
-        private Runspace _runspace;
-        private string _jobName;
+        private readonly Debugger _wrappedDebugger;
+        private readonly Runspace _runspace;
+        private readonly string _jobName;
 
         #endregion
 
@@ -4164,9 +4164,9 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private List<ExecutionCmdletHelper> _helpers = new List<ExecutionCmdletHelper>();
-        private ThrottleManager _throttleManager;
-        private Dictionary<Guid, PowerShell> _powershells = new Dictionary<Guid, PowerShell>();
+        private readonly List<ExecutionCmdletHelper> _helpers = new List<ExecutionCmdletHelper>();
+        private readonly ThrottleManager _throttleManager;
+        private readonly Dictionary<Guid, PowerShell> _powershells = new Dictionary<Guid, PowerShell>();
 
         private int _pipelineFinishedCount;
         private int _pipelineDisconnectedCount;
