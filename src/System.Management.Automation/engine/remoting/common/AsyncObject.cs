@@ -22,7 +22,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Value was set.
         /// </summary>
-        private ManualResetEvent _valueWasSet;
+        private readonly ManualResetEvent _valueWasSet;
 
         /// <summary>
         /// Value.

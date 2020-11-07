@@ -141,7 +141,7 @@ namespace System.Management.Automation.Remoting
         #region tracer
 
         [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
-        private static PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
+        private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion
 
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         // fragmentor used to fragment & defragment objects added to this collection.
-        private ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
+        private readonly ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
 
         // crypto helper used for encrypting/decrypting
         // secure string
@@ -420,8 +420,8 @@ namespace System.Management.Automation.Remoting.Client
         protected object syncObject = new object();
         protected PrioritySendDataCollection dataToBeSent;
         // used to handle callbacks from the server..these are used to synchronize received callbacks
-        private Queue<CallbackNotificationInformation> _callbackNotificationQueue;
-        private ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
+        private readonly Queue<CallbackNotificationInformation> _callbackNotificationQueue;
+        private readonly ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
         private bool _isServicingCallbacks;
         private bool _suspendQueueServicing;
         private bool _isDebuggerSuspend;
@@ -1214,9 +1214,9 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         // used to listen to data available events from serialized datastream.
-        private SerializedDataStream.OnDataAvailableCallback _onDataAvailable;
+        private readonly SerializedDataStream.OnDataAvailableCallback _onDataAvailable;
         // the following variable are used by onDataAvailableCallback.
         private bool _shouldFlushData;
         private bool _reportAsPending;

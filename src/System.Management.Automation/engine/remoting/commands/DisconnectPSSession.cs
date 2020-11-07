@@ -394,8 +394,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private class DisconnectRunspaceOperation : IThrottleOperation
         {
-            private PSSession _remoteSession;
-            private ObjectStream _writeStream;
+            private readonly PSSession _remoteSession;
+            private readonly ObjectStream _writeStream;
 
             internal DisconnectRunspaceOperation(PSSession session, ObjectStream stream)
             {
@@ -550,14 +550,14 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager _throttleManager = new ThrottleManager();
+        private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Output data stream.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         #endregion
     }

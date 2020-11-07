@@ -402,9 +402,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private TextWriter _writer;
+        private readonly TextWriter _writer;
         private bool _isStopped;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         #endregion
 
@@ -466,10 +466,10 @@ namespace System.Management.Automation.Remoting.Client
 
         private readonly BlockingCollection<string> _sessionMessageQueue;
         private readonly BlockingCollection<string> _commandMessageQueue;
-        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private readonly PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
-        private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
-        private Timer _closeTimeOutTimer;
+        private readonly Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
+        private readonly Timer _closeTimeOutTimer;
 
         protected OutOfProcessTextWriter stdInWriter;
         protected PowerShellTraceSource _tracer;
@@ -1055,7 +1055,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private Process _serverProcess;
-        private NewProcessConnectionInfo _connectionInfo;
+        private readonly NewProcessConnectionInfo _connectionInfo;
         private bool _processCreated = true;
         private PowerShellProcessInstance _processInstance;
 
@@ -1427,9 +1427,9 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private readonly Guid _vmGuid;
-        private string _configurationName;
-        private VMConnectionInfo _connectionInfo;
-        private NetworkCredential _networkCredential;
+        private readonly string _configurationName;
+        private readonly VMConnectionInfo _connectionInfo;
+        private readonly NetworkCredential _networkCredential;
 
         #endregion
 
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private readonly Guid _targetGuid; // currently this is the utility vm guid in HyperV container scenario
-        private ContainerConnectionInfo _connectionInfo;
+        private readonly ContainerConnectionInfo _connectionInfo;
 
         #endregion
 
@@ -1571,7 +1571,7 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
-        private SSHConnectionInfo _connectionInfo;
+        private readonly SSHConnectionInfo _connectionInfo;
         private int _sshProcessId;
         private StreamWriter _stdInWriter;
         private StreamReader _stdOutReader;
@@ -1860,9 +1860,9 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
-        private RunspaceConnectionInfo _connectionInfo;
+        private readonly RunspaceConnectionInfo _connectionInfo;
         protected NamedPipeClientBase _clientPipe = new NamedPipeClientBase();
-        private string _threadName;
+        private readonly string _threadName;
 
         #endregion
 
@@ -1987,7 +1987,7 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private NamedPipeConnectionInfo _connectionInfo;
+        private readonly NamedPipeConnectionInfo _connectionInfo;
 
         private const string _threadName = "NamedPipeTransport Reader Thread";
 
@@ -2055,7 +2055,7 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private ContainerConnectionInfo _connectionInfo;
+        private readonly ContainerConnectionInfo _connectionInfo;
 
         private const string _threadName = "ContainerNamedPipeTransport Reader Thread";
 
@@ -2124,9 +2124,9 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private OutOfProcessTextWriter _stdInWriter;
-        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
-        private Timer _signalTimeOutTimer;
+        private readonly OutOfProcessTextWriter _stdInWriter;
+        private readonly PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private readonly Timer _signalTimeOutTimer;
 
         #endregion
 
@@ -2425,10 +2425,10 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private OutOfProcessTextWriter _stdOutWriter;
-        private OutOfProcessTextWriter _stdErrWriter;
-        private Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
-        private object _syncObject = new object();
+        private readonly OutOfProcessTextWriter _stdOutWriter;
+        private readonly OutOfProcessTextWriter _stdErrWriter;
+        private readonly Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
+        private readonly object _syncObject = new object();
 
         #endregion
 
@@ -2523,8 +2523,8 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private OutOfProcessTextWriter _stdOutWriter;
-        private OutOfProcessTextWriter _stdErrWriter;
+        private readonly OutOfProcessTextWriter _stdOutWriter;
+        private readonly OutOfProcessTextWriter _stdErrWriter;
         private readonly Guid _powershellInstanceId;
         private bool _isDataAckSendPending;
 

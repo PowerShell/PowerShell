@@ -10,7 +10,8 @@ dotnet_diagnostic.CA1001.severity = silent
 dotnet_diagnostic.CA1002.severity = none
 
 # CA1003: Use generic event handler instances
-dotnet_diagnostic.CA1003.severity = none
+dotnet_diagnostic.CA1003.severity = warning
+dotnet_code_quality.ca1003.api_surface = private, internal
 
 # CA1005: Avoid excessive parameters on generic types
 dotnet_diagnostic.CA1005.severity = none

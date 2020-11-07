@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                     this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
                 }
 #endif
-                helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress += HelpSystem_OnProgress;
 
                 bool failed = false;
                 HelpCategory helpCategory = ToHelpCategory(Category, ref failed);
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                helpSystem.OnProgress -= new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress -= HelpSystem_OnProgress;
                 HelpSystem_OnComplete();
 
                 // finally clear the ScriptBlockAst -> Token[] cache
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private void HelpSystem_OnProgress(object sender, HelpProgressInfo arg)
+        private void HelpSystem_OnProgress(object sender, HelpProgressEventArgs arg)
         {
             var record = new ProgressRecord(0, this.CommandInfo.Name, arg.Activity)
             {
