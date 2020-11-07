@@ -846,7 +846,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // At this point, we haven't found an actual module, so try loading it as a
                 // PSSnapIn and then finally as an assembly in the GAC...
-                if ((!found) && (moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.RequiredVersion == null) && (moduleSpecification.MaximumVersion == null))
+                if (!found && (moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.RequiredVersion == null) && (moduleSpecification.MaximumVersion == null))
                 {
                     // If we are in module analysis and the parent module declares non-wildcarded ExportedCmdlets, then we don't need to
                     // actually process the binary module.
