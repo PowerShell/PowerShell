@@ -113,8 +113,8 @@ jobs:
       $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force
 
       $itemsToCopyWithRecurse = @(
-      "$($fullSymbolsFolder)\*.ps1"
-      "$($fullSymbolsFolder)\Microsoft.PowerShell*.dll"
+        "$($fullSymbolsFolder)\*.ps1"
+        "$($fullSymbolsFolder)\Microsoft.PowerShell*.dll"
       )
 
       $itemsToCopy = @{
@@ -125,6 +125,11 @@ jobs:
         "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\Diagnostics.format.ps1xml" = "Modules\Microsoft.PowerShell.Diagnostics"
         "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\Event.format.ps1xml" = "Modules\Microsoft.PowerShell.Diagnostics"
         "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\GetEvent.types.ps1xml" = "Modules\Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" = "Modules\Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" = "Modules\Microsoft.PowerShell.Host"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" = "Modules\Microsoft.PowerShell.Management"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" = "Modules\Microsoft.PowerShell.Security"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" = "Modules\Microsoft.PowerShell.Utility"
         "$($fullSymbolsFolder)\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" = "Modules\Microsoft.WSMan.Management"
         "$($fullSymbolsFolder)\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" = "Modules\Microsoft.WSMan.Management"
         "$($fullSymbolsFolder)\Modules\PSDiagnostics\PSDiagnostics.ps?1" = "Modules\PSDiagnostics"
@@ -159,6 +164,7 @@ jobs:
           **\*.psm1
           **\*.ps1xml
           **\*.ps1
+          **\*.exe
         useMinimatch: true
 
   - pwsh: |
