@@ -217,19 +217,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimResultObserver<T> : IObserver<T>
     {
         /// <summary>
-        /// Define delegate that handles new cmdlet action come from
-        /// the operations related to the current CimSession object.
-        /// </summary>
-        /// <param name="cimSession">CimSession object, which raised the event.</param>
-        /// <param name="actionArgs">Event args.</param>
-        public delegate void ResultEventHandler(
-            object observer,
-            AsyncResultEventArgsBase resultArgs);
-
-        /// <summary>
         /// Define an Event based on the NewActionHandler.
         /// </summary>
-        public event ResultEventHandler OnNewResult;
+        public event EventHandler<AsyncResultEventArgsBase> OnNewResult;
 
         /// <summary>
         /// Constructor.
