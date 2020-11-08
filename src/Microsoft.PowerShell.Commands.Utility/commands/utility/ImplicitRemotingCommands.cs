@@ -1920,7 +1920,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructor and shared private data
 
         private readonly PSSession _remoteRunspaceInfo;
-        private Guid _moduleGuid;
+        private readonly Guid _moduleGuid;
         private readonly InvocationInfo _invocationInfo;
 
         internal ImplicitRemotingCodeGenerator(

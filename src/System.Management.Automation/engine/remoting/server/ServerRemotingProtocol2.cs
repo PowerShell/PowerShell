@@ -409,7 +409,7 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        private Guid _clientRunspacePoolId;
+        private readonly Guid _clientRunspacePoolId;
         // transport manager using which this
         // runspace pool driver handles all client
         // communication
@@ -436,8 +436,8 @@ namespace System.Management.Automation
         // powershell driver handles all client
         // communication
         private readonly AbstractServerTransportManager _transportManager;
-        private Guid _clientRunspacePoolId;
-        private Guid _clientPowerShellId;
+        private readonly Guid _clientRunspacePoolId;
+        private readonly Guid _clientPowerShellId;
         private readonly RemoteStreamOptions _streamSerializationOptions;
         private Runspace _rsUsedToInvokePowerShell;
 

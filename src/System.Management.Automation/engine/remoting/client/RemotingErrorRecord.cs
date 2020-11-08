@@ -317,7 +317,7 @@ namespace System.Management.Automation.Remoting
         }
 
         [DataMemberAttribute()]
-        private Guid _runspaceID;
+        private readonly Guid _runspaceID;
 
         /// <summary>
         /// Error record source instance ID.

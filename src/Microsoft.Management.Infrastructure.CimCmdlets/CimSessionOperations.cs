@@ -45,7 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private Guid instanceId;
+        private readonly Guid instanceId;
 
         /// <summary>
         /// Name of the cimsession.

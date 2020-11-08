@@ -862,7 +862,7 @@ namespace System.Management.Automation.Internal
 
         #region Private Members
 
-        private Guid _clientRunspacePoolId;
+        private readonly Guid _clientRunspacePoolId;
         private readonly object _syncObject = new object();
         private bool _createRunspaceCalled = false;
         private Exception _closingReason;

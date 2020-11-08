@@ -2008,7 +2008,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
         private readonly object _jobSyncObject = new object();
         private bool _nojob = false;
-        private Guid _instanceId = Guid.NewGuid();
+        private readonly Guid _instanceId = Guid.NewGuid();
         private bool _propagateErrors = false;
 
         private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
