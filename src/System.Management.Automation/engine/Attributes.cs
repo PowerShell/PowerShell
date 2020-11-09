@@ -1731,6 +1731,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows dynamically generate set of values for <see cref="ValidateSetAttribute"/>
     /// </summary>
+#nullable enable
     public interface IValidateSetValuesGenerator
     {
         /// <summary>
@@ -1738,6 +1739,7 @@ namespace System.Management.Automation
         /// </summary>
         string[] GetValidValues();
     }
+#nullable restore
 
     /// <summary>
     /// Validates that each parameter argument is Trusted data.
