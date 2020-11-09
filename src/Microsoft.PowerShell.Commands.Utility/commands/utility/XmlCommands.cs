@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
         void
         Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 CleanUp();
             }
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
         void
         Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 CleanUp();
             }
@@ -647,7 +647,7 @@ namespace Microsoft.PowerShell.Commands
         /// Reference to cmdlet which is using this helper class.
         /// </summary>
         private readonly PSCmdlet _cmdlet;
-        private bool _isLiteralPath;
+        private readonly bool _isLiteralPath;
 
         internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
         {
@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 CleanUp();
             }

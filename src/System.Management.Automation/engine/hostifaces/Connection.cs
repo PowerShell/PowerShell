@@ -450,9 +450,9 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private static int s_globalId;
-        private Stack<PowerShell> _runningPowerShells;
+        private readonly Stack<PowerShell> _runningPowerShells;
         private PowerShell _baseRunningPowerShell;
-        private object _syncObject;
+        private readonly object _syncObject;
 
         #endregion
 
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         return
                             (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
-                            == Threading.Thread.CurrentThread.ManagedThreadId);
+                            == Environment.CurrentManagedThreadId);
                     }
                 }
 
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return !(this is LocalRunspace || ConnectionInfo == null);
+                return this is not LocalRunspace && ConnectionInfo != null;
             }
         }
 
@@ -801,8 +801,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
-        private static object s_syncObject;
+        private static readonly SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
+        private static readonly object s_syncObject;
 
         /// <summary>
         /// Returns a read only list of runspaces.
@@ -943,7 +943,8 @@ namespace System.Management.Automation.Runspaces
                         case PipelineState.Completed:
                         case PipelineState.Stopped:
                         case PipelineState.Failed:
-                            if (this.InNestedPrompt || !(this is RemoteRunspace) && this.Debugger.InBreakpoint)
+                            if (this.InNestedPrompt
+                                || (this is not RemoteRunspace && this.Debugger.InBreakpoint))
                             {
                                 this.RunspaceAvailability = RunspaceAvailability.AvailableForNestedCommand;
                             }
@@ -1667,7 +1668,7 @@ namespace System.Management.Automation.Runspaces
         {
         }
 
-        private RunspaceBase _runspace;
+        private readonly RunspaceBase _runspace;
 
         internal SessionStateProxy(RunspaceBase runspace)
         {

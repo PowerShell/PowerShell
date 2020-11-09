@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state the provider belongs to.
         /// </summary>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         private string _fullName;
         private string _cachedModuleName;
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// A hidden drive for the provider that is used for setting
         /// the location to a provider-qualified path.
         /// </summary>
-        private PSDriveInfo _hiddenDrive;
+        private readonly PSDriveInfo _hiddenDrive;
 
         /// <summary>
         /// Gets the hidden drive for the provider that is used

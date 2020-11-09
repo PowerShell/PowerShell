@@ -104,7 +104,7 @@ namespace System.Management.Automation
                 else
                 {
                     var commandName = command as string ?? PSObject.ToStringParser(context, command);
-                    invocationName = invocationName ?? commandName;
+                    invocationName ??= commandName;
 
                     if (string.IsNullOrEmpty(commandName))
                     {
@@ -407,7 +407,7 @@ namespace System.Management.Automation
             else
             {
                 string whitespaces = parameterName.Substring(endPosition);
-                parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
+                parameterText = string.Concat("-", parameterName.AsSpan().Slice(0, endPosition), ":", whitespaces);
             }
 
             return parameterText;
@@ -1280,8 +1280,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                var rte = exception as RuntimeException;
-                if (rte == null)
+                if (!(exception is RuntimeException rte))
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1419,7 +1418,7 @@ namespace System.Management.Automation
             if (types[length - 1].Equals(typeof(CatchAll)))
             {
                 ranks[length - 1] = length - 1;
-                length = length - 1;
+                length -= 1;
             }
 
             // For each type check if it's a sub-class of any types after it.
@@ -3228,7 +3227,10 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
-                return new object[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<object>(); always return a new instance.
+                return new object[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             return ArrayOps.Multiply(originalList.ToArray(), times);

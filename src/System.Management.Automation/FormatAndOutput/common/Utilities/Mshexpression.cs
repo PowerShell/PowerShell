@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // private members
-        private string _stringValue;
+        private readonly string _stringValue;
         private bool _isResolved = false;
 
         #endregion Private Members

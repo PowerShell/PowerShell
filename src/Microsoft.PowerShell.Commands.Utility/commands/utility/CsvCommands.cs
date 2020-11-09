@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 CleanUp();
             }
@@ -879,7 +879,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
-        private char _delimiter;
+        private readonly char _delimiter;
         private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
         private readonly HashSet<string> _quoteFields;
         private readonly StringBuilder _outputString;
@@ -1171,7 +1171,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 GC.SuppressFinalize(this);
             }

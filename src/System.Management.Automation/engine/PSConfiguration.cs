@@ -290,12 +290,12 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// The supported separator characters for listing channels and keywords in configuration.
         /// </summary>
-        static readonly char[] s_valueSeparators = new char[] {' ', ',', '|'};
+        private static readonly char[] s_valueSeparators = new char[] {' ', ',', '|'};
 
         /// <summary>
         /// Provides a string name to indicate the default for a configuration setting.
         /// </summary>
-        const string LogDefaultValue = "default";
+        private const string LogDefaultValue = "default";
 
         /// <summary>
         /// Gets the bitmask of the PSChannel values to log.

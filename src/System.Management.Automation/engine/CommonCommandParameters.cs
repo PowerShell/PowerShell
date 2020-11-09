@@ -234,7 +234,7 @@ namespace System.Management.Automation.Internal
 
         #endregion parameters
 
-        private MshCommandRuntime _commandRuntime;
+        private readonly MshCommandRuntime _commandRuntime;
 
         internal class ValidateVariableName : ValidateArgumentsAttribute
         {

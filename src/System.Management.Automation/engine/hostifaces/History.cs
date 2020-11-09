@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of the pipeline corresponding to this history entry.
         /// </summary>
-        private long _pipelineId;
+        private readonly long _pipelineId;
 
         /// <summary>
         /// Returns a clone of this object.
@@ -803,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Private object for synchronization.
         /// </summary>
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 
         #endregion private
 
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
         /// This is a set of HistoryInfo ids which are currently being executed in the
         /// pipelines of the Runspace that is holding this 'History' instance.
         /// </summary>
-        private HashSet<long> _invokeHistoryIds = new HashSet<long>();
+        private readonly HashSet<long> _invokeHistoryIds = new HashSet<long>();
 
         internal bool PresentInInvokeHistoryEntrySet(HistoryInfo entry)
         {
@@ -1098,12 +1098,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 ps.AddScript(commandToInvoke);
 
-                EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e) { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
-                EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e) { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
-                EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e) { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
-                EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e) { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
-                EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e) { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
-                EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e) { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
+                EventHandler<DataAddedEventArgs> debugAdded = (object sender, DataAddedEventArgs e) => { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
+                EventHandler<DataAddedEventArgs> errorAdded = (object sender, DataAddedEventArgs e) => { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
+                EventHandler<DataAddedEventArgs> informationAdded = (object sender, DataAddedEventArgs e) => { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
+                EventHandler<DataAddedEventArgs> progressAdded = (object sender, DataAddedEventArgs e) => { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
+                EventHandler<DataAddedEventArgs> verboseAdded = (object sender, DataAddedEventArgs e) => { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
+                EventHandler<DataAddedEventArgs> warningAdded = (object sender, DataAddedEventArgs e) => { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
 
                 ps.Streams.Debug.DataAdded += debugAdded;
                 ps.Streams.Error.DataAdded += errorAdded;
@@ -1338,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        public PSObject[] InputObject { set; get; }
+        public PSObject[] InputObject { get; set; }
 
         private bool _passthru;
         /// <summary>
@@ -1434,8 +1434,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
                 // Read CommandLine property
-                string commandLine = GetPropertyValue(mshObject, "CommandLine") as string;
-                if (commandLine == null)
+                if (!(GetPropertyValue(mshObject, "CommandLine") is string commandLine))
                 {
                     break;
                 }

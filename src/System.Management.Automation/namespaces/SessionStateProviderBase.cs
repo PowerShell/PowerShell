@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 sortedEntries.Sort(
-                    delegate (DictionaryEntry left, DictionaryEntry right)
+                    (DictionaryEntry left, DictionaryEntry right) =>
                     {
                         string leftKey = (string)left.Key;
                         string rightKey = (string)right.Key;
@@ -1116,8 +1116,8 @@ namespace Microsoft.PowerShell.Commands
             _provider = provider;
         }
 
-        private string _path;
-        private SessionStateProviderBase _provider;
+        private readonly string _path;
+        private readonly SessionStateProviderBase _provider;
 
         /// <summary>
         /// Reads the content from the item.

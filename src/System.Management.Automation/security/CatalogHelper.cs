@@ -3,18 +3,12 @@
 
 #if !UNIX
 
-using Dbg = System.Management.Automation;
-using System;
-using System.Text;
 using System.Security.Cryptography;
 using System.Collections.Generic;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Provider;
 using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 using DWORD = System.UInt32;
@@ -343,7 +337,7 @@ namespace System.Management.Automation
             {
                 // Generate Path for Catalog Definition File
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
-                cdfFilePath = cdfFilePath + ".cdf";
+                cdfFilePath += ".cdf";
                 try
                 {
                     cdfFilePath = GenerateCDFFile(Path, catalogFilePath, cdfFilePath, catalogVersion, hashAlgorithm);

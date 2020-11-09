@@ -1299,17 +1299,16 @@ namespace Microsoft.PowerShell
 
         #endregion helpers
 
-        private ConsoleColor defaultForeground = ConsoleColor.Gray;
+        private readonly ConsoleColor defaultForeground = ConsoleColor.Gray;
 
-        private ConsoleColor defaultBackground = ConsoleColor.Black;
+        private readonly ConsoleColor defaultBackground = ConsoleColor.Black;
 
-        private ConsoleHostUserInterface parent = null;
+        private readonly ConsoleHostUserInterface parent = null;
 
         private ConsoleControl.KEY_EVENT_RECORD cachedKeyEvent;
 
         [TraceSourceAttribute("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole")]
-        private static
-        PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
+        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
     }
 }   // namespace
 
@@ -1336,7 +1335,7 @@ namespace Microsoft.PowerShell
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
 
-        private ConsoleHostUserInterface _parent = null;
+        private readonly ConsoleHostUserInterface _parent = null;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {

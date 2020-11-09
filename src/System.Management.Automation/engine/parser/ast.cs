@@ -369,7 +369,7 @@ namespace System.Management.Automation.Language
                 // Nested function isn't really a member of the type so stop looking
                 // Anonymous script blocks are though
                 var functionDefinitionAst = ast as FunctionDefinitionAst;
-                if (functionDefinitionAst != null && !(functionDefinitionAst.Parent is FunctionMemberAst))
+                if (functionDefinitionAst != null && functionDefinitionAst.Parent is not FunctionMemberAst)
                     break;
                 ast = ast.Parent;
             }
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation.Language
             }
 
             // Make sure all statements are pipelines.
-            if (EndBlock.Statements.Any(ast => !(ast is PipelineAst)))
+            if (EndBlock.Statements.Any(ast => ast is not PipelineAst))
             {
                 errorId = "CanOnlyConvertOnePipeline";
                 errorMsg = AutomationExceptions.CanOnlyConvertOnePipeline;
@@ -2375,7 +2375,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class StatementBlockAst : Ast
     {
-        private static ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
+        private static readonly ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
 
         /// <summary>
         /// Construct a statement block.
@@ -3756,7 +3756,7 @@ namespace System.Management.Automation.Language
                 separator = ", ";
             }
 
-            sb.Append(")");
+            sb.Append(')');
             sb.Append(Environment.NewLine);
 
             return sb.ToString();
@@ -4019,7 +4019,7 @@ namespace System.Management.Automation.Language
             {
                 this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(commandsAllowed.ToArray());
                 SetParents(CommandsAllowed);
-                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(ast => !(ast is StringConstantExpressionAst));
+                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(ast => ast is not StringConstantExpressionAst);
             }
             else
             {
@@ -7213,8 +7213,7 @@ namespace System.Management.Automation.Language
                 PSTraceSource.NewInvalidOperationException();
             }
 
-            var commandExpr = this.Parent as CommandExpressionAst;
-            if (commandExpr == null)
+            if (!(this.Parent is CommandExpressionAst commandExpr))
             {
                 return false;
             }
@@ -7726,8 +7725,7 @@ namespace System.Management.Automation.Language
             var attributes = GetAttributes();
             var assignableValue = GetActualAssignableAst().GetAssignableValue();
 
-            var variableExpr = assignableValue as VariableExpressionAst;
-            if (variableExpr == null)
+            if (!(assignableValue is VariableExpressionAst variableExpr))
             {
                 return assignableValue.SetValue(compiler, Compiler.ConvertValue(rhs, attributes));
             }
@@ -8371,8 +8369,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as TypeName;
-            if (other == null)
+            if (!(obj is TypeName other))
                 return false;
 
             if (!_name.Equals(other._name, StringComparison.OrdinalIgnoreCase))
@@ -8690,8 +8687,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as GenericTypeName;
-            if (other == null)
+            if (!(obj is GenericTypeName other))
                 return false;
 
             if (!TypeName.Equals(other.TypeName))
@@ -8916,8 +8912,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ArrayTypeName;
-            if (other == null)
+            if (!(obj is ArrayTypeName other))
                 return false;
 
             return ElementType.Equals(other.ElementType) && Rank == other.Rank;
@@ -9018,8 +9013,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ReflectionTypeName;
-            if (other == null)
+            if (!(obj is ReflectionTypeName other))
                 return false;
             return _type == other._type;
         }

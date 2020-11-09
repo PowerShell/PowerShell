@@ -379,8 +379,8 @@ namespace Microsoft.PowerShell.Commands
         private const string SelectCloser = "</Select>";
         private const string suppressOpener = "<Suppress>*";
         private const string suppressCloser = "</Suppress>";
-        private const string propOpen = "[";
-        private const string propClose = "]";
+        private const char propOpen = '[';
+        private const char propClose = ']';
         private const string filePrefix = "file://";
         private const string NamedDataTemplate = "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))";
         private const string DataTemplate = "(EventData/Data='{0}')";
@@ -396,14 +396,14 @@ namespace Microsoft.PowerShell.Commands
         // Other private members and constants
         //
         private ResourceManager _resourceMgr = null;
-        private Dictionary<string, StringCollection> _providersByLogMap = new Dictionary<string, StringCollection>();
+        private readonly Dictionary<string, StringCollection> _providersByLogMap = new Dictionary<string, StringCollection>();
 
         private StringCollection _logNamesMatchingWildcard = null;
-        private StringCollection _resolvedPaths = new StringCollection();
+        private readonly StringCollection _resolvedPaths = new StringCollection();
 
-        private List<string> _accumulatedLogNames = new List<string>();
-        private List<string> _accumulatedProviderNames = new List<string>();
-        private List<string> _accumulatedFileNames = new List<string>();
+        private readonly List<string> _accumulatedLogNames = new List<string>();
+        private readonly List<string> _accumulatedProviderNames = new List<string>();
+        private readonly List<string> _accumulatedFileNames = new List<string>();
 
         private const uint MAX_EVENT_BATCH = 100;
 
@@ -1353,21 +1353,21 @@ namespace Microsoft.PowerShell.Commands
             Array idsArray = value as Array;
             if (idsArray != null)
             {
-                ret.Append("(");
+                ret.Append('(');
                 for (int i = 0; i < idsArray.Length; i++)
                 {
-                    ret.Append(SystemEventIDTemplate).Append(idsArray.GetValue(i).ToString()).Append(")");
+                    ret.Append(SystemEventIDTemplate).Append(idsArray.GetValue(i).ToString()).Append(')');
                     if (i < (idsArray.Length - 1))
                     {
                         ret.Append(" or ");
                     }
                 }
 
-                ret.Append(")");
+                ret.Append(')');
             }
             else
             {
-                ret.Append(SystemEventIDTemplate).Append(value).Append(")");
+                ret.Append(SystemEventIDTemplate).Append(value).Append(')');
             }
 
             return ret.ToString();
@@ -1383,21 +1383,21 @@ namespace Microsoft.PowerShell.Commands
             Array levelsArray = value as Array;
             if (levelsArray != null)
             {
-                ret.Append("(");
+                ret.Append('(');
                 for (int i = 0; i < levelsArray.Length; i++)
                 {
-                    ret.Append(SystemLevelTemplate).Append(levelsArray.GetValue(i).ToString()).Append(")");
+                    ret.Append(SystemLevelTemplate).Append(levelsArray.GetValue(i).ToString()).Append(')');
                     if (i < (levelsArray.Length - 1))
                     {
                         ret.Append(" or ");
                     }
                 }
 
-                ret.Append(")");
+                ret.Append(')');
             }
             else
             {
-                ret.Append(SystemLevelTemplate).Append(value).Append(")");
+                ret.Append(SystemLevelTemplate).Append(value).Append(')');
             }
 
             return ret.ToString();
@@ -1571,7 +1571,7 @@ namespace Microsoft.PowerShell.Commands
             Array dataArray = value as Array;
             if (dataArray != null)
             {
-                ret.Append("(");
+                ret.Append('(');
                 for (int i = 0; i < dataArray.Length; i++)
                 {
                     ret.AppendFormat(CultureInfo.InvariantCulture, DataTemplate, dataArray.GetValue(i).ToString());
@@ -1581,7 +1581,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                ret.Append(")");
+                ret.Append(')');
             }
             else
             {
@@ -1602,7 +1602,7 @@ namespace Microsoft.PowerShell.Commands
             Array dataArray = value as Array;
             if (dataArray != null)
             {
-                ret.Append("(");
+                ret.Append('(');
                 for (int i = 0; i < dataArray.Length; i++)
                 {
                     ret.AppendFormat(CultureInfo.InvariantCulture,
@@ -1614,7 +1614,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                ret.Append(")");
+                ret.Append(')');
             }
             else
             {
@@ -1920,14 +1920,14 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder predicate = new StringBuilder("System/Provider[");
             for (int i = 0; i < providers.Count; i++)
             {
-                predicate.Append("@Name='").Append(providers[i]).Append("'");
+                predicate.Append("@Name='").Append(providers[i]).Append('\'');
                 if (i < (providers.Count - 1))
                 {
                     predicate.Append(" or ");
                 }
             }
 
-            predicate.Append("]");
+            predicate.Append(']');
 
             return predicate.ToString();
         }
@@ -1964,14 +1964,14 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = 0; i < uniqueProviderNames.Count; i++)
             {
-                predicate.Append("@Name='").Append(uniqueProviderNames[i]).Append("'");
+                predicate.Append("@Name='").Append(uniqueProviderNames[i]).Append('\'');
                 if (i < uniqueProviderNames.Count - 1)
                 {
                     predicate.Append(" or ");
                 }
             }
 
-            predicate.Append("]");
+            predicate.Append(']');
 
             return predicate.ToString();
         }

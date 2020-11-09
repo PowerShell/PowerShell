@@ -6,6 +6,9 @@ jobs:
   variables:
   - group: 'Azure Blob variable group'
   steps:
+  - checkout: self
+    clean: true
+
   - download: releasePipeline
     artifact: finalResults
     patterns: '**/PowerShell*-win-x64.zip'

@@ -92,20 +92,20 @@ namespace System.Management.Automation
             Text.StringBuilder result = new Text.StringBuilder();
 
             GenerateParametersInDisplayOrder(
-                                 parameter => AppendFormatCommandParameterInfo(parameter, result),
-                                 delegate (string str)
-                                     {
-                                         if (result.Length > 0)
-                                         {
-                                             result.Append(" ");
-                                         }
+                parameter => AppendFormatCommandParameterInfo(parameter, result),
+                (string str) =>
+                {
+                    if (result.Length > 0)
+                    {
+                        result.Append(' ');
+                    }
 
-                                         result.Append("[");
-                                         result.Append(str);
-                                         result.Append("]");
-                                     });
+                    result.Append('[');
+                    result.Append(str);
+                    result.Append(']');
+                });
 
-            return result.ToString();
+          return result.ToString();
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace System.Management.Automation
             if (result.Length > 0)
             {
                 // Add a space between parameters
-                result.Append(" ");
+                result.Append(' ');
             }
 
             if (parameter.ParameterType == typeof(SwitchParameter))

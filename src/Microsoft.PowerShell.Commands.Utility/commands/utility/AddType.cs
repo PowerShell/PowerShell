@@ -1089,7 +1089,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(errorRecord);
             }
 
-            if (visitor.DuplicateSymbols.Count > 0)
+            if (!visitor.DuplicateSymbols.IsEmpty)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new InvalidOperationException(AddTypeStrings.CompilerErrors),

@@ -1841,9 +1841,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    string childName = childNameObjects[index].BaseObject as string;
-
-                    if (childName == null)
+                    if (!(childNameObjects[index].BaseObject is string childName))
                     {
                         continue;
                     }
@@ -2588,9 +2586,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    string name = result.BaseObject as string;
-
-                    if (name == null)
+                    if (!(result.BaseObject is string name))
                     {
                         continue;
                     }
@@ -2638,9 +2634,7 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            string name = result.BaseObject as string;
-
-                            if (name == null)
+                            if (!(result.BaseObject is string name))
                             {
                                 continue;
                             }

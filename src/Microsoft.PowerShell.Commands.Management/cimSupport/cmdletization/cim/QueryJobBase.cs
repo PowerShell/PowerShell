@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </summary>
     internal abstract class QueryJobBase : CimChildJobBase<CimInstance>
     {
-        private CimQuery _cimQuery;
+        private readonly CimQuery _cimQuery;
 
         internal QueryJobBase(CimJobContext jobContext, CimQuery cimQuery)
                 : base(jobContext)

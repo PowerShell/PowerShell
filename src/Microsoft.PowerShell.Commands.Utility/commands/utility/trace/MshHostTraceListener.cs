@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private StringBuilder _cachedWrite = new StringBuilder();
+        private readonly StringBuilder _cachedWrite = new StringBuilder();
 
         /// <summary>
         /// Sends the given output string to the host for processing.
@@ -116,6 +116,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The host interface to write the debug line to.
         /// </summary>
-        private InternalHostUserInterface _ui;
+        private readonly InternalHostUserInterface _ui;
     }
 }

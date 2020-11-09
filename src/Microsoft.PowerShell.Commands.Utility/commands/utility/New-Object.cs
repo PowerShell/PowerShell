@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
                     ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
                     if (ci != null && ci.IsPublic)
                     {
-                        _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });
+                        _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, Array.Empty<object>());
                         if (_newObject != null && Property != null)
                         {
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2

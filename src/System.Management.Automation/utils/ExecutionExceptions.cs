@@ -7,7 +7,6 @@
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
-using System.Security.Permissions;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -275,7 +274,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ProviderInvocationException _providerInvocationException;
+        private readonly ProviderInvocationException _providerInvocationException;
 
         /// <summary>
         /// This is the ProviderInfo associated with the provider which

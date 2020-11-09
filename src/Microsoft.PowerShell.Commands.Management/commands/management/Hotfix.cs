@@ -97,14 +97,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         queryString.Append("HotFixID= '");
                         queryString.Append(Id[i].Replace("'", "\\'"));
-                        queryString.Append("'");
+                        queryString.Append('\'');
                         if (i < Id.Length - 1)
                         {
                             queryString.Append(" Or ");
                         }
                     }
 
-                    queryString.Append(")");
+                    queryString.Append(')');
                 }
                 else
                 {

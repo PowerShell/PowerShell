@@ -347,14 +347,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         public override int ThrottleLimit
         {
-            set
-            {
-                base.ThrottleLimit = value;
-            }
-
             get
             {
                 return base.ThrottleLimit;
+            }
+
+            set
+            {
+                base.ThrottleLimit = value;
             }
         }
 
@@ -1007,8 +1007,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
-                    if (ecHelper == null)
+                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.
@@ -1984,7 +1983,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ThrottleManager _throttleManager = new ThrottleManager();
         // throttle manager for handling all throttling operations
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
         private ManualResetEvent _disconnectComplete;
         // the initial state is true because when no
         // operations actually take place as in case of a
@@ -2002,17 +2001,17 @@ namespace Microsoft.PowerShell.Commands
 
         private const string InProcParameterSet = "InProcess";
 
-        private PSDataCollection<object> _input = new PSDataCollection<object>();
+        private readonly PSDataCollection<object> _input = new PSDataCollection<object>();
         private bool _needToCollect = false;
         private bool _needToStartSteppablePipelineOnServer = false;
         private bool _clearInvokeCommandOnRunspace = false;
-        private List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
-        private object _jobSyncObject = new object();
+        private readonly List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
+        private readonly object _jobSyncObject = new object();
         private bool _nojob = false;
-        private Guid _instanceId = Guid.NewGuid();
+        private readonly Guid _instanceId = Guid.NewGuid();
         private bool _propagateErrors = false;
 
-        private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
+        private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         internal static readonly string RemoteJobType = "RemoteJob";
 
@@ -2092,14 +2091,14 @@ namespace System.Management.Automation.Internal
     internal class RobustConnectionProgress
     {
         private System.Management.Automation.Host.PSHost _psHost;
-        private string _activity;
+        private readonly string _activity;
         private string _status;
         private int _secondsTotal;
         private int _secondsRemaining;
         private ProgressRecord _progressRecord;
         private long _sourceId;
         private bool _progressIsRunning;
-        private object _syncObject;
+        private readonly object _syncObject;
         private Timer _updateTimer;
 
         /// <summary>

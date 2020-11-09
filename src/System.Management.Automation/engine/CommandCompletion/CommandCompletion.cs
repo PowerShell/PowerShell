@@ -891,7 +891,7 @@ namespace System.Management.Automation
 
                 // Determine if we need to quote the paths we parse
 
-                lastWord = lastWord ?? string.Empty;
+                lastWord ??= string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
@@ -1137,11 +1137,11 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                result.Sort(delegate (PathItemAndConvertedPath x, PathItemAndConvertedPath y)
-                                {
-                                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
-                                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
-                                });
+                result.Sort((PathItemAndConvertedPath x, PathItemAndConvertedPath y) =>
+                {
+                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
+                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
+                });
 
                 return result;
             }

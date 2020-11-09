@@ -233,12 +233,12 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystem : IDisposable
     {
-        private TimeSpan _defaultTimeout;
-        private Collection<UpdatableHelpProgressEventArgs> _progressEvents;
+        private readonly TimeSpan _defaultTimeout;
+        private readonly Collection<UpdatableHelpProgressEventArgs> _progressEvents;
         private bool _stopping;
-        private object _syncObject;
-        private UpdatableHelpCommandBase _cmdlet;
-        private CancellationTokenSource _cancelTokenSource;
+        private readonly object _syncObject;
+        private readonly UpdatableHelpCommandBase _cmdlet;
+        private readonly CancellationTokenSource _cancelTokenSource;
 
         internal WebClient WebClient { get; }
 
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation.Help
 
                 if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
-                    attributes = (attributes & ~FileAttributes.ReadOnly);
+                    attributes &= ~FileAttributes.ReadOnly;
                     File.SetAttributes(path, attributes);
                 }
             }
@@ -1579,8 +1579,8 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystemDrive : IDisposable
     {
-        private string _driveName;
-        private PSCmdlet _cmdlet;
+        private readonly string _driveName;
+        private readonly PSCmdlet _cmdlet;
 
         /// <summary>
         /// Gets the drive name.

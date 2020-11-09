@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
-        internal string BasePrefix { set; get; } = string.Empty;
+        internal string BasePrefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Flags -force operations.
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
             "DefaultCommandPrefix"
         };
 
-        private static string[] s_moduleVersionMembers = new string[] {
+        private static readonly string[] s_moduleVersionMembers = new string[] {
             "ModuleName",
             "GUID",
             "ModuleVersion"
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static readonly object s_WindowsPowerShellCompatSyncObject = new object();
 
-        private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
+        private readonly Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
         internal bool LoadUsingModulePath(bool found, IEnumerable<string> modulePath, string name, SessionState ss,
             ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (RuntimeException pe)
             {
-                if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
+                if ((manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0)
                 {
                     string message = StringUtil.Format(Modules.InvalidModuleManifest, scriptInfo.Path, pe.Message);
                     MissingMemberException mm = new MissingMemberException(message);
@@ -483,8 +483,8 @@ namespace Microsoft.PowerShell.Commands
         {
             string message;
 
-            var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
-            var writingErrors = 0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors);
+            var importingModule = (manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0;
+            var writingErrors = (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0;
 
             // Load the data file(s) to get the module info...
             try
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
             if (validMembers != null && !ValidateManifestHash(data, validMembers, moduleManifestPath, manifestProcessingFlags))
             {
                 containedErrors = true;
-                if (0 != (manifestProcessingFlags & ManifestProcessingFlags.NullOnFirstError))
+                if ((manifestProcessingFlags & ManifestProcessingFlags.NullOnFirstError) != 0)
                     return null;
             }
 
@@ -591,9 +591,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (badKeys.Length > 0)
                         badKeys.Append(", ");
-                    badKeys.Append("'");
+                    badKeys.Append('\'');
                     badKeys.Append(s);
-                    badKeys.Append("'");
+                    badKeys.Append('\'');
                 }
             }
 
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
                 result = false;
                 string message = null;
 
-                if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
+                if ((manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0)
                 {
                     // Check for PowerShell Version before checking other keys
                     // If a PowerShellVersion exists and does not match the requirements, then the error is InsufficientPowerShellVersion
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
                             validMembersString.Append(validMembers[i]);
                         }
 
-                        validMembersString.Append("'");
+                        validMembersString.Append('\'');
                         message = StringUtil.Format(Modules.InvalidModuleManifestMember, moduleManifestPath, validMembersString, badKeys);
                         InvalidOperationException ioe = new InvalidOperationException(message);
                         ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidManifestMember",
@@ -1144,7 +1144,7 @@ namespace Microsoft.PowerShell.Commands
                 if (stringVersion[stringVersion.Length - 1] == '*')
                 {
                     stringVersion = stringVersion.Substring(0, stringVersion.Length - 1);
-                    stringVersion = stringVersion + maxRange;
+                    stringVersion += maxRange;
                     int starNum = stringVersion.Count(x => x == '.');
                     for (int i = 0; i < (3 - starNum); i++)
                     {
@@ -1527,7 +1527,7 @@ namespace Microsoft.PowerShell.Commands
                      !Context.ModuleBeingProcessed.Equals(Context.PreviousModuleProcessed,
                          StringComparison.OrdinalIgnoreCase)))
                 {
-                    if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteWarnings))
+                    if ((manifestProcessingFlags & ManifestProcessingFlags.WriteWarnings) != 0)
                     {
                         WriteWarning(Modules.ModuleToProcessFieldDeprecated);
                     }
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 // Ignore errors related to HostVersion as per the ManifestProcessingFlags
                 // doing this at this place because we have to set "containedErrors"
-                if ((0 == (manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion)) &&
+                if (((manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion) == 0) &&
                     bailOnFirstError)
                     return null;
             }
@@ -1791,7 +1791,7 @@ namespace Microsoft.PowerShell.Commands
                     containedErrors = true;
                     // Ignore errors related to HostVersion as per the ManifestProcessingFlags
                     // doing this at this place because we have to set "containedErrors"
-                    if (0 == (manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion))
+                    if ((manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion) == 0)
                     {
                         if (writingErrors)
                         {
@@ -1817,7 +1817,7 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 // Ignore errors related to HostVersion as per the ManifestProcessingFlags
                 // doing this at this place because we have to set "containedErrors"
-                if ((0 == (manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion)) &&
+                if (((manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion) == 0) &&
                     bailOnFirstError)
                     return null;
             }
@@ -1829,7 +1829,7 @@ namespace Microsoft.PowerShell.Commands
                     containedErrors = true;
                     // Ignore errors related to HostVersion as per the ManifestProcessingFlags
                     // doing this at this place because we have to set "containedErrors"
-                    if (0 == (manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion))
+                    if ((manifestProcessingFlags & ManifestProcessingFlags.IgnoreHostNameAndHostVersion) == 0)
                     {
                         if (writingErrors)
                         {
@@ -3030,8 +3030,8 @@ namespace Microsoft.PowerShell.Commands
                         ss: ss,
                         options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
-                        loadTypesFiles: (exportedTypeFiles == null || 0 == exportedTypeFiles.Count),        // If types files already loaded, don't load snapin files
-                        loadFormatFiles: (exportedFormatFiles == null || 0 == exportedFormatFiles.Count),   // if format files already loaded, don't load snapin files
+                        loadTypesFiles: (exportedTypeFiles == null || exportedTypeFiles.Count == 0),        // If types files already loaded, don't load snapin files
+                        loadFormatFiles: (exportedFormatFiles == null || exportedFormatFiles.Count == 0),   // if format files already loaded, don't load snapin files
                         privateData: privateData,
                         found: out found,
                         shortModuleName: null,
@@ -3646,7 +3646,7 @@ namespace Microsoft.PowerShell.Commands
             Exception e,
             ManifestProcessingFlags manifestProcessingFlags)
         {
-            if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
+            if ((manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0)
             {
                 ErrorRecord er = GenerateInvalidModuleMemberErrorRecord(manifestElement, moduleManifestPath, e);
                 cmdlet.WriteError(er);
@@ -3750,7 +3750,7 @@ namespace Microsoft.PowerShell.Commands
             ManifestProcessingFlags manifestProcessingFlags,
             out ErrorRecord error)
         {
-            Dbg.Assert(0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements), "LoadRequiredModule / RequiredModules checks should only be done when actually loading a module");
+            Dbg.Assert((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0, "LoadRequiredModule / RequiredModules checks should only be done when actually loading a module");
 
             error = null;
 
@@ -3817,7 +3817,7 @@ namespace Microsoft.PowerShell.Commands
                     string message;
                     if (moduleManifestPath != null)
                     {
-                        if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
+                        if ((manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0)
                         {
                             switch (loadFailureReason)
                             {
@@ -4214,9 +4214,9 @@ namespace Microsoft.PowerShell.Commands
             while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
             {
                 StringBuilder stringBuilder = new StringBuilder(dir);
-                stringBuilder.Append("\\");
+                stringBuilder.Append('\\');
                 stringBuilder.Append(currentCulture.Name);
-                stringBuilder.Append("\\");
+                stringBuilder.Append('\\');
                 stringBuilder.Append(file);
 
                 string filePath = stringBuilder.ToString();
@@ -4521,7 +4521,7 @@ namespace Microsoft.PowerShell.Commands
             catch (PSInvalidCastException e)
             {
                 result = default(T);
-                if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
+                if ((manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0)
                 {
                     string message = StringUtil.Format(Modules.ModuleManifestInvalidValue, key, e.Message, moduleManifestPath);
                     ArgumentException newAe = new ArgumentException(message);
@@ -5349,7 +5349,7 @@ namespace Microsoft.PowerShell.Commands
             else
                 extensions = ModuleIntrinsics.PSModuleExtensions;
 
-            var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
+            var importingModule = (manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0;
 
             // "ni.dll" has a higher priority then ".dll" to be loaded.
             for (int i = 0; i < extensions.Length; i++)
@@ -5556,8 +5556,8 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
-            var writingErrors = 0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors);
+            var importingModule = (manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0;
+            var writingErrors = (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors) != 0;
 
             // In case the file is a Ngen Assembly.
             string ext;
@@ -6071,7 +6071,7 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static object s_lockObject = new object();
+        private static readonly object s_lockObject = new object();
 
         private void ClearAnalysisCaches()
         {
@@ -6083,7 +6083,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Analyzes a binary module implementation for its cmdlets.
-        private static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
+        private static readonly Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
             new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
 
 #if CORECLR
@@ -6277,7 +6277,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         // Analyzes a script module implementation for its exports.
-        private static Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
+        private static readonly Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
 
         private PSModuleInfo AnalyzeScriptFile(string filename, bool force, ExecutionContext context)
         {
@@ -6558,7 +6558,7 @@ namespace Microsoft.PowerShell.Commands
             bool importSuccessful = false;
             string modulePath = string.Empty;
             Version assemblyVersion = new Version(0, 0, 0, 0);
-            var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
+            var importingModule = (manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0;
 
             // See if we're loading a straight assembly...
             if (assemblyToLoad != null)
@@ -6882,7 +6882,7 @@ namespace Microsoft.PowerShell.Commands
                     iss.Bind(Context, updateOnly: true, module, options.NoClobber, options.Local, setLocation: false);
 
                     // Scan all of the types in the assembly to register JobSourceAdapters.
-                    IEnumerable<Type> allTypes = new Type[] { };
+                    IEnumerable<Type> allTypes = Array.Empty<Type>();
                     if (assembly != null)
                     {
                         allTypes = assembly.ExportedTypes;

@@ -886,7 +886,7 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            sb.Append(")");
+            sb.Append(')');
 
             return sb.ToString();
         }

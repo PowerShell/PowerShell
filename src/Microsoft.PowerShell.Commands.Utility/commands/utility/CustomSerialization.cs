@@ -21,17 +21,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Depth of serialization.
         /// </summary>
-        private int _depth;
+        private readonly int _depth;
 
         /// <summary>
         /// XmlWriter to be used for writing.
         /// </summary>
-        private XmlWriter _writer;
+        private readonly XmlWriter _writer;
 
         /// <summary>
         /// Whether type information should be included in the xml.
         /// </summary>
-        private bool _notypeinformation;
+        private readonly bool _notypeinformation;
 
         /// <summary>
         /// CustomerSerializer used for formatting the output for _writer.
@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Xml writer to be used.
         /// </summary>
-        private XmlWriter _writer;
+        private readonly XmlWriter _writer;
 
         /// <summary>
         /// Check first call for every pipeline object to write Object tag else property tag.
@@ -201,7 +201,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Should the type information to be shown.
         /// </summary>
-        private bool _notypeinformation;
+        private readonly bool _notypeinformation;
 
         /// <summary>
         /// Check object call.
@@ -710,8 +710,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSPropertyInfo property = info as PSPropertyInfo;
-                if (property == null)
+                if (!(info is PSPropertyInfo property))
                 {
                     continue;
                 }

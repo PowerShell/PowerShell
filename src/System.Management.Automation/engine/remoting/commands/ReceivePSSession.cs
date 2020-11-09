@@ -1158,8 +1158,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
-            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-            if (remoteRunspace == null)
+            if (!(session.Runspace is RemoteRunspace remoteRunspace))
             {
                 return null;
             }
@@ -1303,7 +1302,7 @@ namespace Microsoft.PowerShell.Commands
         private RemotePipeline _remotePipeline;
         private Job _job;
         private ManualResetEvent _stopPipelineReceive;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         #endregion
     }

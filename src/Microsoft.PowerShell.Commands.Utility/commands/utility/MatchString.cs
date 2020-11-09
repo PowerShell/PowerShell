@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a list of all Regex matches on the matching line.
         /// </summary>
-        public Match[] Matches { get; set; } = new Match[] { };
+        public Match[] Matches { get; set; } = Array.Empty<Match>();
 
         /// <summary>
         /// Create a deep copy of this MatchInfo instance.
@@ -1897,8 +1897,8 @@ namespace Microsoft.PowerShell.Commands
                     if (matchInfo.Context != null)
                     {
                         matchResult = matchInfo.Clone();
-                        matchResult.Context.DisplayPreContext = new string[] { };
-                        matchResult.Context.DisplayPostContext = new string[] { };
+                        matchResult.Context.DisplayPreContext = Array.Empty<string>();
+                        matchResult.Context.DisplayPostContext = Array.Empty<string>();
                     }
                     else
                     {
@@ -1924,7 +1924,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Matches should be an empty list, rather than null,
                 // in the cases of notMatch and simpleMatch.
-                matchResult.Matches = matches ?? new Match[] { };
+                matchResult.Matches = matches ?? Array.Empty<Match>();
 
                 return true;
             }

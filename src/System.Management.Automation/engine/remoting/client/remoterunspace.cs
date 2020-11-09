@@ -32,11 +32,11 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
-        private object _syncRoot = new object();
+        private readonly List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
+        private readonly object _syncRoot = new object();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
-        private bool _bSessionStateProxyCallInProgress = false;
-        private RunspaceConnectionInfo _connectionInfo;
+        private readonly bool _bSessionStateProxyCallInProgress = false;
+        private readonly RunspaceConnectionInfo _connectionInfo;
         private RemoteDebugger _remoteDebugger;
         private PSPrimitiveDictionary _applicationPrivateData;
 
@@ -156,8 +156,8 @@ namespace System.Management.Automation
         {
             // The RemoteRunspace object can only be constructed this way with a RunspacePool that
             // is in the disconnected state.
-            if ((runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected) ||
-                 !(runspacePool.ConnectionInfo is WSManConnectionInfo))
+            if (runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected
+                || runspacePool.ConnectionInfo is not WSManConnectionInfo)
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.InvalidRunspacePool);
             }
@@ -1792,7 +1792,7 @@ namespace System.Management.Automation
     {
         #region Members
 
-        private RemoteRunspace _runspace;
+        private readonly RemoteRunspace _runspace;
         private PowerShell _psDebuggerCommand;
         private bool _remoteDebugSupported;
         private bool _isActive;
@@ -2491,8 +2491,8 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsRemoteDebug
         {
-            private set;
             get;
+            private set;
         }
 
         /// <summary>
@@ -2933,7 +2933,7 @@ namespace System.Management.Automation
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
-        private RemoteRunspace _runspace;
+        private readonly RemoteRunspace _runspace;
 
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {

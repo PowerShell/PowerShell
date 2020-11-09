@@ -135,6 +135,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Internal stack to manage context.
         /// </summary>
-        private Stack<OutputContext> _stack = new Stack<OutputContext>();
+        private readonly Stack<OutputContext> _stack = new Stack<OutputContext>();
     }
 }

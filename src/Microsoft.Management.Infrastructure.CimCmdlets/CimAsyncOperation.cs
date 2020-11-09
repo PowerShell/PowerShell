@@ -388,8 +388,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (cimReference != null)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
-                CimInstance cimInstance = baseObject as CimInstance;
-                if (cimInstance == null)
+                if (!(baseObject is CimInstance cimInstance))
                 {
                     return null;
                 }
@@ -412,8 +411,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
-                    PSReference tempCimReference = cimReferenceArray[i] as PSReference;
-                    if (tempCimReference == null)
+                    if (!(cimReferenceArray[i] is PSReference tempCimReference))
                     {
                         return null;
                     }
@@ -559,14 +557,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Event to notify ps thread that more action is available.
         /// </summary>
-        private ManualResetEventSlim moreActionEvent;
+        private readonly ManualResetEventSlim moreActionEvent;
 
         /// <summary>
         /// The following is the definition of action queue.
         /// The queue holding all actions to be executed in the context of either
         /// ProcessRecord or EndProcessing.
         /// </summary>
-        private ConcurrentQueue<CimBaseAction> actionQueue;
+        private readonly ConcurrentQueue<CimBaseAction> actionQueue;
 
         /// <summary>
         /// Lock object.

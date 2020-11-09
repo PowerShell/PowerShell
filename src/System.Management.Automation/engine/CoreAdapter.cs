@@ -1658,8 +1658,7 @@ namespace System.Management.Automation
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        PSObject originalArgumentObj = originalArgument as PSObject;
-                        if (originalArgumentObj == null)
+                        if (!(originalArgument is PSObject originalArgumentObj))
                         {
                             continue;
                         }
@@ -2014,7 +2013,7 @@ namespace System.Management.Automation
         /// <see cref="DotNetAdapter.PopulateMethodReflectionTable(Type, CacheTable, BindingFlags)"/>.
         /// </summary>
         internal Collection<object> memberCollection;
-        private Dictionary<string, int> _indexes;
+        private readonly Dictionary<string, int> _indexes;
 
         internal CacheTable()
         {
@@ -2217,7 +2216,7 @@ namespace System.Management.Automation
             return method.Invoke(target, arguments);
         }
 
-        private static OpCode[] s_ldc = new OpCode[] {
+        private static readonly OpCode[] s_ldc = new OpCode[] {
             OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4,
             OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8
         };
@@ -2562,7 +2561,7 @@ namespace System.Management.Automation
         private const BindingFlags staticBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
                                                               BindingFlags.IgnoreCase | BindingFlags.Static);
 
-        private bool _isStatic;
+        private readonly bool _isStatic;
 
         internal DotNetAdapter() { }
 
@@ -2575,25 +2574,25 @@ namespace System.Management.Automation
         /// <summary>
         /// CLR reflection property cache for instance properties.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_instancePropertyCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_instancePropertyCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetStaticPropertyReflectionTable
         /// <summary>
         /// CLR reflection property cache for static properties.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_staticPropertyCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_staticPropertyCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetInstanceMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for instance methods.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_instanceMethodCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_instanceMethodCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetStaticMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for static methods.
         /// </summary>
-        private static Dictionary<Type, CacheTable> s_staticMethodCacheTable = new Dictionary<Type, CacheTable>();
+        private static readonly Dictionary<Type, CacheTable> s_staticMethodCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetInstanceMethodReflectionTable
         /// <summary>
@@ -2722,7 +2721,7 @@ namespace System.Management.Automation
 
                     definition.Append(" {");
                     definition.Append(extraDefinition);
-                    definition.Append("}");
+                    definition.Append('}');
                     definitionArray.Add(definition.ToString());
                 }
 
@@ -3878,8 +3877,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            PropertyCacheEntry entry = property.adapterData as PropertyCacheEntry;
-            if (entry == null)
+            if (!(property.adapterData is PropertyCacheEntry entry))
             {
                 return false;
             }
@@ -3895,7 +3893,7 @@ namespace System.Management.Automation
 
         internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return true; }
 
-        private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
+        private static readonly ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
 
         internal static ConsolidatedString GetInternedTypeNameHierarchy(Type type)
@@ -3995,7 +3993,7 @@ namespace System.Management.Automation
             }
 
             returnValue.Append(PropertyType(property, forDisplay: true));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(property.Name);
             returnValue.Append(" {");
             if (PropertyIsGettable(property))
@@ -4008,7 +4006,7 @@ namespace System.Management.Automation
                 returnValue.Append("set;");
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -4415,7 +4413,7 @@ namespace System.Management.Automation
             if (method != null)
             {
                 builder.Append(ToStringCodeMethods.Type(method.ReturnType));
-                builder.Append(" ");
+                builder.Append(' ');
             }
             else
             {
@@ -4423,20 +4421,20 @@ namespace System.Management.Automation
                 if (ctorInfo != null)
                 {
                     builder.Append(ToStringCodeMethods.Type(ctorInfo.DeclaringType));
-                    builder.Append(" ");
+                    builder.Append(' ');
                 }
             }
 
             if (methodEntry.DeclaringType.IsInterface)
             {
                 builder.Append(ToStringCodeMethods.Type(methodEntry.DeclaringType, dropNamespaces: true));
-                builder.Append(".");
+                builder.Append('.');
             }
 
             builder.Append(memberName ?? methodEntry.Name);
             if (methodEntry.IsGenericMethodDefinition)
             {
-                builder.Append("[");
+                builder.Append('[');
 
                 Type[] genericArgs = methodEntry.GetGenericArguments();
                 for (int i = 0; i < genericArgs.Length; i++)
@@ -4446,10 +4444,10 @@ namespace System.Management.Automation
                     builder.Append(ToStringCodeMethods.Type(genericArgs[i]));
                 }
 
-                builder.Append("]");
+                builder.Append(']');
             }
 
-            builder.Append("(");
+            builder.Append('(');
             System.Reflection.ParameterInfo[] parameters = methodEntry.GetParameters();
             int parametersLength = parameters.Length - parametersToIgnore;
             if (parametersLength > 0)
@@ -4478,7 +4476,7 @@ namespace System.Management.Automation
                     }
 
                     builder.Append(ToStringCodeMethods.Type(parameterType));
-                    builder.Append(" ");
+                    builder.Append(' ');
                     builder.Append(parameter.Name);
                     builder.Append(", ");
                 }
@@ -4486,7 +4484,7 @@ namespace System.Management.Automation
                 builder.Remove(builder.Length - 2, 2);
             }
 
-            builder.Append(")");
+            builder.Append(')');
 
             return builder.ToString();
         }
@@ -4756,7 +4754,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DotNetAdapterWithComTypeName : DotNetAdapter
     {
-        private ComTypeInfo _comTypeInfo;
+        private readonly ComTypeInfo _comTypeInfo;
 
         internal DotNetAdapterWithComTypeName(ComTypeInfo comTypeInfo)
         {
@@ -5256,9 +5254,9 @@ namespace System.Management.Automation
                     if (firstType == null)
                     {
                         firstType = new StringBuilder(baseType);
-                        firstType.Append("#");
+                        firstType.Append('#');
                         firstType.Append(node.NamespaceURI);
-                        firstType.Append("#");
+                        firstType.Append('#');
                         firstType.Append(node.LocalName);
                         yield return firstType.ToString();
                     }

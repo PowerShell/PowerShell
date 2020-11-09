@@ -30,8 +30,8 @@ namespace System.Management.Automation
     /// </summary>
     internal class ComMethod
     {
-        private Collection<int> _methods = new Collection<int>();
-        private COM.ITypeInfo _typeInfo;
+        private readonly Collection<int> _methods = new Collection<int>();
+        private readonly COM.ITypeInfo _typeInfo;
 
         /// <summary>
         /// Initializes new instance of ComMethod class.

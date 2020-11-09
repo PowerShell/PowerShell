@@ -84,8 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static bool IsWsManQuotaReached(Exception exception)
         {
-            var cimException = exception as CimException;
-            if (cimException == null)
+            if (!(exception is CimException cimException))
             {
                 return false;
             }
@@ -1010,8 +1009,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static bool IsShowComputerNameMarkerPresent(CimInstance cimInstance)
         {
             PSObject pso = PSObject.AsPSObject(cimInstance);
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty == null)
+            if (!(pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty))
             {
                 return false;
             }

@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        private string _provider = string.Empty;
+        private readonly string _provider = string.Empty;
 
         /// <summary>
         /// Changes the view of HelpObject returned.
@@ -185,6 +185,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Online", Mandatory = true)]
         public SwitchParameter Online
         {
+            get
+            {
+                return _showOnlineHelp;
+            }
+
             set
             {
                 _showOnlineHelp = value;
@@ -192,11 +197,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     VerifyParameterForbiddenInRemoteRunspace(this, "Online");
                 }
-            }
-
-            get
-            {
-                return _showOnlineHelp;
             }
         }
 
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                     this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
                 }
 #endif
-                helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress += HelpSystem_OnProgress;
 
                 bool failed = false;
                 HelpCategory helpCategory = ToHelpCategory(Category, ref failed);
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (0 == countOfHelpInfos)
+                    if (countOfHelpInfos == 0)
                     {
                         firstHelpInfoObject = helpInfo;
                     }
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 #endif
                 // Write full help as there is only one help info object
-                if (1 == countOfHelpInfos)
+                if (countOfHelpInfos == 1)
                 {
                     WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, true);
                 }
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                helpSystem.OnProgress -= new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress -= HelpSystem_OnProgress;
                 HelpSystem_OnComplete();
 
                 // finally clear the ScriptBlockAst -> Token[] cache
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private void HelpSystem_OnProgress(object sender, HelpProgressInfo arg)
+        private void HelpSystem_OnProgress(object sender, HelpProgressEventArgs arg)
         {
             var record = new ProgressRecord(0, this.CommandInfo.Name, arg.Activity)
             {
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
         #region trace
 
         [TraceSourceAttribute("GetHelpCommand ", "GetHelpCommand ")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
 
         #endregion
     }

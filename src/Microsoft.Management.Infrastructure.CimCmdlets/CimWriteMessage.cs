@@ -22,12 +22,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Channel id.
         /// </summary>
-        private UInt32 channel;
+        private readonly UInt32 channel;
 
         /// <summary>
         /// Message to write to the channel.
         /// </summary>
-        private string message;
+        private readonly string message;
         #endregion
 
         #region Properties

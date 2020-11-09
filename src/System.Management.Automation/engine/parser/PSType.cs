@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Language
             {
                 if (parent is IParameterMetadataProvider)
                 {
-                    nameParts = nameParts ?? new List<string>();
+                    nameParts ??= new List<string>();
                     var fnDefn = parent.Parent as FunctionDefinitionAst;
                     if (fnDefn != null)
                     {
@@ -1437,7 +1437,7 @@ namespace System.Management.Automation.Language
             return string.Join(".", nameParts);
         }
 
-        private static OpCode[] s_ldc =
+        private static readonly OpCode[] s_ldc =
         {
             OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4,
             OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8
@@ -1455,7 +1455,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static OpCode[] s_ldarg =
+        private static readonly OpCode[] s_ldarg =
         {
             OpCodes.Ldarg_0, OpCodes.Ldarg_1, OpCodes.Ldarg_2, OpCodes.Ldarg_3
         };

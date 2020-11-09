@@ -153,4 +153,12 @@
     <!-- This is required to be portable to Coverlet tool !-->
     <DebugType>portable</DebugType>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
 </Project>

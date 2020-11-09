@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                     declaringType.Name,
                     callingMethod.Name);
 
-                methodAndParameters.Append(")");
+                methodAndParameters.Append(')');
             }
             catch
             {
@@ -1436,7 +1436,7 @@ namespace System.Management.Automation
         /// </summary>
         internal string FullName { get; } = string.Empty;
 
-        private string _name;
+        private readonly string _name;
 
         /// <summary>
         /// Creates an instance of the TraceSource on demand.
@@ -1765,7 +1765,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The trace object that is used for any output.
         /// </summary>
-        private PSTraceSource _tracer;
+        private readonly PSTraceSource _tracer;
 
         /// <summary>
         /// The flag which caused this scope object to be created.

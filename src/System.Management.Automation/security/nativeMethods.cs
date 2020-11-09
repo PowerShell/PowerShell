@@ -7,7 +7,6 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Management.Automation.Internal;
-using System.Runtime.ConstrainedExecution;
 using DWORD = System.UInt32;
 using BOOL = System.UInt32;
 
@@ -1152,7 +1151,7 @@ namespace System.Management.Automation.Security
         ///ppCertContext: void**
         ///phWVTStateData: HANDLE*
         [DllImportAttribute("wintrust.dll", EntryPoint = "WTGetSignatureInfo", CallingConvention = CallingConvention.StdCall)]
-        internal static extern int WTGetSignatureInfo([InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string pszFile, [InAttribute()] System.IntPtr hFile, SIGNATURE_INFO_FLAGS sigInfoFlags, ref SIGNATURE_INFO psiginfo, ref System.IntPtr ppCertContext, ref System.IntPtr phWVTStateData);
+        internal static extern int WTGetSignatureInfo([InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string pszFile, [InAttribute()] System.IntPtr hFile, SIGNATURE_INFO_FLAGS sigInfoFlags, ref SIGNATURE_INFO psiginfo, ref System.IntPtr ppCertContext, ref System.IntPtr phWVTStateData);
 
         internal static void FreeWVTStateData(System.IntPtr phWVTStateData)
         {

@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
@@ -119,7 +118,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "ObjectDisposed";
+        private readonly string _errorId = "ObjectDisposed";
     }
 }
 

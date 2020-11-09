@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Gets or Sets the Properties that would be used for Grouping, Sorting and Comparison.
@@ -358,9 +358,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            PSPropertySet defaultKeys = standardNames.Members["DefaultKeyPropertySet"] as PSPropertySet;
-
-            if (defaultKeys == null)
+            if (!(standardNames.Members["DefaultKeyPropertySet"] is PSPropertySet defaultKeys))
             {
                 return null;
             }
@@ -529,7 +527,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Utils
 
         // list of processed parameters obtained from the Expression array
-        private List<MshParameter> _mshParameterList = null;
+        private readonly List<MshParameter> _mshParameterList = null;
 
         // list of unprocessed parameters obtained from the Expression array.
         private List<MshParameter> _unexpandedParameterList = null;
@@ -698,7 +696,7 @@ namespace Microsoft.PowerShell.Commands
             return new OrderByPropertyComparer(ascending, cultureInfo, caseSensitive);
         }
 
-        private ObjectCommandComparer[] _propertyComparers = null;
+        private readonly ObjectCommandComparer[] _propertyComparers = null;
     }
 
     internal class IndexedOrderByPropertyComparer : IComparer<OrderByPropertyEntry>
@@ -727,6 +725,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private OrderByPropertyComparer _orderByPropertyComparer = null;
+        private readonly OrderByPropertyComparer _orderByPropertyComparer = null;
     }
 }
