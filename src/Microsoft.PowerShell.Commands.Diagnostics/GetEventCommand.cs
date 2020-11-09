@@ -11,7 +11,6 @@ using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Management.Automation;
 using System.Net;
-using System.Reflection;
 using System.Resources;
 using System.Security.Principal;
 using System.Text;
