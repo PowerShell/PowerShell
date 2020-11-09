@@ -6,12 +6,28 @@ jobs:
   variables:
   - group: 'Azure Blob variable group'
   steps:
-  - download: releasePipeline
-    artifact: finalResults
-    patterns: '**/PowerShell*-win-x64.zip'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      source: specific
+      project: PowerShellCore
+      pipeline: '696'
+      preferTriggeringPipeline: true
+      runVersion: latestFromBranch
+      runBranch: '$(Build.SourceBranch)'
+      artifact: finalResults
+      patterns: '**/PowerShell*-win-x64.zip'
+      path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
 
-  - download: releasePipeline
-    artifact: BuildInfoJson
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      source: specific
+      project: PowerShellCore
+      pipeline: '696'
+      preferTriggeringPipeline: true
+      runVersion: latestFromBranch
+      runBranch: '$(Build.SourceBranch)'
+      artifact: BuildInfoJson
+      path: '$(Pipeline.Workspace)/releasePipeline/BuildInfoJson'
 
   - pwsh: |
       $fileName = (Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/BuildInfoJson/*.json").BaseName

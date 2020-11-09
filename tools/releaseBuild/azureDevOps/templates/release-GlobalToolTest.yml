@@ -12,21 +12,17 @@ jobs:
   pool:
     vmImage: ${{ parameters.imageName }}
   steps:
-    - download: releasePipeline
-      artifact: finalResults
-      patterns: '**/*.nupkg'
-
-    - task: DownloadBuildArtifacts@0
+    - task: DownloadPipelineArtifact@2
       inputs:
-        buildType: specific
+        source: specific
         project: PowerShellCore
-        pipeline: Co-ordinated Build Test
-        specificBuildWithTriggering: true
-        buildVersionToDownload: latest
-        downloadType: single
-        artifactName: finalResults
-        downloadPath: '$(Pipeline.Workspace)'
-        itemPattern: '*.nupkg'
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: finalResults
+        patterns: '**/*.nupkg'
+        path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
 
     - pwsh: |
         $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
@@ -57,7 +53,7 @@ jobs:
       displayName: Install .NET
 
     - pwsh: |
-        $branch = $ENV:RESOURCES_PIPELINE_RELEASEPIPELINE_SOURCEBRANCH
+        $branch = $ENV:BUILD_SOURCEBRANCH
         $version = $branch -replace '^.*(release[-/])v'
         $vstsCommandString = "vso[task.setvariable variable=PowerShellVersion]$version"
         Write-Verbose -Message "Version is $version" -Verbose
