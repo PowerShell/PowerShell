@@ -1045,7 +1045,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (itemRehydrator == null)
             {
-                itemRehydrator = delegate (PSObject pso) { return ConvertTo<T>(commandName, pso); };
+                itemRehydrator = (PSObject pso) => ConvertTo<T>(commandName, pso);
             }
 
             List<T> result = null;
@@ -1072,7 +1072,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (valueRehydrator == null)
             {
-                valueRehydrator = delegate (PSObject pso) { return ConvertTo<V>(commandName, pso); };
+                valueRehydrator = (PSObject pso) => ConvertTo<V>(commandName, pso);
             }
 
             Dictionary<K, V> result = new Dictionary<K, V>();
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Dbg.Assert(commandMetadata.CommandType == null, "CommandType shouldn't get rehydrated");
-            Dbg.Assert(commandMetadata.ImplementsDynamicParameters == false, "Proxies shouldn't do dynamic parameters");
+            Dbg.Assert(!commandMetadata.ImplementsDynamicParameters, "Proxies shouldn't do dynamic parameters");
 
             if (commandMetadata.Parameters != null)
             {
@@ -1918,7 +1918,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructor and shared private data
 
         private readonly PSSession _remoteRunspaceInfo;
-        private Guid _moduleGuid;
+        private readonly Guid _moduleGuid;
         private readonly InvocationInfo _invocationInfo;
 
         internal ImplicitRemotingCodeGenerator(

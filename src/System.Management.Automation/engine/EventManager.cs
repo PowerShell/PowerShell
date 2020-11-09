@@ -951,11 +951,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ThreadPool.QueueUserWorkItem(new WaitCallback(
-                    delegate (object unused)
-                    {
-                        ProcessNewEventImplementation(newEvent, false);
-                    }));
+                ThreadPool.QueueUserWorkItem(new WaitCallback((_) => ProcessNewEventImplementation(newEvent, false)));
             }
         }
 
@@ -1135,7 +1131,7 @@ namespace System.Management.Automation
                     // teardown event. That can result in starvation of
                     // foreground threads that also want to use the runspace.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(
-                        delegate (object unused)
+                        (_) =>
                         {
                             System.Threading.Thread.Sleep(100);
                             this.PulseEngine();
@@ -1565,7 +1561,7 @@ namespace System.Management.Automation
         private readonly string _computerName;
 
         /// <summary>Runspace on which the event was generated</summary>
-        private Guid _runspaceId;
+        private readonly Guid _runspaceId;
 
         /// <summary>
         /// Creates an event manager for the given runspace.

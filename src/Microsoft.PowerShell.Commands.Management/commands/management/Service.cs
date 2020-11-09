@@ -2825,7 +2825,7 @@ namespace Microsoft.PowerShell.Commands
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
 
-            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
+            if (!status && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
             {
                 return status;
             }
@@ -2863,7 +2863,7 @@ namespace Microsoft.PowerShell.Commands
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
 
-            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
+            if (!status && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
             {
                 return status;
             }

@@ -1996,7 +1996,7 @@ namespace System.Management.Automation
     /// </summary>
     internal sealed class PSInformationalBuffers
     {
-        private Guid _psInstanceId;
+        private readonly Guid _psInstanceId;
 
         /// <summary>
         /// Default constructor.

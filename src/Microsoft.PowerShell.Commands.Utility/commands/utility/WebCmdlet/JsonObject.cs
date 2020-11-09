@@ -653,7 +653,7 @@ namespace Microsoft.PowerShell.Commands
 
             AppendPsProperties(pso, dict, depth, isCustomObj, in context);
 
-            if (wasDictionary == false && dict.Count == 1)
+            if (!wasDictionary && dict.Count == 1)
             {
                 return obj;
             }

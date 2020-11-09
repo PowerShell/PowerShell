@@ -174,11 +174,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 key: terminatedSession,
                 addValue: true,
                 updateValueFactory:
-                    delegate (CimSession key, bool isTerminatedValueInDictionary)
-                        {
-                            closureSafeSessionWasAlreadyTerminated = isTerminatedValueInDictionary;
-                            return true;
-                        });
+                    (CimSession key, bool isTerminatedValueInDictionary) =>
+                    {
+                        closureSafeSessionWasAlreadyTerminated = isTerminatedValueInDictionary;
+                        return true;
+                    });
 
             sessionWasAlreadyTerminated = closureSafeSessionWasAlreadyTerminated;
         }
@@ -197,20 +197,20 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             ManualResetEventSlim manualResetEventSlim = new ManualResetEventSlim();
             object lockObject = new object();
-            Func<Cmdlet, bool> action = delegate (Cmdlet cmdlet)
-                                                {
-                                                    _numberOfReportedSessionTerminatingErrors++;
-                                                    if (_numberOfReportedSessionTerminatingErrors >= _numberOfSessions)
-                                                    {
-                                                        cmdlet.ThrowTerminatingError(errorRecord);
-                                                    }
-                                                    else
-                                                    {
-                                                        cmdlet.WriteError(errorRecord);
-                                                    }
+            Func<Cmdlet, bool> action = (Cmdlet cmdlet) =>
+            {
+                _numberOfReportedSessionTerminatingErrors++;
+                if (_numberOfReportedSessionTerminatingErrors >= _numberOfSessions)
+                {
+                    cmdlet.ThrowTerminatingError(errorRecord);
+                }
+                else
+                {
+                    cmdlet.WriteError(errorRecord);
+                }
 
-                                                    return false; // not really needed here, but required by CmdletMethodInvoker
-                                                };
+                return false; // not really needed here, but required by CmdletMethodInvoker
+            };
 
             return new CmdletMethodInvoker<bool>
             {

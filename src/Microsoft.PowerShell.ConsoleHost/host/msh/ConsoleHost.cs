@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell
                 {
                     // If ShouldEndSession is already true, you can't set it back
 
-                    Dbg.Assert(_shouldEndSession != true || value,
+                    Dbg.Assert(!_shouldEndSession || value,
                         "ShouldEndSession can only be set from false to true");
 
                     _shouldEndSession = value;
@@ -1321,7 +1321,7 @@ namespace Microsoft.PowerShell
 
                 // If this shell is invoked in non-interactive, error is redirected, and OutputFormat was not
                 // specified write data in error stream in xml format assuming PowerShell->PowerShell usage.
-                if (!OutputFormatSpecified && IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
+                if (!OutputFormatSpecified && !IsInteractive && Console.IsErrorRedirected && _wasInitialCommandEncoded)
                 {
                     format = Serialization.DataFormat.XML;
                 }

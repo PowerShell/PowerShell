@@ -925,7 +925,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 if (_waitHandle != null)
                 {

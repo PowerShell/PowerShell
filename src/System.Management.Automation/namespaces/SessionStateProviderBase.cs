@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 sortedEntries.Sort(
-                    delegate (DictionaryEntry left, DictionaryEntry right)
+                    (DictionaryEntry left, DictionaryEntry right) =>
                     {
                         string leftKey = (string)left.Key;
                         string rightKey = (string)right.Key;

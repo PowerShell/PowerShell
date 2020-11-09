@@ -45,7 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private Guid instanceId;
+        private readonly Guid instanceId;
 
         /// <summary>
         /// Name of the cimsession.
@@ -791,7 +791,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.sessionState = cimSessions.GetOrAdd(
                 CurrentRunspaceId,
-                delegate (Guid instanceId)
+                (Guid instanceId) =>
                 {
                     if (Runspace.DefaultRunspace != null)
                     {

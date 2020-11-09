@@ -1129,11 +1129,11 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                result.Sort(delegate (PathItemAndConvertedPath x, PathItemAndConvertedPath y)
-                                {
-                                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
-                                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
-                                });
+                result.Sort((PathItemAndConvertedPath x, PathItemAndConvertedPath y) =>
+                {
+                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
+                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
+                });
 
                 return result;
             }
