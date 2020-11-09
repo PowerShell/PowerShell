@@ -10,10 +10,9 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Resources;
 using System.Threading;
-
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
 using Microsoft.PowerShell.Commands.GetCounter;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
