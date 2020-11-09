@@ -80,11 +80,12 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         // Ensure the string pointer is not garbage collected.
-        static IntPtr _nativeSyslogIdent = IntPtr.Zero;
-        static readonly NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
-        readonly byte _channelFilter;
-        readonly ulong _keywordFilter;
-        readonly byte _levelFilter;
+        private static IntPtr _nativeSyslogIdent = IntPtr.Zero;
+        private static readonly NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
+
+        private readonly byte _channelFilter;
+        private readonly ulong _keywordFilter;
+        private readonly byte _levelFilter;
 
         /// <summary>
         /// Initializes a new instance of this class.
@@ -147,7 +148,7 @@ namespace System.Management.Automation.Tracing
         /// to ensure correct thread initialization.
         /// </remarks>
         [ThreadStatic]
-        static Guid? t_activity;
+        private static Guid? t_activity;
 
         private static Guid Activity
         {
@@ -275,7 +276,7 @@ namespace System.Management.Automation.Tracing
 #region logging
 
         // maps a LogLevel to an associated SysLogPriority.
-        static readonly NativeMethods.SysLogPriority[] _levels =
+        private static readonly NativeMethods.SysLogPriority[] _levels =
         {
             NativeMethods.SysLogPriority.Info,
             NativeMethods.SysLogPriority.Critical,
@@ -374,7 +375,7 @@ namespace System.Management.Automation.Tracing
 
     internal static class NativeMethods
     {
-        const string libpslnative = "libpsl-native";
+        private const string libpslnative = "libpsl-native";
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
         /// See man 3 syslog for more info.
