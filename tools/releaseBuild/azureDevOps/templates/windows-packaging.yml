@@ -14,7 +14,7 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
-    name: Package ES Standard Build
+    vmImage: windows-latest
   variables:
     - name: BuildConfiguration
       value: ${{ parameters.BuildConfiguration }}
@@ -38,19 +38,6 @@ jobs:
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-
-  - task: PkgESSetupBuild@10
-    displayName: 'Initialize build'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      useDfs: false
-      productName: PowerShellCore
-      branchVersion: true
-      disableWorkspace: true
-      disableBuildTools: true
-      disableNugetPack: true
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) {
