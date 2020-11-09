@@ -1,7 +1,7 @@
 steps:
 - pwsh: |
     $variable = 'releaseTag'
-    $branch = $ENV:RESOURCES_PIPELINE_RELEASEPIPELINE_SOURCEBRANCH
+    $branch = $ENV:BUILD_SOURCEBRANCH
     if($branch -notmatch  '^.*(release[-/])')
     {
         throw "Branch name is not in release format: '$branch'"
