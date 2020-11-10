@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {

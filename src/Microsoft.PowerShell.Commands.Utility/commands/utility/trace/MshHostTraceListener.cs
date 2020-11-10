@@ -4,7 +4,6 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
-using System.Security.Permissions;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands

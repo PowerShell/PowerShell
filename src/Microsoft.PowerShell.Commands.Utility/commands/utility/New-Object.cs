@@ -10,10 +10,8 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Management.Automation.Security;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
