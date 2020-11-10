@@ -10,8 +10,9 @@ jobs:
   pool:
     vmImage: windows-latest
   variables:
-    BuildConfiguration: release
-    BuildPlatform: any cpu
+    - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+      value: 1
+    - group: ESRP
 
   steps:
   - checkout: self
