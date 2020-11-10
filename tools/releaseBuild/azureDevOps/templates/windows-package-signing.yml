@@ -17,6 +17,9 @@ jobs:
   - checkout: self
     clean: true
 
+  - checkout: ComplianceRepo
+    clean: true
+
   - template: shouldSign.yml
   - template: SetVersionVariables.yml
     parameters:
@@ -36,42 +39,52 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - powershell: |
-      $authenticodefiles = @(
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
-      )
+  # - powershell: |
+  #     $authenticodefiles = @(
+  #       "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
+  #       "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
+  #     )
 
-      $msixFiles = @(
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
-      )
+  #     $msixFiles = @(
+  #       "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msix"
+  #       "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
+  #       "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
+  #       "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
+  #     )
 
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml" -MsixCertType $env:MSIX_TYPE -MsixFiles $msixFiles
-    displayName: 'Generate Package Signing Xml'
+  #     tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml" -MsixCertType $env:MSIX_TYPE -MsixFiles $msixFiles
+  #   displayName: 'Generate Package Signing Xml'
 
-  - powershell: |
-      Get-Content "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Capture signing xml'
+  # - powershell: |
+  #     Get-Content "$(System.ArtifactsDirectory)\package.xml"
+  #   displayName: 'Capture signing xml'
 
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\signed
+        signOutputPath: $(Build.StagingDirectory)\signedPackages
+        certificateId: "CP-230012"
+        pattern: |
+          **\*.msi
+          **\*.msix
+        useMinimatch: true
 
-  - powershell: |
-      new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
-      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
-    displayName: 'Fake Signing'
-    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+  # - task: PkgESCodeSign@10
+  #   displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
+  #   env:
+  #     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  #   inputs:
+  #     signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
+  #     outPathRoot: '$(Build.StagingDirectory)\signedPackages'
+  #     binVersion: $(SigingVersion)
+  #     binVersionOverride: $(SigningVersionOverride)
+  #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  # - powershell: |
+  #     new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
+  #     Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+  #   displayName: 'Fake Signing'
+  #   condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml
     parameters:
