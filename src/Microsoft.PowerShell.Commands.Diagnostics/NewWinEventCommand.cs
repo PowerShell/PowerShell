@@ -9,7 +9,6 @@ using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
-using System.Reflection;
 using System.Resources;
 using System.Xml;
 

@@ -2,13 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 using Microsoft.PowerShell.Commands.GetCounter;
 using Microsoft.Win32;

@@ -4,8 +4,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-using System.Runtime.ConstrainedExecution;
-
 namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 {
     internal sealed class PdhSafeDataSourceHandle : SafeHandle

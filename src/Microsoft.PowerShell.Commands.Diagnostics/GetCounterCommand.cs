@@ -2,29 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Net;
-using System.Reflection;
 using System.Resources;
-using System.Security;
-using System.Security.Principal;
-using System.Text;
 using System.Threading;
-using System.Xml;
-
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
 using Microsoft.PowerShell.Commands.GetCounter;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
