@@ -13,7 +13,6 @@ using System.Management.Automation.Internal;
 using System.ComponentModel; // Win32Exception
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices; // Marshal, DllImport
-using System.Security.Permissions;
 using System.Security.AccessControl;
 using NakedWin32Handle = System.IntPtr;
 using DWORD = System.UInt32;
