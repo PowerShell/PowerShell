@@ -11,21 +11,17 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading;
-using Microsoft.Win32;
-using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
-using System.Linq;
+using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
 // FxCop suppressions for resource strings:
