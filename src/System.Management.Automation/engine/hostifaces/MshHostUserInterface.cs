@@ -1101,13 +1101,7 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
-                            Encoding currentEncoding;
-
-                            using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
-                            {
-                                _ = reader.Read();
-                                currentEncoding = reader.CurrentEncoding;
-                            }
+                            var currentEncoding = getPathEncoding();
 
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
@@ -1135,6 +1129,15 @@ namespace System.Management.Automation.Host
                 }
 
                 OutputBeingLogged.Clear();
+            }
+
+            Encoding getPathEncoding()
+            {
+                using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
+                {
+                    _ = reader.Read();
+                    return reader.CurrentEncoding;
+                }
             }
         }
 
