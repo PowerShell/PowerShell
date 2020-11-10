@@ -421,7 +421,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         // m_ConsumerPathToHandleAndInstanceMap map is used for reading counter date (live or from files).
         //
-        private readonly Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
+        private readonly Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new();
 
         /// <summary>
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
@@ -460,7 +460,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             Debug.Assert(hCounter != IntPtr.Zero);
 
-            IntPtr pBufferSize = new IntPtr(0);
+            IntPtr pBufferSize = new(0);
             uint res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, IntPtr.Zero);
             if (res != PdhResults.PDH_MORE_DATA)
             {
@@ -585,7 +585,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             Debug.Assert(_hQuery != null);
             Debug.Assert(endTime >= startTime);
 
-            PDH_TIME_INFO pTimeInfo = new PDH_TIME_INFO();
+            PDH_TIME_INFO pTimeInfo = new();
 
             if (startTime != DateTime.MinValue && startTime.Kind == DateTimeKind.Local)
             {
@@ -608,7 +608,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint EnumBlgFilesMachines(ref StringCollection machineNames)
         {
-            IntPtr MachineListTcharSizePtr = new IntPtr(0);
+            IntPtr MachineListTcharSizePtr = new(0);
             uint res = PdhHelper.PdhEnumMachinesH(_hDataSource, IntPtr.Zero, ref MachineListTcharSizePtr);
             if (res != PdhResults.PDH_MORE_DATA)
             {
@@ -636,7 +636,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint EnumObjects(string machineName, ref StringCollection objectNames)
         {
-            IntPtr pBufferSize = new IntPtr(0);
+            IntPtr pBufferSize = new(0);
             uint res = PdhEnumObjectsH(_hDataSource, machineName, IntPtr.Zero, ref pBufferSize, PerfDetail.PERF_DETAIL_WIZARD, false);
             if (res != PdhResults.PDH_MORE_DATA)
             {
@@ -664,8 +664,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public uint EnumObjectItems(string machineName, string objectName, ref StringCollection counterNames, ref StringCollection instanceNames)
         {
-            IntPtr pCounterBufferSize = new IntPtr(0);
-            IntPtr pInstanceBufferSize = new IntPtr(0);
+            IntPtr pCounterBufferSize = new(0);
+            IntPtr pInstanceBufferSize = new(0);
 
             uint res = PdhEnumObjectItemsH(_hDataSource, machineName, objectName,
                                             IntPtr.Zero, ref pCounterBufferSize,
@@ -746,7 +746,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(_hDataSource != null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
 
-            StringCollection machineNames = new StringCollection();
+            StringCollection machineNames = new();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
             if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
@@ -755,7 +755,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             foreach (string machine in machineNames)
             {
-                StringCollection counterSets = new StringCollection();
+                StringCollection counterSets = new();
                 res = this.EnumObjects(machine, ref counterSets);
                 if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
@@ -766,8 +766,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     // Console.WriteLine("Counter set " + counterSet);
 
-                    StringCollection counterSetCounters = new StringCollection();
-                    StringCollection counterSetInstances = new StringCollection();
+                    StringCollection counterSetCounters = new();
+                    StringCollection counterSetInstances = new();
 
                     res = this.EnumObjectItems(machine, counterSet, ref counterSetCounters, ref counterSetInstances);
                     if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
@@ -790,7 +790,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             bool ret = false;
             outPath = string.Empty;
-            IntPtr pPathBufferSize = new IntPtr(0);
+            IntPtr pPathBufferSize = new(0);
 
             uint res = PdhMakeCounterPath(ref pathElts, IntPtr.Zero, ref pPathBufferSize, 0);
             if (res != PdhResults.PDH_MORE_DATA)
@@ -827,7 +827,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
         {
             outPath = string.Empty;
-            IntPtr pPathBufferSize = new IntPtr(0);
+            IntPtr pPathBufferSize = new(0);
 
             if (bWildcardInstances)
             {
@@ -865,7 +865,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             unifiedPath = origPath;
 
-            PDH_COUNTER_PATH_ELEMENTS elts = new PDH_COUNTER_PATH_ELEMENTS();
+            PDH_COUNTER_PATH_ELEMENTS elts = new();
 
             uint res = ParsePath(origPath, ref elts);
             if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
@@ -878,7 +878,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         private uint ParsePath(string fullPath, ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements)
         {
-            IntPtr bufSize = new IntPtr(0);
+            IntPtr bufSize = new(0);
 
             uint res = PdhParseCounterPath(fullPath,
                                            IntPtr.Zero,
@@ -931,7 +931,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             localizedPath = string.Empty;
-            PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
+            PDH_COUNTER_PATH_ELEMENTS pathElts = new();
             res = ParsePath(englishPath, ref pathElts);
             if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
@@ -1059,7 +1059,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
 
-            PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
+            PDH_COUNTER_PATH_ELEMENTS pathElts = new();
             pathElts.MachineName = machineName;
             pathElts.ObjectName = objectName;
 
@@ -1112,11 +1112,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 res = PdhAddCounter(_hQuery, counterPath, IntPtr.Zero, out counterHandle);
                 if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
-                    CounterHandleNInstance chi = new CounterHandleNInstance();
+                    CounterHandleNInstance chi = new();
                     chi.hCounter = counterHandle;
                     chi.InstanceName = null;
 
-                    PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
+                    PDH_COUNTER_PATH_ELEMENTS pathElts = new();
                     res = ParsePath(counterPath, ref pathElts);
                     if (res == PdhResults.PDH_CSTATUS_VALID_DATA && pathElts.InstanceName != null)
                     {
@@ -1180,7 +1180,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             foreach (string path in _consumerPathToHandleAndInstanceMap.Keys)
             {
-                IntPtr counterTypePtr = new IntPtr(0);
+                IntPtr counterTypePtr = new(0);
                 UInt32 counterType = (UInt32)PerformanceCounterType.RawBase;
                 UInt32 defaultScale = 0;
                 UInt64 timeBase = 0;
@@ -1219,7 +1219,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 long dtFT = (((long)rawValue.TimeStamp.dwHighDateTime) << 32) +
                                      (uint)rawValue.TimeStamp.dwLowDateTime;
 
-                DateTime dt = new DateTime(DateTime.FromFileTimeUtc(dtFT).Ticks, DateTimeKind.Local);
+                DateTime dt = new(DateTime.FromFileTimeUtc(dtFT).Ticks, DateTimeKind.Local);
 
                 PDH_FMT_COUNTERVALUE_DOUBLE fmtValueDouble;
                 res = PdhGetFormattedCounterValue(hCounter,
@@ -1281,7 +1281,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public uint ExpandWildCardPath(string path, out StringCollection expandedPaths)
         {
             expandedPaths = new StringCollection();
-            IntPtr pcchPathListLength = new IntPtr(0);
+            IntPtr pcchPathListLength = new(0);
 
             uint res = PdhExpandWildCardPathH(_hDataSource,
                                              path,
