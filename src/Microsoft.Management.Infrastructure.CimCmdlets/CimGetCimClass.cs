@@ -3,11 +3,8 @@
 
 #region Using directives
 
-using System.Collections;
-using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Globalization;
 
 #endregion
 
