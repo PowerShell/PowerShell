@@ -123,6 +123,15 @@ jobs:
       msi: no
       msix: no
 
+  - task: SFP.build-tasks.custom-build-task-2.EsrpMalwareScanning@1
+    displayName: 'Malware Scanning'
+    inputs:
+      ConnectedServiceName: pwshEsrpScanning
+      FolderPath: '$(Build.StagingDirectory)'
+      Pattern: '**\*.exe'
+      UseMinimatch: true
+      SessionTimeout: 30
+
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
 
