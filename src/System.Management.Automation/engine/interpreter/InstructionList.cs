@@ -95,11 +95,9 @@ namespace System.Management.Automation.Interpreter
         private List<BranchLabel> _labels;
 
         // list of (instruction index, cookie) sorted by instruction index:
-#if DEBUG
+#pragma warning disable IDE0044 // Add readonly modifier
         private List<KeyValuePair<int, object>> _debugCookies = null;
-#else
-        private readonly List<KeyValuePair<int, object>> _debugCookies = null;
-#endif
+#pragma warning restore IDE0044 // Variable is assigned when DEBUG is defined.
 
         #region Debug View
 
