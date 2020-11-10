@@ -1125,7 +1125,7 @@ wpa
 wpaProfile
  - demos/WindowsPowerShellModules/README.md
 2.x.
- - CHANGELOG/preview.md
+ - CHANGELOG/7.1.md
 ThomasNieto
 spongemike2
 davidseibel
@@ -1144,4 +1144,7 @@ davidreis97
 soccypowa
 nologo
 InstallLocation
+PkgES
+Microsoft.PowerShell.Native
+rtm.20526.5
 jcotton42
