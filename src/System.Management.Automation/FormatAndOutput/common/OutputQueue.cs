@@ -335,4 +335,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private OutputGroupQueue _groupQueue = null;
     }
 }
-

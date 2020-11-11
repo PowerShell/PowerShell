@@ -685,4 +685,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly List<FormattingError> _formattingErrorList = new List<FormattingError>();
     }
 }
-

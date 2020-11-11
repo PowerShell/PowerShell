@@ -273,4 +273,3 @@ namespace Microsoft.PowerShell
         private bool _atEnd;
     }
 }   // namespace
-

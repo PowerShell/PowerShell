@@ -106,4 +106,3 @@ namespace Microsoft.PowerShell.Commands
         private readonly Type _consoleColorEnumType;
     }
 }
-

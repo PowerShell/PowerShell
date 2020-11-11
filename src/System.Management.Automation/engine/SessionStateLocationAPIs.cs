@@ -1115,4 +1115,3 @@ namespace System.Management.Automation
         public SessionState SessionState { get; internal set; }
     }
 }
-

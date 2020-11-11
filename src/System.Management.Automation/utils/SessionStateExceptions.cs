@@ -1024,4 +1024,3 @@ namespace System.Management.Automation
         #endregion Serialization
     }
 }
-

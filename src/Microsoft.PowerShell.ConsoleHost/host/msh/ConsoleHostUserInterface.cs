@@ -2193,4 +2193,3 @@ namespace Microsoft.PowerShell
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
 }   // namespace
-

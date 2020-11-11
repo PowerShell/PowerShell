@@ -1979,4 +1979,3 @@ namespace System.Management.Automation.Internal
         #endregion IDisposable
     }
 }
-

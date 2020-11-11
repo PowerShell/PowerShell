@@ -140,4 +140,3 @@ namespace System.Management.Automation
         private readonly object _target = null;
     }
 }
-

@@ -527,4 +527,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly CommandParameterDefinition _paramDef = null;
     }
 }
-

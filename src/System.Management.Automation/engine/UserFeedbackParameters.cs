@@ -211,4 +211,3 @@ namespace System.Management.Automation.Internal
         private readonly MshCommandRuntime _commandRuntime;
     }
 }
-
