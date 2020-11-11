@@ -1773,11 +1773,6 @@ function Start-PSBootstrap {
 
     Write-Log -message "Installing PowerShell build dependencies"
 
-    # Temporary workaround to consume .NET 5 pre-release RTM build. Remove after .NET 5 RTM. Details: https://github.com/PowerShell/PowerShell/issues/13974
-    if ($Version -eq '5.0.100') {
-        $Version = '5.0.100-rtm.20526.5'
-    }
-
     Push-Location $PSScriptRoot/tools
 
     try {
