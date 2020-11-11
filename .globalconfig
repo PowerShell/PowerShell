@@ -293,7 +293,7 @@ dotnet_diagnostic.CA1825.severity = warning
 dotnet_diagnostic.CA1826.severity = warning
 
 # CA1827: Do not use Count() or LongCount() when Any() can be used
-dotnet_diagnostic.CA1827.severity = suggestion
+dotnet_diagnostic.CA1827.severity = warning
 
 # CA1828: Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used
 dotnet_diagnostic.CA1828.severity = warning
