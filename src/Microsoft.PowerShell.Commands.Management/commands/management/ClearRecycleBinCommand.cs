@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
                     statusDescription = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionByDrive, drivePath);
                 }
 
-                ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
+                ProgressRecord progress = new(0, activity, statusDescription);
                 progress.PercentComplete = 30;
                 progress.RecordType = ProgressRecordType.Processing;
                 WriteProgress(progress);

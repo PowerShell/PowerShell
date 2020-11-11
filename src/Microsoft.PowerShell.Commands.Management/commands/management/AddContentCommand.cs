@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (Exception e) // Catch-all OK, 3rd party callout
                     {
                         ProviderInvocationException providerException =
-                            new ProviderInvocationException(
+                            new(
                                 "ProviderSeekError",
                                 SessionStateStrings.ProviderSeekError,
                                 holder.PathInfo.Provider,

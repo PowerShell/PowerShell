@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private string _resultRole;
         private string _sourceRole;
 
-        internal readonly Dictionary<string, object> queryOptions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, object> queryOptions = new(StringComparer.OrdinalIgnoreCase);
 
         internal ClientSideQuery ClientSideQuery { get; }
 

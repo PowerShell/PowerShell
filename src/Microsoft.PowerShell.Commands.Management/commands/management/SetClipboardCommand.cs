@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     [Alias("scb")]
     public class SetClipboardCommand : PSCmdlet
     {
-        private readonly List<string> _contentList = new List<string>();
+        private readonly List<string> _contentList = new();
 
         /// <summary>
         /// Property that sets clipboard content.
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder content = new StringBuilder();
+            StringBuilder content = new();
             if (append)
             {
                 content.AppendLine(Clipboard.GetText());

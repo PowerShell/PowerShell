@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void UpdateProgress(string status)
         {
-            ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
+            ProgressRecord progress = new(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
             progress.RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
 
             WriteProgress(progress);
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static HyperVInfo GetHyperVisorInfo(CimSession session)
         {
-            HyperVInfo info = new HyperVInfo();
+            HyperVInfo info = new();
             bool ok = false;
             CimInstance instance = null;
 
