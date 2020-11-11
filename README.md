@@ -30,10 +30,12 @@ You can download and install a PowerShell package for any of the following platf
 | -------------------------------------------| ------------------------| ------------------------| ----------------------| ------------------------------|
 | [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
 | [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
+| [Ubuntu 20.04][corefx-linux]               |                         | [.deb][rl-ubuntu20]     |                       | [Instructions][in-ubuntu20]   |
 | [Ubuntu 18.04][corefx-linux]               | [.deb][lts-ubuntu18]    | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][lts-ubuntu16]    | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
 | [Debian 9][corefx-linux]                   | [.deb][lts-debian9]     | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
-| [Debian 10][corefx-linux]                  | [.deb][lts-debian10]    | [.deb][rl-debian10]     | [.deb][pv-debian10]   |                               |
+| [Debian 10][corefx-linux]                  | [.deb][lts-debian10]    | [.deb][rl-debian10]     | [.deb][pv-debian10]   | [Instructions][in-deb9]       |
+| [Debian 11][corefx-linux]                  |                         | [.deb][rl-debian11]     | [.deb][pv-debian11]   |                               |
 | [CentOS 7][corefx-linux]                   | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
 | [CentOS 8][corefx-linux]                   | [.rpm][lts-centos8]     | [.rpm][rl-centos8]      | [.rpm][pv-centos8]    |                               |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-rhel7]      |
@@ -57,7 +59,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | Windows        | [32-bit][rl-winx86-zip]/[64-bit][rl-winx64-zip]     | [32-bit][pv-winx86-zip]/[64-bit][pv-winx64-zip] | [Instructions][in-windows-zip]                 |
 | macOS          | [64-bit][rl-macos-tar]                              | [64-bit][pv-macos-tar]                          | [Instructions][in-tar-macos]                   |
 | Linux          | [64-bit][rl-linux-tar]                              | [64-bit][pv-linux-tar]                          | [Instructions][in-tar-linux]                   |
-| Windows (Arm)  | [32-bit][rl-winarm]/[64-bit][rl-winarm64] (preview) | [32-bit][pv-winarm]/[64-bit][pv-winarm64]       | [Instructions][in-arm]                         |
+| Windows (Arm)  | [64-bit][rl-winarm64] (preview) | [32-bit][pv-winarm]/[64-bit][pv-winarm64]       | [Instructions][in-arm]                         |
 | Raspbian (Arm) | [32-bit][rl-arm32]/[64-bit][rl-arm64]               | [32-bit][pv-arm32]/[64-bit][pv-arm64]           | [Instructions][in-raspbian]                    |
 
 [lts-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.18.04_amd64.deb
@@ -68,23 +70,24 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [lts-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts-7.0.3-1.centos.8.x86_64.rpm
 [lts-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts-7.0.3-osx-x64.pkg
 
-[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x64.msi
-[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x86.msi
-[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell_7.0.3-1.ubuntu.18.04_amd64.deb
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell_7.0.3-1.ubuntu.16.04_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell_7.0.3-1.debian.9_amd64.deb
-[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell_7.0.3-1.debian.10_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-1.rhel.7.x86_64.rpm
-[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-1.centos.8.x86_64.rpm
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-osx-x64.pkg
-[rl-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-arm32.zip
-[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-arm64.zip
-[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x86.zip
-[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x64.zip
-[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-osx-x64.tar.gz
-[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-linux-x64.tar.gz
-[rl-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-linux-arm32.tar.gz
-[rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-7.0.3-linux-arm64.tar.gz
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x86.msi
+[rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.ubuntu.20.04_amd64.deb
+[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.ubuntu.18.04_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.ubuntu.16.04_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.debian.9_amd64.deb
+[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.debian.10_amd64.deb
+[rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.debian.11_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-1.rhel.7.x86_64.rpm
+[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-1.centos.8.x86_64.rpm
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-osx-x64.pkg
+[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-arm64.zip
+[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x86.zip
+[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.zip
+[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-osx-x64.tar.gz
+[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-linux-x64.tar.gz
+[rl-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-linux-arm32.tar.gz
+[rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell-7.1.0-linux-arm64.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
 [pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/PowerShell-7.1.0-rc.2-win-x64.msi
@@ -93,6 +96,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-preview_7.1.0-rc.2-1.ubuntu.16.04_amd64.deb
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-preview_7.1.0-rc.2-1.debian.9_amd64.deb
 [pv-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-preview_7.1.0-rc.2-1.debian.10_amd64.deb
+[pv-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-preview_7.1.0-rc.2-1.debian.11_amd64.deb
 [pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-preview-7.1.0_rc.2-1.rhel.7.x86_64.rpm
 [pv-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-preview-7.1.0_rc.2-1.centos.8.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-rc.2/powershell-7.1.0-rc.2-osx-x64.pkg
@@ -109,7 +113,9 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-windows]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
 [in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1604
 [in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1804
+[in-ubuntu20]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-2004
 [in-deb9]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-9
+[in-deb10]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-10
 [in-centos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#centos-7
 [in-rhel7]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#red-hat-enterprise-linux-rhel-7
 [in-opensuse]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#opensuse
