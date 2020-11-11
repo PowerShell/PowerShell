@@ -173,7 +173,7 @@ jobs:
       $signedFilesDirectory = "$(System.ArtifactsDirectory)\thirdPartySigned"
       $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force
 
-      $missingSignatures | %{
+      $missingSignatures | ForEach-Object {
         Copy-Item -Path $_ -Destination $filesToSignDirectory
       }
 
