@@ -1093,6 +1093,15 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal void FlushContentToDisk()
         {
+            Encoding GetPathEncoding()
+            {
+                using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
+                {
+                    _ = reader.Read();
+                    return reader.CurrentEncoding;
+                }
+            }
+
             lock (OutputBeingLogged)
             {
                 if (!_disposed)
@@ -1101,7 +1110,7 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
-                            var currentEncoding = getPathEncoding();
+                            var currentEncoding = GetPathEncoding();
 
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
@@ -1129,15 +1138,6 @@ namespace System.Management.Automation.Host
                 }
 
                 OutputBeingLogged.Clear();
-            }
-
-            Encoding getPathEncoding()
-            {
-                using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
-                {
-                    _ = reader.Read();
-                    return reader.CurrentEncoding;
-                }
             }
         }
 
