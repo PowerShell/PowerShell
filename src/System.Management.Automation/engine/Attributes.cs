@@ -1737,6 +1737,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets valid values.
         /// </summary>
+        /// <returns>A non-null array of non-null strings.</returns>
         string[] GetValidValues();
     }
 #nullable restore
