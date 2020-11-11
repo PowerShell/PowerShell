@@ -1320,7 +1320,9 @@ namespace Microsoft.PowerShell.Commands
                             foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(result.FullName))
                             {
                                 if (!p.IsMatch(stream.Stream))
-                                { continue; }
+                                {
+                                    continue;
+                                }
 
                                 string outputPath = result.FullName + ":" + stream.Stream;
                                 // Alternate data streams can never be containers.
