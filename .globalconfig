@@ -911,7 +911,7 @@ dotnet_diagnostic.IDE0060.severity = silent
 dotnet_diagnostic.IDE0061.severity = silent
 
 # IDE0062: MakeLocalFunctionStatic
-dotnet_diagnostic.IDE0062.severity = silent
+dotnet_diagnostic.IDE0062.severity = warning
 
 # IDE0063: UseSimpleUsingStatement
 dotnet_diagnostic.IDE0063.severity = silent
