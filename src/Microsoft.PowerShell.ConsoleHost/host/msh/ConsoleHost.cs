@@ -2743,7 +2743,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                return remoteException.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name;
+                return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
             }
 
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)

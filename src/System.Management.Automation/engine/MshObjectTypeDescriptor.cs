@@ -222,8 +222,8 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
                                                              "component",
-                                                             typeof(PSObject).Name,
-                                                             typeof(PSObjectTypeDescriptor).Name);
+                                                             nameof(PSObject),
+                                                             nameof(PSObjectTypeDescriptor));
                 }
 
                 mshObj = descriptor.Instance;

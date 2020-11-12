@@ -1092,7 +1092,7 @@ namespace System.Management.Automation
                     innerException: null,
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name,
-                    typeof(int).Name);
+                    nameof(Int32));
             }
 
             object resultValue;
