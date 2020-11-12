@@ -28,8 +28,8 @@ You can download and install a PowerShell package for any of the following platf
 
 | Supported Platform                         | Download (LTS)          | Downloads (stable)      | Downloads (preview)   | How to Install                |
 | -------------------------------------------| ------------------------| ------------------------| ----------------------| ------------------------------|
-| [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
-| [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
+| [Windows (x64)][corefx-win]                | [.msi][lts-windows-64]  | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
+| [Windows (x86)][corefx-win]                | [.msi][lts-windows-86]  | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
 | [Ubuntu 20.04][corefx-linux]               |                         | [.deb][rl-ubuntu20]     |                       | [Instructions][in-ubuntu20]   |
 | [Ubuntu 18.04][corefx-linux]               | [.deb][lts-ubuntu18]    | [.deb][rl-ubuntu18]     | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][lts-ubuntu16]    | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
@@ -62,6 +62,8 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | Windows (Arm)  | [64-bit][rl-winarm64] (preview) | [32-bit][pv-winarm]/[64-bit][pv-winarm64]       | [Instructions][in-arm]                         |
 | Raspbian (Arm) | [32-bit][rl-arm32]/[64-bit][rl-arm64]               | [32-bit][pv-arm32]/[64-bit][pv-arm64]           | [Instructions][in-raspbian]                    |
 
+[lts-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x86.msi
+[lts-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x64.msi
 [lts-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.18.04_amd64.deb
 [lts-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.16.04_amd64.deb
 [lts-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.debian.9_amd64.deb
