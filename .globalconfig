@@ -383,7 +383,7 @@ dotnet_diagnostic.CA2200.severity = warning
 dotnet_diagnostic.CA2201.severity = silent
 
 # CA2207: Initialize value type static fields inline
-dotnet_diagnostic.CA2207.severity = none
+dotnet_diagnostic.CA2207.severity = warning
 
 # CA2208: Instantiate argument exceptions correctly
 dotnet_diagnostic.CA2208.severity = suggestion
