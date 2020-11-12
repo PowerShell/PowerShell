@@ -1028,7 +1028,7 @@ dotnet_diagnostic.SA1004.severity = none
 dotnet_diagnostic.SA1005.severity = none
 
 # SA1006: Preprocessor keywords should not be preceded by space
-dotnet_diagnostic.SA1006.severity = none
+dotnet_diagnostic.SA1006.severity = warning
 
 # SA1007: Operator keyword should be followed by space
 dotnet_diagnostic.SA1007.severity = none
