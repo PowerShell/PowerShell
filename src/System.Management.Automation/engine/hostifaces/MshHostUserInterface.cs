@@ -511,7 +511,7 @@ namespace System.Management.Automation.Host
                         Environment.MachineName,
                         Environment.OSVersion.VersionString,
                         string.Join(" ", Environment.GetCommandLineArgs()),
-                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        Environment.ProcessId,
                         versionInfoFooter.ToString().TrimEnd());
             }
 
