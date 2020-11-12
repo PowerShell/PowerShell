@@ -266,7 +266,7 @@ dotnet_diagnostic.CA1814.severity = none
 dotnet_diagnostic.CA1815.severity = none
 
 # CA1816: Dispose methods should call SuppressFinalize
-dotnet_diagnostic.CA1816.severity = suggestion
+dotnet_diagnostic.CA1816.severity = warning
 
 # CA1819: Properties should not return arrays
 dotnet_diagnostic.CA1819.severity = none
