@@ -1250,7 +1250,7 @@ dotnet_diagnostic.SA1210.severity = none
 dotnet_diagnostic.SA1211.severity = none
 
 # SA1212: Property accessors should follow order
-dotnet_diagnostic.SA1212.severity = none
+dotnet_diagnostic.SA1212.severity = warning
 
 # SA1213: Event accessors should follow order
 dotnet_diagnostic.SA1213.severity = none
