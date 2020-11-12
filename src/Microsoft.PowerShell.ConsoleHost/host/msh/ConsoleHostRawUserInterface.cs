@@ -14,7 +14,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using Dbg = System.Management.Automation.Diagnostics;
-using DWORD = System.UInt32;
 using WORD = System.UInt16;
 
 namespace Microsoft.PowerShell

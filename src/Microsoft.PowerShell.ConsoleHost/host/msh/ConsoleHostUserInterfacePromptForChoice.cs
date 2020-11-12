@@ -9,9 +9,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Text;
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using Dbg = System.Management.Automation.Diagnostics;
-using NakedWin32Handle = System.IntPtr;
 
 namespace Microsoft.PowerShell
 {
