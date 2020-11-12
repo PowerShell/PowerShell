@@ -859,7 +859,7 @@ namespace System.Management.Automation
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
-            if ((object)value == null)
+            if (value is null)
                 return 1;
 
             if (Major != value.Major)
