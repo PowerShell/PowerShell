@@ -16,10 +16,6 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     public sealed class PSSessionConfigurationData
     {
-        /// <summary>
-        /// </summary>
-        public static bool IsServerManager;
-
         #region Public Properties
 
         /// <summary>
@@ -54,6 +50,10 @@ namespace System.Management.Automation.Remoting
                 _privateData = value;
             }
         }
+
+        /// <summary>
+        /// </summary>
+        public static bool IsServerManager { get; set; }
 
         #endregion Public Properties
 
