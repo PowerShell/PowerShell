@@ -4,13 +4,9 @@
 #if !UNIX
 
 using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
-using System.Management.Automation.Provider;
-using System.Runtime.InteropServices;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
