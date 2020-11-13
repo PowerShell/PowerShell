@@ -1108,7 +1108,7 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
-                            var currentEncoding = GetPathEncoding();
+                            var currentEncoding = GetPathEncoding(this.Path);
 
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
