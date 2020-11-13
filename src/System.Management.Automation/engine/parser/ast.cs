@@ -1414,7 +1414,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            ExperimentalAttribute GetExpAttributeHelper(AttributeAst attributeAst)
+            static ExperimentalAttribute GetExpAttributeHelper(AttributeAst attributeAst)
             {
                 AttributeAst potentialExpAttr = null;
                 string expAttrTypeName = typeof(ExperimentalAttribute).FullName;
