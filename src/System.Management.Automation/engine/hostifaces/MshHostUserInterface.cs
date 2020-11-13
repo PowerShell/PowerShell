@@ -1093,13 +1093,11 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal void FlushContentToDisk()
         {
-            Encoding GetPathEncoding()
+            static Encoding GetPathEncoding(string path)
             {
-                using (StreamReader reader = new StreamReader(this.Path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true))
-                {
-                    _ = reader.Read();
-                    return reader.CurrentEncoding;
-                }
+                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                _ = reader.Read();
+                return reader.CurrentEncoding;
             }
 
             lock (OutputBeingLogged)
@@ -1322,4 +1320,3 @@ namespace System.Management.Automation.Host
         }
     }
 }
-
