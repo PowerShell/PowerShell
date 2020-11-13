@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void VerifyProcess(Process process)
         {
-            if (process.Id == Process.GetCurrentProcess().Id)
+            if (process.Id == Environment.ProcessId)
             {
                 ThrowTerminatingError(
                         new ErrorRecord(

@@ -974,7 +974,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // It cannot wait on itself
-                if (process.Id.Equals(System.Diagnostics.Process.GetCurrentProcess().Id))
+                if (process.Id.Equals(Environment.ProcessId))
                 {
                     WriteNonTerminatingError(process, null, ProcessResources.WaitOnItself, "WaitOnItself", ErrorCategory.ObjectNotFound);
                     continue;
@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (Process.GetCurrentProcess().Id == SafeGetProcessId(process))
+                    if (Environment.ProcessId == SafeGetProcessId(process))
                     {
                         _shouldKillCurrentProcess = true;
                         continue;

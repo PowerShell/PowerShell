@@ -323,7 +323,7 @@ dotnet_diagnostic.CA1835.severity = suggestion
 dotnet_diagnostic.CA1836.severity = warning
 
 # CA1837: Use 'Environment.ProcessId'
-dotnet_diagnostic.CA1837.severity = suggestion
+dotnet_diagnostic.CA1837.severity = warning
 
 # CA1838: Avoid 'StringBuilder' parameters for P/Invokes
 dotnet_diagnostic.CA1838.severity = silent
