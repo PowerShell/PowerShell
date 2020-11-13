@@ -23,16 +23,14 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Microsoft.PowerShell.Telemetry;
 using Microsoft.PowerShell.Commands;
-
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using Dbg = System.Management.Automation.Diagnostics;
-using Debugger = System.Management.Automation.Debugger;
-
+using Microsoft.PowerShell.Telemetry;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
+using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
