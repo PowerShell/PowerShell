@@ -152,10 +152,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // call the user supplied callback
-            if (Callback != null)
-            {
-                Callback(this);
-            }
+            Callback?.Invoke(this);
         }
 
         /// <summary>

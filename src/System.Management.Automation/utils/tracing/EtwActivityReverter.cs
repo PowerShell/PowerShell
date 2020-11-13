@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 namespace System.Management.Automation.Tracing

@@ -1752,7 +1752,7 @@ namespace System.Management.Automation.Runspaces
     [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
@@ -1838,7 +1838,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -1936,18 +1935,18 @@ namespace System.Management.Automation.Runspaces
             this.TypeName = type.FullName;
         }
 
-        internal bool fromTypesXmlFile { get; private set; }
+        internal bool fromTypesXmlFile { get; }
 
         /// <summary>
         /// Get the TypeName.
         /// </summary>
-        public string TypeName { get; private set; }
+        public string TypeName { get; }
 
         /// <summary>
         /// Get the members of this TypeData instance.
         /// The Key of the dictionary is the member's name, and the Value is a TypeMemberData instance.
         /// </summary>
-        public Dictionary<string, TypeMemberData> Members { get; private set; }
+        public Dictionary<string, TypeMemberData> Members { get; }
 
         /// <summary>
         /// The type converter.
@@ -1966,7 +1965,7 @@ namespace System.Management.Automation.Runspaces
 
         #region StandardMember
 
-        internal Dictionary<string, TypeMemberData> StandardMembers { get; private set; }
+        internal Dictionary<string, TypeMemberData> StandardMembers { get; }
 
         /// <summary>
         /// The serializationMethod.
@@ -2725,7 +2724,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The referenced properties.
         /// </summary>
-        public Collection<string> ReferencedProperties { get; private set; }
+        public Collection<string> ReferencedProperties { get; }
 
         /// <summary>
         /// The PropertySet name.
@@ -2777,7 +2776,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The members of the MemberSet.
         /// </summary>
-        public Collection<TypeMemberData> Members { get; private set; }
+        public Collection<TypeMemberData> Members { get; }
 
         /// <summary>
         /// Set true if the member is supposed to be hidden.
@@ -3291,9 +3290,14 @@ namespace System.Management.Automation.Runspaces
 
         #region add members from TypeData
 
-        private static void ProcessMembersData(ConcurrentBag<string> errors, string typeName, IEnumerable<TypeMemberData> membersData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        private static void ProcessMembersData(
+            ConcurrentBag<string> errors,
+            string typeName,
+            Dictionary<string, TypeMemberData> membersData,
+            PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
+            bool isOverride)
         {
-            foreach (TypeMemberData typeMember in membersData)
+            foreach (TypeMemberData typeMember in membersData.Values)
             {
                 typeMember.Process(errors, typeName, membersCollection, isOverride);
             }
@@ -3449,12 +3453,12 @@ namespace System.Management.Automation.Runspaces
         private static void ProcessStandardMembers(
             ConcurrentBag<string> errors,
             string typeName,
-            IEnumerable<TypeMemberData> standardMembers,
-            IEnumerable<PropertySetData> propertySets,
+            Dictionary<string, TypeMemberData> standardMembers,
+            List<PropertySetData> propertySets,
             PSMemberInfoInternalCollection<PSMemberInfo> membersCollection,
             bool isOverride)
         {
-            int newMemberCount = standardMembers.Count() + propertySets.Count();
+            int newMemberCount = standardMembers.Count + propertySets.Count;
 
             // If StandardMembers do not exists, we follow the original logic to create the StandardMembers
             if (membersCollection[PSStandardMembers] == null)
@@ -3679,7 +3683,7 @@ namespace System.Management.Automation.Runspaces
             string typeName = typeData.TypeName;
             Dbg.Assert(!string.IsNullOrEmpty(typeName), "TypeData class guarantees the typeName is not null and not empty");
 
-            var propertySets = new Collection<PropertySetData>();
+            var propertySets = new List<PropertySetData>();
             if (typeData.DefaultDisplayPropertySet != null)
             {
                 propertySets.Add(typeData.DefaultDisplayPropertySet);
@@ -3710,7 +3714,7 @@ namespace System.Management.Automation.Runspaces
             if (typeData.Members.Count > 0)
             {
                 typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(collectionSize));
-                ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
+                ProcessMembersData(errors, typeName, typeData.Members, typeMembers, typeData.IsOverride);
 
                 foreach (var memberName in typeData.Members.Keys)
                 {
@@ -3725,7 +3729,7 @@ namespace System.Management.Automation.Runspaces
                     typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
                 }
 
-                ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
+                ProcessStandardMembers(errors, typeName, typeData.StandardMembers, propertySets, typeMembers, typeData.IsOverride);
             }
 
             if (typeData.TypeConverter != null)
@@ -3938,7 +3942,7 @@ namespace System.Management.Automation.Runspaces
                 _typeFileList.Add(typefile);
             }
 
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new TypeTableLoadException(errors);
             }
@@ -3971,8 +3975,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
-                    PSPropertySet typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
-                    if (typeProperties == null)
+                    if (!(settings?.Members[PropertySerializationSet] is PSPropertySet typeProperties))
                     {
                         continue;
                     }

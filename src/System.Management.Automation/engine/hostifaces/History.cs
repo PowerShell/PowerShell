@@ -109,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cleared status of an entry.
         /// </summary>
-
         internal bool Cleared { get; set; } = false;
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of the pipeline corresponding to this history entry.
         /// </summary>
-        private long _pipelineId;
+        private readonly long _pipelineId;
 
         /// <summary>
         /// Returns a clone of this object.
@@ -167,7 +166,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs history store.
         /// </summary>
-
         internal History(ExecutionContext context)
         {
             // Create history size variable. Add ValidateRangeAttribute to
@@ -586,7 +584,6 @@ namespace Microsoft.PowerShell.Commands
         /// gets the total number of entries added
         ///</summary>
         ///<returns>count of total entries added.</returns>
-
         internal int Buffercapacity()
         {
             return _capacity;
@@ -806,7 +803,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Private object for synchronization.
         /// </summary>
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 
         #endregion private
 
@@ -824,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
         /// This is a set of HistoryInfo ids which are currently being executed in the
         /// pipelines of the Runspace that is holding this 'History' instance.
         /// </summary>
-        private HashSet<long> _invokeHistoryIds = new HashSet<long>();
+        private readonly HashSet<long> _invokeHistoryIds = new HashSet<long>();
 
         internal bool PresentInInvokeHistoryEntrySet(HistoryInfo entry)
         {
@@ -1101,12 +1098,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 ps.AddScript(commandToInvoke);
 
-                EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e) { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
-                EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e) { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
-                EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e) { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
-                EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e) { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
-                EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e) { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
-                EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e) { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
+                EventHandler<DataAddedEventArgs> debugAdded = (object sender, DataAddedEventArgs e) => { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
+                EventHandler<DataAddedEventArgs> errorAdded = (object sender, DataAddedEventArgs e) => { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
+                EventHandler<DataAddedEventArgs> informationAdded = (object sender, DataAddedEventArgs e) => { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
+                EventHandler<DataAddedEventArgs> progressAdded = (object sender, DataAddedEventArgs e) => { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
+                EventHandler<DataAddedEventArgs> verboseAdded = (object sender, DataAddedEventArgs e) => { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
+                EventHandler<DataAddedEventArgs> warningAdded = (object sender, DataAddedEventArgs e) => { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
 
                 ps.Streams.Debug.DataAdded += debugAdded;
                 ps.Streams.Error.DataAdded += errorAdded;
@@ -1341,7 +1338,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        public PSObject[] InputObject { set; get; }
+        public PSObject[] InputObject { get; set; }
 
         private bool _passthru;
         /// <summary>
@@ -1416,7 +1413,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert mshObject that has has the properties of an HistoryInfo
+        /// Convert mshObject that has the properties of an HistoryInfo
         /// object in to HistoryInfo object.
         /// </summary>
         /// <param name="mshObject">
@@ -1437,8 +1434,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
                 // Read CommandLine property
-                string commandLine = GetPropertyValue(mshObject, "CommandLine") as string;
-                if (commandLine == null)
+                if (!(GetPropertyValue(mshObject, "CommandLine") is string commandLine))
                 {
                     break;
                 }
@@ -1586,7 +1582,6 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     /// This Class implements the Clear History cmdlet
     ///</summary>
-
     [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096691")]
     public class ClearHistoryCommand : PSCmdlet
     {
@@ -1616,13 +1611,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Id of a history entry.
         /// </summary>
-
         private int[] _id;
 
         /// <summary>
         /// Command line name of an entry in the session history.
         /// </summary>
-
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1642,7 +1635,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commandline parameter.
         /// </summary>
-
         private string[] _commandline = null;
 
         ///<summary>
@@ -1677,7 +1669,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies whether new entries to be cleared or the default old ones.
         /// </summary>
-
         [Parameter(Mandatory = false, HelpMessage = "Specifies whether new entries to be cleared or the default old ones.")]
         public SwitchParameter Newest
         {
@@ -1695,7 +1686,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Switch parameter on the history entries.
         /// </summary>
-
         private SwitchParameter _newest;
 
         #endregion Command Line Parameters
@@ -1703,7 +1693,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding Begin Processing.
         /// </summary>
-
         protected override void BeginProcessing()
         {
             _history = ((LocalRunspace)Context.CurrentRunspace).History;
@@ -1712,7 +1701,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding Process Record.
         /// </summary>
-
         protected override void ProcessRecord()
         {
             // case statement to identify the parameter set
@@ -1915,7 +1903,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newest" >Order of the entries.</param>
         /// <returns>Nothing.</returns>
         /// </summary>
-
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)
         {
             // if cmdline is null,use default parameter set notion.
@@ -1988,4 +1975,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Private
     }
 }
-

@@ -732,8 +732,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var pipelineAst = statements[0] as PipelineAst;
-            if (pipelineAst == null)
+            if (!(statements[0] is PipelineAst pipelineAst))
             {
                 return false;
             }
@@ -744,8 +743,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var hashTableAst = expr as HashtableAst;
-            if (hashTableAst == null)
+            if (!(expr is HashtableAst hashTableAst))
             {
                 return false;
             }
@@ -1973,7 +1971,7 @@ namespace System.Management.Automation.Language
                     }
                     else if ((token.TokenFlags & TokenFlags.Keyword) != 0)
                     {
-                        foreach (var attr in attributes.Where(attr => !(attr is AttributeAst)))
+                        foreach (var attr in attributes.Where(attr => attr is not AttributeAst))
                         {
                             ReportError(attr.Extent,
                                 nameof(ParserStrings.TypeNotAllowedBeforeStatement),
@@ -2550,7 +2548,7 @@ namespace System.Management.Automation.Language
             {
                 SkipToken();
                 endErrorStatement = switchParameterToken.Extent;
-                specifiedFlags = specifiedFlags ?? new Dictionary<string, Tuple<Token, Ast>>();
+                specifiedFlags ??= new Dictionary<string, Tuple<Token, Ast>>();
 
                 if (IsSpecificParameter(switchParameterToken, "regex"))
                 {
@@ -2647,7 +2645,7 @@ namespace System.Management.Automation.Language
 
             if (switchParameterToken.Kind == TokenKind.Minus)
             {
-                specifiedFlags = specifiedFlags ?? new Dictionary<string, Tuple<Token, Ast>>();
+                specifiedFlags ??= new Dictionary<string, Tuple<Token, Ast>>();
                 specifiedFlags.Add(VERBATIM_ARGUMENT, new Tuple<Token, Ast>(switchParameterToken, null));
             }
 
@@ -4923,7 +4921,8 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
-            if (!(itemAst is StringConstantExpressionAst) && (kind != UsingStatementKind.Module || !(itemAst is HashtableAst)))
+            if (itemAst is not StringConstantExpressionAst
+                && (kind != UsingStatementKind.Module || itemAst is not HashtableAst))
             {
                 ReportError(ExtentFromFirstOf(itemAst, itemToken),
                     nameof(ParserStrings.InvalidValueForUsingItemName),

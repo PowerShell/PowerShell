@@ -97,7 +97,6 @@ namespace Microsoft.WSMan.Management
     /// the server, hence allowing the user to perform management operations that
     /// access a second hop.
     /// </summary>
-
     [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096628")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
@@ -122,22 +121,19 @@ namespace Microsoft.WSMan.Management
             {
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
                 XmlDocument resultopxml = new XmlDocument();
-                string inputXml = null;
                 resultopxml.LoadXml(result);
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
-                if (!(xNode == null))
-                {
-                    inputXml = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>";
-                }
-                else
+                if (xNode is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
+
+                string inputXml = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>";
 
                 m_SessionObj.Put(helper.CredSSP_RUri, inputXml, 0);
 
@@ -189,19 +185,12 @@ namespace Microsoft.WSMan.Management
             {
                 string result = m_SessionObj.Get(helper.Service_CredSSP_Uri, 0);
                 XmlDocument resultopxml = new XmlDocument();
-                string inputXml = null;
                 resultopxml.LoadXml(result);
 
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", helper.Service_CredSSP_XMLNmsp);
                 XmlNode xNode = resultopxml.SelectSingleNode(helper.CredSSP_SNode, nsmgr);
-                if (!(xNode == null))
-                {
-                    inputXml = string.Format(CultureInfo.InvariantCulture,
-                        @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>",
-                        helper.Service_CredSSP_XMLNmsp);
-                }
-                else
+                if (xNode is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex,
@@ -210,6 +199,10 @@ namespace Microsoft.WSMan.Management
                     WriteError(er);
                     return;
                 }
+
+                string inputXml = string.Format(CultureInfo.InvariantCulture,
+                    @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>",
+                    helper.Service_CredSSP_XMLNmsp);
 
                 m_SessionObj.Put(helper.Service_CredSSP_Uri, inputXml, 0);
             }

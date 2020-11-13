@@ -1124,8 +1124,7 @@ namespace System.Management.Automation.Runspaces
         internal static T ExtractPropertyAsWsManConnectionInfo<T>(RunspaceConnectionInfo rsCI,
             string property, T defaultValue)
         {
-            WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
-            if (wsCI == null)
+            if (!(rsCI is WSManConnectionInfo wsCI))
             {
                 return defaultValue;
             }
@@ -3437,7 +3436,26 @@ namespace System.Management.Automation.Runspaces
                     //
                     if (RuntimeId == Guid.Empty)
                     {
-                        ContainerObRoot = (string)computeSystemPropertiesType.GetProperty("ObRoot").GetValue(computeSystemPropertiesHandle);
+                        // Since Hyper-V changed this from a property to a field, we can optimize for newest Windows to see if it's a field,
+                        // otherwise we fall back to old code to be compatible with older versions of Windows
+                        var obRootFieldInfo = computeSystemPropertiesType.GetField("ObRoot");
+                        if (obRootFieldInfo != null)
+                        {
+                            ContainerObRoot = obRootFieldInfo.GetValue(computeSystemPropertiesHandle) as string;
+                        }
+                        else
+                        {
+                            var obRootPropertyInfo = computeSystemPropertiesType.GetProperty("ObRoot");
+                            if (obRootPropertyInfo != null)
+                            {
+                                ContainerObRoot = obRootPropertyInfo.GetValue(computeSystemPropertiesHandle) as string;
+                            }
+                        }
+
+                        if (ContainerObRoot == null) 
+                        {
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
+                        }
                     }
                 }
             }

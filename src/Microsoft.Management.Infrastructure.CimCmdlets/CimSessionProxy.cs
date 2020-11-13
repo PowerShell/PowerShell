@@ -95,11 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual string ComputerName
-        {
-            get;
-            private set;
-        }
+        internal virtual string ComputerName { get; }
 
         /// <summary>
         /// <para>
@@ -109,11 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// return value could be null
         /// </remarks>
         /// </summary>
-        internal virtual CimInstance TargetCimInstance
-        {
-            get;
-            private set;
-        }
+        internal virtual CimInstance TargetCimInstance { get; }
     }
     #endregion
 
@@ -218,7 +210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// then call Dispose on it.
         /// </para>
         /// </summary>
-        private static Dictionary<CimSession, uint> temporarySessionCache = new Dictionary<CimSession, uint>();
+        private static readonly Dictionary<CimSession, uint> temporarySessionCache = new Dictionary<CimSession, uint>();
 
         /// <summary>
         /// <para>
@@ -305,40 +297,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Event definitions
 
         /// <summary>
-        /// Define delegate that handles new cmdlet action come from
-        /// the operations related to the current CimSession object.
-        /// </summary>
-        /// <param name="cimSession">CimSession object, which raised the event.</param>
-        /// <param name="actionArgs">Event args.</param>
-        public delegate void NewCmdletActionHandler(
-            object cimSession,
-            CmdletActionEventArgs actionArgs);
-
-        /// <summary>
         /// Define an Event based on the NewActionHandler.
         /// </summary>
-        public event NewCmdletActionHandler OnNewCmdletAction;
-
-        /// <summary>
-        /// Define delegate that handles operation creation and complete
-        /// issued by the current CimSession object.
-        /// </summary>
-        /// <param name="cimSession">CimSession object, which raised the event.</param>
-        /// <param name="actionArgs">Event args.</param>
-        public delegate void OperationEventHandler(
-            object cimSession,
-            OperationEventArgs actionArgs);
+        public event EventHandler<CmdletActionEventArgs> OnNewCmdletAction;
 
         /// <summary>
         /// Event triggered when a new operation is started.
         /// </summary>
-        public event OperationEventHandler OnOperationCreated;
+        public event EventHandler<OperationEventArgs> OnOperationCreated;
 
         /// <summary>
         /// Event triggered when a new operation is completed,
         /// either success or failed.
         /// </summary>
-        public event OperationEventHandler OnOperationDeleted;
+        public event EventHandler<OperationEventArgs> OnOperationDeleted;
 
         #endregion
 
@@ -548,16 +520,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         public UInt32 OperationTimeout
         {
+            get
+            {
+                return (UInt32)this.options.Timeout.TotalSeconds;
+            }
+
             set
             {
                 DebugHelper.WriteLogEx("OperationTimeout {0},", 0, value);
 
                 this.options.Timeout = TimeSpan.FromSeconds((double)value);
-            }
-
-            get
-            {
-                return (UInt32)this.options.Timeout.TotalSeconds;
             }
         }
 
@@ -566,16 +538,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         public Uri ResourceUri
         {
+            get
+            {
+                return this.options.ResourceUri;
+            }
+
             set
             {
                 DebugHelper.WriteLogEx("ResourceUri {0},", 0, value);
 
                 this.options.ResourceUri = value;
-            }
-
-            get
-            {
-                return this.options.ResourceUri;
             }
         }
 
@@ -759,7 +731,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            NewCmdletActionHandler temp = this.OnNewCmdletAction;
+            EventHandler<CmdletActionEventArgs> temp = this.OnNewCmdletAction;
             if (temp != null)
             {
                 temp(this.session, actionArgs);
@@ -787,11 +759,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             OperationEventArgs args = new OperationEventArgs(
                 cancelOperation, operation, false);
-            OperationEventHandler temp = this.OnOperationCreated;
-            if (temp != null)
-            {
-                temp(this.session, args);
-            }
+            this.OnOperationCreated?.Invoke(this.session, args);
 
             this.PostOperationCreateEvent(args);
         }
@@ -811,11 +779,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             OperationEventArgs args = new OperationEventArgs(
                 null, operation, success);
             PreOperationDeleteEvent(args);
-            OperationEventHandler temp = this.OnOperationDeleted;
-            if (temp != null)
-            {
-                temp(this.session, args);
-            }
+            this.OnOperationDeleted?.Invoke(this.session, args);
 
             this.PostOperationDeleteEvent(args);
             this.RemoveOperation(operation);
@@ -864,7 +828,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (parameters.Length > 0)
                     {
-                        parameters.Append(",");
+                        parameters.Append(',');
                     }
 
                     parameters.Append(string.Format(CultureInfo.CurrentUICulture, @"'{0}' = {1}", key, parameterList[key]));
@@ -1065,7 +1029,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
 #if DEBUG
-        private static bool isCliXmlTestabilityHookActive = GetIsCliXmlTestabilityHookActive();
+        private static readonly bool isCliXmlTestabilityHookActive = GetIsCliXmlTestabilityHookActive();
 
         private static bool GetIsCliXmlTestabilityHookActive()
         {
@@ -1569,7 +1533,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The current operation parameters.
         /// </summary>
-        private Hashtable operationParameters = new Hashtable();
+        private readonly Hashtable operationParameters = new Hashtable();
 
         /// <summary>
         /// Handler used to cancel operation.
@@ -1603,16 +1567,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private IDisposable CancelOperation
         {
+            get
+            {
+                return this._cancelOperation;
+            }
+
             set
             {
                 DebugHelper.WriteLogEx();
                 this._cancelOperation = value;
                 Interlocked.Exchange(ref this._cancelOperationDisposed, 0);
-            }
-
-            get
-            {
-                return this._cancelOperation;
             }
         }
 
@@ -1635,14 +1599,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal XOperationContextBase ContextObject
         {
-            set
-            {
-                this.contextObject = value;
-            }
-
             get
             {
                 return this.contextObject;
+            }
+
+            set
+            {
+                this.contextObject = value;
             }
         }
 
@@ -1659,14 +1623,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal IObjectPreProcess ObjectPreProcess
         {
-            set
-            {
-                this.objectPreprocess = value;
-            }
-
             get
             {
                 return this.objectPreprocess;
+            }
+
+            set
+            {
+                this.objectPreprocess = value;
             }
         }
 
@@ -1677,7 +1641,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// created to handle the "default" session, in cases where cmdlets are invoked without
         /// ComputerName and/or CimSession parameters.
         /// </summary>
-        private bool isDefaultSession;
+        private readonly bool isDefaultSession;
 
         #endregion
 
@@ -2093,8 +2057,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimClass cimClass = writeResultObject.Result as CimClass;
-            if (cimClass == null)
+            if (!(writeResultObject.Result is CimClass cimClass))
             {
                 return true;
             }
@@ -2247,8 +2210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            CimInstance cimInstance = writeResultObject.Result as CimInstance;
-            if (cimInstance == null)
+            if (!(writeResultObject.Result is CimInstance cimInstance))
             {
                 return true;
             }
@@ -2261,7 +2223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
 
-        private CimNewCimInstance newCimInstance = null;
+        private readonly CimNewCimInstance newCimInstance = null;
 
         internal CimNewCimInstance NewCimInstanceOperation
         {
@@ -2351,7 +2313,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Ture indicates need to output the modified result.
         /// </summary>
-        private bool passThru = false;
+        private readonly bool passThru = false;
 
         #endregion
     }

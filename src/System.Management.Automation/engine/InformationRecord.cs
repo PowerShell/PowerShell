@@ -14,7 +14,6 @@ namespace System.Management.Automation
     /// which, according to host or user preference, forwards that information on to the host for rendering to the user.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteInformation(object, string[])"/>
-
     [DataContract()]
     public class InformationRecord
     {
@@ -30,7 +29,7 @@ namespace System.Management.Automation
 
             this.TimeGenerated = DateTime.Now;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
-            this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
+            this.ManagedThreadId = (uint)Environment.CurrentManagedThreadId;
         }
 
         private InformationRecord() { }

@@ -28,7 +28,7 @@ namespace System.Management.Automation
             new ReadOnlyDictionary<string, TypeDefinitionAst>(new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase));
 
         // This dictionary doesn't include ExportedTypes from nested modules.
-        private ReadOnlyDictionary<string, TypeDefinitionAst> _exportedTypeDefinitionsNoNested { set; get; }
+        private ReadOnlyDictionary<string, TypeDefinitionAst> _exportedTypeDefinitionsNoNested { get; set; }
 
         private static readonly HashSet<string> s_scriptModuleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -876,7 +876,7 @@ namespace System.Management.Automation
             get { return _compatiblePSEditions; }
         }
 
-        private List<string> _compatiblePSEditions = new List<string>();
+        private readonly List<string> _compatiblePSEditions = new List<string>();
 
         internal void AddToCompatiblePSEditions(string psEdition)
         {
@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
                 try
                 {
                     // Only copy simple mutable variables...
-                    if (v.Options == ScopedItemOptions.None && !(v is NullVariable))
+                    if (v.Options == ScopedItemOptions.None && v is not NullVariable)
                     {
                         PSVariable newVar = new PSVariable(v.Name, v.Value, v.Options, v.Description);
                         // The variable is already defined/set in the scope, and that means the attributes

@@ -288,7 +288,6 @@ namespace Microsoft.WSMan.Management
     /// is the local computer. Type the fully qualified domain name, NETBIOS name or
     /// IP address to indicate the remote host(s)
     /// </summary>
-
     [Cmdlet(VerbsCommunications.Disconnect, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096839")]
     public class DisconnectWSManCommand : PSCmdlet, IDisposable
     {

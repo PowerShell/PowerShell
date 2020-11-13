@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private WildcardPattern[] _wildcardPatterns;
+        private readonly WildcardPattern[] _wildcardPatterns;
     }
 
     internal class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// </summary>
@@ -304,8 +304,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
-            private int _first, _last, _skip, _skipLast;
-            private bool _firstOrLastSpecified;
+            private readonly int _first;
+            private readonly int _last;
+            private int _skip;
+            private readonly int _skipLast;
+            private readonly bool _firstOrLastSpecified;
         }
 
         /// <summary>

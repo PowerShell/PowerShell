@@ -67,7 +67,6 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override
         System.Management.Automation.Host.PSHostRawUserInterface
         RawUI
@@ -127,7 +126,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         /// implemented by the external host.
         /// </exception>
-
         public override
         SecureString
         ReadLineAsSecureString()
@@ -168,7 +166,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         Write(string value)
@@ -199,7 +196,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
@@ -226,7 +222,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host
         /// </exception>
-
         public override
         void
         WriteLine()
@@ -248,7 +243,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteLine(string value)
@@ -296,7 +290,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
@@ -321,7 +314,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteDebugLine(string message)
@@ -369,7 +361,6 @@ namespace System.Management.Automation.Internal.Host
         /// <exception cref="ArgumentException">
         /// If the debug preference is not a valid ActionPreference value.
         /// </exception>
-
         internal
         void
         WriteDebugLine(string message, ref ActionPreference preference)
@@ -469,7 +460,6 @@ namespace System.Management.Automation.Internal.Host
         /// Preference setting which determines the behaviour.  This is by-ref and will be modified based upon what the user
         /// types. (e.g. YesToAll will change Inquire => NotifyContinue)
         /// </param>
-
         private
         bool
         DebugShouldContinue(string message, ref ActionPreference actionPreference)
@@ -539,7 +529,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="record"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteProgress(Int64 sourceId, ProgressRecord record)
@@ -570,7 +559,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteVerboseLine(string message)
@@ -616,7 +604,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override void WriteWarningLine(string message)
         {
             if (message == null)
@@ -725,7 +712,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
@@ -779,7 +765,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         int
         PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
@@ -1035,10 +1020,9 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-        private PSHostUserInterface _externalUI = null;
-        private InternalHostRawUserInterface _internalRawUI = null;
-        private InternalHost _parent = null;
+        private readonly PSHostUserInterface _externalUI = null;
+        private readonly InternalHostRawUserInterface _internalRawUI = null;
+        private readonly InternalHost _parent = null;
         private PSInformationalBuffers _informationalBuffers = null;
     }
 }
-

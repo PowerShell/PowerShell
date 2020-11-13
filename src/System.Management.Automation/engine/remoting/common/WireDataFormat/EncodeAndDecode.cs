@@ -1539,7 +1539,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <returns>
         /// ErrorRecord if exception is of type IContainsErrorRecord
-        /// Null if if exception is not of type IContainsErrorRecord
+        /// Null if exception is not of type IContainsErrorRecord
         /// </returns>
         internal static ErrorRecord GetErrorRecordFromException(Exception exception)
         {
@@ -2089,8 +2089,7 @@ namespace System.Management.Automation
         /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.DecodingErrorForPowerShellStateInfo);
@@ -2358,9 +2357,7 @@ namespace System.Management.Automation
         /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.CantCastRemotingDataToPSObject, data.GetType().FullName);

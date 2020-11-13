@@ -363,8 +363,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
-        private static object s_debugPreferenceLockObject = new object();
+        private static readonly string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
+        private static readonly object s_debugPreferenceLockObject = new object();
 
         /// <summary>
         /// DebugPreference serves as a property bag to keep
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces
 
             // Generate the shutdown event
             if (Events != null)
-                Events.GenerateEvent(PSEngineEvent.Exiting, null, new object[] { }, null, true, false);
+                Events.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
 
             // Stop all running pipelines
             // Note:Do not perform the Cancel in lock. Reason is
@@ -950,10 +950,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
-                {
-                    remoteRunspaceCloseCompleted.Set();
-                };
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) => remoteRunspaceCloseCompleted.Set();
 
                 foreach (RemoteRunspace remoteRunspace in runspaces)
                 {
@@ -979,15 +976,12 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
-                {
-                    jobsStopCompleted.Set();
-                };
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) => jobsStopCompleted.Set();
 
                 foreach (Job job in this.JobRepository.Jobs)
                 {
                     // Only stop or disconnect PowerShell jobs.
-                    if (job is PSRemotingJob == false)
+                    if (job is not PSRemotingJob)
                     {
                         continue;
                     }
@@ -1016,10 +1010,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Disconnect all disconnectable job runspaces found.
-            CloseOrDisconnectAllRemoteRunspaces(() =>
-                {
-                    return disconnectRunspaces;
-                });
+            CloseOrDisconnectAllRemoteRunspaces(() => disconnectRunspaces);
         }
 
         internal void ReleaseDebugger()
@@ -1312,14 +1303,13 @@ namespace System.Management.Automation.Runspaces
         private History _history;
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
-        private static
-        PSTraceSource s_runspaceInitTracer =
+        private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
 
         /// <summary>
         /// This ensures all processes have a server/listener.
         /// </summary>
-        private static RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
+        private static readonly RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
 
         #endregion private fields
     }
@@ -1331,7 +1321,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class StopJobOperationHelper : IThrottleOperation
     {
-        private Job _job;
+        private readonly Job _job;
 
         /// <summary>
         /// Internal constructor.
@@ -1408,7 +1398,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class CloseOrDisconnectRunspaceOperationHelper : IThrottleOperation
     {
-        private RemoteRunspace _remoteRunspace;
+        private readonly RemoteRunspace _remoteRunspace;
 
         /// <summary>
         /// Internal constructor.
@@ -1569,7 +1559,7 @@ namespace System.Management.Automation.Runspaces
             get { return _errors; }
         }
 
-        private PSDataCollection<ErrorRecord> _errors;
+        private readonly PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
         /// <summary>
@@ -1603,4 +1593,3 @@ namespace System.Management.Automation.Runspaces
 
     #endregion Helper Class
 }
-

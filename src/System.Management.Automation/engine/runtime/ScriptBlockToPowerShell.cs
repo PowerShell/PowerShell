@@ -386,8 +386,7 @@ namespace System.Management.Automation
 
                     if (variables != null)
                     {
-                        var variableAst = usingAst.SubExpression as VariableExpressionAst;
-                        if (variableAst == null)
+                        if (!(usingAst.SubExpression is VariableExpressionAst variableAst))
                         {
                             throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);

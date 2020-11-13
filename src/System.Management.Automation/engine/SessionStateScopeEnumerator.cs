@@ -101,4 +101,3 @@ namespace System.Management.Automation
         private SessionStateScope _currentEnumeratedScope;
     }
 }
-

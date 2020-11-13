@@ -141,7 +141,7 @@ namespace System.Management.Automation.Remoting
         #region tracer
 
         [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
-        private static PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
+        private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion
 
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         // fragmentor used to fragment & defragment objects added to this collection.
-        private ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
+        private readonly ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
 
         // crypto helper used for encrypting/decrypting
         // secure string
@@ -420,8 +420,8 @@ namespace System.Management.Automation.Remoting.Client
         protected object syncObject = new object();
         protected PrioritySendDataCollection dataToBeSent;
         // used to handle callbacks from the server..these are used to synchronize received callbacks
-        private Queue<CallbackNotificationInformation> _callbackNotificationQueue;
-        private ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
+        private readonly Queue<CallbackNotificationInformation> _callbackNotificationQueue;
+        private readonly ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
         private bool _isServicingCallbacks;
         private bool _suspendQueueServicing;
         private bool _isDebuggerSuspend;
@@ -983,10 +983,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 // wait for the close to be completed and then release the resources.
-                this.CloseCompleted += delegate (object source, EventArgs args)
-                {
-                    Dispose(false);
-                };
+                this.CloseCompleted += (object source, EventArgs args) => Dispose(false);
 
                 try
                 {
@@ -1217,9 +1214,9 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         // used to listen to data available events from serialized datastream.
-        private SerializedDataStream.OnDataAvailableCallback _onDataAvailable;
+        private readonly SerializedDataStream.OnDataAvailableCallback _onDataAvailable;
         // the following variable are used by onDataAvailableCallback.
         private bool _shouldFlushData;
         private bool _reportAsPending;
@@ -1352,7 +1349,7 @@ namespace System.Management.Automation.Remoting.Server
                 (UInt32)_dataType,
                 (UInt32)_targetInterface);
 
-            SendDataToClient(dataToSend, (isEndFragment & _shouldFlushData) ? true : false, _reportAsPending, isEndFragment);
+            SendDataToClient(dataToSend, isEndFragment && _shouldFlushData, _reportAsPending, isEndFragment);
         }
 
         /// <summary>
@@ -1391,7 +1388,7 @@ namespace System.Management.Automation.Remoting.Server
             // Use thread-pool thread to raise the error handler..see explanation
             // in the method summary
             ThreadPool.QueueUserWorkItem(new WaitCallback(
-                delegate (object state)
+                (object state) =>
                 {
                     TransportErrorOccuredEventArgs eventArgs = new TransportErrorOccuredEventArgs(e,
                         TransportMethodEnum.Unknown);

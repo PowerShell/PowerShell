@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Disable ThrottleLimit parameter inherited from base class.
         /// </summary>
-        public new int ThrottleLimit { set { } get { return 0; } }
+        public new int ThrottleLimit { get { return 0; } set { } }
 
         private ObjectStream _stream;
         private RemoteRunspace _tempRunspace;
@@ -651,10 +651,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             string message = StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, eventArgs.Data.OriginalString);
-            Action<Cmdlet> streamObject = delegate (Cmdlet cmdlet)
-            {
-                cmdlet.WriteWarning(message);
-            };
+            Action<Cmdlet> streamObject = (Cmdlet cmdlet) => cmdlet.WriteWarning(message);
             _stream.Write(streamObject);
         }
 

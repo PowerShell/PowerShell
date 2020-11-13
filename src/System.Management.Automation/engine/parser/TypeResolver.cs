@@ -53,9 +53,9 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
-            public string[] Candidates { private set; get; }
+            public string[] Candidates { get; }
 
-            public TypeName TypeName { private set; get; }
+            public TypeName TypeName { get; }
 
             public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
             {
@@ -615,9 +615,7 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            var other = obj as TypeResolutionState;
-
-            if (other == null)
+            if (!(obj is TypeResolutionState other))
                 return false;
 
             if (this.attribute != other.attribute)

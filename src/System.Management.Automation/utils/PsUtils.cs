@@ -386,8 +386,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            var retResult = evaluationResult as Hashtable;
-            if (retResult == null)
+            if (!(evaluationResult is Hashtable retResult))
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -532,23 +531,21 @@ namespace System.Management.Automation
             object dso;
             Deserializer deserializer = new Deserializer(reader);
             dso = deserializer.Deserialize();
-            if (deserializer.Done() == false)
+            if (!deserializer.Done())
             {
                 // This helper function should move to host and it should provide appropriate
                 // error message there.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            PSObject mo = dso as PSObject;
-            if (mo == null)
+            if (!(dso is PSObject mo))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            var argsList = mo.BaseObject as ArrayList;
-            if (argsList == null)
+            if (!(mo.BaseObject is ArrayList argsList))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
@@ -568,7 +565,7 @@ namespace System.Management.Automation
         // CRC-32C polynomial representations
         private const uint polynomial = 0x1EDC6F41;
 
-        private static uint[] table;
+        private static readonly uint[] table;
 
         static CRC32Hash()
         {
@@ -648,4 +645,3 @@ namespace System.Management.Automation
 
     #endregion
 }
-

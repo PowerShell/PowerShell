@@ -2,29 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Net;
-using System.Reflection;
 using System.Resources;
-using System.Security;
-using System.Security.Principal;
-using System.Text;
 using System.Threading;
-using System.Xml;
-
+using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
 using Microsoft.PowerShell.Commands.GetCounter;
-using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -93,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _defaultCounters = true;
 
-        private List<string> _accumulatedCounters = new List<string>();
+        private readonly List<string> _accumulatedCounters = new List<string>();
 
         //
         // SampleInterval parameter.
@@ -180,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
 
         private PdhHelper _pdhHelper = null;
 
-        private EventWaitHandle _cancelEventArrived = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private readonly EventWaitHandle _cancelEventArrived = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         // Culture identifier(s)
         private const string FrenchCultureId = "fr-FR";
@@ -222,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             uint res = _pdhHelper.ConnectToDataSource();
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 ReportPdhError(res, true);
                 return;
@@ -319,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringCollection counterSets = new StringCollection();
             uint res = _pdhHelper.EnumObjects(machine, ref counterSets);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 // add an error message
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoCounterSetsOnComputer"), machine, res);
@@ -367,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(new ErrorRecord(exc, "CounterSetEnumAccessDenied", ErrorCategory.InvalidResult, null));
                         continue;
                     }
-                    else if (res != 0)
+                    else if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         ReportPdhError(res, false);
                         continue;
@@ -437,7 +425,6 @@ namespace Microsoft.PowerShell.Commands
             CultureInfo culture = GetCurrentCulture();
             List<Tuple<char, char>> characterReplacementList = null;
             List<string> paths = CombineMachinesAndCounterPaths();
-            uint res = 0;
 
             if (!_defaultCounters)
             {
@@ -445,13 +432,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             StringCollection allExpandedPaths = new StringCollection();
+            uint res;
             foreach (string path in paths)
             {
                 string localizedPath = path;
                 if (_defaultCounters)
                 {
                     res = _pdhHelper.TranslateLocalCounterPath(path, out localizedPath);
-                    if (res != 0)
+                    if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         string msg = string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterPathTranslationFailed"), res);
                         Exception exc = new Exception(msg);
@@ -470,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
 
                 StringCollection expandedPaths;
                 res = _pdhHelper.ExpandWildCardPath(localizedPath, out expandedPaths);
-                if (res != 0)
+                if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     WriteDebug("Could not expand path " + localizedPath);
                     ReportPdhError(res, false);
@@ -498,13 +486,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             res = _pdhHelper.OpenQuery();
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 ReportPdhError(res, false);
             }
 
             res = _pdhHelper.AddCounters(ref allExpandedPaths, true);
-            if (res != 0)
+            if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
             {
                 ReportPdhError(res, true);
 
@@ -526,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                 // read the first set just to get the initial values
                 res = _pdhHelper.ReadNextSet(out nextSet, bSkip);
 
-                if (res == 0)
+                if (res == PdhResults.PDH_CSTATUS_VALID_DATA)
                 {
                     // Display valid data
                     if (!bSkip)
@@ -657,4 +645,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

@@ -14,8 +14,6 @@ using System.Management.Automation.Help;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
-using System.Text;
-using Microsoft.PowerShell;
 #if !UNIX
 using Microsoft.Win32;
 #endif
@@ -70,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        private string _provider = string.Empty;
+        private readonly string _provider = string.Empty;
 
         /// <summary>
         /// Changes the view of HelpObject returned.
@@ -117,20 +115,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllUsersView")]
         public SwitchParameter Full
         {
-            private get => _full;
-
             set
             {
-                _full = value.ToBool();
-
-                if (_full)
+                if (value.ToBool())
                 {
                     _viewTokenToAdd = HelpView.FullView;
                 }
             }
         }
-
-        private bool _full;
 
         /// <summary>
         /// Changes the view of HelpObject returned.
@@ -149,23 +141,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Examples", Mandatory = true)]
         public SwitchParameter Examples
         {
-            private get
-            {
-                return _examples;
-            }
-
             set
             {
-                _examples = value.ToBool();
-
-                if (_examples)
+                if (value.ToBool())
                 {
                     _viewTokenToAdd = HelpView.ExamplesView;
                 }
             }
         }
-
-        private bool _examples;
 
         /// <summary>
         /// Parameter name.
@@ -202,6 +185,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Online", Mandatory = true)]
         public SwitchParameter Online
         {
+            get
+            {
+                return _showOnlineHelp;
+            }
+
             set
             {
                 _showOnlineHelp = value;
@@ -210,31 +198,9 @@ namespace Microsoft.PowerShell.Commands
                     VerifyParameterForbiddenInRemoteRunspace(this, "Online");
                 }
             }
-
-            get
-            {
-                return _showOnlineHelp;
-            }
         }
 
         private bool _showOnlineHelp;
-
-        /// <summary>
-        /// This parameter, if true, will direct get-help cmdlet to
-        /// display the help content using Microsoft.PowerShell.Pager on alternate screen buffer.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Paged
-        {
-            get;
-            set;
-        }
-
-        private Microsoft.PowerShell.Pager Pager => _pager ??= new Microsoft.PowerShell.Pager();
-
-        private Pager _pager;
-
-        private string _multiItemPagerBuffer;
 
 #if !UNIX
         private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
@@ -296,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                     this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
                 }
 #endif
-                helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress += HelpSystem_OnProgress;
 
                 bool failed = false;
                 HelpCategory helpCategory = ToHelpCategory(Category, ref failed);
@@ -336,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    if (0 == countOfHelpInfos)
+                    if (countOfHelpInfos == 0)
                     {
                         firstHelpInfoObject = helpInfo;
                     }
@@ -362,17 +328,13 @@ namespace Microsoft.PowerShell.Commands
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 #endif
                 // Write full help as there is only one help info object
-                if (1 == countOfHelpInfos)
+                if (countOfHelpInfos == 1)
                 {
                     WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, true);
                 }
                 else if (_showOnlineHelp && (countOfHelpInfos > 1))
                 {
                     throw PSTraceSource.NewInvalidOperationException(HelpErrors.MultipleOnlineTopicsNotSupported, "Online");
-                }
-                else if (Paged && countOfHelpInfos > 1)
-                {
-                    Pager.Write(_multiItemPagerBuffer);
                 }
 
                 // show errors only if there is no wildcard search or VerboseHelpErrors is true.
@@ -392,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                helpSystem.OnProgress -= new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
+                helpSystem.OnProgress -= HelpSystem_OnProgress;
                 HelpSystem_OnComplete();
 
                 // finally clear the ScriptBlockAst -> Token[] cache
@@ -534,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (PSObject pInfo in pInfos)
                 {
-                    WriteObjectPaged(pInfo, bufferOutputWhenPaged: false);
+                    WriteObject(pInfo);
                 }
             }
         }
@@ -635,7 +597,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             PSObject objectToReturn = TransformView(helpInfo.FullHelp);
                             objectToReturn.IsHelpObject = true;
-                            WriteObjectPaged(objectToReturn, bufferOutputWhenPaged: false);
+                            WriteObject(objectToReturn);
                         }
                     }
                     else
@@ -650,90 +612,10 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        WriteObjectPaged(helpInfo.ShortHelp, bufferOutputWhenPaged: true);
+                        WriteObject(helpInfo.ShortHelp);
                     }
                 }
             }
-        }
-
-        private void WriteObjectPaged(object sendToPipeline, bool bufferOutputWhenPaged)
-        {
-            if (Paged)
-            {
-                var helpText = GetHelpOutput();
-
-                if (bufferOutputWhenPaged)
-                {
-                    // The output from GetHelpOutput has all the item in the output.
-                    // We just need to store it and then write to Pager later.
-                    // No need to append them.
-                    _multiItemPagerBuffer = helpText;
-                }
-                else
-                {
-                    Pager.Write(helpText);
-                }
-            }
-            else
-            {
-                WriteObject(sendToPipeline);
-            }
-        }
-
-        private string GetHelpOutput()
-        {
-            using System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-
-            ps.AddCommand(@"Microsoft.PowerShell.Core\Get-Help");
-
-            if (!string.IsNullOrEmpty(this.Name))
-            {
-                ps.AddParameter(nameof(this.Name), this.Name);
-            }
-
-            if (this.Category is not null)
-            {
-                ps.AddParameter(nameof(this.Category), this.Category);
-            }
-
-            if (this.Component is not null)
-            {
-                ps.AddParameter(nameof(this.Component), this.Component);
-            }
-
-            if (this.Functionality is not null)
-            {
-                ps.AddParameter(nameof(this.Functionality), this.Functionality);
-            }
-
-            if (!string.IsNullOrEmpty(this.Path))
-            {
-                ps.AddParameter(nameof(this.Path), this.Path);
-            }
-
-            if (this.Role is not null)
-            {
-                ps.AddParameter(nameof(this.Role), this.Role);
-            }
-
-            if (this.Examples)
-            {
-                ps.AddParameter(nameof(this.Examples), this.Examples);
-            }
-
-            if (this.Full)
-            {
-                ps.AddParameter(nameof(this.Full), this.Full);
-            }
-
-            if (this.Parameter is not null)
-            {
-                ps.AddParameter(nameof(this.Parameter), this.Parameter);
-            }
-
-            ps.AddCommand(@"Microsoft.PowerShell.Utility\Out-String");
-
-            return ps.Invoke<string>().FirstOrDefault();
         }
 
         /// <summary>
@@ -801,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private void HelpSystem_OnProgress(object sender, HelpProgressInfo arg)
+        private void HelpSystem_OnProgress(object sender, HelpProgressEventArgs arg)
         {
             var record = new ProgressRecord(0, this.CommandInfo.Name, arg.Activity)
             {
@@ -841,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
         #region trace
 
         [TraceSourceAttribute("GetHelpCommand ", "GetHelpCommand ")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
 
         #endregion
     }
@@ -852,34 +734,38 @@ namespace Microsoft.PowerShell.Commands
     public static class GetHelpCodeMethods
     {
         /// <summary>
-        /// Verifies if the InitialSessionState of the current process.
-        /// </summary>
-        /// <returns></returns>
+        /// Checks whether the default runspace associated with the current thread has the standard Get-Help cmdlet.
+        /// <summary>
+        /// <return>True if Get-Help is found, false otherwise.</return>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
         {
-            InitialSessionState iss =
-                System.Management.Automation.Runspaces.Runspace.DefaultRunspace.InitialSessionState;
-            if (iss != null)
+            InitialSessionState iss = Runspace.DefaultRunspace.InitialSessionState;
+            if (iss is null)
             {
-                IEnumerable<SessionStateCommandEntry> publicGetHelpEntries = iss
-                    .Commands["Get-Help"]
-                    .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
-                if (publicGetHelpEntries.Count() != 1)
+                return false;
+            }
+
+            Collection<SessionStateCommandEntry> getHelpEntries = iss.Commands["Get-Help"];
+            SessionStateCommandEntry getHelpEntry = null;
+            for (int i = 0; i < getHelpEntries.Count; ++i)
+            {
+                if (getHelpEntries[i].Visibility is not SessionStateEntryVisibility.Public)
+                {
+                    continue;
+                }
+
+                // If we have multiple entries for Get-Help,
+                // our assumption is that the standard Get-Help is not available.
+                if (getHelpEntry is not null)
                 {
                     return false;
                 }
 
-                foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
-                {
-                    SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
-                    if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
-                    {
-                        return true;
-                    }
-                }
+                getHelpEntry = getHelpEntries[i];
             }
 
-            return false;
+            return getHelpEntry is SessionStateCmdletEntry getHelpCmdlet
+                && getHelpCmdlet.ImplementingType == typeof(GetHelpCommand);
         }
 
         /// <summary>

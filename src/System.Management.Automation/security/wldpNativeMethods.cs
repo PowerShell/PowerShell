@@ -7,7 +7,6 @@
 #if !UNIX
 
 using System.Management.Automation.Internal;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
@@ -48,14 +47,21 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
-            if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
+            if (s_systemLockdownPolicy == null)
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
+                    if (s_systemLockdownPolicy == null)
                     {
-                        s_systemLockdownPolicy = GetLockdownPolicy(null, null);
+                        s_systemLockdownPolicy = GetLockdownPolicy(path: null, handle: null);
                     }
+                }
+            }
+            else if (s_allowDebugOverridePolicy)
+            {
+                lock (s_systemLockdownPolicyLock)
+                {
+                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null);
                 }
             }
 
@@ -357,34 +363,7 @@ namespace System.Management.Automation.Security
                     return SystemEnforcementMode.None;
                 }
 
-                using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
-                {
-                    using (RegistryKey wldpPolicy = hklm.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\CI\\TRSData"))
-                    {
-                        if (wldpPolicy != null)
-                        {
-                            object exclusionPathsKey = wldpPolicy.GetValue("TestPath");
-
-                            wldpPolicy.Close();
-                            hklm.Close();
-
-                            if (exclusionPathsKey != null)
-                            {
-                                string[] exclusionPaths = (string[])exclusionPathsKey;
-                                foreach (string exclusionPath in exclusionPaths)
-                                {
-                                    if (path.IndexOf(exclusionPath, StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        return SystemEnforcementMode.None;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // No explicit debug allowance for the file, so return the system policy if there
-                // is one.
+                // No explicit debug allowance for the file, so return the system policy if there is one.
                 return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 

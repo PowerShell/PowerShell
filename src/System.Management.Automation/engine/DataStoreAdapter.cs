@@ -29,7 +29,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "PSDriveInfo",
              "The namespace navigation tracer")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("PSDriveInfo",
              "The namespace navigation tracer");
 
@@ -430,7 +430,7 @@ namespace System.Management.Automation
         /// If null, the current user credential is used.
         /// </param>
         /// <param name="persist">
-        /// It indicates if the the created PSDrive would be
+        /// It indicates if the created PSDrive would be
         /// persisted across PowerShell sessions.
         /// </param>
         /// <throws>
@@ -830,4 +830,3 @@ namespace System.Management.Automation
         }
     }
 }
-

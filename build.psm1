@@ -156,6 +156,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
         $environment += @{'IsUbuntu16' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
+        $environment += @{'IsUbuntu20' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '20.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -303,7 +304,8 @@ function Start-PSBuild {
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
-        [switch]$Detailed
+        [switch]$Detailed,
+        [switch]$InteractiveAuth
     )
 
     if ($PSCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
@@ -344,8 +346,14 @@ function Start-PSBuild {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    # Verify we have git in place to do the build, and abort if the precheck failed
+    $precheck = precheck 'git' "Build dependency 'git' not found in PATH. See <URL: https://docs.github.com/en/github/getting-started-with-github/set-up-git#setting-up-git >"
+    if (-not $precheck) {
+        return
+    }
+
     # Verify we have .NET SDK in place to do the build, and abort if the precheck failed
-    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
+    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see <URL: https://dotnet.github.io/getting-started/ >"
     if (-not $precheck) {
         return
     }
@@ -426,7 +434,7 @@ Fix steps:
     }
 
     # handle Restore
-    Restore-PSPackage -Options $Options -Force:$Restore
+    Restore-PSPackage -Options $Options -Force:$Restore -InteractiveAuth:$InteractiveAuth
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
@@ -618,7 +626,9 @@ function Restore-PSPackage
         [Parameter()]
         $Options = (Get-PSOptions -DefaultToNew),
 
-        [switch] $Force
+        [switch] $Force,
+
+        [switch] $InteractiveAuth
     )
 
     if (-not $ProjectDirs)
@@ -652,6 +662,10 @@ function Restore-PSPackage
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
+        }
+
+        if ($InteractiveAuth) {
+            $RestoreArguments += "--interactive"
         }
 
         $ProjectDirs | ForEach-Object {
@@ -1639,7 +1653,9 @@ function Install-Dotnet {
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
         [switch]$NoSudo,
-        [string]$InstallDir
+        [string]$InstallDir,
+        [string]$AzureFeed,
+        [string]$FeedCredential
     )
 
     # This allows sudo install to be optional; needed when running in containers / as root
@@ -1674,33 +1690,57 @@ function Install-Dotnet {
         Start-NativeExecution {
             & $curl -sO $installObtainUrl/$installScript
 
-            if (-not $InstallDir) {
-                bash ./$installScript -c $Channel -v $Version
-            } else {
-                bash ./$installScript -c $Channel -v $Version -i $InstallDir
+            $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
+
+            if ($InstallDir) {
+                $bashArgs += @('-i', $InstallDir)
             }
+
+            if ($AzureFeed) {
+                $bashArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
+            }
+
+            bash @bashArgs
         }
     } elseif ($environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
-
         if (-not $environment.IsCoreCLR) {
-            if (-not $InstallDir) {
-                & ./$installScript -Channel $Channel -Version $Version
-            } else {
-                & ./$installScript -Channel $Channel -Version $Version -InstallDir $InstallDir
+            $installArgs = @{
+                Channel = $Channel
+                Version = $Version
             }
-        } else {
+
+            if ($InstallDir) {
+                $installArgs += @{ InstallDir = $InstallDir }
+            }
+
+            if ($AzureFeed) {
+                $installArgs += @{
+                    AzureFeed       = $AzureFeed
+                    $FeedCredential = $FeedCredential
+                }
+            }
+
+            & ./$installScript @installArgs
+        }
+        else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
             Start-NativeExecution {
-                if (-not $InstallDir) {
-                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version
-                } else {
-                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version  -InstallDir $InstallDir
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Version', $Version)
+
+                if ($InstallDir) {
+                    $psArgs += @('-InstallDir', $InstallDir)
                 }
+
+                if ($AzureFeed) {
+                    $psArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
+                }
+
+                & $fullPSPath @psArgs
             }
         }
     }
@@ -1969,10 +2009,6 @@ function Start-DevPowerShell {
         if($env:DevPath)
         {
             Remove-Item env:DEVPATH
-        }
-
-        if ($ZapDisable) {
-            Remove-Item env:COMPLUS_ZapDisable
         }
     }
 }

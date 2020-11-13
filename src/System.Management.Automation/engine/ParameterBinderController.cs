@@ -56,7 +56,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the parameter binder for the command.
         /// </summary>
-        internal ParameterBinderBase DefaultParameterBinder { get; private set; }
+        internal ParameterBinderBase DefaultParameterBinder { get; }
 
         /// <summary>
         /// The invocation information about the code being run.
@@ -459,7 +459,7 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
 
-                flags = flags & ~ParameterBindingFlags.DelayBindScriptBlock;
+                flags &= ~ParameterBindingFlags.DelayBindScriptBlock;
                 result = BindParameter(_currentParameterSetFlag, argument, matchingParameter, flags);
             }
 
@@ -1324,4 +1324,3 @@ namespace System.Management.Automation
         #endregion internal_members
     }
 }
-

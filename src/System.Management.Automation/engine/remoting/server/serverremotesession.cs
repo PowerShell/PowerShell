@@ -70,11 +70,11 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteSession : RemoteSession
     {
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
-        private PSSenderInfo _senderInfo;
-        private string _configProviderId;
-        private string _initParameters;
+        private readonly PSSenderInfo _senderInfo;
+        private readonly string _configProviderId;
+        private readonly string _initParameters;
         private string _initScriptForOutOfProcRS;
         private PSSessionConfiguration _sessionConfigProvider;
 
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
         private int? _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
-        private PSRemotingCryptoHelperServer _cryptoHelper;
+        private readonly PSRemotingCryptoHelperServer _cryptoHelper;
 
         // Specifies an optional endpoint configuration for out-of-proc session use.
         // Creates a pushed remote runspace session created with this configuration name.
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Remoting
             // enqueue a connect event in state machine to let session do any other post-connect operation
             // Do this outside of the synchronous connect operation, as otherwise connect can easily get deadlocked
             ThreadPool.QueueUserWorkItem(new WaitCallback(
-                delegate (object state)
+                (object state) =>
                 {
                     RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
                     SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);

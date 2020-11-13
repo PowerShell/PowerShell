@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -66,7 +68,7 @@ namespace Microsoft.PowerShell
 #if UNIX
             AttemptExecPwshLogin(args);
 #endif
-            return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
+            return UnmanagedPSEntry.Start(args, args.Length);
         }
 
 #if UNIX
@@ -93,7 +95,7 @@ namespace Microsoft.PowerShell
             byte procNameFirstByte;
 
             // The path to the executable this process was started from
-            string pwshPath;
+            string? pwshPath;
 
             // On Linux, we can simply use the /proc filesystem
             if (isLinux)
@@ -115,6 +117,11 @@ namespace Microsoft.PowerShell
                 IntPtr bufSize = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
                 pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
                 Marshal.FreeHGlobal(linkPathPtr);
+
+                if (pwshPath == null)
+                {
+                    throw new ArgumentNullException(nameof(pwshPath));
+                }
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
@@ -200,6 +207,11 @@ namespace Microsoft.PowerShell
                 // Get the pwshPath from exec_path
                 pwshPath = Marshal.PtrToStringAnsi(executablePathPtr);
 
+                if (pwshPath == null)
+                {
+                    throw new ArgumentNullException(nameof(pwshPath));
+                }
+
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
             }
@@ -281,20 +293,20 @@ namespace Microsoft.PowerShell
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
 
             string pwshInvocation = string.Create(
-                quotedPwshPathLength + 10, // exec '{pwshPath}' "$@" 
+                quotedPwshPathLength + 10, // exec '{pwshPath}' "$@"
                 (pwshPath, quotedPwshPathLength),
                 CreatePwshInvocation);
 
             // Set up the arguments for '/bin/sh'.
             // We need to add 5 slots for the '/bin/sh' invocation parts, plus 1 slot for the null terminator at the end
-            var execArgs = new string[args.Length + 6];
+            var execArgs = new string?[args.Length + 6];
 
             // The command arguments
 
             // First argument is the command name.
             // Even when executing 'zsh', we want to set this to '/bin/sh'
             // because this tells 'zsh' to run in sh emulation mode (it examines $0)
-            execArgs[0] = "/bin/sh"; 
+            execArgs[0] = "/bin/sh";
 
             execArgs[1] = "-l"; // Login flag
             execArgs[2] = "-c"; // Command parameter
@@ -433,7 +445,7 @@ namespace Microsoft.PowerShell
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static extern int Exec(string path, string[] args);
+        private static extern int Exec(string path, string?[] args);
 
         /// <summary>
         /// The `readlink` POSIX syscall we use to read the symlink from /proc/self/exe
@@ -490,7 +502,7 @@ namespace Microsoft.PowerShell
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
+        private static extern unsafe int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
 #endif
     }
 }

@@ -22,8 +22,7 @@ jobs:
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
-  - powershell: |
-      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap

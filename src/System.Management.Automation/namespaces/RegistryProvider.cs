@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 using System;
@@ -75,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
             "RegistryProvider",
             "The namespace navigation provider for the Windows Registry")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("RegistryProvider",
             "The namespace navigation provider for the Windows Registry");
 
@@ -798,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
                     // This text element needs espacing
-                    result.Append("`");
+                    result.Append('`');
                 }
 
                 result.Append(textElement);
@@ -847,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
                     // This text element needs espacing
-                    result.Append("`");
+                    result.Append('`');
                 }
 
                 result.Append(textElement);
@@ -3061,7 +3062,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (
                         expandAll ||
-                        ((Context.SuppressWildcardExpansion == false) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
+                        ((!Context.SuppressWildcardExpansion) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
                        ((Context.SuppressWildcardExpansion) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (string.IsNullOrEmpty(valueNameToMatch))
@@ -3813,7 +3814,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(byte[]),
                             CultureInfo.CurrentCulture)
-                        : new byte[] { };
+                        : Array.Empty<byte>();
                     break;
 
                 case RegistryValueKind.DWord:
@@ -3833,7 +3834,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    } break;
+                    }
+                    
+                    break;
 
                 case RegistryValueKind.ExpandString:
                     value = (value != null)
@@ -3850,7 +3853,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string[]),
                             CultureInfo.CurrentCulture)
-                        : new string[] { };
+                        : Array.Empty<string>();
                     break;
 
                 case RegistryValueKind.QWord:
@@ -3870,7 +3873,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    } break;
+                    }
+
+                    break;
 
                 case RegistryValueKind.String:
                     value = (value != null)

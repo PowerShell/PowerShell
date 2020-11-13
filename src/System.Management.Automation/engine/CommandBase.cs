@@ -543,7 +543,6 @@ namespace System.Management.Automation
         }
 
         /// <Content contentref="System.Management.Automation.VariableIntrinsics.GetValue" />
-
         public object GetVariableValue(string name, object defaultValue)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -561,4 +560,3 @@ namespace System.Management.Automation
         #endregion public_methods
     }
 }
-

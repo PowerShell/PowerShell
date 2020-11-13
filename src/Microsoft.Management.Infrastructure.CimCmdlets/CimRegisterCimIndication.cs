@@ -55,7 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private CimSubscriptionResult result;
+        private readonly CimSubscriptionResult result;
 
         /// <summary>
         /// <para>Constructor</para>
@@ -89,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private Exception exception;
+        private readonly Exception exception;
 
         /// <summary>
         /// <para>Constructor</para>
@@ -309,8 +309,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"></param>
         internal Cmdlet Cmdlet
         {
-            set;
             get;
+            set;
         }
 
         /// <summary>
@@ -318,8 +318,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal string TargetComputerName
         {
-            set;
             get;
+            set;
         }
 
         #endregion

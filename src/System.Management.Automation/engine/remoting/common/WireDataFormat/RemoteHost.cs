@@ -42,12 +42,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Method info.
         /// </summary>
-        private RemoteHostMethodInfo _methodInfo;
+        private readonly RemoteHostMethodInfo _methodInfo;
 
         /// <summary>
         /// Call id.
         /// </summary>
-        private long _callId;
+        private readonly long _callId;
 
         /// <summary>
         /// Call id.
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Call id.
         /// </summary>
-        private long _callId;
+        private readonly long _callId;
 
         /// <summary>
         /// Call id.
@@ -546,17 +546,17 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Method id.
         /// </summary>
-        private RemoteHostMethodId _methodId;
+        private readonly RemoteHostMethodId _methodId;
 
         /// <summary>
         /// Return value.
         /// </summary>
-        private object _returnValue;
+        private readonly object _returnValue;
 
         /// <summary>
         /// Exception.
         /// </summary>
-        private Exception _exception;
+        private readonly Exception _exception;
 
         /// <summary>
         /// Constructor for RemoteHostResponse.

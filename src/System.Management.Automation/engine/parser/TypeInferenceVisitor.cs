@@ -316,8 +316,7 @@ namespace System.Management.Automation
             // iterate through bases/interfaces
             foreach (var baseType in typename.TypeDefinitionAst.BaseTypes)
             {
-                var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName == null)
+                if (!(baseType.TypeName is TypeName baseTypeName))
                 {
                     continue;
                 }
@@ -1484,8 +1483,7 @@ namespace System.Management.Automation
             var expression = memberExpressionAst.Expression;
 
             // If the member name isn't simple, don't even try.
-            var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
-            if (memberAsStringConst == null)
+            if (!(memberCommandElement is StringConstantExpressionAst memberAsStringConst))
             {
                 return Array.Empty<PSTypeName>();
             }
@@ -1728,8 +1726,7 @@ namespace System.Management.Automation
             PSTypeName[] exprType;
             if (isStatic)
             {
-                var exprAsType = expression as TypeExpressionAst;
-                if (exprAsType == null)
+                if (!(expression is TypeExpressionAst exprAsType))
                 {
                     return null;
                 }
@@ -2281,8 +2278,7 @@ namespace System.Management.Automation
         private void GetInferredTypeFromScriptBlockParameter(AstParameterArgumentPair argument, List<PSTypeName> inferredTypes)
         {
             var argumentPair = argument as AstPair;
-            var scriptBlockExpressionAst = argumentPair?.Argument as ScriptBlockExpressionAst;
-            if (scriptBlockExpressionAst == null)
+            if (!(argumentPair?.Argument is ScriptBlockExpressionAst scriptBlockExpressionAst))
             {
                 return;
             }

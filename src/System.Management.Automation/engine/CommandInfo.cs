@@ -889,7 +889,7 @@ namespace System.Management.Automation
         /// <summary>
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
-        public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+        public TypeDefinitionAst TypeDefinitionAst { get; }
 
         private bool _typeWasCalculated;
 
@@ -981,7 +981,7 @@ namespace System.Management.Automation
             {
                 if (!IsPSTypeName(m))
                 {
-                    builder.Append(m.Name).Append(":");
+                    builder.Append(m.Name).Append(':');
                 }
             }
 

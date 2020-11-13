@@ -4,7 +4,6 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -838,6 +837,7 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender?.Dispose();
+                    _dnsLookupCancel.Dispose();
                 }
 
                 _disposed = true;

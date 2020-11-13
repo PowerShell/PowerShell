@@ -134,6 +134,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_PSDriveInfo());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo",
+                ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ShellVariable",
                 ViewsOf_System_Management_Automation_ShellVariable());
 
@@ -728,6 +732,24 @@ namespace System.Management.Automation.Runspaces
                 .EndList());
         }
 
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo()
+        {
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, width: 17, label: "Kind")
+                    .AddHeader(Alignment.Left, width: 18, label: "SubsystemType")
+                    .AddHeader(Alignment.Right, width: 12, label: "IsRegistered")
+                    .AddHeader(Alignment.Left, label: "Implementations")
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Kind")
+                        .AddScriptBlockColumn("$_.SubsystemType.Name")
+                        .AddPropertyColumn("IsRegistered")
+                        .AddPropertyColumn("Implementations")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ShellVariable()
         {
             yield return new FormatViewDefinition("ShellVariable",
@@ -1162,7 +1184,7 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
+                                            $message = $message.Replace($newline, ' ').Replace(""`n"", ' ').Replace(""`t"", ' ')
 
                                             $windowWidth = 120
                                             if ($Host.UI.RawUI -ne $null) {
@@ -1204,7 +1226,7 @@ namespace System.Management.Automation.Runspaces
                                             $reason = 'Exception'
                                         }
                                         # MyCommand can be the script block, so we don't want to show that so check if it's an actual command
-                                        elseif ($myinv.MyCommand -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
+                                        elseif ($myinv.MyCommand -and $myinv.MyCommand.Name -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
                                         {
                                             $reason = $myinv.MyCommand
                                         }

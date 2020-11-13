@@ -240,7 +240,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJobTrigger(
             SerializationInfo info,
             StreamingContext context)
@@ -284,7 +283,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)

@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Management.Automation;
 
 #endregion
 
@@ -57,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private string methodName;
+            private readonly string methodName;
 
             /// <summary>
             /// <para>parameters collection</para>
@@ -70,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private CimMethodParametersCollection collection;
+            private readonly CimMethodParametersCollection collection;
         }
 
         /// <summary>

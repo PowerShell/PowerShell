@@ -27,9 +27,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Name", Mandatory = true, ValueFromPipeline = true, Position = 0)]
         public string Name
         {
-            set { _name = value; }
-
             get { return _name; }
+
+            set { _name = value; }
         }
 
         private string _name;
@@ -60,6 +60,8 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Function
         {
+            get { return _functionImportList; }
+
             set
             {
                 if (value == null)
@@ -74,8 +76,6 @@ namespace Microsoft.PowerShell.Commands
                     BaseFunctionPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
-
-            get { return _functionImportList; }
         }
 
         private string[] _functionImportList = Array.Empty<string>();
@@ -88,6 +88,8 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Cmdlet
         {
+            get { return _cmdletImportList; }
+
             set
             {
                 if (value == null)
@@ -102,8 +104,6 @@ namespace Microsoft.PowerShell.Commands
                     BaseCmdletPatterns.Add(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase));
                 }
             }
-
-            get { return _cmdletImportList; }
         }
 
         private string[] _cmdletImportList = Array.Empty<string>();

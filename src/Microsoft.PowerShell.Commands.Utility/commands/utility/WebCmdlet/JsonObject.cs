@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
-                : this(maxDepth, enumsAsStrings, compressOutput, CancellationToken.None, StringEscapeHandling.Default, targetCmdlet: null)
+                : this(maxDepth, enumsAsStrings, compressOutput, StringEscapeHandling.Default, targetCmdlet: null, CancellationToken.None)
             {
             }
 
@@ -78,16 +78,16 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
-            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
             /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
             /// <param name="targetCmdlet">Specifies the cmdlet that is calling this method.</param>
+            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
             public ConvertToJsonContext(
                 int maxDepth,
                 bool enumsAsStrings,
                 bool compressOutput,
-                CancellationToken cancellationToken,
                 StringEscapeHandling stringEscapeHandling,
-                PSCmdlet targetCmdlet)
+                PSCmdlet targetCmdlet,
+                CancellationToken cancellationToken)
             {
                 this.MaxDepth = maxDepth;
                 this.CancellationToken = cancellationToken;
@@ -457,6 +457,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
+                _maxDepthWarningWritten = false;
                 object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
                 var jsonSettings = new JsonSerializerSettings
                 {
@@ -483,6 +484,8 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
         }
+
+        private static bool _maxDepthWarningWritten;
 
         /// <summary>
         /// Return an alternate representation of the specified object that serializes the same JSON, except
@@ -561,6 +564,16 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (currentDepth > context.MaxDepth)
                     {
+                        if (!_maxDepthWarningWritten && context.Cmdlet != null)
+                        {
+                            _maxDepthWarningWritten = true;
+                            string maxDepthMessage = string.Format(
+                                CultureInfo.CurrentCulture,
+                                WebCmdletStrings.JsonMaxDepthReached,
+                                context.MaxDepth);
+                            context.Cmdlet.WriteWarning(maxDepthMessage);
+                        }
+
                         if (pso != null && pso.ImmediateBaseObjectIsEmpty)
                         {
                             // The obj is a pure PSObject, we convert the original PSObject to a string,
@@ -620,9 +633,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static object AddPsProperties(object psObj, object obj, int depth, bool isPurePSObj, bool isCustomObj, in ConvertToJsonContext context)
         {
-            PSObject pso = psObj as PSObject;
-
-            if (pso == null)
+            if (!(psObj is PSObject pso))
             {
                 return obj;
             }
@@ -645,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
 
             AppendPsProperties(pso, dict, depth, isCustomObj, in context);
 
-            if (wasDictionary == false && dict.Count == 1)
+            if (!wasDictionary && dict.Count == 1)
             {
                 return obj;
             }

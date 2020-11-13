@@ -4,7 +4,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
@@ -323,7 +322,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private string _message /* = null */;
+        private readonly string _message /* = null */;
 
         #endregion Private/Internal
     }
@@ -477,7 +476,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -522,7 +520,7 @@ namespace System.Management.Automation
             get { return _itemName; }
         }
 
-        private string _itemName = string.Empty;
+        private readonly string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.
@@ -532,12 +530,12 @@ namespace System.Management.Automation
             get { return _sessionStateCategory; }
         }
 
-        private SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
+        private readonly SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
         #endregion Properties
 
         #region Private
-        private string _errorId = "SessionStateException";
-        private ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
+        private readonly string _errorId = "SessionStateException";
+        private readonly ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
 
         private static string BuildMessage(
             string itemName,
@@ -855,7 +853,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ReadOnlyCollection<ProviderInfo> _possibleMatches;
+        private readonly ReadOnlyCollection<ProviderInfo> _possibleMatches;
 
         #endregion public properties
     }
@@ -1026,4 +1024,3 @@ namespace System.Management.Automation
         #endregion Serialization
     }
 }
-

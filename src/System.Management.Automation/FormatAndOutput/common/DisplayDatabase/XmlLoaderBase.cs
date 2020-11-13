@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region tracer
         // PSS/end-user tracer
         [TraceSource("FormatFileLoading", "Loading format files")]
-        private static PSTraceSource s_formatFileLoadingtracer = PSTraceSource.GetTracer("FormatFileLoading", "Loading format files", false);
+        private static readonly PSTraceSource s_formatFileLoadingtracer = PSTraceSource.GetTracer("FormatFileLoading", "Loading format files", false);
 
         #endregion tracer
         /// <summary>
@@ -149,12 +149,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// If true, log entries to memory.
         /// </summary>
-        private bool _saveInMemory = true;
+        private readonly bool _saveInMemory = true;
 
         /// <summary>
         /// List of entries logged if saveInMemory is true.
         /// </summary>
-        private List<XmlLoaderLoggerEntry> _entries = new List<XmlLoaderLoggerEntry>();
+        private readonly List<XmlLoaderLoggerEntry> _entries = new List<XmlLoaderLoggerEntry>();
 
         /// <summary>
         /// True if we ever logged an error.
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("XmlLoaderBase", "XmlLoaderBase")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("XmlLoaderBase", "XmlLoaderBase");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("XmlLoaderBase", "XmlLoaderBase");
         #endregion tracer
 
         /// <summary>
@@ -690,7 +690,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _loadingInfo.isProductCode = isProductCode;
         }
 
-        private DatabaseLoadingInfo _loadingInfo = new DatabaseLoadingInfo();
+        private readonly DatabaseLoadingInfo _loadingInfo = new DatabaseLoadingInfo();
 
         protected DatabaseLoadingInfo LoadingInfo
         {
@@ -711,13 +711,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal bool VerifyStringResources { get; } = true;
 
-        private int _maxNumberOfErrors = 30;
+        private readonly int _maxNumberOfErrors = 30;
 
         private int _currentErrorCount = 0;
 
-        private bool _logStackActivity = false;
+        private readonly bool _logStackActivity = false;
 
-        private Stack<XmlLoaderStackFrame> _executionStack = new Stack<XmlLoaderStackFrame>();
+        private readonly Stack<XmlLoaderStackFrame> _executionStack = new Stack<XmlLoaderStackFrame>();
 
         private XmlLoaderLogger _logger = new XmlLoaderLogger();
     }

@@ -10,7 +10,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Base class for a variety of commandlets that take color parameters.
     /// </summary>
-
     public
     class ConsoleColorCmdlet : PSCmdlet
     {
@@ -26,7 +25,6 @@ namespace Microsoft.PowerShell.Commands
         /// The -ForegroundColor parameter.
         /// </summary>
         /// <value></value>
-
         [Parameter]
         public
         ConsoleColor
@@ -60,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         /// <value></value>
-
         [Parameter]
         public
         ConsoleColor
@@ -109,4 +106,3 @@ namespace Microsoft.PowerShell.Commands
         private readonly Type _consoleColorEnumType;
     }
 }
-

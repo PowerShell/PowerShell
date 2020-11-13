@@ -11,21 +11,17 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading;
-using Microsoft.Win32;
-using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
-using System.Linq;
+using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
 // FxCop suppressions for resource strings:
@@ -45,12 +41,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Name of the computer that is restarting.
         /// </summary>
-        public string ComputerName { get; private set; }
+        public string ComputerName { get; }
 
         /// <summary>
         /// The timeout value specified by the user. It indicates the seconds to wait before timeout.
         /// </summary>
-        public int Timeout { get; private set; }
+        public int Timeout { get; }
 
         /// <summary>
         /// Construct a RestartComputerTimeoutException.
@@ -123,7 +119,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">
         /// streaming context
         /// </param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -319,7 +314,7 @@ $result
         /// <summary>
         /// The indicator to use when show progress.
         /// </summary>
-        private string[] _indicator = { "|", "/", "-", "\\" };
+        private readonly string[] _indicator = { "|", "/", "-", "\\" };
 
         /// <summary>
         /// The activity id.
@@ -538,7 +533,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -594,7 +589,7 @@ $result
             {
                 try
                 {
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -664,7 +659,7 @@ $result
 
         #region "Internal Methods"
 
-        internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, CancellationToken token, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet)
+        internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet, CancellationToken token)
         {
             // Check if the WMI service "Winmgmt" is started
             const string wmiServiceQuery = "Select * from " + ComputerWMIHelper.WMI_Class_Service + " Where name = 'Winmgmt'";
@@ -680,7 +675,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, token, cmdlet))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, cmdlet, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -965,7 +960,7 @@ $result
                                         WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                     }
 
-                                    wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, _cancel.Token, Credential, WsmanAuthentication, this);
+                                    wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, Credential, WsmanAuthentication, this, _cancel.Token);
                                 }
                             }
 
@@ -1272,7 +1267,6 @@ $result
     /// workgroup computer. Use this command to rename domain workstations and local
     /// machines only. It cannot be used to rename Domain Controllers.
     /// </summary>
-
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet
@@ -1437,7 +1431,7 @@ $result
             try
             {
                 using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource())
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, cancelTokenSource.Token, this))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, this, cancelTokenSource.Token))
                 {
                     var operationOptions = new CimOperationOptions
                     {
@@ -1812,7 +1806,7 @@ $result
                 }
                 else
                 {
-                    localUserName = computerName.Substring(0, dotIndex) + "\\" + psLocalCredential.UserName;
+                    localUserName = string.Concat(computerName.AsSpan().Slice(0, dotIndex), "\\", psLocalCredential.UserName);
                 }
             }
 
@@ -2112,7 +2106,7 @@ $result
                     return false;
                 }
 
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cancelToken, cmdlet))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cmdlet, cancelToken))
                 {
                     var methodParameters = new CimMethodParametersCollection();
                     int retVal;

@@ -9,7 +9,6 @@ using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
-using System.Reflection;
 using System.Resources;
 using System.Xml;
 
@@ -28,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         private const string TemplateTag = "template";
         private const string DataTag = "data";
 
-        private ResourceManager _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
+        private readonly ResourceManager _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
         /// <summary>
         /// ProviderName.

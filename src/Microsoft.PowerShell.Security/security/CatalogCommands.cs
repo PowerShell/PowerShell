@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string commandName;
+        private readonly string commandName;
 
         /// <summary>
         /// Initializes a new instance of the CatalogCommandsBase class,

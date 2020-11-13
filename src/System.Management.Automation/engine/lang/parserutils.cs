@@ -190,7 +190,7 @@ namespace System.Management.Automation
             this.RequestingCommandProcessor = requestingCommand.Context.CurrentCommandProcessor;
         }
 
-        public CommandProcessorBase RequestingCommandProcessor { get; private set; }
+        public CommandProcessorBase RequestingCommandProcessor { get; }
     }
 
     #endregion Flow Control Exceptions
@@ -1466,8 +1466,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj.GetType().FullName;
             }
@@ -1571,9 +1570,7 @@ namespace System.Management.Automation
                 // not really a method call.
                 if (valueToSet != AutomationNull.Value)
                 {
-                    PSParameterizedProperty propertyToSet = targetMethod as PSParameterizedProperty;
-
-                    if (propertyToSet == null)
+                    if (!(targetMethod is PSParameterizedProperty propertyToSet))
                     {
                         throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition,
                                                                        "ParameterizedPropertyAssignmentFailed", ParserStrings.ParameterizedPropertyAssignmentFailed, GetTypeFullName(target), methodName);
@@ -1635,14 +1632,14 @@ namespace System.Management.Automation
     /// </summary>
     internal class RangeEnumerator : IEnumerator
     {
-        private int _lowerBound;
+        private readonly int _lowerBound;
 
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
-        private int _upperBound;
+        private readonly int _upperBound;
 
         internal int UpperBound
         {
@@ -1666,7 +1663,7 @@ namespace System.Management.Automation
             get { return _current; }
         }
 
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1707,7 +1704,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CharRangeEnumerator : IEnumerator
     {
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1725,15 +1722,9 @@ namespace System.Management.Automation
             get { return Current; }
         }
 
-        internal char LowerBound
-        {
-            get; private set;
-        }
+        internal char LowerBound { get; }
 
-        internal char UpperBound
-        {
-            get; private set;
-        }
+        internal char UpperBound { get; }
 
         public char Current
         {
@@ -1818,7 +1809,7 @@ namespace System.Management.Automation
             try
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args == null || args.Length == 0)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;
@@ -1979,7 +1970,7 @@ namespace System.Management.Automation
             if (context.PSDebugTraceLevel > level)
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args == null || args.Length == 0)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;

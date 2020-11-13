@@ -23,7 +23,6 @@ namespace Microsoft.WSMan.Management
 
     #region WsManEnumFlags
     /// <summary><para>_WSManEnumFlags enumeration.</para></summary>
-
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     [TypeLibType((short)0)]
     public enum WSManEnumFlags
@@ -735,19 +734,18 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         string ResourceUri
         {
-            // IDL: HRESULT resourceUri (BSTR value);
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
-            [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-            [DispId(1)]
-            set;
-
             // IDL: HRESULT resourceUri ([out, retval] BSTR* ReturnValue);
-
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
             [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
             [DispId(1)]
             [return: MarshalAs(UnmanagedType.BStr)]
             get;
+
+            // IDL: HRESULT resourceUri (BSTR value);
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
+            [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+            [DispId(1)]
+            set;
         }
 
         /// <summary><para><c>AddSelector</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add selector to resource locator</para></summary>
@@ -926,7 +924,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="parameters"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
         [DispId(5)]

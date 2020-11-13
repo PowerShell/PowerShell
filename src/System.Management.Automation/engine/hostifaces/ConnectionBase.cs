@@ -924,12 +924,13 @@ namespace System.Management.Automation.Runspaces
                         Tuple<WaitHandle[], ManualResetEvent> stateInfo = new Tuple<WaitHandle[], ManualResetEvent>(waitHandles, waitAllIsDone);
 
                         ThreadPool.QueueUserWorkItem(new WaitCallback(
-                                                         delegate (object state)
-                                                         {
-                                                             var tuple = (Tuple<WaitHandle[], ManualResetEvent>)state;
-                                                             WaitHandle.WaitAll(tuple.Item1);
-                                                             tuple.Item2.Set();
-                                                         }), stateInfo);
+                            (object state) =>
+                            {
+                                var tuple = (Tuple<WaitHandle[], ManualResetEvent>)state;
+                                WaitHandle.WaitAll(tuple.Item1);
+                                tuple.Item2.Set();
+                            }),
+                            stateInfo);
                         return waitAllIsDone.WaitOne();
                     }
                 }

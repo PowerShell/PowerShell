@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
@@ -24,7 +25,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class WSManPluginServerSession : IDisposable
     {
-        private object _syncObject;
+        private readonly object _syncObject;
 
         protected bool isClosed;
         protected bool isContextReported;
@@ -201,7 +202,7 @@ namespace System.Management.Automation.Remoting
             }
 
             if ((streamSet == null) ||
-                (1 != streamSet.streamIDsCount))
+                (streamSet.streamIDsCount != 1))
             {
                 // only "stdout" is the supported output stream.
                 WSManPluginInstance.ReportOperationComplete(
@@ -398,8 +399,8 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
-        private ServerRemoteSession _remoteSession;
+        private readonly Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
+        private readonly ServerRemoteSession _remoteSession;
 
         #endregion
 
@@ -728,7 +729,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private ServerRemoteSession _remoteSession;
+        private readonly ServerRemoteSession _remoteSession;
 
         #endregion
 
@@ -755,7 +756,7 @@ namespace System.Management.Automation.Remoting
         internal bool ProcessArguments(
             WSManNativeApi.WSManCommandArgSet arguments)
         {
-            if (1 != arguments.argsCount)
+            if (arguments.argsCount != 1)
             {
                 return false;
             }

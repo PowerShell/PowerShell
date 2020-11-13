@@ -39,7 +39,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="PromptingException">
         ///  when prompt is canceled by, for example, Ctrl-c.
         /// </exception>
-
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
         {
             HandleThrowOnReadAndPrompt();

@@ -271,8 +271,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal bool IsRemoteDebugStop
         {
-            set;
             get;
+            set;
         }
 
         #endregion
@@ -679,7 +679,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         private PSPrimitiveDictionary _applicationPrivateData;
-        private ManualResetEvent _applicationPrivateDataReceived = new ManualResetEvent(false);
+        private readonly ManualResetEvent _applicationPrivateDataReceived = new ManualResetEvent(false);
 
         /// <summary>
         /// This event is raised, when a host call is for a remote runspace
@@ -1237,11 +1237,9 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            WSManConnectionInfo wsmanConnectionInfoParam = connectionInfo as WSManConnectionInfo;
-
-            // Disconnect-Connect currently only supported by WSMan.
-            if (wsmanConnectionInfoParam == null)
+            if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
             {
+                // Disconnect-Connect currently only supported by WSMan.
                 throw new NotSupportedException();
             }
 
@@ -1881,7 +1879,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         #region Private Members
 
-        private RunspaceConnectionInfo _connectionInfo;     // connection info with which this
+        private readonly RunspaceConnectionInfo _connectionInfo;     // connection info with which this
         // runspace is created
         // data structure handler handling
         private RunspacePoolAsyncResult _openAsyncResult;// async result object generated on
@@ -1898,7 +1896,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private bool _canReconnect;
         private string _friendlyName = string.Empty;
 
-        private System.Collections.Concurrent.ConcurrentStack<PowerShell> _runningPowerShells;
+        private readonly System.Collections.Concurrent.ConcurrentStack<PowerShell> _runningPowerShells;
 
         #endregion Private Members
 

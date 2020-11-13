@@ -136,7 +136,7 @@ namespace System.Management.Automation
             }
         }
 
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         /// <summary>
         /// Full help object for this provider help info.

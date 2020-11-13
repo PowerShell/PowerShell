@@ -18,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class comment.
     /// </summary>
-
     [Cmdlet(VerbsData.ConvertTo, "Html", DefaultParameterSetName = "Page",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096595", RemotingCapability = RemotingCapability.None)]
     public sealed
@@ -562,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     COLTag.Append(" width = \"");
                     COLTag.Append(width);
-                    COLTag.Append("\"");
+                    COLTag.Append('"');
                 }
 
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
@@ -570,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     COLTag.Append(" align = \"");
                     COLTag.Append(alignment);
-                    COLTag.Append("\"");
+                    COLTag.Append('"');
                 }
 
                 COLTag.Append("/>");
@@ -594,7 +593,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // for writing the property name
                 WritePropertyName(Listtag, p);
-                Listtag.Append(":");
+                Listtag.Append(':');
                 Listtag.Append("</td>");
 
                 // for writing the property value

@@ -1,8 +1,13 @@
 parameters:
-  BuildConfiguration: release
-  BuildPlatform: any cpu
-  Architecture: x64
-  parentJob: ''
+  - name: BuildConfiguration
+    default: release
+  - name: BuildPlatform
+    default: any cpu
+  - name: Architecture
+    default: x64
+  - name: parentJob
+    default: ''
+
 jobs:
 - job: build_windows_${{ parameters.Architecture }}
   displayName: Build Windows - ${{ parameters.Architecture }}
@@ -21,7 +26,6 @@ jobs:
 
   - checkout: self
     clean: true
-    persistCredentials: true
 
   - template: SetVersionVariables.yml
     parameters:
@@ -29,11 +33,7 @@ jobs:
 
   - template: insert-nuget-config-azfeed.yml
 
-  - powershell: |
-      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
-      $null = New-Item -ItemType Directory -Path /Powershell -Force
-      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
-    displayName: Clone PowerShell Repo to /PowerShell
+  - template: cloneToOfficialPath.yml
 
   - powershell: |
 

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
@@ -169,7 +170,7 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         // Holds the delegate pointers in a structure that has identical layout to the native structure.
-        private WSManPluginEntryDelegatesInternal _unmanagedStruct = new WSManPluginEntryDelegatesInternal();
+        private readonly WSManPluginEntryDelegatesInternal _unmanagedStruct = new WSManPluginEntryDelegatesInternal();
 
         internal WSManPluginEntryDelegatesInternal UnmanagedStruct
         {

@@ -1258,14 +1258,14 @@ namespace System.Management.Automation
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX
-            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL",
+            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL", "CONIN$", "CONOUT$",
                                              "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
                                              "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
             string compareName = Path.GetFileName(destinationPath);
             string noExtensionCompareName = Path.GetFileNameWithoutExtension(destinationPath);
 
-            if (((compareName.Length < 3) || (compareName.Length > 6)) &&
-                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 6)))
+            if (((compareName.Length < 3) || (compareName.Length > 7)) &&
+                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 7)))
             {
                 return false;
             }
@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
                 return Encoding.Unicode;
             }
 
-            return Encoding.ASCII;
+            return utf8NoBom;
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
@@ -1674,8 +1674,7 @@ namespace System.Management.Automation
                 try
                 {
                     var scriptBlock = ScriptBlock.Create(command);
-                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                    if (scriptBlockAst == null)
+                    if (!(scriptBlock.Ast is ScriptBlockAst scriptBlockAst))
                     {
                         return false;
                     }
@@ -2032,11 +2031,7 @@ namespace System.Management.Automation
 
     internal class ImplicitRemotingBatchingNotSupportedException : Exception
     {
-        internal string ErrorId
-        {
-            get;
-            private set;
-        }
+        internal string ErrorId { get; }
 
         internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(
             ParserStrings.ImplicitRemotingPipelineBatchingNotSupported)
@@ -2238,7 +2233,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal sealed class ReadOnlyBag<T> : IEnumerable
     {
-        private HashSet<T> _hashset;
+        private readonly HashSet<T> _hashset;
 
         /// <summary>
         /// Constructor for the readonly Hashset.
@@ -2277,5 +2272,35 @@ namespace System.Management.Automation.Internal
         /// Get an empty singleton.
         /// </summary>
         internal static readonly ReadOnlyBag<T> Empty = new ReadOnlyBag<T>(new HashSet<T>(capacity: 0));
+    }
+
+    /// <summary>
+    /// Helper class for simple argument validations.
+    /// </summary>
+    internal static class Requires
+    {
+        internal static void NotNull(object value, string paramName)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void NotNullOrEmpty(string value, string paramName)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
+        {
+            if (!precondition)
+            {
+                throw new ArgumentException(paramName);
+            }
+        }
     }
 }

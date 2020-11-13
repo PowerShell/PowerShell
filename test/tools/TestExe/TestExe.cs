@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Threading;
 using System.Diagnostics;
 
 namespace TestExe
 {
-    class TestExe
+    internal class TestExe
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             if (args.Length > 0)
             {
@@ -43,7 +44,7 @@ namespace TestExe
         // <Summary>
         // Echos back to stdout the arguments passed in
         // </Summary>
-        static void EchoArgs(string[] args)
+        private static void EchoArgs(string[] args)
         {
             for (int i = 1; i < args.Length; i++)
             {
@@ -55,7 +56,7 @@ namespace TestExe
         // First argument is the number of child processes to create which are instances of itself
         // Processes automatically exit after 100 seconds
         // </Summary>
-        static void CreateChildProcess(string[] args)
+        private static void CreateChildProcess(string[] args)
         {
             if (args.Length > 1)
             {

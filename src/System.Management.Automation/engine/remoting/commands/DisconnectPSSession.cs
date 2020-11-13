@@ -394,8 +394,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private class DisconnectRunspaceOperation : IThrottleOperation
         {
-            private PSSession _remoteSession;
-            private ObjectStream _writeStream;
+            private readonly PSSession _remoteSession;
+            private readonly ObjectStream _writeStream;
 
             internal DisconnectRunspaceOperation(PSSession session, ObjectStream stream)
             {
@@ -481,10 +481,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_writeStream.ObjectWriter.IsOpen)
                 {
-                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteObject(_remoteSession);
-                    };
+                    Action<Cmdlet> outputWriter = (Cmdlet cmdlet) => cmdlet.WriteObject(_remoteSession);
                     _writeStream.ObjectWriter.Write(outputWriter);
                 }
             }
@@ -506,10 +503,7 @@ namespace Microsoft.PowerShell.Commands
 
                     Exception reason = new RuntimeException(msg, e);
                     ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
-                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteError(errorRecord);
-                    };
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                     _writeStream.ObjectWriter.Write(errorWriter);
                 }
             }
@@ -556,14 +550,14 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager _throttleManager = new ThrottleManager();
+        private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Output data stream.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         #endregion
     }
