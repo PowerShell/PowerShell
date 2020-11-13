@@ -443,7 +443,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data != null && data.IsElevationRequired;
             }
         }
 

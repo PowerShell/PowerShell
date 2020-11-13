@@ -208,8 +208,7 @@ namespace Microsoft.PowerShell
 
                 bool sizeChanged =
                         (newRegion.GetLength(0) != _progressRegion.GetLength(0))
-                    || (newRegion.GetLength(1) != _progressRegion.GetLength(1))
-                    ? true : false;
+                    || (newRegion.GetLength(1) != _progressRegion.GetLength(1));
 
                 _progressRegion = newRegion;
 

@@ -114,8 +114,7 @@ namespace System.Management.Automation
             }
 
             return (context != null)
-                       ? context.IsStrictVersion(majorVersion)
-                       : false;
+&& context.IsStrictVersion(majorVersion);
         }
         /// <summary>
         /// Check to see a specific version of strict mode is enabled.  The check is always scoped,
@@ -488,7 +487,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return InitialSessionState != null ? InitialSessionState.UseFullLanguageModeInDebugger : false;
+                return InitialSessionState != null && InitialSessionState.UseFullLanguageModeInDebugger;
             }
         }
 

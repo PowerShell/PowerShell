@@ -2019,7 +2019,7 @@ namespace Microsoft.PowerShell.Commands
                 FileAttributes fileAttributes = fileSystemInfo.Attributes;
 
                 bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileSystemInfo);
-                bool isLink = isReparsePoint || (excludeHardLink ? false : InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo));
+                bool isLink = isReparsePoint || (!excludeHardLink && InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileSystemInfo));
                 if (!isLink)
                 {
                     // special casing for the common cases - no allocations

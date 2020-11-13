@@ -1396,7 +1396,7 @@ namespace System.Diagnostics.Eventing.Reader
                 bool[] array = new bool[val.Count];
                 for (int i = 0; i < val.Count; i++)
                 {
-                    bool value = (Marshal.ReadInt32(ptr) != 0) ? true : false;
+                    bool value = (Marshal.ReadInt32(ptr) != 0);
                     array[i] = value;
                     ptr = new IntPtr((Int64)ptr + 4);
                 }
