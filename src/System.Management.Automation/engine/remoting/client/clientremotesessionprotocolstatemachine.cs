@@ -277,7 +277,7 @@ namespace System.Management.Automation.Remoting
                         Dbg.Assert(_state >= RemoteSessionState.Established,
                             "Client can send a public key only after reaching the Established state");
 
-                        Dbg.Assert(_keyExchanged == false, "Client should do key exchange only once");
+                        Dbg.Assert(!_keyExchanged, "Client should do key exchange only once");
 
                         if (_state == RemoteSessionState.Established ||
                             _state == RemoteSessionState.EstablishedAndKeyRequested)
