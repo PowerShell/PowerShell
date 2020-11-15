@@ -896,7 +896,7 @@ dotnet_diagnostic.IDE0055.severity = silent
 dotnet_diagnostic.IDE0056.severity = silent
 
 # IDE0057: UseRangeOperator
-dotnet_diagnostic.IDE0057.severity = silent
+dotnet_diagnostic.IDE0057.severity = warning
 
 # IDE0058: ExpressionValueIsUnused
 dotnet_diagnostic.IDE0058.severity = silent
