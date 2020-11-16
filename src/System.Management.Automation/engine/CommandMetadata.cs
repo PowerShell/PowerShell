@@ -680,7 +680,7 @@ namespace System.Management.Automation
 
             // Determine if the cmdlet implements dynamic parameters by looking for the interface
 
-            Type dynamicParametersType = CommandType.GetInterface(typeof(IDynamicParameters).Name, true);
+            Type dynamicParametersType = CommandType.GetInterface(nameof(IDynamicParameters), true);
 
             if (dynamicParametersType != null)
             {

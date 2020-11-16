@@ -548,7 +548,7 @@ namespace System.Management.Automation
             {
                 if (ImplementingType != null)
                 {
-                    return (ImplementingType.GetInterface(typeof(IDynamicParameters).Name, true) != null);
+                    return (ImplementingType.GetInterface(nameof(IDynamicParameters), true) != null);
                 }
                 else
                 {

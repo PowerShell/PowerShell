@@ -1936,7 +1936,7 @@ namespace System.Management.Automation
                     {
                         // Allow the IncompleteParseException to throw so that the console
                         // can handle here strings and continued parsing.
-                        if (re.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name)
+                        if (re.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException))
                         {
                             throw new IncompleteParseException(
                                 (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : null,
@@ -1945,8 +1945,8 @@ namespace System.Management.Automation
 
                         // Allow the RemoteException and InvalidRunspacePoolStateException to propagate so that the host can
                         // clean up the debug session.
-                        if ((re.ErrorRecord.CategoryInfo.Reason == typeof(InvalidRunspacePoolStateException).Name) ||
-                            (re.ErrorRecord.CategoryInfo.Reason == typeof(RemoteException).Name))
+                        if ((re.ErrorRecord.CategoryInfo.Reason == nameof(InvalidRunspacePoolStateException)) ||
+                            (re.ErrorRecord.CategoryInfo.Reason == nameof(RemoteException)))
                         {
                             throw new PSRemotingTransportException(
                                 (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : string.Empty);
