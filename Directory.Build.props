@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+  </PropertyGroup>
+</Project>
