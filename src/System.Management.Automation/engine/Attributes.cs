@@ -1618,6 +1618,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the valid values in the set.
         /// </summary>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public IList<string> ValidValues
         {
             get
