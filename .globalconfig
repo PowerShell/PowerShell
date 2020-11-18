@@ -1002,3 +1002,549 @@ dotnet_diagnostic.IDE1007.severity = silent
 
 # IDE1008: UnboundConstructor
 dotnet_diagnostic.IDE1008.severity = silent
+
+# SA0001: XML comment analysis disabled
+dotnet_diagnostic.SA0001.severity = none
+
+# SA0002: Invalid settings file
+dotnet_diagnostic.SA0002.severity = none
+
+# SA1000: Keywords should be spaced correctly
+dotnet_diagnostic.SA1000.severity = none
+
+# SA1001: Commas should be spaced correctly
+dotnet_diagnostic.SA1001.severity = none
+
+# SA1002: Semicolons should be spaced correctly
+dotnet_diagnostic.SA1002.severity = none
+
+# SA1003: Symbols should be spaced correctly
+dotnet_diagnostic.SA1003.severity = none
+
+# SA1004: Documentation lines should begin with single space
+dotnet_diagnostic.SA1004.severity = none
+
+# SA1005: Single line comments should begin with single space
+dotnet_diagnostic.SA1005.severity = none
+
+# SA1006: Preprocessor keywords should not be preceded by space
+dotnet_diagnostic.SA1006.severity = none
+
+# SA1007: Operator keyword should be followed by space
+dotnet_diagnostic.SA1007.severity = none
+
+# SA1008: Opening parenthesis should be spaced correctly
+dotnet_diagnostic.SA1008.severity = none
+
+# SA1009: Closing parenthesis should be spaced correctly
+dotnet_diagnostic.SA1009.severity = none
+
+# SA1010: Opening square brackets should be spaced correctly
+dotnet_diagnostic.SA1010.severity = none
+
+# SA1011: Closing square brackets should be spaced correctly
+dotnet_diagnostic.SA1011.severity = none
+
+# SA1012: Opening braces should be spaced correctly
+dotnet_diagnostic.SA1012.severity = none
+
+# SA1013: Closing braces should be spaced correctly
+dotnet_diagnostic.SA1013.severity = none
+
+# SA1014: Opening generic brackets should be spaced correctly
+dotnet_diagnostic.SA1014.severity = none
+
+# SA1015: Closing generic brackets should be spaced correctly
+dotnet_diagnostic.SA1015.severity = none
+
+# SA1016: Opening attribute brackets should be spaced correctly
+dotnet_diagnostic.SA1016.severity = none
+
+# SA1017: Closing attribute brackets should be spaced correctly
+dotnet_diagnostic.SA1017.severity = none
+
+# SA1018: Nullable type symbols should be spaced correctly
+dotnet_diagnostic.SA1018.severity = none
+
+# SA1019: Member access symbols should be spaced correctly
+dotnet_diagnostic.SA1019.severity = none
+
+# SA1020: Increment decrement symbols should be spaced correctly
+dotnet_diagnostic.SA1020.severity = none
+
+# SA1021: Negative signs should be spaced correctly
+dotnet_diagnostic.SA1021.severity = none
+
+# SA1022: Positive signs should be spaced correctly
+dotnet_diagnostic.SA1022.severity = none
+
+# SA1023: Dereference and access of symbols should be spaced correctly
+dotnet_diagnostic.SA1023.severity = none
+
+# SA1024: Colons Should Be Spaced Correctly
+dotnet_diagnostic.SA1024.severity = none
+
+# SA1025: Code should not contain multiple whitespace in a row
+dotnet_diagnostic.SA1025.severity = none
+
+# SA1026: Code should not contain space after new or stackalloc keyword in implicitly typed array allocation
+dotnet_diagnostic.SA1026.severity = none
+
+# SA1027: Use tabs correctly
+dotnet_diagnostic.SA1027.severity = none
+
+# SA1028: Code should not contain trailing whitespace
+dotnet_diagnostic.SA1028.severity = none
+
+# SA1100: Do not prefix calls with base unless local implementation exists
+dotnet_diagnostic.SA1100.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1102: Query clause should follow previous clause
+dotnet_diagnostic.SA1102.severity = none
+
+# SA1103: Query clauses should be on separate lines or all on one line
+dotnet_diagnostic.SA1103.severity = none
+
+# SA1104: Query clause should begin on new line when previous clause spans multiple lines
+dotnet_diagnostic.SA1104.severity = none
+
+# SA1105: Query clauses spanning multiple lines should begin on own line
+dotnet_diagnostic.SA1105.severity = none
+
+# SA1106: Code should not contain empty statements
+dotnet_diagnostic.SA1106.severity = none
+
+# SA1107: Code should not contain multiple statements on one line
+dotnet_diagnostic.SA1107.severity = none
+
+# SA1108: Block statements should not contain embedded comments
+dotnet_diagnostic.SA1108.severity = none
+
+# SA1110: Opening parenthesis or bracket should be on declaration line
+dotnet_diagnostic.SA1110.severity = none
+
+# SA1111: Closing parenthesis should be on line of last parameter
+dotnet_diagnostic.SA1111.severity = none
+
+# SA1112: Closing parenthesis should be on line of opening parenthesis
+dotnet_diagnostic.SA1112.severity = none
+
+# SA1113: Comma should be on the same line as previous parameter
+dotnet_diagnostic.SA1113.severity = none
+
+# SA1114: Parameter list should follow declaration
+dotnet_diagnostic.SA1114.severity = none
+
+# SA1115: Parameter should follow comma
+dotnet_diagnostic.SA1115.severity = none
+
+# SA1116: Split parameters should start on line after declaration
+dotnet_diagnostic.SA1116.severity = none
+
+# SA1117: Parameters should be on same line or separate lines
+dotnet_diagnostic.SA1117.severity = none
+
+# SA1118: Parameter should not span multiple lines
+dotnet_diagnostic.SA1118.severity = none
+
+# SA1119: Statement should not use unnecessary parenthesis
+dotnet_diagnostic.SA1119.severity = none
+
+# SA1120: Comments should contain text
+dotnet_diagnostic.SA1120.severity = none
+
+# SA1121: Use built-in type alias
+dotnet_diagnostic.SA1121.severity = none
+
+# SA1122: Use string.Empty for empty strings
+dotnet_diagnostic.SA1122.severity = none
+
+# SA1123: Do not place regions within elements
+dotnet_diagnostic.SA1123.severity = none
+
+# SA1124: Do not use regions
+dotnet_diagnostic.SA1124.severity = none
+
+# SA1125: Use shorthand for nullable types
+dotnet_diagnostic.SA1125.severity = none
+
+# SA1127: Generic type constraints should be on their own line
+dotnet_diagnostic.SA1127.severity = none
+
+# SA1128: Put constructor initializers on their own line
+dotnet_diagnostic.SA1128.severity = none
+
+# SA1129: Do not use default value type constructor
+dotnet_diagnostic.SA1129.severity = none
+
+# SA1130: Use lambda syntax
+dotnet_diagnostic.SA1130.severity = none
+
+# SA1131: Use readable conditions
+dotnet_diagnostic.SA1131.severity = none
+
+# SA1132: Do not combine fields
+dotnet_diagnostic.SA1132.severity = none
+
+# SA1133: Do not combine attributes
+dotnet_diagnostic.SA1133.severity = none
+
+# SA1134: Attributes should not share line
+dotnet_diagnostic.SA1134.severity = none
+
+# SA1135: Using directives should be qualified
+dotnet_diagnostic.SA1135.severity = none
+
+# SA1136: Enum values should be on separate lines
+dotnet_diagnostic.SA1136.severity = none
+
+# SA1137: Elements should have the same indentation
+dotnet_diagnostic.SA1137.severity = none
+
+# SA1139: Use literal suffix notation instead of casting
+dotnet_diagnostic.SA1139.severity = none
+
+# SA1141: Use tuple syntax
+dotnet_diagnostic.SA1141.severity = none
+
+# SA1142: Refer to tuple fields by name
+dotnet_diagnostic.SA1142.severity = none
+
+# SA1200: Using directives should be placed correctly
+dotnet_diagnostic.SA1200.severity = none
+
+# SA1201: Elements should appear in the correct order
+dotnet_diagnostic.SA1201.severity = none
+
+# SA1202: Elements should be ordered by access
+dotnet_diagnostic.SA1202.severity = none
+
+# SA1203: Constants should appear before fields
+dotnet_diagnostic.SA1203.severity = none
+
+# SA1204: Static elements should appear before instance elements
+dotnet_diagnostic.SA1204.severity = none
+
+# SA1205: Partial elements should declare access
+dotnet_diagnostic.SA1205.severity = none
+
+# SA1206: Declaration keywords should follow order
+dotnet_diagnostic.SA1206.severity = none
+
+# SA1207: Protected should come before internal
+dotnet_diagnostic.SA1207.severity = none
+
+# SA1208: System using directives should be placed before other using directives
+dotnet_diagnostic.SA1208.severity = none
+
+# SA1209: Using alias directives should be placed after other using directives
+dotnet_diagnostic.SA1209.severity = none
+
+# SA1210: Using directives should be ordered alphabetically by namespace
+dotnet_diagnostic.SA1210.severity = none
+
+# SA1211: Using alias directives should be ordered alphabetically by alias name
+dotnet_diagnostic.SA1211.severity = none
+
+# SA1212: Property accessors should follow order
+dotnet_diagnostic.SA1212.severity = none
+
+# SA1213: Event accessors should follow order
+dotnet_diagnostic.SA1213.severity = none
+
+# SA1214: Readonly fields should appear before non-readonly fields
+dotnet_diagnostic.SA1214.severity = none
+
+# SA1216: Using static directives should be placed at the correct location
+dotnet_diagnostic.SA1216.severity = none
+
+# SA1217: Using static directives should be ordered alphabetically
+dotnet_diagnostic.SA1217.severity = none
+
+# SA1300: Element should begin with upper-case letter
+dotnet_diagnostic.SA1300.severity = none
+
+# SA1302: Interface names should begin with I
+dotnet_diagnostic.SA1302.severity = none
+
+# SA1303: Const field names should begin with upper-case letter
+dotnet_diagnostic.SA1303.severity = none
+
+# SA1304: Non-private readonly fields should begin with upper-case letter
+dotnet_diagnostic.SA1304.severity = none
+
+# SA1305: Field names should not use Hungarian notation
+dotnet_diagnostic.SA1305.severity = none
+
+# SA1306: Field names should begin with lower-case letter
+dotnet_diagnostic.SA1306.severity = none
+
+# SA1307: Accessible fields should begin with upper-case letter
+dotnet_diagnostic.SA1307.severity = none
+
+# SA1308: Variable names should not be prefixed
+dotnet_diagnostic.SA1308.severity = none
+
+# SA1309: Field names should not begin with underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1310: Field names should not contain underscore
+dotnet_diagnostic.SA1310.severity = none
+
+# SA1311: Static readonly fields should begin with upper-case letter
+dotnet_diagnostic.SA1311.severity = none
+
+# SA1312: Variable names should begin with lower-case letter
+dotnet_diagnostic.SA1312.severity = none
+
+# SA1313: Parameter names should begin with lower-case letter
+dotnet_diagnostic.SA1313.severity = none
+
+# SA1314: Type parameter names should begin with T
+dotnet_diagnostic.SA1314.severity = none
+
+# SA1316: Tuple element names should use correct casing
+dotnet_diagnostic.SA1316.severity = none
+
+# SA1400: Access modifier should be declared
+dotnet_diagnostic.SA1400.severity = none
+
+# SA1401: Fields should be private
+dotnet_diagnostic.SA1401.severity = none
+
+# SA1402: File may only contain a single type
+dotnet_diagnostic.SA1402.severity = none
+
+# SA1403: File may only contain a single namespace
+dotnet_diagnostic.SA1403.severity = none
+
+# SA1404: Code analysis suppression should have justification
+dotnet_diagnostic.SA1404.severity = none
+
+# SA1405: Debug.Assert should provide message text
+dotnet_diagnostic.SA1405.severity = none
+
+# SA1406: Debug.Fail should provide message text
+dotnet_diagnostic.SA1406.severity = none
+
+# SA1407: Arithmetic expressions should declare precedence
+dotnet_diagnostic.SA1407.severity = none
+
+# SA1408: Conditional expressions should declare precedence
+dotnet_diagnostic.SA1408.severity = none
+
+# SA1410: Remove delegate parenthesis when possible
+dotnet_diagnostic.SA1410.severity = none
+
+# SA1411: Attribute constructor should not use unnecessary parenthesis
+dotnet_diagnostic.SA1411.severity = none
+
+# SA1412: Store files as UTF-8 with byte order mark
+dotnet_diagnostic.SA1412.severity = none
+
+# SA1413: Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1413.severity = none
+
+# SA1414: Tuple types in signatures should have element names
+dotnet_diagnostic.SA1414.severity = none
+
+# SA1500: Braces for multi-line statements should not share line
+dotnet_diagnostic.SA1500.severity = none
+
+# SA1501: Statement should not be on a single line
+dotnet_diagnostic.SA1501.severity = none
+
+# SA1502: Element should not be on a single line
+dotnet_diagnostic.SA1502.severity = none
+
+# SA1503: Braces should not be omitted
+dotnet_diagnostic.SA1503.severity = none
+
+# SA1504: All accessors should be single-line or multi-line
+dotnet_diagnostic.SA1504.severity = none
+
+# SA1505: Opening braces should not be followed by blank line
+dotnet_diagnostic.SA1505.severity = none
+
+# SA1506: Element documentation headers should not be followed by blank line
+dotnet_diagnostic.SA1506.severity = none
+
+# SA1507: Code should not contain multiple blank lines in a row
+dotnet_diagnostic.SA1507.severity = none
+
+# SA1508: Closing braces should not be preceded by blank line
+dotnet_diagnostic.SA1508.severity = none
+
+# SA1509: Opening braces should not be preceded by blank line
+dotnet_diagnostic.SA1509.severity = none
+
+# SA1510: Chained statement blocks should not be preceded by blank line
+dotnet_diagnostic.SA1510.severity = none
+
+# SA1511: While-do footer should not be preceded by blank line
+dotnet_diagnostic.SA1511.severity = none
+
+# SA1512: Single-line comments should not be followed by blank line
+dotnet_diagnostic.SA1512.severity = none
+
+# SA1513: Closing brace should be followed by blank line
+dotnet_diagnostic.SA1513.severity = none
+
+# SA1514: Element documentation header should be preceded by blank line
+dotnet_diagnostic.SA1514.severity = none
+
+# SA1515: Single-line comment should be preceded by blank line
+dotnet_diagnostic.SA1515.severity = none
+
+# SA1516: Elements should be separated by blank line
+dotnet_diagnostic.SA1516.severity = none
+
+# SA1517: Code should not contain blank lines at start of file
+dotnet_diagnostic.SA1517.severity = none
+
+# SA1518: Use line endings correctly at end of file
+dotnet_diagnostic.SA1518.severity = warning
+
+# SA1519: Braces should not be omitted from multi-line child statement
+dotnet_diagnostic.SA1519.severity = none
+
+# SA1520: Use braces consistently
+dotnet_diagnostic.SA1520.severity = none
+
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
+
+# SA1601: Partial elements should be documented
+dotnet_diagnostic.SA1601.severity = none
+
+# SA1602: Enumeration items should be documented
+dotnet_diagnostic.SA1602.severity = none
+
+# SA1604: Element documentation should have summary
+dotnet_diagnostic.SA1604.severity = none
+
+# SA1605: Partial element documentation should have summary
+dotnet_diagnostic.SA1605.severity = none
+
+# SA1606: Element documentation should have summary text
+dotnet_diagnostic.SA1606.severity = none
+
+# SA1607: Partial element documentation should have summary text
+dotnet_diagnostic.SA1607.severity = none
+
+# SA1608: Element documentation should not have default summary
+dotnet_diagnostic.SA1608.severity = none
+
+# SA1609: Property documentation should have value
+dotnet_diagnostic.SA1609.severity = none
+
+# SA1610: Property documentation should have value text
+dotnet_diagnostic.SA1610.severity = none
+
+# SA1611: Element parameters should be documented
+dotnet_diagnostic.SA1611.severity = none
+
+# SA1612: Element parameter documentation should match element parameters
+dotnet_diagnostic.SA1612.severity = none
+
+# SA1613: Element parameter documentation should declare parameter name
+dotnet_diagnostic.SA1613.severity = none
+
+# SA1614: Element parameter documentation should have text
+dotnet_diagnostic.SA1614.severity = none
+
+# SA1615: Element return value should be documented
+dotnet_diagnostic.SA1615.severity = none
+
+# SA1616: Element return value documentation should have text
+dotnet_diagnostic.SA1616.severity = none
+
+# SA1617: Void return value should not be documented
+dotnet_diagnostic.SA1617.severity = none
+
+# SA1618: Generic type parameters should be documented
+dotnet_diagnostic.SA1618.severity = none
+
+# SA1619: Generic type parameters should be documented partial class
+dotnet_diagnostic.SA1619.severity = none
+
+# SA1620: Generic type parameter documentation should match type parameters
+dotnet_diagnostic.SA1620.severity = none
+
+# SA1621: Generic type parameter documentation should declare parameter name
+dotnet_diagnostic.SA1621.severity = none
+
+# SA1622: Generic type parameter documentation should have text
+dotnet_diagnostic.SA1622.severity = none
+
+# SA1623: Property summary documentation should match accessors
+dotnet_diagnostic.SA1623.severity = none
+
+# SA1624: Property summary documentation should omit accessor with restricted access
+dotnet_diagnostic.SA1624.severity = none
+
+# SA1625: Element documentation should not be copied and pasted
+dotnet_diagnostic.SA1625.severity = none
+
+# SA1626: Single-line comments should not use documentation style slashes
+dotnet_diagnostic.SA1626.severity = none
+
+# SA1627: Documentation text should not be empty
+dotnet_diagnostic.SA1627.severity = none
+
+# SA1629: Documentation text should end with a period
+dotnet_diagnostic.SA1629.severity = none
+
+# SA1633: File should have header
+dotnet_diagnostic.SA1633.severity = none
+
+# SA1634: File header should show copyright
+dotnet_diagnostic.SA1634.severity = none
+
+# SA1635: File header should have copyright text
+dotnet_diagnostic.SA1635.severity = none
+
+# SA1636: File header copyright text should match
+dotnet_diagnostic.SA1636.severity = none
+
+# SA1637: File header should contain file name
+dotnet_diagnostic.SA1637.severity = none
+
+# SA1638: File header file name documentation should match file name
+dotnet_diagnostic.SA1638.severity = none
+
+# SA1639: File header should have summary
+dotnet_diagnostic.SA1639.severity = none
+
+# SA1640: File header should have valid company text
+dotnet_diagnostic.SA1640.severity = none
+
+# SA1641: File header company name text should match
+dotnet_diagnostic.SA1641.severity = none
+
+# SA1642: Constructor summary documentation should begin with standard text
+dotnet_diagnostic.SA1642.severity = none
+
+# SA1643: Destructor summary documentation should begin with standard text
+dotnet_diagnostic.SA1643.severity = none
+
+# SA1648: inheritdoc should be used with inheriting class
+dotnet_diagnostic.SA1648.severity = none
+
+# SA1649: File name should match first type name
+dotnet_diagnostic.SA1649.severity = none
+
+# SA1651: Do not use placeholder elements
+dotnet_diagnostic.SA1651.severity = none
+
+# SX1101: Do not prefix local calls with 'this.'
+dotnet_diagnostic.SX1101.severity = none
+
+# SX1309: Field names should begin with underscore
+dotnet_diagnostic.SX1309.severity = none
+
+# SX1309S: Static field names should begin with underscore
+dotnet_diagnostic.SX1309S.severity = none
