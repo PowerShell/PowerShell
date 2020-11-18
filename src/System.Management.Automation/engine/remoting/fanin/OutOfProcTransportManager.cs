@@ -144,12 +144,19 @@ namespace System.Management.Automation.Remoting
         #region Packet Processing Helper Methods / Delegates
 
         internal delegate void DataPacketReceived(byte[] rawData, string stream, Guid psGuid);
+
         internal delegate void DataAckPacketReceived(Guid psGuid);
+
         internal delegate void CommandCreationPacketReceived(Guid psGuid);
+
         internal delegate void CommandCreationAckReceived(Guid psGuid);
+
         internal delegate void ClosePacketReceived(Guid psGuid);
+
         internal delegate void CloseAckPacketReceived(Guid psGuid);
+
         internal delegate void SignalPacketReceived(Guid psGuid);
+
         internal delegate void SignalAckPacketReceived(Guid psGuid);
 
         internal struct DataProcessingDelegates

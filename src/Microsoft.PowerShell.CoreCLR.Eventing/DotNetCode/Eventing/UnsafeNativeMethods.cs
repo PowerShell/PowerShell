@@ -177,6 +177,7 @@ namespace System.Diagnostics.Eventing
                 [In] long keywords,
                 [In] char* message
                 );
+
         // ActivityId Control APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventActivityIdControl", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]

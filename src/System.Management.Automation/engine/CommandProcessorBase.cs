@@ -149,6 +149,7 @@ namespace System.Management.Automation
         {
             get { return null; }
         }
+
         // Full Qualified ID for the obsolete command warning
         private const string FQIDCommandObsolete = "CommandObsolete";
 

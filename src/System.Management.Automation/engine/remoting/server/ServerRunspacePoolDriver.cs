@@ -31,7 +31,9 @@ namespace System.Management.Automation
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
 

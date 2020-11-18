@@ -39,6 +39,7 @@ namespace System.Management.Automation.Remoting
 
         private readonly Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
+
         // whether some thread is actively processing events
         // in a loop. If this is set then other threads
         // should simply add to the queue and not attempt

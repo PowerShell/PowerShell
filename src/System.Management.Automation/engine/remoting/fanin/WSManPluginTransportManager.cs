@@ -304,6 +304,7 @@ namespace System.Management.Automation.Remoting
                 _activeCmdTransportManagers.Remove(cmdId);
             }
         }
+
         #endregion
         internal bool EnableTransportManagerSendDataToClient(
             WSManNativeApi.WSManPluginRequest requestDetails,

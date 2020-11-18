@@ -607,6 +607,7 @@ namespace System.Management.Automation
         public ExperimentAction ExperimentAction { get; }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>

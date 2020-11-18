@@ -1335,6 +1335,7 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
     }
+
 #pragma warning disable 649 // fields and properties in these class are assigned dynamically
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiBaseBoard

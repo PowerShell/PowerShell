@@ -53,11 +53,17 @@ namespace System.Management.Automation.Interpreter
         }
 
         protected internal abstract Instruction GetArrayItem();
+
         protected internal abstract Instruction SetArrayItem();
+
         protected internal abstract Instruction TypeIs();
+
         protected internal abstract Instruction TypeAs();
+
         protected internal abstract Instruction DefaultValue();
+
         protected internal abstract Instruction NewArray();
+
         protected internal abstract Instruction NewArrayInit(int elementCount);
     }
 

@@ -679,6 +679,7 @@ namespace System.Management.Automation
         #endregion
 
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
         /// <summary>

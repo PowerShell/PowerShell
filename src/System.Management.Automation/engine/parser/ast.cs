@@ -53,8 +53,11 @@ namespace System.Management.Automation.Language
     internal interface IParameterMetadataProvider
     {
         bool HasAnyScriptBlockAttributes();
+
         RuntimeDefinedParameterDictionary GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding);
+
         IEnumerable<Attribute> GetScriptBlockAttributes();
+
         IEnumerable<ExperimentalAttribute> GetExperimentalAttributes();
 
         bool UsesCmdletBinding();
@@ -286,6 +289,7 @@ namespace System.Management.Automation.Language
         }
 
         internal abstract object Accept(ICustomAstVisitor visitor);
+
         internal abstract AstVisitAction InternalVisit(AstVisitor visitor);
 
         internal static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
@@ -770,6 +774,7 @@ namespace System.Management.Automation.Language
             Utils.EmptyReadOnlyCollection<UsingStatementAst>();
 
         internal bool HadErrors { get; set; }
+
         internal bool IsConfiguration { get; private set; }
 
         internal bool PostParseChecksPerformed { get; set; }
@@ -6463,7 +6468,9 @@ namespace System.Management.Automation.Language
         #region Internal methods/properties
 
         internal Token LCurlyToken { get; set; }
+
         internal Token ConfigurationToken { get; set; }
+
         internal IEnumerable<AttributeAst> CustomAttributes { get; set; }
 
         /// <summary>
@@ -6945,10 +6952,15 @@ namespace System.Management.Automation.Language
         private DynamicKeyword _keyword;
 
         internal Token LCurly { get; set; }
+
         internal Token FunctionName { get; set; }
+
         internal ExpressionAst InstanceName { get; set; }
+
         internal ExpressionAst OriginalInstanceName { get; set; }
+
         internal ExpressionAst BodyExpression { get; set; }
+
         internal string ElementName { get; set; }
 
         private PipelineAst _commandCallPipelineAst;
@@ -9233,6 +9245,7 @@ namespace System.Management.Automation.Language
         internal int TupleIndex { get; set; } = VariableAnalysis.Unanalyzed;
 
         internal bool Automatic { get; set; }
+
         internal bool Assigned { get; set; }
 
         IAssignableValue ISupportsAssignment.GetAssignableValue()

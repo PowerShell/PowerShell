@@ -721,6 +721,7 @@ namespace System.Management.Automation.Language
         }
 
         internal TokenizerMode Mode { get; set; }
+
         internal bool AllowSignedNumbers { get; set; }
 
         // TODO: use auto-properties when making 'ternary operator' an official feature.
@@ -733,8 +734,11 @@ namespace System.Management.Automation.Language
         }
 
         internal bool WantSimpleName { get; set; }
+
         internal bool InWorkflowContext { get; set; }
+
         internal List<Token> TokenList { get; set; }
+
         internal Token FirstToken { get; private set; }
 
         internal Token LastToken { get; private set; }

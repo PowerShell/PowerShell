@@ -873,6 +873,7 @@ namespace System.Management.Automation.Internal
 
         private readonly Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
             = new Dictionary<Guid, ClientPowerShellDataStructureHandler>();
+
         // data structure handlers of all ClientRemotePowerShell which are
         // associated with this runspace pool
         private readonly object _associationSyncObject = new object();
