@@ -815,7 +815,7 @@ namespace System.Management.Automation
                     ErrorRecord errorRecord = GetErrorRecordForRemoteDiscoveryProvider(exception);
                     if (!cmdlet.MyInvocation.ExpectingInput)
                     {
-                        if (((-1) != errorRecord.FullyQualifiedErrorId.IndexOf(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase)) ||
+                        if ((errorRecord.FullyQualifiedErrorId.IndexOf(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase) != (-1)) ||
                             (cancellationToken.IsCancellationRequested || (exception is OperationCanceledException)) ||
                             (!cimSession.TestConnection()))
                         {

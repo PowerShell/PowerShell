@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Cmdletization
             List<T> result = new List<T>();
             foreach (var methodParameter in this.Parameters)
             {
-                if (MethodParameterBindings.In != (methodParameter.Bindings & MethodParameterBindings.In))
+                if ((methodParameter.Bindings & MethodParameterBindings.In) != MethodParameterBindings.In)
                 {
                     continue;
                 }

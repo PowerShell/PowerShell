@@ -5939,7 +5939,7 @@ namespace System.Management.Automation
 
             using (s_tracer.TraceScope("Inferring type parameters for the following method: {0}", genericMethod))
             {
-                if (PSTraceSourceOptions.WriteLine == (s_tracer.Options & PSTraceSourceOptions.WriteLine))
+                if ((s_tracer.Options & PSTraceSourceOptions.WriteLine) == PSTraceSourceOptions.WriteLine)
                 {
                     s_tracer.WriteLine(
                         "Types of method arguments: {0}",

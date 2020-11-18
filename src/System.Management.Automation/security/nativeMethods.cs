@@ -1877,7 +1877,7 @@ namespace System.Management.Automation.Security
                                         NativeMethods.LOAD_LIBRARY_AS_DATAFILE |
                                             NativeMethods.LOAD_LIBRARY_AS_IMAGE_RESOURCE |
                                             NativeMethods.LOAD_LIBRARY_SEARCH_SYSTEM32);
-                if (IntPtr.Zero != module)
+                if (module != IntPtr.Zero)
                 {
                     FreeLibrary(module);
                     DllExists = true;

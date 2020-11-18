@@ -1524,7 +1524,7 @@ namespace System.Management.Automation.Remoting.Server
             XmlReader reader = XmlReader.Create(new StringReader(xmlBuffer), readerSettings);
 
             string additionalData;
-            if (XmlNodeType.Element == reader.MoveToContent())
+            if (reader.MoveToContent() == XmlNodeType.Element)
             {
                 additionalData = reader.ReadElementContentAsString(xmlTag, reader.NamespaceURI);
             }

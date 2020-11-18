@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
-                for (int read = 1; 0 < read; totalLength += read)
+                for (int read = 1; read > 0; totalLength += read)
                 {
                     if (_ownerCmdlet != null)
                     {
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
 
                     read = _originalStreamToProxy.Read(buffer, 0, buffer.Length);
 
-                    if (0 < read)
+                    if (read > 0)
                     {
                         base.Write(buffer, 0, read);
                     }

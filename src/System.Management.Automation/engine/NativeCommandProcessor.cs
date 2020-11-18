@@ -824,7 +824,7 @@ namespace System.Management.Automation
                 get
                 {
                     // Construct parent id only once.
-                    if (int.MinValue == _parentId)
+                    if (_parentId == int.MinValue)
                     {
                         ConstructParentId();
                     }

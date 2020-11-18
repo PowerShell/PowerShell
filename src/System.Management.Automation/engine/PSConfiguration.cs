@@ -566,7 +566,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="value">The value to write.</param>
         private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
         {
-            if (ConfigScope.CurrentUser == scope && !Directory.Exists(perUserConfigDirectory))
+            if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }

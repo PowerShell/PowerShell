@@ -42,7 +42,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal AsyncResult(Guid ownerId, AsyncCallback callback, object state)
         {
-            Dbg.Assert(Guid.Empty != ownerId, "ownerId cannot be empty");
+            Dbg.Assert(ownerId != Guid.Empty, "ownerId cannot be empty");
             OwnerId = ownerId;
             Callback = callback;
             AsyncState = state;

@@ -495,7 +495,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string Ellipsize(CultureInfo uiCultureInfo, string original)
         {
-            if (40 >= original.Length)
+            if (original.Length <= 40)
             {
                 return original;
             }

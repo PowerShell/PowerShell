@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 long contentLength = response.Content.Headers.ContentLength.Value;
-                if (0 >= contentLength)
+                if (contentLength <= 0)
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
                 }

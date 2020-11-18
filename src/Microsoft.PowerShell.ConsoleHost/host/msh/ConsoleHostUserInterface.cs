@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell
                     // Handle Ctrl-C ending input
                     if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
 #else
-                    if (string.IsNullOrEmpty(key) || (char)3 == key[0])
+                    if (string.IsNullOrEmpty(key) || key[0] == (char)3)
 #endif
                     {
                         PipelineStoppedException e = new PipelineStoppedException();
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                    if ((char)13 == key[0])
+                    if (key[0] == (char)13)
 #endif
                     {
                         //
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Backspace)
 #else
-                    if ((char)8 == key[0])
+                    if (key[0] == (char)8)
 #endif
                     {
                         //

@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.Proxy = webProxy;
             }
 
-            if (-1 < MaximumRedirection)
+            if (MaximumRedirection > -1)
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
@@ -777,7 +777,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder bodyBuilder = new StringBuilder();
             foreach (string key in content.Keys)
             {
-                if (0 < bodyBuilder.Length)
+                if (bodyBuilder.Length > 0)
                 {
                     bodyBuilder.Append('&');
                 }

@@ -458,11 +458,11 @@ namespace System.Management.Automation.Internal
         {
             // Note: This is not done in a switch because the order of tests matters.
 
-            if ((int)(OpFlags.Create | OpFlags.Excl) == (oflag & (int)(OpFlags.Create | OpFlags.Excl)))
+            if ((oflag & (int)(OpFlags.Create | OpFlags.Excl)) == (int)(OpFlags.Create | OpFlags.Excl))
             {
                 return FileMode.CreateNew;
             }
-            else if ((int)(OpFlags.Create | OpFlags.Truncate) == (oflag & (int)(OpFlags.Create | OpFlags.Truncate)))
+            else if ((oflag & (int)(OpFlags.Create | OpFlags.Truncate)) == (int)(OpFlags.Create | OpFlags.Truncate))
             {
                 return FileMode.OpenOrCreate;
             }
@@ -497,7 +497,7 @@ namespace System.Management.Automation.Internal
         {
             // Note: This is not done in a switch because the order of tests matters.
 
-            if ((int)(PermissionMode.Read | PermissionMode.Write) == (pmode & (int)(PermissionMode.Read | PermissionMode.Write)))
+            if ((pmode & (int)(PermissionMode.Read | PermissionMode.Write)) == (int)(PermissionMode.Read | PermissionMode.Write))
             {
                 return FileAccess.ReadWrite;
             }
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Internal
         {
             // Note: This is not done in a switch because the order of tests matters.
 
-            if ((int)(PermissionMode.Read | PermissionMode.Write) == (pmode & (int)(PermissionMode.Read | PermissionMode.Write)))
+            if ((pmode & (int)(PermissionMode.Read | PermissionMode.Write)) == (int)(PermissionMode.Read | PermissionMode.Write))
             {
                 return FileShare.ReadWrite;
             }
