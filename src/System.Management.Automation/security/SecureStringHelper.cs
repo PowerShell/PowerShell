@@ -385,6 +385,21 @@ namespace Microsoft.PowerShell
                 return s;
             }
         }
+
+#nullable enable
+        internal static unsafe SecureString FromPlainTextString(string plainTextString)
+        {
+            if (plainTextString.Length == 0)
+            {
+                return new SecureString();
+            }
+
+            fixed (char* charsPtr = &plainTextString.GetPinnableReference())
+            {
+                return new SecureString(charsPtr, plainTextString.Length);
+            }
+        }
+#nullable restore
     }
 
     /// <summary>

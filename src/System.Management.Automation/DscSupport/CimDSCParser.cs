@@ -22,6 +22,8 @@ using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Serialization;
 using Microsoft.PowerShell.Commands;
 
+using static Microsoft.PowerShell.SecureStringHelper;
+
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
     /// <summary>
@@ -261,12 +263,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw invalidOperationException;
             }
 
-            // Extract the password into a SecureString.
-            var password = new SecureString();
-            foreach (char t in plainPassWord)
-            {
-                password.AppendChar(t);
-            }
+            SecureString password = SecureStringHelper.FromPlainTextString(plainPassWord);
 
             password.MakeReadOnly();
             return new PSCredential(userName, password);
