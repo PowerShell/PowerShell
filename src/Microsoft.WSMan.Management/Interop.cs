@@ -24,6 +24,7 @@ namespace Microsoft.WSMan.Management
     #region WsManEnumFlags
     /// <summary><para>_WSManEnumFlags enumeration.</para></summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
+    [SuppressMessage("Design", "CA1069:Enums values should not be duplicated", Justification = "<Pending>")]
     [TypeLibType((short)0)]
     public enum WSManEnumFlags
     {

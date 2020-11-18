@@ -140,7 +140,7 @@ dotnet_diagnostic.CA1067.severity = suggestion
 dotnet_diagnostic.CA1068.severity = warning
 
 # CA1069: Enums values should not be duplicated
-dotnet_diagnostic.CA1069.severity = suggestion
+dotnet_diagnostic.CA1069.severity = warning
 
 # CA1070: Do not declare event fields as virtual
 dotnet_diagnostic.CA1070.severity = warning

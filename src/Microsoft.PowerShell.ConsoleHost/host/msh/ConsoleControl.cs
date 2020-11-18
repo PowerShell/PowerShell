@@ -640,9 +640,9 @@ namespace Microsoft.PowerShell
             Extended = 0x080,
             AutoPosition = 0x100,
             // output modes
-            ProcessedOutput = 0x001,  // yes, I know they are the same values as some flags defined above.
-            WrapEndOfLine = 0x002,
-            VirtualTerminal = 0x004,
+            ProcessedOutput = ProcessedInput,
+            WrapEndOfLine = LineInput,
+            VirtualTerminal = EchoInput,
             // Error getting console mode
             Unknown = 0xffffffff,
         }
