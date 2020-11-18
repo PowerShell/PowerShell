@@ -82,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 GetComputerName(cmdlet));
             string nameSpace;
             List<CimSessionProxy> proxys = new List<CimSessionProxy>();
-            bool isGetCimInstanceCommand = (cmdlet is GetCimInstanceCommand);
+            bool isGetCimInstanceCommand = cmdlet is GetCimInstanceCommand;
             CimInstance targetCimInstance = null;
             switch (cmdlet.ParameterSetName)
             {

@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell
                 WriteToConsole(printFieldPrompt, true);
                 SecureString secureString = ReadLineAsSecureString();
                 convertedObj = secureString;
-                cancelInput = (convertedObj == null);
+                cancelInput = convertedObj == null;
                 if ((secureString != null) && (secureString.Length == 0) && listInput)
                 {
                     endListInput = true;
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell
                         null,
                         string.Empty);
                 convertedObj = credential;
-                cancelInput = (convertedObj == null);
+                cancelInput = convertedObj == null;
                 if ((credential != null) && (credential.Password.Length == 0) && listInput)
                 {
                     endListInput = true;

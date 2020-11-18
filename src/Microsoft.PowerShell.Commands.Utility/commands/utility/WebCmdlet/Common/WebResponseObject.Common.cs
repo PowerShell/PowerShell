@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public int StatusCode
         {
-            get { return (WebResponseHelper.GetStatusCode(BaseResponse)); }
+            get { return WebResponseHelper.GetStatusCode(BaseResponse); }
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string StatusDescription
         {
-            get { return (WebResponseHelper.GetStatusDescription(BaseResponse)); }
+            get { return WebResponseHelper.GetStatusDescription(BaseResponse); }
         }
 
         private MemoryStream _rawContentStream;
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public MemoryStream RawContentStream
         {
-            get { return (_rawContentStream); }
+            get { return _rawContentStream; }
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public long RawContentLength
         {
-            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
+            get { return RawContentStream == null ? -1 : RawContentStream.Length; }
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsPrintable(char c)
         {
-            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
+            return char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c);
         }
 
         /// <summary>

@@ -709,7 +709,7 @@ namespace Microsoft.WSMan.Management
                                     }
                                     else
                                     {
-                                        sResourceDirName = path.Substring(strPathChk.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathChk.Length) - (strPathChk.Length));
+                                        sResourceDirName = path.Substring(strPathChk.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathChk.Length) - strPathChk.Length);
                                     }
 
                                     if (path.Contains(strPathChk + sResourceDirName))
@@ -1074,7 +1074,7 @@ namespace Microsoft.WSMan.Management
                             }
                             else
                             {
-                                sResourceDirName = path.Substring(strPathChk.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathChk.Length) - (strPathChk.Length));
+                                sResourceDirName = path.Substring(strPathChk.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathChk.Length) - strPathChk.Length);
                             }
 
                             if (path.Contains(strPathChk + sResourceDirName))
@@ -1738,7 +1738,7 @@ namespace Microsoft.WSMan.Management
                             }
                             else
                             {
-                                sResourceDirName = path.Substring(strPathCheck.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathCheck.Length) - (strPathCheck.Length));
+                                sResourceDirName = path.Substring(strPathCheck.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathCheck.Length) - strPathCheck.Length);
                             }
 
                             strPathCheck = strPathCheck + sResourceDirName + WSManStringLiterals.DefaultPathSeparator;
@@ -2903,7 +2903,7 @@ namespace Microsoft.WSMan.Management
                         valuexml += ((IWSManEnumerator)value).ReadItem();
                     }
 
-                    if ((valuexml != string.Empty) && !(string.IsNullOrEmpty(valuexml)))
+                    if ((valuexml != string.Empty) && !string.IsNullOrEmpty(valuexml))
                     {
                         valuexml = "<WsManResults>" + valuexml + "</WsManResults>";
                     }
@@ -2912,7 +2912,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    valuexml = this.GetResourceValueInXml(((IWSManSession)sessionobj), ResourceURI, null);
+                    valuexml = this.GetResourceValueInXml((IWSManSession)sessionobj, ResourceURI, null);
                 }
 
                 if (string.IsNullOrEmpty(valuexml))
@@ -3516,7 +3516,7 @@ namespace Microsoft.WSMan.Management
                         else
                         {
                             sResourceDirName = path.Substring(strPathchk.Length,
-                                path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathchk.Length) - (strPathchk.Length));
+                                path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathchk.Length) - strPathchk.Length);
                         }
 
                         if (path.EndsWith(strPathchk + sResourceDirName, StringComparison.OrdinalIgnoreCase))
@@ -4045,7 +4045,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    return (ContainResourceValue(sessionobj, uri, ChildName, path, host));
+                    return ContainResourceValue(sessionobj, uri, ChildName, path, host);
                 }
 
                 return false;
@@ -4378,7 +4378,7 @@ namespace Microsoft.WSMan.Management
                             }
                             else
                             {
-                                sResourceDirName = path.Substring(strPathchk.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathchk.Length) - (strPathchk.Length));
+                                sResourceDirName = path.Substring(strPathchk.Length, path.IndexOf(WSManStringLiterals.DefaultPathSeparator, strPathchk.Length) - strPathchk.Length);
                             }
 
                             if (arrResources == null)
@@ -4489,9 +4489,9 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    if ((path.EndsWith(WSManStringLiterals.containerService, StringComparison.OrdinalIgnoreCase) || path.EndsWith(WSManStringLiterals.containerTrustedHosts, StringComparison.OrdinalIgnoreCase)
+                    if (path.EndsWith(WSManStringLiterals.containerService, StringComparison.OrdinalIgnoreCase) || path.EndsWith(WSManStringLiterals.containerTrustedHosts, StringComparison.OrdinalIgnoreCase)
                            || path.EndsWith(WSManStringLiterals.containerClient, StringComparison.OrdinalIgnoreCase) || path.EndsWith(WSManStringLiterals.containerDefaultPorts, StringComparison.OrdinalIgnoreCase)
-                              || path.EndsWith(WSManStringLiterals.containerAuth, StringComparison.OrdinalIgnoreCase) || path.EndsWith(WSManStringLiterals.containerShell, StringComparison.OrdinalIgnoreCase)))
+                              || path.EndsWith(WSManStringLiterals.containerAuth, StringComparison.OrdinalIgnoreCase) || path.EndsWith(WSManStringLiterals.containerShell, StringComparison.OrdinalIgnoreCase))
                     {
                         foreach (XmlNode node in outxml.ChildNodes)
                         {
@@ -4597,7 +4597,7 @@ namespace Microsoft.WSMan.Management
                 winrmServiceController.Refresh();
             }
 
-            return (winrmServiceController.Status.Equals(ServiceControllerStatus.Running));
+            return winrmServiceController.Status.Equals(ServiceControllerStatus.Running);
         }
 
         /// <summary>
@@ -5331,7 +5331,7 @@ namespace Microsoft.WSMan.Management
                 if (IsValueOfParamList(prop.Name, WSManStringLiterals.NewItemSecurityParams))
                 {
                     // Ensure SDDL, which can contain invalid XML characters such as '&', is escaped.
-                    string propValueStr = (prop.Name.Equals("SDDL", StringComparison.OrdinalIgnoreCase)) ?
+                    string propValueStr = prop.Name.Equals("SDDL", StringComparison.OrdinalIgnoreCase) ?
                         EscapeValuesForXML(prop.Value.ToString()) :
                         prop.Value.ToString();
 

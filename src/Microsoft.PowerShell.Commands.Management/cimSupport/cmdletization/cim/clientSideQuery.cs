@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 if (wildcardsEnabled)
                 {
                     var propertyValueAsString = propertyValue as string;
-                    if ((propertyValueAsString != null) && (WildcardPattern.ContainsWildcardCharacters(propertyValueAsString)))
+                    if ((propertyValueAsString != null) && WildcardPattern.ContainsWildcardCharacters(propertyValueAsString))
                     {
                         this.ErrorMessageGenerator =
                             (queryDescription, className) => GetErrorMessageForNotFound_ForWildcard(this.PropertyName, this.PropertyValue, className);

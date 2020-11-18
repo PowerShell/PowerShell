@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return false;
             }
 
-            WsManErrorCode wsManErrorCode = (WsManErrorCode)(UInt32)(errorCodeProperty.Value);
+            WsManErrorCode wsManErrorCode = (WsManErrorCode)(UInt32)errorCodeProperty.Value;
             switch (wsManErrorCode) // error codes that should result in sleep-and-retry are based on an email from Ryan
             {
                 case WsManErrorCode.ERROR_WSMAN_QUOTA_MAX_SHELLS:
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                return (Results.IsOpen || Results.Count > 0);
+                return Results.IsOpen || Results.Count > 0;
             }
         }
 
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             else
             {
                 CimJobException cje = exception as CimJobException;
-                if ((cje != null) && (cje.IsTerminatingError))
+                if ((cje != null) && cje.IsTerminatingError)
                 {
                     terminatingErrorTracker.MarkSessionAsTerminated(this.JobContext.Session, out sessionWasAlreadyTerminated);
                     isThisTerminatingError = true;
@@ -934,7 +934,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             Dbg.Assert(
                 (this.JobContext.ShouldProcessOptimization != MshCommandRuntime.ShouldProcessPossibleOptimization.AutoYes_CanSkipShouldProcessCall) ||
-                (this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ClientSideShouldProcess),
+                this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ClientSideShouldProcess,
                 "MI layer should not call us when AutoYes_CanSkipShouldProcessCall optimization is in effect");
             Exception exceptionThrownOnCmdletThread;
             ShouldProcessReason shouldProcessReason;

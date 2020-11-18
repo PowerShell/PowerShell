@@ -1151,7 +1151,7 @@ dotnet_diagnostic.SA1117.severity = none
 dotnet_diagnostic.SA1118.severity = none
 
 # SA1119: Statement should not use unnecessary parenthesis
-dotnet_diagnostic.SA1119.severity = none
+dotnet_diagnostic.SA1119.severity = warning
 
 # SA1120: Comments should contain text
 dotnet_diagnostic.SA1120.severity = none

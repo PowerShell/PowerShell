@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
             // try Id first
             PSObject result = FindById(nameOrId) ?? FindByName(nameOrId);
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (PSObject candidate in this)
             {
-                var namePropInfo = candidate.Properties[(findById ? "id" : "name")];
+                var namePropInfo = candidate.Properties[findById ? "id" : "name"];
                 if (namePropInfo != null && (string)namePropInfo.Value == nameOrId)
                 {
                     return candidate;

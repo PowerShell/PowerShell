@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
                 doc = null;
             }
 
-            return (doc != null);
+            return doc != null;
         }
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
@@ -497,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
                 rt = RestReturnType.Xml;
             }
 
-            return (rt);
+            return rt;
         }
 
         #endregion Helper Methods

@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(er);
                     }
 
-                    if (AsHashTable && !AsString && (Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
+                    if (AsHashTable && !AsString && Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1))
                     {
                         ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
                         ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);

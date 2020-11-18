@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (_matchOptions == MshMemberMatchOptions.IncludeHidden);
+                return _matchOptions == MshMemberMatchOptions.IncludeHidden;
             }
 
             set
@@ -189,15 +189,15 @@ namespace Microsoft.PowerShell.Commands
 
                 // request is to search dotnet or adapted or both members.
                 // dotnet,adapted members cannot be Script*,Note*,Code*
-                memberTypeToSearch ^= (PSMemberTypes.AliasProperty | PSMemberTypes.CodeMethod | PSMemberTypes.CodeProperty
+                memberTypeToSearch ^= PSMemberTypes.AliasProperty | PSMemberTypes.CodeMethod | PSMemberTypes.CodeProperty
                 | PSMemberTypes.MemberSet | PSMemberTypes.NoteProperty | PSMemberTypes.PropertySet | PSMemberTypes.ScriptMethod
-                | PSMemberTypes.ScriptProperty);
+                | PSMemberTypes.ScriptProperty;
             }
 
             if (((View & PSMemberViewTypes.Adapted) == 0) && (View & PSMemberViewTypes.Base) == 0)
             {
                 // base and adapted are not mentioned in the view so ignore respective properties
-                memberTypeToSearch ^= (PSMemberTypes.Property | PSMemberTypes.ParameterizedProperty | PSMemberTypes.Method);
+                memberTypeToSearch ^= PSMemberTypes.Property | PSMemberTypes.ParameterizedProperty | PSMemberTypes.Method;
             }
 
             if (((View & PSMemberViewTypes.Base) == PSMemberViewTypes.Base) &&
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!Force)
                     {
                         PSMethod memberAsPSMethod = member as PSMethod;
-                        if ((memberAsPSMethod != null) && (memberAsPSMethod.IsSpecial))
+                        if ((memberAsPSMethod != null) && memberAsPSMethod.IsSpecial)
                         {
                             continue;
                         }

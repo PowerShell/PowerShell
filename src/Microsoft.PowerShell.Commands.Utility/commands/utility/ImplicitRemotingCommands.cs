@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(results != null, "Import-Module should always succeed");
             Dbg.Assert(results.Count == 1, "Import-Module should always succeed");
             Dbg.Assert(results[0].BaseObject is PSModuleInfo, "Import-Module should always succeed");
-            return (PSModuleInfo)(results[0].BaseObject);
+            return (PSModuleInfo)results[0].BaseObject;
         }
 
         #endregion
@@ -1638,7 +1638,7 @@ namespace Microsoft.PowerShell.Commands
                         this.DuplicatePowerShellStreams(powerShell);
                         powerShell.EndInvoke(asyncResult);
 
-                        if ((numberOfReceivedObjects == 0) && (_formatTypeNamesSpecified))
+                        if ((numberOfReceivedObjects == 0) && _formatTypeNamesSpecified)
                         {
                             this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-FormatData"));
                         }
@@ -1764,7 +1764,7 @@ namespace Microsoft.PowerShell.Commands
                         this.DuplicatePowerShellStreams(powerShell);
                         powerShell.EndInvoke(asyncResult);
 
-                        if ((numberOfReceivedObjects == 0) && (_commandParameterSpecified))
+                        if ((numberOfReceivedObjects == 0) && _commandParameterSpecified)
                         {
                             this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-Command"));
                         }

@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return (_savedRegion != null);
+                return _savedRegion != null;
             }
         }
 

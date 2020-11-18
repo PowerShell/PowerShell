@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Cim
             Type dotNetType = psObject.BaseObject.GetType();
             if (typeof(PSCredential).IsAssignableFrom(dotNetType))
             {
-                var credential = (PSCredential)(psObject.BaseObject);
+                var credential = (PSCredential)psObject.BaseObject;
 
                 string escapedUsername = credential.UserName;
                 escapedUsername = escapedUsername.Replace("\\", "\\\\"); // Esc backslashes
@@ -304,14 +304,14 @@ namespace Microsoft.PowerShell.Cim
 
             if (typeof(X509Certificate2).IsAssignableFrom(dotNetType))
             {
-                var cert = (X509Certificate2)(psObject.BaseObject);
+                var cert = (X509Certificate2)psObject.BaseObject;
                 byte[] cimIntrinsicValue = cert.RawData;
                 return cimIntrinsicValue;
             }
 
             if (typeof(X500DistinguishedName).IsAssignableFrom(dotNetType))
             {
-                var x500name = (X500DistinguishedName)(psObject.BaseObject);
+                var x500name = (X500DistinguishedName)psObject.BaseObject;
                 byte[] cimIntrinsicValue = x500name.RawData;
                 return cimIntrinsicValue;
             }
@@ -330,13 +330,13 @@ namespace Microsoft.PowerShell.Cim
 
             if (typeof(WildcardPattern).IsAssignableFrom(dotNetType))
             {
-                var wildcardPattern = (WildcardPattern)(psObject.BaseObject);
+                var wildcardPattern = (WildcardPattern)psObject.BaseObject;
                 return wildcardPattern.ToWql();
             }
 
             if (typeof(XmlDocument).IsAssignableFrom(dotNetType))
             {
-                var xmlDocument = (XmlDocument)(psObject.BaseObject);
+                var xmlDocument = (XmlDocument)psObject.BaseObject;
                 string cimIntrinsicValue = xmlDocument.OuterXml;
                 return cimIntrinsicValue;
             }

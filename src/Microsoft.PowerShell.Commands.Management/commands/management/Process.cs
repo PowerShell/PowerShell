@@ -2801,7 +2801,7 @@ namespace Microsoft.PowerShell.Commands
 
             protected override bool ReleaseHandle()
             {
-                return (LocalFree(base.handle) == IntPtr.Zero);
+                return LocalFree(base.handle) == IntPtr.Zero;
             }
         }
 

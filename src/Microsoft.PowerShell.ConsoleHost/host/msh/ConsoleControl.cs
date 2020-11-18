@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell
             {
                 const int TAB = 0x9;
 
-                control.dwCtrlWakeupMask = (1 << TAB);
+                control.dwCtrlWakeupMask = 1 << TAB;
             }
 
             DWORD charsReaded = 0;
@@ -1420,7 +1420,7 @@ namespace Microsoft.PowerShell
                                 characterBuffer[characterBufferIndex].UnicodeChar =
                                     (ushort)contents[r, c].Character;
                                 characterBuffer[characterBufferIndex].Attributes =
-                                    (ushort)(ColorToWORD(contents[r, c].ForegroundColor, contents[r, c].BackgroundColor));
+                                    (ushort)ColorToWORD(contents[r, c].ForegroundColor, contents[r, c].BackgroundColor);
 
                                 lastCharIsLeading = false;
                             }

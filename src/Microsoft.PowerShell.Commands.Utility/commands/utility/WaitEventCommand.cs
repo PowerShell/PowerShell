@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (PSEventArgs eventArg in Events.ReceivedEvents)
                 {
                     // If they specified a subscription identifier and we don't match, continue
-                    if ((_matchPattern == null) || (_matchPattern.IsMatch(eventArg.SourceIdentifier)))
+                    if ((_matchPattern == null) || _matchPattern.IsMatch(eventArg.SourceIdentifier))
                     {
                         NotifyEvent(eventArg);
                         return;

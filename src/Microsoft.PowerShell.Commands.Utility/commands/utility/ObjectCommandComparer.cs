@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool IsValueNull(object value)
         {
             object val = PSObject.Base(value);
-            return (val == null);
+            return val == null;
         }
 
         internal int Compare(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)

@@ -2006,7 +2006,7 @@ namespace Microsoft.PowerShell
                     // the user hit tab up to the current cursor position after writing the completed text.
 
                     int deltaInput =
-                        (endOfInputCursorPos.Y * screenBufferSize.Width + endOfInputCursorPos.X)
+                        endOfInputCursorPos.Y * screenBufferSize.Width + endOfInputCursorPos.X
                         - (endOfCompletionCursorPos.Y * screenBufferSize.Width + endOfCompletionCursorPos.X);
 
                     if (deltaInput > 0)

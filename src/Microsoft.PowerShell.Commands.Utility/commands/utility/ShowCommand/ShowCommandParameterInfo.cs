@@ -54,11 +54,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             }
 
             this.Name = other.Members["Name"].Value as string;
-            this.IsMandatory = (bool)(other.Members["IsMandatory"].Value);
-            this.ValueFromPipeline = (bool)(other.Members["ValueFromPipeline"].Value);
-            this.HasParameterSet = (bool)(other.Members["HasParameterSet"].Value);
+            this.IsMandatory = (bool)other.Members["IsMandatory"].Value;
+            this.ValueFromPipeline = (bool)other.Members["ValueFromPipeline"].Value;
+            this.HasParameterSet = (bool)other.Members["HasParameterSet"].Value;
             this.ParameterType = new ShowCommandParameterType(other.Members["ParameterType"].Value as PSObject);
-            this.Position = (int)(other.Members["Position"].Value);
+            this.Position = (int)other.Members["Position"].Value;
             if (this.HasParameterSet)
             {
                 this.ValidParamSetValues = ShowCommandCommandInfo.GetObjectEnumerable((other.Members["ValidParamSetValues"].Value as PSObject).BaseObject as System.Collections.ArrayList).Cast<string>().ToList();

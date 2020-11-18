@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
                 if (debugger != null)
                 {
                     WriteObject(
-                        new PSRunspaceDebug((debugger.UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Wait),
+                        new PSRunspaceDebug(debugger.UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Wait,
                             debugger.IsDebuggerSteppingEnabled,
                             runspace.Name,
                             runspace.Id)

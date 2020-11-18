@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Make sure the file is not read only
                             // Note that we will not clear the ReadOnly flag later
-                            fInfo.Attributes &= ~(FileAttributes.ReadOnly);
+                            fInfo.Attributes &= ~FileAttributes.ReadOnly;
                         }
                         else
                         {

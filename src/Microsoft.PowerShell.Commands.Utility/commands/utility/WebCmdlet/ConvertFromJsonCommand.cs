@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(result, !NoEnumerate.IsPresent);
-            return (result != null);
+            return result != null;
         }
 
         #endregion overrides

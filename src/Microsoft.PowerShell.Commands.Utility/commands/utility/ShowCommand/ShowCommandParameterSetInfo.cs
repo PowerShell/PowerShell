@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             }
 
             this.Name = other.Members["Name"].Value as string;
-            this.IsDefault = (bool)(other.Members["IsDefault"].Value);
+            this.IsDefault = (bool)other.Members["IsDefault"].Value;
             var parameters = (other.Members["Parameters"].Value as PSObject).BaseObject as System.Collections.ArrayList;
             this.Parameters = ShowCommandCommandInfo.GetObjectEnumerable(parameters).Cast<PSObject>().Select(x => new ShowCommandParameterInfo(x)).ToArray();
         }

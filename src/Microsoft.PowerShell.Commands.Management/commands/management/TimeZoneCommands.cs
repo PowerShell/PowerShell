@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
                     NativeMethods.CloseHandle(hToken);
                 }
 
-                return (hasAccess);
+                return hasAccess;
             }
         }
 
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PrivilegeCount = 1,
                     Luid = 0,
-                    Attributes = (enable ? NativeMethods.SE_PRIVILEGE_ENABLED : 0),
+                    Attributes = enable ? NativeMethods.SE_PRIVILEGE_ENABLED : 0,
                 };
 
                 // lookup the Luid of the SeTimeZonePrivilege
@@ -729,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of HWND_BROADCAST constant from Win32 API.
             /// </summary>
-            public const int HWND_BROADCAST = (-1);
+            public const int HWND_BROADCAST = -1;
 
             /// <summary>
             /// Definition of SMTO_ABORTIFHUNG constant from Win32 API.
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (tzi.ToArray());
+            return tzi.ToArray();
         }
     }
 }

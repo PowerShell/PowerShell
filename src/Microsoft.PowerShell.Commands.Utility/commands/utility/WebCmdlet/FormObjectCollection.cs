@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                return (form);
+                return form;
             }
         }
     }

@@ -490,7 +490,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private CimGetInstance GetOperationAgent()
         {
-            return (this.AsyncOperation as CimGetInstance);
+            return this.AsyncOperation as CimGetInstance;
         }
 
         /// <summary>

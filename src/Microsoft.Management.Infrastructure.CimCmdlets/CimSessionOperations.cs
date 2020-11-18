@@ -646,7 +646,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     if (pattern.IsMatch(kvp.Key))
                     {
                         HashSet<CimSessionWrapper> wrappers = kvp.Value;
-                        foundSession = (wrappers.Count > 0);
+                        foundSession = wrappers.Count > 0;
                         foreach (CimSessionWrapper wrapper in wrappers)
                         {
                             if (!sessionIds.Contains(wrapper.SessionId))
@@ -686,7 +686,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if (this.curCimSessionsByComputerName.ContainsKey(computername))
                 {
                     HashSet<CimSessionWrapper> wrappers = this.curCimSessionsByComputerName[computername];
-                    foundSession = (wrappers.Count > 0);
+                    foundSession = wrappers.Count > 0;
                     foreach (CimSessionWrapper wrapper in wrappers)
                     {
                         if (!sessionIds.Contains(wrapper.SessionId))

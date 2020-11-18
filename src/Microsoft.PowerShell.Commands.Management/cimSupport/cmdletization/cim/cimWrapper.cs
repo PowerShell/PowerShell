@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     PSPropertyInfo protocolProperty = PSObject.AsPSObject(cimSession).Properties["Protocol"];
                     if ((protocolProperty != null) &&
                         (protocolProperty.Value != null) &&
-                        (protocolProperty.Value.ToString().Equals("DCOM", StringComparison.OrdinalIgnoreCase)))
+                        protocolProperty.Value.ToString().Equals("DCOM", StringComparison.OrdinalIgnoreCase))
                     {
                         bool sessionWasAlreadyTerminated;
                         terminatingErrorTracker.MarkSessionAsTerminated(cimSession, out sessionWasAlreadyTerminated);

@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
             if (localRunspace != null)
             {
                 var basePowerShell = localRunspace.GetCurrentBasePowerShell();
-                if ((basePowerShell != null) && (basePowerShell.IsNested))
+                if ((basePowerShell != null) && basePowerShell.IsNested)
                 {
                     return;
                 }
@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Handle new item.
-                if ((_debugBlockingCollection != null) && (_debugBlockingCollection.IsOpen))
+                if ((_debugBlockingCollection != null) && _debugBlockingCollection.IsOpen)
                 {
                     AddToDebugBlockingCollection(streamItem);
                 }

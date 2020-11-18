@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
             // if only unique is mentioned
-            else if ((_unique))
+            else if (_unique)
             {
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
@@ -803,14 +803,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_first != 0)
                 {
-                    while ((_selectObjectQueue.Count > 0))
+                    while (_selectObjectQueue.Count > 0)
                     {
                         ProcessObjectAndHandleErrors(_selectObjectQueue.Dequeue());
                     }
                 }
                 else
                 {
-                    while ((_selectObjectQueue.Count > 0))
+                    while (_selectObjectQueue.Count > 0)
                     {
                         int lenQueue = _selectObjectQueue.Count;
                         if (lenQueue > Skip)

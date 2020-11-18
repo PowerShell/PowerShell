@@ -692,17 +692,17 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile
         {
-            get { return (QualifyFilePath(OutFile)); }
+            get { return QualifyFilePath(OutFile); }
         }
 
         internal bool ShouldSaveToOutFile
         {
-            get { return (!string.IsNullOrEmpty(OutFile)); }
+            get { return !string.IsNullOrEmpty(OutFile); }
         }
 
         internal bool ShouldWriteToPipeline
         {
-            get { return (!ShouldSaveToOutFile || PassThru); }
+            get { return !ShouldSaveToOutFile || PassThru; }
         }
 
         internal bool ShouldCheckHttpStatus
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal bool ShouldResume
         {
-            get { return (Resume.IsPresent && _resumeSuccess); }
+            get { return Resume.IsPresent && _resumeSuccess; }
         }
 
         #endregion Helper Properties
@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.Commands
                 uri = new Uri("http://" + uri.OriginalString);
             }
 
-            return (uri);
+            return uri;
         }
 
         private string QualifyFilePath(string path)
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var ex = new ValidationMetadataException(msg);
             var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
-            return (error);
+            return error;
         }
 
         private ErrorRecord GetValidationError(string msg, string errorId, params object[] args)
@@ -810,17 +810,17 @@ namespace Microsoft.PowerShell.Commands
             msg = string.Format(CultureInfo.InvariantCulture, msg, args);
             var ex = new ValidationMetadataException(msg);
             var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
-            return (error);
+            return error;
         }
 
         private bool IsStandardMethodSet()
         {
-            return (ParameterSetName == "StandardMethod");
+            return ParameterSetName == "StandardMethod";
         }
 
         private bool IsCustomMethodSet()
         {
-            return (ParameterSetName == "CustomMethod");
+            return ParameterSetName == "CustomMethod";
         }
 
         private string GetBasicAuthorizationHeader()
@@ -1162,7 +1162,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (request);
+            return request;
         }
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
@@ -1297,11 +1297,11 @@ namespace Microsoft.PowerShell.Commands
         {
             int intCode = (int)code;
             return
-            (
+            
                 (intCode >= 300 && intCode < 304)
                 ||
                 intCode == 307
-            );
+            ;
         }
 
         // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
@@ -1309,7 +1309,7 @@ namespace Microsoft.PowerShell.Commands
         private static bool IsRedirectToGet(HttpStatusCode code)
         {
             return
-            (
+            
                 code == HttpStatusCode.Found
                 ||
                 code == HttpStatusCode.Moved
@@ -1323,7 +1323,7 @@ namespace Microsoft.PowerShell.Commands
                 code == HttpStatusCode.Ambiguous
                 ||
                 code == HttpStatusCode.MultipleChoices
-            );
+            ;
         }
 
         private bool ShouldRetry(HttpStatusCode code)
@@ -1390,8 +1390,8 @@ namespace Microsoft.PowerShell.Commands
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
                 if (Resume.IsPresent &&
                     response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
-                    (response.Content.Headers.ContentRange.HasLength &&
-                    response.Content.Headers.ContentRange.Length != _resumeFileSize))
+                    response.Content.Headers.ContentRange.HasLength &&
+                    response.Content.Headers.ContentRange.Length != _resumeFileSize)
                 {
                     _cancelToken.Cancel();
 
@@ -1814,7 +1814,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(content));
 
             string body = FormatDictionary(content);
-            return (SetRequestContent(request, body));
+            return SetRequestContent(request, body);
         }
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)

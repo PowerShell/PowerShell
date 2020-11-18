@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
                 while (!completed)
                 {
                     // If this is the last input data, flush the decoder's internal buffer and state.
-                    bool flush = (bytesRead == 0);
+                    bool flush = bytesRead == 0;
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
                                     chars, 0, useBufferSize, flush,
                                     out bytesUsed, out charsUsed, out completed);

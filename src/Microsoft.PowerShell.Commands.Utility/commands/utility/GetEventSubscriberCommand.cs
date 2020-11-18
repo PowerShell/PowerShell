@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool lookingForSource = (_sourceIdentifier != null) &&
                     (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
-                bool lookingForId = (SubscriptionId >= 0);
+                bool lookingForId = SubscriptionId >= 0;
 
                 if (lookingForSource || lookingForId)
                 {

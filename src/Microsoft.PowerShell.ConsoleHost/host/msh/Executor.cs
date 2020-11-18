@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell
             // Check for implicit remoting commands that can be batched, and execute as batched if able.
             if (ExperimentalFeature.IsEnabled("PSImplicitRemotingBatching"))
             {
-                var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
+                var addOutputter = (options & ExecutionOptions.AddOutputter) > 0;
                 if (addOutputter &&
                     !_parent.RunspaceRef.IsRunspaceOverridden &&
                     _parent.RunspaceRef.Runspace.ExecutionContext.Modules != null &&
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell
 
                     var lastCmd = executeCommands.Last();
                     if (!((lastCmd.CommandText != null) &&
-                          (lastCmd.CommandText.Equals("Out-Default", StringComparison.OrdinalIgnoreCase)))
+                          lastCmd.CommandText.Equals("Out-Default", StringComparison.OrdinalIgnoreCase))
                        )
                     {
                         // Ensure pipeline output goes to Out-Default.
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell
 
                 // we got back one or more objects.
 
-                result = (streamResults.Count > 1) || (LanguagePrimitives.IsTrue(streamResults[0]));
+                result = (streamResults.Count > 1) || LanguagePrimitives.IsTrue(streamResults[0]);
             }
             while (false);
 

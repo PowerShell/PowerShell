@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
-            if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
+            if (_cssuriSpecified && string.IsNullOrEmpty(_cssuri.OriginalString.Trim()))
             {
                 ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, "CSSUri");

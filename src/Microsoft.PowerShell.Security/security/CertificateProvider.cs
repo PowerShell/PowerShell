@@ -834,7 +834,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // if the destination leads to the same thumbprint
                 if (destElements.Length == 3 &&
-                   (string.Equals(pathElements[2], destElements[2], StringComparison.OrdinalIgnoreCase)))
+                   string.Equals(pathElements[2], destElements[2], StringComparison.OrdinalIgnoreCase))
                 {
                     // in this case we think of destination path as valid
                     // and strip the thumbprint part
@@ -2774,7 +2774,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertContainsName(X509Certificate2 cert, WildcardPattern pattern)
         {
-            List<DnsNameRepresentation> list = (new DnsNameProperty(cert)).DnsNameList;
+            List<DnsNameRepresentation> list = new DnsNameProperty(cert).DnsNameList;
             foreach (DnsNameRepresentation dnsName in list)
             {
                 if (pattern.IsMatch(dnsName.Unicode))

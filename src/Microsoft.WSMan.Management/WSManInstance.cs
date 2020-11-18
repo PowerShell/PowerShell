@@ -86,7 +86,7 @@ namespace Microsoft.WSMan.Management
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (string.IsNullOrEmpty(computername) || computername.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     computername = "localhost";
                 }
@@ -399,7 +399,7 @@ namespace Microsoft.WSMan.Management
             string name;
             string value;
             string[] Split = filter.Trim().Split(new char[] { '=', ';' });
-            if ((Split.Length) % 2 != 0)
+            if (Split.Length % 2 != 0)
             {
                 // mismatched property name/value pair
                 return null;
@@ -414,7 +414,7 @@ namespace Microsoft.WSMan.Management
             }
 
             filter += "</wsman:SelectorSet>";
-            return (filter);
+            return filter;
         }
 
         private void ReturnEnumeration(IWSManEx wsmanObject, IWSManResourceLocator wsmanResourceLocator, IWSManSession wsmanSession)
@@ -667,7 +667,7 @@ namespace Microsoft.WSMan.Management
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (string.IsNullOrEmpty(computername) || computername.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     computername = "localhost";
                 }
@@ -1037,7 +1037,7 @@ namespace Microsoft.WSMan.Management
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (string.IsNullOrEmpty(computername) || computername.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     computername = "localhost";
                 }
@@ -1299,7 +1299,7 @@ namespace Microsoft.WSMan.Management
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (string.IsNullOrEmpty(computername) || computername.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     computername = "localhost";
                 }

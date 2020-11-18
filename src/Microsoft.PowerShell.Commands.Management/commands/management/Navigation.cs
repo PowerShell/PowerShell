@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // If the drive wasn't specified but the provider was
                     else if ((PSDrive == null || PSDrive.Length == 0) &&
-                             (PSProvider != null && PSProvider.Length > 0))
+                             PSProvider != null && PSProvider.Length > 0)
                     {
                         foreach (string providerName in PSProvider)
                         {
@@ -3717,7 +3717,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    CopyContainers copyContainers = (Container) ? CopyContainers.CopyTargetContainer : CopyContainers.CopyChildrenOfTargetContainer;
+                    CopyContainers copyContainers = Container ? CopyContainers.CopyTargetContainer : CopyContainers.CopyChildrenOfTargetContainer;
 
                     // Now do the copy
                     InvokeProvider.Item.Copy(path, Destination, Recurse, copyContainers, currentCommandContext);

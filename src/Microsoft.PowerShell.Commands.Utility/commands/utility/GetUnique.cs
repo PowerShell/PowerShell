@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (OnType)
             {
-                isUnique = (InputObject.InternalTypeNames[0] != _lastObject.InternalTypeNames[0]);
+                isUnique = InputObject.InternalTypeNames[0] != _lastObject.InternalTypeNames[0];
             }
             else if (AsString)
             {
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
                         true); // case-sensitive
                 }
 
-                isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
+                isUnique = _comparer.Compare(InputObject, _lastObject) != 0;
             }
 
             if (isUnique)

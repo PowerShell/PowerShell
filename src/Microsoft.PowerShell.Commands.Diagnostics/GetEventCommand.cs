@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Commands
                         if (((!WildcardPattern.ContainsWildcardCharacters(logPattern))
                             && string.Equals(logPattern, logName, StringComparison.OrdinalIgnoreCase))
                             ||
-                            (wildLogPattern.IsMatch(logName)))
+                            wildLogPattern.IsMatch(logName))
                         {
                             try
                             {
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Commands
                         if (((!WildcardPattern.ContainsWildcardCharacters(provPattern))
                             && string.Equals(provPattern, provName, StringComparison.OrdinalIgnoreCase))
                             ||
-                            (wildProvPattern.IsMatch(provName)))
+                            wildProvPattern.IsMatch(provName))
                         {
                             try
                             {
@@ -1631,9 +1631,9 @@ namespace Microsoft.PowerShell.Commands
         //
         private void CheckHashTableForQueryPathPresence(Hashtable hash)
         {
-            bool isLogHash = (hash.ContainsKey(hashkey_logname_lc));
-            bool isPathHash = (hash.ContainsKey(hashkey_path_lc));
-            bool isProviderHash = (hash.ContainsKey(hashkey_providername_lc));
+            bool isLogHash = hash.ContainsKey(hashkey_logname_lc);
+            bool isPathHash = hash.ContainsKey(hashkey_path_lc);
+            bool isProviderHash = hash.ContainsKey(hashkey_providername_lc);
 
             if (!isLogHash && !isProviderHash && !isPathHash)
             {
@@ -2068,9 +2068,9 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string actualLogName in eventLogSession.GetLogNames())
                 {
                     if (((!WildcardPattern.ContainsWildcardCharacters(logPattern))
-                        && (logPattern.Equals(actualLogName, StringComparison.OrdinalIgnoreCase)))
+                        && logPattern.Equals(actualLogName, StringComparison.OrdinalIgnoreCase))
                         ||
-                        (wildLogPattern.IsMatch(actualLogName)))
+                        wildLogPattern.IsMatch(actualLogName))
                     {
                         //
                         // Skip direct ETW channels matching wildcards unless -force is present.
@@ -2137,9 +2137,9 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string provName in eventLogSession.GetProviderNames())
                 {
                     if (((!WildcardPattern.ContainsWildcardCharacters(provPattern))
-                      && (provPattern.Equals(provName, StringComparison.OrdinalIgnoreCase)))
+                      && provPattern.Equals(provName, StringComparison.OrdinalIgnoreCase))
                       ||
-                      (wildProvPattern.IsMatch(provName)))
+                      wildProvPattern.IsMatch(provName))
                     {
                         WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Found matching provider: {0}", provName));
                         AddLogsForProviderToInternalMap(eventLogSession, provName);

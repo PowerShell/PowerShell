@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         internal static Encoding GetEncodingOrDefault(string characterSet)
         {
             // get the name of the codepage to use for response content
-            string codepage = (string.IsNullOrEmpty(characterSet) ? _defaultCodePage : characterSet);
+            string codepage = string.IsNullOrEmpty(characterSet) ? _defaultCodePage : characterSet;
             Encoding encoding = null;
 
             try
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
             || contentType.Equals("application/javascript", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("text/javascript", StringComparison.OrdinalIgnoreCase);
 
-            return (isJson);
+            return isJson;
         }
 
         private static bool CheckIsText(string contentType)
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (extensionKey != null)
                                 {
                                     string perceivedType = extensionKey.GetValue("PerceivedType") as string;
-                                    isText = (perceivedType == "text");
+                                    isText = perceivedType == "text";
                                 }
                             }
                         }
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (isText);
+            return isText;
         }
 
         private static bool CheckIsXml(string contentType)
@@ -193,12 +193,12 @@ namespace Microsoft.PowerShell.Commands
                 return false;
 
             // RFC 3023: Media types with the suffix "+xml" are XML
-            bool isXml = (contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
+            bool isXml = contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase));
+            || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase);
 
             isXml |= contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
-            return (isXml);
+            return isXml;
         }
 
         private static string GetContentTypeSignature(string contentType)
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
 
             string sig = contentType.Split(s_contentTypeParamSeparator, 2)[0].ToUpperInvariant();
-            return (sig);
+            return sig;
         }
 
         #endregion Private Helper Methods

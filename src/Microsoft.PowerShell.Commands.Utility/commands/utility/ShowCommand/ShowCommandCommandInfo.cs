@@ -81,13 +81,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             if (this.ParameterSets != null)
             {
                 // Simple case - the objects are still live because they came from in-proc. Just cast them back
-                this.CommandType = (CommandTypes)(other.Members["CommandType"].Value);
+                this.CommandType = (CommandTypes)other.Members["CommandType"].Value;
                 this.Module = other.Members["Module"].Value as ShowCommandModuleInfo;
             }
             else
             {
                 // Objects came in their deserialized form - recreate the object graph
-                this.CommandType = (CommandTypes)((other.Members["CommandType"].Value as PSObject).BaseObject);
+                this.CommandType = (CommandTypes)(other.Members["CommandType"].Value as PSObject).BaseObject;
 
                 var parameterSets = (other.Members["ParameterSets"].Value as PSObject).BaseObject as System.Collections.ArrayList;
                 this.ParameterSets = GetObjectEnumerable(parameterSets).Cast<PSObject>().Select(x => new ShowCommandParameterSetInfo(x)).ToList().AsReadOnly();

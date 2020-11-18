@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
                 // cache MyParameterSet enum instead of doing string comparison every time
                 if (_effectiveParameterSet == MyParameterSet.Unknown)
                 {
-                    if ((MyInvocation.ExpectingInput) && (Maximum == null) && (Minimum == null))
+                    if (MyInvocation.ExpectingInput && (Maximum == null) && (Minimum == null))
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (ParameterSetName.Equals(GetRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
                     {
-                        if ((Maximum != null) && (Maximum.GetType().IsArray))
+                        if ((Maximum != null) && Maximum.GetType().IsArray)
                         {
                             InputObject = (object[])Maximum;
                             _effectiveParameterSet = MyParameterSet.RandomListItem;
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
                 diffCopy >>= 1;
             }
             // Get the mask for the number of bits
-            UInt64 mask = (0xffffffffffffffff >> (64 - bitsToRepresentDiff));
+            UInt64 mask = 0xffffffffffffffff >> (64 - bitsToRepresentDiff);
             do
             {
                 // Randomly fill the buffer
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
             long range = (long)maxValue - (long)minValue;
             if (range <= int.MaxValue)
             {
-                randomNumber = ((int)(NextDouble() * range) + minValue);
+                randomNumber = (int)(NextDouble() * range) + minValue;
             }
             else
             {

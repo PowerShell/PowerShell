@@ -54,11 +54,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 throw new ArgumentNullException(nameof(other));
             }
 
-            this.IsEnum = (bool)(other.Members["IsEnum"].Value);
+            this.IsEnum = (bool)other.Members["IsEnum"].Value;
             this.FullName = other.Members["FullName"].Value as string;
-            this.IsArray = (bool)(other.Members["IsArray"].Value);
-            this.HasFlagAttribute = (bool)(other.Members["HasFlagAttribute"].Value);
-            this.ImplementsDictionary = (bool)(other.Members["ImplementsDictionary"].Value);
+            this.IsArray = (bool)other.Members["IsArray"].Value;
+            this.HasFlagAttribute = (bool)other.Members["HasFlagAttribute"].Value;
+            this.ImplementsDictionary = (bool)other.Members["ImplementsDictionary"].Value;
 
             if (this.IsArray)
             {

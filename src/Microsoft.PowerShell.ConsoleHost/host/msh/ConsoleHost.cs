@@ -2352,7 +2352,7 @@ namespace Microsoft.PowerShell
                 // The main (non-nested) input loop has Count == 1,
                 // so Count == 2 is the value that indicates the next
                 // popped stack input loop is non-nested.
-                return (s_instanceStack.Count > 2);
+                return s_instanceStack.Count > 2;
             }
 
             /// <summary>

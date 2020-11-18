@@ -1029,8 +1029,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             else if (
-                (ParameterSetName.Equals("Path", StringComparison.OrdinalIgnoreCase) ||
-                (ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))))
+                ParameterSetName.Equals("Path", StringComparison.OrdinalIgnoreCase) ||
+                ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
                 // If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();

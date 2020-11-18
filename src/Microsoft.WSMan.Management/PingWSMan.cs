@@ -40,7 +40,7 @@ namespace Microsoft.WSMan.Management
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (string.IsNullOrEmpty(computername) || computername.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     computername = "localhost";
                 }

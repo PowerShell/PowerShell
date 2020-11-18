@@ -789,7 +789,7 @@ $result
 
             if (Wait)
             {
-                _activityId = (new Random()).Next();
+                _activityId = new Random().Next();
                 if (_timeout == -1 || _timeout >= int.MaxValue / 1000)
                 {
                     _timeoutInMilliseconds = int.MaxValue;
@@ -906,7 +906,7 @@ $result
                         int loopCount = actualDelay * 4; // (delay * 1000)/250ms
                         while (loopCount > 0)
                         {
-                            WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
+                            WriteProgress(_indicator[indicatorIndex++ % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
 
                             loopCount--;
                             _waitHandler.Wait(250);
@@ -921,7 +921,7 @@ $result
                             if (_waitOnComputers.Count > 1)
                             {
                                 _status = StringUtil.Format(ComputerResources.WaitForMultipleComputers, machineCompleteRestart, _waitOnComputers.Count);
-                                WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
+                                WriteProgress(_indicator[indicatorIndex++ % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                             }
                         }
 
@@ -938,7 +938,7 @@ $result
                                 {
                                     _status = ComputerResources.VerifyRebootStage;
                                     _percent = CalculateProgressPercentage(StageVerification);
-                                    WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
+                                    WriteProgress(_indicator[indicatorIndex++ % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                 }
 
                                 List<string> nextTestList = (isForWmi || isForPowershell) ? wmiTestList : winrmTestList;
@@ -957,7 +957,7 @@ $result
                                     {
                                         _status = ComputerResources.WaitForWMI;
                                         _percent = CalculateProgressPercentage(WmiConnectionTest);
-                                        WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
+                                        WriteProgress(_indicator[indicatorIndex++ % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                     }
 
                                     wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, Credential, WsmanAuthentication, this, _cancel.Token);
@@ -988,7 +988,7 @@ $result
                                         loopCount = actualDelay * 4; // (delay * 1000)/250ms
                                         while (loopCount > 0)
                                         {
-                                            WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
+                                            WriteProgress(_indicator[indicatorIndex++ % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
 
                                             loopCount--;
                                             _waitHandler.Wait(250);
@@ -1009,7 +1009,7 @@ $result
                                 {
                                     _status = ComputerResources.WaitForPowerShell;
                                     _percent = CalculateProgressPercentage(PowerShellConnectionTest);
-                                    WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
+                                    WriteProgress(_indicator[indicatorIndex++ % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                 }
 
                                 psTestList = TestPowerShell(psTestList, allDoneList, _powershell, this.Credential);
@@ -1023,15 +1023,15 @@ $result
                         switch (_waitFor)
                         {
                             case WaitForServiceTypes.Wmi:
-                                waitComplete = (winrmTestList.Count == _waitOnComputers.Count);
+                                waitComplete = winrmTestList.Count == _waitOnComputers.Count;
                                 machineCompleteRestart = winrmTestList.Count;
                                 break;
                             case WaitForServiceTypes.WinRM:
-                                waitComplete = (psTestList.Count == _waitOnComputers.Count);
+                                waitComplete = psTestList.Count == _waitOnComputers.Count;
                                 machineCompleteRestart = psTestList.Count;
                                 break;
                             case WaitForServiceTypes.PowerShell:
-                                waitComplete = (allDoneList.Count == _waitOnComputers.Count);
+                                waitComplete = allDoneList.Count == _waitOnComputers.Count;
                                 machineCompleteRestart = allDoneList.Count;
                                 break;
                         }
@@ -1224,7 +1224,7 @@ $result
 
                 if (_cancel.Token.IsCancellationRequested) { break; }
 
-                if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (computer.Equals("localhost", StringComparison.OrdinalIgnoreCase) || computer.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     compname = Dns.GetHostName();
                     strLocal = "localhost";
@@ -1933,7 +1933,7 @@ $result
                     i++;
                 }
 
-                if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if (computer.Equals("localhost", StringComparison.OrdinalIgnoreCase) || computer.Equals(".", StringComparison.OrdinalIgnoreCase))
                 {
                     compname = Dns.GetHostName();
                 }

@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
                                                                    drivePath);
             }
 
-            if (_force || (ShouldProcess(clearRecycleBinShouldProcessTarget, "Clear-RecycleBin")))
+            if (_force || ShouldProcess(clearRecycleBinShouldProcessTarget, "Clear-RecycleBin"))
             {
                 // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified driveName.
 

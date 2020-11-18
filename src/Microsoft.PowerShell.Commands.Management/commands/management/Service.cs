@@ -1069,7 +1069,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             RemoveNotStoppedServices(stoppedServices);
-            if ((serviceController.Status.Equals(ServiceControllerStatus.Stopped)) || (serviceController.Status.Equals(ServiceControllerStatus.StopPending)))
+            if (serviceController.Status.Equals(ServiceControllerStatus.Stopped) || serviceController.Status.Equals(ServiceControllerStatus.StopPending))
             {
                 stoppedServices.Add(serviceController);
             }

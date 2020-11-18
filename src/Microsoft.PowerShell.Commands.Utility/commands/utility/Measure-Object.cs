@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands
                 if (stat.count == 0 && Property != null)
                 {
                     // Why are there two different ids for this error?
-                    string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
+                    string errorId = IsMeasuringGeneric ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
                     WritePropertyNotFoundError(propertyName, errorId);
                     continue;
                 }

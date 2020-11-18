@@ -646,8 +646,8 @@ namespace Microsoft.PowerShell
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
 
-            return (switchKey.Length >= smallestUnambiguousMatch.Length
-                    && match.IndexOf(switchKey, StringComparison.Ordinal) == 0);
+            return switchKey.Length >= smallestUnambiguousMatch.Length
+                    && match.IndexOf(switchKey, StringComparison.Ordinal) == 0;
         }
 
         #endregion

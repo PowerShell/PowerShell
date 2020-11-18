@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             var outParameters = allParameters_plus_returnValue
-                .Where(p => ((p.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)) != 0));
+                .Where(p => (p.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)) != 0);
 
             return outParameters;
         }
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal bool IsPassThruObjectNeeded()
         {
-            return (_passThru) && (!this.DidUserSuppressTheOperation) && (!this.JobHadErrors);
+            return _passThru && (!this.DidUserSuppressTheOperation) && (!this.JobHadErrors);
         }
 
         public override void OnCompleted()

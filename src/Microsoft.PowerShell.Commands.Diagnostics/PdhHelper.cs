@@ -689,7 +689,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             Int32 cChars = pCounterBufferSize.ToInt32();
             IntPtr strCountersList = (cChars > 0) ?
-                Marshal.AllocHGlobal((cChars) * sizeof(char)) : IntPtr.Zero;
+                Marshal.AllocHGlobal(cChars * sizeof(char)) : IntPtr.Zero;
             // re-set count to 0 if it is lte 2
             if (cChars < 0)
             {
@@ -698,7 +698,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             cChars = pInstanceBufferSize.ToInt32();
             IntPtr strInstancesList = (cChars > 0) ?
-                Marshal.AllocHGlobal((cChars) * sizeof(char)) : IntPtr.Zero;
+                Marshal.AllocHGlobal(cChars * sizeof(char)) : IntPtr.Zero;
 
             // re-set count to 0 if it is lte 2
             if (cChars < 0)
@@ -808,7 +808,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 {
                     outPath = Marshal.PtrToStringUni(strPath);
 
-                    ret = (PdhValidatePathEx(_hDataSource, outPath) == PdhResults.PDH_CSTATUS_VALID_DATA);
+                    ret = PdhValidatePathEx(_hDataSource, outPath) == PdhResults.PDH_CSTATUS_VALID_DATA;
                 }
             }
             finally
@@ -821,7 +821,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         public bool IsPathValid(string path)
         {
-            return (PdhValidatePathEx(_hDataSource, path) == PdhResults.PDH_CSTATUS_VALID_DATA);
+            return PdhValidatePathEx(_hDataSource, path) == PdhResults.PDH_CSTATUS_VALID_DATA;
         }
 
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)

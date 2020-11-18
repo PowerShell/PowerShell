@@ -342,7 +342,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private CimSetCimInstance GetOperationAgent()
         {
-            return (this.AsyncOperation as CimSetCimInstance);
+            return this.AsyncOperation as CimSetCimInstance;
         }
 
         /// <summary>

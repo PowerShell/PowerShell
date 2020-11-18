@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
                                     if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                                     {
                                         // Make sure the file is not read only
-                                        fInfo.Attributes &= ~(FileAttributes.ReadOnly);
+                                        fInfo.Attributes &= ~FileAttributes.ReadOnly;
                                     }
                                 }
                             }

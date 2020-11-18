@@ -20,7 +20,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         protected override bool ReleaseHandle()
         {
-            return (PdhHelper.PdhCloseLog(handle, 0) == 0);
+            return PdhHelper.PdhCloseLog(handle, 0) == 0;
         }
     }
 
@@ -38,7 +38,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         protected override bool ReleaseHandle()
         {
-            return (PdhHelper.PdhCloseQuery(handle) == 0);
+            return PdhHelper.PdhCloseQuery(handle) == 0;
         }
     }
 
@@ -56,7 +56,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         protected override bool ReleaseHandle()
         {
-            return (PdhHelper.PdhCloseLog(handle, 0) == 0);
+            return PdhHelper.PdhCloseLog(handle, 0) == 0;
         }
     }
 }

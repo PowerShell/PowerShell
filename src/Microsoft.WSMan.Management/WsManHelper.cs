@@ -502,7 +502,7 @@ namespace Microsoft.WSMan.Management
 
         internal string GetXmlNs(string resUri)
         {
-            return (@"xmlns:p=""" + StripParams(resUri) + @"""");
+            return @"xmlns:p=""" + StripParams(resUri) + @"""";
         }
 
         internal XmlNode GetXmlNode(string xmlString, string xpathpattern, string xmlnamespace)
