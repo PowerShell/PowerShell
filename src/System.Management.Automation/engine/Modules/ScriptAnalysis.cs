@@ -335,10 +335,7 @@ namespace System.Management.Automation
 
                 List<string> commandsToPostFilter = new List<string>();
 
-                Action<string> onEachCommand = importedCommandName =>
-                {
-                    commandsToPostFilter.Add(importedCommandName);
-                };
+                Action<string> onEachCommand = importedCommandName => commandsToPostFilter.Add(importedCommandName);
 
                 // Process any exports from the module that we determine from
                 // the -Function, -Cmdlet, or -Alias parameters
@@ -547,7 +544,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
+        private static readonly Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
 
         private class ParameterBindingInfo
         {

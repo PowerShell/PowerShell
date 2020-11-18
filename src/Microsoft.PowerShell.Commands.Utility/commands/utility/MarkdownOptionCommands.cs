@@ -3,13 +3,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-using System.Threading.Tasks;
 
 using Microsoft.PowerShell.MarkdownRender;
 
@@ -271,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class PSMarkdownOptionInfoCache
     {
-        private static ConcurrentDictionary<Guid, PSMarkdownOptionInfo> markdownOptionInfoCache;
+        private static readonly ConcurrentDictionary<Guid, PSMarkdownOptionInfo> markdownOptionInfoCache;
 
         private const string MarkdownOptionInfoVariableName = "PSMarkdownOptionInfo";
 

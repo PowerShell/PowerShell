@@ -160,8 +160,7 @@ namespace System.Management.Automation.Language
 
         private static bool IsNullDivisor(ExpressionAst operand)
         {
-            var varExpr = operand as VariableExpressionAst;
-            if (varExpr == null)
+            if (!(operand is VariableExpressionAst varExpr))
             {
                 return false;
             }
@@ -261,7 +260,7 @@ namespace System.Management.Automation.Language
 
         public object VisitMemberExpression(MemberExpressionAst memberExpressionAst)
         {
-            if (!memberExpressionAst.Static || !(memberExpressionAst.Expression is TypeExpressionAst))
+            if (!memberExpressionAst.Static || memberExpressionAst.Expression is not TypeExpressionAst)
             {
                 return false;
             }
@@ -272,8 +271,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var member = memberExpressionAst.Member as StringConstantExpressionAst;
-            if (member == null)
+            if (!(memberExpressionAst.Member is StringConstantExpressionAst member))
             {
                 return false;
             }

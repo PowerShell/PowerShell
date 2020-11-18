@@ -146,4 +146,3 @@ namespace System.Management.Automation.Provider
 
     #endregion IContentCmdletProvider
 }
-

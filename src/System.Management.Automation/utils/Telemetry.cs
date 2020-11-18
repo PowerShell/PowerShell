@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.
         /// If it's not in the list (initialized in the static constructor), then we report anonymous.
-        private static HashSet<string> s_knownModules;
+        private static readonly HashSet<string> s_knownModules;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
         public static bool CanSendTelemetry { get; private set; }
@@ -389,7 +389,11 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerShell.Management",
                         "Microsoft.PowerShell.ODataUtils",
                         "Microsoft.PowerShell.Operation.Validation",
+                        "Microsoft.PowerShell.RemotingTools",
+                        "Microsoft.PowerShell.SecretManagement",
+                        "Microsoft.PowerShell.SecretStore",
                         "Microsoft.PowerShell.Security",
+                        "Microsoft.PowerShell.TextUtility",
                         "Microsoft.PowerShell.Utility",
                         "Microsoft.SharePoint.Powershell",
                         "Microsoft.SystemCenter.ServiceManagementAutomation",

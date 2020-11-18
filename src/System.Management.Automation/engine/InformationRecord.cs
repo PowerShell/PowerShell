@@ -29,7 +29,7 @@ namespace System.Management.Automation
 
             this.TimeGenerated = DateTime.Now;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
-            this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
+            this.ManagedThreadId = (uint)Environment.CurrentManagedThreadId;
         }
 
         private InformationRecord() { }
@@ -137,7 +137,7 @@ namespace System.Management.Automation
             {
                 if (!this._processId.HasValue)
                 {
-                    this._processId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+                    this._processId = (uint)Environment.ProcessId;
                 }
 
                 return this._processId.Value;

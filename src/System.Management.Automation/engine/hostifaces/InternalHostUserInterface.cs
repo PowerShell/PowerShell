@@ -517,7 +517,7 @@ namespace System.Management.Automation.Internal.Host
                         endLoop = false;
                         break;
                 }
-            } while (endLoop != true);
+            } while (!endLoop);
 
             return shouldContinue;
         }
@@ -680,12 +680,12 @@ namespace System.Management.Automation.Internal.Host
 
         internal static bool IsSecuritySensitiveType(string typeName)
         {
-            if (typeName.Equals(typeof(PSCredential).Name, StringComparison.OrdinalIgnoreCase))
+            if (typeName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (typeName.Equals(typeof(SecureString).Name, StringComparison.OrdinalIgnoreCase))
+            if (typeName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -1020,10 +1020,9 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-        private PSHostUserInterface _externalUI = null;
-        private InternalHostRawUserInterface _internalRawUI = null;
-        private InternalHost _parent = null;
+        private readonly PSHostUserInterface _externalUI = null;
+        private readonly InternalHostRawUserInterface _internalRawUI = null;
+        private readonly InternalHost _parent = null;
         private PSInformationalBuffers _informationalBuffers = null;
     }
 }
-

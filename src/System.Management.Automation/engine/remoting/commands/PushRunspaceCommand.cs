@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Disable ThrottleLimit parameter inherited from base class.
         /// </summary>
-        public new int ThrottleLimit { set { } get { return 0; } }
+        public new int ThrottleLimit { get { return 0; } set { } }
 
         private ObjectStream _stream;
         private RemoteRunspace _tempRunspace;
@@ -651,10 +651,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             string message = StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, eventArgs.Data.OriginalString);
-            Action<Cmdlet> streamObject = delegate (Cmdlet cmdlet)
-            {
-                cmdlet.WriteWarning(message);
-            };
+            Action<Cmdlet> streamObject = (Cmdlet cmdlet) => cmdlet.WriteWarning(message);
             _stream.Write(streamObject);
         }
 
@@ -794,10 +791,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingRunspaceId(Guid remoteRunspaceId)
         {
-            Predicate<PSSession> condition = delegate (PSSession info)
-            {
-                return info.InstanceId == remoteRunspaceId;
-            };
+            Predicate<PSSession> condition = (PSSession info) => info.InstanceId == remoteRunspaceId;
             PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
             PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId;
             string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
@@ -810,10 +804,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingSessionId(int sessionId)
         {
-            Predicate<PSSession> condition = delegate (PSSession info)
-            {
-                return info.Id == sessionId;
-            };
+            Predicate<PSSession> condition = (PSSession info) => info.Id == sessionId;
             PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedSessionId;
             PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId;
             string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedSessionId;
@@ -826,7 +817,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingName(string name)
         {
-            Predicate<PSSession> condition = delegate (PSSession info)
+            Predicate<PSSession> condition = (PSSession info) =>
             {
                 // doing case-insensitive match for session name
                 return info.Name.Equals(name, StringComparison.OrdinalIgnoreCase);

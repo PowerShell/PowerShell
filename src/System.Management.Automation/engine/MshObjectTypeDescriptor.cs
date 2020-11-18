@@ -218,13 +218,12 @@ namespace System.Management.Automation
             PSObject mshObj = component as PSObject;
             if (mshObj == null)
             {
-                PSObjectTypeDescriptor descriptor = component as PSObjectTypeDescriptor;
-                if (descriptor == null)
+                if (!(component is PSObjectTypeDescriptor descriptor))
                 {
                     throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
                                                              "component",
-                                                             typeof(PSObject).Name,
-                                                             typeof(PSObjectTypeDescriptor).Name);
+                                                             nameof(PSObject),
+                                                             nameof(PSObjectTypeDescriptor));
                 }
 
                 mshObj = descriptor.Instance;
@@ -467,8 +466,7 @@ namespace System.Management.Automation
         /// <returns>True if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            PSObjectTypeDescriptor other = obj as PSObjectTypeDescriptor;
-            if (other == null)
+            if (!(obj is PSObjectTypeDescriptor other))
             {
                 return false;
             }
@@ -771,4 +769,3 @@ namespace System.Management.Automation
         }
     }
 }
-

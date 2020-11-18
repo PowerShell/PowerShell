@@ -342,10 +342,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                if (handler != null)
-                {
-                    handler(this, eventArgs);
-                }
+                handler?.Invoke(this, eventArgs);
             }
             catch (Exception exception)
             {
@@ -888,7 +885,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Exiting method", null);
         }
 
-        private static Tracer s_structuredTracer = new Tracer();
+        private static readonly Tracer s_structuredTracer = new Tracer();
 
         /// <summary>
         /// Starts all child jobs asynchronously.
@@ -2058,7 +2055,7 @@ namespace System.Management.Automation
 
                 if (i < (ChildJobs.Count - 1))
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
             }
 
@@ -2169,14 +2166,14 @@ namespace System.Management.Automation
         /// </summary>
         public Exception Reason { get { return _reason; } }
 
-        private Exception _reason;
+        private readonly Exception _reason;
 
         /// <summary>
         /// The user-focused location from where this error originated.
         /// </summary>
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
 
-        private ScriptExtent _displayScriptPosition;
+        private readonly ScriptExtent _displayScriptPosition;
 
         /// <summary>
         /// Gets the information for serialization.

@@ -2,9 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Diagnostics;
-using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
@@ -100,4 +98,3 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         }
     }
 }
-

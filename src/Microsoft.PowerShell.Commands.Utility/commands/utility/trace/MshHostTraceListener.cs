@@ -4,7 +4,6 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
-using System.Security.Permissions;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands
@@ -88,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private StringBuilder _cachedWrite = new StringBuilder();
+        private readonly StringBuilder _cachedWrite = new StringBuilder();
 
         /// <summary>
         /// Sends the given output string to the host for processing.
@@ -116,6 +115,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The host interface to write the debug line to.
         /// </summary>
-        private InternalHostUserInterface _ui;
+        private readonly InternalHostUserInterface _ui;
     }
 }

@@ -10,8 +10,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -419,7 +417,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     TraceListener listenerToRemove = source.Listeners[index];
 
-                    if (fileListenersOnly && !(listenerToRemove is TextWriterTraceListener))
+                    if (fileListenersOnly && listenerToRemove is not TextWriterTraceListener)
                     {
                         // Since we only want to remove file listeners, skip any that
                         // aren't file listeners
@@ -597,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
             _storedTraceSourceState.Clear();
         }
 
-        private Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>> _storedTraceSourceState =
+        private readonly Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>> _storedTraceSourceState =
             new Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>>();
 
         #endregion stored state

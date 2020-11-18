@@ -221,7 +221,7 @@ namespace System.Management.Automation.Interpreter
                     return null;
                 }
                 // return the last one that is smaller
-                i = i - 1;
+                i -= 1;
             }
 
             return debugInfos[i];
@@ -288,7 +288,7 @@ namespace System.Management.Automation.Interpreter
 
         private readonly LightCompiler _parent;
 
-        private static LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
+        private static readonly LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
 
         public LightCompiler(int compilationThreshold)
         {
@@ -1297,8 +1297,7 @@ namespace System.Management.Automation.Interpreter
 
         private void DefineBlockLabels(Expression node)
         {
-            var block = node as BlockExpression;
-            if (block == null)
+            if (!(node is BlockExpression block))
             {
                 return;
             }

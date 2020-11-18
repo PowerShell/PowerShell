@@ -3,8 +3,8 @@
 
 #region Using directives
 using System;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 using Microsoft.Management.Infrastructure.Options;
 
 #endregion

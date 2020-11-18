@@ -341,7 +341,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         private const string _threadName = "IPC Listener Thread";
         private const int _namedPipeBufferSizeForRemoting = 32768;
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Remoting
         private const int _maxPipePathLengthMacOS = 104;
 
         // Singleton server.
-        private static object s_syncObject;
+        private static readonly object s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
 
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
-            string processId = System.Diagnostics.Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture);
+            string processId = Environment.ProcessId.ToString(CultureInfo.InvariantCulture);
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
             // Logging.
@@ -900,10 +900,7 @@ namespace System.Management.Automation.Remoting
 
             ManualResetEventSlim clientConnectionEnded = new ManualResetEventSlim(false);
             IPCNamedPipeServer.ListenerEnded -= OnIPCNamedPipeServerEnded;
-            IPCNamedPipeServer.ListenerEnded += (sender, e) =>
-                {
-                    clientConnectionEnded.Set();
-                };
+            IPCNamedPipeServer.ListenerEnded += (sender, e) => clientConnectionEnded.Set();
 
             // Wait for server to service a single client connection.
             clientConnectionEnded.Wait();
@@ -1010,7 +1007,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private NamedPipeClientStream _clientPipeStream;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         protected string _pipeName;
 

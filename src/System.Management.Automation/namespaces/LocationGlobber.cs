@@ -25,7 +25,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.");
 
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "PathResolution",
              "Traces the path resolution algorithm.")]
-        private static Dbg.PSTraceSource s_pathResolutionTracer =
+        private static readonly Dbg.PSTraceSource s_pathResolutionTracer =
             Dbg.PSTraceSource.GetTracer(
                 "PathResolution",
                 "Traces the path resolution algorithm.",
@@ -1654,7 +1654,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state on which this globber acts.
         /// </summary>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         /// <summary>
         /// Removes the back tick "`" from any of the glob characters in the path.

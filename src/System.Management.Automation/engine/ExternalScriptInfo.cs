@@ -608,4 +608,3 @@ namespace System.Management.Automation
         public Version Version { get; internal set; }
     }
 }
-

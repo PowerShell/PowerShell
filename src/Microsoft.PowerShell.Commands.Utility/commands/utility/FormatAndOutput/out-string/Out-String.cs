@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
-using System.Management.Automation.Host;
 using System.Text;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
@@ -166,6 +164,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Buffer used when buffering until the end.
         /// </summary>
-        private StringBuilder _buffer = new StringBuilder();
+        private readonly StringBuilder _buffer = new StringBuilder();
     }
 }

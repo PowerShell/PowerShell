@@ -32,25 +32,25 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.
         /// [State,Event]=>Action.
         /// </summary>
-        private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
-        private Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
+        private readonly EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
+        private readonly Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
 
         /// <summary>
         /// Current state of session.
         /// </summary>
         private RemoteSessionState _state;
 
-        private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
+        private readonly Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
         // all events raised through the state machine
         // will be queued in this
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         // object for synchronizing access to the above
         // queue
 
@@ -161,7 +161,7 @@ namespace System.Management.Automation.Remoting
         /// Unique identifier for this state machine. Used
         /// in tracing.
         /// </summary>
-        private Guid _id;
+        private readonly Guid _id;
 
         /// <summary>
         /// Handler to be used in cases, where setting the state is the
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Remoting
                         Dbg.Assert(_state >= RemoteSessionState.Established,
                             "Client can send a public key only after reaching the Established state");
 
-                        Dbg.Assert(_keyExchanged == false, "Client should do key exchange only once");
+                        Dbg.Assert(!_keyExchanged, "Client should do key exchange only once");
 
                         if (_state == RemoteSessionState.Established ||
                             _state == RemoteSessionState.EstablishedAndKeyRequested)

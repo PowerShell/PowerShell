@@ -105,7 +105,7 @@ namespace System.Management.Automation
                     {
                         if (attribute is CmdletBindingAttribute c)
                         {
-                            cmdletBindingAttribute = cmdletBindingAttribute ?? c;
+                            cmdletBindingAttribute ??= c;
                         }
                         else if (attribute is DebuggerHiddenAttribute)
                         {
@@ -193,8 +193,7 @@ namespace System.Management.Automation
 
         private void PerformSecurityChecks()
         {
-            var scriptBlockAst = Ast as ScriptBlockAst;
-            if (scriptBlockAst == null)
+            if (!(Ast is ScriptBlockAst scriptBlockAst))
             {
                 // Checks are only needed at the top level.
                 return;
@@ -263,14 +262,12 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
-                if (pipelineAst == null)
+                if (!(endBlock.Statements[0] is PipelineAst pipelineAst))
                 {
                     return false;
                 }
 
-                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
-                if (hashtableAst == null)
+                if (!(pipelineAst.GetPureExpression() is HashtableAst hashtableAst))
                 {
                     return false;
                 }
@@ -726,7 +723,7 @@ namespace System.Management.Automation
         internal SteppablePipeline GetSteppablePipelineImpl(CommandOrigin commandOrigin, object[] args)
         {
             var pipelineAst = GetSimplePipeline(
-                resourceString => { throw PSTraceSource.NewInvalidOperationException(resourceString); });
+                resourceString => throw PSTraceSource.NewInvalidOperationException(resourceString));
             Diagnostics.Assert(pipelineAst != null, "This should be checked by GetSimplePipeline");
 
             if (pipelineAst.PipelineElements[0] is not CommandAst)
@@ -739,7 +736,7 @@ namespace System.Management.Automation
 
         private PipelineAst GetSimplePipeline(Func<string, PipelineAst> errorHandler)
         {
-            errorHandler = errorHandler ?? (_ => null);
+            errorHandler ??= (_ => null);
 
             if (HasBeginBlock || HasProcessBlock)
             {
@@ -763,8 +760,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
 
-            var pipeAst = statements[0] as PipelineAst;
-            if (pipeAst == null)
+            if (!(statements[0] is PipelineAst pipeAst))
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
@@ -833,7 +829,7 @@ namespace System.Management.Automation
             set { _scriptBlockData.SkipLogging = value; }
         }
 
-        internal Assembly AssemblyDefiningPSTypes { set; get; }
+        internal Assembly AssemblyDefiningPSTypes { get; set; }
 
         internal HelpInfo GetHelpInfo(
             ExecutionContext context,
@@ -1716,12 +1712,12 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
 
-        private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
+        private static readonly Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
@@ -2001,7 +1997,7 @@ namespace System.Management.Automation
                     uint h = text[i];
                     if (h >= 'A' && h <= 'Z')
                     {
-                        h = h | 0x20; // ToLower
+                        h |= 0x20; // ToLower
                     }
                     else if (!((h >= 'a' && h <= 'z') || h == '-'))
                     {
@@ -2185,7 +2181,7 @@ namespace System.Management.Automation
         private readonly bool _fromScriptFile;
         private readonly bool _useLocalScope;
         private readonly bool _runOptimized;
-        private bool _rethrowExitException;
+        private readonly bool _rethrowExitException;
         private MshCommandRuntime _commandRuntime;
         private readonly MutableTuple _localsTuple;
         private bool _exitWasCalled;

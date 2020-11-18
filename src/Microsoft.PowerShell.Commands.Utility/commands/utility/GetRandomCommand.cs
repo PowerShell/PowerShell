@@ -109,10 +109,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Random generator state
 
-        private static ReaderWriterLockSlim s_runspaceGeneratorMapLock = new ReaderWriterLockSlim();
+        private static readonly ReaderWriterLockSlim s_runspaceGeneratorMapLock = new ReaderWriterLockSlim();
 
         // 1-to-1 mapping of runspaces and random number generators
-        private static Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new Dictionary<Guid, PolymorphicRandomNumberGenerator>();
+        private static readonly Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new Dictionary<Guid, PolymorphicRandomNumberGenerator>();
 
         private static void CurrentRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
         {
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     double r = Generator.NextDouble();
                     randomNumber = minValue + r * diff;
-                    diff = diff * r;
+                    diff *= r;
                 }
                 while (randomNumber >= maxValue);
             }
@@ -597,8 +597,8 @@ namespace Microsoft.PowerShell.Commands
             _pseudoGenerator = new Random(seed);
         }
 
-        private Random _pseudoGenerator = null;
-        private RandomNumberGenerator _cryptographicGenerator = null;
+        private readonly Random _pseudoGenerator = null;
+        private readonly RandomNumberGenerator _cryptographicGenerator = null;
 
         /// <summary>
         /// Generates a random floating-point number that is greater than or equal to 0.0, and less than 1.0.

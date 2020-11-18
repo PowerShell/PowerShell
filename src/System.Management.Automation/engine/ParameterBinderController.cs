@@ -459,7 +459,7 @@ namespace System.Management.Automation
                     throw bindingException;
                 }
 
-                flags = flags & ~ParameterBindingFlags.DelayBindScriptBlock;
+                flags &= ~ParameterBindingFlags.DelayBindScriptBlock;
                 result = BindParameter(_currentParameterSetFlag, argument, matchingParameter, flags);
             }
 
@@ -1324,4 +1324,3 @@ namespace System.Management.Automation
         #endregion internal_members
     }
 }
-

@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
                 return Encoding.Unicode;
             }
 
-            return Encoding.ASCII;
+            return utf8NoBom;
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
@@ -1674,8 +1674,7 @@ namespace System.Management.Automation
                 try
                 {
                     var scriptBlock = ScriptBlock.Create(command);
-                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                    if (scriptBlockAst == null)
+                    if (!(scriptBlock.Ast is ScriptBlockAst scriptBlockAst))
                     {
                         return false;
                     }
@@ -2234,7 +2233,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal sealed class ReadOnlyBag<T> : IEnumerable
     {
-        private HashSet<T> _hashset;
+        private readonly HashSet<T> _hashset;
 
         /// <summary>
         /// Constructor for the readonly Hashset.

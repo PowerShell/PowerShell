@@ -3,9 +3,9 @@
 
 #region Using directives
 
+using System;
 using System.Threading;
 using Microsoft.Management.Infrastructure.Options;
-using System;
 
 #endregion
 
@@ -126,7 +126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Action completed event.
         /// </summary>
-        private ManualResetEventSlim completeEvent;
+        private readonly ManualResetEventSlim completeEvent;
 
         /// <summary>
         /// Response result.

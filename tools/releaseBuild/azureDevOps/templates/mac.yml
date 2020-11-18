@@ -15,6 +15,8 @@ jobs:
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -27,10 +29,7 @@ jobs:
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
 
-  - pwsh: |
-      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
-      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
-    displayName: Clone PowerShell Repo to /PowerShell
+  - template: cloneToOfficialPath.yml
 
   - pwsh: |
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap

@@ -2071,22 +2071,22 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                         {
                             if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery && ((object)(ai) != null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery");
+                                if (((object)ai) != null && ai is not global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery");
                                 Write13_WildcardablePropertyQuery(@"RegularQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)ai), false, false);
                             }
                             else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery && ((object)(ai) != null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery");
+                                if (((object)ai) != null && ai is not global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery");
                                 Write13_WildcardablePropertyQuery(@"ExcludeQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)ai), false, false);
                             }
                             else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery && ((object)(ai) != null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery");
+                                if (((object)ai) != null && ai is not global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery");
                                 Write14_PropertyQuery(@"MaxValueQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)ai), false, false);
                             }
                             else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery && ((object)(ai) != null))
                             {
-                                if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery");
+                                if (((object)ai) != null && ai is not global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery");
                                 Write14_PropertyQuery(@"MinValueQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)ai), false, false);
                             }
                             else if ((object)(ai) != null)

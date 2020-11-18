@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell
 
                         StringBuilder fieldPromptList = new StringBuilder(fieldPrompt);
                         // fieldPromptList = fieldPrompt + "[i] :"
-                        fieldPromptList.Append("[");
+                        fieldPromptList.Append('[');
 
                         while (true)
                         {
@@ -542,4 +542,3 @@ namespace Microsoft.PowerShell
         private const string PromptCommandPrefix = "!";
     }
 }   // namespace
-

@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Members
 
-        private static string s_LOCALHOST = "localhost";
+        private static readonly string s_LOCALHOST = "localhost";
 
         // private PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Cmdlets);
 
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        public virtual int ThrottleLimit { set; get; } = 0;
+        public virtual int ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to
@@ -3257,8 +3257,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal Runspace PipelineRunspace
         {
-            set;
             get;
+            set;
         }
 
         #region Runspace Debug
@@ -3472,7 +3472,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the command should be invoked and then disconnect the
         /// remote runspace from the client.
         /// </summary>
-        private bool _invokeAndDisconnect;
+        private readonly bool _invokeAndDisconnect;
 
         /// <summary>
         /// The remote runspace created using the computer name

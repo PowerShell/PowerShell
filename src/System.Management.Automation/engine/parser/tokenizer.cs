@@ -377,7 +377,7 @@ namespace System.Management.Automation.Language
                     (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
         }
 
-        private static Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+        private static readonly Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
         {
             {@"Node", new List<string> {@"Node"}},
         };
@@ -2110,7 +2110,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+                if (argumentValue is string || argumentValue is not IEnumerable)
                 {
                     requiredEditions = HandleRequiresPSEditionArgument(argumentAst, argumentValue, ref requiredEditions);
                 }
@@ -2165,7 +2165,7 @@ namespace System.Management.Automation.Language
             }
             else if (assemblyToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+                if (argumentValue is string || argumentValue is not IEnumerable)
                 {
                     requiredAssemblies = HandleRequiresAssemblyArgument(argumentAst, argumentValue, requiredAssemblies);
                 }
@@ -4563,7 +4563,7 @@ namespace System.Management.Automation.Language
                 if (PeekChar() == '=')
                 {
                     _tokenStart = _currentIndex;
-                    sb.Append("=");
+                    sb.Append('=');
                     SkipChar();
                     NewToken(TokenKind.Equals);
                     ScanAssemblyNameSpecToken(sb);

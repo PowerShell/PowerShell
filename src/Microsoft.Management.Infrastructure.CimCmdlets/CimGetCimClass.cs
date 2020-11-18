@@ -3,11 +3,8 @@
 
 #region Using directives
 
-using System.Collections;
-using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Globalization;
 
 #endregion
 
@@ -68,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             get { return methodName; }
         }
 
-        private string methodName;
+        private readonly string methodName;
 
         /// <summary>
         /// <para>
@@ -82,7 +79,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             get { return propertyName; }
         }
 
-        private string propertyName;
+        private readonly string propertyName;
 
         /// <summary>
         /// <para>
@@ -96,7 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             get { return qualifierName; }
         }
 
-        private string qualifierName;
+        private readonly string qualifierName;
     }
 
     /// <summary>

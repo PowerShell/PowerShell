@@ -54,7 +54,7 @@ namespace System.Management.Automation.Help
             }
         }
 
-        private Guid _moduleGuid;
+        private readonly Guid _moduleGuid;
 
         /// <summary>
         /// Module path.

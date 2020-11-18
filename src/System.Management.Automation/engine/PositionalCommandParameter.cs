@@ -25,4 +25,3 @@ namespace System.Management.Automation
         internal Collection<ParameterSetSpecificMetadata> ParameterSetData { get; } = new Collection<ParameterSetSpecificMetadata>();
     }
 }
-

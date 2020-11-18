@@ -23,16 +23,14 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Microsoft.PowerShell.Telemetry;
 using Microsoft.PowerShell.Commands;
-
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using Dbg = System.Management.Automation.Diagnostics;
-using Debugger = System.Management.Automation.Debugger;
-
+using Microsoft.PowerShell.Telemetry;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
+using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
@@ -739,7 +737,7 @@ namespace Microsoft.PowerShell
 
         public class ConsoleColorProxy
         {
-            private ConsoleHostUserInterface _ui;
+            private readonly ConsoleHostUserInterface _ui;
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
@@ -1287,7 +1285,7 @@ namespace Microsoft.PowerShell
                 {
                     // If ShouldEndSession is already true, you can't set it back
 
-                    Dbg.Assert(_shouldEndSession != true || value,
+                    Dbg.Assert(!_shouldEndSession || value,
                         "ShouldEndSession can only be set from false to true");
 
                     _shouldEndSession = value;
@@ -1321,7 +1319,7 @@ namespace Microsoft.PowerShell
 
                 // If this shell is invoked in non-interactive, error is redirected, and OutputFormat was not
                 // specified write data in error stream in xml format assuming PowerShell->PowerShell usage.
-                if (!OutputFormatSpecified && IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
+                if (!OutputFormatSpecified && !IsInteractive && Console.IsErrorRedirected && _wasInitialCommandEncoded)
                 {
                     format = Serialization.DataFormat.XML;
                 }
@@ -1868,7 +1866,7 @@ namespace Microsoft.PowerShell
 
                 // If we're not going to continue, then get the exit code out of the runspace and
                 // and indicate that it should be returned...
-                if (!_noExit && !(this.Runspace is RemoteRunspace))
+                if (!_noExit && this.Runspace is not RemoteRunspace)
                 {
                     this.Runspace.ExecutionContext.ScriptCommandProcessorShouldRethrowExit = true;
                 }
@@ -2523,7 +2521,7 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 s_tracer.WriteLine("adding line to block");
-                                inputBlock.Append("\n");
+                                inputBlock.Append('\n');
                                 inputBlock.Append(line);
                                 continue;
                             }
@@ -2743,7 +2741,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                return remoteException.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name;
+                return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
             }
 
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)
@@ -2844,12 +2842,12 @@ namespace Microsoft.PowerShell
                 return promptString;
             }
 
-            private ConsoleHost _parent;
-            private bool _isNested;
+            private readonly ConsoleHost _parent;
+            private readonly bool _isNested;
             private bool _shouldExit;
-            private Executor _exec;
-            private Executor _promptExec;
-            private object _syncObject = new object();
+            private readonly Executor _exec;
+            private readonly Executor _promptExec;
+            private readonly object _syncObject = new object();
             private bool _isRunspacePushed = false;
             private bool _runspacePopped = false;
 
@@ -2858,7 +2856,7 @@ namespace Microsoft.PowerShell
 
             // threadsafety guaranteed by enclosing class
 
-            private static Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
+            private static readonly Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
         }
 
         [Serializable]
@@ -2913,7 +2911,7 @@ namespace Microsoft.PowerShell
 
         // Set to Unknown so that we avoid saving/restoring the console mode if we don't have a console.
         private ConsoleControl.ConsoleModes _savedConsoleMode = ConsoleControl.ConsoleModes.Unknown;
-        private ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
+        private readonly ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
 #endif
         private Thread _breakHandlerThread;
         private bool _isDisposed;
@@ -2922,7 +2920,7 @@ namespace Microsoft.PowerShell
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
         private string _savedWindowTitle = string.Empty;
-        private Version _ver = PSVersionInfo.PSVersion;
+        private readonly Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;
         private bool _setShouldExitCalled;
@@ -2942,7 +2940,7 @@ namespace Microsoft.PowerShell
         private bool _shouldEndSession;
         private int _beginApplicationNotifyCount;
 
-        private ConsoleTextWriter _consoleWriter;
+        private readonly ConsoleTextWriter _consoleWriter;
         private WrappedSerializer _outputSerializer;
         private WrappedSerializer _errorSerializer;
         private bool _displayDebuggerBanner;
@@ -2958,11 +2956,10 @@ namespace Microsoft.PowerShell
         internal static InitialSessionState DefaultInitialSessionState;
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
-        private static
-        PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost");
 
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
-        private static PSTraceSource s_runspaceInitTracer =
+        private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
     }
 
@@ -2995,4 +2992,3 @@ namespace Microsoft.PowerShell
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace
-
