@@ -13,6 +13,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandParameterType
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ShowCommandParameterType"/> class.
         /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
         /// <param name="other">
@@ -42,6 +43,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ShowCommandParameterType"/> class.
         /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
         /// <param name="other">

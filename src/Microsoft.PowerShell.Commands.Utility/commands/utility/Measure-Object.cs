@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="GenericMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public GenericMeasureInfo()
@@ -77,6 +78,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericObjectMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="GenericObjectMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public GenericObjectMeasureInfo()
@@ -122,6 +124,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class TextMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public TextMeasureInfo()
@@ -162,6 +165,7 @@ namespace Microsoft.PowerShell.Commands
             where V : new()
         {
             /// <summary>
+            /// Initializes a new instance of the <see cref="MeasureObjectDictionary{V}"/> class.
             /// Default ctor.
             /// </summary>
             internal MeasureObjectDictionary() : base(StringComparer.OrdinalIgnoreCase)
@@ -216,6 +220,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MeasureObjectCommand"/> class.
         /// Default constructor.
         /// </summary>
         public MeasureObjectCommand()

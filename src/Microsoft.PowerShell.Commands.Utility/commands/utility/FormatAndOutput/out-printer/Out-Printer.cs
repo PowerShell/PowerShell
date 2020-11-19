@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     public class OutPrinterCommand : FrontEndCommandBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="OutPrinterCommand"/> class.
         /// Set inner command.
         /// </summary>
         public OutPrinterCommand()

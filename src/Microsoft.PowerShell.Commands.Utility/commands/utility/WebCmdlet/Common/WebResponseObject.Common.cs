@@ -144,6 +144,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// Constructor for WebResponseObject.
         /// </summary>
         /// <param name="response"></param>
@@ -152,6 +153,7 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// Constructor for WebResponseObject with contentStream.
         /// </summary>
         /// <param name="response"></param>

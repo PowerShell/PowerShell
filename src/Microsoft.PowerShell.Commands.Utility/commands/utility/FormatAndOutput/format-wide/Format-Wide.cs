@@ -16,6 +16,7 @@ namespace Microsoft.PowerShell.Commands
     public class FormatWideCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FormatWideCommand"/> class.
         /// Constructor to se the inner command.
         /// </summary>
         public FormatWideCommand()

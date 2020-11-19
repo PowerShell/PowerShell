@@ -393,6 +393,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class WriteErrorCommand : WriteOrThrowErrorCommand
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="WriteErrorCommand"/> class.
         /// Constructor.
         /// </summary>
         public WriteErrorCommand()
@@ -433,6 +434,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region ctor
         /// <summary>
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// Constructor for class WriteErrorException.
         /// </summary>
         /// <returns>Constructed object.</returns>
@@ -442,6 +444,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// Constructor for class WriteErrorException.
         /// </summary>
         /// <param name="message"></param>
@@ -452,6 +455,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// Constructor for class WriteErrorException.
         /// </summary>
         /// <param name="message"></param>
@@ -466,6 +470,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Serialization
         /// <summary>
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// Serialization constructor for class WriteErrorException.
         /// </summary>
         /// <param name="info">Serialization information.</param>

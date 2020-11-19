@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructors
         /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseContentMemoryStream"/> class.
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>

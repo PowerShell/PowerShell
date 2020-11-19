@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
         #region TraceListener constructors and disposer
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PSHostTraceListener"/> class.
         /// Default constructor used if no.
         /// </summary>
         internal PSHostTraceListener(PSCmdlet cmdlet)

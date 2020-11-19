@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     public class FormatListCommand : OuterFormatTableAndListBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FormatListCommand"/> class.
         /// Constructor to set the inner command.
         /// </summary>
         public FormatListCommand()

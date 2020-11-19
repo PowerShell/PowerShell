@@ -18,6 +18,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class PSPropertyExpressionFilter
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class.
         /// Construct the class, using an array of patterns.
         /// </summary>
         /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>

@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="OutStringCommand"/> class.
         /// Set inner command.
         /// </summary>
         public OutStringCommand()

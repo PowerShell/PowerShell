@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
 
         /// <summary>
-        /// Initializes a new instance of the OutWindowProxy class.
+        /// Initializes a new instance of the <see cref="OutWindowProxy"/> class.
         /// </summary>
         internal OutWindowProxy(string title, OutputModeOption outPutMode, OutGridViewCommand parentCmdlet)
         {

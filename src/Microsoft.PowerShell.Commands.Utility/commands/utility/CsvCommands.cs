@@ -883,6 +883,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly StringBuilder _outputString;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ExportCsvHelper"/> class.
         /// Create ExportCsvHelper instance.
         /// </summary>
         /// <param name="delimiter">Delimiter char.</param>

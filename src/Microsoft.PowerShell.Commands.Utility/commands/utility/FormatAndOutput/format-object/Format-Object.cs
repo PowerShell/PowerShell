@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     public class FormatCustomCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FormatCustomCommand"/> class.
         /// Constructor to se the inner command.
         /// </summary>
         public FormatCustomCommand()

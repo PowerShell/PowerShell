@@ -863,6 +863,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class HttpResponseException : HttpRequestException
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
         /// Constructor for HttpResponseException.
         /// </summary>
         /// <param name="message">Message for the exception.</param>

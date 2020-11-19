@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ReadHostCommand : PSCmdlet
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ReadHostCommand"/> class.
         /// Constructs a new instance.
         /// </summary>
         public

@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// Constructor for BasicHtmlWebResponseObject.
         /// </summary>
         /// <param name="response"></param>
@@ -38,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// Constructor for HtmlWebResponseObject with memory stream.
         /// </summary>
         /// <param name="response"></param>

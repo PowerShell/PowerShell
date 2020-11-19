@@ -12,6 +12,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandModuleInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ShowCommandModuleInfo"/> class.
         /// Creates an instance of the ShowCommandModuleInfo class based on a CommandInfo object.
         /// </summary>
         /// <param name="other">
@@ -28,6 +29,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ShowCommandModuleInfo"/> class.
         /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object.
         /// </summary>
         /// <param name="other">

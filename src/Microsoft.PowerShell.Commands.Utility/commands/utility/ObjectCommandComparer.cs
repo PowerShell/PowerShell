@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectCommandPropertyValue"/> class.
         /// ObjectCommandPropertyValue constructor.
         /// </summary>
         /// <param name="propVal">Property Value.</param>
@@ -139,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
     internal class ObjectCommandComparer : IComparer
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectCommandComparer"/> class.
         /// Constructor that doesn't set any private field.
         /// Necessary because compareTo can compare two objects by calling
         /// ((ICompare)obj1).CompareTo(obj2) without using a key.

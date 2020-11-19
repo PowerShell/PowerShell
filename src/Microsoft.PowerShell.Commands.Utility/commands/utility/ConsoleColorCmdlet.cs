@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     class ConsoleColorCmdlet : PSCmdlet
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ConsoleColorCmdlet"/> class.
         /// Default ctor.
         /// </summary>
         public ConsoleColorCmdlet()
