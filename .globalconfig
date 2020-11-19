@@ -129,7 +129,7 @@ dotnet_diagnostic.CA1063.severity = none
 dotnet_diagnostic.CA1064.severity = none
 
 # CA1065: Do not raise exceptions in unexpected locations
-dotnet_diagnostic.CA1065.severity = none
+dotnet_diagnostic.CA1065.severity = warning
 
 # CA1066: Implement IEquatable when overriding Object.Equals
 dotnet_diagnostic.CA1066.severity = none
