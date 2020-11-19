@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         protected ArgumentCompleterAttribute()
         {
-            if (!(this is IArgumentCompleterFactory))
+            if (this is not IArgumentCompleterFactory)
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         /// <param name="scriptBlock"></param>
         public ArgumentCompleterAttribute(ScriptBlock scriptBlock)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
