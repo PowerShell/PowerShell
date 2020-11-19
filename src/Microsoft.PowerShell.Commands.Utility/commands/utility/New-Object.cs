@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage  ||
-                    (Context.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) )
+                    (Context.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
                 {
                     if (!CoreTypes.Contains(type))
                     {
