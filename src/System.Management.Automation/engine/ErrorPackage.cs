@@ -1790,6 +1790,8 @@ namespace System.Management.Automation
         ErrorRecord ErrorRecord { get; }
     }
 
+#nullable enable
+
     /// <summary>
     /// Objects implementing this interface can be used by
     /// <see cref="System.Management.Automation.ErrorDetails(IResourceSupplier,string,string,object[])"/>
@@ -1833,7 +1835,7 @@ namespace System.Management.Automation
         /// <param name="baseName">The base resource name.</param>
         /// <param name="resourceId">The resource id.</param>
         /// <returns>The error message template string corresponding to baseName and resourceId.</returns>
-        string GetResourceString(string baseName, string resourceId);
+        string? GetResourceString(string baseName, string resourceId);
     }
 }
 
