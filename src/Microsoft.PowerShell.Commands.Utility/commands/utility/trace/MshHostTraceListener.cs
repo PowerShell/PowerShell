@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PSHostTraceListener"/> class.
-        /// Default constructor used if no.
         /// </summary>
         internal PSHostTraceListener(PSCmdlet cmdlet)
             : base(string.Empty)

@@ -76,7 +76,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebRequestSession"/> class.
-        /// Construct a new instance of a WebRequestSession object.
         /// </summary>
         public WebRequestSession()
         {

@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectCommandPropertyValue"/> class.
-        /// ObjectCommandPropertyValue constructor.
         /// </summary>
         /// <param name="propVal">Property Value.</param>
         /// <param name="isCaseSensitive">Indicates if the Property value comparison has to be case sensitive or not.</param>

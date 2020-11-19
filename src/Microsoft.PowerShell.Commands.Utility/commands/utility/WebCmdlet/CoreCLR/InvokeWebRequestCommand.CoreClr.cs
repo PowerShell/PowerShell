@@ -19,7 +19,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvokeWebRequestCommand"/> class.
-        /// Default constructor for InvokeWebRequestCommand.
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {

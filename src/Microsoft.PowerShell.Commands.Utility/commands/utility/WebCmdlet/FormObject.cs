@@ -32,7 +32,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FormObject"/> class.
-        /// Constructor for FormObject.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="method"></param>

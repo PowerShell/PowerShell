@@ -52,7 +52,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PSRunspaceDebug"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="enabled">Enable debugger option.</param>
         /// <param name="breakAll">BreakAll option.</param>

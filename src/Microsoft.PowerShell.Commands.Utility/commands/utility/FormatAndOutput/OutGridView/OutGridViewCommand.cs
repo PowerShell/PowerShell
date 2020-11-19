@@ -55,7 +55,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OutGridViewCommand"/> class.
-        /// Constructor for OutGridView.
         /// </summary>
         public OutGridViewCommand()
         {

@@ -39,7 +39,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomSerialization"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -76,7 +75,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomSerialization"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -211,7 +209,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomInternalSerializer"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="writer">
         /// Xml writer to be used.

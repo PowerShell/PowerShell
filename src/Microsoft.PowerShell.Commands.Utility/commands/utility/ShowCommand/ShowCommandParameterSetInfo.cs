@@ -14,8 +14,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandParameterSetInfo
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShowCommandParameterSetInfo"/> class.
-        /// Creates an instance of the ShowCommandParameterSetInfo class based on a CommandParameterSetInfo object.
+        /// Initializes a new instance of the <see cref="ShowCommandParameterSetInfo"/> class
+        /// with the specified <see cref="CommandParameterSetInfo"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -33,8 +33,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShowCommandParameterSetInfo"/> class.
-        /// Creates an instance of the ShowCommandParameterSetInfo class based on a PSObject object.
+        /// Initializes a new instance of the <see cref="ShowCommandParameterSetInfo"/> class
+        /// with the specified <see cref="PSObject"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.

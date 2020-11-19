@@ -83,7 +83,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrinterLineOutput"/> class.
-        /// Constructor for the class.
         /// </summary>
         /// <param name="printerName">Name of printer, if null use default printer.</param>
         internal PrinterLineOutput(string printerName)

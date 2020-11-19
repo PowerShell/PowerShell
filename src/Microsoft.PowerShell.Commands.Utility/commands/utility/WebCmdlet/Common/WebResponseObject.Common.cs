@@ -145,7 +145,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
-        /// Constructor for WebResponseObject.
         /// </summary>
         /// <param name="response"></param>
         public WebResponseObject(HttpResponseMessage response)
@@ -153,8 +152,8 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
-        /// Constructor for WebResponseObject with contentStream.
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
