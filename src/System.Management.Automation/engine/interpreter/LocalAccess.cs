@@ -23,10 +23,15 @@ using System.Collections.Generic;
 
 namespace System.Management.Automation.Interpreter
 {
+
+#nullable enable
+
     internal interface IBoxableInstruction
     {
-        Instruction BoxIfIndexMatches(int index);
+        Instruction? BoxIfIndexMatches(int index);
     }
+
+#nullable restore
 
     internal abstract class LocalAccessInstruction : Instruction
     {
