@@ -24,6 +24,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
+
+#nullable enable
+
     /// <summary>
     /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
@@ -34,6 +37,8 @@ namespace System.Management.Automation
         void ExitNestedPipeline();
         bool HandleStopSignal();
     }
+
+#nullable restore
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function
