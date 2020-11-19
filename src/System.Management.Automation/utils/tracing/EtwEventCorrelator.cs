@@ -8,6 +8,8 @@ namespace System.Management.Automation.Tracing
     using System;
     using System.Diagnostics.Eventing;
 
+#nullable enable
+
     /// <summary>
     ///     An object that can be used to manage the ETW activity ID of the current thread.
     /// </summary>
@@ -42,6 +44,8 @@ namespace System.Management.Automation.Tracing
         ///     the new activity yields control of the current thread.</returns>
         IEtwActivityReverter StartActivity();
     }
+
+#nullable restore
 
     /// <summary>
     ///     A simple implementation of <see cref="IEtwEventCorrelator" />.
