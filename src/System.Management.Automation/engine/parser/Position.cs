@@ -48,6 +48,8 @@ namespace System.Management.Automation.Language
         string GetFullScript();
     }
 
+#nullable enable
+
     /// <summary>
     /// Represents the a span of text in a script.
     /// </summary>
@@ -56,7 +58,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The filename the extent includes, or null if the extent is not included in any file.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The starting position of the extent.
@@ -103,6 +105,8 @@ namespace System.Management.Automation.Language
         /// </summary>
         int EndOffset { get; }
     }
+
+#nullable restore
 
     /// <summary>
     /// A few utility functions for script positions.
