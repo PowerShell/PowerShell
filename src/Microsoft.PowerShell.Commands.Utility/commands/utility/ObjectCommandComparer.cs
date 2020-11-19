@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
             {
-                return result * (_ascendingOrder ? 1 : -1);
+                return _ascendingOrder ? result : -result;
             }
 
             // Note that this will occur if the objects do not support
@@ -221,7 +221,9 @@ namespace Microsoft.PowerShell.Commands
             string firstString = PSObject.AsPSObject(first).ToString();
             string secondString = PSObject.AsPSObject(second).ToString();
 
-            return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
+            int result = _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
+
+            return _ascendingOrder ? result : -result;
         }
 
         private readonly CultureInfo _cultureInfo = null;
