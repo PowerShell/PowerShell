@@ -15,6 +15,7 @@ using System.Security.AccessControl;
 
 namespace System.Management.Automation.Provider
 {
+#nullable enable
     /// <summary>
     /// This interface needs to be implemented by providers that want users to see
     /// provider-specific help.
@@ -37,7 +38,7 @@ namespace System.Management.Automation.Provider
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Maml", Justification = "Maml is an acronym.")]
         string GetHelpMaml(string helpItemName, string path);
     }
-
+#nullable restore
     #region CmdletProvider
 
     /// <summary>
