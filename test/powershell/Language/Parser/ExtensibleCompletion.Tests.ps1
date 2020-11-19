@@ -176,14 +176,14 @@ function TestFunction
 }
 
 
-class NumberCompleter : IArgumentCompleter 
+class NumberCompleter : IArgumentCompleter
 {
 
     [int] $From
     [int] $To
     [int] $Step
-    
-    NumberCompleter([int] $from, [int] $to, [int] $step) 
+
+    NumberCompleter([int] $from, [int] $to, [int] $step)
     {
         if ($from -gt $to) {
             throw [ArgumentOutOfRangeException]::new("from")
@@ -208,7 +208,7 @@ class NumberCompleter : IArgumentCompleter
                 $resultList.Add([CompletionResult]::new($num, $num, "ParameterValue", $num))
             }
         }
-        
+
         return $resultList
     }
 }
@@ -218,7 +218,7 @@ class NumberCompletionAttribute : ArgumentCompleterAttribute, IArgumentCompleter
     [int] $From
     [int] $To
     [int] $Step
-    
+
     NumberCompletionAttribute([int] $from, [int] $to)
     {
         $this.From = $from
