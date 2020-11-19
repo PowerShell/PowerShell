@@ -69,7 +69,7 @@ namespace mvc.Controllers
 
                         foreach (string entry in GetSingleOrArray<string>(property.Value))
                         {
-                            Response.Headers.Append(property.Name,entry);
+                            Response.Headers.Append(property.Name, entry);
                         }
                     }
                 }

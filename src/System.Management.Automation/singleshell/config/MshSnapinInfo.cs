@@ -954,8 +954,8 @@ namespace System.Management.Automation
             // System.Management.Automation formats & types files
             Collection<string> types = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
             Collection<string> formats = new Collection<string>(new string[]
-                        {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
-                         "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
+                        {"Certificate.format.ps1xml", "DotNetTypes.format.ps1xml", "FileSystem.format.ps1xml",
+                         "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
             string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
@@ -1007,8 +1007,8 @@ namespace System.Management.Automation
 
             // System.Management.Automation formats & types files
             Collection<string> smaFormats = new Collection<string>(new string[]
-                        {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
-                         "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
+                        {"Certificate.format.ps1xml", "DotNetTypes.format.ps1xml", "FileSystem.format.ps1xml",
+                         "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
             Collection<string> smaTypes = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
 
@@ -1305,18 +1305,18 @@ namespace System.Management.Automation
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
 #endif
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost", null,
-                                    "HostMshSnapInResources,Description","HostMshSnapInResources,Vendor"),
+                                    "HostMshSnapInResources,Description", "HostMshSnapInResources,Vendor"),
 
                                 s_coreSnapin,
 
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Commands.Utility", null,
-                                    "UtilityMshSnapInResources,Description","UtilityMshSnapInResources,Vendor"),
+                                    "UtilityMshSnapInResources,Description", "UtilityMshSnapInResources,Vendor"),
 
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Management", "Microsoft.PowerShell.Commands.Management", null,
-                                    "ManagementMshSnapInResources,Description","ManagementMshSnapInResources,Vendor"),
+                                    "ManagementMshSnapInResources,Description", "ManagementMshSnapInResources,Vendor"),
 
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Security", "Microsoft.PowerShell.Security", null,
-                                    "SecurityMshSnapInResources,Description","SecurityMshSnapInResources,Vendor")
+                                    "SecurityMshSnapInResources,Description", "SecurityMshSnapInResources,Vendor")
                             };
 
 #if !UNIX

@@ -110,7 +110,7 @@ namespace System.Management.Automation.Remoting
                 // There is a limit of 104 characters in total including the temp path to the named pipe file
                 // on non-Windows systems, so we'll convert the starttime to hex and just take the first 8 characters.
 #if UNIX
-                .Append(proc.StartTime.ToFileTime().ToString("X8").Substring(1,8))
+                .Append(proc.StartTime.ToFileTime().ToString("X8").Substring(1, 8))
 #else
                 .Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture))
 #endif
