@@ -286,6 +286,8 @@ namespace System.Management.Automation.Host
         }
     }
 
+#nullable enable
+
     /// <summary>
     /// This interface needs to be implemented by PSHost objects that want to support the PushRunspace
     /// and PopRunspace functionality.
@@ -317,6 +319,6 @@ namespace System.Management.Automation.Host
         /// Returns the current runspace associated with this host.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        Runspace Runspace { get; }
+        Runspace? Runspace { get; }
     }
 }
