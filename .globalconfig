@@ -1031,7 +1031,7 @@ dotnet_diagnostic.SA1005.severity = none
 dotnet_diagnostic.SA1006.severity = none
 
 # SA1007: Operator keyword should be followed by space
-dotnet_diagnostic.SA1007.severity = none
+dotnet_diagnostic.SA1007.severity = warning
 
 # SA1008: Opening parenthesis should be spaced correctly
 dotnet_diagnostic.SA1008.severity = none
