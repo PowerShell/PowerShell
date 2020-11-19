@@ -12,27 +12,15 @@ jobs:
   timeoutInMinutes: 90
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
-    - name: build
-      value: ${{ parameters.buildName }}
-    - group: ESRP
-    - name: GenAPIToolPath
-      value: '$(System.ArtifactsDirectory)/GenAPI'
-    - name: PackagePath
-      value: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
-    - name: winFxdPath
-      value: '$(System.ArtifactsDirectory)/winFxd'
-    - name: winFxdWinDesktopPath
-      value: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
-    - name: linuxFxdPath
-      value: '$(System.ArtifactsDirectory)/linuxFxd'
+    runCodesignValidationInjection: false
+    GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
+    PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
+    winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
+    winFxdWinDesktopPath: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
+    linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
   - checkout: self
-    clean: true
-
-  - checkout: ComplianceRepo
     clean: true
 
   - powershell: |
@@ -129,14 +117,28 @@ jobs:
       Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
-  - template: EsrpSign.yml@ComplianceRepo
-    parameters:
-        buildOutputPath: $(PackagePath)
-        signOutputPath: $(System.ArtifactsDirectory)\signed
-        certificateId: "CP-401405"
-        pattern: |
-          **\*.nupkg
-        useMinimatch: true
+  - powershell: |
+      $packages = Get-ChildItem "$(PackagePath)\*.nupkg", "$(PackagePath)\globaltool\*.nupkg" | Select-Object -ExpandProperty FullName
+
+      if($packages.Count -lt 1)
+      {
+          throw "No packages created"
+      }
+
+      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(PackagePath)\NugetSigning.xml -NuPkgFiles $packages
+    displayName: Create signing file
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign Nuget Packages'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(PackagePath)\NugetSigning.xml'
+      inPathRoot: '$(PackagePath)'
+      outPathRoot: '$(System.ArtifactsDirectory)\signed'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
       if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
