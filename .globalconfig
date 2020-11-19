@@ -1,7 +1,8 @@
 is_global = true
 
 # CA1000: Do not declare static members on generic types
-dotnet_diagnostic.CA1000.severity = silent
+dotnet_diagnostic.CA1000.severity = warning
+dotnet_code_quality.ca1000.api_surface = all
 
 # CA1001: Types that own disposable fields should be disposable
 dotnet_diagnostic.CA1001.severity = silent
