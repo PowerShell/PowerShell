@@ -3,6 +3,8 @@
 
 using System.Collections.ObjectModel;
 
+#nullable enable
+
 namespace System.Management.Automation.Provider
 {
     #region IPropertyCmdletProvider
@@ -58,7 +60,7 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         void GetProperty(
             string path,
-            Collection<string> providerSpecificPickList);
+            Collection<string>? providerSpecificPickList);
 
         /// <summary>
         /// Gives the provider an opportunity to attach additional parameters to the
@@ -79,9 +81,9 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object GetPropertyDynamicParameters(
+        object? GetPropertyDynamicParameters(
             string path,
-            Collection<string> providerSpecificPickList);
+            Collection<string>? providerSpecificPickList);
 
         /// <summary>
         /// Sets the specified properties of the item at the specified path.
@@ -137,7 +139,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object SetPropertyDynamicParameters(
+        object? SetPropertyDynamicParameters(
             string path,
             PSObject propertyValue);
 
@@ -191,7 +193,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object ClearPropertyDynamicParameters(
+        object? ClearPropertyDynamicParameters(
             string path,
             Collection<string> propertyToClear);
     }
