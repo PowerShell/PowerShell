@@ -376,6 +376,8 @@ namespace System.Management.Automation
         internal Guid InstanceId { get; private set; }
     }
 
+#nullable enable
+
     /// <summary>
     /// Interface to expose a job debugger.
     /// </summary>
@@ -384,7 +386,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Job Debugger.
         /// </summary>
-        Debugger Debugger
+        Debugger? Debugger
         {
             get;
         }
@@ -398,6 +400,8 @@ namespace System.Management.Automation
             set;
         }
     }
+
+#nullable restore
 
     /// <summary>
     /// Represents a command running in background. A job object can internally
