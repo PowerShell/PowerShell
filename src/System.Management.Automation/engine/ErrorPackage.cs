@@ -1717,6 +1717,8 @@ namespace System.Management.Automation
         }
     }
 
+#nullable enable
+
     /// <summary>
     /// Implemented by exception classes which contain additional
     /// <see cref="System.Management.Automation.ErrorRecord"/>
@@ -1789,6 +1791,8 @@ namespace System.Management.Automation
         /// </remarks>
         ErrorRecord ErrorRecord { get; }
     }
+
+#nullable restore
 
     /// <summary>
     /// Objects implementing this interface can be used by
