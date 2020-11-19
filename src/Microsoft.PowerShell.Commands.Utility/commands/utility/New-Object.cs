@@ -189,7 +189,8 @@ namespace Microsoft.PowerShell.Commands
                             targetObject: null));
                 }
 
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage  ||
+                    (Context.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) )
                 {
                     if (!CoreTypes.Contains(type))
                     {
