@@ -29,10 +29,14 @@ namespace System.Management.Automation.Language
     using System.Runtime.CompilerServices;
     using System.Reflection.Emit;
 
+#nullable enable
+
     internal interface ISupportsAssignment
     {
         IAssignableValue GetAssignableValue();
     }
+
+#nullable restore
 
     internal interface IAssignableValue
     {
