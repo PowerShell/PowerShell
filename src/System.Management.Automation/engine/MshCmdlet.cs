@@ -14,6 +14,9 @@ using PipelineResultTypes = System.Management.Automation.Runspaces.PipelineResul
 namespace System.Management.Automation
 {
     #region Auxiliary
+
+#nullable enable
+
     /// <summary>
     /// An interface that a
     /// <see cref="Cmdlet"/> or <see cref="Provider.CmdletProvider"/>
@@ -62,8 +65,11 @@ namespace System.Management.Automation
         /// may not be set at the time this method is called,
         /// even if the parameters are mandatory.
         /// </returns>
-        object GetDynamicParameters();
+        object? GetDynamicParameters();
     }
+
+#nullable restore
+
     /// <summary>
     /// Type used to define a parameter on a cmdlet script of function that
     /// can only be used as a switch.
