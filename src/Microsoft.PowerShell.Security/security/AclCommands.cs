@@ -15,6 +15,7 @@ using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
+
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -1587,4 +1588,3 @@ namespace Microsoft.PowerShell.Commands
 }
 
 #pragma warning restore 56506
-
