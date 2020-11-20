@@ -166,7 +166,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            ErrorRecord coreErrorRecord = new ErrorRecord(
+            ErrorRecord coreErrorRecord = new(
                 exception: exception,
                 errorId: errorId,
                 errorCategory: errorCategory,
@@ -177,7 +177,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return coreErrorRecord;
             }
 
-            System.Management.Automation.Remoting.OriginInfo originInfo = new System.Management.Automation.Remoting.OriginInfo(
+            System.Management.Automation.Remoting.OriginInfo originInfo = new(
                 context.ComputerName,
                 Guid.Empty);
 

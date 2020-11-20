@@ -76,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.percentageCompleted);
 
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
-            ProgressRecord record = new ProgressRecord(
+            ProgressRecord record = new(
                 this.activityID,
                 this.activity,
                 this.statusDescription);

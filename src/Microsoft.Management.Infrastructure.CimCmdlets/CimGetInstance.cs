@@ -81,7 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
             string nameSpace;
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             bool isGetCimInstanceCommand = (cmdlet is GetCimInstanceCommand);
             CimInstance targetCimInstance = null;
             switch (cmdlet.ParameterSetName)
@@ -301,7 +301,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             GetCimInstanceCommand cmd = cmdlet as GetCimInstanceCommand;
             if (cmd != null)
             {
-                StringBuilder propertyList = new StringBuilder();
+                StringBuilder propertyList = new();
                 if (cmd.SelectProperties == null)
                 {
                     propertyList.Append('*');
@@ -397,7 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     proxy.ResourceUri = removeCimInstance.ResourceUri;
                 }
 
-                CimRemoveCimInstanceContext context = new CimRemoveCimInstanceContext(
+                CimRemoveCimInstanceContext context = new(
                     ConstValue.GetNamespace(removeCimInstance.Namespace),
                     proxy);
                 proxy.ContextObject = context;
@@ -411,7 +411,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     proxy.ResourceUri = setCimInstance.ResourceUri;
                 }
 
-                CimSetCimInstanceContext context = new CimSetCimInstanceContext(
+                CimSetCimInstanceContext context = new(
                     ConstValue.GetNamespace(setCimInstance.Namespace),
                     setCimInstance.Property,
                     proxy,

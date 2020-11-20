@@ -399,7 +399,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string computerName,
             ProtocolType protocol)
         {
-            CimSessionWrapper wrapper = new CimSessionWrapper(
+            CimSessionWrapper wrapper = new(
                 sessionId, instanceId, name, computerName, session, protocol);
 
             HashSet<CimSessionWrapper> objects;
@@ -568,9 +568,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<uint> ids,
             out IEnumerable<ErrorRecord> errorRecords)
         {
-            HashSet<PSObject> sessions = new HashSet<PSObject>();
-            HashSet<uint> sessionIds = new HashSet<uint>();
-            List<ErrorRecord> errRecords = new List<ErrorRecord>();
+            HashSet<PSObject> sessions = new();
+            HashSet<uint> sessionIds = new();
+            List<ErrorRecord> errRecords = new();
             errorRecords = errRecords;
             // NOTES: use template function to implement this will save duplicate code
             foreach (uint id in ids)
@@ -601,9 +601,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<Guid> instanceIds,
             out IEnumerable<ErrorRecord> errorRecords)
         {
-            HashSet<PSObject> sessions = new HashSet<PSObject>();
-            HashSet<uint> sessionIds = new HashSet<uint>();
-            List<ErrorRecord> errRecords = new List<ErrorRecord>();
+            HashSet<PSObject> sessions = new();
+            HashSet<uint> sessionIds = new();
+            List<ErrorRecord> errRecords = new();
             errorRecords = errRecords;
             foreach (Guid instanceid in instanceIds)
             {
@@ -633,14 +633,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal IEnumerable<PSObject> QuerySession(IEnumerable<string> nameArray,
             out IEnumerable<ErrorRecord> errorRecords)
         {
-            HashSet<PSObject> sessions = new HashSet<PSObject>();
-            HashSet<uint> sessionIds = new HashSet<uint>();
-            List<ErrorRecord> errRecords = new List<ErrorRecord>();
+            HashSet<PSObject> sessions = new();
+            HashSet<uint> sessionIds = new();
+            List<ErrorRecord> errRecords = new();
             errorRecords = errRecords;
             foreach (string name in nameArray)
             {
                 bool foundSession = false;
-                WildcardPattern pattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
+                WildcardPattern pattern = new(name, WildcardOptions.IgnoreCase);
                 foreach (KeyValuePair<string, HashSet<CimSessionWrapper>> kvp in this.curCimSessionsByName)
                 {
                     if (pattern.IsMatch(kvp.Key))
@@ -676,9 +676,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<string> computernameArray,
             out IEnumerable<ErrorRecord> errorRecords)
         {
-            HashSet<PSObject> sessions = new HashSet<PSObject>();
-            HashSet<uint> sessionIds = new HashSet<uint>();
-            List<ErrorRecord> errRecords = new List<ErrorRecord>();
+            HashSet<PSObject> sessions = new();
+            HashSet<uint> sessionIds = new();
+            List<ErrorRecord> errRecords = new();
             errorRecords = errRecords;
             foreach (string computername in computernameArray)
             {
@@ -714,9 +714,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal IEnumerable<PSObject> QuerySession(IEnumerable<CimSession> cimsessions,
             out IEnumerable<ErrorRecord> errorRecords)
         {
-            HashSet<PSObject> sessions = new HashSet<PSObject>();
-            HashSet<uint> sessionIds = new HashSet<uint>();
-            List<ErrorRecord> errRecords = new List<ErrorRecord>();
+            HashSet<PSObject> sessions = new();
+            HashSet<uint> sessionIds = new();
+            List<ErrorRecord> errRecords = new();
             errorRecords = errRecords;
             foreach (CimSession cimsession in cimsessions)
             {
@@ -814,7 +814,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         internal static readonly ConcurrentDictionary<Guid, CimSessionState> cimSessions
-            = new ConcurrentDictionary<Guid, CimSessionState>();
+            = new();
 
         /// <summary>
         /// <para>
@@ -974,8 +974,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 proxy = new CimSessionProxyTestConnection(computerName, sessionOptions);
                 string computerNameValue = (computerName == ConstValue.NullComputerName) ? ConstValue.LocalhostComputerName : computerName;
-                CimSessionWrapper wrapper = new CimSessionWrapper(0, Guid.Empty, cmdlet.Name, computerNameValue, proxy.CimSession, proxy.Protocol);
-                CimTestCimSessionContext context = new CimTestCimSessionContext(proxy, wrapper);
+                CimSessionWrapper wrapper = new(0, Guid.Empty, cmdlet.Name, computerNameValue, proxy.CimSession, proxy.Protocol);
+                CimTestCimSessionContext context = new(proxy, wrapper);
                 proxy.ContextObject = context;
                 // Skip test the connection if user intend to
                 if (cmdlet.SkipTestConnection.IsPresent)

@@ -259,7 +259,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // OnNext, OnError
             try
             {
-                AsyncResultCompleteEventArgs completeArgs = new AsyncResultCompleteEventArgs(
+                AsyncResultCompleteEventArgs completeArgs = new(
                     this.session, this.observable);
                 this.OnNewResult(this, completeArgs);
             }
@@ -280,7 +280,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             try
             {
-                AsyncResultErrorEventArgs errorArgs = new AsyncResultErrorEventArgs(
+                AsyncResultErrorEventArgs errorArgs = new(
                     this.session, this.observable, error, this.context);
                 this.OnNewResult(this, errorArgs);
             }
@@ -300,7 +300,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("value = {0}.", 1, value);
             try
             {
-                AsyncResultObjectEventArgs resultArgs = new AsyncResultObjectEventArgs(
+                AsyncResultObjectEventArgs resultArgs = new(
                     this.session, this.observable, value);
                 this.OnNewResult(this, resultArgs);
             }

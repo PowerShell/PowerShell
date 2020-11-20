@@ -121,10 +121,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object.</param>
         public void GetCimClass(GetCimClassCommand cmdlet)
         {
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             string nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
             string className = (cmdlet.ClassName == null) ? @"*" : cmdlet.ClassName;
-            CimGetCimClassContext context = new CimGetCimClassContext(
+            CimGetCimClassContext context = new(
                 cmdlet.ClassName,
                 cmdlet.MethodName,
                 cmdlet.PropertyName,

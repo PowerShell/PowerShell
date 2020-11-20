@@ -256,12 +256,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// throw exception
         /// </para>
         /// </summary>
-        private List<string> parametersetNamesList = new List<string>();
+        private List<string> parametersetNamesList = new();
 
         /// <summary>
         /// Parameter names list.
         /// </summary>
-        private readonly List<string> parameterNamesList = new List<string>();
+        private readonly List<string> parameterNamesList = new();
 
         /// <summary>
         /// <para>
@@ -270,12 +270,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// throw exception
         /// </para>
         /// </summary>
-        private List<string> parametersetNamesListAtBeginProcess = new List<string>();
+        private List<string> parametersetNamesListAtBeginProcess = new();
 
         /// <summary>
         /// Parameter names list before begin process.
         /// </summary>
-        private readonly List<string> parameterNamesListAtBeginProcess = new List<string>();
+        private readonly List<string> parameterNamesListAtBeginProcess = new();
 
         /// <summary>
         /// <para>
@@ -331,7 +331,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (this.parametersetNamesList.Count == 0)
             {
-                List<string> nameset = new List<string>();
+                List<string> nameset = new();
                 foreach (ParameterDefinitionEntry parameterDefinitionEntry in this.parameterDefinitionEntries[parameterName])
                 {
                     DebugHelper.WriteLogEx("parameterset name = '{0}'; mandatory = '{1}'", 1, parameterDefinitionEntry.ParameterSetName, parameterDefinitionEntry.IsMandatory);
@@ -370,7 +370,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                List<string> nameset = new List<string>();
+                List<string> nameset = new();
                 foreach (ParameterDefinitionEntry entry in this.parameterDefinitionEntries[parameterName])
                 {
                     if (this.parametersetNamesList.Contains(entry.ParameterSetName))
@@ -418,7 +418,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string boundParameterSetName = null;
             string defaultParameterSetName = null;
-            List<string> noMandatoryParameterSet = new List<string>();
+            List<string> noMandatoryParameterSet = new();
 
             // Looking for parameter set which have mandatory parameters
             foreach (string parameterSetName in this.parameterSetEntries.Keys)
@@ -687,7 +687,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object myLock = new object();
+        private readonly object myLock = new();
 
         /// <summary>
         /// <para>
@@ -771,7 +771,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
-            ErrorRecord errorRecord = new ErrorRecord(exception, operation, ErrorCategory.InvalidOperation, this);
+            ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);
             this.CmdletOperation.ThrowTerminatingError(errorRecord);
         }
 
@@ -909,7 +909,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 ImpersonatedAuthenticationMechanism.Negotiate,
                 ImpersonatedAuthenticationMechanism.Kerberos,
                 ImpersonatedAuthenticationMechanism.NtlmDomain);
-            PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
+            PSArgumentOutOfRangeException exception = new(
                 parameterName, authentication, message);
             ThrowTerminatingError(exception, operationName);
         }
@@ -928,7 +928,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string message = string.Format(CultureInfo.CurrentUICulture,
                 CimCmdletStrings.ConflictParameterWasSet,
                 parameterName, conflictParameterName);
-            PSArgumentException exception = new PSArgumentException(message, parameterName);
+            PSArgumentException exception = new(message, parameterName);
             ThrowTerminatingError(exception, operationName);
         }
 
@@ -944,7 +944,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string operationName,
             IDictionary actualValue)
         {
-            StringBuilder propList = new StringBuilder();
+            StringBuilder propList = new();
             foreach (string property in propertiesList)
             {
                 if (propList.Length > 0)
@@ -957,7 +957,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string message = string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.CouldNotFindPropertyFromGivenClass,
                 className, propList);
-            PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
+            PSArgumentOutOfRangeException exception = new(
                 parameterName, actualValue, message);
             ThrowTerminatingError(exception, operationName);
         }
