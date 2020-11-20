@@ -8107,10 +8107,10 @@ namespace System.Management.Automation.Language
         }
     }
 
-#nullable enable
     /// <summary>
     /// The name and attributes of a type.
     /// </summary>
+#nullable enable
     public interface ITypeName
     {
         /// <summary>
