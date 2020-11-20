@@ -15,11 +15,12 @@ using System.Security.AccessControl;
 
 namespace System.Management.Automation.Provider
 {
-#nullable enable
+
     /// <summary>
     /// This interface needs to be implemented by providers that want users to see
     /// provider-specific help.
     /// </summary>
+#nullable enable
     public interface ICmdletProviderSupportsHelp
     {
         /// <summary>
@@ -1825,7 +1826,7 @@ namespace System.Management.Automation.Provider
                 {
                     try
                     {
-                        // Use LStat because if you get a link, you want the information about the 
+                        // Use LStat because if you get a link, you want the information about the
                         // link, not the file.
                         var commonStat = Platform.Unix.GetLStat(path);
                         result.AddOrSetProperty("UnixStat", commonStat);
