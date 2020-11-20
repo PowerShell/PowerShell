@@ -48,7 +48,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         string? GetFullScript();
     }
-
 #nullable restore
 
     /// <summary>
