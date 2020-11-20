@@ -51,7 +51,6 @@ namespace System.Management.Automation.Language
     }
 
 #nullable enable
-
     internal interface IParameterMetadataProvider
     {
         bool HasAnyScriptBlockAttributes();
@@ -79,7 +78,6 @@ namespace System.Management.Automation.Language
 
         #endregion Remoting/Invoke Command
     }
-
 #nullable restore
 
     /// <summary>
