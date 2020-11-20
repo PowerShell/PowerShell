@@ -1197,7 +1197,6 @@ namespace System.Management.Automation.Host
     }
 
 #nullable enable
-
     /// <summary>
     /// This interface needs to be implemented by PSHost objects that want to support PromptForChoice
     /// by giving the user ability to select more than one choice. The PromptForChoice method available
@@ -1230,7 +1229,6 @@ namespace System.Management.Automation.Host
         Collection<int> PromptForChoice(string? caption, string? message,
             Collection<ChoiceDescription> choices, IEnumerable<int>? defaultChoices);
     }
-
 #nullable restore
 
     /// <summary>
