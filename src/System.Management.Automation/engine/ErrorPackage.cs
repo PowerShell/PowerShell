@@ -1790,7 +1790,6 @@ namespace System.Management.Automation
         ErrorRecord ErrorRecord { get; }
     }
 
-#nullable enable
     /// <summary>
     /// Objects implementing this interface can be used by
     /// <see cref="System.Management.Automation.ErrorDetails(IResourceSupplier,string,string,object[])"/>
@@ -1811,6 +1810,7 @@ namespace System.Management.Automation
     /// since the improved
     /// information about the error may help enable future scenarios.
     /// </remarks>
+#nullable enable
     public interface IResourceSupplier
     {
         /// <summary>
