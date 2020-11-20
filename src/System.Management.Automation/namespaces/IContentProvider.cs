@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 namespace System.Management.Automation.Provider
 {
     #region IContentCmdletProvider
@@ -46,7 +48,7 @@ namespace System.Management.Automation.Provider
         /// the user unless the Force property is set to true. An error should be sent to the WriteError method if
         /// the path represents an item that is hidden from the user and Force is set to false.
         /// </remarks>
-        IContentReader GetContentReader(string path);
+        IContentReader? GetContentReader(string path);
 
         /// <summary>
         /// Gives the provider an opportunity to attach additional parameters to the
@@ -63,7 +65,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object GetContentReaderDynamicParameters(string path);
+        object? GetContentReaderDynamicParameters(string path);
 
         /// <summary>
         /// Gets the content writer for the item at the specified path.
@@ -87,7 +89,7 @@ namespace System.Management.Automation.Provider
         /// the user unless the Force property is set to true. An error should be sent to the WriteError method if
         /// the path represents an item that is hidden from the user and Force is set to false.
         /// </remarks>
-        IContentWriter GetContentWriter(string path);
+        IContentWriter? GetContentWriter(string path);
 
         /// <summary>
         /// Gives the provider an opportunity to attach additional parameters to the
@@ -104,7 +106,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object GetContentWriterDynamicParameters(string path);
+        object? GetContentWriterDynamicParameters(string path);
 
         /// <summary>
         /// Clears the content from the specified item.
@@ -141,7 +143,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object ClearContentDynamicParameters(string path);
+        object? ClearContentDynamicParameters(string path);
     }
 
     #endregion IContentCmdletProvider
