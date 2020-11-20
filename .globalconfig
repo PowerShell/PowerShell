@@ -1404,7 +1404,7 @@ dotnet_diagnostic.SA1515.severity = none
 dotnet_diagnostic.SA1516.severity = warning
 
 # SA1517: Code should not contain blank lines at start of file
-dotnet_diagnostic.SA1517.severity = none
+dotnet_diagnostic.SA1517.severity = warning
 
 # SA1518: Use line endings correctly at end of file
 dotnet_diagnostic.SA1518.severity = warning
