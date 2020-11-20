@@ -1889,7 +1889,7 @@ namespace System.Management.Automation
                         }
 
                         PSObject pso = PSObject.AsPSObject(element);
-                        if ((pso.TypeNames.Count > 0) && (! pso.TypeNames[0].Equals(pso.BaseObject.GetType().FullName, StringComparison.OrdinalIgnoreCase)))
+                        if ((pso.TypeNames.Count > 0) && (!pso.TypeNames[0].Equals(pso.BaseObject.GetType().FullName, StringComparison.OrdinalIgnoreCase)))
                         {
                             yield return new PSTypeName(pso.TypeNames[0]);
                         }

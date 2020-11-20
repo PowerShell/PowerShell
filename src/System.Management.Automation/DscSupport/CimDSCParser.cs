@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                     if ((superClassName != null) && superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase))
                     {
                         // Get the name of the file without schema.mof extension
-                        if (! className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase))
+                        if (!className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase))
                         {
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                 ParserStrings.ClassNameNotSameAsDefiningFile, className, fileNameDefiningClass);

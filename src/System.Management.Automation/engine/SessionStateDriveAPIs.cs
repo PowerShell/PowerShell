@@ -1364,7 +1364,7 @@ namespace System.Management.Automation
 #endif
                         if (drive.Name.Length == 1)
                         {
-                            if (! driveNames.Contains(drive.Name))
+                            if (!driveNames.Contains(drive.Name))
                                 driveTable.Remove(drive.Name);
                         }
 
