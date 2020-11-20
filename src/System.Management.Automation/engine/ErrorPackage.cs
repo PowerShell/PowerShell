@@ -1791,7 +1791,6 @@ namespace System.Management.Automation
     }
 
 #nullable enable
-
     /// <summary>
     /// Objects implementing this interface can be used by
     /// <see cref="System.Management.Automation.ErrorDetails(IResourceSupplier,string,string,object[])"/>
