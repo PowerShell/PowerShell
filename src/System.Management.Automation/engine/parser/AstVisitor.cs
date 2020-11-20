@@ -8,8 +8,6 @@ using System.Reflection.Emit;
 
 namespace System.Management.Automation.Language
 {
-
-
     /// <summary>
     /// </summary>
 #nullable enable
