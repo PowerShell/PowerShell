@@ -1340,32 +1340,26 @@ namespace Microsoft.PowerShell
             }
         }
 
-        // Format colors
         public ConsoleColor FormatAccentColor { get; set; } = ConsoleColor.Green;
 
-        // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
 
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
 
         public ConsoleColor ErrorBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Warning colors
         public ConsoleColor WarningForegroundColor { get; set; } = ConsoleColor.Yellow;
 
         public ConsoleColor WarningBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Debug colors
         public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
 
         public ConsoleColor DebugBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Verbose colors
         public ConsoleColor VerboseForegroundColor { get; set; } = ConsoleColor.Yellow;
 
         public ConsoleColor VerboseBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Progress colors
         public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Black;
 
         public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.Yellow;
