@@ -993,7 +993,6 @@ namespace System.Management.Automation
     }
 
 #nullable enable
-
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }
