@@ -1374,7 +1374,7 @@ dotnet_diagnostic.SA1505.severity = none
 dotnet_diagnostic.SA1506.severity = none
 
 # SA1507: Code should not contain multiple blank lines in a row
-dotnet_diagnostic.SA1507.severity = none
+dotnet_diagnostic.SA1507.severity = warning
 
 # SA1508: Closing braces should not be preceded by blank line
 dotnet_diagnostic.SA1508.severity = none
