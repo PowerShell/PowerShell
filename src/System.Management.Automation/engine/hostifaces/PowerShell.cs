@@ -4602,7 +4602,7 @@ namespace System.Management.Automation
             psAsyncResult.EndInvoke();
             EndInvokeAsyncResult = null;
 
-            if ((PSInvocationState.Failed == InvocationStateInfo.State) &&
+            if ((InvocationStateInfo.State == PSInvocationState.Failed) &&
                         (InvocationStateInfo.Reason != null))
             {
                 throw InvocationStateInfo.Reason;

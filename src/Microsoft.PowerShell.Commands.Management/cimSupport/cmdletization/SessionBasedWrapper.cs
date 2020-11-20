@@ -325,37 +325,37 @@ namespace Microsoft.PowerShell.Cmdletization
 
         private static void DiscardJobOutputs(Job job, JobOutputs jobOutputsToDiscard)
         {
-            if (JobOutputs.Output == (jobOutputsToDiscard & JobOutputs.Output))
+            if ((jobOutputsToDiscard & JobOutputs.Output) == JobOutputs.Output)
             {
                 DiscardJobOutputs(job.Output);
             }
 
-            if (JobOutputs.Error == (jobOutputsToDiscard & JobOutputs.Error))
+            if ((jobOutputsToDiscard & JobOutputs.Error) == JobOutputs.Error)
             {
                 DiscardJobOutputs(job.Error);
             }
 
-            if (JobOutputs.Warning == (jobOutputsToDiscard & JobOutputs.Warning))
+            if ((jobOutputsToDiscard & JobOutputs.Warning) == JobOutputs.Warning)
             {
                 DiscardJobOutputs(job.Warning);
             }
 
-            if (JobOutputs.Verbose == (jobOutputsToDiscard & JobOutputs.Verbose))
+            if ((jobOutputsToDiscard & JobOutputs.Verbose) == JobOutputs.Verbose)
             {
                 DiscardJobOutputs(job.Verbose);
             }
 
-            if (JobOutputs.Debug == (jobOutputsToDiscard & JobOutputs.Debug))
+            if ((jobOutputsToDiscard & JobOutputs.Debug) == JobOutputs.Debug)
             {
                 DiscardJobOutputs(job.Debug);
             }
 
-            if (JobOutputs.Progress == (jobOutputsToDiscard & JobOutputs.Progress))
+            if ((jobOutputsToDiscard & JobOutputs.Progress) == JobOutputs.Progress)
             {
                 DiscardJobOutputs(job.Progress);
             }
 
-            if (JobOutputs.Results == (jobOutputsToDiscard & JobOutputs.Results))
+            if ((jobOutputsToDiscard & JobOutputs.Results) == JobOutputs.Results)
             {
                 DiscardJobOutputs(job.Results);
             }

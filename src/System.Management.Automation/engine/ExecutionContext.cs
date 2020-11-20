@@ -907,7 +907,7 @@ namespace System.Management.Automation
             const int maxErrorCount = 256;
 
             int numToErase = arraylist.Count - (maxErrorCount - 1);
-            if (0 < numToErase)
+            if (numToErase > 0)
             {
                 arraylist.RemoveRange(
                     maxErrorCount - 1,

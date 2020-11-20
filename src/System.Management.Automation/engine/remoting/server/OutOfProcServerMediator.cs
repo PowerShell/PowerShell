@@ -125,7 +125,7 @@ namespace System.Management.Automation.Remoting.Server
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
 
-            if (Guid.Empty == psGuid)
+            if (psGuid == Guid.Empty)
             {
                 lock (_syncObject)
                 {

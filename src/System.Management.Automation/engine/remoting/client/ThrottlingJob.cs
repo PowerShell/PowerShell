@@ -387,7 +387,7 @@ namespace System.Management.Automation
                     newJobStateInfo = new JobStateInfo(JobState.Running);
                 }
 
-                if (ChildJobFlags.CreatesChildJobs == (ChildJobFlags.CreatesChildJobs & flags))
+                if ((ChildJobFlags.CreatesChildJobs & flags) == ChildJobFlags.CreatesChildJobs)
                 {
                     _setOfChildJobsThatCanAddMoreChildJobs.Add(childJob.InstanceId);
                 }

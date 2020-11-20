@@ -79,13 +79,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             // 93 = ]
             // 94 = ^
             // 95 = _
-            if ((91 <= startOfCharacterRange) && (startOfCharacterRange <= 94))
+            if ((startOfCharacterRange >= 91) && (startOfCharacterRange <= 94))
             {
                 startOfCharacterRange = (char)90;
                 _needClientSideFiltering = true;
             }
 
-            if ((91 <= endOfCharacterRange) && (endOfCharacterRange <= 94))
+            if ((endOfCharacterRange >= 91) && (endOfCharacterRange <= 94))
             {
                 endOfCharacterRange = (char)95;
                 _needClientSideFiltering = true;

@@ -540,7 +540,7 @@ namespace System.Management.Automation
 
             // If version is not provided, we assume it is the default
             string version = InternalSerializer.DefaultVersion;
-            if (DeserializationOptions.NoRootElement == (_context.options & DeserializationOptions.NoRootElement))
+            if ((_context.options & DeserializationOptions.NoRootElement) == DeserializationOptions.NoRootElement)
             {
                 _done = _reader.EOF;
             }
@@ -571,7 +571,7 @@ namespace System.Management.Automation
         {
             if (!_done)
             {
-                if (DeserializationOptions.NoRootElement == (_context.options & DeserializationOptions.NoRootElement))
+                if ((_context.options & DeserializationOptions.NoRootElement) == DeserializationOptions.NoRootElement)
                 {
                     _done = _reader.EOF;
                 }
@@ -866,7 +866,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void Start()
         {
-            if (SerializationOptions.NoRootElement != (_context.options & SerializationOptions.NoRootElement))
+            if ((_context.options & SerializationOptions.NoRootElement) != SerializationOptions.NoRootElement)
             {
                 this.WriteStartElement(SerializationStrings.RootElementTag);
                 this.WriteAttribute(SerializationStrings.VersionAttribute, InternalSerializer.DefaultVersion);
@@ -878,7 +878,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void End()
         {
-            if (SerializationOptions.NoRootElement != (_context.options & SerializationOptions.NoRootElement))
+            if ((_context.options & SerializationOptions.NoRootElement) != SerializationOptions.NoRootElement)
             {
                 _writer.WriteEndElement();
             }
@@ -2750,7 +2750,7 @@ namespace System.Management.Automation
         private void WriteStartElement(string elementTag)
         {
             Dbg.Assert(!string.IsNullOrEmpty(elementTag), "Caller should validate the parameter");
-            if (SerializationOptions.NoNamespace == (_context.options & SerializationOptions.NoNamespace))
+            if ((_context.options & SerializationOptions.NoNamespace) == SerializationOptions.NoNamespace)
             {
                 _writer.WriteStartElement(elementTag);
             }
@@ -2908,7 +2908,7 @@ namespace System.Management.Automation
 
             value = EncodeString(value);
 
-            if (SerializationOptions.NoNamespace == (_context.options & SerializationOptions.NoNamespace))
+            if ((_context.options & SerializationOptions.NoNamespace) == SerializationOptions.NoNamespace)
             {
                 _writer.WriteElementString(name, value);
             }
@@ -4418,7 +4418,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(deserializer != null, "Caller should validate the parameter");
             string scriptBlockBody = deserializer.ReadDecodedElementString(SerializationStrings.ScriptBlockTag);
-            if (DeserializationOptions.DeserializeScriptBlocks == (deserializer._context.options & DeserializationOptions.DeserializeScriptBlocks))
+            if ((deserializer._context.options & DeserializationOptions.DeserializeScriptBlocks) == DeserializationOptions.DeserializeScriptBlocks)
             {
                 return ScriptBlock.Create(scriptBlockBody);
             }
@@ -4768,7 +4768,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(!string.IsNullOrEmpty(element), "Caller should validate the parameter");
 
-            if (DeserializationOptions.NoNamespace == (_context.options & DeserializationOptions.NoNamespace))
+            if ((_context.options & DeserializationOptions.NoNamespace) == DeserializationOptions.NoNamespace)
             {
                 _reader.ReadStartElement(element);
             }
@@ -4792,7 +4792,7 @@ namespace System.Management.Automation
             this.CheckIfStopping();
 
             string temp = null;
-            if (DeserializationOptions.NoNamespace == (_context.options & DeserializationOptions.NoNamespace))
+            if ((_context.options & DeserializationOptions.NoNamespace) == DeserializationOptions.NoNamespace)
             {
                 temp = _reader.ReadElementContentAsString(element, string.Empty);
             }
@@ -6850,14 +6850,14 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "Caller should verify propertyName != null");
 
             PSPropertyInfo property = pso.Properties[propertyName];
-            if ((property == null) && (RehydrationFlags.MissingPropertyOk == (flags & RehydrationFlags.MissingPropertyOk)))
+            if ((property == null) && ((flags & RehydrationFlags.MissingPropertyOk) == RehydrationFlags.MissingPropertyOk))
             {
                 return default(T);
             }
             else
             {
                 object propertyValue = property.Value;
-                if ((propertyValue == null) && (RehydrationFlags.NullValueOk == (flags & RehydrationFlags.NullValueOk)))
+                if ((propertyValue == null) && ((flags & RehydrationFlags.NullValueOk) == RehydrationFlags.NullValueOk))
                 {
                     return default(T);
                 }
@@ -6875,7 +6875,7 @@ namespace Microsoft.PowerShell
             ArrayList deserializedList = GetPropertyValue<ArrayList>(pso, propertyName, flags);
             if (deserializedList == null)
             {
-                if (RehydrationFlags.NullValueMeansEmptyList == (flags & RehydrationFlags.NullValueMeansEmptyList))
+                if ((flags & RehydrationFlags.NullValueMeansEmptyList) == RehydrationFlags.NullValueMeansEmptyList)
                 {
                     return new ListType();
                 }
