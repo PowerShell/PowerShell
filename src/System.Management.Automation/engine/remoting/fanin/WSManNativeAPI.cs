@@ -3015,7 +3015,6 @@ namespace System.Management.Automation.Remoting.Client
     }
 
 #nullable enable
-
     /// <summary>
     /// Interface to enable stubbing of the WSManNativeApi PInvoke calls for
     /// unit testing.
@@ -3054,7 +3053,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr shutdownCallback,
             IntPtr shutdownContext);
     }
-
 #nullable restore
 
     /// <summary>
