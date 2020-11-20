@@ -320,7 +320,6 @@ namespace System.Management.Automation
         #endregion private data
     }
 
-#nullable enable
     /// <summary>
     /// This enum defines the visibility of execution environment elements...
     /// </summary>
@@ -337,6 +336,7 @@ namespace System.Management.Automation
         Private = 1
     }
 
+#nullable enable
     internal interface IHasSessionStateEntryVisibility
     {
         SessionStateEntryVisibility Visibility { get; set; }
