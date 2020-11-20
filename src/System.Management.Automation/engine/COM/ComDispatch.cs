@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using COM = System.Runtime.InteropServices.ComTypes;
 
 #nullable enable
-
 namespace System.Management.Automation
 {
     /// <summary>
