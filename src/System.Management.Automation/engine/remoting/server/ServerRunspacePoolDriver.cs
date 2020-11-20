@@ -25,11 +25,11 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
 
-#nullable enable
     /// <summary>
     /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
     /// </summary>
+#nullable enable
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
