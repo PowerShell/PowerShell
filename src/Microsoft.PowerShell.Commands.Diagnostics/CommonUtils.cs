@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                     LANGID = 0; // neutral
                 }
 
-                StringBuilder outStringBuilder = new StringBuilder(1024);
+                StringBuilder outStringBuilder = new(1024);
                 uint nChars = FormatMessage(dwFormatFlags,
                     moduleHandle,
                     lastError,
