@@ -1196,12 +1196,12 @@ namespace System.Management.Automation.Host
         private bool _disposed = false;
     }
 
-#nullable enable
     /// <summary>
     /// This interface needs to be implemented by PSHost objects that want to support PromptForChoice
     /// by giving the user ability to select more than one choice. The PromptForChoice method available
     /// in PSHostUserInterface class supports only one choice selection.
     /// </summary>
+#nullable enable
     public interface IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
