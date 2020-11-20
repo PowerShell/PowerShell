@@ -200,8 +200,8 @@ namespace System.Management.Automation.Language
         #endregion Expressions
     }
 
-#nullable enable
     /// <summary/>
+#nullable enable
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
         /// <summary/>
