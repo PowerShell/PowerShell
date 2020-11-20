@@ -1717,7 +1717,6 @@ namespace System.Management.Automation
         }
     }
 
-#nullable enable
     /// <summary>
     /// Implemented by exception classes which contain additional
     /// <see cref="System.Management.Automation.ErrorRecord"/>
@@ -1762,6 +1761,7 @@ namespace System.Management.Automation
     /// <seealso cref="Provider.CmdletProvider"/>
     /// is no longer available.
     /// </remarks>
+#nullable enable
     public interface IContainsErrorRecord
     {
         /// <summary>
