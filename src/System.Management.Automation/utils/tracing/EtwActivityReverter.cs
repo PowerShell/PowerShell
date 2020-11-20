@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #nullable enable
-
 #if !UNIX
 
 namespace System.Management.Automation.Tracing
