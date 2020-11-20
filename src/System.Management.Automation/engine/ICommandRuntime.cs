@@ -3,7 +3,6 @@
 
 using System.Management.Automation.Host;
 
-#nullable enable
 namespace System.Management.Automation
 {
     /// <summary>
@@ -22,6 +21,7 @@ namespace System.Management.Automation
     /// implementation of this class and pass it to cmdlets before calling the Cmdlet Invoke() or
     /// Execute() methods.
     /// </remarks>
+#nullable enable
     public interface ICommandRuntime
     {
         /// <summary>
@@ -555,7 +555,6 @@ namespace System.Management.Automation
         #endregion misc
 
     }
-
 #nullable disable
 
     /// <summary>
