@@ -20,18 +20,29 @@ namespace System.Management.Automation
         // This is how we can tell if we're trying to complete part of something (like a member)
         // or complete an argument, where TokenBeforeCursor could be a parameter name.
         internal Token TokenAtCursor { get; set; }
+
         internal Token TokenBeforeCursor { get; set; }
+
         internal IScriptPosition CursorPosition { get; set; }
 
         internal PowerShellExecutionHelper Helper { get; set; }
+
         internal Hashtable Options { get; set; }
+
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
+
         internal string WordToComplete { get; set; }
+
         internal int ReplacementIndex { get; set; }
+
         internal int ReplacementLength { get; set; }
+
         internal ExecutionContext ExecutionContext { get; set; }
+
         internal PseudoBindingInfo PseudoBindingInfo { get; set; }
+
         internal TypeInferenceContext TypeInferenceContext { get; set; }
 
         internal bool GetOption(string option, bool @default)

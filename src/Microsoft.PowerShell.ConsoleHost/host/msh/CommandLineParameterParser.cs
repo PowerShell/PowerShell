@@ -327,6 +327,7 @@ namespace Microsoft.PowerShell
                 AssertArgumentsParsed();
                 return _configurationName;
             }
+
             set
             {
                 if (!string.IsNullOrEmpty(value))

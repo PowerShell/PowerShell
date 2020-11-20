@@ -111,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 // the values to be written
             }
         }
+
         /// <summary>
         /// </summary>
         protected override void ProcessRecord()
@@ -155,6 +156,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Dispose(false);
         }
+
         #region private
         private CommandWrapper _commandWrapper;
         private bool _alreadyDisposed;

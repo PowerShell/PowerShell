@@ -1401,7 +1401,7 @@ dotnet_diagnostic.SA1514.severity = none
 dotnet_diagnostic.SA1515.severity = none
 
 # SA1516: Elements should be separated by blank line
-dotnet_diagnostic.SA1516.severity = none
+dotnet_diagnostic.SA1516.severity = warning
 
 # SA1517: Code should not contain blank lines at start of file
 dotnet_diagnostic.SA1517.severity = none

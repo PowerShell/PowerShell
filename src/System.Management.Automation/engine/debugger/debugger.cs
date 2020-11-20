@@ -1578,8 +1578,11 @@ namespace System.Management.Automation
         private class CallStackInfo
         {
             internal InvocationInfo InvocationInfo { get; set; }
+
             internal string File { get; set; }
+
             internal bool DebuggerStepThrough { get; set; }
+
             internal FunctionContext FunctionContext { get; set; }
 
             /// <summary>

@@ -456,6 +456,7 @@ namespace System.Management.Automation.Remoting.Client
             new Dictionary<long, WSManClientSessionTransportManager>();
 
         private static long s_sessionTMSeed;
+
         // generate unique session id
         private static long GetNextSessionTMHandleId()
         {

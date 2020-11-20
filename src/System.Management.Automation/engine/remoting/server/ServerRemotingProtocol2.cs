@@ -417,6 +417,7 @@ namespace System.Management.Automation
 
         private readonly Dictionary<Guid, ServerPowerShellDataStructureHandler> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDataStructureHandler>();
+
         // powershell data structure handlers associated with this
         // runspace pool data structure handler
         private readonly object _associationSyncObject = new object();
