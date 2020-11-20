@@ -1715,12 +1715,12 @@ namespace System.Management.Automation
         NullModuleSpecification,
     }
 
-#nullable enable
 
     /// <summary>
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
     /// w.r.t compiled assembly loading.
     /// </summary>
+#nullable enable
     public interface IModuleAssemblyInitializer
     {
         /// <summary>
