@@ -4350,7 +4350,6 @@ namespace System.Management.Automation
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
 #nullable enable
-
         internal interface IConversionData
         {
             object Converter { get; }
@@ -4364,7 +4363,6 @@ namespace System.Management.Automation
                           IFormatProvider? formatProvider,
                           TypeTable? backupTable);
         }
-
 #nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
