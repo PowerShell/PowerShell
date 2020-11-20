@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
                     string moduleName = Path.GetFileName(folder);
-                    if (string.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Equals(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase))
                     {
                         fileBaseName = moduleName;
 #endif
@@ -3531,7 +3531,7 @@ namespace Microsoft.PowerShell.Commands
                 if (nestedModule != null)
                 {
                     var exportedTypes = nestedModule.GetExportedTypeDefinitions();
-                    if (exportedTypes != null && exportedTypes.Count != 0)
+                    if (exportedTypes != null && exportedTypes.Count > 0)
                     {
                         foreach (var t in exportedTypes)
                         {
