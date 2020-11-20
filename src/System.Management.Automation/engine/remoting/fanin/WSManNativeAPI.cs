@@ -3014,6 +3014,8 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
+#nullable enable
+
     /// <summary>
     /// Interface to enable stubbing of the WSManNativeApi PInvoke calls for
     /// unit testing.
@@ -3037,7 +3039,7 @@ namespace System.Management.Automation.Remoting.Client
         int WSManPluginReceiveResult(
             IntPtr requestDetails,
             int flags,
-            string stream,
+            string? stream,
             IntPtr streamResult,
             string commandState,
             int exitCode);
@@ -3052,6 +3054,8 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr shutdownCallback,
             IntPtr shutdownContext);
     }
+
+#nullable restore
 
     /// <summary>
     /// Concrete implementation of the PInvoke facade for use in the production code.
