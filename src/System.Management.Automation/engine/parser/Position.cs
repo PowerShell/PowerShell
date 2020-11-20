@@ -48,10 +48,10 @@ namespace System.Management.Automation.Language
         string GetFullScript();
     }
 
-#nullable enable
     /// <summary>
     /// Represents the a span of text in a script.
     /// </summary>
+#nullable enable
     public interface IScriptExtent
     {
         /// <summary>
