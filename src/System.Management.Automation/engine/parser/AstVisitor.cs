@@ -10,7 +10,6 @@ namespace System.Management.Automation.Language
 {
 
 #nullable enable
-
     /// <summary>
     /// </summary>
     public interface ICustomAstVisitor
@@ -202,7 +201,6 @@ namespace System.Management.Automation.Language
 
         #endregion Expressions
     }
-
 #nullable restore
 
     /// <summary/>
