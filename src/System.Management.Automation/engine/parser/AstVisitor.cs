@@ -9,9 +9,10 @@ using System.Reflection.Emit;
 namespace System.Management.Automation.Language
 {
 
-#nullable enable
+
     /// <summary>
     /// </summary>
+#nullable enable
     public interface ICustomAstVisitor
     {
         /// <summary/>
