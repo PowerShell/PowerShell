@@ -286,11 +286,11 @@ namespace System.Management.Automation.Host
         }
     }
 
-#nullable enable
     /// <summary>
     /// This interface needs to be implemented by PSHost objects that want to support the PushRunspace
     /// and PopRunspace functionality.
     /// </summary>
+#nullable enable
     public interface IHostSupportsInteractiveSession
     {
         /// <summary>
