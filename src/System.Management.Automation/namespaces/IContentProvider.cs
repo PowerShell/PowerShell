@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #nullable enable
-
 namespace System.Management.Automation.Provider
 {
     #region IContentCmdletProvider
