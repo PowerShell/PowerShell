@@ -55,10 +55,10 @@ namespace System.Management.Automation
         }
     }
 
-#nullable enable
     /// <summary>
     /// A type specified by the <see cref="ArgumentCompleterAttribute"/> must implement this interface.
     /// </summary>
+#nullable enable
     public interface IArgumentCompleter
     {
         /// <summary>
