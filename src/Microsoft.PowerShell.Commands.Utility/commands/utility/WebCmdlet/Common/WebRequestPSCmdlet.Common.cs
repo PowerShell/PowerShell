@@ -1796,12 +1796,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (multipartContent == null)
-            {
-                throw new ArgumentNullException(nameof(multipartContent));
-            }
-
-            request.Content = multipartContent;
+            request.Content = multipartContent ?? throw new ArgumentNullException(nameof(multipartContent));
 
             return multipartContent.Headers.ContentLength.Value;
         }

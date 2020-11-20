@@ -1234,21 +1234,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
-
-            if (streamReader == null)
-            {
-                throw new ArgumentNullException(nameof(streamReader));
-            }
-
-            _cmdlet = cmdlet;
+            _cmdlet = cmdlet ?? throw new ArgumentNullException(nameof(cmdlet));
+            _sr = streamReader ?? throw new ArgumentNullException(nameof(streamReader));
             _delimiter = delimiter;
             Header = header;
             TypeName = typeName;
-            _sr = streamReader;
         }
 
         #endregion constructor

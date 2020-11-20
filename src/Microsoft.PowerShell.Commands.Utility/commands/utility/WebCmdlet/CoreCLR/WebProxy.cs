@@ -13,12 +13,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal WebProxy(Uri address)
         {
-            if (address == null)
-            {
-                throw new ArgumentNullException(nameof(address));
-            }
-
-            _proxyAddress = address;
+            _proxyAddress = address ?? throw new ArgumentNullException(nameof(address));
         }
 
         public ICredentials Credentials

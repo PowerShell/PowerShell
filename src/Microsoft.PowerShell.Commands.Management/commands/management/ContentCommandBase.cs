@@ -343,12 +343,7 @@ namespace Microsoft.PowerShell.Commands
                 IContentReader reader,
                 IContentWriter writer)
             {
-                if (pathInfo == null)
-                {
-                    throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
-                }
-
-                PathInfo = pathInfo;
+                PathInfo = pathInfo ?? throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
                 Reader = reader;
                 Writer = writer;
             }

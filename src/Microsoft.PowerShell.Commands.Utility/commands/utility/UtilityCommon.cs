@@ -118,13 +118,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
         public ByteCollection(ulong offset, byte[] value, string path)
         {
-            if (value == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(value));
-            }
-
+            Bytes = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
             Offset64 = offset;
-            Bytes = value;
             Path = path;
             Label = path;
         }
@@ -147,13 +142,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">Underlying bytes stored in the collection.</param>
         public ByteCollection(ulong offset, byte[] value)
         {
-            if (value == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(value));
-            }
-
+            Bytes = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
             Offset64 = offset;
-            Bytes = value;
         }
 
         /// <summary>
@@ -176,12 +166,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">Underlying bytes stored in the collection.</param>
         public ByteCollection(byte[] value)
         {
-            if (value == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(value));
-            }
-
-            Bytes = value;
+            Bytes = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
         }
 
         /// <summary>

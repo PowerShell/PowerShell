@@ -776,7 +776,7 @@ dotnet_diagnostic.IDE0010.severity = silent
 dotnet_diagnostic.IDE0011.severity = silent
 
 # IDE0016: UseThrowExpression
-dotnet_diagnostic.IDE0016.severity = silent
+dotnet_diagnostic.IDE0016.severity = warning
 
 # IDE0017: UseObjectInitializer
 dotnet_diagnostic.IDE0017.severity = silent

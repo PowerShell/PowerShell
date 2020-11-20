@@ -330,19 +330,9 @@ namespace Microsoft.PowerShell.Commands
             bool writeError,
             Collection<PSTraceSource> matchingSources)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
-
-            if (matchingSources == null)
-            {
-                throw new ArgumentNullException(nameof(matchingSources));
-            }
-
-            _cmdlet = cmdlet;
+            _cmdlet = cmdlet ?? throw new ArgumentNullException(nameof(cmdlet));
+            _matchingSources = matchingSources ?? throw new ArgumentNullException(nameof(matchingSources));
             _writeError = writeError;
-            _matchingSources = matchingSources;
         }
 
         /// <summary>

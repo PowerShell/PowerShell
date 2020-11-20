@@ -61,13 +61,8 @@ namespace Microsoft.WSMan.Management
         /// <param name="serverSession">Current server session.</param>
         public CurrentConfigurations(IWSManSession serverSession)
         {
-            if (serverSession == null)
-            {
-                throw new ArgumentNullException(nameof(serverSession));
-            }
-
+            this.serverSession = serverSession ?? throw new ArgumentNullException(nameof(serverSession));
             this.rootDocument = new XmlDocument();
-            this.serverSession = serverSession;
         }
 
         /// <summary>

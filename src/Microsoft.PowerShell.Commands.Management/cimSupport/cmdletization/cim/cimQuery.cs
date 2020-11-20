@@ -319,12 +319,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 throw new ArgumentNullException(nameof(optionName));
             }
 
-            if (optionValue == null)
-            {
-                throw new ArgumentNullException(nameof(optionValue));
-            }
-
-            this.queryOptions[optionName] = optionValue;
+            this.queryOptions[optionName] = optionValue ?? throw new ArgumentNullException(nameof(optionValue));
         }
 
         #endregion Cmdletization inputs
