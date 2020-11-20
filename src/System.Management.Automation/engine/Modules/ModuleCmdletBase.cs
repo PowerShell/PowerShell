@@ -2189,10 +2189,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set up to load any types files that have been specified...
-            List<string> exportedTypeFiles;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "TypesToProcess", manifestProcessingFlags, moduleBase,
-                    ".ps1xml", true, out exportedTypeFiles))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "TypesToProcess",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: ".ps1xml",
+                verifyFilesExist: true,
+                out List<string> exportedTypeFiles))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2234,10 +2239,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set up to load any format files that have been specified...
-            List<string> exportedFormatFiles;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "FormatsToProcess", manifestProcessingFlags,
-                    moduleBase, ".ps1xml", true, out exportedFormatFiles))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "FormatsToProcess",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: ".ps1xml",
+                verifyFilesExist: true,
+                out List<string> exportedFormatFiles))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2276,10 +2286,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // scripts to process
-            List<string> scriptsToProcess;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "ScriptsToProcess", manifestProcessingFlags,
-                    moduleBase, ".ps1", true, out scriptsToProcess))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "ScriptsToProcess",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: ".ps1",
+                verifyFilesExist: true,
+                out List<string> scriptsToProcess))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2323,13 +2338,16 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Process "FileList"
-            List<string> fileList;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "FileList", manifestProcessingFlags, moduleBase, ""
-                    /*extension*/,
-                    false
-                    /* don't check file existence - don't want to change current behavior without feature team discussion */,
-                    out fileList))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "FileList",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: "",
+                // Don't check file existence - don't want to change current behavior without feature team discussion.
+                verifyFilesExist: false,
+                out List<string> fileList))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
