@@ -50,6 +50,8 @@ namespace System.Management.Automation.Language
         Expression SetValue(Compiler compiler, Expression rhs);
     }
 
+#nullable enable
+
     internal interface IParameterMetadataProvider
     {
         bool HasAnyScriptBlockAttributes();
@@ -59,24 +61,26 @@ namespace System.Management.Automation.Language
 
         bool UsesCmdletBinding();
 
-        ReadOnlyCollection<ParameterAst> Parameters { get; }
+        ReadOnlyCollection<ParameterAst>? Parameters { get; }
 
         ScriptBlockAst Body { get; }
 
         #region Remoting/Invoke Command
 
-        PowerShell GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
-            bool filterNonUsingVariables, bool? createLocalScope, params object[] args);
+        PowerShell? GetPowerShell(ExecutionContext context, Dictionary<string, object>? variables, bool isTrustedInput,
+            bool filterNonUsingVariables, bool? createLocalScope, params object[]? args);
 
         string GetWithInputHandlingForInvokeCommand();
 
         /// <summary>
         /// Return value is Tuple[paramText, scriptBlockText]
         /// </summary>
-        Tuple<string, string> GetWithInputHandlingForInvokeCommandWithUsingExpression(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple);
+        Tuple<string, string> GetWithInputHandlingForInvokeCommandWithUsingExpression(Tuple<List<VariableExpressionAst>, string>? usingVariablesTuple);
 
         #endregion Remoting/Invoke Command
     }
+
+#nullable restore
 
     /// <summary>
     /// The abstract base class for all PowerShell abstract syntax tree nodes.
