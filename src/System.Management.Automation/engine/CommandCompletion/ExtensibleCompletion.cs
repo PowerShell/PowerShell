@@ -56,7 +56,6 @@ namespace System.Management.Automation
     }
 
 #nullable enable
-
     /// <summary>
     /// A type specified by the <see cref="ArgumentCompleterAttribute"/> must implement this interface.
     /// </summary>
@@ -84,7 +83,6 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters);
     }
-
 #nullable restore
 
     /// <summary>
