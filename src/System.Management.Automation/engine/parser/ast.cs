@@ -51,7 +51,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         Expression SetValue(Compiler compiler, Expression rhs);
     }
-
 #nullable restore
 
     internal interface IParameterMetadataProvider
