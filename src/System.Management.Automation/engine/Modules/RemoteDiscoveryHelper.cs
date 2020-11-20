@@ -360,7 +360,7 @@ namespace System.Management.Automation
             Exception outerException = new InvalidOperationException(errorMessage, innerException);
 
             RemoteException remoteException = innerException as RemoteException;
-            ErrorRecord remoteErrorRecord = remoteException != null ? remoteException.ErrorRecord : null;
+            ErrorRecord remoteErrorRecord = remoteException?.ErrorRecord;
             string errorId = remoteErrorRecord != null ? remoteErrorRecord.FullyQualifiedErrorId : innerException.GetType().Name;
             ErrorCategory errorCategory = remoteErrorRecord != null ? remoteErrorRecord.CategoryInfo.Category : ErrorCategory.NotSpecified;
             ErrorRecord errorRecord = new ErrorRecord(outerException, errorId, errorCategory, null);

@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Language
         {
             PSInvokeDynamicMemberBinder result;
 
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst?.Type;
             lock (s_binderCache)
             {
                 var key = Tuple.Create(callInfo, constraints, propertySetter, @static, classScope);
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation.Language
             PSGetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope?.Type;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -1406,7 +1406,7 @@ namespace System.Management.Automation.Language
             PSSetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope?.Type;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -5071,7 +5071,7 @@ namespace System.Management.Automation.Language
 
         public static PSGetMemberBinder Get(string memberName, TypeDefinitionAst classScope, bool @static)
         {
-            return Get(memberName, classScope != null ? classScope.Type : null, @static, false);
+            return Get(memberName, classScope?.Type, @static, false);
         }
 
         public static PSGetMemberBinder Get(string memberName, Type classScope, bool @static)
@@ -5629,7 +5629,7 @@ namespace System.Management.Automation.Language
             PSMemberInfo memberInfo = null;
             ConsolidatedString typenames = null;
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var typeTable = context != null ? context.TypeTable : null;
+            var typeTable = context?.TypeTable;
 
             if (hasTypeTableMember)
             {
@@ -5842,7 +5842,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             if (memberInfo == null)
             {
                 memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
@@ -5881,7 +5881,7 @@ namespace System.Management.Automation.Language
         internal static TypeTable GetTypeTableFromTLS()
         {
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            return executionContext != null ? executionContext.TypeTable : null;
+            return executionContext?.TypeTable;
         }
 
         internal static bool TryGetInstanceMember(object value, string memberName, out PSMemberInfo memberInfo)
@@ -5964,7 +5964,7 @@ namespace System.Management.Automation.Language
 
         public static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
         {
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst?.Type;
             return Get(memberName, classScope, @static);
         }
 
@@ -6446,7 +6446,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+                var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
                 if (memberInfo == null)
                 {
                     memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
@@ -7401,7 +7401,7 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, methodName) as PSMethodInfo;
             if (methodInfo == null && adapterSet.DotNetAdapter != null)
             {
@@ -7446,7 +7446,7 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedSetMember(object obj, string methodName, object[] args, object valueToSet)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSParameterizedProperty>(obj, methodName);
             if (methodInfo == null && adapterSet.DotNetAdapter != null)
             {

@@ -952,7 +952,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 RemoteRunspace remoteRunspace = this as RemoteRunspace;
                                 RemoteDebugger remoteDebugger = (remoteRunspace != null) ? remoteRunspace.Debugger as RemoteDebugger : null;
-                                Internal.ConnectCommandInfo remoteCommand = (remoteRunspace != null) ? remoteRunspace.RemoteCommand : null;
+                                Internal.ConnectCommandInfo remoteCommand = remoteRunspace?.RemoteCommand;
                                 if (((pipelineState == PipelineState.Completed) || (pipelineState == PipelineState.Failed) ||
                                     ((pipelineState == PipelineState.Stopped) && (this.RunspaceStateInfo.State == RunspaceState.Opened)))
                                     && (remoteCommand != null) && (cmdInstanceId != null) && (remoteCommand.CommandId == cmdInstanceId))
@@ -1590,7 +1590,7 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 var context = GetExecutionContext;
-                return (context != null) ? context.Debugger : null;
+                return context?.Debugger;
             }
         }
 

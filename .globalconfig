@@ -819,7 +819,7 @@ dotnet_diagnostic.IDE0029.severity = silent
 dotnet_diagnostic.IDE0030.severity = silent
 
 # IDE0031: UseNullPropagation
-dotnet_diagnostic.IDE0031.severity = silent
+dotnet_diagnostic.IDE0031.severity = warning
 
 # IDE0032: UseAutoProperty
 dotnet_diagnostic.IDE0032.severity = silent

@@ -1531,7 +1531,7 @@ namespace System.Management.Automation.Interpreter
                 enterTryInstr.SetTryHandler(
                     new TryCatchFinallyHandler(tryStart, tryEnd, gotoEnd.TargetIndex,
                         startOfFinally.TargetIndex, _instructions.Count,
-                        exHandlers != null ? exHandlers.ToArray() : null));
+                        exHandlers?.ToArray()));
                 PopLabelBlock(LabelScopeKind.Finally);
             }
             else

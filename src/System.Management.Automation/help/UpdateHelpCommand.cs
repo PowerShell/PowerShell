@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (UpdatableHelpUri contentUri in newHelpInfo.HelpContentUriCollection)
             {
-                Version currentHelpVersion = (currentHelpInfo != null) ? currentHelpInfo.GetCultureVersion(contentUri.Culture) : null;
+                Version currentHelpVersion = currentHelpInfo?.GetCultureVersion(contentUri.Culture);
                 string updateHelpShouldProcessAction = string.Format(CultureInfo.InvariantCulture,
                     HelpDisplayStrings.UpdateHelpShouldProcessActionMessage,
                     module.ModuleName,

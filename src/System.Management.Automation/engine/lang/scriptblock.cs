@@ -596,7 +596,7 @@ namespace System.Management.Automation
         /// Get the PSModuleInfo object for the module that defined this
         /// scriptblock.
         /// </summary>
-        public PSModuleInfo Module { get => SessionStateInternal != null ? SessionStateInternal.Module : null; }
+        public PSModuleInfo Module { get => SessionStateInternal?.Module; }
 
         /// <summary>
         /// Return the PSToken object for this function definition...
@@ -709,7 +709,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
+                return SessionStateInternal?.PublicSessionState;
             }
 
             set
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
-            ICommandRuntime crt = commandProcessor == null ? null : commandProcessor.CommandRuntime;
+            ICommandRuntime crt = commandProcessor?.CommandRuntime;
             Begin(expectInput, crt);
         }
 

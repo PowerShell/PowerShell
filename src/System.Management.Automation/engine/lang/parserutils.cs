@@ -378,8 +378,8 @@ namespace System.Management.Automation
             lval = PSObject.Base(lval);
             rval = PSObject.Base(rval);
 
-            Type lvalType = lval != null ? lval.GetType() : null;
-            Type rvalType = rval != null ? rval.GetType() : null;
+            Type lvalType = lval?.GetType();
+            Type rvalType = rval?.GetType();
             Type opType;
             if (lvalType == null || (lvalType.IsPrimitive))
             {

@@ -449,7 +449,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
-                    commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
+                    commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
                 }

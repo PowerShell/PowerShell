@@ -670,7 +670,7 @@ namespace System.Management.Automation.Language
             }
 
             var str = expr as StringConstantExpressionAst;
-            return str != null ? str.Value : null;
+            return str?.Value;
         }
 
         public override AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst)

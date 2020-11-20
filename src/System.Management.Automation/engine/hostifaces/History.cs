@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int historySize = 0;
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            object obj = (executionContext != null) ? executionContext.GetVariableValue(SpecialVariables.HistorySizeVarPath) : null;
+            object obj = executionContext?.GetVariableValue(SpecialVariables.HistorySizeVarPath);
             if (obj != null)
             {
                 try
