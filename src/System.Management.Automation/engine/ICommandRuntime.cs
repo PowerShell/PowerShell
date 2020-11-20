@@ -3,6 +3,8 @@
 
 using System.Management.Automation.Host;
 
+#nullable enable
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an instance of the PSHost implementation for this environment.
         /// </summary>
-        PSHost Host { get; }
+        PSHost? Host { get; }
         #region Write
         /// <summary>
         /// Display debug information.
@@ -65,7 +67,7 @@ namespace System.Management.Automation
         /// When the cmdlet wants to write a single object out, it will call this
         /// API. It is up to the implementation to decide what to do with these objects.
         /// </remarks>
-        void WriteObject(object sendToPipeline);
+        void WriteObject(object? sendToPipeline);
 
         /// <summary>
         /// Called to write one or more objects to the output pipe.
@@ -83,7 +85,7 @@ namespace System.Management.Automation
         ///  When the cmdlet wants to write multiple objects out, it will call this
         /// API. It is up to the implementation to decide what to do with these objects.
         /// </remarks>
-        void WriteObject(object sendToPipeline, bool enumerateCollection);
+        void WriteObject(object? sendToPipeline, bool enumerateCollection);
 
         /// <summary>
         /// Called by the cmdlet to display progress information.
@@ -515,7 +517,7 @@ namespace System.Management.Automation
         /// Gets an object that surfaces the current PowerShell transaction.
         /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
-        PSTransactionContext CurrentPSTransaction { get; }
+        PSTransactionContext? CurrentPSTransaction { get; }
         #endregion Transaction Support
 
         #region Misc
@@ -554,6 +556,8 @@ namespace System.Management.Automation
         #endregion misc
 
     }
+
+#nullable disable
 
     /// <summary>
     /// This interface defines the set of functionality that must be implemented to directly
