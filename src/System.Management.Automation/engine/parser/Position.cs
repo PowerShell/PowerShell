@@ -12,10 +12,10 @@ namespace System.Management.Automation.Language
 {
     #region Public Interfaces
 
-#nullable enable
     /// <summary>
     /// Represents a single point in a script.  The script may come from a file or interactive input.
     /// </summary>
+#nullable enable
     public interface IScriptPosition
     {
         /// <summary>
