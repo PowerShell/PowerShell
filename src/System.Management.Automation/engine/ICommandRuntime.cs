@@ -555,12 +555,12 @@ namespace System.Management.Automation
 
     }
 
-#nullable enable
     /// <summary>
     /// This interface defines the set of functionality that must be implemented to directly
     /// execute an instance of a Cmdlet. ICommandRuntime2 extends the ICommandRuntime interface
     /// by adding support for the informational data stream.
     /// </summary>
+#nullable enable
     public interface ICommandRuntime2 : ICommandRuntime
     {
         /// <summary>
