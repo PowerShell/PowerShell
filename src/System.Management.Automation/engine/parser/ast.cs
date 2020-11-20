@@ -8107,6 +8107,8 @@ namespace System.Management.Automation.Language
         }
     }
 
+#nullable enable
+
     /// <summary>
     /// The name and attributes of a type.
     /// </summary>
@@ -8154,6 +8156,8 @@ namespace System.Management.Automation.Language
         /// </summary>
         IScriptExtent Extent { get; }
     }
+
+#nullable restore
 
     internal interface ISupportsTypeCaching
     {
