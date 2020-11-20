@@ -49,7 +49,6 @@ namespace System.Management.Automation.Language
     }
 
 #nullable enable
-
     /// <summary>
     /// Represents the a span of text in a script.
     /// </summary>
@@ -105,7 +104,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         int EndOffset { get; }
     }
-
 #nullable restore
 
     /// <summary>
