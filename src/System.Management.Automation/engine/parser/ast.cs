@@ -8126,7 +8126,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly, if specified, otherwise null.
         /// </summary>
-        string AssemblyName { get; }
+        string? AssemblyName { get; }
 
         /// <summary>
         /// Returns true if the type names an array, false otherwise.
@@ -8141,14 +8141,14 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
         /// </summary>
-        Type GetReflectionType();
+        Type? GetReflectionType();
 
         /// <summary>
         /// Assuming the typename is an attribute, returns the <see cref="System.Type"/> that this typename represents.
         /// By convention, the typename may omit the suffix "Attribute".  Lookup will attempt to resolve the type as is,
         /// and if that fails, the suffix "Attribute" will be appended.
         /// </summary>
-        Type GetReflectionAttributeType();
+        Type? GetReflectionAttributeType();
 
         /// <summary>
         /// The extent of the typename.
