@@ -4,7 +4,6 @@
 using System.Collections.ObjectModel;
 
 #nullable enable
-
 namespace System.Management.Automation.Provider
 {
     #region IPropertyCmdletProvider
