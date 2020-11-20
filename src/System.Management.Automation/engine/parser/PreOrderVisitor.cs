@@ -250,11 +250,12 @@ namespace System.Management.Automation.Language
         public virtual AstVisitAction VisitPipelineChain(PipelineChainAst statementChain) => DefaultVisit(statementChain);
     }
 
-#nullable enable
+
     /// <summary>
     /// Implement this interface when you implement <see cref="AstVisitor"/> or <see cref="AstVisitor2"/> when
     /// you want to do something after possibly visiting the children of the ast.
     /// </summary>
+#nullable enable
     public interface IAstPostVisitHandler
     {
         /// <summary>
