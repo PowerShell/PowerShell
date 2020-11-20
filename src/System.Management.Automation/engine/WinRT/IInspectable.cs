@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 #nullable enable
-
 namespace System.Management.Automation
 {
     /// <summary>
