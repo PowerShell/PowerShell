@@ -8,11 +8,11 @@ namespace System.Management.Automation.Tracing
     using System;
     using System.Diagnostics.Eventing;
 
-#nullable enable
     /// <summary>
     ///     An object that can be used to manage the ETW activity ID of the current thread.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Etw")]
+#nullable enable
     public interface IEtwEventCorrelator
     {
         /// <summary>
