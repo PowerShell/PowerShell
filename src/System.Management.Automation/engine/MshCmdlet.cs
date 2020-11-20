@@ -15,7 +15,6 @@ namespace System.Management.Automation
 {
     #region Auxiliary
 
-#nullable enable
     /// <summary>
     /// An interface that a
     /// <see cref="Cmdlet"/> or <see cref="Provider.CmdletProvider"/>
@@ -33,6 +32,7 @@ namespace System.Management.Automation
     /// <seealso cref="PSCmdlet"/>
     /// <seealso cref="RuntimeDefinedParameter"/>
     /// <seealso cref="RuntimeDefinedParameterDictionary"/>
+#nullable enable
     public interface IDynamicParameters
     {
         /// <summary>
