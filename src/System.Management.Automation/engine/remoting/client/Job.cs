@@ -376,10 +376,10 @@ namespace System.Management.Automation
         internal Guid InstanceId { get; private set; }
     }
 
-#nullable enable
     /// <summary>
     /// Interface to expose a job debugger.
     /// </summary>
+#nullable enable
     public interface IJobDebugger
     {
         /// <summary>
