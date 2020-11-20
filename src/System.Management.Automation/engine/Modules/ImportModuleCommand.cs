@@ -573,11 +573,19 @@ namespace Microsoft.PowerShell.Commands
 
             if (!moduleLoaded)
             {
-                bool found;
-                PSModuleInfo module = LoadBinaryModule(false, null, null, suppliedAssembly, null, null,
+                PSModuleInfo module = LoadBinaryModule(
+                    trySnapInName: false,
+                    moduleName: null,
+                    fileName: null,
+                    suppliedAssembly,
+                    moduleBase: null,
+                    ss: null,
                     importModuleOptions,
                     ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,
-                    this.BasePrefix, false /* loadTypes */ , false /* loadFormats */, out found);
+                    this.BasePrefix,
+                    loadTypes: false,
+                    loadFormats: false,
+                    out bool found);
 
                 if (found && module != null)
                 {
