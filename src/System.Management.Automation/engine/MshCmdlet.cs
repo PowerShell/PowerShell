@@ -16,7 +16,6 @@ namespace System.Management.Automation
     #region Auxiliary
 
 #nullable enable
-
     /// <summary>
     /// An interface that a
     /// <see cref="Cmdlet"/> or <see cref="Provider.CmdletProvider"/>
@@ -67,7 +66,6 @@ namespace System.Management.Automation
         /// </returns>
         object? GetDynamicParameters();
     }
-
 #nullable restore
 
     /// <summary>
