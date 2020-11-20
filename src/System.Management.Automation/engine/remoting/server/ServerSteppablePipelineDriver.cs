@@ -355,7 +355,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (!ProcessingInput && ((Input.Count > TotalObjectsProcessed)))
+                    if (!ProcessingInput && (Input.Count > TotalObjectsProcessed))
                     {
                         shouldPulse = true;
                         Pulsed = true;

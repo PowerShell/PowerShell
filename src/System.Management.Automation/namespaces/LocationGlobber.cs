@@ -274,7 +274,7 @@ namespace System.Management.Automation
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
                     if ((itemProvider != null) &&
-                        (WildcardPattern.ContainsWildcardCharacters(providerPath)))
+                        WildcardPattern.ContainsWildcardCharacters(providerPath))
                     {
                         stringResult = new Collection<string>(itemProvider.ExpandPath(providerPath, context));
                     }
@@ -495,7 +495,7 @@ namespace System.Management.Automation
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
                     if ((itemProvider != null) &&
-                        (WildcardPattern.ContainsWildcardCharacters(relativePath)))
+                        WildcardPattern.ContainsWildcardCharacters(relativePath))
                     {
                         foreach (string pathResult in itemProvider.ExpandPath(itemPath, context))
                         {
@@ -2059,8 +2059,8 @@ namespace System.Management.Automation
             // the supplied path
 
             string driveRootRelativeWorkingPath = drive.CurrentLocation;
-            if ((!string.IsNullOrEmpty(driveRootRelativeWorkingPath) &&
-                (driveRootRelativeWorkingPath.StartsWith(drive.Root, StringComparison.Ordinal))))
+            if ( !string.IsNullOrEmpty(driveRootRelativeWorkingPath) &&
+                driveRootRelativeWorkingPath.StartsWith(drive.Root, StringComparison.Ordinal))
             {
                 driveRootRelativeWorkingPath = driveRootRelativeWorkingPath.Substring(drive.Root.Length);
             }
@@ -2276,7 +2276,7 @@ namespace System.Management.Automation
         {
             string comparePath = path.Replace('/', '\\');
 
-            return (
+            return 
                 comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.Contains("\\.\\") ||
@@ -2285,7 +2285,7 @@ namespace System.Management.Automation
                 comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                comparePath.StartsWith('~'));
+                comparePath.StartsWith('~');
         }
 
         /// <summary>
@@ -4362,8 +4362,8 @@ namespace System.Management.Automation
                 bool isChildMatch = stringMatcher.IsMatch(childName);
                 s_tracer.WriteLine("isChildMatch = {0}", isChildMatch);
 
-                bool isIncludeSpecified = (includeMatcher.Count > 0);
-                bool isExcludeSpecified = (excludeMatcher.Count > 0);
+                bool isIncludeSpecified = includeMatcher.Count > 0;
+                bool isExcludeSpecified = excludeMatcher.Count > 0;
                 bool isIncludeMatch =
                      SessionStateUtilities.MatchesAnyWildcardPattern(
                         childName,

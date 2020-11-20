@@ -636,7 +636,7 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            return (CompareTo(drive));
+            return CompareTo(drive);
         }
 
         /// <summary>
@@ -747,7 +747,7 @@ namespace System.Management.Automation
 
             if (drive1Object == null)
             {
-                return (drive2Object != null);
+                return drive2Object != null;
             }
             else
             {
@@ -783,7 +783,7 @@ namespace System.Management.Automation
             object drive1Object = drive1;
             object drive2Object = drive2;
 
-            if ((drive1Object == null))
+            if (drive1Object == null)
             {
                 // Since both drives are null, they are equal
                 // Since drive1 is null it is less than drive2 which is not null

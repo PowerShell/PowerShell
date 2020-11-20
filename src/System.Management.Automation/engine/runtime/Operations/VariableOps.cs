@@ -81,7 +81,7 @@ namespace System.Management.Automation
                             null,
                             Metadata.InvalidValueFailure,
                             var.Name,
-                            ((value != null) ? value.ToString() : "$null"));
+                            (value != null) ? value.ToString() : "$null");
 
                         throw e;
                     }

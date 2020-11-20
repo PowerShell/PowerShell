@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
             if ((methods.Length == 1) &&
                 (!methods[0].hasVarArgs) &&
                 (!methods[0].isGeneric) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
+                (methods[0].method == null || ! methods[0].method.DeclaringType.IsGenericTypeDefinition) &&
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 (methods[0].parameters.Length == arguments.Length))
             {
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation
 
             if (candidates.Count == 0)
             {
-                if ((methods.Length > 0) && (methods.All(m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
+                if ((methods.Length > 0) && methods.All(m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic))
                 {
                     errorId = "CannotInvokeStaticMethodOnUninstantiatedGenericType";
                     errorMsg = string.Format(
@@ -2555,11 +2555,11 @@ namespace System.Management.Automation
     {
         #region auxiliary methods and classes
 
-        private const BindingFlags instanceBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
-                                                              BindingFlags.IgnoreCase | BindingFlags.Instance);
+        private const BindingFlags instanceBindingFlags = BindingFlags.FlattenHierarchy | BindingFlags.Public |
+                                                              BindingFlags.IgnoreCase | BindingFlags.Instance;
 
-        private const BindingFlags staticBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
-                                                              BindingFlags.IgnoreCase | BindingFlags.Static);
+        private const BindingFlags staticBindingFlags = BindingFlags.FlattenHierarchy | BindingFlags.Public |
+                                                              BindingFlags.IgnoreCase | BindingFlags.Static;
 
         private readonly bool _isStatic;
 
@@ -6022,7 +6022,7 @@ namespace System.Management.Automation
             ICollection<Type> inferenceCandidates =
                 _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition];
 
-            if ((inferenceCandidates != null) && (inferenceCandidates.Any(t => t == typeof(LanguagePrimitives.Null))))
+            if ((inferenceCandidates != null) && inferenceCandidates.Any(t => t == typeof(LanguagePrimitives.Null)))
             {
                 Type firstValueType = inferenceCandidates.FirstOrDefault(t => t.IsValueType);
                 if (firstValueType != null)

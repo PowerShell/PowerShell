@@ -571,7 +571,7 @@ namespace System.Management.Automation
                             // C:\ and C:\Temp
                             // C:\Temp and C:\
                             if (!(drive.Root.StartsWith(baseDrive.Root, StringComparison.OrdinalIgnoreCase) ||
-                                (baseDrive.Root.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase))))
+                                baseDrive.Root.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase)))
                             {
                                 // In this case, no normalization is necessary
                                 return path;
@@ -591,7 +591,7 @@ namespace System.Management.Automation
                     if (
                         (GetProviderInstance(provider) is NavigationCmdletProvider) &&
                         (!string.IsNullOrEmpty(drive.Root)) &&
-                        (path.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase)))
+                        path.StartsWith(drive.Root, StringComparison.OrdinalIgnoreCase))
                     {
                         //
                         // If the drive root doesn't end with a path separator then there is a chance the

@@ -29,7 +29,7 @@ namespace System.Management.Automation.Internal
             }
 
             _stream = stream;
-#if (false)
+#if false
             stream.WriteReady += new EventHandler (this.OnWriteReady);
 #endif
         }
@@ -173,7 +173,7 @@ namespace System.Management.Automation.Internal
             return _stream.Write(obj, enumerateCollection);
         }
 
-#if (false)
+#if false
         /// <summary>
         /// Handle WriteReady events from the underlying stream.
         /// </summary>

@@ -57,13 +57,13 @@ namespace System.Management.Automation
                     break;
 
                 case VarEnum.VT_DECIMAL:
-                    destVariant->_typeUnion._unionTypes._byref = new IntPtr(&(srcVariant->_decimal));
+                    destVariant->_typeUnion._unionTypes._byref = new IntPtr(& srcVariant->_decimal);
                     break;
 
                 default:
                     // All the other cases start at the same offset (it's a Union) so using &_i4 should work.
                     // This is the same code as in CLR implementation. It could be &_i1, &_i2 and etc. CLR implementation just prefer using &_i4.
-                    destVariant->_typeUnion._unionTypes._byref = new IntPtr(&(srcVariant->_typeUnion._unionTypes._i4));
+                    destVariant->_typeUnion._unionTypes._byref = new IntPtr(& srcVariant->_typeUnion._unionTypes._i4);
                     break;
             }
 

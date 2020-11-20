@@ -754,9 +754,9 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         protected bool IsPipelineFinished()
         {
-            return (PipelineState == PipelineState.Completed ||
+            return PipelineState == PipelineState.Completed ||
                     PipelineState == PipelineState.Failed ||
-                    PipelineState == PipelineState.Stopped);
+                    PipelineState == PipelineState.Stopped;
         }
 
         /// <summary>

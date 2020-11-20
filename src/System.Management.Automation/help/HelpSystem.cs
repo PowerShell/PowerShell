@@ -520,7 +520,7 @@ namespace System.Management.Automation
 
                     if (this.HelpProviders.Count > 0)
                     {
-                        progress.PercentComplete += (100 / this.HelpProviders.Count);
+                        progress.PercentComplete += 100 / this.HelpProviders.Count;
                         OnProgress(this, progress);
                     }
                 } while (!shouldBreak);

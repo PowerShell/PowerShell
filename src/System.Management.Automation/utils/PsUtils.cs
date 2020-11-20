@@ -420,7 +420,7 @@ namespace System.Management.Automation
         {
             string dataFileContents = ScriptAnalysis.ReadScript(psDataFilePath);
             ParseError[] parseErrors;
-            var ast = (new Parser()).Parse(psDataFilePath, dataFileContents, null, out parseErrors, ParseMode.ModuleAnalysis);
+            var ast = new Parser().Parse(psDataFilePath, dataFileContents, null, out parseErrors, ParseMode.ModuleAnalysis);
             if (parseErrors.Length > 0)
             {
                 var pe = new ParseException(parseErrors);

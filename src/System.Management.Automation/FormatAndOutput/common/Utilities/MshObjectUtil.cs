@@ -148,8 +148,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if the underlying object is of primitive type
             // if so just return its value
             if (x is PSObject &&
-                (LanguagePrimitives.IsBoolOrSwitchParameterType((((PSObject)x).BaseObject).GetType()) ||
-                LanguagePrimitives.IsNumeric(((((PSObject)x).BaseObject).GetType()).GetTypeCode()) ||
+                (LanguagePrimitives.IsBoolOrSwitchParameterType(((PSObject)x).BaseObject.GetType()) ||
+                LanguagePrimitives.IsNumeric( ((PSObject)x).BaseObject.GetType().GetTypeCode()) ||
                 LanguagePrimitives.IsNull(x)))
             {
                 objName = x.ToString();

@@ -241,8 +241,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (job is IJobDebugger)
             {
-                return ((job.JobStateInfo.State == JobState.Running) ||
-                        (job.JobStateInfo.State == JobState.AtBreakpoint));
+                return (job.JobStateInfo.State == JobState.Running) ||
+                        (job.JobStateInfo.State == JobState.AtBreakpoint);
             }
 
             return false;

@@ -518,7 +518,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-#if(DEBUG)
+#if DEBUG
             // In debug builds, allow remote runspaces to wait for debugger attach
             if (Environment.GetEnvironmentVariable("__PSRemoteRunspaceWaitForDebugger", EnvironmentVariableTarget.Machine) != null)
             {

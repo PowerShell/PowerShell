@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected static bool IsFilteredOutNode(XmlNode n)
         {
-            return (n is XmlComment || n is XmlWhitespace);
+            return n is XmlComment || n is XmlWhitespace;
         }
 
         protected bool VerifyNodeHasNoChildren(XmlNode n)

@@ -133,7 +133,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsStopping
         {
-            get { return (this.PipelineProcessor != null && this.PipelineProcessor.Stopping); }
+            get { return this.PipelineProcessor != null && this.PipelineProcessor.Stopping; }
         }
 
         #region Write
@@ -943,7 +943,7 @@ namespace System.Management.Automation
             // as it needs to handle much of its OutVariable support itself.
             if (
                 (!string.IsNullOrEmpty(this.OutVariable)) &&
-                (!(this.OutVariable.StartsWith('+'))) &&
+                (! this.OutVariable.StartsWith('+')) &&
                 string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)

@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
                                 Modules.ModuleDriveInUse,
                                 moduleName);
 
-                        throw (invalidOperation);
+                        throw invalidOperation;
                     }
 
                     // Add module to remove list.
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                         hasWildcards = false;
                 }
 
-                if (FullyQualifiedName != null && (FullyQualifiedName.Any(moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
+                if (FullyQualifiedName != null && FullyQualifiedName.Any(moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name)))
                 {
                     isEngineModule = false;
                 }

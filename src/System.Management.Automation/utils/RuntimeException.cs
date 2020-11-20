@@ -249,7 +249,7 @@ namespace System.Management.Automation
             if (ed == null)
                 return e.Message;
             string detailsMessage = ed.Message;
-            return (string.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
+            return string.IsNullOrEmpty(detailsMessage) ? e.Message : detailsMessage;
         }
 
         internal static Exception RetrieveException(ErrorRecord errorRecord)

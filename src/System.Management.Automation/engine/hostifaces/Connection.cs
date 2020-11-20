@@ -573,8 +573,8 @@ namespace System.Management.Automation.Runspaces
                     if ((localPipeline != null) && (localPipeline.NestedPipelineExecutionThread != null))
                     {
                         return
-                            (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
-                            == Environment.CurrentManagedThreadId);
+                            localPipeline.NestedPipelineExecutionThread.ManagedThreadId
+                            == Environment.CurrentManagedThreadId;
                     }
                 }
 

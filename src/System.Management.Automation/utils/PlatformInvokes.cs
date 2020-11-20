@@ -125,7 +125,7 @@ namespace System.Management.Automation
 
             protected override bool ReleaseHandle()
             {
-                return (LocalFree(base.handle) == IntPtr.Zero);
+                return LocalFree(base.handle) == IntPtr.Zero;
             }
         }
 

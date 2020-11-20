@@ -865,8 +865,8 @@ namespace System.Management.Automation
                 (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (result.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
                 (executionContext.Debugger != null) &&
-                (executionContext.Debugger.InBreakpoint) &&
-                (!(executionContext.TopLevelSessionState.GetFunctionTableAtScope("GLOBAL").ContainsKey(result.Name))))
+                executionContext.Debugger.InBreakpoint &&
+                (! executionContext.TopLevelSessionState.GetFunctionTableAtScope("GLOBAL").ContainsKey(result.Name)))
             {
                 return true;
             }

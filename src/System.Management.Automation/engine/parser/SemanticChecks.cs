@@ -1677,10 +1677,10 @@ namespace System.Management.Automation.Language
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
             if (hasTest) return;
-            hasTest = (functionMemberAst.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) &&
+            hasTest = functionMemberAst.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) &&
                     functionMemberAst.Parameters.Count == 0 &&
                     functionMemberAst.ReturnType != null &&
-                    functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
+                    functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool);
         }
         /// <summary>
         /// Check if it is a Set method with correct return type and signature.
@@ -1690,9 +1690,9 @@ namespace System.Management.Automation.Language
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
             if (hasSet) return;
-            hasSet = (functionMemberAst.Name.Equals("Set", StringComparison.OrdinalIgnoreCase) &&
+            hasSet = functionMemberAst.Name.Equals("Set", StringComparison.OrdinalIgnoreCase) &&
                     functionMemberAst.Parameters.Count == 0 &&
-                    functionMemberAst.IsReturnTypeVoid());
+                    functionMemberAst.IsReturnTypeVoid();
         }
 
         /// <summary>

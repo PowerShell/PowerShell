@@ -830,7 +830,7 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            return (Errors.Count == 0);
+            return Errors.Count == 0;
         }
 
         /// <summary>
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation.Help
                         if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                         {
                             // Clear the read-only attribute
-                            fInfo.Attributes &= ~(FileAttributes.ReadOnly);
+                            fInfo.Attributes &= ~ FileAttributes.ReadOnly;
                         }
                     }
                 }
@@ -1380,7 +1380,7 @@ namespace System.Management.Automation.Help
                     FileAttributes? originalFileAttributes = null;
                     try
                     {
-                        if (File.Exists(destPath) && (_cmdlet.Force))
+                        if (File.Exists(destPath) && _cmdlet.Force)
                         {
                             FileInfo fInfo = new FileInfo(destPath);
                             if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation.Help
                                 // remember to reset the read-only attribute later
                                 originalFileAttributes = fInfo.Attributes;
                                 // Clear the read-only attribute
-                                fInfo.Attributes &= ~(FileAttributes.ReadOnly);
+                                fInfo.Attributes &= ~ FileAttributes.ReadOnly;
                             }
                         }
 

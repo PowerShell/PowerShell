@@ -449,7 +449,7 @@ namespace System.Management.Automation
             if (type == null) { return false; }
 
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(type);
-            return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
+            return getEnumerable != LanguagePrimitives.ReturnNullEnumerable;
         }
 
         /// <summary>
@@ -487,7 +487,7 @@ namespace System.Management.Automation
 
         private static IEnumerable DataTableEnumerable(object obj)
         {
-            return (((DataTable)obj).Rows);
+            return ((DataTable)obj).Rows;
         }
 
         private static IEnumerable TypicalEnumerable(object obj)
@@ -660,8 +660,8 @@ namespace System.Management.Automation
             if (firstString != null)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                return (culture.CompareInfo.Compare(firstString, secondString,
-                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
+                return culture.CompareInfo.Compare(firstString, secondString,
+                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
             }
 
             if (first.Equals(second)) return true;
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation
 
         internal static bool IsTrue(string s)
         {
-            return (s.Length != 0);
+            return s.Length != 0;
         }
 
         internal static bool IsTrue(IList objectArray)
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
         /// <returns>True if the object is null.</returns>
         internal static bool IsNull(object obj)
         {
-            return (obj == null || obj == AutomationNull.Value);
+            return obj == null || obj == AutomationNull.Value;
         }
 
         /// <summary>
@@ -1556,7 +1556,7 @@ namespace System.Management.Automation
             string mappedType;
             if (s_nameMap.TryGetValue(typeName, out mappedType))
             {
-                return ('[' + mappedType + ']');
+                return '[' + mappedType + ']';
             }
 
             // Then check dot net types
@@ -2580,7 +2580,7 @@ namespace System.Management.Automation
                 // first using ConvertTo for the original type
                 object valueConverter = GetConverter(originalType, backupTypeTable);
 
-                if ((valueConverter != null))
+                if (valueConverter != null)
                 {
                     TypeConverter valueTypeConverter = valueConverter as TypeConverter;
                     if (valueTypeConverter != null)
@@ -4402,7 +4402,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    Dbg.Assert(((Delegate)(data.Converter)).GetMethodInfo().Equals(converter.GetMethodInfo()),
+                    Dbg.Assert(((Delegate)data.Converter).GetMethodInfo().Equals(converter.GetMethodInfo()),
                         "Existing conversion isn't the same as new conversion");
                 }
             }
@@ -5477,7 +5477,7 @@ namespace System.Management.Automation
 
         internal static PSConverter<object> FigurePropertyConversion(Type fromType, Type toType, ref ConversionRank rank)
         {
-            if ((!typeof(PSObject).IsAssignableFrom(fromType)) || (toType.IsAbstract))
+            if ((!typeof(PSObject).IsAssignableFrom(fromType)) || toType.IsAbstract)
             {
                 return null;
             }

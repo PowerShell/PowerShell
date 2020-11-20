@@ -261,8 +261,8 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                return (errorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
-                        errorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
+                return errorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
+                        errorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline;
             }
 
             return false;
@@ -591,7 +591,7 @@ namespace System.Management.Automation
                         if (lastAst is ErrorExpressionAst && lastAst.Parent is FileRedirectionAst)
                         {
                             completionContext.WordToComplete = string.Empty;
-                            completionContext.ReplacementIndex = (replacementIndex += tokenAtCursor.Text.Length);
+                            completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
                             completionContext.ReplacementLength = replacementLength = 0;
                             result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
                         }
@@ -1935,7 +1935,7 @@ namespace System.Management.Automation
 
             var isSingleDash = tokenAtCursorText.Length == 1 && tokenAtCursorText[0].IsDash();
             var isDoubleDash = tokenAtCursorText.Length == 2 && tokenAtCursorText[0].IsDash() && tokenAtCursorText[1].IsDash();
-            var isParentCommandOrDynamicKeyword = (lastAst.Parent is CommandAst || lastAst.Parent is DynamicKeywordStatementAst);
+            var isParentCommandOrDynamicKeyword = lastAst.Parent is CommandAst || lastAst.Parent is DynamicKeywordStatementAst;
             if ((isSingleDash || isDoubleDash) && isParentCommandOrDynamicKeyword)
             {
                 // When it's the content of a quoted string, we only handle variable/member completion
@@ -1954,7 +1954,7 @@ namespace System.Management.Automation
             }
 
             TokenKind memberOperator = TokenKind.Unknown;
-            bool isMemberCompletion = (lastAst.Parent is MemberExpressionAst);
+            bool isMemberCompletion = lastAst.Parent is MemberExpressionAst;
             bool isStatic = isMemberCompletion && ((MemberExpressionAst)lastAst.Parent).Static;
             bool isWildcard = false;
 
@@ -2006,7 +2006,7 @@ namespace System.Management.Automation
 
             if (isMemberCompletion)
             {
-                result = CompletionCompleters.CompleteMember(completionContext, @static: (isStatic || memberOperator == TokenKind.ColonColon));
+                result = CompletionCompleters.CompleteMember(completionContext, @static: isStatic || memberOperator == TokenKind.ColonColon);
 
                 // If the last token was just a '.', we tried to complete members.  That may
                 // have failed because it wasn't really an attempt to complete a member, in

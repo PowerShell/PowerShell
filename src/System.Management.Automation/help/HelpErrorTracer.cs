@@ -200,7 +200,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_traceFrames.Count > 0 && this.HelpSystem.VerboseHelpErrors);
+                return _traceFrames.Count > 0 && this.HelpSystem.VerboseHelpErrors;
             }
         }
     }

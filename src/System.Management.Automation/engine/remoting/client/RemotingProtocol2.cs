@@ -922,7 +922,7 @@ namespace System.Management.Automation.Internal
                 if (_transportManager != null &&
                     _transportManager is WSManClientSessionTransportManager)
                 {
-                    return ((WSManClientSessionTransportManager)(_transportManager)).MaxRetryConnectionTime;
+                    return ((WSManClientSessionTransportManager)_transportManager).MaxRetryConnectionTime;
                 }
 
                 return 0;
@@ -1432,7 +1432,7 @@ namespace System.Management.Automation.Internal
         internal void ReconnectAsync()
         {
             int currentState = Interlocked.CompareExchange(ref _connectionState, (int)connectionStates.Reconnecting, (int)connectionStates.Disconnected);
-            if ((currentState != (int)connectionStates.Disconnected))
+            if (currentState != (int)connectionStates.Disconnected)
             {
                 Dbg.Assert(false, "Pipeline DS Handler is in unexpected connection state");
 

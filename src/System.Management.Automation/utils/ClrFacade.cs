@@ -326,7 +326,7 @@ namespace System.Management.Automation
             // Fill up the UTC field in the DMTF date with the current zones UTC value
             TimeZoneInfo curZone = TimeZoneInfo.Local;
             TimeSpan tickOffset = curZone.GetUtcOffset(date);
-            long OffsetMins = (tickOffset.Ticks / TimeSpan.TicksPerMinute);
+            long OffsetMins = tickOffset.Ticks / TimeSpan.TicksPerMinute;
             IFormatProvider frmInt32 = (IFormatProvider)CultureInfo.InvariantCulture.GetFormat(typeof(int));
 
             // If the offset is more than that what can be specified in DMTF format, then
@@ -337,9 +337,9 @@ namespace System.Management.Automation
                 UtcString = "+000";
             }
             else
-                if ((tickOffset.Ticks >= 0))
+                if (tickOffset.Ticks >= 0)
             {
-                UtcString = "+" + ((tickOffset.Ticks / TimeSpan.TicksPerMinute)).ToString(frmInt32).PadLeft(3, '0');
+                UtcString = "+" + (tickOffset.Ticks / TimeSpan.TicksPerMinute).ToString(frmInt32).PadLeft(3, '0');
             }
             else
             {

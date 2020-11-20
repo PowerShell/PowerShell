@@ -133,7 +133,7 @@ namespace System.Management.Automation
                 {
                     // If StrictModeVersion is not null, just check the major version.  A version of 0
                     // is the same as off to make this a simple check.
-                    return (scope.StrictModeVersion.Major >= majorVersion);
+                    return scope.StrictModeVersion.Major >= majorVersion;
                 }
                 // We shouldn't check global scope if we were in a module.
                 if (scope == EngineSessionState.ModuleScope)
@@ -654,7 +654,7 @@ namespace System.Management.Automation
             bool converted = defaultPref;
             defaultUsed = !LanguagePrimitives.TryConvertTo<bool>
                 (val, out converted);
-            return (defaultUsed) ? defaultPref : converted;
+            return defaultUsed ? defaultPref : converted;
         }
         #endregion GetSetVariable methods
 

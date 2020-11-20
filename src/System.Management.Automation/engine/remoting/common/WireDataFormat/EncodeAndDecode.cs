@@ -1190,7 +1190,7 @@ namespace System.Management.Automation
             // Add State Property
             PSNoteProperty stateProperty =
                         new PSNoteProperty(RemoteDataNameStrings.RunspaceState,
-                            (int)(stateInfo.State));
+                            (int)stateInfo.State);
             dataAsPSObject.Properties.Add(stateProperty);
 
             // Add Reason property
@@ -1509,7 +1509,7 @@ namespace System.Management.Automation
 
             // Convert the state to int and add as property
             PSNoteProperty stateProperty = new PSNoteProperty(
-                RemoteDataNameStrings.PipelineState, (int)(stateInfo.State));
+                RemoteDataNameStrings.PipelineState, (int)stateInfo.State);
             dataAsPSObject.Properties.Add(stateProperty);
 
             // Add exception property
@@ -1707,20 +1707,20 @@ namespace System.Management.Automation
             }
             else if (propertyValue is T)
             {
-                return (T)(propertyValue);
+                return (T)propertyValue;
             }
             else if (propertyValue is PSObject)
             {
                 PSObject psObject = (PSObject)propertyValue;
                 return ConvertPropertyValueTo<T>(propertyName, psObject.BaseObject);
             }
-            else if ((propertyValue is Hashtable) && (typeof(T).Equals(typeof(PSPrimitiveDictionary))))
+            else if ((propertyValue is Hashtable) && typeof(T).Equals(typeof(PSPrimitiveDictionary)))
             {
                 // rehydration of PSPrimitiveDictionary might not work when CreateRunspacePool message is received
                 // (there is no runspace and so no type table at this point) so try converting manually
                 try
                 {
-                    return (T)(object)(new PSPrimitiveDictionary((Hashtable)propertyValue));
+                    return (T)(object)new PSPrimitiveDictionary((Hashtable)propertyValue);
                 }
                 catch (ArgumentException)
                 {
@@ -2404,7 +2404,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return (runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM);
+            return runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM;
         }
     }
 }

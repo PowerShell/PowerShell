@@ -177,7 +177,7 @@ namespace System.Management.Automation.Language
             _parseMode = parseMode;
             _fileName = fileName;
             _tokenizer.Initialize(fileName, input, tokenList);
-            _savingTokens = (tokenList != null);
+            _savingTokens = tokenList != null;
             ErrorList.Clear();
 
             try
@@ -238,7 +238,7 @@ namespace System.Management.Automation.Language
                 return 0;
             }
 
-            var tokenizer = (new Parser())._tokenizer;
+            var tokenizer = new Parser()._tokenizer;
             tokenizer.Initialize(null, str, null);
             tokenizer.AllowSignedNumbers = true;
             var token = tokenizer.NextToken() as NumberToken;
@@ -755,7 +755,7 @@ namespace System.Management.Automation.Language
             }
 
             var data = hashtable as Hashtable;
-            Diagnostics.Assert((data != null), "IsConstantValueVisitor.IsConstant() should return false when the specified HashtableAst is not a avalid Hashtable");
+            Diagnostics.Assert(data != null, "IsConstantValueVisitor.IsConstant() should return false when the specified HashtableAst is not a avalid Hashtable");
             result = data;
             return true;
         }
@@ -992,7 +992,7 @@ namespace System.Management.Automation.Language
                     return null;
                 }
 
-                variableToken = ((VariableToken)token);
+                variableToken = (VariableToken)token;
 
                 SkipNewlines();
                 Token equalsToken = PeekToken();
@@ -7256,7 +7256,7 @@ namespace System.Management.Automation.Language
             if (variablePath.IsDriveQualified && variablePath.DriveName.Equals("using", StringComparison.OrdinalIgnoreCase) && variablePath.UnqualifiedPath.Length > 0)
             {
                 var realVariablePath = new VariablePath(variablePath.UnqualifiedPath);
-                ExpressionAst childExpr = new VariableExpressionAst(variableToken.Extent, realVariablePath, (variableToken.Kind == TokenKind.SplattedVariable));
+                ExpressionAst childExpr = new VariableExpressionAst(variableToken.Extent, realVariablePath, variableToken.Kind == TokenKind.SplattedVariable);
                 if (withMemberAccess)
                 {
                     childExpr = CheckPostPrimaryExpressionOperators(NextMemberAccessToken(true), childExpr);

@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
                         RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
                         if ((remoteRunspace != null) &&
                             (remoteRunspace.RunspaceAvailability == RunspaceAvailability.Busy) &&
-                            (remoteRunspace.IsAnotherInvokeCommandExecuting(this, localPipelineId)))
+                            remoteRunspace.IsAnotherInvokeCommandExecuting(this, localPipelineId))
                         {
                             // Valid steppable pipeline session.
                             availableSessions.Add(session);
@@ -1491,7 +1491,7 @@ namespace Microsoft.PowerShell.Commands
             switch (e.Notification)
             {
                 case PSConnectionRetryStatus.NetworkFailureDetected:
-                    StartProgressBar(sender.GetHashCode(), e.ComputerName, (e.MaxRetryConnectionTime / 1000));
+                    StartProgressBar(sender.GetHashCode(), e.ComputerName, e.MaxRetryConnectionTime / 1000);
                     break;
 
                 case PSConnectionRetryStatus.ConnectionRetrySucceeded:

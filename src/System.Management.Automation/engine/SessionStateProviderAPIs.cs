@@ -1296,7 +1296,7 @@ namespace System.Management.Automation
                 {
                     // making sure that we are not trying to add the same provider by checking the provider name & type of the new and existing providers.
                     if (string.IsNullOrEmpty(provider.PSSnapInName) && (string.Equals(existingProvider.Name, provider.Name, StringComparison.OrdinalIgnoreCase) &&
-                        (existingProvider.GetType().Equals(provider.GetType()))))
+                        existingProvider.GetType().Equals(provider.GetType())))
                     {
                         isDuplicateProvider = true;
                     }

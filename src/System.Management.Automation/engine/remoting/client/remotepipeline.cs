@@ -921,7 +921,7 @@ namespace System.Management.Automation
             }
 
             // Initialize the PowerShell object if it hasn't been initialized before.
-            if ((_powershell.RemotePowerShell) == null || !_powershell.RemotePowerShell.Initialized)
+            if (_powershell.RemotePowerShell == null || !_powershell.RemotePowerShell.Initialized)
             {
                 PSInvocationSettings settings = new PSInvocationSettings();
                 settings.AddToHistory = _addToHistory;

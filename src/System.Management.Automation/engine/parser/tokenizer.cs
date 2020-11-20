@@ -373,8 +373,8 @@ namespace System.Management.Automation.Language
 
         internal static bool IsCompatibleWithConfigurationType(this DynamicKeyword keyword, ConfigurationType ConfigurationType)
         {
-            return ((ConfigurationType == ConfigurationType.Meta && keyword.IsMetaDSCResource()) ||
-                    (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
+            return (ConfigurationType == ConfigurationType.Meta && keyword.IsMetaDSCResource()) ||
+                    (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource());
         }
 
         private static readonly Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
@@ -1570,7 +1570,7 @@ namespace System.Management.Automation.Language
             uint unicodeValue = uint.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
             if (unicodeValue <= char.MaxValue)
             {
-                return ((char)unicodeValue);
+                return (char)unicodeValue;
             }
             else if (unicodeValue <= 0x10FFFF)
             {

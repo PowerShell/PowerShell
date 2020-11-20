@@ -144,7 +144,7 @@ namespace System.Management.Automation
             }
 
             base.GetObjectData(info, context);
-            bool hasErrorRecord = (_errorRecord != null);
+            bool hasErrorRecord = _errorRecord != null;
             info.AddValue("HasErrorRecord", hasErrorRecord);
             if (hasErrorRecord)
                 info.AddValue("ErrorRecord", _errorRecord);
@@ -538,7 +538,7 @@ namespace System.Management.Automation
             base.GetObjectData(info, context);
             if (info != null)
             {
-                bool hasErrorRecord = (_errorRecord != null);
+                bool hasErrorRecord = _errorRecord != null;
                 info.AddValue("HasErrorRecord", hasErrorRecord);
                 if (hasErrorRecord)
                 {

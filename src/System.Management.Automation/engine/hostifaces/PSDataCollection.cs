@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
 
             Dbg.Assert(readCount >= 0, "ReadCount cannot be negative");
 
-            int resolvedReadCount = (readCount > 0 ? readCount : Int32.MaxValue);
+            int resolvedReadCount = readCount > 0 ? readCount : Int32.MaxValue;
 
             lock (SyncObject)
             {
@@ -1721,7 +1721,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool PulseIdleEvent
         {
-            get { return (IdleEvent != null); }
+            get { return IdleEvent != null; }
         }
 
         internal event EventHandler<EventArgs> IdleEvent;

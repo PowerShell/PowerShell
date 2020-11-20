@@ -289,12 +289,12 @@ namespace System.Management.Automation
 
             if (version.Major == s_psV5Version.Major)
             {
-                return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
+                return version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor;
             }
 
             if (version.Major == s_psV4Version.Major)
             {
-                return (version.Minor == s_psV4Version.Minor);
+                return version.Minor == s_psV4Version.Minor;
             }
             else if (version.Major == s_psV3Version.Major)
             {
@@ -928,7 +928,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <(SemanticVersion v1, SemanticVersion v2)
         {
-            return (Compare(v1, v2) < 0);
+            return Compare(v1, v2) < 0;
         }
 
         /// <summary>
@@ -936,7 +936,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
         {
-            return (Compare(v1, v2) <= 0);
+            return Compare(v1, v2) <= 0;
         }
 
         /// <summary>
@@ -944,7 +944,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator >(SemanticVersion v1, SemanticVersion v2)
         {
-            return (Compare(v1, v2) > 0);
+            return Compare(v1, v2) > 0;
         }
 
         /// <summary>
@@ -952,7 +952,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
         {
-            return (Compare(v1, v2) >= 0);
+            return Compare(v1, v2) >= 0;
         }
 
         private static int ComparePreLabel(string preLabel1, string preLabel2)

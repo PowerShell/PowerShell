@@ -32,7 +32,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(commandInfo != null, "commandInfo cannot be null");
             Diagnostics.Assert(commandInfo.ScriptBlock != null, "scriptblock cannot be null");
 
-            this._fromScriptFile = (this.CommandInfo is ExternalScriptInfo || this.CommandInfo is ScriptInfo);
+            this._fromScriptFile = this.CommandInfo is ExternalScriptInfo || this.CommandInfo is ScriptInfo;
             this._dontUseScopeCommandOrigin = true;
 
             CommonInitialization(commandInfo.ScriptBlock, context, useLocalScope, CommandOrigin.Internal, sessionState);
@@ -465,7 +465,7 @@ namespace System.Management.Automation
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if ((_scriptBlock.LanguageMode.HasValue) &&
+            if (_scriptBlock.LanguageMode.HasValue &&
                 (_scriptBlock.LanguageMode != Context.LanguageMode))
             {
                 oldLanguageMode = Context.LanguageMode;

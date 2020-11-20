@@ -2113,7 +2113,7 @@ namespace System.Management.Automation.Language
             // execution.
             if (lambda == null)
             {
-                lambda = (new Compiler()).CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
+                lambda = new Compiler().CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
             }
 
             SessionStateInternal oldSessionState = context.EngineSessionState;
@@ -4568,7 +4568,7 @@ namespace System.Management.Automation.Language
                                }
                                else
                                {
-                                   test = CallStringEquals(conditionExpr, currentAsString, ((flags & SwitchFlags.CaseSensitive) == 0));
+                                   test = CallStringEquals(conditionExpr, currentAsString, (flags & SwitchFlags.CaseSensitive) == 0);
                                }
                            }
                            else
@@ -5991,7 +5991,7 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_UnaryJoinOperator,
                         s_executionContextParameter,
                         Expression.Constant(unaryExpressionAst.Extent),
-                        (CompileExpressionOperand(child)).Cast(typeof(object)));
+                        CompileExpressionOperand(child).Cast(typeof(object)));
                 case TokenKind.Isplit:
                 case TokenKind.Csplit:
                     // TODO: replace this with faster code
@@ -5999,7 +5999,7 @@ namespace System.Management.Automation.Language
                         CachedReflectionInfo.ParserOps_UnarySplitOperator,
                         s_executionContextParameter,
                         Expression.Constant(unaryExpressionAst.Extent),
-                        (CompileExpressionOperand(child)).Cast(typeof(object)));
+                        CompileExpressionOperand(child).Cast(typeof(object)));
             }
 
             throw new InvalidOperationException("Unknown token in unary operator.");
@@ -6544,7 +6544,7 @@ namespace System.Management.Automation.Language
             var targetExpr = CompileExpressionOperand(indexExpressionAst.Target);
 
             var index = indexExpressionAst.Index;
-            var arrayLiteral = (index as ArrayLiteralAst);
+            var arrayLiteral = index as ArrayLiteralAst;
             var constraints = CombineTypeConstraintForMethodResolution(
                                 GetTypeConstraintForMethodResolution(indexExpressionAst.Target),
                                 GetTypeConstraintForMethodResolution(index));

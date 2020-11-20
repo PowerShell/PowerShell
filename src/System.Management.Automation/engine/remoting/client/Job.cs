@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
         {
             lock (syncObject)
             {
-                return (state == JobState.Completed || state == JobState.Failed || state == JobState.Stopped);
+                return state == JobState.Completed || state == JobState.Failed || state == JobState.Stopped;
             }
         }
 
@@ -1505,7 +1505,7 @@ namespace System.Management.Automation
         {
             lock (syncObject)
             {
-                return (IsFinishedState(state) || state == JobState.Disconnected || state == JobState.Suspended);
+                return IsFinishedState(state) || state == JobState.Disconnected || state == JobState.Suspended;
             }
         }
 
@@ -2146,7 +2146,7 @@ namespace System.Management.Automation
 
             foreach (PSRemotingChildJob childJob in this.ChildJobs)
             {
-                if ((childJob.Runspace.InstanceId.Equals(runspaceInstanceId)) &&
+                if (childJob.Runspace.InstanceId.Equals(runspaceInstanceId) &&
                     (childJob.JobStateInfo.State == JobState.Disconnected))
                 {
                     rtnJob = childJob;
@@ -2483,7 +2483,7 @@ namespace System.Management.Automation
             {
                 if (newState == JobState.Disconnected)
                 {
-                    ++(_disconnectedChildJobsCount);
+                    ++_disconnectedChildJobsCount;
 
                     // If previous state was Blocked then we need to decrement the count
                     // since it is now Disconnected.
@@ -2505,7 +2505,7 @@ namespace System.Management.Automation
                 {
                     if (prevState == JobState.Disconnected)
                     {
-                        --(_disconnectedChildJobsCount);
+                        --_disconnectedChildJobsCount;
                     }
 
                     if ((newState == JobState.Running) && (JobStateInfo.State == JobState.Disconnected))
@@ -2791,8 +2791,8 @@ namespace System.Management.Automation
         internal PSRemotingChildJob(ExecutionCmdletHelper helper, ThrottleManager throttleManager, bool aggregateResults = false)
         {
             UsesResultsCollection = true;
-            Dbg.Assert((helper.Pipeline is RemotePipeline), "Helper pipeline object should be a remote pipeline");
-            Dbg.Assert((helper.Pipeline.PipelineStateInfo.State == PipelineState.Disconnected), "Remote pipeline object must be in Disconnected state.");
+            Dbg.Assert(helper.Pipeline is RemotePipeline, "Helper pipeline object should be a remote pipeline");
+            Dbg.Assert(helper.Pipeline.PipelineStateInfo.State == PipelineState.Disconnected, "Remote pipeline object must be in Disconnected state.");
 
             Helper = helper;
             _remotePipeline = helper.Pipeline as RemotePipeline;
@@ -2901,7 +2901,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Results.IsOpen || Results.Count > 0);
+                return Results.IsOpen || Results.Count > 0;
             }
         }
 
@@ -3171,7 +3171,7 @@ namespace System.Management.Automation
                     break;
 
                 case PipelineState.Disconnected:
-                    DisconnectedAndBlocked = (JobStateInfo.State == JobState.Blocked);
+                    DisconnectedAndBlocked = JobStateInfo.State == JobState.Blocked;
                     SetJobState(JobState.Disconnected);
                     break;
             }
@@ -4341,8 +4341,8 @@ namespace System.Management.Automation
                         break;
                 }
 
-                setJobStateToDisconnected = ((_pipelineFinishedCount + _pipelineDisconnectedCount) == _helpers.Count &&
-                                              _pipelineDisconnectedCount > 0);
+                setJobStateToDisconnected = (_pipelineFinishedCount + _pipelineDisconnectedCount) == _helpers.Count &&
+                                              _pipelineDisconnectedCount > 0;
             }
 
             if (setJobStateToDisconnected)
@@ -4456,8 +4456,8 @@ namespace System.Management.Automation
         /// false otherwise.</returns>
         internal bool IsTerminalState()
         {
-            return (IsFinishedState(this.JobStateInfo.State) ||
-                    this.JobStateInfo.State == JobState.Disconnected);
+            return IsFinishedState(this.JobStateInfo.State) ||
+                    this.JobStateInfo.State == JobState.Disconnected;
         }
 
         /// <summary>

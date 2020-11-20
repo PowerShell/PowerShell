@@ -615,7 +615,7 @@ namespace System.Management.Automation
 
                 // ExternalScriptInfo.GetScriptBlockAst() uses a cache layer to avoid re-parsing.
                 CreateExportedTypeDefinitions(rootedPath != null && IsScriptModuleFile(rootedPath) && IO.File.Exists(rootedPath) ?
-                    (new ExternalScriptInfo(rootedPath, rootedPath)).GetScriptBlockAst() : null);
+                    new ExternalScriptInfo(rootedPath, rootedPath).GetScriptBlockAst() : null);
             }
 
             var res = new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase);

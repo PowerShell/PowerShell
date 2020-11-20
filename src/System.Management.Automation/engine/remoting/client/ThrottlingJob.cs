@@ -353,7 +353,7 @@ namespace System.Management.Automation
 
             _alreadyDisabledFlowControlForPendingCmdletActionsQueue = true;
 
-            long slotsToRelease = (long)(int.MaxValue / 2) - (long)(_jobResultsThrottlingSemaphore.CurrentCount);
+            long slotsToRelease = (long)(int.MaxValue / 2) - (long)_jobResultsThrottlingSemaphore.CurrentCount;
             if ((slotsToRelease > 0) && (slotsToRelease < int.MaxValue))
             {
                 _jobResultsThrottlingSemaphore.Release((int)slotsToRelease);
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                if (!(PSObject.AsPSObject(streamObject.Value).BaseObject.GetType().Name.Equals("CimInstance")))
+                if (! PSObject.AsPSObject(streamObject.Value).BaseObject.GetType().Name.Equals("CimInstance"))
                 {
                     return;
                 }

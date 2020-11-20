@@ -180,8 +180,8 @@ namespace System.Management.Automation.Language
                 case TokenKind.Rem:
                 case TokenKind.RemainderEquals:
                     string name = varExpr.VariablePath.UnqualifiedPath;
-                    return (name.Equals(SpecialVariables.False, StringComparison.OrdinalIgnoreCase) ||
-                            name.Equals(SpecialVariables.Null, StringComparison.OrdinalIgnoreCase));
+                    return name.Equals(SpecialVariables.False, StringComparison.OrdinalIgnoreCase) ||
+                            name.Equals(SpecialVariables.Null, StringComparison.OrdinalIgnoreCase);
             }
 
             return false;

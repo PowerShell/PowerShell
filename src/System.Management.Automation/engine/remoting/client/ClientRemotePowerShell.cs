@@ -665,9 +665,9 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private bool IsFinished(PSInvocationState state)
         {
-            return (state == PSInvocationState.Completed ||
+            return state == PSInvocationState.Completed ||
                     state == PSInvocationState.Failed ||
-                    state == PSInvocationState.Stopped);
+                    state == PSInvocationState.Stopped;
         }
 
         /// <summary>

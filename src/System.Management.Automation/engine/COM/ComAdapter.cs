@@ -76,7 +76,7 @@ namespace System.Management.Automation
 
             ComMethod method;
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)) &&
-                (_comTypeInfo != null) && (_comTypeInfo.Methods.TryGetValue(memberName, out method)))
+                (_comTypeInfo != null) && _comTypeInfo.Methods.TryGetValue(memberName, out method))
             {
                 PSMethod mshMethod = new PSMethod(method.Name, this, obj, method);
                 return mshMethod as T;

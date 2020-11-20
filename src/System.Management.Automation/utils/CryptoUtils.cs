@@ -160,7 +160,7 @@ namespace System.Management.Automation.Internal
                 rsap.Exponent[2] = blob[offset + 16];
 
                 int pos = offset + 20;
-                int byteLen = (bitLen >> 3);
+                int byteLen = bitLen >> 3;
                 rsap.Modulus = new byte[byteLen];
                 Buffer.BlockCopy(blob, pos, rsap.Modulus, 0, byteLen);
                 Array.Reverse(rsap.Modulus);

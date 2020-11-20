@@ -1380,7 +1380,7 @@ namespace System.Management.Automation.Remoting.Client
             bool isSSLSpecified = false;
             string connectionStr = connectionUri.OriginalString;
             if ((connectionUri == connectionInfo.ConnectionUri) &&
-                (connectionInfo.UseDefaultWSManPort))
+                connectionInfo.UseDefaultWSManPort)
             {
                 connectionStr = WSManConnectionInfo.GetConnectionString(connectionInfo.ConnectionUri,
                     out isSSLSpecified);
@@ -1599,7 +1599,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // Set use interactive token flag based on EnableNetworkAccess property.
             SetWSManSessionOption(WSManNativeApi.WSManSessionOption.WSMAN_OPTION_USE_INTERACTIVE_TOKEN,
-                (connectionInfo.EnableNetworkAccess) ? 1 : 0);
+                connectionInfo.EnableNetworkAccess ? 1 : 0);
 
             // set UI Culture for this session from current thread's UI Culture
             string currentUICulture = connectionInfo.UICulture.Name;

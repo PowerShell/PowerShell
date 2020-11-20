@@ -94,7 +94,7 @@ namespace System.Management.Automation
 
             if (result.Length != resultLength)
             {
-                Array.Copy(result, 0, result, resultLength, (result.Length - resultLength));
+                Array.Copy(result, 0, result, resultLength, result.Length - resultLength);
             }
 
             return result;

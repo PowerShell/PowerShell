@@ -256,7 +256,7 @@ namespace System.Management.Automation
             IHasSessionStateEntryVisibility obj = valueToCheck as IHasSessionStateEntryVisibility;
             if (obj != null)
             {
-                return (obj.Visibility == SessionStateEntryVisibility.Public);
+                return obj.Visibility == SessionStateEntryVisibility.Public;
             }
 
             return true;
@@ -276,7 +276,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
-            return (variable.Visibility == SessionStateEntryVisibility.Public);
+            return variable.Visibility == SessionStateEntryVisibility.Public;
         }
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
@@ -293,7 +293,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
-            return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
+            return commandInfo.Visibility == SessionStateEntryVisibility.Public;
         }
 
         #endregion Public methods

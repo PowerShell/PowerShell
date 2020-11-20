@@ -103,8 +103,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int charactersAdded = 0; // number of characters that fit
             int currCharDisplayLen; // scratch variable
 
-            int k = (head) ? offset : str.Length - 1;
-            int kFinal = (head) ? str.Length - 1 : offset;
+            int k = head ? offset : str.Length - 1;
+            int kFinal = head ? str.Length - 1 : offset;
             while (true)
             {
                 if ((head && (k > kFinal)) || ((!head) && (k < kFinal)))
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 }
 
-                k = (head) ? (k + 1) : (k - 1);
+                k = head ? (k + 1) : (k - 1);
             }
 
             return charactersAdded;

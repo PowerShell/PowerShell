@@ -400,31 +400,31 @@ namespace System.Management.Automation
             System.Management.Automation.Diagnostics.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
-            if ((!string.IsNullOrEmpty(synopsis)) && (pattern.IsMatch(synopsis)))
+            if ((!string.IsNullOrEmpty(synopsis)) && pattern.IsMatch(synopsis))
             {
                 return true;
             }
 
             string detailedDescription = DetailedDescription;
-            if ((!string.IsNullOrEmpty(detailedDescription)) && (pattern.IsMatch(detailedDescription)))
+            if ((!string.IsNullOrEmpty(detailedDescription)) && pattern.IsMatch(detailedDescription))
             {
                 return true;
             }
 
             string examples = Examples;
-            if ((!string.IsNullOrEmpty(examples)) && (pattern.IsMatch(examples)))
+            if ((!string.IsNullOrEmpty(examples)) && pattern.IsMatch(examples))
             {
                 return true;
             }
 
             string notes = Notes;
-            if ((!string.IsNullOrEmpty(notes)) && (pattern.IsMatch(notes)))
+            if ((!string.IsNullOrEmpty(notes)) && pattern.IsMatch(notes))
             {
                 return true;
             }
 
             string parameters = Parameters;
-            if ((!string.IsNullOrEmpty(parameters)) && (pattern.IsMatch(parameters)))
+            if ((!string.IsNullOrEmpty(parameters)) && pattern.IsMatch(parameters))
             {
                 return true;
             }

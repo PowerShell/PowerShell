@@ -1058,9 +1058,9 @@ namespace System.Management.Automation.Remoting
             {
                 // Win10 server can support Win8 client
                 if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM &&
-                    (
+                    
                         (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
+                    )
                 {
                     // - report that server is Win8 version to the client
                     serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;

@@ -155,13 +155,13 @@ namespace System.Management.Automation
                 {
                     COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
 
-                    if ((typeattr.typekind == COM.TYPEKIND.TKIND_INTERFACE))
+                    if (typeattr.typekind == COM.TYPEKIND.TKIND_INTERFACE)
                     {
                         // We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
                         typeinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeinfo);
                     }
 
-                    if ((typeattr.typekind == COM.TYPEKIND.TKIND_COCLASS))
+                    if (typeattr.typekind == COM.TYPEKIND.TKIND_COCLASS)
                     {
                         // We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
                         typeinfo = GetDispatchTypeInfoFromCoClassTypeInfo(typeinfo);

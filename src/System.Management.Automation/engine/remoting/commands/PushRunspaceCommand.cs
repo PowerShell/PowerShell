@@ -400,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSNotImplementedException) { }
 
-            bool supportRunningCommand = ((debugger != null) && ((debugger.DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript));
+            bool supportRunningCommand = (debugger != null) && ((debugger.DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript);
             if (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available)
             {
                 // Session has running command.
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // A third-party host can throw any exception here..we should
                 // clean the runspace created in this case.
-                if ((remoteRunspace != null) && (remoteRunspace.ShouldCloseOnPop))
+                if ((remoteRunspace != null) && remoteRunspace.ShouldCloseOnPop)
                 {
                     remoteRunspace.Close();
                 }
@@ -852,13 +852,13 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsParameterSetForVM()
         {
-            return ((ParameterSetName == VMIdParameterSet) ||
-                    (ParameterSetName == VMNameParameterSet));
+            return (ParameterSetName == VMIdParameterSet) ||
+                    (ParameterSetName == VMNameParameterSet);
         }
 
         private bool IsParameterSetForContainer()
         {
-            return (ParameterSetName == ContainerIdParameterSet);
+            return ParameterSetName == ContainerIdParameterSet;
         }
 
         /// <summary>

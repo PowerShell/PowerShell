@@ -32,7 +32,7 @@ namespace System.Management.Automation.Remoting
         private static bool IsKnownType(Type type)
         {
             TypeSerializationInfo info = KnownTypes.GetTypeSerializationInfo(type);
-            return (info != null);
+            return info != null;
         }
 
         /// <summary>

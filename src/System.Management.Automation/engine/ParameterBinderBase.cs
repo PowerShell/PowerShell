@@ -609,7 +609,7 @@ namespace System.Management.Automation
                     "BIND arg [{0}] to param [{1}] {2}",
                     parameterValue,
                     parameter.ParameterName,
-                    (result) ? "SUCCESSFUL" : "SKIPPED");
+                    result ? "SUCCESSFUL" : "SKIPPED");
 
                 if (result)
                 {
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
                                     collectionTypeInfo,
                                     toType,
                                     currentValue,
-                                    (collectionTypeInfo.ElementType != null),
+                                    collectionTypeInfo.ElementType != null,
                                     out ignored);
 
                             break;
@@ -1506,7 +1506,7 @@ namespace System.Management.Automation
 
                 // We must special case System.Array to be like an object array since it is an
                 // abstract base class and cannot be created in the IList path below.
-                bool isSystemDotArray = (toType == typeof(System.Array));
+                bool isSystemDotArray = toType == typeof(System.Array);
 
                 if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array ||
                     isSystemDotArray)

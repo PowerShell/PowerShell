@@ -489,7 +489,7 @@ namespace System.Management.Automation
             }
             else
             {
-                variable = (LocalsTuple?.TrySetVariable(name, value)) ?? new PSVariable(name, value);
+                variable = LocalsTuple?.TrySetVariable(name, value) ?? new PSVariable(name, value);
             }
 
             if (ExecutionContext.HasEverUsedConstrainedLanguage)

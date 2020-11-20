@@ -336,7 +336,7 @@ namespace System.Management.Automation
 
             TimeSpan remainingTime = totalTime - elapsedTime;
 
-            return (int)(remainingTime.TotalSeconds);
+            return (int)remainingTime.TotalSeconds;
         }
 
         /// <summary>

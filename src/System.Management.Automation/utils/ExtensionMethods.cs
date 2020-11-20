@@ -129,7 +129,7 @@ namespace System.Management.Automation
         {
             var t = weakReference.Target;
             target = t as T;
-            return (target != null);
+            return target != null;
         }
     }
 }

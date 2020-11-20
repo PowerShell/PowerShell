@@ -42,7 +42,7 @@ namespace System.Management.Automation.Internal
             {
                 lock (_monitorObject)
                 {
-                    bool firstRegistrant = (InternalDataReady == null);
+                    bool firstRegistrant = InternalDataReady == null;
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Internal
             {
                 if (_datastore.Count > 0)
                 {
-                    results.Add(ConvertToReturnType((_datastore.ReadAndRemove(1))[0]));
+                    results.Add(ConvertToReturnType(_datastore.ReadAndRemove(1)[0]));
                     readCount--;
                     continue;
                 }

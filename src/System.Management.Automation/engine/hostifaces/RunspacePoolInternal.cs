@@ -547,7 +547,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // maxPoolSz. Because of this there may be cases where maxPoolSz - totalRunspaces will become
                     // less than 0.
                     int unUsedCapacity = (maxPoolSz - totalRunspaces) < 0 ? 0 : (maxPoolSz - totalRunspaces);
-                    return (pool.Count + unUsedCapacity);
+                    return pool.Count + unUsedCapacity;
                 }
                 else if (stateInfo.State == RunspacePoolState.Disconnected)
                 {
@@ -692,7 +692,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
-                (rsAsyncResult.IsAssociatedWithAsyncOpen))
+                rsAsyncResult.IsAssociatedWithAsyncOpen)
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -1309,9 +1309,9 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="state"></param>
         protected void CleanupCallback(object state)
         {
-            Dbg.Assert((this.stateInfo.State != RunspacePoolState.Disconnected &&
+            Dbg.Assert(this.stateInfo.State != RunspacePoolState.Disconnected &&
                         this.stateInfo.State != RunspacePoolState.Disconnecting &&
-                        this.stateInfo.State != RunspacePoolState.Connecting),
+                        this.stateInfo.State != RunspacePoolState.Connecting,
                        "Local RunspacePool cannot be in disconnect/connect states");
 
             bool isCleanupTimerChanged = false;
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         if ((pool.Count > 0) || (totalRunspaces < maxPoolSz))
                         {
                             isServicingRequests = true;
-                            if ((useCallingThread) && (ultimateRequestQueue.Count == 0))
+                            if (useCallingThread && (ultimateRequestQueue.Count == 0))
                             {
                                 shouldStartServicingInSameThread = true;
                             }
@@ -1500,9 +1500,9 @@ namespace System.Management.Automation.Runspaces.Internal
                 return;
             }
 
-            Dbg.Assert((this.stateInfo.State != RunspacePoolState.Disconnected &&
+            Dbg.Assert(this.stateInfo.State != RunspacePoolState.Disconnected &&
                         this.stateInfo.State != RunspacePoolState.Disconnecting &&
-                        this.stateInfo.State != RunspacePoolState.Connecting),
+                        this.stateInfo.State != RunspacePoolState.Connecting,
                        "Local RunspacePool cannot be in disconnect/connect states");
 
             bool useCallingThread = (bool)useCallingThreadState;
@@ -1604,7 +1604,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if ((useCallingThread) && (runspaceRequester != null))
+            if (useCallingThread && (runspaceRequester != null))
             {
                 // call DoComplete outside of the lock and finally..as the
                 // DoComplete handler may handle the runspace in the same

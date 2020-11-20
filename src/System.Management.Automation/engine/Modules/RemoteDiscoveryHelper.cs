@@ -538,7 +538,7 @@ namespace System.Management.Automation
                             Array.Reverse(lengthBytes);
                         }
 
-                        return (T)(object)(lengthBytes.Concat(contentBytes).ToArray());
+                        return (T)(object)lengthBytes.Concat(contentBytes).ToArray();
                     }
                 }
                 catch (Exception)
@@ -653,7 +653,7 @@ namespace System.Management.Automation
                 {
                     UInt16 moduleTypeInt = GetPropertyValue<UInt16>(_baseObject, "ModuleType", 0);
                     DiscoveredModuleType moduleType = (DiscoveredModuleType)moduleTypeInt;
-                    bool isPsCimModule = (moduleType == DiscoveredModuleType.Cim);
+                    bool isPsCimModule = moduleType == DiscoveredModuleType.Cim;
                     return isPsCimModule;
                 }
             }
@@ -899,7 +899,7 @@ namespace System.Management.Automation
 
         private static CimCredential GetCimCredentials(string authentication, PSCredential credential)
         {
-            if (authentication == null || (authentication.Equals("Default", StringComparison.OrdinalIgnoreCase)))
+            if (authentication == null || authentication.Equals("Default", StringComparison.OrdinalIgnoreCase))
             {
                 if (credential == null)
                 {

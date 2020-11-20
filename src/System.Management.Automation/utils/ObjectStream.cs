@@ -755,7 +755,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    endOfStream = (_objects.Count == 0 && !_isOpen);
+                    endOfStream = _objects.Count == 0 && !_isOpen;
                 }
 
                 return endOfStream;
@@ -894,9 +894,9 @@ namespace System.Management.Automation.Internal
                     // External readers block only for open streams
                     // with no stored objects.  External writers block
                     // only for open streams with no free buffer space.
-                    unblockReaders = (!_isOpen || (_objects.Count > 0));
-                    unblockWriters = (!_isOpen || (_objects.Count < _capacity));
-                    endOfStream = (!_isOpen && (_objects.Count == 0));
+                    unblockReaders = !_isOpen || (_objects.Count > 0);
+                    unblockWriters = !_isOpen || (_objects.Count < _capacity);
+                    endOfStream = !_isOpen && (_objects.Count == 0);
 
                     // I would prefer to set the ManualResetEvents outside
                     // of the lock, so that the unblocked thread would not
@@ -986,7 +986,7 @@ namespace System.Management.Automation.Internal
             {
                 FireDataReadyEvent(this, EventArgs.Empty);
             }
-#if (false)
+#if false
             //
             // NOTE: Event delegates are called only after the internal
             // AutoResetEvents are set to ensure that an exception in an
@@ -1638,7 +1638,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_syncObject)
                 {
-                    endOfStream = (_objects.Count == 0 && !_isOpen);
+                    endOfStream = _objects.Count == 0 && !_isOpen;
                 }
 
                 return endOfStream;

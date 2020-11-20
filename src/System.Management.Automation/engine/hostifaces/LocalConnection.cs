@@ -819,7 +819,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         private void DoCloseHelper()
         {
-            var isPrimaryRunspace = (Runspace.PrimaryRunspace == this);
+            var isPrimaryRunspace = Runspace.PrimaryRunspace == this;
             var haveOpenRunspaces = false;
             foreach (Runspace runspace in RunspaceList)
             {

@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
-            else if ((requiredModules != null))
+            else if (requiredModules != null)
             {
                 if (importingModule)
                 {
@@ -2909,7 +2909,7 @@ namespace Microsoft.PowerShell.Commands
                 // If the nested manifest explicitly (no wildcards) specifies functions to be exported then allow all functions to be exported
                 // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the
                 // specified function list.
-                nestedModuleOptions.AllowNestedModuleFunctionsToExport = ((exportedFunctions != null) && !exportedFunctionsContainsWildcards);
+                nestedModuleOptions.AllowNestedModuleFunctionsToExport = (exportedFunctions != null) && !exportedFunctionsContainsWildcards;
 
                 foreach (ModuleSpecification nestedModuleSpecification in nestedModules)
                 {
@@ -2932,7 +2932,7 @@ namespace Microsoft.PowerShell.Commands
                             privateData: privateData,
                             found: out found,
                             shortModuleName: null,
-                            manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
+                            manifestLanguageMode: (manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null);
 
                     this.BaseGlobal = oldGlobal;
 
@@ -3030,12 +3030,12 @@ namespace Microsoft.PowerShell.Commands
                         ss: ss,
                         options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
-                        loadTypesFiles: (exportedTypeFiles == null || exportedTypeFiles.Count == 0),        // If types files already loaded, don't load snapin files
-                        loadFormatFiles: (exportedFormatFiles == null || exportedFormatFiles.Count == 0),   // if format files already loaded, don't load snapin files
+                        loadTypesFiles: exportedTypeFiles == null || exportedTypeFiles.Count == 0,        // If types files already loaded, don't load snapin files
+                        loadFormatFiles: exportedFormatFiles == null || exportedFormatFiles.Count == 0,   // if format files already loaded, don't load snapin files
                         privateData: privateData,
                         found: out found,
                         shortModuleName: null,
-                        manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
+                        manifestLanguageMode: (manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null);
 
                     if (!found || (newManifestInfo == null))
                     {
@@ -4648,14 +4648,14 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the path is rooted, false otherwise.</returns>
         internal static bool IsRooted(string filePath)
         {
-            return (Path.IsPathRooted(filePath) ||
+            return Path.IsPathRooted(filePath) ||
                 filePath.StartsWith(@".\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"./", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"..\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
-                filePath.Contains(':'));
+                filePath.Contains(':');
         }
 
         /// <summary>
@@ -6028,7 +6028,7 @@ namespace Microsoft.PowerShell.Commands
                 var dotSourceOperator = scriptInfo.GetScriptBlockAst().FindAll(ast =>
                 {
                     var cmdAst = ast as CommandAst;
-                    return (cmdAst?.InvocationOperator == TokenKind.Dot);
+                    return cmdAst?.InvocationOperator == TokenKind.Dot;
                 },
                 searchNestedScriptBlocks: true).FirstOrDefault();
 
@@ -6788,7 +6788,7 @@ namespace Microsoft.PowerShell.Commands
                         aliasEntry = commandEntry as SessionStateAliasEntry;
                     }
 
-                    Dbg.Assert((cmdletEntry != null || aliasEntry != null), "When importing a binary module, the commands entry should only have cmdlets/aliases in it");
+                    Dbg.Assert(cmdletEntry != null || aliasEntry != null, "When importing a binary module, the commands entry should only have cmdlets/aliases in it");
                     if (ss != null)
                     {
                         if (cmdletEntry != null)

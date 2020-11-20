@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (index > _countEntriesAdded) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
-                                (_buffer[GetIndexFromId(index)].Cleared))
+                                _buffer[GetIndexFromId(index)].Cleared)
                             {
                                 index++; continue;
                             }
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (index < 1) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
-                                (_buffer[GetIndexFromId(index)].Cleared))
+                                _buffer[GetIndexFromId(index)].Cleared)
                             { index--; continue; }
                             else
                             {

@@ -218,10 +218,10 @@ namespace System.Management.Automation.Language
                             suffix += Math.Min(totalSuffix, maxLineLength - candidateLength);
                         }
 
-                        needsSuffixDots = (suffix < totalSuffix);
+                        needsSuffixDots = suffix < totalSuffix;
                     }
 
-                    needsPrefixDots = (prefix < totalPrefix);
+                    needsPrefixDots = prefix < totalPrefix;
 
                     var startIndex = Math.Max(spacesBeforeError - prefix, 0);
                     sourceLine = sourceLine.Substring(startIndex, maxLineLength);
@@ -345,7 +345,7 @@ namespace System.Management.Automation.Language
             if (line < extent.StartLineNumber)
                 return true;
 
-            return (line == extent.StartLineNumber && column < extent.StartColumnNumber);
+            return line == extent.StartLineNumber && column < extent.StartColumnNumber;
         }
 
         internal static bool ContainsLineAndColumn(this IScriptExtent extent, int line, int column)
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Language
                 if (column >= extent.StartColumnNumber)
                 {
                     if (extent.EndLineNumber != extent.StartLineNumber) return true;
-                    return (column < extent.EndColumnNumber);
+                    return column < extent.EndColumnNumber;
                 }
 
                 return false;
@@ -576,12 +576,12 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            if ((string.IsNullOrEmpty(otherPosition.File)) &&
+            if (string.IsNullOrEmpty(otherPosition.File) &&
                 (otherPosition.StartLineNumber == StartLineNumber) &&
                 (otherPosition.StartColumnNumber == StartColumnNumber) &&
                 (otherPosition.EndLineNumber == EndLineNumber) &&
                 (otherPosition.EndColumnNumber == EndColumnNumber) &&
-                (string.IsNullOrEmpty(otherPosition.Text)))
+                string.IsNullOrEmpty(otherPosition.Text))
             {
                 return true;
             }

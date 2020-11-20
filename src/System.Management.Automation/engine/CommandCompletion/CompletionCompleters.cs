@@ -496,7 +496,7 @@ namespace System.Management.Automation
             {
                 if (keywordAst == null)
                     keywordAst = context.RelatedAsts[i] as DynamicKeywordStatementAst;
-                parameterAst = (context.RelatedAsts[i] as CommandParameterAst);
+                parameterAst = context.RelatedAsts[i] as CommandParameterAst;
                 if (parameterAst != null) break;
             }
 
@@ -1889,7 +1889,7 @@ namespace System.Management.Automation
                         }
 
                         PSObject pso = PSObject.AsPSObject(element);
-                        if ((pso.TypeNames.Count > 0) && (!(pso.TypeNames[0].Equals(pso.BaseObject.GetType().FullName, StringComparison.OrdinalIgnoreCase))))
+                        if ((pso.TypeNames.Count > 0) && (! pso.TypeNames[0].Equals(pso.BaseObject.GetType().FullName, StringComparison.OrdinalIgnoreCase)))
                         {
                             yield return new PSTypeName(pso.TypeNames[0]);
                         }
@@ -3869,7 +3869,7 @@ namespace System.Management.Automation
 
                 if (closeBrackets < openBrackets)
                 {
-                    suffix = suffix.Insert(0, new string(']', (openBrackets - closeBrackets)));
+                    suffix = suffix.Insert(0, new string(']', openBrackets - closeBrackets));
                 }
 
                 if (isQuoted && closeBrackets == openBrackets)
@@ -5370,7 +5370,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            bool isReadOnly = ((cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly);
+            bool isReadOnly = (cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly;
             return type + " " + cimProperty.Name + " { get; " + (isReadOnly ? "}" : "set; }");
         }
 

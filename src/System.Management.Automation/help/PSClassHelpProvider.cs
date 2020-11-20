@@ -348,7 +348,7 @@ namespace System.Management.Automation
 
                         string nodeLocalName = node.LocalName;
 
-                        bool isClass = (string.Equals(nodeLocalName, "class", StringComparison.OrdinalIgnoreCase));
+                        bool isClass = string.Equals(nodeLocalName, "class", StringComparison.OrdinalIgnoreCase);
 
                         if (node.NodeType == XmlNodeType.Element && isClass)
                         {

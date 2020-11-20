@@ -242,7 +242,7 @@ namespace System.Management.Automation
                         ((digits[byteWalker - 3] << 3)
                         | (digits[byteWalker - 2] << 2)
                         | (digits[byteWalker - 1] << 1)
-                        | (digits[byteWalker])
+                        | digits[byteWalker]
                         ) & 0b1111
                       )
                     );
@@ -1769,7 +1769,7 @@ namespace System.Management.Automation
                         {
                             foreach (var variableName in checker.ValidVariables)
                             {
-                                command = command.Replace(variableName, ("Using:" + variableName), StringComparison.OrdinalIgnoreCase);
+                                command = command.Replace(variableName, "Using:" + variableName, StringComparison.OrdinalIgnoreCase);
                             }
 
                             scriptBlock = ScriptBlock.Create(command);

@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
 
             if (!isPSHomePathNullOrEmpty && !isSharedPathNullOrEmpty)
             {
-                return (sharedModulePath + Path.PathSeparator + psHomeModulePath);
+                return sharedModulePath + Path.PathSeparator + psHomeModulePath;
             }
 
             if (!isPSHomePathNullOrEmpty || !isSharedPathNullOrEmpty)
@@ -1144,7 +1144,7 @@ namespace System.Management.Automation
                         if (insertPosition == -1) // append subPathToAdd to the end
                         {
                             bool endsWithPathSeparator = false;
-                            if (result.Length > 0) endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            if (result.Length > 0) endsWithPathSeparator = result[result.Length - 1] == Path.PathSeparator;
 
                             if (endsWithPathSeparator)
                                 result.Append(subPathToAdd);
@@ -1464,7 +1464,7 @@ namespace System.Management.Automation
             foreach (T item in input)
             {
                 string currentKey = keyGetter(item);
-                if ((firstItem) || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
+                if (firstItem || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
                 {
                     output.Add(item);
                 }

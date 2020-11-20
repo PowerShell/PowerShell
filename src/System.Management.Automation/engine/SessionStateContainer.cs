@@ -1794,7 +1794,7 @@ namespace System.Management.Automation
                     GetChildNames(
                         providerInstance,
                         path,
-                        (recurse) ? ReturnContainers.ReturnAllContainers : ReturnContainers.ReturnMatchingContainers,
+                        recurse ? ReturnContainers.ReturnAllContainers : ReturnContainers.ReturnMatchingContainers,
                         newContext);
                     newContext.WriteErrorsToContext(context);
                     childNameObjects = newContext.GetAccumulatedObjects();
@@ -1803,7 +1803,7 @@ namespace System.Management.Automation
                     // but then emits the non-matching container further down. The public API doesn't support a way to
                     // differentiate the two, so we need to do a diff.
                     // So if there was a filter, do it again to get the fully filtered items.
-                    if (recurse && (providerInstance.IsFilterSet()))
+                    if (recurse && providerInstance.IsFilterSet())
                     {
                         newContext.RemoveStopReferral();
                         newContext = new CmdletProviderContext(context);
@@ -2078,7 +2078,7 @@ namespace System.Management.Automation
                 (providerType != typeof(ContainerCmdletProvider))
             );
 
-            return (mi != null);
+            return mi != null;
         }
 
         /// <summary>
@@ -3413,8 +3413,8 @@ namespace System.Management.Automation
                 {
                     PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
-                else if (path.EndsWith((":" + Path.DirectorySeparatorChar), StringComparison.Ordinal) ||
-                         path.EndsWith((":" + Path.AltDirectorySeparatorChar), StringComparison.Ordinal))
+                else if (path.EndsWith(":" + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+                         path.EndsWith(":" + Path.AltDirectorySeparatorChar, StringComparison.Ordinal))
                 {
                     // path is Windows root
                     resolvePath = path;
@@ -3469,7 +3469,7 @@ namespace System.Management.Automation
                     // function can be abused
                     if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
                         (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
-                        (string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))
+                        string.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase))
                     {
                         throw
                             PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -4874,10 +4874,10 @@ namespace System.Management.Automation
 
             // Here there are two scenarios:
             // 1) If the source is remote and the path does not exist, error out.
-            bool invalidRemoteSource = (sourceIsRemote && (!pathExist));
+            bool invalidRemoteSource = sourceIsRemote && (!pathExist);
 
             // 2) For a remote destination, if the root does not exist, error out.
-            bool invalidRemoteDestination = (root == null);
+            bool invalidRemoteDestination = root == null;
 
             if (invalidRemoteSource || invalidRemoteDestination)
             {

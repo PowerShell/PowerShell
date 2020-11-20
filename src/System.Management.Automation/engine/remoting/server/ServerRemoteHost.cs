@@ -248,7 +248,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public virtual void PopRunspace()
         {
-            if ((_serverDriverRemoteHost != null) && (_serverDriverRemoteHost.IsRunspacePushed))
+            if ((_serverDriverRemoteHost != null) && _serverDriverRemoteHost.IsRunspacePushed)
             {
                 if (_serverDriverRemoteHost.PropagatePop)
                 {
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return (_pushedRunspace != null);
+                return _pushedRunspace != null;
             }
         }
 

@@ -805,14 +805,14 @@ namespace System.Management.Automation
             if ((writeToPipeline & PipelineResultTypes.Output) == PipelineResultTypes.Output)
             {
                 cmdletToUse = _cmdlet;
-                writeToPipeline &= (~PipelineResultTypes.Output);
+                writeToPipeline &= ~PipelineResultTypes.Output;
             }
 
             // Check if they want error
             if ((writeToPipeline & PipelineResultTypes.Error) == PipelineResultTypes.Error)
             {
                 errorHandlingBehavior = ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe;
-                writeToPipeline &= (~PipelineResultTypes.Error);
+                writeToPipeline &= ~PipelineResultTypes.Error;
             }
 
             if (writeToPipeline != PipelineResultTypes.None)

@@ -255,16 +255,16 @@ namespace Microsoft.PowerShell.Commands
             GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
             if (fspDynamicParam != null)
             {
-                attributeFilterSet = (
+                attributeFilterSet = 
                     (fspDynamicParam.Attributes != null)
-                        || (fspDynamicParam.Directory)
-                        || (fspDynamicParam.File)
-                        || (fspDynamicParam.Hidden)
-                        || (fspDynamicParam.ReadOnly)
-                        || (fspDynamicParam.System));
+                        || fspDynamicParam.Directory
+                        || fspDynamicParam.File
+                        || fspDynamicParam.Hidden
+                        || fspDynamicParam.ReadOnly
+                        || fspDynamicParam.System;
             }
 
-            return (attributeFilterSet || base.IsFilterSet());
+            return attributeFilterSet || base.IsFilterSet();
         }
 
         /// <summary>
@@ -1594,9 +1594,9 @@ namespace Microsoft.PowerShell.Commands
             // Don't handle full paths, paths that the user is already trying to
             // filter, or paths they are trying to escape.
             if ((!string.IsNullOrEmpty(filter)) ||
-                (path.Contains(StringLiterals.DefaultPathSeparator, StringComparison.Ordinal)) ||
-                (path.Contains(StringLiterals.AlternatePathSeparator, StringComparison.Ordinal)) ||
-                (path.Contains(StringLiterals.EscapeCharacter)))
+                path.Contains(StringLiterals.DefaultPathSeparator, StringComparison.Ordinal) ||
+                path.Contains(StringLiterals.AlternatePathSeparator, StringComparison.Ordinal) ||
+                path.Contains(StringLiterals.EscapeCharacter))
             {
                 return false;
             }
@@ -1828,9 +1828,9 @@ namespace Microsoft.PowerShell.Commands
                             // If specification is to return all containers, then do not do attribute filter on
                             // the containers.
                             bool attributeSatisfy =
-                                ((attributeFilter && switchAttributeFilter) ||
+                                (attributeFilter && switchAttributeFilter) ||
                                     ((returnContainers == ReturnContainers.ReturnAllContainers) &&
-                                    ((filesystemInfo.Attributes & FileAttributes.Directory) != 0)));
+                                    ((filesystemInfo.Attributes & FileAttributes.Directory) != 0));
 
                             if (attributeSatisfy && (filterHidden || switchFilterHidden || Force || !hidden))
                             {
@@ -3694,7 +3694,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    bool exists = (bool)(op["Exists"]);
+                    bool exists = (bool)op["Exists"];
                     if (!exists)
                     {
                         throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, path);
@@ -4049,7 +4049,7 @@ namespace Microsoft.PowerShell.Commands
             bool recurse,
             System.Management.Automation.PowerShell ps)
         {
-            Dbg.Diagnostics.Assert((sourceDirectoryName != null && sourceDirectoryFullName != null), "The caller should verify directory.");
+            Dbg.Diagnostics.Assert(sourceDirectoryName != null && sourceDirectoryFullName != null, "The caller should verify directory.");
 
             if (IsItemContainer(destination))
             {
@@ -4411,7 +4411,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["ExceptionThrown"] != null)
                     {
-                        bool failedToReadFile = (bool)(op["ExceptionThrown"]);
+                        bool failedToReadFile = (bool)op["ExceptionThrown"];
                         if (failedToReadFile)
                         {
                             // The error is written to the error array via SafeInvokeCommand
@@ -4682,7 +4682,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
                         ps.AddParameter("copyToFilePath", destinationPath);
-                        ps.AddParameter("createFile", (iteration == 1));
+                        ps.AddParameter("createFile", iteration == 1);
 
                         if ((iteration == 1) && (b64Fragment.Length == 0))
                         {
@@ -4719,7 +4719,7 @@ namespace Microsoft.PowerShell.Commands
                         return false;
                     }
 
-                    if ((int)(op["BytesWritten"]) != toRead)
+                    if ((int)op["BytesWritten"] != toRead)
                     {
                         Exception e = new IOException(string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemRemotelyFailed, file));
                         WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, file.FullName));
@@ -4852,7 +4852,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            return (bool)(op["IsFileInfo"]);
+            return (bool)op["IsFileInfo"];
         }
 
         private string CreateDirectoryOnRemoteSession(string destination, bool force, System.Management.Automation.PowerShell ps)
@@ -4883,7 +4883,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            string path = (string)(op["DirectoryPath"]);
+            string path = (string)op["DirectoryPath"];
 
             if ((!force) && (bool)op["PathExists"])
             {
@@ -7013,7 +7013,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Since a security exception was thrown, try to mask off
                         // the hidden and readonly bits and then retry.
-                        File.SetAttributes(path, (File.GetAttributes(path) & ~(FileAttributes.Hidden | FileAttributes.ReadOnly)));
+                        File.SetAttributes(path, File.GetAttributes(path) & ~(FileAttributes.Hidden | FileAttributes.ReadOnly));
                         FileStream fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
                         fileStream.Dispose();
 
@@ -7421,7 +7421,7 @@ namespace Microsoft.PowerShell.Commands
 
         public static Hashtable Invoke(System.Management.Automation.PowerShell ps, FileSystemProvider fileSystemContext, CmdletProviderContext cmdletContext, bool shouldHaveOutput)
         {
-            bool useFileSystemProviderContext = (cmdletContext == null);
+            bool useFileSystemProviderContext = cmdletContext == null;
 
             if (useFileSystemProviderContext)
             {

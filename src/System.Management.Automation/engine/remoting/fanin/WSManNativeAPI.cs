@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     for (int i = 0; i < resultInternal.optionsCount; i++)
                     {
-                        IntPtr p = IntPtr.Add(perElementPtr, (i * sizeInBytes));
+                        IntPtr p = IntPtr.Add(perElementPtr, i * sizeInBytes);
                         tempOptions[i] = Marshal.PtrToStructure<WSManOption>(p);
                     }
                 }
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation.Remoting.Client
 
                         for (int i = 0; i < resultInternal.varsCount; i++)
                         {
-                            IntPtr p = IntPtr.Add(perElementPtr, (i * sizeInBytes));
+                            IntPtr p = IntPtr.Add(perElementPtr, i * sizeInBytes);
                             varsArray[i] = Marshal.PtrToStructure<WSManEnvironmentVariableInternal>(p);
                         }
                     }
@@ -2293,7 +2293,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     for (int i = 0; i < resultInternal.numberKeys; i++)
                     {
-                        IntPtr p = IntPtr.Add(perElementPtr, (i * sizeInBytes));
+                        IntPtr p = IntPtr.Add(perElementPtr, i * sizeInBytes);
                         tempKeys[i] = Marshal.PtrToStructure<WSManKeyStruct>(p);
                     }
                 }

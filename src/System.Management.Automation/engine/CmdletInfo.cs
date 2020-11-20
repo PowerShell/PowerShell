@@ -369,7 +369,7 @@ namespace System.Management.Automation
                             var arg = Arguments[i] as string;
                             if (arg != null &&
                                 (arg.Equals("-Path", StringComparison.OrdinalIgnoreCase) ||
-                                (arg.Equals("-LiteralPath", StringComparison.OrdinalIgnoreCase))))
+                                arg.Equals("-LiteralPath", StringComparison.OrdinalIgnoreCase)))
                             {
                                 var path = Arguments[i + 1] as string;
                                 if (path != null)
@@ -548,7 +548,7 @@ namespace System.Management.Automation
             {
                 if (ImplementingType != null)
                 {
-                    return (ImplementingType.GetInterface(nameof(IDynamicParameters), true) != null);
+                    return ImplementingType.GetInterface(nameof(IDynamicParameters), true) != null;
                 }
                 else
                 {

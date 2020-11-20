@@ -309,7 +309,7 @@ namespace System.Management.Automation.Language
                 {
                     // See if this uses the workflow keyword
                     FunctionDefinitionAst functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
-                    if ((functionDefinition != null))
+                    if (functionDefinition != null)
                     {
                         stopScanning = true;
                         if (functionDefinition.IsWorkflow) { return true; }
@@ -3834,7 +3834,7 @@ namespace System.Management.Automation.Language
 
         ReadOnlyCollection<ParameterAst> IParameterMetadataProvider.Parameters
         {
-            get { return Parameters ?? (Body.ParamBlock?.Parameters); }
+            get { return Parameters ?? Body.ParamBlock?.Parameters; }
         }
 
         PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
@@ -6661,17 +6661,17 @@ namespace System.Management.Automation.Language
                 string paramName = entry.Key;
                 var paramValue = entry.Value;
 
-                if ((paramName.Length <= nameParam.Length) && (paramName.AsSpan().Equals(nameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
+                if ((paramName.Length <= nameParam.Length) && paramName.AsSpan().Equals(nameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase))
                 {
                     resourceNames = paramValue;
                 }
                 // Since both parameters -ModuleName and -ModuleVersion has same start string i.e. Module so we will try to resolve it to -ModuleName
                 // if user specifies like -Module
-                if ((paramName.Length <= moduleNameParam.Length) && (paramName.AsSpan().Equals(moduleNameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
+                if ((paramName.Length <= moduleNameParam.Length) && paramName.AsSpan().Equals(moduleNameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase))
                 {
                     moduleNames = paramValue;
                 }
-                else if ((paramName.Length <= moduleVersionParam.Length) && (paramName.AsSpan().Equals(moduleVersionParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
+                else if ((paramName.Length <= moduleVersionParam.Length) && paramName.AsSpan().Equals(moduleVersionParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase))
                 {
                     moduleVersion = paramValue;
                 }
@@ -7243,7 +7243,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                return (pipelineAst.Parent is StatementBlockAst || pipelineAst.Parent is NamedBlockAst);
+                return pipelineAst.Parent is StatementBlockAst || pipelineAst.Parent is NamedBlockAst;
             }
         }
     }
@@ -9096,7 +9096,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = visitor.VisitTypeExpression(this);
-            return visitor.CheckForPostAction(this, (action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action));
+            return visitor.CheckForPostAction(this, action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action);
         }
 
         #endregion Visitors
@@ -9138,7 +9138,7 @@ namespace System.Management.Automation.Language
         /// Construct a variable reference from a token.  Used from the parser.
         /// </summary>
         internal VariableExpressionAst(VariableToken token)
-            : this(token.Extent, token.VariablePath, (token.Kind == TokenKind.SplattedVariable))
+            : this(token.Extent, token.VariablePath, token.Kind == TokenKind.SplattedVariable)
         {
         }
 
@@ -9235,7 +9235,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = visitor.VisitVariableExpression(this);
-            return visitor.CheckForPostAction(this, (action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action));
+            return visitor.CheckForPostAction(this, action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action);
         }
 
         #endregion Visitors
@@ -9386,7 +9386,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = visitor.VisitConstantExpression(this);
-            return visitor.CheckForPostAction(this, (action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action));
+            return visitor.CheckForPostAction(this, action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action);
         }
 
         #endregion Visitors
@@ -9517,7 +9517,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = visitor.VisitStringConstantExpression(this);
-            return visitor.CheckForPostAction(this, (action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action));
+            return visitor.CheckForPostAction(this, action == AstVisitAction.SkipChildren ? AstVisitAction.Continue : action);
         }
 
         #endregion Visitors

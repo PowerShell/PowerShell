@@ -430,7 +430,7 @@ namespace System.Management.Automation.Language
 
         internal static bool IsUsingDollarInput(Ast ast)
         {
-            return (AstSearcher.Contains(
+            return AstSearcher.Contains(
                 ast,
                 ast_ =>
                 {
@@ -444,7 +444,7 @@ namespace System.Management.Automation.Language
 
                     return false;
                 },
-                searchNestedScriptBlocks: false));
+                searchNestedScriptBlocks: false);
         }
 
         #endregion External interface

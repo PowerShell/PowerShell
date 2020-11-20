@@ -97,7 +97,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="pipeline">The source pipeline.</param>
         internal LocalPipeline(LocalPipeline pipeline)
-            : base((PipelineBase)(pipeline))
+            : base((PipelineBase)pipeline)
         {
             _stopper = new PipelineStopper(this);
             InitStreams();
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Runspaces
             // NTRAID#Windows Out Of Band Releases-925566-2005/12/09-JonN
             // Remember this here, in the synchronous thread,
             // to avoid timing dependencies in the pipeline thread.
-            _useExternalInput = (InputStream.IsOpen || InputStream.Count > 0);
+            _useExternalInput = InputStream.IsOpen || InputStream.Count > 0;
 
             PSThreadOptions memberOptions = this.IsNested ? PSThreadOptions.UseCurrentThread : this.LocalRunspace.ThreadOptions;
 
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 exitCode = (int)ee.Argument;
 
-                                if ((InvocationSettings != null) && (InvocationSettings.ExposeFlowControlExceptions))
+                                if ((InvocationSettings != null) && InvocationSettings.ExposeFlowControlExceptions)
                                 {
                                     flowControlException = ee;
                                 }
@@ -454,7 +454,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     catch (FlowControlException e)
                     {
-                        if ((InvocationSettings != null) && (InvocationSettings.ExposeFlowControlExceptions) &&
+                        if ((InvocationSettings != null) && InvocationSettings.ExposeFlowControlExceptions &&
                             ((e is BreakException) || (e is ContinueException) || (e is TerminateException)))
                         {
                             // Save FlowControl exception for return to caller.
@@ -638,7 +638,7 @@ namespace System.Management.Automation.Runspaces
                 // Win8:464422 Revert the host only if this pipeline invocation changed it
                 // with 464422 a nested pipeline reverts the host, although the nested pipeline did not set it.
                 if ((InvocationSettings != null && InvocationSettings.Host != null) &&
-                    (LocalRunspace.ExecutionContext.InternalHost.IsHostRefSet))
+                    LocalRunspace.ExecutionContext.InternalHost.IsHostRefSet)
                 {
                     LocalRunspace.ExecutionContext.InternalHost.RevertHostRef();
                 }
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces
                             // runs nested commands).  This prevents the script debugger command line from seeing private commands.
                             if (IsNested &&
                                 !LocalRunspace.InNestedPrompt &&
-                                !((LocalRunspace.Debugger != null) && (LocalRunspace.Debugger.InBreakpoint)))
+                                !((LocalRunspace.Debugger != null) && LocalRunspace.Debugger.InBreakpoint))
                             {
                                 commandOrigin = CommandOrigin.Internal;
                             }

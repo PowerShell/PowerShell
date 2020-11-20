@@ -2058,14 +2058,14 @@ namespace System.Management.Automation
                                                      InformationalBuffers, null);
                 }
 
-                Dbg.Assert((_invokeAsyncResult == null), "Async result should be null in the reconstruct scenario.");
+                Dbg.Assert(_invokeAsyncResult == null, "Async result should be null in the reconstruct scenario.");
                 _invokeAsyncResult = new PowerShellAsyncResult(InstanceId, invocationCallback, state, streamToUse, true);
             }
             else
             {
                 // If this is not a reconstruct scenario then this must be a PowerShell object that was
                 // previously disconnected, and all state should be valid.
-                Dbg.Assert((_invokeAsyncResult != null && RemotePowerShell.Initialized),
+                Dbg.Assert(_invokeAsyncResult != null && RemotePowerShell.Initialized,
                             "AsyncResult and RemotePowerShell objects must be valid here.");
 
                 if (output != null ||
@@ -3334,7 +3334,7 @@ namespace System.Management.Automation
             }
 
             RunspacePool pool = _rsConnection as RunspacePool;
-            if ((pool != null) && (pool.IsRemote))
+            if ((pool != null) && pool.IsRemote)
             {
                 // Server supports batch invocation, in this case, we just send everything to the server and return immediately
                 if (ServerSupportsBatchInvocation())
@@ -3493,7 +3493,7 @@ namespace System.Management.Automation
                 ActionPreference preference;
                 if (_batchInvocationSettings != null)
                 {
-                    preference = (_batchInvocationSettings.ErrorActionPreference.HasValue) ?
+                    preference = _batchInvocationSettings.ErrorActionPreference.HasValue ?
                         _batchInvocationSettings.ErrorActionPreference.Value
                         : ActionPreference.Continue;
                 }
@@ -3773,7 +3773,7 @@ namespace System.Management.Automation
 
             if ((psAsyncResult == null) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
-                (psAsyncResult.IsAssociatedWithAsyncInvoke))
+                psAsyncResult.IsAssociatedWithAsyncInvoke)
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                     PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginStop");
@@ -4005,7 +4005,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private bool IsDisconnected()
         {
-            return (InvocationStateInfo.State == PSInvocationState.Disconnected);
+            return InvocationStateInfo.State == PSInvocationState.Disconnected;
         }
 
         /// <summary>
@@ -4632,7 +4632,7 @@ namespace System.Management.Automation
 
             SetHadErrors(false);
             RunspacePool pool = _rsConnection as RunspacePool;
-            if ((pool != null) && (pool.IsRemote))
+            if ((pool != null) && pool.IsRemote)
             {
                 if (ServerSupportsBatchInvocation())
                 {
@@ -4784,7 +4784,7 @@ namespace System.Management.Automation
             RunspacePool pool = _rsConnection as RunspacePool;
 
             // We dont need to create worker if pool is remote
-            Prepare<TInput, TOutput>(input, output, settings, (pool == null || !pool.IsRemote));
+            Prepare<TInput, TOutput>(input, output, settings, pool == null || !pool.IsRemote);
 
             _invokeAsyncResult = new PowerShellAsyncResult(InstanceId, callback, state, asyncResultOutput, true);
 
@@ -5000,7 +5000,7 @@ namespace System.Management.Automation
                     InvocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
 
                     // update settings for impersonation policy
-                    if ((settings != null) && (settings.FlowImpersonationPolicy))
+                    if ((settings != null) && settings.FlowImpersonationPolicy)
                     {
                         // get the identity of the thread.
                         // false behavior: If the thread is impersonating the WindowsIdentity for the
@@ -5316,7 +5316,7 @@ namespace System.Management.Automation
         private RemoteRunspacePoolInternal GetRemoteRunspacePoolInternal()
         {
             RunspacePool runspacePool = _rsConnection as RunspacePool;
-            return (runspacePool != null) ? (runspacePool.RemoteRunspacePoolInternal) : null;
+            return (runspacePool != null) ? runspacePool.RemoteRunspacePoolInternal : null;
         }
 
         #endregion
@@ -5546,7 +5546,7 @@ namespace System.Management.Automation
                         LocalPipeline localPipeline = new LocalPipeline(
                             lrs,
                             _shell.Commands.Commands,
-                            ((_settings != null) && (_settings.AddToHistory)) ? true : false,
+                            ((_settings != null) && _settings.AddToHistory) ? true : false,
                             _shell.IsNested,
                             _inputStream,
                             _outputStream,

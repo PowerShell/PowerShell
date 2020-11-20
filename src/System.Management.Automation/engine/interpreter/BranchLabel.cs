@@ -105,8 +105,8 @@ namespace System.Management.Automation.Interpreter
 
         internal void AddBranch(InstructionList instructions, int branchIndex)
         {
-            Debug.Assert(((_targetIndex == UnknownIndex) == (_stackDepth == UnknownDepth)));
-            Debug.Assert(((_targetIndex == UnknownIndex) == (_continuationStackDepth == UnknownDepth)));
+            Debug.Assert((_targetIndex == UnknownIndex) == (_stackDepth == UnknownDepth));
+            Debug.Assert((_targetIndex == UnknownIndex) == (_continuationStackDepth == UnknownDepth));
 
             if (_targetIndex == UnknownIndex)
             {

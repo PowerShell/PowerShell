@@ -318,7 +318,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get { return (string.IsNullOrEmpty(_message)) ? base.Message : _message; }
+            get { return string.IsNullOrEmpty(_message) ? base.Message : _message; }
         }
 
         [NonSerialized]

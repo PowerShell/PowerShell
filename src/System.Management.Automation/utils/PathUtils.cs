@@ -110,7 +110,7 @@ namespace System.Management.Automation
                             // remember to reset the read-only attribute later
                             readOnlyFileInfo = fInfo;
                             // Clear the read-only attribute
-                            fInfo.Attributes &= ~(FileAttributes.ReadOnly);
+                            fInfo.Attributes &= ~ FileAttributes.ReadOnly;
                         }
                     }
                 }

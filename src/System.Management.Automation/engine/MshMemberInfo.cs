@@ -3840,11 +3840,11 @@ namespace System.Management.Automation
 
         internal static bool IsReservedName(string name)
         {
-            return (string.Equals(name, PSObject.BaseObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+            return string.Equals(name, PSObject.BaseObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(name, PSObject.AdaptedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(name, PSObject.ExtendedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(name, PSObject.PSObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(name, PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(name, PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase);
         }
 
         #region IEnumerable

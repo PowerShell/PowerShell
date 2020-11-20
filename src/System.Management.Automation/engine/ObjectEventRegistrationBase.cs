@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (
                     ((inputObject != null) || (eventName != null)) &&
-                    (Events.GetEventSubscribers(_sourceIdentifier).GetEnumerator().MoveNext())
+                    Events.GetEventSubscribers(_sourceIdentifier).GetEnumerator().MoveNext()
                     )
                 {
                     // Detect if the event identifier already exists

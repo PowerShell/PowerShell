@@ -663,7 +663,7 @@ namespace System.Management.Automation
                 // If the identifier starts with "PowerShell.", then it will collide with engine
                 // events
                 if ((sourceIdentifier != null) &&
-                    (sourceIdentifier.StartsWith("PowerShell.", StringComparison.OrdinalIgnoreCase)))
+                    sourceIdentifier.StartsWith("PowerShell.", StringComparison.OrdinalIgnoreCase))
                 {
                     string errorMessage = StringUtil.Format(EventingResources.ReservedIdentifier, sourceIdentifier);
 
@@ -1288,7 +1288,7 @@ namespace System.Management.Automation
 
         internal bool IsExecutingEventAction
         {
-            get { return (_processingAction != null); }
+            get { return _processingAction != null; }
         }
 
         /// <summary>
@@ -2039,7 +2039,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return (string.Equals(SubscriptionId, other.SubscriptionId));
+            return string.Equals(SubscriptionId, other.SubscriptionId);
         }
 
         /// <summary>

@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
         /// The default value is 0, indicating no timeout.
         /// </summary>
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
-        [ValidateRange(0, (Int32.MaxValue / 1000))]
+        [ValidateRange(0, Int32.MaxValue / 1000)]
         public int TimeoutSeconds { get; set; }
 
         /// <summary>

@@ -87,7 +87,7 @@ namespace System.Management.Automation
                 commandExtent = cpiCommand.ArgumentExtent;
             }
 
-            string invocationName = (dotSource) ? "." : invocationToken == TokenKind.Ampersand ? "&" : null;
+            string invocationName = dotSource ? "." : invocationToken == TokenKind.Ampersand ? "&" : null;
             CommandProcessorBase commandProcessor;
             var scriptBlock = command as ScriptBlock;
             if (scriptBlock != null)
@@ -699,7 +699,7 @@ namespace System.Management.Automation
 
                         var exprAst = (ExpressionAst)commandElement;
                         var argument = Compiler.GetExpressionValue(exprAst, isTrusted, context);
-                        var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
+                        var splatting = exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted;
                         commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
                     }
 
@@ -767,8 +767,8 @@ namespace System.Management.Automation
             }
 
             object argumentValue = Compiler.GetExpressionValue(argumentAst, isTrusted, context);
-            bool spaceAfterParameter = (errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
-                                        errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber);
+            bool spaceAfterParameter = errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
+                                        errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber;
             return CommandParameterInternal.CreateParameterWithArgument(commandParameterAst, commandParameterAst.ParameterName,
                                                                         errorPos.Text, argumentAst, argumentValue,
                                                                         spaceAfterParameter);
@@ -2861,7 +2861,7 @@ namespace System.Management.Automation
                     sb.InvokeWithPipeImpl(ScriptBlockClauseToInvoke.Begin, false, null, null, ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, AutomationNull.Value, AutomationNull.Value, AutomationNull.Value, outputPipe, null, arguments);
                 }
 
-                ScriptBlockClauseToInvoke processClause = (sb.HasProcessBlock) ? ScriptBlockClauseToInvoke.Process : ScriptBlockClauseToInvoke.End;
+                ScriptBlockClauseToInvoke processClause = sb.HasProcessBlock ? ScriptBlockClauseToInvoke.Process : ScriptBlockClauseToInvoke.End;
                 object ie = null;
                 while (MoveNext(context, enumerator))
                 {
@@ -3275,7 +3275,7 @@ namespace System.Management.Automation
                 return new NonEnumerableObjectEnumerator
                 {
                     _obj = obj,
-                    _realEnumerator = (new[] { obj }).GetEnumerator()
+                    _realEnumerator = new[] { obj }.GetEnumerator()
                 };
             }
 

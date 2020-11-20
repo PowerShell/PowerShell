@@ -2144,7 +2144,7 @@ namespace System.Management.Automation
 
             public override IEnumerable<string> GetDynamicMemberNames()
             {
-                return (from member in Value.Members select member.Name);
+                return from member in Value.Members select member.Name;
             }
 
             private bool MustDeferIDMOP()

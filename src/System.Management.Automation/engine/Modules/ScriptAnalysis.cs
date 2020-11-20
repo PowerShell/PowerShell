@@ -44,7 +44,7 @@ namespace System.Management.Automation
             string scriptContent = ReadScript(path);
 
             ParseError[] errors;
-            var moduleAst = (new Parser()).Parse(path, scriptContent, null, out errors, ParseMode.ModuleAnalysis);
+            var moduleAst = new Parser().Parse(path, scriptContent, null, out errors, ParseMode.ModuleAnalysis);
 
             // Don't bother analyzing if there are syntax errors (we don't do semantic analysis which would
             // detect other errors that we also might choose to ignore, but it's slower.)
@@ -420,7 +420,7 @@ namespace System.Management.Automation
 
             // They are exporting a module member using our advanced 'public' function
             // that we've presented in many demos
-            if ((string.Equals(commandName, "public", StringComparison.OrdinalIgnoreCase)) &&
+            if (string.Equals(commandName, "public", StringComparison.OrdinalIgnoreCase) &&
                 (commandAst.CommandElements.Count > 2))
             {
                 // public function Publicly-ExportedFunction

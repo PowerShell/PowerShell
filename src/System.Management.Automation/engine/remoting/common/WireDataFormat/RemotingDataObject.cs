@@ -233,10 +233,10 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(serializedDataStream.Length >= 4, "Not enough data to get Int.");
 
             uint result = 0;
-            result |= (((uint)(serializedDataStream.ReadByte())) & 0xFF);
-            result |= (((uint)(serializedDataStream.ReadByte() << 8)) & 0xFF00);
-            result |= (((uint)(serializedDataStream.ReadByte() << (2 * 8))) & 0xFF0000);
-            result |= (((uint)(serializedDataStream.ReadByte() << (3 * 8))) & 0xFF000000);
+            result |=  ((uint)serializedDataStream.ReadByte()) & 0xFF;
+            result |= ((uint)(serializedDataStream.ReadByte() << 8)) & 0xFF00;
+            result |= ((uint)(serializedDataStream.ReadByte() << (2 * 8))) & 0xFF0000;
+            result |= ((uint)(serializedDataStream.ReadByte() << (3 * 8))) & 0xFF000000;
 
             return result;
         }

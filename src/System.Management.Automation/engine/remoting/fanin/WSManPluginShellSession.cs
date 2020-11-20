@@ -281,7 +281,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if ((result != WSManPluginConstants.ExitCodeSuccess) || (isRegisterWaitForSingleObjectFailed))
+            if ((result != WSManPluginConstants.ExitCodeSuccess) || isRegisterWaitForSingleObjectFailed)
             {
                 string errorMessage;
                 if (isRegisterWaitForSingleObjectFailed)
@@ -699,7 +699,7 @@ namespace System.Management.Automation.Remoting
 
             WSManPluginInstance.SetThreadProperties(creationRequestDetails);
 
-            bool isRcvOpShuttingDown = (context.isShuttingDown) && (context.isReceiveOperation);
+            bool isRcvOpShuttingDown = context.isShuttingDown && context.isReceiveOperation;
             bool isRcvOp = context.isReceiveOperation;
             bool isShuttingDown = context.isShuttingDown;
 
@@ -801,11 +801,11 @@ namespace System.Management.Automation.Remoting
 
             bool isRcvOp = context.isReceiveOperation;
             // only one thread will be here.
-            bool isRcvOpShuttingDown = (context.isShuttingDown) &&
-                (context.isReceiveOperation) &&
+            bool isRcvOpShuttingDown = context.isShuttingDown &&
+                context.isReceiveOperation &&
                 (context.commandContext == creationRequestDetails.unmanagedHandle);
 
-            bool isCmdShuttingDown = (context.isShuttingDown) &&
+            bool isCmdShuttingDown = context.isShuttingDown &&
                 (!context.isReceiveOperation) &&
                 (context.commandContext == creationRequestDetails.unmanagedHandle);
 

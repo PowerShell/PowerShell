@@ -235,7 +235,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             var result = loc.LoadFromArray(null, _closureArray);
-            return (unbox) ? LightCompiler.Unbox(result) : result;
+            return unbox ? LightCompiler.Unbox(result) : result;
         }
 
         protected override Expression VisitExtension(Expression node)

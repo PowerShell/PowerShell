@@ -373,7 +373,7 @@ namespace System.Management.Automation.Internal
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
-                Pipe UpstreamPipe = (readErrorQueue) ?
+                Pipe UpstreamPipe = readErrorQueue ?
                     prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
                 if (UpstreamPipe == null)
                 {

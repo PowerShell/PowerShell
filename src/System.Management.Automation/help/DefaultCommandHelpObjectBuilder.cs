@@ -30,7 +30,7 @@ namespace System.Management.Automation.Help
 
             Debug.Assert(a != null && b != null);
 
-            return (a.Position - b.Position);
+            return a.Position - b.Position;
         }
     }
 
@@ -908,7 +908,7 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            return (commonParams.Count == Cmdlet.CommonParameters.Count);
+            return commonParams.Count == Cmdlet.CommonParameters.Count;
         }
 
         /// <summary>

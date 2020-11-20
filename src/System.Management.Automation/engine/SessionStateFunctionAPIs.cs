@@ -120,7 +120,7 @@ namespace System.Management.Automation
 
             set
             {
-                Dbg.Assert((value), "This property should never be set/reset to false");
+                Dbg.Assert(value, "This property should never be set/reset to false");
                 if (value)
                 {
                     _functionsExportedWithWildcard = value;
@@ -169,7 +169,7 @@ namespace System.Management.Automation
                 result = ((IEnumerator<FunctionInfo>)searcher).Current;
             }
 
-            return (IsFunctionVisibleInDebugger(result, origin)) ? result : null;
+            return IsFunctionVisibleInDebugger(result, origin) ? result : null;
         }
 
         private bool IsFunctionVisibleInDebugger(FunctionInfo fnInfo, CommandOrigin origin)
@@ -183,9 +183,9 @@ namespace System.Management.Automation
             // Always allow built-in functions needed for command line debugging.
             if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage) ||
                 (fnInfo == null) ||
-                (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
-                (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||
-                (fnInfo.Name.Equals("Clear-Host", StringComparison.Ordinal)))
+                fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase) ||
+                fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase) ||
+                fnInfo.Name.Equals("Clear-Host", StringComparison.Ordinal))
             {
                 return true;
             }

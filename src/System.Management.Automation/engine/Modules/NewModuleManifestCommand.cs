@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (name == null)
                 return "''";
-            return ("'" + name.Replace("'", "''") + "'");
+            return "'" + name.Replace("'", "''") + "'";
         }
 
         /// <summary>

@@ -229,7 +229,7 @@ namespace System.Management.Automation.Language
 
         public static bool IsCurlyBracket(char c)
         {
-            return (c == '{' || c == '}');
+            return c == '{' || c == '}';
         }
 
         // Return true if the character is a whitespace character.
@@ -243,8 +243,8 @@ namespace System.Management.Automation.Language
 
             if (c <= 256)
             {
-                return (c == SpecialChars.NoBreakSpace
-                        || c == SpecialChars.NextLine);
+                return c == SpecialChars.NoBreakSpace
+                        || c == SpecialChars.NextLine;
             }
 
             return char.IsSeparator(c);
@@ -254,31 +254,31 @@ namespace System.Management.Automation.Language
         // dash characters.
         internal static bool IsDash(this char c)
         {
-            return (c == '-'
+            return c == '-'
                 || c == SpecialChars.EnDash
                 || c == SpecialChars.EmDash
-                || c == SpecialChars.HorizontalBar);
+                || c == SpecialChars.HorizontalBar;
         }
 
         // Return true if the character is any of the normal or special
         // single quote characters.
         internal static bool IsSingleQuote(this char c)
         {
-            return (c == '\''
+            return c == '\''
                 || c == SpecialChars.QuoteSingleLeft
                 || c == SpecialChars.QuoteSingleRight
                 || c == SpecialChars.QuoteSingleBase
-                || c == SpecialChars.QuoteReversed);
+                || c == SpecialChars.QuoteReversed;
         }
 
         // Return true if the character is any of the normal or special
         // double quote characters.
         internal static bool IsDoubleQuote(this char c)
         {
-            return (c == '"'
+            return c == '"'
                 || c == SpecialChars.QuoteDoubleLeft
                 || c == SpecialChars.QuoteDoubleRight
-                || c == SpecialChars.QuoteLowDoubleLeft);
+                || c == SpecialChars.QuoteLowDoubleLeft;
         }
 
         // Return true if the character can be the first character of

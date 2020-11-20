@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
         {
             internal static string FindLastWord(string sentence, out int replacementIndexOut, out char closingQuote)
             {
-                return (new LastWordFinder(sentence)).FindLastWord(out replacementIndexOut, out closingQuote);
+                return new LastWordFinder(sentence).FindLastWord(out replacementIndexOut, out closingQuote);
             }
 
             private LastWordFinder(string sentence)

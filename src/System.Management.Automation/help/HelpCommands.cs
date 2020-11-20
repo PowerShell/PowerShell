@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
             CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
-            if ((cmdInfo == null) || (string.IsNullOrEmpty(cmdInfo.Name)))
+            if ((cmdInfo == null) || string.IsNullOrEmpty(cmdInfo.Name))
             {
                 return string.Empty;
             }

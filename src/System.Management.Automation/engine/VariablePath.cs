@@ -248,7 +248,7 @@ namespace System.Management.Automation
         /// Returns true if the path specifies a variable path with no scope qualifiers.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Unscoped")]
-        public bool IsUnscopedVariable { get { return ((_flags & VariablePathFlags.UnscopedVariableMask) == 0); } }
+        public bool IsUnscopedVariable { get { return (_flags & VariablePathFlags.UnscopedVariableMask) == 0; } }
 
         /// <summary>
         /// Returns true if the path defines a variable.

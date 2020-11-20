@@ -227,7 +227,7 @@ namespace System.Management.Automation
 
         internal bool IsDashQuestion()
         {
-            return ParameterNameSpecified && (ParameterName.Equals("?", StringComparison.OrdinalIgnoreCase));
+            return ParameterNameSpecified && ParameterName.Equals("?", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

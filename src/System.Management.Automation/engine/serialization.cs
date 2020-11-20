@@ -908,7 +908,7 @@ namespace System.Management.Automation
         {
             // Check if source is of primitive known type
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfo(input);
-            return (pktInfo != null);
+            return pktInfo != null;
         }
 
         /// <summary>
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
             string toStringValue = SerializationUtilities.GetToStringForPrimitiveObject(source);
             bool hasModifiedTypesCollection = PSObjectHasModifiedTypesCollection(source);
             bool hasNotes = PSObjectHasNotes(source);
-            bool hasModifiedToString = (toStringValue != null);
+            bool hasModifiedToString = toStringValue != null;
 
             if (hasNotes || hasModifiedTypesCollection || hasModifiedToString)
             {
@@ -2262,7 +2262,7 @@ namespace System.Management.Automation
                     PSEventId.Serializer_ModeOverride, PSOpcode.SerializationSettings, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     source.InternalTypeNames.Key,
-                    (UInt32)(SerializationMethod.String));
+                    (UInt32)SerializationMethod.String);
 
                 return true;
             }
@@ -2332,7 +2332,7 @@ namespace System.Management.Automation
 
             if ((_context.options & SerializationOptions.PreserveSerializationSettingOfOriginal) != 0)
             {
-                if ((pso.IsDeserialized) && (depth <= 0))
+                if (pso.IsDeserialized && (depth <= 0))
                 {
                     return 1;
                 }
@@ -2953,7 +2953,7 @@ namespace System.Management.Automation
                 Dbg.Assert(_version.Major <= 1, "Deserializer assumes clixml version is <= 1.1");
                 // If minor version is greater than 1, it means that there can be
                 // some unknown tags in xml. Deserialization should ignore such element.
-                return (_version.Minor > 1);
+                return _version.Minor > 1;
             }
         }
 
@@ -2964,7 +2964,7 @@ namespace System.Management.Automation
 #if DEBUG
                 Dbg.Assert(_version.Major <= 1, "Deserializer assumes clixml version is <= 1.1");
                 Version boundaryVersion = new Version(1, 1, 0, 1);
-                return (_version < boundaryVersion);
+                return _version < boundaryVersion;
 #else
                 return true; // handle v1 stuff gracefully
 #endif
@@ -4976,7 +4976,7 @@ namespace System.Management.Automation
         internal string GetRefId(T t)
         {
             UInt64 refId;
-            if ((_object2refId != null) && (_object2refId.TryGetValue(t, out refId)))
+            if ((_object2refId != null) && _object2refId.TryGetValue(t, out refId))
             {
                 return refId.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
@@ -5542,7 +5542,7 @@ namespace System.Management.Automation
                     PSEventId.Serializer_ModeOverride, PSOpcode.SerializationSettings, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     source.InternalTypeNames.Key,
-                    (UInt32)(SerializationMethod.SpecificProperties));
+                    (UInt32)SerializationMethod.SpecificProperties);
 
                 PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties =
                     new PSMemberInfoInternalCollection<PSPropertyInfo>();
@@ -6003,7 +6003,7 @@ namespace System.Management.Automation
             //        but it is safer to limit the types to arrays.
             //        (one concern is that in v.next we might allow overriding SerializationMethod for
             //         types [i.e. check SerializationMethod *before* HandleKnownContainerTypes)
-            if ((valueType.IsArray) || valueType == typeof(ArrayList))
+            if (valueType.IsArray || valueType == typeof(ArrayList))
             {
                 foreach (object o in (IEnumerable)value)
                 {
@@ -6499,7 +6499,7 @@ namespace System.Management.Automation
         internal static PSPrimitiveDictionary CloneAndAddPSVersionTable(PSPrimitiveDictionary originalHash)
         {
             if ((originalHash != null) &&
-                (originalHash.ContainsKey(PSVersionInfo.PSVersionTableName)))
+                originalHash.ContainsKey(PSVersionInfo.PSVersionTableName))
             {
                 return (PSPrimitiveDictionary)originalHash.Clone();
             }
@@ -7277,7 +7277,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            return (UInt32)(parameterSetMetadata.Flags);
+            return (UInt32)parameterSetMetadata.Flags;
         }
 
         /// <summary>

@@ -456,7 +456,7 @@ namespace System.Management.Automation.Language
         {
             Exception exception;
             type = ResolveType(typeName, out exception);
-            return (type != null);
+            return type != null;
         }
 
         internal static Type ResolveITypeName(ITypeName iTypeName, out Exception exception)
@@ -832,7 +832,7 @@ namespace System.Management.Automation
                 return genericTypeDefinition == typeof(Nullable<>) || genericTypeDefinition == typeof(FlagsExpression<>);
             }
 
-            return (inputType.IsArray && Contains(inputType.GetElementType()));
+            return inputType.IsArray && Contains(inputType.GetElementType());
         }
     }
 

@@ -95,13 +95,13 @@ namespace Microsoft.PowerShell
 
         private static bool IsSupportedExtension(string ext)
         {
-            return (
+            return 
                        ext.Equals(".ps1", StringComparison.OrdinalIgnoreCase) ||
                        ext.Equals(".ps1xml", StringComparison.OrdinalIgnoreCase) ||
                        ext.Equals(".psm1", StringComparison.OrdinalIgnoreCase) ||
                        ext.Equals(".psd1", StringComparison.OrdinalIgnoreCase) ||
                        ext.Equals(".xaml", StringComparison.OrdinalIgnoreCase) ||
-                       ext.Equals(".cdxml", StringComparison.OrdinalIgnoreCase));
+                       ext.Equals(".cdxml", StringComparison.OrdinalIgnoreCase);
         }
 
         private bool CheckPolicy(ExternalScriptInfo script, PSHost host, out Exception reason)
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell
             }
             // Don't need to check the signature if the file is local
             // and we're in "RemoteSigned" mode
-            else if ((IsLocalFile(fi.FullName)) &&
+            else if (IsLocalFile(fi.FullName) &&
                     (_executionPolicy == ExecutionPolicy.RemoteSigned))
             {
                 policyCheckPassed = true;

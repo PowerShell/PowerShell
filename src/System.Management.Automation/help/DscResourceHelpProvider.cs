@@ -343,7 +343,7 @@ namespace System.Management.Automation
 
                         string nodeLocalName = node.LocalName;
 
-                        bool isDscResource = (string.Equals(nodeLocalName, "dscResource", StringComparison.OrdinalIgnoreCase));
+                        bool isDscResource = string.Equals(nodeLocalName, "dscResource", StringComparison.OrdinalIgnoreCase);
 
                         if (node.NodeType == XmlNodeType.Element && isDscResource)
                         {

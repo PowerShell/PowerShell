@@ -221,7 +221,7 @@ namespace System.Management.Automation
             internal override bool Eval(object val)
             {
                 // bitwise NOT
-                bool satisfy = !(Operand1.Eval(val));
+                bool satisfy = ! Operand1.Eval(val);
                 return satisfy;
             }
 
@@ -274,14 +274,14 @@ namespace System.Management.Automation
                 {
                     ulong valueToCheck = (ulong)LanguagePrimitives.ConvertTo(val, typeof(ulong), CultureInfo.InvariantCulture);
                     ulong operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
-                    satisfy = (operandValue == (valueToCheck & operandValue));
+                    satisfy = operandValue == (valueToCheck & operandValue);
                 }
                 // allow for negative enum value input (though it's not recommended practice for flags attribute)
                 else
                 {
                     long valueToCheck = (long)LanguagePrimitives.ConvertTo(val, typeof(long), CultureInfo.InvariantCulture);
                     long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
-                    satisfy = (operandValue == (valueToCheck & operandValue));
+                    satisfy = operandValue == (valueToCheck & operandValue);
                 }
 
                 return satisfy;
@@ -311,7 +311,7 @@ namespace System.Management.Automation
 
             private bool isUnsigned(Type type)
             {
-                return (type == typeof(ulong) || type == typeof(uint) || type == typeof(ushort) || type == typeof(byte));
+                return type == typeof(ulong) || type == typeof(uint) || type == typeof(ushort) || type == typeof(byte);
             }
         }
 
@@ -499,19 +499,19 @@ namespace System.Management.Automation
 
             if (result.Equals(","))
             {
-                return (new Token(TokenKind.Or));
+                return new Token(TokenKind.Or);
             }
             else if (result.Equals("+"))
             {
-                return (new Token(TokenKind.And));
+                return new Token(TokenKind.And);
             }
             else if (result.Equals("!"))
             {
-                return (new Token(TokenKind.Not));
+                return new Token(TokenKind.Not);
             }
             else
             {
-                return (new Token(result));
+                return new Token(result);
             }
         }
 

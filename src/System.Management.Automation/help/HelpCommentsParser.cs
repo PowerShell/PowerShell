@@ -911,12 +911,12 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        localHelpInfo.ForwardHelpCategory = (HelpCategory.Alias |
+                        localHelpInfo.ForwardHelpCategory = HelpCategory.Alias |
                                                              HelpCategory.Cmdlet |
                                                              HelpCategory.ExternalScript |
                                                              HelpCategory.Filter |
                                                              HelpCategory.Function |
-                                                             HelpCategory.ScriptCommand);
+                                                             HelpCategory.ScriptCommand;
                     }
                 }
 

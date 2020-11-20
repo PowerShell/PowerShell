@@ -169,7 +169,7 @@ namespace System.Management.Automation.Interpreter
                 // So change the lambda's delegate type to Func<...> or
                 // Action<...> so it can be called from the LightLambda.Run
                 // methods.
-                LambdaExpression lambda = (_lambda as LambdaExpression);// ?? (LambdaExpression)((LightLambdaExpression)_lambda).Reduce();
+                LambdaExpression lambda = _lambda as LambdaExpression;// ?? (LambdaExpression)((LightLambdaExpression)_lambda).Reduce();
                 if (_interpreter != null)
                 {
                     _compiledDelegateType = GetFuncOrAction(lambda);

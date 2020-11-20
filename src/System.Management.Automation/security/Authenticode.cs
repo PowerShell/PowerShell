@@ -376,7 +376,7 @@ namespace System.Management.Automation
                                         // ProductFile has to be Catalog signed. Hence validating
                                         // to see if the Catalog API is functional using the ProductFile.
                                         Signature productFileSignature = GetSignatureFromCatalog(productFile);
-                                        Signature.CatalogApiAvailable = (productFileSignature != null && productFileSignature.Status == SignatureStatus.Valid);
+                                        Signature.CatalogApiAvailable = productFileSignature != null && productFileSignature.Status == SignatureStatus.Valid;
                                     }
                                 }
                             }

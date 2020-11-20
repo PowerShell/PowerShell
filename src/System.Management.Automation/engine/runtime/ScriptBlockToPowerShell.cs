@@ -778,8 +778,8 @@ namespace System.Management.Automation
             {
                 var arg = commandParameterAst.Argument;
                 var errorPos = commandParameterAst.ErrorPosition;
-                bool spaceAfterParameter = (errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
-                                            errorPos.EndColumnNumber != arg.Extent.StartColumnNumber);
+                bool spaceAfterParameter = errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
+                                            errorPos.EndColumnNumber != arg.Extent.StartColumnNumber;
                 nameSuffix = spaceAfterParameter ? ": " : ":";
 
                 argument = GetExpressionValue(commandParameterAst.Argument, isTrustedInput);

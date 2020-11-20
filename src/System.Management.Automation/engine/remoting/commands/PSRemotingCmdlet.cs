@@ -2248,7 +2248,7 @@ namespace Microsoft.PowerShell.Commands
             // Semantic checks on the using statement have already validated that there are no arbitrary expressions,
             // so we'll allow these expressions in everything but NoLanguage mode.
 
-            bool allowUsingExpressions = (Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+            bool allowUsingExpressions = Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             object[] usingValuesInArray = null;
             IDictionary usingValuesInDict = null;
 
@@ -2302,7 +2302,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (Context.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrustedInput = Context.LanguageMode == PSLanguageMode.FullLanguage;
                 powershell = _scriptBlock.GetPowerShell(isTrustedInput, _args);
             }
             catch (ScriptBlockToPowerShellNotSupportedException)
@@ -2397,7 +2397,7 @@ namespace Microsoft.PowerShell.Commands
                 // GetExpressionValue ensures that it only does variable access when supplied a VariableExpressionAst.
                 // So, this is still safe to use in ConstrainedLanguage and will not result in arbitrary code
                 // execution.
-                bool allowVariableAccess = (Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+                bool allowVariableAccess = Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
 
                 foreach (var varAst in paramUsingVars)
                 {
@@ -4163,19 +4163,19 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case SessionFilterState.Opened:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Opened);
+                    result = runspace.RunspaceStateInfo.State == RunspaceState.Opened;
                     break;
 
                 case SessionFilterState.Closed:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Closed);
+                    result = runspace.RunspaceStateInfo.State == RunspaceState.Closed;
                     break;
 
                 case SessionFilterState.Disconnected:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Disconnected);
+                    result = runspace.RunspaceStateInfo.State == RunspaceState.Disconnected;
                     break;
 
                 case SessionFilterState.Broken:
-                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Broken);
+                    result = runspace.RunspaceStateInfo.State == RunspaceState.Broken;
                     break;
 
                 default:

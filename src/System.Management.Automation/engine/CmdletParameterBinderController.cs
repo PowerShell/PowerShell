@@ -162,7 +162,7 @@ namespace System.Management.Automation
                     Collection<MergedCompiledCommandParameter> missingMandatoryParameters;
 
                     // We shouldn't prompt for mandatory parameters if this command is private.
-                    bool promptForMandatoryParameters = (Command.CommandInfo.Visibility == SessionStateEntryVisibility.Public);
+                    bool promptForMandatoryParameters = Command.CommandInfo.Visibility == SessionStateEntryVisibility.Public;
                     HandleUnboundMandatoryParameters(validParameterSetCount, true, promptForMandatoryParameters, isPipelineInputExpected, out missingMandatoryParameters);
 
                     if (DefaultParameterBinder is ScriptParameterBinder)
@@ -1798,8 +1798,8 @@ namespace System.Management.Automation
 
                         if (newMandatoryParameterSetFlag != uint.MaxValue)
                         {
-                            parameterMandatorySets |= (_currentParameterSetFlag & newMandatoryParameterSetFlag);
-                            commandMandatorySets |= (_currentParameterSetFlag & parameterMandatorySets);
+                            parameterMandatorySets |= _currentParameterSetFlag & newMandatoryParameterSetFlag;
+                            commandMandatorySets |= _currentParameterSetFlag & parameterMandatorySets;
                         }
                         else
                         {
@@ -1836,7 +1836,7 @@ namespace System.Management.Automation
                         availableParameterSetFlags = uint.MaxValue;
                     }
 
-                    commandMandatorySets = (_currentParameterSetFlag & availableParameterSetFlags);
+                    commandMandatorySets = _currentParameterSetFlag & availableParameterSetFlags;
                 }
 
                 // First we need to see if there are multiple valid parameter sets, and if one is
@@ -2446,7 +2446,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _currentParameterSetFlag &= (~otherMandatorySetsToBeIgnored);
+                _currentParameterSetFlag &= ~otherMandatorySetsToBeIgnored;
             }
         }
 
@@ -2679,7 +2679,7 @@ namespace System.Management.Automation
                 .Where(p => p.IsMandatory);
             foreach (ParameterSetSpecificMetadata parameterSetMetadata in parameterSetMetadatasForUnboundMandatoryParameters)
             {
-                remainingParameterSetsWithNoMandatoryUnboundParameters &= (~parameterSetMetadata.ParameterSetFlag);
+                remainingParameterSetsWithNoMandatoryUnboundParameters &= ~parameterSetMetadata.ParameterSetFlag;
             }
 
             int finalParameterSetCount = ValidParameterSetCount(remainingParameterSetsWithNoMandatoryUnboundParameters);
@@ -3372,7 +3372,7 @@ namespace System.Management.Automation
 
                 if (!aParameterWasBound)
                 {
-                    validParameterSets &= ~(defaultParameterSetFlag);
+                    validParameterSets &= ~defaultParameterSetFlag;
                 }
             }
 

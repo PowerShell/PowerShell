@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
             s_tracer.WriteLine("blocks requested = {0}", readCount);
 
             var blocks = new List<object>();
-            bool readToEnd = (readCount <= 0);
+            bool readToEnd = readCount <= 0;
 
             if (_alreadyDetectEncoding && _reader.BaseStream.Position == 0)
             {
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                for (long currentBlock = 0; (currentBlock < readCount) || (readToEnd); ++currentBlock)
+                for (long currentBlock = 0; (currentBlock < readCount) || readToEnd; ++currentBlock)
                 {
                     if (waitChanges && _provider.Stopping)
                         waitChanges = false;
@@ -808,18 +808,18 @@ namespace Microsoft.PowerShell.Commands
 
                 // Clear the hidden attribute, and if we're writing, also clear readonly.
                 var attributesToClear = FileAttributes.Hidden;
-                if ((fileAccess & (FileAccess.Write)) != 0)
+                if ((fileAccess & FileAccess.Write) != 0)
                 {
                     attributesToClear |= FileAttributes.ReadOnly;
                 }
 
-                File.SetAttributes(_path, (File.GetAttributes(filePath) & ~attributesToClear));
+                File.SetAttributes(_path, File.GetAttributes(filePath) & ~attributesToClear);
             }
 
             // If we want to write to the stream, attempt to open it for reading as well
             // so that we can determine the file encoding as we append to it
             FileAccess requestedAccess = fileAccess;
-            if ((fileAccess & (FileAccess.Write)) != 0)
+            if ((fileAccess & FileAccess.Write) != 0)
             {
                 fileAccess = FileAccess.ReadWrite;
             }
@@ -854,18 +854,18 @@ namespace Microsoft.PowerShell.Commands
             if (!_usingByteEncoding)
             {
                 // Open the reader stream
-                if ((fileAccess & (FileAccess.Read)) != 0)
+                if ((fileAccess & FileAccess.Read) != 0)
                 {
                     _reader = new StreamReader(_stream, fileEncoding);
                     _backReader = new FileStreamBackReader(_stream, fileEncoding);
                 }
 
                 // Open the writer stream
-                if ((fileAccess & (FileAccess.Write)) != 0)
+                if ((fileAccess & FileAccess.Write) != 0)
                 {
                     // Ensure we are using the proper encoding
                     if ((_reader != null) &&
-                        ((fileAccess & (FileAccess.Read)) != 0))
+                        ((fileAccess & FileAccess.Read) != 0))
                     {
                         _reader.Peek();
                         fileEncoding = _reader.CurrentEncoding;
@@ -1244,7 +1244,7 @@ namespace Microsoft.PowerShell.Commands
 
             // _charCount > 0
             int byteCount = _currentEncoding.GetByteCount(_charBuff, 0, _charCount);
-            return (_currentPosition + byteCount);
+            return _currentPosition + byteCount;
         }
 
         /// <summary>
@@ -1412,7 +1412,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int RefillCharBuffer()
         {
-            if ((RefillByteBuff()) == -1)
+            if (RefillByteBuff() == -1)
             {
                 return -1;
             }

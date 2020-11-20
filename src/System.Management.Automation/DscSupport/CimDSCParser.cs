@@ -433,10 +433,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
                 {
                     string superClassName = c.CimSuperClassName;
                     string className = c.CimSystemProperties.ClassName;
-                    if ((superClassName != null) && (superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase)))
+                    if ((superClassName != null) && superClassName.Equals("OMI_BaseResource", StringComparison.OrdinalIgnoreCase))
                     {
                         // Get the name of the file without schema.mof extension
-                        if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
+                        if (! className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase))
                         {
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                 ParserStrings.ClassNameNotSameAsDefiningFile, className, fileNameDefiningClass);
@@ -1110,9 +1110,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     let cachedClassName = splittedName[IndexClassName]
                     let cachedModuleName = splittedName[IndexModuleName]
                     let cachedResourceName = splittedName[IndexFriendlyName]
-                    where (string.Equals(cachedResourceName, resourceName, StringComparison.OrdinalIgnoreCase)
+                    where string.Equals(cachedResourceName, resourceName, StringComparison.OrdinalIgnoreCase)
                     || (string.Equals(cachedClassName, className, StringComparison.OrdinalIgnoreCase)
-                        && string.Equals(cachedModuleName, moduleName, StringComparison.OrdinalIgnoreCase)))
+                        && string.Equals(cachedModuleName, moduleName, StringComparison.OrdinalIgnoreCase))
                     select cacheEntry).ToList();
         }
 
@@ -2439,7 +2439,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             // All 3 methods (Get/Set/Test) position should be found.
-            return (methodsLinePosition.Count == 3);
+            return methodsLinePosition.Count == 3;
         }
 
         /// <summary>
@@ -2661,7 +2661,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 bool skip = true;
                 foreach (var toImport in resourcesToImport)
                 {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name))
+                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase).IsMatch(resourceDefnAst.Name))
                     {
                         skip = false;
                         break;
@@ -3136,7 +3136,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 foreach (var toImport in resourcesToImport)
                 {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(r.Name))
+                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase).IsMatch(r.Name))
                     {
                         skip = false;
                         break;

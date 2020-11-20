@@ -511,10 +511,10 @@ namespace System.Management.Automation.Internal
 
             // Prepare the code properties struct.
             codeProperties.cbSize = (uint)Marshal.SizeOf(typeof(SAFER_CODE_PROPERTIES));
-            codeProperties.dwCheckFlags = (
+            codeProperties.dwCheckFlags = 
                 NativeConstants.SAFER_CRITERIA_IMAGEPATH |
                 NativeConstants.SAFER_CRITERIA_IMAGEHASH |
-                NativeConstants.SAFER_CRITERIA_AUTHENTICODE);
+                NativeConstants.SAFER_CRITERIA_AUTHENTICODE;
             codeProperties.ImagePath = path;
 
             if (handle != null)
@@ -624,10 +624,10 @@ namespace System.Management.Automation.Internal
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
-            return (
+            return 
                 CertHasOid(c, CertificateFilterInfo.DocumentEncryptionOid) &&
                 (CertHasKeyUsage(c, X509KeyUsageFlags.DataEncipherment) ||
-                 CertHasKeyUsage(c, X509KeyUsageFlags.KeyEncipherment)));
+                 CertHasKeyUsage(c, X509KeyUsageFlags.KeyEncipherment));
         }
 
         /// <summary>

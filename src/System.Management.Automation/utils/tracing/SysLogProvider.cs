@@ -177,8 +177,8 @@ namespace System.Management.Automation.Tracing
         /// <returns>True if the specified level and keywords are enabled for logging.</returns>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return ( ((ulong) keywords & _keywordFilter) != 0 &&
-                     ((int) level <= _levelFilter) );
+            return  ((ulong) keywords & _keywordFilter) != 0 &&
+                     ((int) level <= _levelFilter) ;
         }
 
         // NOTE: There are a number of places where PowerShell code sends analytic events
@@ -188,8 +188,8 @@ namespace System.Management.Automation.Tracing
         // filtering is performed to suppress analytic events.
         private bool ShouldLog(PSLevel level, PSKeyword keywords, PSChannel channel)
         {
-            return ((_channelFilter & (ulong)channel) != 0 &&
-                    IsEnabled(level, keywords));
+            return (_channelFilter & (ulong)channel) != 0 &&
+                    IsEnabled(level, keywords);
         }
 
 #region resource manager
@@ -443,97 +443,97 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// Kernel messages.
             /// </summary>
-            Kernel          = (0<<3),
+            Kernel          = 0<< 3,
 
             /// <summary>
             /// Random user-level messages.
             /// </summary>
-            User            = (1<<3),
+            User            = 1<< 3,
 
             /// <summary>
             /// Mail system.
             /// </summary>
-            Mail            = (2<<3),
+            Mail            = 2<< 3,
 
             /// <summary>
             /// System daemons.
             /// </summary>
-            Daemon          = (3<<3),
+            Daemon          = 3<< 3,
 
             /// <summary>
             /// Authorization messages.
             /// </summary>
-            Authorization   = (4<<3),
+            Authorization   = 4<< 3,
 
             /// <summary>
             /// Messages generated internally by syslogd.
             /// </summary>
-            Syslog          = (5<<3),
+            Syslog          = 5<< 3,
 
             /// <summary>
             /// Line printer subsystem.
             /// </summary>
-            Lpr             = (6<<3),
+            Lpr             = 6<< 3,
 
             /// <summary>
             /// Network news subsystem.
             /// </summary>
-            News            = (7<<3),
+            News            = 7<< 3,
 
             /// <summary>
             /// UUCP subsystem.
             /// </summary>
-            Uucp            = (8<<3),
+            Uucp            = 8<< 3,
 
             /// <summary>
             /// Clock daemon.
             /// </summary>
-            Cron            = (9<<3),
+            Cron            = 9<< 3,
 
             /// <summary>
             /// Security/authorization messages (private)
             /// </summary>
-            Authpriv        = (10<<3),
+            Authpriv        = 10<< 3,
 
             /// <summary>
             /// FTP daemon.
             /// </summary>
-            Ftp             = (11<<3),
+            Ftp             = 11<< 3,
 
             // Reserved for system use
 
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local0          = (16<<3),
+            Local0          = 16<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local1          = (17<<3),
+            Local1          = 17<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local2          = (18<<3),
+            Local2          = 18<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local3          = (19<<3),
+            Local3          = 19<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local4          = (20<<3),
+            Local4          = 20<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local5          = (21<<3),
+            Local5          = 21<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local6          = (22<<3),
+            Local6          = 22<< 3,
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local7          = (23<<3),
+            Local7          = 23<< 3,
         }
     }
 }

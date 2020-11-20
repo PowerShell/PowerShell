@@ -654,7 +654,7 @@ namespace System.Management.Automation
                         null,
                         Metadata.InvalidValueFailure,
                         Name,
-                        ((transformedValue != null) ? transformedValue.ToString() : "$null"));
+                        (transformedValue != null) ? transformedValue.ToString() : "$null");
 
                     throw e;
                 }

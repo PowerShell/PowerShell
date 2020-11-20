@@ -344,7 +344,7 @@ namespace System.Management.Automation
             {
                 _isClosed = true;
 
-                if ((_remoteHost != null) && (_remoteHost.IsRunspacePushed))
+                if ((_remoteHost != null) && _remoteHost.IsRunspacePushed)
                 {
                     Runspace runspaceToDispose = _remoteHost.PushedRunspace;
                     _remoteHost.PopRunspace();
@@ -444,7 +444,7 @@ namespace System.Management.Automation
             {
                 // Client is requesting a configured session.
                 // Create a configured remote runspace and push onto host stack.
-                if ((_remoteHost != null) && !(_remoteHost.IsRunspacePushed))
+                if ((_remoteHost != null) && ! _remoteHost.IsRunspacePushed)
                 {
                     // Let exceptions propagate.
                     RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(_configurationName, _remoteHost);
@@ -974,7 +974,7 @@ namespace System.Management.Automation
                             else
                             {
                                 SessionStateCmdletEntry getCommandCmdlet = publicGetCommandEntries.OfType<SessionStateCmdletEntry>().FirstOrDefault();
-                                if ((getCommandCmdlet != null) && (getCommandCmdlet.ImplementingType.Equals(typeof(Microsoft.PowerShell.Commands.GetCommandCommand))))
+                                if ((getCommandCmdlet != null) && getCommandCmdlet.ImplementingType.Equals(typeof(Microsoft.PowerShell.Commands.GetCommandCommand)))
                                 {
                                     newValue = true;
                                 }
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
         private void HandleHostResponseReceived(object sender,
             RemoteDataEventArgs<RemoteHostResponse> eventArgs)
         {
-            _remoteHost.ServerMethodExecutor.HandleRemoteHostResponseFromClient((eventArgs.Data));
+            _remoteHost.ServerMethodExecutor.HandleRemoteHostResponseFromClient(eventArgs.Data);
         }
 
         /// <summary>
@@ -1123,7 +1123,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs"></param>
         private void HandleResetRunspaceState(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
-            long callId = (long)((PSNoteProperty)(eventArgs.Data).Properties[RemoteDataNameStrings.CallId]).Value;
+            long callId = (long)((PSNoteProperty)eventArgs.Data.Properties[RemoteDataNameStrings.CallId]).Value;
             bool response = ResetRunspaceState();
 
             DataStructureHandler.SendResponseToClient(callId, response);
@@ -1628,7 +1628,7 @@ namespace System.Management.Automation
                         pump = null;
                     }
 
-                    return (pump != null) ? !(pump.IsBusy) : false;
+                    return (pump != null) ? ! pump.IsBusy : false;
                 }
             }
 
@@ -2055,7 +2055,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (InBreakpoint || _wrappedDebugger.Value.IsActive || _wrappedDebugger.Value.InBreakpoint);
+                return InBreakpoint || _wrappedDebugger.Value.IsActive || _wrappedDebugger.Value.InBreakpoint;
             }
         }
 
@@ -2682,8 +2682,8 @@ namespace System.Management.Automation
         // server remote debugger, enabling it if remote debugging is enabled.
         internal void CheckDebuggerState()
         {
-            if ((_wrappedDebugger.Value.DebugMode == DebugModes.None &&
-                (DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript))
+            if (_wrappedDebugger.Value.DebugMode == DebugModes.None &&
+                (DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript)
             {
                 _wrappedDebugger.Value.SetDebugMode(DebugMode);
             }

@@ -720,7 +720,7 @@ namespace System.Management.Automation.Host
                     // Transcription should begin only if file generation is successful.
                     // If there is an error in file generation, throw the exception.
                     string baseDirectory = Path.GetDirectoryName(transcript.Path);
-                    if (Directory.Exists(transcript.Path) || (string.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
+                    if (Directory.Exists(transcript.Path) || string.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal))
                     {
                         string errorMessage = string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,

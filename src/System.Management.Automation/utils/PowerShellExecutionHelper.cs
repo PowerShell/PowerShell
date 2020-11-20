@@ -63,7 +63,7 @@ namespace System.Management.Automation
             }
 
             // we got back one or more objects.
-            return (streamResults.Count > 1) || (LanguagePrimitives.IsTrue(streamResults[0]));
+            return (streamResults.Count > 1) || LanguagePrimitives.IsTrue(streamResults[0]);
         }
 
         internal string ExecuteCommandAndGetResultAsString()
@@ -105,7 +105,7 @@ namespace System.Management.Automation
             {
                 foreach (DictionaryEntry arg in args)
                 {
-                    cmd.Parameters.Add((string)(arg.Key), arg.Value);
+                    cmd.Parameters.Add((string)arg.Key, arg.Value);
                 }
             }
 

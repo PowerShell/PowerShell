@@ -169,7 +169,7 @@ namespace System.Management.Automation.Provider
 
                 // Check that the provider supports the use of transactions if the command
                 // requested it
-                if ((value.UseTransaction) &&
+                if (value.UseTransaction &&
                    (!CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Transactions, _providerInformation)))
                 {
                     throw PSTraceSource.NewNotSupportedException(

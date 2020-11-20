@@ -743,7 +743,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (InternalStateChanged == null);
+                    bool firstEntry = InternalStateChanged == null;
                     InternalStateChanged += value;
                     if (firstEntry)
                     {
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (InternalRunspaceCreated == null);
+                    bool firstEntry = InternalRunspaceCreated == null;
                     InternalRunspaceCreated += value;
                     if (firstEntry)
                     {

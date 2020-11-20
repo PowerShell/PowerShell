@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting
                     isRunspacePushed = true;
                 }
 
-                if ((remoteRunspace.GetCurrentlyRunningPipeline() != null))
+                if (remoteRunspace.GetCurrentlyRunningPipeline() != null)
                 {
                     // Don't execute command if pushed runspace is already running one.
                     return;
@@ -363,7 +363,7 @@ namespace System.Management.Automation.Remoting
             switch (e.Notification)
             {
                 case PSConnectionRetryStatus.NetworkFailureDetected:
-                    StartProgressBar(sender.GetHashCode(), e.ComputerName, (e.MaxRetryConnectionTime / 1000));
+                    StartProgressBar(sender.GetHashCode(), e.ComputerName, e.MaxRetryConnectionTime / 1000);
                     break;
 
                 case PSConnectionRetryStatus.AutoDisconnectStarting:

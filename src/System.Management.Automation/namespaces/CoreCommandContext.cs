@@ -1183,8 +1183,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return ((Include != null && Include.Count > 0) ||
-                        (Exclude != null && Exclude.Count > 0));
+                return (Include != null && Include.Count > 0) ||
+                        (Exclude != null && Exclude.Count > 0);
             }
         }
 

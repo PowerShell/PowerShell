@@ -37,7 +37,7 @@ namespace System.Management.Automation
 
             // If the current scope is the global scope there is nowhere else
             // to do the lookup, so return false.
-            return (_currentEnumeratedScope != null);
+            return _currentEnumeratedScope != null;
         }
 
         /// <summary>

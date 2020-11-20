@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if ((i != 0) && (ptn.Type != null) && (ptn.Type.Equals(typeof(object))))
+                    if ((i != 0) && (ptn.Type != null) && ptn.Type.Equals(typeof(object)))
                     {
                         continue;
                     }
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Only sort if they didn't fully specify a name)
-            if ((_names == null) || (_nameContainsWildcard))
+            if ((_names == null) || _nameContainsWildcard)
             {
                 // Use the stable sorting to sort the result list
                 _accumulatedResults = _accumulatedResults.OrderBy(a => a, new CommandInfoComparer()).ToList();
@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
                     // available modules for the command.
                     string moduleName;
                     string plainCommandName = Utils.ParseCommandName(commandName, out moduleName);
-                    bool isModuleQualified = (moduleName != null);
+                    bool isModuleQualified = moduleName != null;
 
                     // If they've specified a module name, we can do some smarter filtering.
                     // Otherwise, we have to filter everything.
@@ -1628,20 +1628,20 @@ namespace Microsoft.PowerShell.Commands
             returnParameterType.Properties.Add(new PSNoteProperty("IsEnum", isEnum));
             returnParameterType.Properties.Add(new PSNoteProperty("IsArray", isArray));
 
-            ArrayList enumValues = (isEnum) ?
+            ArrayList enumValues = isEnum ?
                 new ArrayList(Enum.GetValues(parameterType)) : new ArrayList();
             returnParameterType.Properties.Add(new PSNoteProperty("EnumValues", enumValues));
 
-            bool hasFlagAttribute = (isArray) ?
-                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Length > 0) : false;
+            bool hasFlagAttribute = isArray ?
+                (parameterType.GetCustomAttributes(typeof(FlagsAttribute), true).Length > 0) : false;
             returnParameterType.Properties.Add(new PSNoteProperty("HasFlagAttribute", hasFlagAttribute));
 
             // Recurse into array elements.
-            object elementType = (isArray) ?
+            object elementType = isArray ?
                 GetParameterType(parameterType.GetElementType()) : null;
             returnParameterType.Properties.Add(new PSNoteProperty("ElementType", elementType));
 
-            bool implementsDictionary = (!isEnum && !isArray && (parameterType is IDictionary));
+            bool implementsDictionary = !isEnum && !isArray && (parameterType is IDictionary);
             returnParameterType.Properties.Add(new PSNoteProperty("ImplementsDictionary", implementsDictionary));
 
             return returnParameterType;

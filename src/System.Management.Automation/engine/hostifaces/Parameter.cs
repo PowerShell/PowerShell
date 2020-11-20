@@ -167,7 +167,7 @@ namespace System.Management.Automation.Runspaces
             parameterText = name.Substring(0, endPosition);
 
             // parameterName should contain only the actual name of the parameter (no whitespace, colons, dashes)
-            bool hasColon = (name[endPosition - 1] == ':');
+            bool hasColon = name[endPosition - 1] == ':';
             var parameterName = parameterText.Substring(1, parameterText.Length - (hasColon ? 2 : 1));
 
             // At this point we have rebuilt the token.  There are 3 strings that might be different:

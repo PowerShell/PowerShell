@@ -303,7 +303,7 @@ namespace System.Management.Automation.Runspaces
             // specifying the default value on the server.
             IdleTimeout = (options.IdleTimeout.TotalMilliseconds >= BaseTransportManager.UseServerDefaultIdleTimeout &&
                                 options.IdleTimeout.TotalMilliseconds < int.MaxValue)
-                                ? (int)(options.IdleTimeout.TotalMilliseconds) : int.MaxValue;
+                                ? (int)options.IdleTimeout.TotalMilliseconds : int.MaxValue;
         }
 
         #endregion Public Properties
@@ -318,7 +318,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                return (int)(t.TotalMilliseconds);
+                return (int)t.TotalMilliseconds;
             }
         }
 
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="port">Port number to validate.</param>
         internal virtual void ValidatePortInRange(int port)
         {
-            if ((port < MinPort || port > MaxPort))
+            if (port < MinPort || port > MaxPort)
             {
                 string message =
                     PSRemotingErrorInvariants.FormatResourceString(
@@ -994,7 +994,7 @@ namespace System.Management.Automation.Runspaces
             this.MaximumReceivedDataSizePerCommand = options.MaximumReceivedDataSizePerCommand;
             this.MaximumReceivedObjectSize = options.MaximumReceivedObjectSize;
 
-            this.UseCompression = !(options.NoCompression);
+            this.UseCompression = ! options.NoCompression;
             this.NoMachineProfile = options.NoMachineProfile;
 
             ProxyAccessType = options.ProxyAccessType;
@@ -1436,10 +1436,10 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return (EnableNetworkAccess &&                                                              // Interactive token requested
+                return EnableNetworkAccess &&                                                              // Interactive token requested
                         (Credential == null &&                                                              // No credential provided
                          (ComputerName.Equals(DefaultComputerName, StringComparison.OrdinalIgnoreCase) ||   // Localhost computer name
-                          !ComputerName.Contains('.'))));                                                    // Not FQDN computer name
+                          !ComputerName.Contains('.')));                                                    // Not FQDN computer name
             }
         }
 
@@ -1958,7 +1958,7 @@ namespace System.Management.Automation.Runspaces
             ValidatePortInRange(port);
 
             this.Port = port;
-            this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+            this.Subsystem = string.IsNullOrEmpty(subsystem) ? DefaultSubsystem : subsystem;
         }
 
         #endregion
@@ -2311,7 +2311,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                 }
 
-                argvList.Add(argsToParse.Substring(iStart, (i-iStart)));
+                argvList.Add(argsToParse.Substring(iStart, i- iStart));
                 while ((++i < argsLength) && argsToParse[i] == ' ') { };
             }
 

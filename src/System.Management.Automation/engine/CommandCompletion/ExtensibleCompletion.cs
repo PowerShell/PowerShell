@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
-            if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
+            if (type == null || type.GetInterfaces().All(t => t != typeof(IArgumentCompleter)))
             {
                 throw PSTraceSource.NewArgumentException(nameof(type));
             }

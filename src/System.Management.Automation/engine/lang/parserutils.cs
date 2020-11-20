@@ -381,7 +381,7 @@ namespace System.Management.Automation
             Type lvalType = lval?.GetType();
             Type rvalType = rval?.GetType();
             Type opType;
-            if (lvalType == null || (lvalType.IsPrimitive))
+            if (lvalType == null || lvalType.IsPrimitive)
             {
                 // Prefer the LHS type when looking for the operator, but attempt the right
                 // the lhs can't have an operator.

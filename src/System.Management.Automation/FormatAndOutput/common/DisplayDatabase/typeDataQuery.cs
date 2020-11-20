@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (match.BestMatch != null)
             {
-                return ((EnumerableExpansionDirective)(match.BestMatch)).enumerableExpansion;
+                return ((EnumerableExpansionDirective)match.BestMatch).enumerableExpansion;
             }
             else
             {
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (match.BestMatch != null)
             {
-                return ((FormatShapeSelectionOnType)(match.BestMatch)).formatShape;
+                return ((FormatShapeSelectionOnType)match.BestMatch).formatShape;
             }
             else
             {
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
-                        ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
+                        ControlBase.GetControlShapeName(vd.mainControl), vd != null ? vd.name : string.Empty);
                     continue;
                 }
 

@@ -516,7 +516,7 @@ namespace System.Management.Automation.Language
         // Used to analyze an expression that is invoked separately, i.e. a default argument.
         internal static Tuple<Type, Dictionary<string, int>> AnalyzeExpression(ExpressionAst exprAst)
         {
-            return (new VariableAnalysis()).AnalyzeImpl(exprAst);
+            return new VariableAnalysis().AnalyzeImpl(exprAst);
         }
 
         private Tuple<Type, Dictionary<string, int>> AnalyzeImpl(ExpressionAst exprAst)
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Language
 
         internal static Tuple<Type, Dictionary<string, int>> AnalyzeTrap(TrapStatementAst trap)
         {
-            return (new VariableAnalysis()).AnalyzeImpl(trap);
+            return new VariableAnalysis().AnalyzeImpl(trap);
         }
 
         private Tuple<Type, Dictionary<string, int>> AnalyzeImpl(TrapStatementAst trap)
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Language
 
         internal static Tuple<Type, Dictionary<string, int>> Analyze(IParameterMetadataProvider ast, bool disableOptimizations, bool scriptCmdlet)
         {
-            return (new VariableAnalysis()).AnalyzeImpl(ast, disableOptimizations, scriptCmdlet);
+            return new VariableAnalysis().AnalyzeImpl(ast, disableOptimizations, scriptCmdlet);
         }
 
         /// <summary>
@@ -579,7 +579,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal static bool AnalyzeMemberFunction(FunctionMemberAst ast)
         {
-            VariableAnalysis va = (new VariableAnalysis());
+            VariableAnalysis va = new VariableAnalysis();
             va.AnalyzeImpl(ast, false, false);
             return va._exitBlock._predecessors.All(b => b._returns || b._throws || b._unreachable);
         }
@@ -710,9 +710,9 @@ namespace System.Management.Automation.Language
             // However, $? is not a real automatic variable from 'SpecialVariables.AutomaticVariables'
             // even though it's marked as so, and thus we need to exclude it.
             var orderedLocals = (from details in _variables.Values
-                                 where (details.LocalTupleIndex >= 0 || (details.LocalTupleIndex == ForceDynamic &&
+                                 where details.LocalTupleIndex >= 0 || (details.LocalTupleIndex == ForceDynamic &&
                                                                          details.Automatic &&
-                                                                         details.Name != SpecialVariables.Question))
+                                                                         details.Name != SpecialVariables.Question)
                                  orderby details.LocalTupleIndex
                                  select details).ToArray();
 
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation.Language
             for (int i = 0; i < clauseCount; i++)
             {
                 var clause = ifStmtAst.Clauses[i];
-                bool isLastClause = (i == (clauseCount - 1) && ifStmtAst.ElseClause == null);
+                bool isLastClause = i == (clauseCount - 1) && ifStmtAst.ElseClause == null;
                 Block clauseBlock = new Block();
                 Block nextBlock = isLastClause ? afterStmt : new Block();
 
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation.Language
 
             Action switchBodyGenerator = () =>
             {
-                bool hasDefault = (switchStatementAst.Default != null);
+                bool hasDefault = switchStatementAst.Default != null;
                 Block afterStmt = new Block();
 
                 int clauseCount = switchStatementAst.Clauses.Count;
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Language
                 {
                     var clause = switchStatementAst.Clauses[i];
                     Block clauseBlock = new Block();
-                    bool isLastClause = (i == (clauseCount - 1) && !hasDefault);
+                    bool isLastClause = i == (clauseCount - 1) && !hasDefault;
                     Block nextBlock = isLastClause ? afterStmt : new Block();
 
                     clause.Item1.Accept(this);

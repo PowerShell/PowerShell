@@ -1708,7 +1708,7 @@ namespace System.Management.Automation.Remoting
                 PSEventId.ReportOperationComplete,
                 PSOpcode.Close, PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                (requestDetails.unmanagedHandle).ToString(),
+                requestDetails.unmanagedHandle.ToString(),
                 Convert.ToString(errorCode, CultureInfo.InvariantCulture),
                 string.Empty,
                 string.Empty);
@@ -1785,7 +1785,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
             // ref nativeLocaleData);
-            bool retrievingLocaleSucceeded = (hResult == 0);
+            bool retrievingLocaleSucceeded = hResult == 0;
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
             // IntPtr nativeDataLocaleData = IntPtr.Zero;
@@ -1794,7 +1794,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
             // ref nativeDataLocaleData);
-            bool retrievingDataLocaleSucceeded = (hResult == (int)WSManPluginErrorCodes.NoError);
+            bool retrievingDataLocaleSucceeded = hResult == (int)WSManPluginErrorCodes.NoError;
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 
             // Set the UI Culture

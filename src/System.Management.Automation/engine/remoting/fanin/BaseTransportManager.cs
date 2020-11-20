@@ -213,7 +213,7 @@ namespace System.Management.Automation.Remoting
             // so type information is serialized only the first time an object of a particular type
             // is sent. only data is serialized for the rest of the objects of the same type.
             Fragmentor = new Fragmentor(DefaultFragmentSize, cryptoHelper);
-            ReceivedDataCollection = new PriorityReceiveDataCollection(Fragmentor, (this is BaseClientTransportManager));
+            ReceivedDataCollection = new PriorityReceiveDataCollection(Fragmentor, this is BaseClientTransportManager);
             _onDataAvailableCallback = new ReceiveDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
         }
 
@@ -334,9 +334,9 @@ namespace System.Management.Automation.Remoting
                                                   PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                                                   remoteObject.RunspacePoolId.ToString(),
                                                   remoteObject.PowerShellId.ToString(),
-                                                  (UInt32)(remoteObject.Destination),
-                                                  (UInt32)(remoteObject.DataType),
-                                                  (UInt32)(remoteObject.TargetInterface));
+                                                  (UInt32)remoteObject.Destination,
+                                                  (UInt32)remoteObject.DataType,
+                                                  (UInt32)remoteObject.TargetInterface);
 
             // This might throw exceptions which the caller handles.
             PowerShellGuidObserver.SafeInvoke(remoteObject.PowerShellId, EventArgs.Empty);
@@ -1366,7 +1366,7 @@ namespace System.Management.Automation.Remoting.Server
         /// </param>
         internal void SendDataToClient(RemoteDataObject psObjectData, bool flush, bool reportAsPending = false)
         {
-            SendDataToClient<object>((RemoteDataObject<object>)(psObjectData), flush, reportAsPending);
+            SendDataToClient<object>((RemoteDataObject<object>)psObjectData, flush, reportAsPending);
         }
 
         /// <summary>

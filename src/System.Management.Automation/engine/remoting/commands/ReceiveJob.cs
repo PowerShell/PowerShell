@@ -1578,7 +1578,7 @@ namespace Microsoft.PowerShell.Commands
             bool stateChanged;
             lock (_syncObject)
             {
-                stateChanged = (processingOutput != _processingOutput);
+                stateChanged = processingOutput != _processingOutput;
                 if (stateChanged)
                 {
                     _processingOutput = processingOutput;

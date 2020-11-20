@@ -868,7 +868,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Dbg.Assert((ParameterSetName == PSExecutionCmdlet.VMNameParameterSet),
+                Dbg.Assert(ParameterSetName == PSExecutionCmdlet.VMNameParameterSet,
                            "Expected ParameterSetName == VMId or VMName");
 
                 inputArraySize = this.VMName.Length;
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> resolvedNameList = new List<string>();
             List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
 
-            Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet),
+            Dbg.Assert(ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet,
                        "Expected ParameterSetName == ContainerId");
 
             foreach (var input in ContainerId)

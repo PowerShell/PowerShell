@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell.Commands
                             int pAppDomainIndex = namedPipe.IndexOf('.', pIdIndex + 1);
                             if (pAppDomainIndex > -1)
                             {
-                                ReadOnlySpan<char> idString = namedPipe.AsSpan(pIdIndex + 1, (pAppDomainIndex - pIdIndex - 1));
+                                ReadOnlySpan<char> idString = namedPipe.AsSpan(pIdIndex + 1, pAppDomainIndex - pIdIndex - 1);
                                 int id = -1;
                                 if (int.TryParse(idString, out id))
                                 {
@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
                                 int pNameIndex = namedPipe.IndexOf('.', pAppDomainIndex + 1);
                                 if (pNameIndex > -1)
                                 {
-                                    string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, (pNameIndex - pAppDomainIndex - 1));
+                                    string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, pNameIndex - pAppDomainIndex - 1);
                                     string pName = namedPipe.Substring(pNameIndex + 1);
 
                                     Process process = null;

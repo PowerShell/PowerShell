@@ -4424,7 +4424,7 @@ namespace System.Management.Automation.Runspaces
             if (_typeAdapters.TryGetValue(typeName, out adapterResult))
             {
                 Dbg.Assert(adapterResult != null, "adapter should not be null");
-                typeData.TypeAdapter = ((ThirdPartyAdapter)(adapterResult.OriginalAdapter)).ExternalAdapterType;
+                typeData.TypeAdapter = ((ThirdPartyAdapter)adapterResult.OriginalAdapter).ExternalAdapterType;
                 return true;
             }
 

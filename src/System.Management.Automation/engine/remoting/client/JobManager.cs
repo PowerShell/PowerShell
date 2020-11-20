@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 {
                     if (sourceAdapter.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
-                        return (sourceAdapter.GetJobByInstanceId(id, false) != null);
+                        return sourceAdapter.GetJobByInstanceId(id, false) != null;
                     }
                 }
             }
@@ -643,9 +643,9 @@ namespace System.Management.Automation
 
         private string GetAdapterName(JobSourceAdapter sourceAdapter)
         {
-            return (!string.IsNullOrEmpty(sourceAdapter.Name) ?
+            return !string.IsNullOrEmpty(sourceAdapter.Name) ?
                 sourceAdapter.Name :
-                sourceAdapter.GetType().ToString());
+                sourceAdapter.GetType().ToString();
         }
 
         /// <summary>

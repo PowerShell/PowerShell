@@ -244,7 +244,7 @@ namespace System.Management.Automation
             // invocationInfo.MyCommand can be null when invoked via ScriptBlock.Invoke()
             if (CommandPattern.IsMatch(invocationInfo.InvocationName) || CommandInfoMatches(invocationInfo.MyCommand))
             {
-                return (Script == null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase));
+                return Script == null || Script.Equals(invocationInfo.ScriptName, StringComparison.OrdinalIgnoreCase);
             }
 
             return false;

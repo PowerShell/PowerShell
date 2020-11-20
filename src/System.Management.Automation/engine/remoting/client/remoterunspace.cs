@@ -1910,7 +1910,7 @@ namespace System.Management.Automation
                             DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
                             if (dbgCmd != null)
                             {
-                                bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
+                                bool executedByDebugger = dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger;
                                 results = new DebuggerCommandResults(dbgCmd.ResumeAction, executedByDebugger);
                             }
                             else if (item.BaseObject is DebuggerCommandResults)
@@ -1974,7 +1974,7 @@ namespace System.Management.Automation
             _psDebuggerCommand = null;
 
             // Special processing when the detach command is run.
-            _detachCommand = (!executionError) && (command.Commands.Count > 0) && (command.Commands[0].CommandText.Equals("Detach", StringComparison.OrdinalIgnoreCase));
+            _detachCommand = (!executionError) && (command.Commands.Count > 0) && command.Commands[0].CommandText.Equals("Detach", StringComparison.OrdinalIgnoreCase);
 
             return results ?? new DebuggerCommandResults(null, false);
         }

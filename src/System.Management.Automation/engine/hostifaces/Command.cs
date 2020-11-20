@@ -510,7 +510,7 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 // RestrictedLanguage / NoLanguage do not support dot-sourcing when CommandOrigin is Runspace
-                if ((_useLocalScope.HasValue) && (!_useLocalScope.Value))
+                if (_useLocalScope.HasValue && (!_useLocalScope.Value))
                 {
                     switch (executionContext.LanguageMode)
                     {

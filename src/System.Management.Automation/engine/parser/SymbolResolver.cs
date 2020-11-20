@@ -35,7 +35,7 @@ namespace System.Management.Automation.Language
 
         public bool IsAmbiguous()
         {
-            return (ExternalNamespaces != null && ExternalNamespaces.Count > 1);
+            return ExternalNamespaces != null && ExternalNamespaces.Count > 1;
         }
     }
 

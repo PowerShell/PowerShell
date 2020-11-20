@@ -278,10 +278,10 @@ namespace System.Management.Automation
 
             set
             {
-                this.IsMandatory = ((value & ParameterFlags.Mandatory) == ParameterFlags.Mandatory);
-                this.ValueFromPipeline = ((value & ParameterFlags.ValueFromPipeline) == ParameterFlags.ValueFromPipeline);
-                this.ValueFromPipelineByPropertyName = ((value & ParameterFlags.ValueFromPipelineByPropertyName) == ParameterFlags.ValueFromPipelineByPropertyName);
-                this.ValueFromRemainingArguments = ((value & ParameterFlags.ValueFromRemainingArguments) == ParameterFlags.ValueFromRemainingArguments);
+                this.IsMandatory = (value & ParameterFlags.Mandatory) == ParameterFlags.Mandatory;
+                this.ValueFromPipeline = (value & ParameterFlags.ValueFromPipeline) == ParameterFlags.ValueFromPipeline;
+                this.ValueFromPipelineByPropertyName = (value & ParameterFlags.ValueFromPipelineByPropertyName) == ParameterFlags.ValueFromPipelineByPropertyName;
+                this.ValueFromRemainingArguments = (value & ParameterFlags.ValueFromRemainingArguments) == ParameterFlags.ValueFromRemainingArguments;
             }
         }
 
@@ -700,8 +700,8 @@ namespace System.Management.Automation
             {
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
                 bool parameterAcceptsObjects =
-                    ((int)(LanguagePrimitives.FigureConversion(typeof(object), this.ParameterType).Rank)) >=
-                    (int)(ConversionRank.AssignableS2A);
+                    ((int)LanguagePrimitives.FigureConversion(typeof(object), this.ParameterType).Rank) >=
+                    (int)ConversionRank.AssignableS2A;
                 if (dotNetType.Equals(typeof(object)))
                 {
                     return parameterAcceptsObjects;
@@ -709,14 +709,14 @@ namespace System.Management.Automation
 
                 if (parameterAcceptsObjects)
                 {
-                    return (psTypeName.Type != null) && (psTypeName.Type.Equals(typeof(object)));
+                    return (psTypeName.Type != null) && psTypeName.Type.Equals(typeof(object));
                 }
 
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
                 var conversionData = LanguagePrimitives.FigureConversion(dotNetType, this.ParameterType);
                 if (conversionData != null)
                 {
-                    if ((int)(conversionData.Rank) >= (int)(ConversionRank.NumericImplicitS2A))
+                    if ((int)conversionData.Rank >= (int)ConversionRank.NumericImplicitS2A)
                     {
                         return true;
                     }
@@ -733,7 +733,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            if (this.ParameterType.IsArray && wildcardPattern.IsMatch((this.ParameterType.GetElementType().FullName)))
+            if (this.ParameterType.IsArray && wildcardPattern.IsMatch(this.ParameterType.GetElementType().FullName))
             {
                 return true;
             }
@@ -1279,7 +1279,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The flags used when reflecting against the object to create the metadata.
         /// </summary>
-        internal static readonly BindingFlags metaDataBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+        internal static readonly BindingFlags metaDataBindingFlags = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
         #region helper methods
 

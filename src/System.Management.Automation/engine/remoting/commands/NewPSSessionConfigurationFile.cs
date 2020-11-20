@@ -1669,7 +1669,7 @@ namespace Microsoft.PowerShell.Commands
                 // Scripts to process
                 string resultData = (_scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ScriptsToProcess, RemotingErrorIdStrings.DISCScriptsToProcessComment,
-                    resultData, streamWriter, (_scriptsToProcess.Length == 0)));
+                    resultData, streamWriter, _scriptsToProcess.Length == 0));
 
                 // Alias definitions
                 if ((_aliasDefinitions == null) || (_aliasDefinitions.Length == 0))
@@ -1819,12 +1819,12 @@ namespace Microsoft.PowerShell.Commands
                 // Types to process
                 resultData = (_typesToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_typesToProcess) : "'C:\\ConfigData\\MyTypes.ps1xml', 'C:\\ConfigData\\OtherTypes.ps1xml'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.TypesToProcess, RemotingErrorIdStrings.DISCTypesToProcessComment,
-                    resultData, streamWriter, (_typesToProcess.Length == 0)));
+                    resultData, streamWriter, _typesToProcess.Length == 0));
 
                 // Formats to process
                 resultData = (_formatsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_formatsToProcess) : "'C:\\ConfigData\\MyFormats.ps1xml', 'C:\\ConfigData\\OtherFormats.ps1xml'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FormatsToProcess, RemotingErrorIdStrings.DISCFormatsToProcessComment,
-                    resultData, streamWriter, (_formatsToProcess.Length == 0)));
+                    resultData, streamWriter, _formatsToProcess.Length == 0));
 
                 // Assemblies to load
                 bool isExample = false;

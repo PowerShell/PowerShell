@@ -318,7 +318,7 @@ function __cmdletization_BindCommonParameters
 
             foreach (ParameterMetadata parameter in commonParameters.Values)
             {
-                if ((parameter.ParameterSets.Count == 1) && (parameter.ParameterSets.ContainsKey(ParameterAttribute.AllParameterSets)))
+                if ((parameter.ParameterSets.Count == 1) && parameter.ParameterSets.ContainsKey(ParameterAttribute.AllParameterSets))
                 {
                     ParameterSetMetadata oldParameterSetMetadata = parameter.ParameterSets[ParameterAttribute.AllParameterSets];
 
@@ -908,7 +908,7 @@ function __cmdletization_BindCommonParameters
 
             if ((maxBeforePosition >= 0) && (minAfterPosition <= maxBeforePosition))
             {
-                int delta = (1001 - minAfterPosition % 1000);
+                int delta = 1001 - minAfterPosition % 1000;
                 foreach (ParameterMetadata afterParameter in afterParameters.Values)
                 {
                     foreach (ParameterSetMetadata afterParameterSet in afterParameter.ParameterSets.Values)

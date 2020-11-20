@@ -407,7 +407,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsDebugHandlerSubscribed
         {
-            get { return (DebuggerStop != null); }
+            get { return DebuggerStop != null; }
         }
 
         /// <summary>
@@ -478,7 +478,7 @@ namespace System.Management.Automation
         /// <returns>True if event subscription exists.</returns>
         protected bool IsDebuggerStopEventSubscribed()
         {
-            return (DebuggerStop != null);
+            return DebuggerStop != null;
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace System.Management.Automation
         /// <returns>True if event subscription exists.</returns>
         protected bool IsDebuggerBreakpointUpdatedEventSubscribed()
         {
-            return (BreakpointUpdated != null);
+            return BreakpointUpdated != null;
         }
 
         #region Runspace Debug Processing
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// <summary/>
         protected bool IsStartRunspaceDebugProcessingEventSubscribed()
         {
-            return (StartRunspaceDebugProcessing != null);
+            return StartRunspaceDebugProcessing != null;
         }
 
         /// <summary/>
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
 
         internal override bool IsPushed
         {
-            get { return (!_activeDebuggers.IsEmpty); }
+            get { return !_activeDebuggers.IsEmpty; }
         }
 
         /// <summary>
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return ((_preserveDebugStopEvent != null) && !_preserveDebugStopEvent.IsSet);
+                return (_preserveDebugStopEvent != null) && !_preserveDebugStopEvent.IsSet;
             }
         }
 
@@ -1045,9 +1045,9 @@ namespace System.Management.Automation
         {
             get
             {
-                return ((_context._debuggingMode == (int)InternalDebugMode.Enabled) &&
+                return (_context._debuggingMode == (int)InternalDebugMode.Enabled) &&
                         (_currentDebuggerAction == DebuggerResumeAction.StepInto) &&
-                        (_steppingMode != SteppingMode.None));
+                        (_steppingMode != SteppingMode.None);
             }
         }
 
@@ -1060,8 +1060,8 @@ namespace System.Management.Automation
                 if (_isLocalSession == null)
                 {
                     // Remote debug sessions always have a ServerRemoteHost.  Otherwise it is a local session.
-                    _isLocalSession = !(((_context.InternalHost.ExternalHost != null) &&
-                                         (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)));
+                    _isLocalSession = ! ((_context.InternalHost.ExternalHost != null) &&
+                                         (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost));
                 }
 
                 return _isLocalSession.Value;
@@ -2153,8 +2153,8 @@ namespace System.Management.Automation
                     {
                         if (_isSystemLockedDown == null)
                         {
-                            _isSystemLockedDown = (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                                System.Management.Automation.Security.SystemEnforcementMode.Enforce);
+                            _isSystemLockedDown = System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                                System.Management.Automation.Security.SystemEnforcementMode.Enforce;
                         }
                     }
                 }
@@ -2358,7 +2358,7 @@ namespace System.Management.Automation
                                 DebuggerCommand dbgCmd = item.BaseObject as DebuggerCommand;
                                 if (dbgCmd != null)
                                 {
-                                    bool executedByDebugger = (dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger);
+                                    bool executedByDebugger = dbgCmd.ResumeAction != null || dbgCmd.ExecutedByDebugger;
                                     results = new DebuggerCommandResults(dbgCmd.ResumeAction, executedByDebugger);
                                 }
                                 else
@@ -2468,7 +2468,7 @@ namespace System.Management.Automation
             get
             {
                 int debuggerState = _context._debuggingMode;
-                return (debuggerState != 0);
+                return debuggerState != 0;
             }
         }
 
@@ -2602,7 +2602,7 @@ namespace System.Management.Automation
                 Debugger activeDebugger;
                 if (_activeDebuggers.TryPeek(out activeDebugger))
                 {
-                    return (activeDebugger is RemotingJobDebugger);
+                    return activeDebugger is RemotingJobDebugger;
                 }
 
                 return false;
@@ -2636,7 +2636,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_preserveUnhandledDebugStopEvent) ? UnhandledBreakpointProcessingMode.Wait : UnhandledBreakpointProcessingMode.Ignore;
+                return _preserveUnhandledDebugStopEvent ? UnhandledBreakpointProcessingMode.Wait : UnhandledBreakpointProcessingMode.Ignore;
             }
 
             set
@@ -3482,8 +3482,8 @@ namespace System.Management.Automation
 
         private bool IsJobDebuggingMode()
         {
-            return ((((DebugMode & DebugModes.LocalScript) == DebugModes.LocalScript) && IsLocalSession) ||
-                    (((DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript) && !IsLocalSession));
+            return (((DebugMode & DebugModes.LocalScript) == DebugModes.LocalScript) && IsLocalSession) ||
+                    (((DebugMode & DebugModes.RemoteScript) == DebugModes.RemoteScript) && !IsLocalSession);
         }
 
         private bool IsRunningWFJobsDebugger(Debugger debugger)
@@ -3536,9 +3536,9 @@ namespace System.Management.Automation
         private DebuggerCommandResults ProcessCommandForActiveDebugger(PSCommand command, PSDataCollection<PSObject> output)
         {
             // Check for debugger "detach" command which is only applicable to nested debugging.
-            bool detachCommand = ((command.Commands.Count > 0) &&
-                                  ((command.Commands[0].CommandText.Equals("Detach", StringComparison.OrdinalIgnoreCase)) ||
-                                   (command.Commands[0].CommandText.Equals("d", StringComparison.OrdinalIgnoreCase))));
+            bool detachCommand =  (command.Commands.Count > 0) &&
+                                  (command.Commands[0].CommandText.Equals("Detach", StringComparison.OrdinalIgnoreCase) ||
+                                   command.Commands[0].CommandText.Equals("d", StringComparison.OrdinalIgnoreCase));
 
             Debugger activeDebugger;
             if (_activeDebuggers.TryPeek(out activeDebugger))
@@ -3976,7 +3976,7 @@ namespace System.Management.Automation
 
         private bool IsDebuggerReady()
         {
-            return (!this.IsPushed && !this.InBreakpoint && (this._context._debuggingMode > -1) && (this._context.InternalHost.NestedPromptCount == 0));
+            return !this.IsPushed && !this.InBreakpoint && (this._context._debuggingMode > -1) && (this._context.InternalHost.NestedPromptCount == 0);
         }
 
         private void WaitForDebugComplete()
@@ -5661,7 +5661,7 @@ namespace System.Management.Automation.Internal
 
             lock (s_noHistoryCommandNames)
             {
-                return !(s_noHistoryCommandNames.Contains(command, StringComparer.OrdinalIgnoreCase));
+                return ! s_noHistoryCommandNames.Contains(command, StringComparer.OrdinalIgnoreCase);
             }
         }
 

@@ -252,7 +252,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // Set availability for disconnected runspace pool in the
                     // same way it is set for runspaces.
-                    availability = (AvailableForConnection) ?
+                    availability = AvailableForConnection ?
                             RunspacePoolAvailability.None :     // Disconnected runspacepool available for connection.
                             RunspacePoolAvailability.Busy;      // Disconnected runspacepool unavailable for connection.
                 }
@@ -733,8 +733,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // Disconnect/Connect support is currently only provided by the WSMan transport
                     // that is running PSRP protocol version 2.2 and greater.
-                    return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersionWin8RTM &&
-                            DataStructureHandler.EndpointSupportsDisconnect);
+                    return remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersionWin8RTM &&
+                            DataStructureHandler.EndpointSupportsDisconnect;
                 }
 
                 return false;
@@ -1068,7 +1068,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
-                (rsAsyncResult.IsAssociatedWithAsyncOpen))
+                rsAsyncResult.IsAssociatedWithAsyncOpen)
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
-                (rsAsyncResult.IsAssociatedWithAsyncOpen))
+                rsAsyncResult.IsAssociatedWithAsyncOpen)
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -1555,8 +1555,8 @@ namespace System.Management.Automation.Runspaces.Internal
             stateInfo = newStateInfo;
 
             // Update the availableForConnection variable based on state change.
-            AvailableForConnection = (stateInfo.State == RunspacePoolState.Disconnected ||
-                                           stateInfo.State == RunspacePoolState.Opened);
+            AvailableForConnection = stateInfo.State == RunspacePoolState.Disconnected ||
+                                           stateInfo.State == RunspacePoolState.Opened;
 
             if (raiseEvents)
             {
@@ -2135,8 +2135,8 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private static bool CheckForSSL(WSManConnectionInfo wsmanConnectionInfo)
         {
-            return (!string.IsNullOrEmpty(wsmanConnectionInfo.Scheme) &&
-                    wsmanConnectionInfo.Scheme.Contains(WSManConnectionInfo.HttpsScheme, StringComparison.OrdinalIgnoreCase));
+            return !string.IsNullOrEmpty(wsmanConnectionInfo.Scheme) &&
+                    wsmanConnectionInfo.Scheme.Contains(WSManConnectionInfo.HttpsScheme, StringComparison.OrdinalIgnoreCase);
         }
 
         private static int ConvertPSAuthToWSManAuth(AuthenticationMechanism psAuth)
