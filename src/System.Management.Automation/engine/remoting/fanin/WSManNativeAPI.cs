@@ -3014,12 +3014,12 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-#nullable enable
     /// <summary>
     /// Interface to enable stubbing of the WSManNativeApi PInvoke calls for
     /// unit testing.
     /// Note: It is implemented as a class to avoid exposing it outside the module.
     /// </summary>
+#nullable enable
     internal interface IWSManNativeApiFacade
     {
         // TODO: Expand this to cover the rest of the API once I prove that it works!
