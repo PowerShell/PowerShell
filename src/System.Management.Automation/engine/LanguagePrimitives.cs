@@ -4349,19 +4349,23 @@ namespace System.Management.Automation
 
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
+#nullable enable
+
         internal interface IConversionData
         {
             object Converter { get; }
 
             ConversionRank Rank { get; }
 
-            object Invoke(object valueToConvert,
+            object? Invoke(object? valueToConvert,
                           Type resultType,
                           bool recurse,
-                          PSObject originalValueToConvert,
-                          IFormatProvider formatProvider,
-                          TypeTable backupTable);
+                          PSObject? originalValueToConvert,
+                          IFormatProvider? formatProvider,
+                          TypeTable? backupTable);
         }
+
+#nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : IConversionData
