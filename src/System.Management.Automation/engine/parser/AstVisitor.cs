@@ -201,7 +201,6 @@ namespace System.Management.Automation.Language
     }
 
 #nullable enable
-
     /// <summary/>
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
@@ -232,7 +231,6 @@ namespace System.Management.Automation.Language
         /// <summary/>
         object? VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
     }
-
 #nullable restore
 
 #if DEBUG
