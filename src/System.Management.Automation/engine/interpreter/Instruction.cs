@@ -18,12 +18,10 @@ using System.Collections.Generic;
 namespace System.Management.Automation.Interpreter
 {
 #nullable enable
-
     internal interface IInstructionProvider
     {
         void AddInstructions(LightCompiler compiler);
     }
-
 #nullable restore
 
     internal abstract class Instruction
