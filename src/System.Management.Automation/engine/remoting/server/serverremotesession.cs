@@ -696,7 +696,7 @@ namespace System.Management.Automation.Remoting
             // as this is executed only when connecting from a new client that does not have any previous fragments context.
             // no problem even if fragment Ids in this response and the sessiontransport stream clash (interfere) and its guaranteed
             // that the fragments in connect response are always complete (enclose a complete object).
-            SerializedDataStream stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
+            SerializedDataStream stream = new SerializedDataStream(4 * 1024); //Each message with fragment headers cannot cross 4k
             stream.Enter();
             capability.Serialize(stream, fragmentor);
             stream.Exit();

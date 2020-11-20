@@ -856,7 +856,7 @@ namespace Microsoft.WSMan.Management
                             }
                         }
                     }
-                    catch (PSArgumentNullException) { return;/*Leaving this known exception for no value found. Not Throwing error.*/}
+                    catch (PSArgumentNullException) { return; /*Leaving this known exception for no value found. Not Throwing error.*/}
                     catch (NullReferenceException) { return; /*Leaving this known exception for no value found. Not Throwing error.*/}
                 }
             }
