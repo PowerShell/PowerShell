@@ -321,7 +321,6 @@ namespace System.Management.Automation
     }
 
 #nullable enable
-
     /// <summary>
     /// This enum defines the visibility of execution environment elements...
     /// </summary>
