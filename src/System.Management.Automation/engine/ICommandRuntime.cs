@@ -555,6 +555,8 @@ namespace System.Management.Automation
 
     }
 
+#nullable enable
+
     /// <summary>
     /// This interface defines the set of functionality that must be implemented to directly
     /// execute an instance of a Cmdlet. ICommandRuntime2 extends the ICommandRuntime interface
@@ -614,6 +616,6 @@ namespace System.Management.Automation
         /// performed, and the Cmdlet should move on to the next target resource.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        bool ShouldContinue(string query, string caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll);
+        bool ShouldContinue(string? query, string? caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll);
     }
 }
