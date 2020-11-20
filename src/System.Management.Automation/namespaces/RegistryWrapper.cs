@@ -19,7 +19,6 @@ namespace Microsoft.PowerShell.Commands
 {
 
 #nullable enable
-
     internal interface IRegistryWrapper
     {
         void SetValue(string? name, object value);
@@ -56,7 +55,6 @@ namespace Microsoft.PowerShell.Commands
 
         int SubKeyCount { get; }
     }
-
 #nullable restore
 
     internal static class RegistryWrapperUtils
