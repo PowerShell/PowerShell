@@ -4,7 +4,6 @@
 using System.Management.Automation.Host;
 
 #nullable enable
-
 namespace System.Management.Automation
 {
     /// <summary>
