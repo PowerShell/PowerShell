@@ -377,7 +377,6 @@ namespace System.Management.Automation
     }
 
 #nullable enable
-
     /// <summary>
     /// Interface to expose a job debugger.
     /// </summary>
@@ -400,7 +399,6 @@ namespace System.Management.Automation
             set;
         }
     }
-
 #nullable restore
 
     /// <summary>
