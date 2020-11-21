@@ -5,18 +5,18 @@
 #pragma warning disable 56506
 
 using System;
-using System.Management.Automation;
-using Dbg = System.Management.Automation;
-using System.Management.Automation.Security;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using System.Globalization;
 using System.ComponentModel;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Management.Automation;
+using System.Management.Automation.Security;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -1588,4 +1588,3 @@ namespace Microsoft.PowerShell.Commands
 }
 
 #pragma warning restore 56506
-
