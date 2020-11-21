@@ -24,7 +24,8 @@ dotnet_diagnostic.CA1008.severity = none
 dotnet_diagnostic.CA1010.severity = silent
 
 # CA1012: Abstract types should not have public constructors
-dotnet_diagnostic.CA1012.severity = none
+dotnet_diagnostic.CA1012.severity = warning
+dotnet_code_quality.ca1012.api_surface = all
 
 # CA1014: Mark assemblies with CLSCompliant
 dotnet_diagnostic.CA1014.severity = none

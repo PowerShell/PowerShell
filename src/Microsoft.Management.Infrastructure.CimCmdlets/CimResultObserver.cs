@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
-        public AsyncResultEventArgsBase(
+        protected AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType)
@@ -86,7 +86,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
         /// <param name="context"></param>
-        public AsyncResultEventArgsBase(
+        protected AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType,
