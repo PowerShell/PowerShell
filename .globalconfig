@@ -402,7 +402,7 @@ dotnet_diagnostic.CA2214.severity = none
 dotnet_diagnostic.CA2215.severity = silent
 
 # CA2216: Disposable types should declare finalizer
-dotnet_diagnostic.CA2216.severity = none
+dotnet_diagnostic.CA2216.severity = warning
 
 # CA2217: Do not mark enums with FlagsAttribute
 dotnet_diagnostic.CA2217.severity = none
