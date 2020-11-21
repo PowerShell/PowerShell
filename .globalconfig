@@ -754,7 +754,7 @@ dotnet_diagnostic.IDE0003.severity = silent
 dotnet_diagnostic.IDE0004.severity = silent
 
 # IDE0005: RemoveUnnecessaryImports
-dotnet_diagnostic.IDE0005.severity = silent
+dotnet_diagnostic.IDE0005.severity = warning
 
 # IDE0006: IntellisenseBuildFailed
 dotnet_diagnostic.IDE0006.severity = silent
