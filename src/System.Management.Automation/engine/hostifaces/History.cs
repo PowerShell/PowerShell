@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        index = _countEntriesAdded;//SmallestIDinBuffer
+                        index = _countEntriesAdded; //SmallestIDinBuffer
 
                         for (long i = count - 1; i >= 0;)
                         {
@@ -1816,7 +1816,7 @@ namespace Microsoft.PowerShell.Commands
                 // confirmation message if all the clearhistory cmdlet is used without any parameters
                 if (!_countParameterSpecified)
                 {
-                    string message = StringUtil.Format(HistoryStrings.ClearHistoryWarning, "Warning");// "The command would clear all the entry(s) from the session history,Are you sure you want to continue ?";
+                    string message = StringUtil.Format(HistoryStrings.ClearHistoryWarning, "Warning"); // "The command would clear all the entry(s) from the session history,Are you sure you want to continue ?";
                     if (!ShouldProcess(message))
                     {
                         return;

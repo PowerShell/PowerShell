@@ -2327,7 +2327,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < sd.Count; i++)
             {
-                builder.Append(array[i]);//
+                builder.Append(array[i]);
                 builder.Append('=');
                 builder.Append(strArray2[i]);
                 builder.Append('\0');
