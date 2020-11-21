@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             string nameSpace;
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cmdlet.MethodName);
 
             switch (cmdlet.ParameterSetName)
@@ -194,7 +194,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (CimSessionProxy proxy in proxys)
                     {
                         // create context object
-                        CimInvokeCimMethodContext context = new CimInvokeCimMethodContext(
+                        CimInvokeCimMethodContext context = new(
                             nameSpace,
                             cmdlet.MethodName,
                             paramsCollection,

@@ -192,7 +192,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Temporary CimSession cache lock.
         /// </summary>
-        private static readonly object temporarySessionCacheLock = new object();
+        private static readonly object temporarySessionCacheLock = new();
 
         /// <summary>
         /// <para>temporary CimSession cache</para>
@@ -210,7 +210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// then call Dispose on it.
         /// </para>
         /// </summary>
-        private static readonly Dictionary<CimSession, uint> temporarySessionCache = new Dictionary<CimSession, uint>();
+        private static readonly Dictionary<CimSession, uint> temporarySessionCache = new();
 
         /// <summary>
         /// <para>
@@ -725,7 +725,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            CmdletActionEventArgs actionArgs = new CmdletActionEventArgs(action);
+            CmdletActionEventArgs actionArgs = new(action);
             if (!PreNewActionEvent(actionArgs))
             {
                 return;
@@ -757,7 +757,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            OperationEventArgs args = new OperationEventArgs(
+            OperationEventArgs args = new(
                 cancelOperation, operation, false);
             this.OnOperationCreated?.Invoke(this.session, args);
 
@@ -776,7 +776,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             this.WriteOperationCompleteMessage(this.operationName);
-            OperationEventArgs args = new OperationEventArgs(
+            OperationEventArgs args = new(
                 null, operation, success);
             PreOperationDeleteEvent(args);
             this.OnOperationDeleted?.Invoke(this.session, args);
@@ -802,7 +802,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("Channel = {0} message = {1}", 0, channel, message);
             try
             {
-                CimWriteMessage action = new CimWriteMessage(channel, message);
+                CimWriteMessage action = new(channel, message);
                 this.FireNewActionEvent(action);
             }
             catch (Exception ex)
@@ -821,7 +821,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal void WriteOperationStartMessage(string operation, Hashtable parameterList)
         {
             DebugHelper.WriteLogEx();
-            StringBuilder parameters = new StringBuilder();
+            StringBuilder parameters = new();
             if (parameterList != null)
             {
                 foreach (string key in parameterList.Keys)
@@ -878,7 +878,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             try
             {
-                CimWriteProgress action = new CimWriteProgress(
+                CimWriteProgress action = new(
                     activity,
                     (int)this.operationID,
                     currentOperation,
@@ -905,7 +905,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("Error:{0}", 0, instance);
             try
             {
-                CimWriteError action = new CimWriteError(instance, this.invocationContextObject);
+                CimWriteError action = new(instance, this.invocationContextObject);
                 this.FireNewActionEvent(action);
                 return action.GetResponse();
             }
@@ -927,7 +927,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("message:{0} prompt:{1}", 0, message, prompt);
             try
             {
-                CimPromptUser action = new CimPromptUser(message, prompt);
+                CimPromptUser action = new(message, prompt);
                 this.FireNewActionEvent(action);
                 return action.GetResponse();
             }
@@ -969,7 +969,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         AsyncResultErrorEventArgs args = resultArgs as AsyncResultErrorEventArgs;
                         DebugHelper.WriteLog("ResultEventHandler::Exception {0}", 4, args.error);
 
-                        using (CimWriteError action = new CimWriteError(args.error, this.invocationContextObject, args.context))
+                        using (CimWriteError action = new(args.error, this.invocationContextObject, args.context))
                         {
                             this.FireNewActionEvent(action);
                         }
@@ -995,7 +995,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 #if DEBUG
                         resultObject = PostProcessCimInstance(resultObject);
 #endif
-                        CimWriteResultObject action = new CimWriteResultObject(resultObject, this.ContextObject);
+                        CimWriteResultObject action = new(resultObject, this.ContextObject);
                         this.FireNewActionEvent(action);
                     }
 
@@ -1024,7 +1024,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            PSNoteProperty psShowComputerNameProperty = new PSNoteProperty(ConstValue.ShowComputerNameNoteProperty, true);
+            PSNoteProperty psShowComputerNameProperty = new(ConstValue.ShowComputerNameNoteProperty, true);
             pso.Members.Add(psShowComputerNameProperty);
         }
 
@@ -1518,7 +1518,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Lock object used to lock
         /// operation & cancelOperation members.
         /// </summary>
-        private readonly object stateLock = new object();
+        private readonly object stateLock = new();
 
         /// <summary>
         /// The operation issued by cimSession.
@@ -1533,7 +1533,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The current operation parameters.
         /// </summary>
-        private readonly Hashtable operationParameters = new Hashtable();
+        private readonly Hashtable operationParameters = new();
 
         /// <summary>
         /// Handler used to cancel operation.
@@ -1775,7 +1775,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected void ConsumeObjectAsync(IObservable<object> asyncResult,
             CimResultContext cimResultContext)
         {
-            CimResultObserver<object> observer = new CimResultObserver<object>(
+            CimResultObserver<object> observer = new(
                 this.session, asyncResult, cimResultContext);
 
             observer.OnNewResult += this.ResultEventHandler;
@@ -1796,7 +1796,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected void ConsumeCimClassAsync(IObservable<CimClass> asyncResult,
             CimResultContext cimResultContext)
         {
-            CimResultObserver<CimClass> observer = new CimResultObserver<CimClass>(
+            CimResultObserver<CimClass> observer = new(
                 this.session, asyncResult, cimResultContext);
 
             observer.OnNewResult += this.ResultEventHandler;
@@ -1817,7 +1817,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IObservable<CimSubscriptionResult> asyncResult,
             CimResultContext cimResultContext)
         {
-            CimSubscriptionResultObserver observer = new CimSubscriptionResultObserver(
+            CimSubscriptionResultObserver observer = new(
                 this.session, asyncResult, cimResultContext);
             observer.OnNewResult += this.ResultEventHandler;
             this.operationID = Interlocked.Increment(ref gOperationCounter);
@@ -1841,7 +1841,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string methodName,
             CimResultContext cimResultContext)
         {
-            CimMethodResultObserver observer = new CimMethodResultObserver(this.session, asyncResult, cimResultContext)
+            CimMethodResultObserver observer = new(this.session, asyncResult, cimResultContext)
             {
                 ClassName = className,
                 MethodName = methodName
@@ -1995,7 +1995,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (args.success)
             {
                 // test connection success, write session object to pipeline
-                CimWriteResultObject result = new CimWriteResultObject(this.CimSession, this.ContextObject);
+                CimWriteResultObject result = new(this.CimSession, this.ContextObject);
                 this.FireNewActionEvent(result);
             }
         }

@@ -304,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (this.CertificateThumbprint != null)
                 {
-                    CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
+                    CimCredential credentials = new(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
                     wsmanOptions.AddDestinationCredentials(credentials);
                 }
 

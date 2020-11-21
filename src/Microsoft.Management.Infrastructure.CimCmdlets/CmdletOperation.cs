@@ -117,7 +117,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
-            ErrorRecord errorRecord = new ErrorRecord(exception, operation, ErrorCategory.InvalidOperation, this);
+            ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);
             cmdlet.ThrowTerminatingError(errorRecord);
         }
         #endregion

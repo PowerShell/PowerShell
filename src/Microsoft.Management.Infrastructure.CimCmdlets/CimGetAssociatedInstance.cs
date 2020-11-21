@@ -43,7 +43,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 nameSpace = ConstValue.GetNamespace(cmdlet.CimInstance.CimSystemProperties.Namespace);
             }
 
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.ComputerSetName:
