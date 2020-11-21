@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// OrderByProperty constructor.
+        /// Initializes a new instance of the <see cref="OrderByProperty"/> class.
         /// </summary>
         internal OrderByProperty()
         {

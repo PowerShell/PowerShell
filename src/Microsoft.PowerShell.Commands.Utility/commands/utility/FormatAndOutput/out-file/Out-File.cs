@@ -25,7 +25,8 @@ namespace Microsoft.PowerShell.Commands
     public class OutFileCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// Set inner command.
+        /// Initializes a new instance of the <see cref="OutFileCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public OutFileCommand()
         {

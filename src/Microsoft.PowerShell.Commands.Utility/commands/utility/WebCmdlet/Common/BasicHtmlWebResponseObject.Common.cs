@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for BasicHtmlWebResponseObject.
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
         public BasicHtmlWebResponseObject(HttpResponseMessage response)
@@ -38,7 +38,8 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Constructor for HtmlWebResponseObject with memory stream.
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>

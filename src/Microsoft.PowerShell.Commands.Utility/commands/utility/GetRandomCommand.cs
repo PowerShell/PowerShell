@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
     internal class PolymorphicRandomNumberGenerator
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PolymorphicRandomNumberGenerator"/> class.
         /// </summary>
         public PolymorphicRandomNumberGenerator()
         {

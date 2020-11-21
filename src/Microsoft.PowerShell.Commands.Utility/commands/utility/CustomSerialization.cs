@@ -38,7 +38,7 @@ namespace System.Management.Automation
         private CustomInternalSerializer _serializer;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CustomSerialization"/> class.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         public static int MshDefaultSerializationDepth { get; } = 1;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CustomSerialization"/> class.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         private bool _firstobjectcall = true;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CustomInternalSerializer"/> class.
         /// </summary>
         /// <param name="writer">
         /// Xml writer to be used.

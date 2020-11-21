@@ -70,6 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
+        /// Initializes static members of the <see cref="PrinterLineOutput"/> class.
         /// Used for static initializations like DefaultPrintFontName.
         /// </summary>
         static PrinterLineOutput()
@@ -81,7 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Constructor for the class.
+        /// Initializes a new instance of the <see cref="PrinterLineOutput"/> class.
         /// </summary>
         /// <param name="printerName">Name of printer, if null use default printer.</param>
         internal PrinterLineOutput(string printerName)
