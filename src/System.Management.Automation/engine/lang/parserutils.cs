@@ -1011,18 +1011,7 @@ namespace System.Management.Automation
                     return regex.Replace(input, replacementString);
 
                 case ScriptBlock sb:
-                    MatchEvaluator me = match =>
-                    {
-                        var result = sb.DoInvokeReturnAsIs(
-                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: match,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: Array.Empty<object>());
-
-                        return PSObject.ToStringParser(context, result);
-                    };
+                    MatchEvaluator me = GetMatchEvaluator(context, sb);
                     return regex.Replace(input, me);
 
                 case object val when LanguagePrimitives.TryConvertTo(val, out MatchEvaluator matchEvaluator):
@@ -1031,6 +1020,24 @@ namespace System.Management.Automation
                 default:
                     string replacement = PSObject.ToStringParser(context, substitute);
                     return regex.Replace(input, replacement);
+            }
+
+            // Local helper function to avoid creating an instance of the generated delegate helper class
+            // every time 'ReplaceOperatorImpl' is invoked.
+            static MatchEvaluator GetMatchEvaluator(ExecutionContext context, ScriptBlock sb)
+            {
+                return match =>
+                {
+                    var result = sb.DoInvokeReturnAsIs(
+                        useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: match,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: Array.Empty<object>());
+
+                    return PSObject.ToStringParser(context, result);
+                };
             }
         }
 
