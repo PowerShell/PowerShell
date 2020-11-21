@@ -164,7 +164,7 @@ namespace System.Management.Automation.Internal
                 _fdiNotifyHandle.Free();
             }
         }
-    };
+    }
 
     // CabinetExtractor loader implementation
     internal class CabinetExtractorLoader : ICabinetExtractorLoader
@@ -188,7 +188,7 @@ namespace System.Management.Automation.Internal
         {
             return s_extractorInstance;
         }
-    };
+    }
 
     internal static class CabinetNativeApi
     {
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Internal
             internal short iCabinet; // USHORT
             internal short iFolder; // USHORT
             internal int fdie; // FDIERROR
-        };
+        }
 
         internal enum FdiNotificationType : int
         {
@@ -607,7 +607,7 @@ namespace System.Management.Automation.Internal
             internal int erfOper;
             internal int erfType;
             internal bool fError;
-        };
+        }
 
         internal sealed class FdiContextHandle : SafeHandleZeroOrMinusOneIsInvalid
         {

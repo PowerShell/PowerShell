@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Wsman
-    };
+    }
 
     /// <summary>
     /// The Cmdlet allows the IT Pro to create a CimSessionOptions object that she/he

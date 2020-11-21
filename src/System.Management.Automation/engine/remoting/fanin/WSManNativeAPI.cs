@@ -612,7 +612,7 @@ namespace System.Management.Automation.Remoting.Client
             WSMAN_DATA_TYPE_BINARY = 2,
             WSMAN_DATA_TYPE_WS_XML_READER = 3,
             WSMAN_DATA_TYPE_DWORD = 4
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal class WSManDataStruct

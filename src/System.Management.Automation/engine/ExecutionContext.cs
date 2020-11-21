@@ -1699,5 +1699,5 @@ namespace System.Management.Automation
         /// Engine is stopped.
         /// </summary>
         Stopped = 4
-    };
+    }
 }

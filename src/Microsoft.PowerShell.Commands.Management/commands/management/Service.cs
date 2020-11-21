@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
             /// Select services by Service name.
             /// </summary>
             ServiceName = 3
-        };
+        }
         /// <summary>
         /// Holds the selection mode setting.
         /// </summary>
@@ -2706,7 +2706,7 @@ namespace Microsoft.PowerShell.Commands
         {
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string lpDescription;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct QUERY_SERVICE_CONFIG
@@ -2720,13 +2720,13 @@ namespace Microsoft.PowerShell.Commands
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpDependencies;
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpServiceStartName;
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpDisplayName;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct SERVICE_DELAYED_AUTO_START_INFO
         {
             internal bool fDelayedAutostart;
-        };
+        }
 
         [DllImport(PinvokeDllNames.CreateServiceWDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern

@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             /// Select the processes specified as input.
             /// </summary>
             ByInput
-        };
+        }
         /// <summary>
         /// The current process selection mode.
         /// </summary>

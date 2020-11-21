@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>Breakpoint on a command</summary>
         Command
-    };
+    }
 
     /// <summary>
     /// This class implements Get-PSBreakpoint.

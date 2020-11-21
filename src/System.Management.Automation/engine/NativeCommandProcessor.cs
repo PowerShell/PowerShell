@@ -32,7 +32,7 @@ namespace System.Management.Automation
     {
         Text,
         Xml
-    };
+    }
 
     /// <summary>
     /// Different streams produced by minishell output.
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
-        };
+        }
 
         private const uint SHGFI_EXETYPE = 0x000002000; // flag used to ask to return exe type
 

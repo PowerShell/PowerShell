@@ -866,7 +866,7 @@ namespace System.Diagnostics.Eventing
 
             [FieldOffset(12)]
             public UInt32 Type;
-        };
+        }
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]

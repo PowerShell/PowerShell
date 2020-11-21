@@ -1248,7 +1248,7 @@ namespace System.Management.Automation
             /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
-        };
+        }
 
         private class DebuggerCommandArgument
         {

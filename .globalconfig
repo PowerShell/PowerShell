@@ -1116,7 +1116,7 @@ dotnet_diagnostic.SA1104.severity = none
 dotnet_diagnostic.SA1105.severity = none
 
 # SA1106: Code should not contain empty statements
-dotnet_diagnostic.SA1106.severity = none
+dotnet_diagnostic.SA1106.severity = warning
 
 # SA1107: Code should not contain multiple statements on one line
 dotnet_diagnostic.SA1107.severity = none

@@ -977,7 +977,7 @@ namespace System.Management.Automation.Runspaces.Internal
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// PSConnectionRetryStatusEventArgs.
