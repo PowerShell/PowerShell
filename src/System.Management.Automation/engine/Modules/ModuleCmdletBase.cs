@@ -644,8 +644,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSModuleInfo LoadModuleNamedInManifest(PSModuleInfo parentModule, ModuleSpecification moduleSpecification, string moduleBase, bool searchModulePath,
-            string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, bool loadTypesFiles,
-            bool loadFormatFiles, object privateData, out bool found, string shortModuleName, PSLanguageMode? manifestLanguageMode)
+            string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, bool loadTypes,
+            bool loadFormats, object privateData, out bool found, string shortModuleName, PSLanguageMode? manifestLanguageMode)
         {
             PSModuleInfo module = null;
             PSModuleInfo tempModuleInfoFromVerification = null;
@@ -878,19 +878,20 @@ namespace Microsoft.PowerShell.Commands
                             // At this point, we are already exhaust all possible ways to load the nested module. The last option is to load it as a binary module/snapin.
                             module = LoadBinaryModule(
                                 parentModule,
-                                true, // trySnapInName
+                                trySnapInName: true,
                                 moduleSpecification.Name,
-                                null, // fileName
-                                null, // assemblyToLoad
+                                fileName: null,
+                                assemblyToLoad: null,
                                 moduleBase,
                                 ss,
                                 options,
                                 manifestProcessingFlags,
                                 prefix,
-                                loadTypesFiles,
-                                loadFormatFiles,
+                                loadTypes,
+                                loadFormats,
                                 out found,
-                                shortModuleName, false);
+                                shortModuleName,
+                                disableFormatUpdates: false);
                         }
                         catch (FileNotFoundException)
                         {
@@ -2945,8 +2946,8 @@ namespace Microsoft.PowerShell.Commands
                             ss: null,
                             options: nestedModuleOptions,
                             manifestProcessingFlags: manifestProcessingFlags,
-                            loadTypesFiles: true,
-                            loadFormatFiles: true,
+                            loadTypes: true,
+                            loadFormats: true,
                             privateData: privateData,
                             found: out found,
                             shortModuleName: null,
@@ -3048,8 +3049,8 @@ namespace Microsoft.PowerShell.Commands
                         ss: ss,
                         options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
-                        loadTypesFiles: (exportedTypeFiles == null || exportedTypeFiles.Count == 0),        // If types files already loaded, don't load snapin files
-                        loadFormatFiles: (exportedFormatFiles == null || exportedFormatFiles.Count == 0),   // if format files already loaded, don't load snapin files
+                        loadTypes: (exportedTypeFiles == null || exportedTypeFiles.Count == 0),        // If types files already loaded, don't load snapin files
+                        loadFormats: (exportedFormatFiles == null || exportedFormatFiles.Count == 0),   // if format files already loaded, don't load snapin files
                         privateData: privateData,
                         found: out found,
                         shortModuleName: null,
@@ -5890,8 +5891,20 @@ namespace Microsoft.PowerShell.Commands
                          ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
                          ext.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(fileName), fileName, null,
-                        moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);
+                    module = LoadBinaryModule(
+                        trySnapInName: false,
+                        ModuleIntrinsics.GetModuleName(fileName),
+                        fileName,
+                        assemblyToLoad: null,
+                        moduleBase,
+                        ss,
+                        options,
+                        manifestProcessingFlags,
+                        prefix,
+                        loadTypes: true,
+                        loadFormats: true,
+                        out found);
+
                     if (found && module != null)
                     {
                         // LanguageMode does not apply to binary modules
@@ -6528,13 +6541,36 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="prefix">Command name prefix.</param>
         /// <param name="found">Sets this to true if an assembly was found.</param>
         /// <returns>THe module info object that was created...</returns>
-        internal PSModuleInfo LoadBinaryModule(bool trySnapInName, string moduleName, string fileName,
-            Assembly assemblyToLoad, string moduleBase, SessionState ss, ImportModuleOptions options,
-            ManifestProcessingFlags manifestProcessingFlags, string prefix,
-            bool loadTypes, bool loadFormats, out bool found)
+        internal PSModuleInfo LoadBinaryModule(
+            bool trySnapInName,
+            string moduleName,
+            string fileName,
+            Assembly assemblyToLoad,
+            string moduleBase,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            string prefix,
+            bool loadTypes,
+            bool loadFormats,
+            out bool found)
         {
-            return LoadBinaryModule(null, trySnapInName, moduleName, fileName, assemblyToLoad, moduleBase, ss, options,
-                                    manifestProcessingFlags, prefix, loadTypes, loadFormats, out found, null, false);
+            return LoadBinaryModule(
+                parentModule: null,
+                trySnapInName,
+                moduleName,
+                fileName,
+                assemblyToLoad,
+                moduleBase,
+                ss,
+                options,
+                manifestProcessingFlags,
+                prefix,
+                loadTypes,
+                loadFormats,
+                out found,
+                shortModuleName: null,
+                disableFormatUpdates: false);
         }
 
         /// <summary>
@@ -6560,7 +6596,22 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="shortModuleName">Short name for module.</param>
         /// <param name="disableFormatUpdates"></param>
         /// <returns>THe module info object that was created...</returns>
-        internal PSModuleInfo LoadBinaryModule(PSModuleInfo parentModule, bool trySnapInName, string moduleName, string fileName, Assembly assemblyToLoad, string moduleBase, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, string prefix, bool loadTypes, bool loadFormats, out bool found, string shortModuleName, bool disableFormatUpdates)
+        internal PSModuleInfo LoadBinaryModule(
+            PSModuleInfo parentModule,
+            bool trySnapInName,
+            string moduleName,
+            string fileName,
+            Assembly assemblyToLoad,
+            string moduleBase,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            string prefix,
+            bool loadTypes,
+            bool loadFormats,
+            out bool found,
+            string shortModuleName,
+            bool disableFormatUpdates)
         {
             PSModuleInfo module = null;
 
