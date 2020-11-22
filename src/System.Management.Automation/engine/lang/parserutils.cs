@@ -965,6 +965,8 @@ namespace System.Management.Automation
                 }
             }
 
+            MatchEvaluator cachedMatchEvaluator = null;
+            string cachedReplacementString = null;
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
@@ -978,7 +980,7 @@ namespace System.Management.Automation
                     lvalString = lval?.ToString() ?? string.Empty;
                 }
 
-                return ReplaceOperatorImpl(context, lvalString, rr, substitute);
+                return ReplaceOperatorImpl(context, lvalString, rr, substitute, ref cachedReplacementString, ref cachedMatchEvaluator);
             }
             else
             {
@@ -986,7 +988,7 @@ namespace System.Management.Automation
                 while (ParserOps.MoveNext(context, errorPosition, list))
                 {
                     string lvalString = PSObject.ToStringParser(context, ParserOps.Current(errorPosition, list));
-                    resultList.Add(ReplaceOperatorImpl(context, lvalString, rr, substitute));
+                    resultList.Add(ReplaceOperatorImpl(context, lvalString, rr, substitute, ref cachedReplacementString, ref cachedMatchEvaluator));
                 }
 
                 return resultList.ToArray();
@@ -1002,24 +1004,44 @@ namespace System.Management.Automation
         /// <param name="input">The input string.</param>
         /// <param name="regex">A Regex instance.</param>
         /// <param name="substitute">The substitute value.</param>
+        /// <param name="cachedReplacementString">Cached replacement string.</param>
+        /// <param name="cachedMatchEvaluator">Cached MatchEvaluator.</param>
         /// <returns>The result of the regex.Replace operation.</returns>
-        private static object ReplaceOperatorImpl(ExecutionContext context, string input, Regex regex, object substitute)
+        private static object ReplaceOperatorImpl(
+            ExecutionContext context,
+            string input,
+            Regex regex,
+            object substitute,
+            ref string cachedReplacementString,
+            ref MatchEvaluator cachedMatchEvaluator)
         {
+            // After first call we will have necessarily either cachedReplacementString or cachedMatchEvaluator.
+            if (cachedReplacementString is not null)
+            {
+                return regex.Replace(input, cachedReplacementString);
+            }
+
+            if (cachedMatchEvaluator is not null)
+            {
+                return regex.Replace(input, cachedMatchEvaluator);
+            }
+
             switch (substitute)
             {
-                case string replacementString:
-                    return regex.Replace(input, replacementString);
+                case string replacement:
+                    cachedReplacementString = replacement;
+                    return regex.Replace(input, cachedReplacementString);
 
                 case ScriptBlock sb:
-                    MatchEvaluator me = GetMatchEvaluator(context, sb);
-                    return regex.Replace(input, me);
+                    cachedMatchEvaluator = GetMatchEvaluator(context, sb);
+                    return regex.Replace(input, cachedMatchEvaluator);
 
-                case object val when LanguagePrimitives.TryConvertTo(val, out MatchEvaluator matchEvaluator):
-                    return regex.Replace(input, matchEvaluator);
+                case object val when LanguagePrimitives.TryConvertTo(val, out cachedMatchEvaluator):
+                    return regex.Replace(input, cachedMatchEvaluator);
 
                 default:
-                    string replacement = PSObject.ToStringParser(context, substitute);
-                    return regex.Replace(input, replacement);
+                    cachedReplacementString = PSObject.ToStringParser(context, substitute);
+                    return regex.Replace(input, cachedReplacementString);
             }
 
             // Local helper function to avoid creating an instance of the generated delegate helper class
