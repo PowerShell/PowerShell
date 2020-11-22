@@ -1398,7 +1398,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             if (errorList.Count == 0)
             {
                 // No errors, try to load the resources
-                LoadResourcesFromModule(kwAst.Extent, moduleSpecifications, resourceNames, errorList);
+                LoadResourcesFromModuleInImportResourcePostParse(kwAst.Extent, moduleSpecifications, resourceNames, errorList);
             }
 
             return errorList.ToArray();
@@ -1513,7 +1513,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="moduleSpecifications">Module information, can be null.</param>
         /// <param name="resourceNames">Name of the resource to be loaded from module.</param>
         /// <param name="errorList">List of errors reported by the method.</param>
-        public static void LoadResourcesFromModule(IScriptExtent scriptExtent,
+        internal static void LoadResourcesFromModuleInImportResourcePostParse(IScriptExtent scriptExtent,
                                                            ModuleSpecification[] moduleSpecifications,
                                                            string[] resourceNames,
                                                            List<ParseError> errorList)
