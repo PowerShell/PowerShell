@@ -333,7 +333,7 @@ dotnet_diagnostic.CA1837.severity = warning
 dotnet_diagnostic.CA1838.severity = silent
 
 # CA2000: Dispose objects before losing scope
-dotnet_diagnostic.CA2000.severity = none
+dotnet_diagnostic.CA2000.severity = suggestion
 
 # CA2002: Do not lock on objects with weak identity
 dotnet_diagnostic.CA2002.severity = none
