@@ -129,7 +129,7 @@ namespace System.Management.Automation
 
             if (CommandName == null || CommandName.Length == 0)
             {
-                CommandName = new[] { "" };
+                CommandName = new[] { string.Empty };
             }
 
             for (int i = 0; i < CommandName.Length; i++)

@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell
             //
             // Since command_name is ignored and we can't use null (it's the terminator)
             // we use empty string
-            execArgs[4] = "";
+            execArgs[4] = string.Empty;
 
             // Add the arguments passed to pwsh on the end.
             args.CopyTo(execArgs, 5);

@@ -1284,7 +1284,7 @@ namespace Microsoft.WSMan.Management
                             {
                                 if (!Force)
                                 {
-                                    string query = "";
+                                    string query = string.Empty;
                                     string caption = helper.GetResourceMsgFromResourcetext("SetItemGeneralSecurityCaption");
                                     if (ChildName.Equals("TrustedHosts", StringComparison.OrdinalIgnoreCase))
                                     {
