@@ -438,7 +438,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             return null;
         }
 
-
         private static void WriteWarning(string warning)
         {
             var executionContext = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
@@ -2840,7 +2839,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
             }
 
-            usageString.Append("}");
+            usageString.Append('}');
 
             return usageString.ToString();
         }
@@ -2886,10 +2885,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             // We prepend optional property with "[" so close out it here. This way it is shown with [ ] to indication optional
             if (isOptionalProperty)
             {
-                formattedTypeString.Append("]");
+                formattedTypeString.Append(']');
             }
 
-            formattedTypeString.Append("\n");
+            formattedTypeString.Append('\n');
 
             return formattedTypeString;
         }

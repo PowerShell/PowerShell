@@ -321,7 +321,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     internal class CimDSCParser
     {
         private CimMofDeserializer _deserializer;
+
         private CimMofDeserializer.OnClassNeeded _onClassNeeded;
+
         /// <summary>
         /// </summary>
         internal CimDSCParser(CimMofDeserializer.OnClassNeeded onClassNeeded)
