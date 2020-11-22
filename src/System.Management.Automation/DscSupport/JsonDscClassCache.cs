@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// Initializes variables with default values.
         /// </summary>
         public DscClassCacheEntry()
-            : this(DSCResourceRunAsCredential.Default, isImportedImplicitly: false, cimClassInstance: null)
+            : this(DSCResourceRunAsCredential.Default, isImportedImplicitly: false, cimClassInstance: null, modulePath: string.Empty)
         {
         }
 
@@ -41,11 +41,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="dscResourceRunAsCredential"></param>
         /// <param name="isImportedImplicitly"></param>
         /// <param name="cimClassInstance"></param>
-        public DscClassCacheEntry(DSCResourceRunAsCredential dscResourceRunAsCredential, bool isImportedImplicitly, PSObject cimClassInstance)
+        /// <param name="modulePath"></param>
+        public DscClassCacheEntry(DSCResourceRunAsCredential dscResourceRunAsCredential, bool isImportedImplicitly, PSObject cimClassInstance, string modulePath)
         {
             DscResRunAsCred = dscResourceRunAsCredential;
             IsImportedImplicitly = isImportedImplicitly;
             CimClassInstance = cimClassInstance;
+            ModulePath = modulePath;
         }
 
         /// <summary>
@@ -63,6 +65,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// A CimClass instance for this resource.
         /// </summary>
         public PSObject CimClassInstance { get; set; }
+
+        /// <summary>
+        /// Path of the implementing module for this resource.
+        /// </summary>
+        public string ModulePath { get; set; }
     }
 
     /// <summary>
@@ -441,6 +448,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
+        private static void WriteError(string error)
+        {
+            var executionContext = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
+            if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)
+            {
+                executionContext.InternalHost.UI.WriteErrorLine(error);
+            }
+        }
+
         /// <summary>
         /// Import CIM classes from the given file.
         /// </summary>
@@ -552,7 +568,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         }
                     }
 
-                    ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(DSCResourceRunAsCredential.Default, importInBoxResourcesImplicitly, c);
+                    ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(DSCResourceRunAsCredential.Default, importInBoxResourcesImplicitly, c, path);
                     ByClassModuleCache[className] = moduleInfo;
                 }
 
@@ -1805,7 +1821,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 string alias = GetFriendlyName(c);
                 var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
                 var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className, friendlyName);
-                ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c);
+                ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c, module.Path);
                 ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
             }
         }
@@ -2393,10 +2409,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
 
                 var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className, friendlyName);
-                ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c);
-                ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
-                resourcesFound.Add(className);
-                CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, runAsBehavior);
+                DscClassCacheEntry existingCacheEntry = null;
+                if (ClassCache.TryGetValue(moduleQualifiedResourceName, out existingCacheEntry))
+                {
+                    WriteError(string.Format(ParserStrings.DuplicateCimClassDefinition, className, module.Path, existingCacheEntry.ModulePath));
+                }
+                else
+                {
+                    ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c, module.Path);
+                    ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
+                    resourcesFound.Add(className);
+                    CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, runAsBehavior);
+                }
             }
         }
 
