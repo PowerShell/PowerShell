@@ -1939,61 +1939,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             return (methodsLinePosition.Count == 3);
         }
 
-        /// <summary>
-        /// Gets the line no for DSC Class Resource Get/Set/Test methods.
-        /// </summary>
-        /// <param name="moduleInfo"></param>
-        /// <param name="resourceName"></param>
-        /// <param name="resourceMethodsLinePosition"></param>
-        /// <param name="resourceFilePath"></param>
-        public static bool GetResourceMethodsLinePosition(PSModuleInfo moduleInfo, string resourceName, out Dictionary<string, int> resourceMethodsLinePosition, out string resourceFilePath)
-        {
-            resourceMethodsLinePosition = null;
-            resourceFilePath = string.Empty;
-            if (moduleInfo == null || string.IsNullOrEmpty(resourceName))
-            {
-                return false;
-            }
-
-            IEnumerable<Ast> resourceDefinitions;
-            List<string> moduleFiles = new List<string>();
-            if (moduleInfo.RootModule != null)
-            {
-                moduleFiles.Add(moduleInfo.Path);
-            }
-
-            if (moduleInfo.NestedModules != null)
-            {
-                foreach (var nestedModule in moduleInfo.NestedModules.Where(m => !string.IsNullOrEmpty(m.Path)))
-                {
-                    moduleFiles.Add(nestedModule.Path);
-                }
-            }
-
-            foreach (string moduleFile in moduleFiles)
-            {
-                if (GetResourceDefinitionsFromModule(moduleFile, out resourceDefinitions, null, null))
-                {
-                    foreach (var r in resourceDefinitions)
-                    {
-                        var resourceDefnAst = (TypeDefinitionAst)r;
-                        if (!resourceName.Equals(resourceDefnAst.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        if (GetResourceMethodsLineNumber(resourceDefnAst, out resourceMethodsLinePosition))
-                        {
-                            resourceFilePath = moduleFile;
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private static List<PSObject> ProcessMembers(List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)
         {
             List<PSObject> result = new List<PSObject>();
