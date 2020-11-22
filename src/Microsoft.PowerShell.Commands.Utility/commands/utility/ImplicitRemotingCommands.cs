@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="name">Name to validate.</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the name is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeNameOrIdentifier(string name)
         {
             // '.' is needed for stuff like net.exe
@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="parameterName">Parameter name to validate.</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the name is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
             return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(":");
@@ -1136,7 +1136,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it doesn't introduce any side effects on the client).
         /// </summary>
         /// <param name="type">Type to validate.</param>
-        /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the type is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeTypeConstraint(Type type)
         {
             if (type == null)
@@ -1179,7 +1179,7 @@ namespace Microsoft.PowerShell.Commands
         /// Writes error messages if necessary.  Modifies command metadata to make it safe if necessary.
         /// </summary>
         /// <param name="commandMetadata">Command metadata to verify.</param>
-        /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the command metadata is safe; <see langword="false"/> otherwise.</returns>
         private bool IsSafeCommandMetadata(CommandMetadata commandMetadata)
         {
             if (!IsCommandNameMatchingParameters(commandMetadata.Name))

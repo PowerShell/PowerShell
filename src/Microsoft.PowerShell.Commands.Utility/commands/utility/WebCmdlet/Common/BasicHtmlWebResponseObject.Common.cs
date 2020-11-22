@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// Content of the response body, decoded using <see cref="Encoding"/>,
         /// if the <c>Content-Type</c> response header is a recognized text
-        /// type.  Otherwise <c>null</c>.
+        /// type.  Otherwise <see langword="null"/>.
         /// </value>
         public new string Content { get; private set; }
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value>
         /// Encoding of the response body from the <c>Content-Type</c> header,
-        /// or <c>null</c> if the encoding could not be determined.
+        /// or <see langword="null"/> if the encoding could not be determined.
         /// </value>
         public Encoding Encoding { get; private set; }
 

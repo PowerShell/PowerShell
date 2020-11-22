@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="session">Remote session to invoke the method in.</param>
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         /// <remarks>
         /// <para>
         /// This method shouldn't do any processing or interact with the remote session.
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         /// <param name="query">Query parameters.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the object instance being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the object instance being operated on.</param>
         public override void ProcessRecord(QueryBuilder query, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             _parentJob.DisableFlowControlForPendingJobsQueue();
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         public override void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             if (objectInstance == null) throw new ArgumentNullException(nameof(objectInstance));
