@@ -448,15 +448,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
-        private static void WriteError(string error)
-        {
-            var executionContext = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
-            if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)
-            {
-                executionContext.InternalHost.UI.WriteErrorLine(error);
-            }
-        }
-
         /// <summary>
         /// Import CIM classes from the given file.
         /// </summary>
@@ -1607,7 +1598,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var dscResourcesPath = Path.Join(moduleInfo.ModuleBase, "DscResources");
 
                 var resourcesFound = new List<string>();
-                LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, errorList, null, true, scriptExtent);
+                var exceptionList = new System.Collections.ObjectModel.Collection<Exception>();
+                LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, exceptionList, null, true, scriptExtent);
+                foreach(Exception ex in exceptionList)
+                {
+                    errorList.Add(new ParseError(scriptExtent,
+                        "ClassResourcesLoadingFailed",
+                        ex.Message));
+                }
 
                 if (Directory.Exists(dscResourcesPath))
                 {
@@ -1720,7 +1718,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         private static void LoadPowerShellClassResourcesFromModule(PSModuleInfo primaryModuleInfo, PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, ICollection<string> resourcesFound,
-            List<ParseError> errorList,
+            Collection<Exception> errorList,
             Dictionary<string, ScriptBlock> functionsToDefine = null,
             bool recurse = true,
             IScriptExtent extent = null)
@@ -1764,8 +1762,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="moduleInfo"></param>
         /// <param name="resourcesToImport"></param>
         /// <param name="functionsToDefine"></param>
+        /// <param name="errors"></param>
         /// <returns>The list of resources imported from this module.</returns>
-        public static List<string> ImportClassResourcesFromModule(PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, Dictionary<string, ScriptBlock> functionsToDefine)
+        public static List<string> ImportClassResourcesFromModule(PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
             if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
             {
@@ -1773,7 +1772,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
 
             var resourcesImported = new List<string>();
-            LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesImported, null, functionsToDefine);
+            LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesImported, errors, functionsToDefine);
             return resourcesImported;
         }
 
@@ -2113,7 +2112,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="errorList"></param>
         /// <param name="extent"></param>
         /// <returns></returns>
-        private static bool GetResourceDefinitionsFromModule(string fileName, out IEnumerable<Ast> resourceDefinitions, List<ParseError> errorList, IScriptExtent extent)
+        private static bool GetResourceDefinitionsFromModule(string fileName, out IEnumerable<Ast> resourceDefinitions, Collection<Exception> errorList, IScriptExtent extent)
         {
             resourceDefinitions = null;
 
@@ -2150,9 +2149,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     {
                         errorMessages.Add(error.ToString());
                     }
-
-                    errorList.Add(new ParseError(extent, "FailToParseModuleScriptFile",
-                        string.Format(CultureInfo.CurrentCulture, ParserStrings.FailToParseModuleScriptFile, fileName, string.Join(Environment.NewLine, errorMessages))));
+                    
+                    PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.FailToParseModuleScriptFile, fileName, string.Join(Environment.NewLine, errorMessages));
+                    e.SetErrorId("FailToParseModuleScriptFile");
+                    errorList.Add(e);
                 }
 
                 return false;
@@ -2186,7 +2186,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="errorList"></param>
         /// <param name="extent"></param>
         /// <returns></returns>
-        private static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, List<ParseError> errorList, IScriptExtent extent)
+        private static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errorList, IScriptExtent extent)
         {
             IEnumerable<Ast> resourceDefinitions;
             if (!GetResourceDefinitionsFromModule(fileName, out resourceDefinitions, errorList, extent))
@@ -2243,7 +2243,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 var classes = GenerateJsonClassesForAst(resourceDefnAst, module, runAsBehavior);
 
-                ProcessJsonForDynamicKeywords(module, resourcesFound, functionsToDefine, classes, runAsBehavior);
+                ProcessJsonForDynamicKeywords(module, resourcesFound, functionsToDefine, classes, runAsBehavior, errorList);
             }
 
             return result;
@@ -2384,7 +2384,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         private static void ProcessJsonForDynamicKeywords(PSModuleInfo module, ICollection<string> resourcesFound,
-            Dictionary<string, ScriptBlock> functionsToDefine, PSObject[] classes, DSCResourceRunAsCredential runAsBehavior)
+            Dictionary<string, ScriptBlock> functionsToDefine, PSObject[] classes, DSCResourceRunAsCredential runAsBehavior, Collection<Exception> errors)
         {
             foreach (dynamic c in classes)
             {
@@ -2412,7 +2412,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 DscClassCacheEntry existingCacheEntry = null;
                 if (ClassCache.TryGetValue(moduleQualifiedResourceName, out existingCacheEntry))
                 {
-                    WriteError(string.Format(ParserStrings.DuplicateCimClassDefinition, className, module.Path, existingCacheEntry.ModulePath));
+                    if (errors != null)
+                    {
+                        PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.DuplicateCimClassDefinition, className, module.Path, existingCacheEntry.ModulePath);
+                        e.SetErrorId("DuplicateCimClassDefinition");
+                        errors.Add(e);
+                    }
                 }
                 else
                 {
