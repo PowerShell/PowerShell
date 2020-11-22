@@ -24,14 +24,15 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Data
 
-        private Stream _originalStreamToProxy;
+        private readonly Stream _originalStreamToProxy;
         private bool _isInitialized = false;
-        private Cmdlet _ownerCmdlet;
+        private readonly Cmdlet _ownerCmdlet;
 
         #endregion
 
         #region Constructors
         /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseContentMemoryStream"/> class.
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
@@ -220,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
-                for (int read = 1; 0 < read; totalLength += read)
+                for (int read = 1; read > 0; totalLength += read)
                 {
                     if (_ownerCmdlet != null)
                     {
@@ -235,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
 
                     read = _originalStreamToProxy.Read(buffer, 0, buffer.Length);
 
-                    if (0 < read)
+                    if (read > 0)
                     {
                         base.Write(buffer, 0, read);
                     }

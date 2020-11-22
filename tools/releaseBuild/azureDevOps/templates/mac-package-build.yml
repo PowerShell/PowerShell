@@ -13,6 +13,9 @@ jobs:
     HOMEBREW_NO_ANALYTICS: 1
     runCodesignValidationInjection: false
   steps:
+  - checkout: self
+    clean: true
+
   - pwsh: |
       # create folder
       sudo mkdir /PowerShell
@@ -20,11 +23,6 @@ jobs:
       # make the current user the owner
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
-
-  - pwsh: |
-      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
-      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
-    displayName: Clone PowerShell Repo to /PowerShell
 
   - template: shouldSign.yml
 
@@ -36,6 +34,7 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
+  - template: cloneToOfficialPath.yml
 
   - task: DownloadBuildArtifacts@0
     displayName: Download macosBinResults

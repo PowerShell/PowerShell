@@ -2,24 +2,16 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Loader;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-
-using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
@@ -242,7 +234,7 @@ namespace System.Management.Automation
                 // has 'dot' in it, the file will be treated as in Internet security zone. Otherwise, it's
                 // in Intranet security zone.
                 string hostName = uri.Host;
-                return hostName.Contains('.') ? SecurityZone.Intranet : SecurityZone.Internet;
+                return hostName.Contains('.') ? SecurityZone.Internet : SecurityZone.Intranet;
             }
 
             string root = Path.GetPathRoot(filePath);
@@ -357,12 +349,12 @@ namespace System.Management.Automation
 
             string dmtfDateTime = date.Year.ToString(frmInt32).PadLeft(4, '0');
 
-            dmtfDateTime = (dmtfDateTime + date.Month.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Day.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Hour.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Minute.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Second.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + ".");
+            dmtfDateTime += date.Month.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Day.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Hour.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Minute.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Second.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += ".";
 
             // Construct a DateTime with with the precision to Second as same as the passed DateTime and so get
             // the ticks difference so that the microseconds can be calculated
@@ -376,9 +368,9 @@ namespace System.Management.Automation
                 strMicrosec = strMicrosec.Substring(0, 6);
             }
 
-            dmtfDateTime = dmtfDateTime + strMicrosec.PadLeft(6, '0');
+            dmtfDateTime += strMicrosec.PadLeft(6, '0');
             // adding the UTC offset
-            dmtfDateTime = dmtfDateTime + UtcString;
+            dmtfDateTime += UtcString;
 
             return dmtfDateTime;
 #else

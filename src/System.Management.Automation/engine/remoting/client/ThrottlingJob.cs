@@ -337,10 +337,7 @@ namespace System.Management.Automation
                 while (_actionsForUnblockingChildAdditions.Count > 0)
                 {
                     Action a = _actionsForUnblockingChildAdditions.Dequeue();
-                    if (a != null)
-                    {
-                        a();
-                    }
+                    a?.Invoke();
                 }
             }
         }
@@ -390,7 +387,7 @@ namespace System.Management.Automation
                     newJobStateInfo = new JobStateInfo(JobState.Running);
                 }
 
-                if (ChildJobFlags.CreatesChildJobs == (ChildJobFlags.CreatesChildJobs & flags))
+                if ((ChildJobFlags.CreatesChildJobs & flags) == ChildJobFlags.CreatesChildJobs)
                 {
                     _setOfChildJobsThatCanAddMoreChildJobs.Add(childJob.InstanceId);
                 }
@@ -406,10 +403,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (jobEnqueuedAction != null)
-                    {
-                        jobEnqueuedAction();
-                    }
+                    jobEnqueuedAction?.Invoke();
                 }
             }
 
@@ -746,10 +740,7 @@ namespace System.Management.Automation
                         if (_actionsForUnblockingChildAdditions.Count > 0)
                         {
                             Action a = _actionsForUnblockingChildAdditions.Dequeue();
-                            if (a != null)
-                            {
-                                a();
-                            }
+                            a?.Invoke();
                         }
 
                         if (_cmdletMode)

@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string tzname in Name)
                     {
                         TimeZoneInfo[] timeZones = TimeZoneHelper.LookupSystemTimeZoneInfoByName(tzname);
-                        if (0 < timeZones.Length)
+                        if (timeZones.Length > 0)
                         {
                             // manually process each object in the array, so if there is only a single
                             // entry then the returned type is TimeZoneInfo and not TimeZoneInfo[], and
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // lookup the time zone name and make sure we have one (and only one) match
                 TimeZoneInfo[] timeZones = TimeZoneHelper.LookupSystemTimeZoneInfoByName(Name);
-                if (0 == timeZones.Length)
+                if (timeZones.Length == 0)
                 {
                     string message = string.Format(CultureInfo.InvariantCulture,
                         TimeZoneResources.TimeZoneNameNotFound, Name);
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.InvalidArgument,
                         "Name"));
                 }
-                else if (1 < timeZones.Length)
+                else if (timeZones.Length > 1)
                 {
                     string message = string.Format(CultureInfo.InvariantCulture,
                         TimeZoneResources.MultipleMatchingTimeZones, Name);

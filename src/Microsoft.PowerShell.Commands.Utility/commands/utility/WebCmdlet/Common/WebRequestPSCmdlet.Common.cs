@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
@@ -21,8 +20,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-
-using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -78,7 +75,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
         /// </summary>
-        Tls12 = SslProtocols.Tls12
+        Tls12 = SslProtocols.Tls12,
+
+        /// <summary>
+        /// Specifies the TLS 1.3 security protocol. The TLS protocol is defined in IETF RFC 8446.
+        /// </summary>
+        Tls13 = SslProtocols.Tls13
     }
 
     /// <summary>
@@ -593,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((Credential != null || null != Token) && Authentication != WebAuthenticationType.None)
+            else if ((Credential != null || Token != null) && Authentication != WebAuthenticationType.None)
             {
                 ProcessAuthentication();
             }
@@ -653,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.Proxy = webProxy;
             }
 
-            if (-1 < MaximumRedirection)
+            if (MaximumRedirection > -1)
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
@@ -734,7 +736,7 @@ namespace Microsoft.PowerShell.Commands
                 UriBuilder uriBuilder = new UriBuilder(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
                 {
-                    uriBuilder.Query = uriBuilder.Query.Substring(1) + "&" + FormatDictionary(bodyAsDictionary);
+                    uriBuilder.Query = string.Concat(uriBuilder.Query.AsSpan().Slice(1), "&", FormatDictionary(bodyAsDictionary));
                 }
                 else
                 {
@@ -775,9 +777,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder bodyBuilder = new StringBuilder();
             foreach (string key in content.Keys)
             {
-                if (0 < bodyBuilder.Length)
+                if (bodyBuilder.Length > 0)
                 {
-                    bodyBuilder.Append("&");
+                    bodyBuilder.Append('&');
                 }
 
                 object value = content[key];
@@ -861,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class HttpResponseException : HttpRequestException
     {
         /// <summary>
-        /// Constructor for HttpResponseException.
+        /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
         /// </summary>
         /// <param name="message">Message for the exception.</param>
         /// <param name="response">Response from the HTTP server.</param>
@@ -873,7 +875,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// HTTP error response.
         /// </summary>
-        public HttpResponseMessage Response { get; private set; }
+        public HttpResponseMessage Response { get; }
     }
 
     /// <summary>
@@ -1892,7 +1894,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (enumerate == false || fieldValue is string || !(fieldValue is IEnumerable))
+            if (!enumerate || fieldValue is string || fieldValue is not IEnumerable)
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;

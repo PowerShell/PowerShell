@@ -157,7 +157,7 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
@@ -236,7 +236,7 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(ast, tokens, cursorPosition, options, debugger);
@@ -891,7 +891,7 @@ namespace System.Management.Automation
 
                 // Determine if we need to quote the paths we parse
 
-                lastWord = lastWord ?? string.Empty;
+                lastWord ??= string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
@@ -1137,11 +1137,11 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                result.Sort(delegate (PathItemAndConvertedPath x, PathItemAndConvertedPath y)
-                                {
-                                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
-                                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
-                                });
+                result.Sort((PathItemAndConvertedPath x, PathItemAndConvertedPath y) =>
+                {
+                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
+                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
+                });
 
                 return result;
             }

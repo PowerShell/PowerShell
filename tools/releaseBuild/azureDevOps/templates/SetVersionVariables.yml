@@ -5,8 +5,28 @@ parameters:
 
 steps:
 - powershell: |
+    $path = "./build.psm1"
+
+    if(Test-Path -Path $path)
+    {
+      $vstsCommandString = "vso[task.setvariable variable=repoRoot]."
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    }
+    else{
+      $path = "./PowerShell/build.psm1"
+      if(Test-Path -Path $path)
+      {
+        $vstsCommandString = "vso[task.setvariable variable=repoRoot]./PowerShell"
+        Write-Host ("sending " + $vstsCommandString)
+        Write-Host "##$vstsCommandString"
+      }
+    }
+  displayName: 'Set repo Root'
+
+- powershell: |
     $createJson = ("${{ parameters.ReleaseTagVarName }}" -ne "no")
-    $releaseTag = tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
+    $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"
     Write-Host ("sending " + $vstsCommandString)

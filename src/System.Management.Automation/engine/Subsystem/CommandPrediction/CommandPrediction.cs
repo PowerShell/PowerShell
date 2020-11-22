@@ -82,7 +82,8 @@ namespace System.Management.Automation.Subsystem
                 ICommandPredictor predictor = predictors[i];
 
                 tasks[i] = Task.Factory.StartNew(
-                    state => {
+                    state =>
+                    {
                         var predictor = (ICommandPredictor)state!;
                         List<PredictiveSuggestion>? texts = predictor.GetSuggestion(context, cancellationSource.Token);
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;

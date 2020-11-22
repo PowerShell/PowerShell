@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -283,12 +284,12 @@ namespace System.Management.Automation
 
         internal bool MatchesOptions(MshMemberMatchOptions options)
         {
-            if (this.IsHidden && (0 == (options & MshMemberMatchOptions.IncludeHidden)))
+            if (this.IsHidden && ((options & MshMemberMatchOptions.IncludeHidden) == 0))
             {
                 return false;
             }
 
-            if (!this.ShouldSerialize && (0 != (options & MshMemberMatchOptions.OnlySerializable)))
+            if (!this.ShouldSerialize && ((options & MshMemberMatchOptions.OnlySerializable) != 0))
             {
                 return false;
             }
@@ -356,9 +357,9 @@ namespace System.Management.Automation
             returnValue.Append(" = ");
             if (ConversionType != null)
             {
-                returnValue.Append("(");
+                returnValue.Append('(');
                 returnValue.Append(ConversionType);
-                returnValue.Append(")");
+                returnValue.Append(')');
             }
 
             returnValue.Append(ReferencedMemberName);
@@ -616,24 +617,24 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
-            returnValue.Append("{");
+            returnValue.Append('{');
             if (this.IsGettable)
             {
                 returnValue.Append("get=");
                 returnValue.Append(GetterCodeReference.Name);
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(SetterCodeReference.Name);
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -875,6 +876,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="GetValueException">When getting and there is no getter or when the getter throws an exception.</exception>
         /// <exception cref="SetValueException">When setting and there is no setter or when the setter throws an exception.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -964,6 +966,7 @@ namespace System.Management.Automation
         /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="GetValueException">If there is no property getter.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override string TypeNameOfValue
         {
             get
@@ -1274,9 +1277,9 @@ namespace System.Management.Automation
             StringBuilder returnValue = new StringBuilder();
 
             returnValue.Append(GetDisplayTypeNameOfValue(this.Value));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
-            returnValue.Append("=");
+            returnValue.Append('=');
             returnValue.Append(this.noteValue == null ? "null" : this.noteValue.ToString());
             return returnValue.ToString();
         }
@@ -1421,9 +1424,9 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(GetDisplayTypeNameOfValue(_variable.Value));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(_variable.Name);
-            returnValue.Append("=");
+            returnValue.Append('=');
             returnValue.Append(_variable.Value ?? "null");
             return returnValue.ToString();
         }
@@ -1541,24 +1544,24 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
             returnValue.Append(" {");
             if (this.IsGettable)
             {
                 returnValue.Append("get=");
                 returnValue.Append(this.GetterScript.ToString());
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(this.SetterScript.ToString());
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -1786,6 +1789,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="SetValueException">When setting and there is no setter,
         /// when the setter throws an exception or when there is no Runspace to run the script.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -1971,7 +1975,7 @@ namespace System.Management.Automation
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }
@@ -2283,7 +2287,7 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
             returnValue.Append("();");
             return returnValue.ToString();
@@ -3038,7 +3042,7 @@ namespace System.Management.Automation
             }
 
             returnValue.Insert(0, this.Name);
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -3441,7 +3445,7 @@ namespace System.Management.Automation
                 returnValue.Remove(returnValue.Length - 2, 2);
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -3554,7 +3558,7 @@ namespace System.Management.Automation
             StringBuilder eventDefinition = new StringBuilder();
             eventDefinition.Append(this.baseEvent.ToString());
 
-            eventDefinition.Append("(");
+            eventDefinition.Append('(');
 
             int loopCounter = 0;
             foreach (ParameterInfo parameter in baseEvent.EventHandlerType.GetMethod("Invoke").GetParameters())
@@ -3567,7 +3571,7 @@ namespace System.Management.Automation
                 loopCounter++;
             }
 
-            eventDefinition.Append(")");
+            eventDefinition.Append(')');
 
             return eventDefinition.ToString();
         }

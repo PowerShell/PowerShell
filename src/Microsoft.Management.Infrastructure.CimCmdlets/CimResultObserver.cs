@@ -4,8 +4,8 @@
 #region Using directives
 
 using System;
-using System.Management.Automation;
 using System.Globalization;
+using System.Management.Automation;
 
 #endregion
 
@@ -51,7 +51,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private object errorSource;
+        private readonly object errorSource;
     }
     #endregion
 
@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
-        public AsyncResultEventArgsBase(
+        protected AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType)
@@ -86,7 +86,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
         /// <param name="context"></param>
-        public AsyncResultEventArgsBase(
+        protected AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType,
@@ -217,19 +217,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimResultObserver<T> : IObserver<T>
     {
         /// <summary>
-        /// Define delegate that handles new cmdlet action come from
-        /// the operations related to the current CimSession object.
-        /// </summary>
-        /// <param name="cimSession">CimSession object, which raised the event.</param>
-        /// <param name="actionArgs">Event args.</param>
-        public delegate void ResultEventHandler(
-            object observer,
-            AsyncResultEventArgsBase resultArgs);
-
-        /// <summary>
         /// Define an Event based on the NewActionHandler.
         /// </summary>
-        public event ResultEventHandler OnNewResult;
+        public event EventHandler<AsyncResultEventArgsBase> OnNewResult;
 
         /// <summary>
         /// Constructor.
@@ -269,7 +259,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // OnNext, OnError
             try
             {
-                AsyncResultCompleteEventArgs completeArgs = new AsyncResultCompleteEventArgs(
+                AsyncResultCompleteEventArgs completeArgs = new(
                     this.session, this.observable);
                 this.OnNewResult(this, completeArgs);
             }
@@ -290,7 +280,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             try
             {
-                AsyncResultErrorEventArgs errorArgs = new AsyncResultErrorEventArgs(
+                AsyncResultErrorEventArgs errorArgs = new(
                     this.session, this.observable, error, this.context);
                 this.OnNewResult(this, errorArgs);
             }
@@ -310,7 +300,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("value = {0}.", 1, value);
             try
             {
-                AsyncResultObjectEventArgs resultArgs = new AsyncResultObjectEventArgs(
+                AsyncResultObjectEventArgs resultArgs = new(
                     this.session, this.observable, value);
                 this.OnNewResult(this, resultArgs);
             }
@@ -352,17 +342,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private CimSession session;
+        private readonly CimSession session;
 
         /// <summary>
         /// Async operation that can be observed.
         /// </summary>
-        private IObservable<object> observable;
+        private readonly IObservable<object> observable;
 
         /// <summary>
         /// <see cref="CimResultContext"/> object used during delivering result.
         /// </summary>
-        private CimResultContext context;
+        private readonly CimResultContext context;
         #endregion
     }
 

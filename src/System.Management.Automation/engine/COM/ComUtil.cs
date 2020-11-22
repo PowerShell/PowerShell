@@ -97,7 +97,7 @@ namespace System.Management.Automation
                 }
             }
 
-            builder.Append(")");
+            builder.Append(')');
 
             return builder.ToString();
         }

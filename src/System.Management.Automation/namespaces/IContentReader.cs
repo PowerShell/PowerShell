@@ -65,4 +65,3 @@ namespace System.Management.Automation.Provider
 
     #endregion IContentReader
 }
-

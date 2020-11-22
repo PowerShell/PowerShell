@@ -1125,9 +1125,46 @@ wpa
 wpaProfile
  - demos/WindowsPowerShellModules/README.md
 2.x.
- - CHANGELOG/preview.md
+ - CHANGELOG/7.1.md
 ThomasNieto
 spongemike2
 davidseibel
 HumanEquivalentUnit
+hemisphera
+tamasvajk
+boolean
+bitwise
+StringUtil
+StringUtil.Format
+CommandLineParameterParser
+jackerr3
+preview.8.20407.11
+pre-check
+davidreis97
+soccypowa
+nologo
+InstallLocation
+PkgES
+Microsoft.PowerShell.Native
+rtm.20526.5
 jcotton42
+ - CHANGELOG/preview.md
+Gimly
+jborean93
+mkswd
+PatLeong
+paul-cheung
+georgettica
+ProcessId
+CurrentManagedThreadId
+System.Environment
+LongCount
+nullable
+Guid
+accessor
+CancellationToken
+struct
+IsEmpty
+StringBuilder.Append
+String.Concat
+String.Substring

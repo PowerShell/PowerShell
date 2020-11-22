@@ -16,6 +16,7 @@ namespace System.Management.Automation
         private readonly HashSet<string> _validVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
         internal bool UsesParameter { get; private set; }
 
         internal bool HasUsingExpr { get; private set; }
@@ -386,8 +387,7 @@ namespace System.Management.Automation
 
                     if (variables != null)
                     {
-                        var variableAst = usingAst.SubExpression as VariableExpressionAst;
-                        if (variableAst == null)
+                        if (!(usingAst.SubExpression is VariableExpressionAst variableAst))
                         {
                             throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);

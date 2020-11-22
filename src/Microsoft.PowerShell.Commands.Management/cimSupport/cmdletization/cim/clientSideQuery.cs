@@ -55,11 +55,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public string PropertyName { get; private set; }
+            public string PropertyName { get; }
 
-            public object PropertyValue { get; private set; }
+            public object PropertyValue { get; }
 
-            public Func<string, string, string> ErrorMessageGenerator { get; private set; }
+            public Func<string, string, string> ErrorMessageGenerator { get; }
 
             private static string GetErrorMessageForNotFound(string queryDescription, string className)
             {
@@ -572,8 +572,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var expectedComparable = expectedPropertyValue as IComparable;
-                    if (expectedComparable == null)
+                    if (!(expectedPropertyValue is IComparable expectedComparable))
                     {
                         return false;
                     }
@@ -608,8 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var actualComparable = actualPropertyValue as IComparable;
-                    if (actualComparable == null)
+                    if (!(actualPropertyValue is IComparable actualComparable))
                     {
                         return false;
                     }

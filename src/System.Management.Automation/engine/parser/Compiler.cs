@@ -1166,7 +1166,7 @@ namespace System.Management.Automation.Language
                 expr = ((AttributedExpressionAst)expr).Child;
             }
 
-            return firstConvert == null ? null : firstConvert.Type.TypeName.GetReflectionType();
+            return firstConvert?.Type.TypeName.GetReflectionType();
         }
 
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type argType)
@@ -1255,7 +1255,7 @@ namespace System.Management.Automation.Language
                 {
                     var rdp = runtimeDefinedParamList[index];
                     var paramAttribute = (ParameterAttribute)rdp.Attributes.First(attr => attr is ParameterAttribute);
-                    if (!(rdp.ParameterType == typeof(SwitchParameter)))
+                    if (rdp.ParameterType != typeof(SwitchParameter))
                     {
                         paramAttribute.Position = pos++;
                     }
@@ -2206,11 +2206,11 @@ namespace System.Management.Automation.Language
                 this.ContinueLabel = continueLabel;
             }
 
-            internal string Label { get; private set; }
+            internal string Label { get; }
 
-            internal LabelTarget ContinueLabel { get; private set; }
+            internal LabelTarget ContinueLabel { get; }
 
-            internal LabelTarget BreakLabel { get; private set; }
+            internal LabelTarget BreakLabel { get; }
         }
 
         private LabelTarget _returnTarget;
@@ -2265,11 +2265,9 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
             exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
-            if (generateRedirectExprs != null)
-            {
-                // Add merge redirection expressions if delegate is provided.
-                generateRedirectExprs(exprs, finallyExprs);
-            }
+
+            // Add merge redirection expressions if delegate is provided.
+            generateRedirectExprs?.Invoke(exprs, finallyExprs);
 
             exprs.Add(Compile(ast));
 
@@ -2458,7 +2456,7 @@ namespace System.Management.Automation.Language
             {
                 if (!scriptBlockAst.EndBlock.Unnamed)
                 {
-                    funcName = funcName + "<End>";
+                    funcName += "<End>";
                 }
 
                 _endBlockLambda = CompileNamedBlock(scriptBlockAst.EndBlock, funcName, rootForDefiningTypesAndUsings);
@@ -5502,7 +5500,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                labelExpr = labelExpr ?? ExpressionCache.ConstEmptyString;
+                labelExpr ??= ExpressionCache.ConstEmptyString;
                 result = Expression.Throw(Expression.New(nonLocalExceptionCtor, labelExpr.Convert(typeof(string))));
             }
 
@@ -5664,7 +5662,7 @@ namespace System.Management.Automation.Language
                     if (rhs is ConstantExpression && rhs.Type == typeof(Type))
                     {
                         var isType = (Type)((ConstantExpression)rhs).Value;
-                        if (!(isType == typeof(PSCustomObject)) && !(isType == typeof(PSObject)))
+                        if (isType != typeof(PSCustomObject) && isType != typeof(PSObject))
                         {
                             lhs = lhs.Type.IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
                             if (binaryExpressionAst.Operator == TokenKind.Is)
@@ -5935,14 +5933,12 @@ namespace System.Management.Automation.Language
 
         private static Expression GetLikeRHSOperand(WildcardOptions options, Expression expr)
         {
-            var constExpr = expr as ConstantExpression;
-            if (constExpr == null)
+            if (!(expr is ConstantExpression constExpr))
             {
                 return expr;
             }
 
-            var val = constExpr.Value as string;
-            if (val == null)
+            if (!(constExpr.Value is string val))
             {
                 return expr;
             }
@@ -6315,7 +6311,7 @@ namespace System.Management.Automation.Language
             var targetTypeConstraint = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Expression);
             return CombineTypeConstraintForMethodResolution(
                     targetTypeConstraint,
-                    arguments != null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
+                    arguments?.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray());
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(BaseCtorInvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6334,7 +6330,7 @@ namespace System.Management.Automation.Language
 
             return CombineTypeConstraintForMethodResolution(
                     targetTypeConstraint,
-                    arguments != null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
+                    arguments?.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray());
         }
 
         internal Expression InvokeMember(
@@ -6347,7 +6343,7 @@ namespace System.Management.Automation.Language
             bool nullConditional = false)
         {
             var callInfo = new CallInfo(args.Count());
-            var classScope = _memberFunctionType != null ? _memberFunctionType.Type : null;
+            var classScope = _memberFunctionType?.Type;
             var binder = name.Equals("new", StringComparison.OrdinalIgnoreCase) && @static
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
                 : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope);
@@ -6430,7 +6426,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            values = values ?? CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
+            values ??= CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
 
             if (pureExprAst is ArrayLiteralAst)
             {

@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Text;
 
 using System.Management.Automation.Internal;
@@ -38,9 +36,9 @@ namespace System.Management.Automation
             { Default, ClrFacade.GetDefaultEncoding() },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
-#pragma warning disable MSLIB0001
+#pragma warning disable SYSLIB0001
             { Utf7, System.Text.Encoding.UTF7 },
-#pragma warning restore MSLIB0001
+#pragma warning restore SYSLIB0001
             { Utf8, ClrFacade.GetDefaultEncoding() },
             { Utf8Bom, System.Text.Encoding.UTF8 },
             { Utf8NoBom, ClrFacade.GetDefaultEncoding() },
@@ -66,7 +64,7 @@ namespace System.Management.Automation
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
                 // Write a warning if using utf7 as it is obsolete in .NET5
-                if (string.Compare(encoding, Utf7, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
                 {
                     cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }

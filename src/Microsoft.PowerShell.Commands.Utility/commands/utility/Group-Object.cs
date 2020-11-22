@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -149,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (propValuePropertyValue is ICollection propertyValueItems)
                     {
-                        sb.Append("{");
+                        sb.Append('{');
                         var length = sb.Length;
 
                         foreach (object item in propertyValueItems)

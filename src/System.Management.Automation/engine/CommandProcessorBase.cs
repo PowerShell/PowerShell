@@ -149,6 +149,7 @@ namespace System.Management.Automation
         {
             get { return null; }
         }
+
         // Full Qualified ID for the obsolete command warning
         private const string FQIDCommandObsolete = "CommandObsolete";
 
@@ -517,7 +518,7 @@ namespace System.Management.Automation
                         {
                             SetCurrentScopeToExecutionScope();
 
-                            if (Context._debuggingMode > 0 && !(Command is PSScriptCmdlet))
+                            if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                             {
                                 Context.Debugger.CheckCommand(this.Command.MyInvocation);
                             }
@@ -896,7 +897,7 @@ namespace System.Management.Automation
 
                 // An explicit throw is written to $error as an ErrorRecord, so we
                 // skip adding what is more or less a duplicate.
-                if (!(e is PipelineStoppedException) && !e.WasThrownFromThrowStatement)
+                if (e is not PipelineStoppedException && !e.WasThrownFromThrowStatement)
                     commandRuntime.AppendErrorToVariables(e);
             }
             // Upstream cmdlets see only that execution stopped

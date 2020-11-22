@@ -105,7 +105,7 @@ namespace System.Management.Automation
                     {
                         if (attribute is CmdletBindingAttribute c)
                         {
-                            cmdletBindingAttribute = cmdletBindingAttribute ?? c;
+                            cmdletBindingAttribute ??= c;
                         }
                         else if (attribute is DebuggerHiddenAttribute)
                         {
@@ -193,8 +193,7 @@ namespace System.Management.Automation
 
         private void PerformSecurityChecks()
         {
-            var scriptBlockAst = Ast as ScriptBlockAst;
-            if (scriptBlockAst == null)
+            if (!(Ast is ScriptBlockAst scriptBlockAst))
             {
                 // Checks are only needed at the top level.
                 return;
@@ -263,14 +262,12 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
-                if (pipelineAst == null)
+                if (!(endBlock.Statements[0] is PipelineAst pipelineAst))
                 {
                     return false;
                 }
 
-                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
-                if (hashtableAst == null)
+                if (!(pipelineAst.GetPureExpression() is HashtableAst hashtableAst))
                 {
                     return false;
                 }
@@ -310,18 +307,29 @@ namespace System.Management.Automation
         }
 
         internal Type LocalsMutableTupleType { get; set; }
+
         internal Type UnoptimizedLocalsMutableTupleType { get; set; }
+
         internal Func<MutableTuple> LocalsMutableTupleCreator { get; set; }
+
         internal Func<MutableTuple> UnoptimizedLocalsMutableTupleCreator { get; set; }
+
         internal Dictionary<string, int> NameToIndexMap { get; set; }
 
         internal Action<FunctionContext> DynamicParamBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; set; }
+
         internal Action<FunctionContext> BeginBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedBeginBlock { get; set; }
+
         internal Action<FunctionContext> ProcessBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedProcessBlock { get; set; }
+
         internal Action<FunctionContext> EndBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
 
         internal IScriptExtent[] SequencePoints { get; set; }
@@ -335,12 +343,16 @@ namespace System.Management.Automation
         private bool? _isProductCode;
 
         internal bool DebuggerHidden { get; set; }
+
         internal bool DebuggerStepThrough { get; set; }
+
         internal Guid Id { get; private set; }
 
         internal bool HasLogged { get; set; }
+
         internal bool SkipLogging { get; set; }
-        internal bool IsFilter { get; private set; }
+
+        internal bool IsFilter { get; }
 
         internal bool IsProductCode
         {
@@ -726,7 +738,7 @@ namespace System.Management.Automation
         internal SteppablePipeline GetSteppablePipelineImpl(CommandOrigin commandOrigin, object[] args)
         {
             var pipelineAst = GetSimplePipeline(
-                resourceString => { throw PSTraceSource.NewInvalidOperationException(resourceString); });
+                resourceString => throw PSTraceSource.NewInvalidOperationException(resourceString));
             Diagnostics.Assert(pipelineAst != null, "This should be checked by GetSimplePipeline");
 
             if (pipelineAst.PipelineElements[0] is not CommandAst)
@@ -739,7 +751,7 @@ namespace System.Management.Automation
 
         private PipelineAst GetSimplePipeline(Func<string, PipelineAst> errorHandler)
         {
-            errorHandler = errorHandler ?? (_ => null);
+            errorHandler ??= (_ => null);
 
             if (HasBeginBlock || HasProcessBlock)
             {
@@ -763,8 +775,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
 
-            var pipeAst = statements[0] as PipelineAst;
-            if (pipeAst == null)
+            if (!(statements[0] is PipelineAst pipeAst))
             {
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
@@ -833,7 +844,7 @@ namespace System.Management.Automation
             set { _scriptBlockData.SkipLogging = value; }
         }
 
-        internal Assembly AssemblyDefiningPSTypes { set; get; }
+        internal Assembly AssemblyDefiningPSTypes { get; set; }
 
         internal HelpInfo GetHelpInfo(
             ExecutionContext context,
@@ -1716,12 +1727,12 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
 
-        private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
+        private static readonly Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
@@ -2001,7 +2012,7 @@ namespace System.Management.Automation
                     uint h = text[i];
                     if (h >= 'A' && h <= 'Z')
                     {
-                        h = h | 0x20; // ToLower
+                        h |= 0x20; // ToLower
                     }
                     else if (!((h >= 'a' && h <= 'z') || h == '-'))
                     {
@@ -2185,7 +2196,7 @@ namespace System.Management.Automation
         private readonly bool _fromScriptFile;
         private readonly bool _useLocalScope;
         private readonly bool _runOptimized;
-        private bool _rethrowExitException;
+        private readonly bool _rethrowExitException;
         private MshCommandRuntime _commandRuntime;
         private readonly MutableTuple _localsTuple;
         private bool _exitWasCalled;

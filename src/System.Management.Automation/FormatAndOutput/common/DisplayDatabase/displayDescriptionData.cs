@@ -102,19 +102,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal bool MultilineTables
         {
+            get
+            {
+                if (_multilineTables.HasValue)
+                    return _multilineTables.Value;
+                return false;
+            }
+
             set
             {
                 if (!_multilineTables.HasValue)
                 {
                     _multilineTables = value;
                 }
-            }
-
-            get
-            {
-                if (_multilineTables.HasValue)
-                    return _multilineTables.Value;
-                return false;
             }
         }
 
@@ -132,19 +132,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal bool ShowErrorsAsMessages
         {
+            get
+            {
+                if (_showErrorsAsMessages.HasValue)
+                    return _showErrorsAsMessages.Value;
+                return false;
+            }
+
             set
             {
                 if (!_showErrorsAsMessages.HasValue)
                 {
                     _showErrorsAsMessages = value;
                 }
-            }
-
-            get
-            {
-                if (_showErrorsAsMessages.HasValue)
-                    return _showErrorsAsMessages.Value;
-                return false;
             }
         }
 
@@ -156,19 +156,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal bool ShowErrorsInFormattedOutput
         {
+            get
+            {
+                if (_showErrorsInFormattedOutput.HasValue)
+                    return _showErrorsInFormattedOutput.Value;
+                return false;
+            }
+
             set
             {
                 if (!_showErrorsInFormattedOutput.HasValue)
                 {
                     _showErrorsInFormattedOutput = value;
                 }
-            }
-
-            get
-            {
-                if (_showErrorsInFormattedOutput.HasValue)
-                    return _showErrorsInFormattedOutput.Value;
-                return false;
             }
         }
 
@@ -191,19 +191,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal int PropertyCountForTable
         {
+            get
+            {
+                if (_propertyCountForTable.HasValue)
+                    return _propertyCountForTable.Value;
+                return 4;
+            }
+
             set
             {
                 if (!_propertyCountForTable.HasValue)
                 {
                     _propertyCountForTable = value;
                 }
-            }
-
-            get
-            {
-                if (_propertyCountForTable.HasValue)
-                    return _propertyCountForTable.Value;
-                return 4;
             }
         }
 
@@ -672,10 +672,10 @@ namespace System.Management.Automation
     public sealed class FormatViewDefinition
     {
         /// <summary>Name of the formatting view as defined in the formatting file</summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>The control defined by this formatting view can be one of table, list, wide, or custom</summary>
-        public PSControl Control { get; private set; }
+        public PSControl Control { get; }
 
         /// <summary>instance id of the original view this will be used to distinguish two views with the same name and control types</summary>
         internal Guid InstanceId { get; set; }
@@ -774,7 +774,7 @@ namespace System.Management.Automation
                 return new PSControlGroupBy
                 {
                     Expression = new DisplayEntry(expressionToken),
-                    Label = (groupBy.startGroup.labelTextToken != null) ? groupBy.startGroup.labelTextToken.text : null
+                    Label = groupBy.startGroup.labelTextToken?.text
                 };
             }
 

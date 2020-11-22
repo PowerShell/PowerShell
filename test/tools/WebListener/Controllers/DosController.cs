@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -20,7 +21,6 @@ namespace mvc.Controllers
             string contentType = Constants.ApplicationJson;
 
             Response.StatusCode = 200;
-
 
             StringValues dosType;
             if (Request.Query.TryGetValue("dosType", out dosType))

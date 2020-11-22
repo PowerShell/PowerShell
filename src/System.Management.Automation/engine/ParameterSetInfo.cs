@@ -72,12 +72,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter set.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets whether the parameter set is the default parameter set.
         /// </summary>
-        public bool IsDefault { get; private set; }
+        public bool IsDefault { get; }
 
         /// <summary>
         /// Gets the parameter information for the parameters in this parameter set.
@@ -92,18 +92,18 @@ namespace System.Management.Automation
             Text.StringBuilder result = new Text.StringBuilder();
 
             GenerateParametersInDisplayOrder(
-                                 parameter => AppendFormatCommandParameterInfo(parameter, result),
-                                 delegate (string str)
-                                     {
-                                         if (result.Length > 0)
-                                         {
-                                             result.Append(" ");
-                                         }
+                parameter => AppendFormatCommandParameterInfo(parameter, result),
+                (string str) =>
+                {
+                    if (result.Length > 0)
+                    {
+                        result.Append(' ');
+                    }
 
-                                         result.Append("[");
-                                         result.Append(str);
-                                         result.Append("]");
-                                     });
+                    result.Append('[');
+                    result.Append(str);
+                    result.Append(']');
+                });
 
             return result.ToString();
         }
@@ -233,7 +233,7 @@ namespace System.Management.Automation
             if (result.Length > 0)
             {
                 // Add a space between parameters
-                result.Append(" ");
+                result.Append(' ');
             }
 
             if (parameter.ParameterType == typeof(SwitchParameter))
@@ -339,4 +339,3 @@ namespace System.Management.Automation
         #endregion private members
     }
 }
-

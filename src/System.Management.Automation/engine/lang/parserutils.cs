@@ -190,7 +190,7 @@ namespace System.Management.Automation
             this.RequestingCommandProcessor = requestingCommand.Context.CurrentCommandProcessor;
         }
 
-        public CommandProcessorBase RequestingCommandProcessor { get; private set; }
+        public CommandProcessorBase RequestingCommandProcessor { get; }
     }
 
     #endregion Flow Control Exceptions
@@ -378,8 +378,8 @@ namespace System.Management.Automation
             lval = PSObject.Base(lval);
             rval = PSObject.Base(rval);
 
-            Type lvalType = lval != null ? lval.GetType() : null;
-            Type rvalType = rval != null ? rval.GetType() : null;
+            Type lvalType = lval?.GetType();
+            Type rvalType = rval?.GetType();
             Type opType;
             if (lvalType == null || (lvalType.IsPrimitive))
             {
@@ -1011,18 +1011,7 @@ namespace System.Management.Automation
                     return regex.Replace(input, replacementString);
 
                 case ScriptBlock sb:
-                    MatchEvaluator me = match =>
-                    {
-                        var result = sb.DoInvokeReturnAsIs(
-                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: match,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: Array.Empty<object>());
-
-                        return PSObject.ToStringParser(context, result);
-                    };
+                    MatchEvaluator me = GetMatchEvaluator(context, sb);
                     return regex.Replace(input, me);
 
                 case object val when LanguagePrimitives.TryConvertTo(val, out MatchEvaluator matchEvaluator):
@@ -1031,6 +1020,24 @@ namespace System.Management.Automation
                 default:
                     string replacement = PSObject.ToStringParser(context, substitute);
                     return regex.Replace(input, replacement);
+            }
+
+            // Local helper function to avoid creating an instance of the generated delegate helper class
+            // every time 'ReplaceOperatorImpl' is invoked.
+            static MatchEvaluator GetMatchEvaluator(ExecutionContext context, ScriptBlock sb)
+            {
+                return match =>
+                {
+                    var result = sb.DoInvokeReturnAsIs(
+                        useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: match,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: Array.Empty<object>());
+
+                    return PSObject.ToStringParser(context, result);
+                };
             }
         }
 
@@ -1466,8 +1473,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj.GetType().FullName;
             }
@@ -1571,9 +1577,7 @@ namespace System.Management.Automation
                 // not really a method call.
                 if (valueToSet != AutomationNull.Value)
                 {
-                    PSParameterizedProperty propertyToSet = targetMethod as PSParameterizedProperty;
-
-                    if (propertyToSet == null)
+                    if (!(targetMethod is PSParameterizedProperty propertyToSet))
                     {
                         throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), errorPosition,
                                                                        "ParameterizedPropertyAssignmentFailed", ParserStrings.ParameterizedPropertyAssignmentFailed, GetTypeFullName(target), methodName);
@@ -1635,14 +1639,14 @@ namespace System.Management.Automation
     /// </summary>
     internal class RangeEnumerator : IEnumerator
     {
-        private int _lowerBound;
+        private readonly int _lowerBound;
 
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
-        private int _upperBound;
+        private readonly int _upperBound;
 
         internal int UpperBound
         {
@@ -1666,7 +1670,7 @@ namespace System.Management.Automation
             get { return _current; }
         }
 
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1707,7 +1711,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CharRangeEnumerator : IEnumerator
     {
-        private int _increment = 1;
+        private readonly int _increment = 1;
 
         private bool _firstElement = true;
 
@@ -1725,15 +1729,9 @@ namespace System.Management.Automation
             get { return Current; }
         }
 
-        internal char LowerBound
-        {
-            get; private set;
-        }
+        internal char LowerBound { get; }
 
-        internal char UpperBound
-        {
-            get; private set;
-        }
+        internal char UpperBound { get; }
 
         public char Current
         {
@@ -1818,7 +1816,7 @@ namespace System.Management.Automation
             try
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args == null || args.Length == 0)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;
@@ -1979,7 +1977,7 @@ namespace System.Management.Automation
             if (context.PSDebugTraceLevel > level)
             {
                 string message;
-                if (args == null || 0 == args.Length)
+                if (args == null || args.Length == 0)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;

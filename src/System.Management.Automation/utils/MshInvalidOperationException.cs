@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
@@ -52,7 +51,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -138,8 +136,7 @@ namespace System.Management.Automation
             _errorId = errorId;
         }
 
-        private ErrorCategory _errorCategory = ErrorCategory.InvalidOperation;
-        private object _target = null;
+        private readonly ErrorCategory _errorCategory = ErrorCategory.InvalidOperation;
+        private readonly object _target = null;
     }
 }
-

@@ -3,8 +3,8 @@
 
 #region Using directives
 using System;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 using Microsoft.Management.Infrastructure.Options;
 
 #endregion
@@ -304,7 +304,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (this.CertificateThumbprint != null)
                 {
-                    CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
+                    CimCredential credentials = new(CertificateAuthenticationMechanism.Default, this.CertificateThumbprint);
                     wsmanOptions.AddDestinationCredentials(credentials);
                 }
 

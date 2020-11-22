@@ -590,7 +590,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 foreach (var c in classes)
                 {
                     sb.Append(c.CimSystemProperties.ClassName);
-                    sb.Append(",");
+                    sb.Append(',');
                 }
 
                 s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added the following classes to the cache: {1}", path, sb.ToString());
@@ -2471,7 +2471,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             var sb = new StringBuilder();
 
-            sb.Append("[");
+            sb.Append('[');
             bool needComma = false;
             foreach (var attr in customAttributes)
             {
@@ -2514,9 +2514,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         valueMapComma = true;
                     }
 
-                    sb.Append("}");
+                    sb.Append('}');
                     sb.Append(sbValues);
-                    sb.Append("}");
+                    sb.Append('}');
                 }
             }
 
@@ -2545,14 +2545,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     needComma = true;
                 }
 
-                sb.Append("}");
+                sb.Append('}');
             }
             else if (embeddedInstanceType != null)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
 
-            sb.Append("]");
+            sb.Append(']');
             return sb.ToString();
         }
 
@@ -3206,7 +3206,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
             }
 
-            usageString.Append("}");
+            usageString.Append('}');
 
             return usageString.ToString();
         }
@@ -3252,10 +3252,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // We prepend optional property with "[" so close out it here. This way it is shown with [ ] to indication optional
             if (isOptionalProperty)
             {
-                formattedTypeString.Append("]");
+                formattedTypeString.Append(']');
             }
 
-            formattedTypeString.Append("\n");
+            formattedTypeString.Append('\n');
 
             return formattedTypeString;
         }

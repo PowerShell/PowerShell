@@ -76,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.percentageCompleted);
 
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
-            ProgressRecord record = new ProgressRecord(
+            ProgressRecord record = new(
                 this.activityID,
                 this.activity,
                 this.statusDescription);
@@ -92,32 +92,32 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Activity of the given activity.
         /// </summary>
-        private string activity;
+        private readonly string activity;
 
         /// <summary>
         /// Activity identifier of the given activity.
         /// </summary>
-        private int activityID;
+        private readonly int activityID;
 
         /// <summary>
         /// Current operation text of the given activity.
         /// </summary>
-        private string currentOperation;
+        private readonly string currentOperation;
 
         /// <summary>
         /// Status description of the given activity.
         /// </summary>
-        private string statusDescription;
+        private readonly string statusDescription;
 
         /// <summary>
         /// Percentage completed of the given activity.
         /// </summary>
-        private UInt32 percentageCompleted;
+        private readonly UInt32 percentageCompleted;
 
         /// <summary>
         /// How many seconds remained for the given activity.
         /// </summary>
-        private UInt32 secondsRemaining;
+        private readonly UInt32 secondsRemaining;
 
         internal string Activity
         {

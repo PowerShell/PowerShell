@@ -615,4 +615,3 @@ namespace System.Management.Automation.Internal
         public int Score;
     }
 }
-

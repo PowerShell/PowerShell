@@ -8,8 +8,6 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-using Microsoft.PowerShell.Commands.Internal.Format;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -29,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericMeasureInfo : MeasureInfo
     {
         /// <summary>
-        /// Default ctor.
+        /// Initializes a new instance of the <see cref="GenericMeasureInfo"/> class.
         /// </summary>
         public GenericMeasureInfo()
         {
@@ -79,6 +77,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericObjectMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="GenericObjectMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public GenericObjectMeasureInfo()
@@ -124,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class TextMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public TextMeasureInfo()
@@ -164,6 +164,7 @@ namespace Microsoft.PowerShell.Commands
             where V : new()
         {
             /// <summary>
+            /// Initializes a new instance of the <see cref="MeasureObjectDictionary{V}"/> class.
             /// Default ctor.
             /// </summary>
             internal MeasureObjectDictionary() : base(StringComparer.OrdinalIgnoreCase)
@@ -218,6 +219,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MeasureObjectCommand"/> class.
         /// Default constructor.
         /// </summary>
         public MeasureObjectCommand()
@@ -234,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Properties to be examined.
@@ -959,7 +961,7 @@ namespace Microsoft.PowerShell.Commands
         /// The observed statistics keyed by property name.
         /// If Property is not set, then the key used will be the value of thisObject.
         /// </summary>
-        private MeasureObjectDictionary<Statistics> _statistics = new MeasureObjectDictionary<Statistics>();
+        private readonly MeasureObjectDictionary<Statistics> _statistics = new MeasureObjectDictionary<Statistics>();
 
         /// <summary>
         /// Whether or not a numeric conversion error occurred.

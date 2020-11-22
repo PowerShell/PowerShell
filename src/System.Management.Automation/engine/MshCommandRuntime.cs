@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Collections;
@@ -91,8 +92,8 @@ namespace System.Management.Automation
 
         internal PipelineProcessor PipelineProcessor { get; set; }
 
-        private CommandInfo _commandInfo;
-        private InternalCommand _thisCommand;
+        private readonly CommandInfo _commandInfo;
+        private readonly InternalCommand _thisCommand;
 
         #endregion private_members
 
@@ -352,7 +353,7 @@ namespace System.Management.Automation
             // WriteProgress. The following logic ensures that
             // there is a unique id for each Cmdlet instance.
 
-            if (0 == _sourceId)
+            if (_sourceId == 0)
             {
                 _sourceId = Interlocked.Increment(ref s_lastUsedSourceId);
             }
@@ -2320,8 +2321,7 @@ namespace System.Management.Automation
             {
                 if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
-                MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
-                if (mcr == null)
+                if (!(permittedToWrite.commandRuntime is MshCommandRuntime mcr))
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
                 if (_pp == null)
@@ -2351,10 +2351,10 @@ namespace System.Management.Automation
             // There is no finalizer, by design.  This class relies on always
             // being disposed and always following stack semantics.
 
-            private PipelineProcessor _pp = null;
-            private InternalCommand _wasPermittedToWrite = null;
-            private bool _wasPermittedToWriteToPipeline = false;
-            private Thread _wasPermittedToWriteThread = null;
+            private readonly PipelineProcessor _pp = null;
+            private readonly InternalCommand _wasPermittedToWrite = null;
+            private readonly bool _wasPermittedToWriteToPipeline = false;
+            private readonly Thread _wasPermittedToWriteThread = null;
         }
 
         /// <summary>
@@ -2383,7 +2383,10 @@ namespace System.Management.Automation
             // PipelineStoppedException should not get added to $Error
             // 2008/06/25 - narrieta: ExistNestedPromptException should not be added to $error either
             // 2019/10/18 - StopUpstreamCommandsException should not be added either
-            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException) && !(e is StopUpstreamCommandsException))
+            if (e is not HaltCommandException
+                && e is not PipelineStoppedException
+                && e is not ExitNestedPromptException
+                && e is not StopUpstreamCommandsException)
             {
                 try
                 {
@@ -2841,20 +2844,20 @@ namespace System.Management.Automation
                 }
 
                 // No trace of the error in the 'Ignore' case
-                if (ActionPreference.Ignore == preference)
+                if (preference == ActionPreference.Ignore)
                 {
                     return; // do not write or record to output pipe
                 }
 
                 // 2004/05/26-JonN
                 // The object is not written in the SilentlyContinue case
-                if (ActionPreference.SilentlyContinue == preference)
+                if (preference == ActionPreference.SilentlyContinue)
                 {
                     AppendErrorToVariables(errorRecord);
                     return; // do not write to output pipe
                 }
 
-                if (ContinueStatus.YesToAll == lastErrorContinueStatus)
+                if (lastErrorContinueStatus == ContinueStatus.YesToAll)
                 {
                     preference = ActionPreference.Continue;
                 }
@@ -3023,7 +3026,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isVerbosePreferenceCached = false;
+        private readonly bool _isVerbosePreferenceCached = false;
         private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
@@ -3072,7 +3075,7 @@ namespace System.Management.Automation
 
         internal bool IsWarningActionSet { get; private set; } = false;
 
-        private bool _isWarningPreferenceCached = false;
+        private readonly bool _isWarningPreferenceCached = false;
         private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.
@@ -3381,7 +3384,7 @@ namespace System.Management.Automation
             No,
             YesToAll,
             NoToAll
-        };
+        }
 
         internal ContinueStatus lastShouldProcessContinueStatus = ContinueStatus.Yes;
         internal ContinueStatus lastErrorContinueStatus = ContinueStatus.Yes;
@@ -3681,7 +3684,7 @@ namespace System.Management.Automation
                     CBhost.EnterNestedPrompt(_thisCommand);
                     // continue loop
                 }
-                else if (-1 == response)
+                else if (response == -1)
                 {
                     ActionPreferenceStopException e =
                         new ActionPreferenceStopException(

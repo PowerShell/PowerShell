@@ -93,7 +93,7 @@ namespace System.Management.Automation.Language
             if (baseValue != null && baseValue.GetType() == typeof(object[]))
             {
                 var effectiveArgType = Adapter.EffectiveArgumentType(obj.Value);
-                var methodInfo = !(effectiveArgType == typeof(object[]))
+                var methodInfo = effectiveArgType != typeof(object[])
                     ? CachedReflectionInfo.PSInvokeMemberBinder_IsHomogenousArray.MakeGenericMethod(effectiveArgType.GetElementType())
                     : CachedReflectionInfo.PSInvokeMemberBinder_IsHeterogeneousArray;
 
@@ -737,7 +737,11 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !Marshal.IsComObject(obj))
+            if (obj is not PSObject
+                && obj is not IEnumerable
+                && obj is not IEnumerator
+                && obj is not DataTable
+                && !Marshal.IsComObject(obj))
             {
                 return null;
             }
@@ -885,7 +889,7 @@ namespace System.Management.Automation.Language
                     restrictions)).WriteToDebugLog(this);
             }
 
-            bool needsToDispose = !(PSObject.Base(target.Value) is IEnumerator);
+            bool needsToDispose = PSObject.Base(target.Value) is not IEnumerator;
             return (new DynamicMetaObject(
                 Expression.Call(CachedReflectionInfo.EnumerableOps_WriteEnumerableToPipe,
                                 enumerable.Expression,
@@ -1136,7 +1140,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(pipelineResult != null, "Pipeline result is always an IList");
 
             var ilistExpr = target.Expression;
-            if (!(typeof(IList) == ilistExpr.Type))
+            if (typeof(IList) != ilistExpr.Type)
             {
                 ilistExpr = Expression.Convert(ilistExpr, typeof(IList));
             }
@@ -1198,7 +1202,7 @@ namespace System.Management.Automation.Language
         {
             PSInvokeDynamicMemberBinder result;
 
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst?.Type;
             lock (s_binderCache)
             {
                 var key = Tuple.Create(callInfo, constraints, propertySetter, @static, classScope);
@@ -1292,7 +1296,7 @@ namespace System.Management.Automation.Language
             PSGetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope?.Type;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -1402,7 +1406,7 @@ namespace System.Management.Automation.Language
             PSSetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope?.Type;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -1722,7 +1726,8 @@ namespace System.Management.Automation.Language
                 {
                     var members = attributeType.GetMember(name, MemberTypes.Field | MemberTypes.Property,
                         BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                    if (members.Length != 1 || !(members[0] is PropertyInfo || members[0] is FieldInfo))
+                    if (members.Length != 1
+                        || (members[0] is not PropertyInfo && members[0] is not FieldInfo))
                     {
                         return target.ThrowRuntimeError(args, BindingRestrictions.Empty, "PropertyNotFoundForType",
                                                         ParserStrings.PropertyNotFoundForType, Expression.Constant(name),
@@ -2011,7 +2016,7 @@ namespace System.Management.Automation.Language
 
         private static object ObjectRule(CallSite site, object obj)
         {
-            if (!(obj is ValueType) && !(obj is PSObject)) { return obj; }
+            if (obj is not ValueType && obj is not PSObject) { return obj; }
 
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
@@ -2651,7 +2656,7 @@ namespace System.Management.Automation.Language
                 return new DynamicMetaObject(arg.Expression.Cast(typeof(object)), target.CombineRestrictions(arg));
             }
 
-            if (target.LimitType.IsNumericOrPrimitive() && !(target.LimitType == typeof(char)))
+            if (target.LimitType.IsNumericOrPrimitive() && target.LimitType != typeof(char))
             {
                 var numericArg = GetArgAsNumericOrPrimitive(arg, target.LimitType);
                 if (numericArg != null)
@@ -3075,7 +3080,7 @@ namespace System.Management.Automation.Language
                 var targetExpr = target.Expression.Cast(typeof(string));
 
                 // Doing a string comparison no matter what.
-                var argExpr = !(arg.LimitType == typeof(string))
+                var argExpr = arg.LimitType != typeof(string)
                                   ? DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
                                                               arg.Expression, ExpressionCache.GetExecutionContextFromTLS)
                                   : arg.Expression.Cast(typeof(string));
@@ -3253,7 +3258,7 @@ namespace System.Management.Automation.Language
                 var targetExpr = target.Expression.Cast(typeof(string));
 
                 // Doing a string comparison no matter what.
-                var argExpr = !(arg.LimitType == typeof(string))
+                var argExpr = arg.LimitType != typeof(string)
                                   ? DynamicExpression.Dynamic(PSToStringBinder.Get(), typeof(string),
                                                               arg.Expression, ExpressionCache.GetExecutionContextFromTLS)
                                   : arg.Expression.Cast(typeof(string));
@@ -3811,7 +3816,7 @@ namespace System.Management.Automation.Language
                                               target.Expression.Cast(typeof(object)),
                                               Expression.Constant(toType, typeof(Type)));
 
-            if (!(binder.ReturnType == typeof(void)))
+            if (binder.ReturnType != typeof(void))
             {
                 expr = Expression.Block(expr, Expression.Default(binder.ReturnType));
             }
@@ -3836,7 +3841,7 @@ namespace System.Management.Automation.Language
             var baseObject = PSObject.Base(argument.Value);
 
             // Source value cannot be null or AutomationNull, and it cannot be a pure PSObject.
-            if (baseObject != null && !(baseObject is PSObject))
+            if (baseObject != null && baseObject is not PSObject)
             {
                 Type fromType = baseObject.GetType();
                 ConversionRank rank = ConversionRank.None;
@@ -4673,7 +4678,9 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (paramLength == 2 && setterParams[0].ParameterType == typeof(int) && !(target.Value is IDictionary))
+            if (paramLength == 2
+                && setterParams[0].ParameterType == typeof(int)
+                && target.Value is not IDictionary)
             {
                 // PowerShell supports negative indexing for some types (specifically, those with a single
                 // int parameter to the indexer, and also have either a Length or Count property.)  For
@@ -5064,7 +5071,7 @@ namespace System.Management.Automation.Language
 
         public static PSGetMemberBinder Get(string memberName, TypeDefinitionAst classScope, bool @static)
         {
-            return Get(memberName, classScope != null ? classScope.Type : null, @static, false);
+            return Get(memberName, classScope?.Type, @static, false);
         }
 
         public static PSGetMemberBinder Get(string memberName, Type classScope, bool @static)
@@ -5622,7 +5629,7 @@ namespace System.Management.Automation.Language
             PSMemberInfo memberInfo = null;
             ConsolidatedString typenames = null;
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var typeTable = context != null ? context.TypeTable : null;
+            var typeTable = context?.TypeTable;
 
             if (hasTypeTableMember)
             {
@@ -5835,7 +5842,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             if (memberInfo == null)
             {
                 memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
@@ -5874,7 +5881,7 @@ namespace System.Management.Automation.Language
         internal static TypeTable GetTypeTableFromTLS()
         {
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            return executionContext != null ? executionContext.TypeTable : null;
+            return executionContext?.TypeTable;
         }
 
         internal static bool TryGetInstanceMember(object value, string memberName, out PSMemberInfo memberInfo)
@@ -5957,7 +5964,7 @@ namespace System.Management.Automation.Language
 
         public static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
         {
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst?.Type;
             return Get(memberName, classScope, @static);
         }
 
@@ -6439,7 +6446,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+                var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
                 if (memberInfo == null)
                 {
                     memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
@@ -6764,7 +6771,7 @@ namespace System.Management.Automation.Language
                     // If we get here, then the target value should have 'isDeserialized == false', otherwise we cannot get a .NET methodInfo
                     // from _getMemberBinder.GetPSMemberInfo(). This is because when 'isDeserialized' is true, we use the PSObject to find the
                     // corresponding Adapter -- PSObjectAdapter, which cannot be optimized.
-                    Diagnostics.Assert(psObj.IsDeserialized == false,
+                    Diagnostics.Assert(!psObj.IsDeserialized,
                         "isDeserialized should be false, because if not, we cannot get a .NET method/parameterizedProperty from GetPSMemberInfo");
 
                     restrictions = restrictions.Merge(BindingRestrictions.GetExpressionRestriction(
@@ -7394,7 +7401,7 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, methodName) as PSMethodInfo;
             if (methodInfo == null && adapterSet.DotNetAdapter != null)
             {
@@ -7439,7 +7446,7 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedSetMember(object obj, string methodName, object[] args, object valueToSet)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSParameterizedProperty>(obj, methodName);
             if (methodInfo == null && adapterSet.DotNetAdapter != null)
             {

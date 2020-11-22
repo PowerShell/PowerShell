@@ -217,7 +217,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _fullyQualifiedWarningId;
+        private readonly string _fullyQualifiedWarningId;
     }
 
     /// <summary>

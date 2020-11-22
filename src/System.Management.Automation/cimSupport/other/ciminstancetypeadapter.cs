@@ -285,8 +285,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override Collection<string> GetTypeNameHierarchy(object baseObject)
         {
-            var cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (!(baseObject is CimInstance cimInstance))
             {
                 throw new ArgumentNullException(nameof(baseObject));
             }
@@ -362,13 +361,12 @@ namespace Microsoft.PowerShell.Cim
                 return false;
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty == null)
+            if (!(adaptedProperty.Tag is CimProperty cimProperty))
             {
                 return false;
             }
 
-            bool isReadOnly = (CimFlags.ReadOnly == (cimProperty.Flags & CimFlags.ReadOnly));
+            bool isReadOnly = ((cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly);
             bool isSettable = !isReadOnly;
             return isSettable;
         }

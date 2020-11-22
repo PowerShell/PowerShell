@@ -1,12 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -32,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for BasicHtmlWebResponseObject.
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
         public BasicHtmlWebResponseObject(HttpResponseMessage response)
@@ -40,7 +38,8 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Constructor for HtmlWebResponseObject with memory stream.
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>

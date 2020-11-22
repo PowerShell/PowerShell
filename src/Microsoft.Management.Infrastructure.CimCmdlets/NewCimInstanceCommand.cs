@@ -397,7 +397,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimNewCimInstance CreateOperationAgent()
         {
-            CimNewCimInstance cimNewCimInstance = new CimNewCimInstance();
+            CimNewCimInstance cimNewCimInstance = new();
             this.AsyncOperation = cimNewCimInstance;
             return cimNewCimInstance;
         }
@@ -437,7 +437,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameClassName, new HashSet<ParameterDefinitionEntry> {
@@ -500,7 +500,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.ClassNameSessionSet, new ParameterSetEntry(2)     },
             {   CimBaseCommand.ClassNameComputerSet, new ParameterSetEntry(1, true)     },

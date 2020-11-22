@@ -30,6 +30,7 @@ namespace System.Management.Automation.Language
         }
 
         public TypeDefinitionAst Type { get; set; }
+
         public List<string> ExternalNamespaces { get; set; }
 
         public bool IsAmbiguous()

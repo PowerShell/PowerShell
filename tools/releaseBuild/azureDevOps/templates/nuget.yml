@@ -20,6 +20,8 @@ jobs:
     linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
+  - checkout: self
+    clean: true
 
   - powershell: |
       $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
@@ -90,6 +92,7 @@ jobs:
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+      Find-Dotnet
       New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
 
@@ -102,7 +105,7 @@ jobs:
   - powershell: |
       Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-
+      Find-Dotnet
       # Create unified package first
       New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
 

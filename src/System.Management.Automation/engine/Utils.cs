@@ -49,7 +49,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out byte b)
         {
-            if (value < byte.MinValue || byte.MaxValue < value)
+            if (value < byte.MinValue || value > byte.MaxValue)
             {
                 b = 0;
                 return false;
@@ -61,7 +61,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out sbyte sb)
         {
-            if (value < sbyte.MinValue || sbyte.MaxValue < value)
+            if (value < sbyte.MinValue || value > sbyte.MaxValue)
             {
                 sb = 0;
                 return false;
@@ -73,7 +73,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out short s)
         {
-            if (value < short.MinValue || short.MaxValue < value)
+            if (value < short.MinValue || value > short.MaxValue)
             {
                 s = 0;
                 return false;
@@ -85,7 +85,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out ushort us)
         {
-            if (value < ushort.MinValue || ushort.MaxValue < value)
+            if (value < ushort.MinValue || value > ushort.MaxValue)
             {
                 us = 0;
                 return false;
@@ -97,7 +97,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out int i)
         {
-            if (value < int.MinValue || int.MaxValue < value)
+            if (value < int.MinValue || value > int.MaxValue)
             {
                 i = 0;
                 return false;
@@ -109,7 +109,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out uint u)
         {
-            if (value < uint.MinValue || uint.MaxValue < value)
+            if (value < uint.MinValue || value > uint.MaxValue)
             {
                 u = 0;
                 return false;
@@ -121,7 +121,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out long l)
         {
-            if (value < long.MinValue || long.MaxValue < value)
+            if (value < long.MinValue || value > long.MaxValue)
             {
                 l = 0;
                 return false;
@@ -133,7 +133,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out ulong ul)
         {
-            if (value < ulong.MinValue || ulong.MaxValue < value)
+            if (value < ulong.MinValue || value > ulong.MaxValue)
             {
                 ul = 0;
                 return false;
@@ -1258,14 +1258,14 @@ namespace System.Management.Automation
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX
-            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL",
+            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL", "CONIN$", "CONOUT$",
                                              "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
                                              "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
             string compareName = Path.GetFileName(destinationPath);
             string noExtensionCompareName = Path.GetFileNameWithoutExtension(destinationPath);
 
-            if (((compareName.Length < 3) || (compareName.Length > 6)) &&
-                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 6)))
+            if (((compareName.Length < 3) || (compareName.Length > 7)) &&
+                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 7)))
             {
                 return false;
             }
@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
                 return Encoding.Unicode;
             }
 
-            return Encoding.ASCII;
+            return utf8NoBom;
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
@@ -1674,8 +1674,7 @@ namespace System.Management.Automation
                 try
                 {
                     var scriptBlock = ScriptBlock.Create(command);
-                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                    if (scriptBlockAst == null)
+                    if (!(scriptBlock.Ast is ScriptBlockAst scriptBlockAst))
                     {
                         return false;
                     }
@@ -2032,11 +2031,7 @@ namespace System.Management.Automation
 
     internal class ImplicitRemotingBatchingNotSupportedException : Exception
     {
-        internal string ErrorId
-        {
-            get;
-            private set;
-        }
+        internal string ErrorId { get; }
 
         internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(
             ParserStrings.ImplicitRemotingPipelineBatchingNotSupported)
@@ -2238,7 +2233,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal sealed class ReadOnlyBag<T> : IEnumerable
     {
-        private HashSet<T> _hashset;
+        private readonly HashSet<T> _hashset;
 
         /// <summary>
         /// Constructor for the readonly Hashset.

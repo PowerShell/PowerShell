@@ -204,7 +204,7 @@ namespace System.Management.Automation.Interpreter
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex)
+        protected IndexedBranchInstruction(int labelIndex)
         {
             _labelIndex = labelIndex;
         }
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Interpreter
     /// </summary>
     internal sealed class LeaveExceptionHandlerInstruction : IndexedBranchInstruction
     {
-        private static LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
+        private static readonly LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
 
         private readonly bool _hasValue;
 

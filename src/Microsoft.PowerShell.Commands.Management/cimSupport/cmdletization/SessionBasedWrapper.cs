@@ -151,14 +151,15 @@ namespace Microsoft.PowerShell.Cmdletization
                     discardNonPipelineResults,
                     actionAgainstResults == null
                         ? (Action<PSObject>)null
-                        : delegate (PSObject pso)
-                              {
-                                  var objectInstance =
-                                      (TObjectInstance)
-                                      LanguagePrimitives.ConvertTo(pso, typeof(TObjectInstance),
-                                                                   CultureInfo.InvariantCulture);
-                                  actionAgainstResults(sessionForJob, objectInstance);
-                              });
+                        : ((PSObject pso) =>
+                        {
+                            var objectInstance =
+                                (TObjectInstance)LanguagePrimitives.ConvertTo(
+                                    pso,
+                                    typeof(TObjectInstance),
+                                    CultureInfo.InvariantCulture);
+                            actionAgainstResults(sessionForJob, objectInstance);
+                        }));
             }
 
             return queryJob;
@@ -239,21 +240,18 @@ namespace Microsoft.PowerShell.Cmdletization
         private void HandleJobOutput(Job job, TSession sessionForJob, bool discardNonPipelineResults, Action<PSObject> outputAction)
         {
             Action<PSObject> processOutput =
-                    delegate (PSObject pso)
+                    (PSObject pso) =>
                     {
                         if (pso == null)
                         {
                             return;
                         }
 
-                        if (outputAction != null)
-                        {
-                            outputAction(pso);
-                        }
+                        outputAction?.Invoke(pso);
                     };
 
             job.Output.DataAdded +=
-                    delegate (object sender, DataAddedEventArgs eventArgs)
+                    (object sender, DataAddedEventArgs eventArgs) =>
                     {
                         var dataCollection = (PSDataCollection<PSObject>)sender;
 
@@ -303,7 +301,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private static void DiscardJobOutputs<T>(PSDataCollection<T> psDataCollection)
         {
             psDataCollection.DataAdded +=
-                    delegate (object sender, DataAddedEventArgs e)
+                    (object sender, DataAddedEventArgs e) =>
                     {
                         var localDataCollection = (PSDataCollection<T>)sender;
                         localDataCollection.Clear();
@@ -327,37 +325,37 @@ namespace Microsoft.PowerShell.Cmdletization
 
         private static void DiscardJobOutputs(Job job, JobOutputs jobOutputsToDiscard)
         {
-            if (JobOutputs.Output == (jobOutputsToDiscard & JobOutputs.Output))
+            if ((jobOutputsToDiscard & JobOutputs.Output) == JobOutputs.Output)
             {
                 DiscardJobOutputs(job.Output);
             }
 
-            if (JobOutputs.Error == (jobOutputsToDiscard & JobOutputs.Error))
+            if ((jobOutputsToDiscard & JobOutputs.Error) == JobOutputs.Error)
             {
                 DiscardJobOutputs(job.Error);
             }
 
-            if (JobOutputs.Warning == (jobOutputsToDiscard & JobOutputs.Warning))
+            if ((jobOutputsToDiscard & JobOutputs.Warning) == JobOutputs.Warning)
             {
                 DiscardJobOutputs(job.Warning);
             }
 
-            if (JobOutputs.Verbose == (jobOutputsToDiscard & JobOutputs.Verbose))
+            if ((jobOutputsToDiscard & JobOutputs.Verbose) == JobOutputs.Verbose)
             {
                 DiscardJobOutputs(job.Verbose);
             }
 
-            if (JobOutputs.Debug == (jobOutputsToDiscard & JobOutputs.Debug))
+            if ((jobOutputsToDiscard & JobOutputs.Debug) == JobOutputs.Debug)
             {
                 DiscardJobOutputs(job.Debug);
             }
 
-            if (JobOutputs.Progress == (jobOutputsToDiscard & JobOutputs.Progress))
+            if ((jobOutputsToDiscard & JobOutputs.Progress) == JobOutputs.Progress)
             {
                 DiscardJobOutputs(job.Progress);
             }
 
-            if (JobOutputs.Results == (jobOutputsToDiscard & JobOutputs.Results))
+            if ((jobOutputsToDiscard & JobOutputs.Results) == JobOutputs.Results)
             {
                 DiscardJobOutputs(job.Results);
             }
@@ -412,7 +410,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 StartableJob queryJob = this.DoCreateQueryJob(
                     sessionForJob,
                     query,
-                    delegate (TSession sessionForMethodInvocationJob, TObjectInstance objectInstance)
+                    (TSession sessionForMethodInvocationJob, TObjectInstance objectInstance) =>
                     {
                         StartableJob methodInvocationJob = this.DoCreateInstanceMethodInvocationJob(
                             sessionForMethodInvocationJob,

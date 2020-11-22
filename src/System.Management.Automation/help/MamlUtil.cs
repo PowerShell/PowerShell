@@ -206,7 +206,7 @@ namespace System.Management.Automation
                     return propertyInfo;
                 }
 
-                if (propertyInfo == null || !(propertyInfo.Value is PSObject))
+                if (propertyInfo == null || propertyInfo.Value is not PSObject)
                 {
                     return null;
                 }
@@ -317,7 +317,7 @@ namespace System.Management.Automation
                 }
 
                 // If we are not on the last path element, let's make sure we can extend the path.
-                if (propertyInfo.Value == null || !(propertyInfo.Value is PSObject))
+                if (propertyInfo.Value == null || propertyInfo.Value is not PSObject)
                 {
                     propertyInfo.Value = new PSObject();
                 }

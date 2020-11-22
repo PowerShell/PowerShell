@@ -1450,7 +1450,7 @@ namespace System.Management.Automation
             Dbg.Assert(input != null, "Caller should verify that input != null");
 
             input.Sort(
-                delegate (T x, T y)
+                (T x, T y) =>
                 {
                     string kx = keyGetter(x);
                     string ky = keyGetter(y);
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, (FunctionInfo ci) => ci.Name);
             }
 
             if (cmdletPatterns != null)
@@ -1582,7 +1582,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate (CmdletInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, (CmdletInfo ci) => ci.Name);
             }
 
             if (variablePatterns != null)
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, (PSVariable v) => v.Name);
             }
 
             if (aliasPatterns != null)
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, (AliasInfo ci) => ci.Name);
             }
         }
 

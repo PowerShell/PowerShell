@@ -185,7 +185,6 @@ namespace Microsoft.PowerShell
                     // We can reuse this value later to prevent needing to call a .NET API
                     // to generate our exec invocation.
 
-
                     // We don't care about argc's value, since argv[0] must always exist.
                     // Skip over argc, but remember where exec_path is for later
                     executablePathPtr = IntPtr.Add(procargs, sizeof(int));
@@ -502,7 +501,7 @@ namespace Microsoft.PowerShell
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
+        private static extern unsafe int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
 #endif
     }
 }

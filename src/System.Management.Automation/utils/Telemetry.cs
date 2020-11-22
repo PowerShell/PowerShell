@@ -79,13 +79,13 @@ namespace Microsoft.PowerShell.Telemetry
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
 
         // Telemetry client to be reused when we start sending more telemetry
-        private static TelemetryClient s_telemetryClient { get; set; }
+        private static TelemetryClient s_telemetryClient { get; }
 
         // the unique identifier for the user, when we start we
-        private static string s_uniqueUserIdentifier { get; set; }
+        private static string s_uniqueUserIdentifier { get; }
 
         // the session identifier
-        private static string s_sessionId { get; set; }
+        private static string s_sessionId { get; }
 
         // private semaphore to determine whether we sent the startup telemetry event
         private static int s_startupEventSent = 0;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.
         /// If it's not in the list (initialized in the static constructor), then we report anonymous.
-        private static HashSet<string> s_knownModules;
+        private static readonly HashSet<string> s_knownModules;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
         public static bool CanSendTelemetry { get; private set; }
@@ -389,7 +389,11 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerShell.Management",
                         "Microsoft.PowerShell.ODataUtils",
                         "Microsoft.PowerShell.Operation.Validation",
+                        "Microsoft.PowerShell.RemotingTools",
+                        "Microsoft.PowerShell.SecretManagement",
+                        "Microsoft.PowerShell.SecretStore",
                         "Microsoft.PowerShell.Security",
+                        "Microsoft.PowerShell.TextUtility",
                         "Microsoft.PowerShell.Utility",
                         "Microsoft.SharePoint.Powershell",
                         "Microsoft.SystemCenter.ServiceManagementAutomation",

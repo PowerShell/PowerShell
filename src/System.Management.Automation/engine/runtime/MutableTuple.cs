@@ -149,6 +149,7 @@ namespace System.Management.Automation
         }
 
         protected abstract object GetValueImpl(int index);
+
         protected abstract void SetValueImpl(int index, object value);
 
         /// <summary>
@@ -511,7 +512,7 @@ namespace System.Management.Automation
             int res = 1;
             while (value > res)
             {
-                res = res << 1;
+                res <<= 1;
             }
 
             return res;

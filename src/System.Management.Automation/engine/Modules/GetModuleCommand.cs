@@ -165,8 +165,8 @@ namespace Microsoft.PowerShell.Commands
                     "Get-Module");
                 foreach (
                     PSObject outputObject in
-                        RemoteDiscoveryHelper.InvokePowerShell(powerShell, this.CancellationToken, this,
-                                                               errorMessageTemplate))
+                        RemoteDiscoveryHelper.InvokePowerShell(powerShell, this, errorMessageTemplate,
+                                                               this.CancellationToken))
                 {
                     PSModuleInfo moduleInfo = RemoteDiscoveryHelper.RehydratePSModuleInfo(outputObject);
                     yield return moduleInfo;

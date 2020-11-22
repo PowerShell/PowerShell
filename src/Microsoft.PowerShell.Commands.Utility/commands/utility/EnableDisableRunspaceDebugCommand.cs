@@ -26,11 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// debugger is currently attached.  The script or command will remain stopped until
         /// a debugger is attached to debug the breakpoint.
         /// </summary>
-        public bool Enabled
-        {
-            get;
-            private set;
-        }
+        public bool Enabled { get; }
 
         /// <summary>
         /// When true this property will cause any running command or script in the Runspace
@@ -38,36 +34,24 @@ namespace Microsoft.PowerShell.Commands
         /// script or command will remain stopped until a debugger is attached to debug the
         /// current stop point.
         /// </summary>
-        public bool BreakAll
-        {
-            get;
-            private set;
-        }
+        public bool BreakAll { get; }
 
         /// <summary>
         /// Name of runspace for which the options apply.
         /// </summary>
-        public string RunspaceName
-        {
-            get;
-            private set;
-        }
+        public string RunspaceName { get; }
 
         /// <summary>
         /// Local Id of runspace for which the options apply.
         /// </summary>
-        public int RunspaceId
-        {
-            get;
-            private set;
-        }
+        public int RunspaceId { get; }
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PSRunspaceDebug"/> class.
         /// </summary>
         /// <param name="enabled">Enable debugger option.</param>
         /// <param name="breakAll">BreakAll option.</param>

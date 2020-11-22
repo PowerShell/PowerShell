@@ -1,4 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Analyzers.props" />
 
   <!--
       The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
@@ -97,7 +98,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
     <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -152,5 +153,13 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <!-- This is required to be portable to Coverlet tool !-->
     <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 </Project>

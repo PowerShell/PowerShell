@@ -31,7 +31,9 @@ namespace System.Management.Automation
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
 
@@ -49,7 +51,7 @@ namespace System.Management.Automation
         private readonly string _initialLocation;
 
         // Script to run after a RunspacePool/Runspace is created in this session.
-        private ConfigurationDataFromXML _configData;
+        private readonly ConfigurationDataFromXML _configData;
 
         // application private data to send back to the client in when we get into "opened" state
         private PSPrimitiveDictionary _applicationPrivateData;
@@ -61,35 +63,35 @@ namespace System.Management.Automation
         // with the client
 
         // powershell's associated with this runspace pool
-        private Dictionary<Guid, ServerPowerShellDriver> _associatedShells
+        private readonly Dictionary<Guid, ServerPowerShellDriver> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDriver>();
 
         // remote host associated with this runspacepool
-        private ServerDriverRemoteHost _remoteHost;
+        private readonly ServerDriverRemoteHost _remoteHost;
 
         private bool _isClosed;
 
         // server capability reported to the client during negotiation (not the actual capability)
-        private RemoteSessionCapability _serverCapability;
+        private readonly RemoteSessionCapability _serverCapability;
         private Runspace _rsToUseForSteppablePipeline;
 
         // steppable pipeline event subscribers exist per-session
-        private ServerSteppablePipelineSubscriber _eventSubscriber = new ServerSteppablePipelineSubscriber();
+        private readonly ServerSteppablePipelineSubscriber _eventSubscriber = new ServerSteppablePipelineSubscriber();
         private PSDataCollection<object> _inputCollection; // PowerShell driver input collection
 
         // Object to invoke nested PowerShell drivers on single pipeline worker thread.
-        private PowerShellDriverInvoker _driverNestedInvoker;
+        private readonly PowerShellDriverInvoker _driverNestedInvoker;
 
         // Remote wrapper for script debugger.
         private ServerRemoteDebugger _serverRemoteDebugger;
 
         // Version of PowerShell client.
-        private Version _clientPSVersion;
+        private readonly Version _clientPSVersion;
 
         // Optional endpoint configuration name.
         // Used in OutOfProc scenarios that do not support PSSession endpoint configuration.
         // Results in a configured remote runspace pushed onto driver host.
-        private string _configurationName;
+        private readonly string _configurationName;
 
         /// <summary>
         /// Event that get raised when the RunspacePool is closed.
@@ -831,7 +833,7 @@ namespace System.Management.Automation
                 {
                     if (_driverNestedInvoker != null && _driverNestedInvoker.IsActive)
                     {
-                        if (_driverNestedInvoker.IsAvailable == false)
+                        if (!_driverNestedInvoker.IsAvailable)
                         {
                             // A nested command is already running.
                             throw new PSInvalidOperationException(
@@ -943,7 +945,7 @@ namespace System.Management.Automation
         }
 
         private bool? _initialSessionStateIncludesGetCommandWithListImportedSwitch;
-        private object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
+        private readonly object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
 
         private bool DoesInitialSessionStateIncludeGetCommandWithListImportedSwitch()
         {
@@ -1246,7 +1248,7 @@ namespace System.Management.Automation
             /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
-        };
+        }
 
         private class DebuggerCommandArgument
         {
@@ -1587,7 +1589,7 @@ namespace System.Management.Automation
         {
             #region Private Members
 
-            private ConcurrentStack<InvokePump> _invokePumpStack;
+            private readonly ConcurrentStack<InvokePump> _invokePumpStack;
 
             #endregion
 
@@ -1690,9 +1692,9 @@ namespace System.Management.Automation
             /// </summary>
             private sealed class InvokePump
             {
-                private Queue<ServerPowerShellDriver> _driverInvokeQueue;
-                private ManualResetEvent _processDrivers;
-                private object _syncObject;
+                private readonly Queue<ServerPowerShellDriver> _driverInvokeQueue;
+                private readonly ManualResetEvent _processDrivers;
+                private readonly object _syncObject;
                 private bool _stopPump;
                 private bool _isDisposed;
 
@@ -1802,9 +1804,9 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private IRSPDriverInvoke _driverInvoker;
-        private Runspace _runspace;
-        private ObjectRef<Debugger> _wrappedDebugger;
+        private readonly IRSPDriverInvoke _driverInvoker;
+        private readonly Runspace _runspace;
+        private readonly ObjectRef<Debugger> _wrappedDebugger;
         private bool _inDebugMode;
         private DebuggerStopEventArgs _debuggerStopEventArgs;
 
@@ -2248,10 +2250,10 @@ namespace System.Management.Automation
         private sealed class ThreadCommandProcessing
         {
             // Members
-            private ManualResetEventSlim _commandCompleteEvent;
-            private Debugger _wrappedDebugger;
-            private PSCommand _command;
-            private PSDataCollection<PSObject> _output;
+            private readonly ManualResetEventSlim _commandCompleteEvent;
+            private readonly Debugger _wrappedDebugger;
+            private readonly PSCommand _command;
+            private readonly PSDataCollection<PSObject> _output;
             private DebuggerCommandResults _results;
             private Exception _exception;
 #if !UNIX

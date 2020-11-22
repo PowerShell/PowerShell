@@ -9,9 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Management.Automation;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
@@ -191,7 +189,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock the log file.
         /// </summary>
-        internal static readonly object logLock = new object();
+        internal static readonly object logLock = new();
 
         #endregion
 
@@ -216,7 +214,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region runtime methods
         internal static string GetSourceCodeInformation(bool withFileName, int depth)
         {
-            StackTrace trace = new StackTrace();
+            StackTrace trace = new();
             StackFrame frame = trace.GetFrame(depth);
             // if (withFileName)
             // {
@@ -357,7 +355,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     sourceInformation = string.Format(
                         CultureInfo.InvariantCulture,
                         "Thread {0}#{1}:{2}:{3} {4}",
-                        Thread.CurrentThread.ManagedThreadId,
+                        Environment.CurrentManagedThreadId,
                         DateTime.Now.Hour,
                         DateTime.Now.Minute,
                         DateTime.Now.Second,
@@ -366,8 +364,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 lock (logLock)
                 {
-                    using (FileStream fs = new FileStream(logFile, FileMode.OpenOrCreate))
-                    using (StreamWriter writer = new StreamWriter(fs))
+                    using (FileStream fs = new(logFile, FileMode.OpenOrCreate))
+                    using (StreamWriter writer = new(fs))
                     {
                         writer.WriteLineAsync(spaces[indent] + sourceInformation + @"        " + message);
                     }
@@ -425,7 +423,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 string trimed = value.Trim();
                 // The first character should be contained in set: [A-Za-z_]
                 // Inner characters should be contained in set: [A-Za-z0-9_]
-                Regex regex = new Regex(@"^[a-zA-Z_][a-zA-Z0-9_]*\z");
+                Regex regex = new(@"^[a-zA-Z_][a-zA-Z0-9_]*\z");
                 if (regex.IsMatch(trimed))
                 {
                     DebugHelper.WriteLogEx("A valid name: {0}={1}", 0, parameterName, value);

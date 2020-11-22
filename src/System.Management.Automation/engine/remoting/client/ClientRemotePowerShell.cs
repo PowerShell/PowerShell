@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Tracer
 
         [TraceSourceAttribute("CRPS", "ClientRemotePowerShell")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
 
         #endregion Tracer
 
@@ -645,7 +645,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
                     RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
-                    Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
+                    Exception closeReason = sessionEventArgs?.SessionStateInfo.Reason;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
 
@@ -929,7 +929,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// datastructure handler. We cannot send the state back to the upper layers until
         /// close is completed from the datastructure/transport layer.
         /// </summary>
-        private Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
+        private readonly Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
 
         private PSConnectionRetryStatus _connectionRetryStatus = PSConnectionRetryStatus.None;
 
@@ -977,7 +977,7 @@ namespace System.Management.Automation.Runspaces.Internal
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// PSConnectionRetryStatusEventArgs.

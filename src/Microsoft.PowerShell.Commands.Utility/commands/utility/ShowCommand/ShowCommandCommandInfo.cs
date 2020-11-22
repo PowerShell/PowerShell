@@ -14,7 +14,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandCommandInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandCommandInfo class based on a CommandInfo object.
+        /// Initializes a new instance of the <see cref="ShowCommandCommandInfo"/> class
+        /// with the specified <see cref="CommandInfo"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -62,7 +63,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandCommandInfo class based on a PSObject object.
+        /// Initializes a new instance of the <see cref="ShowCommandCommandInfo"/> class
+        /// with the specified <see cref="PSObject"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -116,31 +118,31 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// A string representing module the command belongs to.
         /// </summary>
-        public string ModuleName { get; private set; }
+        public string ModuleName { get; }
 
         /// <summary>
         /// A reference to the module the command came from.
         /// </summary>
-        public ShowCommandModuleInfo Module { get; private set; }
+        public ShowCommandModuleInfo Module { get; }
 
         /// <summary>
         /// An enumeration of the command types this command belongs to.
         /// </summary>
-        public CommandTypes CommandType { get; private set; }
+        public CommandTypes CommandType { get; }
 
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public string Definition { get; private set; }
+        public string Definition { get; }
 
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public ICollection<ShowCommandParameterSetInfo> ParameterSets { get; private set; }
+        public ICollection<ShowCommandParameterSetInfo> ParameterSets { get; }
     }
 }

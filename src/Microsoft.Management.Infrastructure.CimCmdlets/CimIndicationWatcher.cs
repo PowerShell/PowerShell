@@ -53,7 +53,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private Exception exception;
+        private readonly Exception exception;
 
         /// <summary>
         /// <para>
@@ -81,7 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Instance;
+                return result?.Instance;
             }
         }
 
@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.MachineId;
+                return result?.MachineId;
             }
         }
 
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Bookmark;
+                return result?.Bookmark;
             }
         }
 
@@ -124,7 +124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// subscription result
         /// </para>
         /// </summary>
-        private CimSubscriptionResult result;
+        private readonly CimSubscriptionResult result;
     }
 
     /// <summary>

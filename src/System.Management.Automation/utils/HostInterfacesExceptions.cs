@@ -101,6 +101,7 @@ namespace System.Management.Automation.Host
             : base(info, context)
         {
         }
+
         #endregion
         #region private
         private void SetDefaultErrorRecord()

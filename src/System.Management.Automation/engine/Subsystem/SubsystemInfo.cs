@@ -20,12 +20,12 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// The kind of a concrete subsystem.
         /// </summary>
-        public SubsystemKind Kind { get; private set; }
+        public SubsystemKind Kind { get; }
 
         /// <summary>
         /// The type of a concrete subsystem.
         /// </summary>
-        public Type SubsystemType { get; private set; }
+        public Type SubsystemType { get; }
 
         /// <summary>
         /// Indicate whether the subsystem allows to unregister an implementation.
@@ -90,6 +90,7 @@ namespace System.Management.Automation.Subsystem
         }
 
         private protected abstract void AddImplementation(ISubsystem rawImpl);
+
         private protected abstract ISubsystem RemoveImplementation(Guid id);
 
         internal void RegisterImplementation(ISubsystem impl)

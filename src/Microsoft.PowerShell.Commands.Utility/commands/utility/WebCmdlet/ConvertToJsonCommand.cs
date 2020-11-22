@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private List<object> _inputObjects = new List<object>();
+        private readonly List<object> _inputObjects = new List<object>();
 
         /// <summary>
         /// Caching the input objects for the command.
@@ -116,9 +116,9 @@ namespace Microsoft.PowerShell.Commands
                     Depth,
                     EnumsAsStrings.IsPresent,
                     Compress.IsPresent,
-                    _cancellationSource.Token,
                     EscapeHandling,
-                    targetCmdlet: this);
+                    targetCmdlet: this,
+                    _cancellationSource.Token);
 
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
                 // in that case, we shouldn't write the null to the output pipe.

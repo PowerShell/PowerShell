@@ -2,11 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-
-using Markdig;
 using Markdig.Helpers;
-using Markdig.Renderers;
 using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender

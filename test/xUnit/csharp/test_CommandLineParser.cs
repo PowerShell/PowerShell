@@ -19,7 +19,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[0]);
+            cpp.Parse(System.Array.Empty<string>());
 
             Assert.False(cpp.AbortStartup);
             Assert.Empty(cpp.Args);
@@ -60,9 +60,9 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[0]);
+            cpp.Parse(System.Array.Empty<string>());
 
-            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(new string[0]));
+            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(System.Array.Empty<string>()));
         }
 
         [Theory]
@@ -969,13 +969,14 @@ namespace PSTests.Parallel
 
         public class TestDataSettingsFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
                 yield return new object[] { "-settingsfile", _fileName };
                 yield return new object[] { "-settings", _fileName };
             }
+
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
@@ -1162,7 +1163,7 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {

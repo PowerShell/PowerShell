@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Management.Automation;
 
 #endregion
 
@@ -57,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private string methodName;
+            private readonly string methodName;
 
             /// <summary>
             /// <para>parameters collection</para>
@@ -70,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            private CimMethodParametersCollection collection;
+            private readonly CimMethodParametersCollection collection;
         }
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             string nameSpace;
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cmdlet.MethodName);
 
             switch (cmdlet.ParameterSetName)
@@ -195,7 +194,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (CimSessionProxy proxy in proxys)
                     {
                         // create context object
-                        CimInvokeCimMethodContext context = new CimInvokeCimMethodContext(
+                        CimInvokeCimMethodContext context = new(
                             nameSpace,
                             cmdlet.MethodName,
                             paramsCollection,
