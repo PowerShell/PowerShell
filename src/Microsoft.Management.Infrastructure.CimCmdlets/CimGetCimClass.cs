@@ -18,9 +18,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimGetCimClassContext"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         /// <param name="methodName"></param>
         /// <param name="propertyName"></param>
@@ -106,9 +103,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimGetCimClass"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         public CimGetCimClass()
             : base()

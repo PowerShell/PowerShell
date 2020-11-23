@@ -30,7 +30,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveCimSessionCommand"/> class.
-        /// Constructor.
         /// </summary>
         public RemoveCimSessionCommand()
             : base(parameters, parameterSets)

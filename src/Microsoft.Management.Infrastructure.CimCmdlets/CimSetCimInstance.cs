@@ -20,9 +20,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSetCimInstanceContext"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theCollection"></param>
@@ -89,9 +86,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSetCimInstance"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         public CimSetCimInstance()
             : base()

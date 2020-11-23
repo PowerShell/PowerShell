@@ -19,7 +19,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimWriteProgress"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="activity">
         ///  Activity identifier of the given activity

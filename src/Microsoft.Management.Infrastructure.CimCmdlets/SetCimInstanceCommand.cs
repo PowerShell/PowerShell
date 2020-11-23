@@ -30,7 +30,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SetCimInstanceCommand"/> class.
-        /// Constructor.
         /// </summary>
         public SetCimInstanceCommand()
             : base(parameters, parameterSets)

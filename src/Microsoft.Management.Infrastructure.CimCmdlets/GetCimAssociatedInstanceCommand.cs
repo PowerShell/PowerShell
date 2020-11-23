@@ -34,7 +34,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetCimAssociatedInstanceCommand"/> class.
-        /// Constructor.
         /// </summary>
         public GetCimAssociatedInstanceCommand()
             : base(parameters, parameterSets)

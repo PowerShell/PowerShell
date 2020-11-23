@@ -265,9 +265,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSessionState"/> class.
-        /// <para>
-        /// The constructor.
-        /// </para>
         /// </summary>
         internal CimSessionState()
         {
@@ -787,7 +784,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSessionBase"/> class.
-        /// The constructor.
         /// </summary>
         public CimSessionBase()
         {
@@ -911,9 +907,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="CimTestCimSessionContext"/> class.
-            /// <para>
-            /// The constructor.
-            /// </para>
             /// </summary>
             /// <param name="theProxy"></param>
             /// <param name="wrapper"></param>
@@ -942,9 +935,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimNewSession"/> class.
-        /// <para>
-        /// The constructor.
-        /// </para>
         /// </summary>
         internal CimNewSession() : base()
         {
@@ -1135,7 +1125,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimGetSession"/> class.
-        /// The constructor.
         /// </summary>
         public CimGetSession() : base()
         {
@@ -1218,7 +1207,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimRemoveSession"/> class.
-        /// Constructor.
         /// </summary>
         public CimRemoveSession() : base()
         {
@@ -1289,7 +1277,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimTestSession"/> class.
-        /// Constructor.
         /// </summary>
         internal CimTestSession()
             : base()

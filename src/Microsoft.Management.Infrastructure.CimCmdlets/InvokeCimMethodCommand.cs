@@ -28,7 +28,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvokeCimMethodCommand"/> class.
-        /// Constructor.
         /// </summary>
         public InvokeCimMethodCommand()
             : base(parameters, parameterSets)

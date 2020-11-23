@@ -46,7 +46,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewCimSessionOptionCommand"/> class.
-        /// Constructor.
         /// </summary>
         public NewCimSessionOptionCommand()
             : base(parameters, parameterSets)

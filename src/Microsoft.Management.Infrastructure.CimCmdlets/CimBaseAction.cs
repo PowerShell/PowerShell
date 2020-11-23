@@ -18,7 +18,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimBaseAction"/> class.
-        /// Constructor method.
         /// </summary>
         protected CimBaseAction()
         {
@@ -71,7 +70,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSyncAction"/> class.
-        /// The constructor.
         /// </summary>
         public CimSyncAction()
         {

@@ -16,7 +16,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimWriteResultObject"/> class.
-        /// Constructor.
         /// </summary>
         public CimWriteResultObject(object result, XOperationContextBase theContext)
         {

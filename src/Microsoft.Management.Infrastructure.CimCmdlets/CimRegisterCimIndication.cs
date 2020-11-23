@@ -59,7 +59,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSubscriptionResultEventArgs"/> class.
-        /// <para>Constructor</para>
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionResultEventArgs(
@@ -94,7 +93,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSubscriptionExceptionEventArgs"/> class.
-        /// <para>Constructor</para>
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionExceptionEventArgs(
@@ -121,9 +119,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimRegisterCimIndication"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         public CimRegisterCimIndication()
             : base()

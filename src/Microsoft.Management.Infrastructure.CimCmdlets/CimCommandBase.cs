@@ -26,7 +26,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterDefinitionEntry"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="parameterSetName"></param>
         /// <param name="mandatory"></param>
@@ -72,7 +71,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         internal ParameterSetEntry(UInt32 mandatoryParameterCount)
@@ -84,7 +82,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="toClone"></param>
         internal ParameterSetEntry(ParameterSetEntry toClone)
@@ -96,7 +93,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         /// <param name="mandatory"></param>
@@ -222,7 +218,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParameterBinder"/> class.
-        /// Constructor.
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="sets"></param>
@@ -573,7 +568,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
-        /// Constructor.
         /// </summary>
         internal CimBaseCommand()
         {
@@ -583,7 +577,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
-        /// Constructor.
         /// </summary>
         internal CimBaseCommand(Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,
             Dictionary<string, ParameterSetEntry> sets)

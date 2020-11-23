@@ -18,9 +18,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimRemoveCimInstanceContext"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theProxy"></param>
@@ -41,9 +38,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CimRemoveCimInstance"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         public CimRemoveCimInstance()
             : base()

@@ -23,7 +23,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetCimSessionCommand"/> class.
-        /// Constructor.
         /// </summary>
         public GetCimSessionCommand()
             : base(parameters, parameterSets)

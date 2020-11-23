@@ -28,9 +28,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="CimInvokeCimMethodContext"/> class.
-            /// <para>
-            /// Constructor
-            /// </para>
             /// </summary>
             /// <param name="theNamespace"></param>
             /// <param name="theCollection"></param>
@@ -75,9 +72,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimInvokeCimMethod"/> class.
-        /// <para>
-        /// Constructor
-        /// </para>
         /// </summary>
         public CimInvokeCimMethod()
             : base()
