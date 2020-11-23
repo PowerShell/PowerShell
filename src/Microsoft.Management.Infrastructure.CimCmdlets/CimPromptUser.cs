@@ -22,6 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimPromptUser : CimSyncAction
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimPromptUser"/> class.
         /// Constructor.
         /// </summary>
         public CimPromptUser(string message,

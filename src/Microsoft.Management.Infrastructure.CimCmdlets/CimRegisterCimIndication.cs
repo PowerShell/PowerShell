@@ -58,6 +58,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly CimSubscriptionResult result;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSubscriptionResultEventArgs"/> class.
         /// <para>Constructor</para>
         /// </summary>
         /// <param name="theResult"></param>
@@ -92,6 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly Exception exception;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSubscriptionExceptionEventArgs"/> class.
         /// <para>Constructor</para>
         /// </summary>
         /// <param name="theResult"></param>
@@ -118,6 +120,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimRegisterCimIndication"/> class.
         /// <para>
         /// Constructor
         /// </para>

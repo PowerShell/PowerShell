@@ -264,6 +264,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionState"/> class.
         /// <para>
         /// The constructor.
         /// </para>
@@ -785,6 +786,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionBase"/> class.
         /// The constructor.
         /// </summary>
         public CimSessionBase()
@@ -908,6 +910,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal class CimTestCimSessionContext : XOperationContextBase
         {
             /// <summary>
+            /// Initializes a new instance of the <see cref="CimTestCimSessionContext"/> class.
             /// <para>
             /// The constructor.
             /// </para>
@@ -938,6 +941,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimNewSession"/> class.
         /// <para>
         /// The constructor.
         /// </para>
@@ -1130,6 +1134,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetSession : CimSessionBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimGetSession"/> class.
         /// The constructor.
         /// </summary>
         public CimGetSession() : base()
@@ -1212,6 +1217,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static readonly string RemoveCimSessionActionName = "Remove CimSession";
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimRemoveSession"/> class.
         /// Constructor.
         /// </summary>
         public CimRemoveSession() : base()
@@ -1282,6 +1288,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimTestSession : CimAsyncOperation
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimTestSession"/> class.
         /// Constructor.
         /// </summary>
         internal CimTestSession()

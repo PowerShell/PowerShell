@@ -18,6 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteProgress : CimBaseAction
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimWriteProgress"/> class.
         /// Constructor.
         /// </summary>
         /// <param name="activity">

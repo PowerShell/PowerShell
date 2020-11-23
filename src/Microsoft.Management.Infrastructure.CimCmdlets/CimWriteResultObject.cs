@@ -15,6 +15,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteResultObject : CimBaseAction
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimWriteResultObject"/> class.
         /// Constructor.
         /// </summary>
         public CimWriteResultObject(object result, XOperationContextBase theContext)

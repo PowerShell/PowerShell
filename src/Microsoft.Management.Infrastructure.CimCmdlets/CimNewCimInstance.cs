@@ -20,6 +20,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimNewCimInstanceContext : XOperationContextBase
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimNewCimInstanceContext"/> class.
         /// <para>
         /// Constructor
         /// </para>
@@ -44,6 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimNewCimInstance : CimAsyncOperation
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimNewCimInstance"/> class.
         /// <para>
         /// Constructor
         /// </para>

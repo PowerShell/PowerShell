@@ -51,6 +51,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetInstance : CimAsyncOperation
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimGetInstance"/> class.
         /// <para>
         /// Constructor
         /// </para>

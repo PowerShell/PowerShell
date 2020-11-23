@@ -27,6 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal class CimInvokeCimMethodContext : XOperationContextBase
         {
             /// <summary>
+            /// Initializes a new instance of the <see cref="CimInvokeCimMethodContext"/> class.
             /// <para>
             /// Constructor
             /// </para>
@@ -73,6 +74,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimInvokeCimMethod"/> class.
         /// <para>
         /// Constructor
         /// </para>

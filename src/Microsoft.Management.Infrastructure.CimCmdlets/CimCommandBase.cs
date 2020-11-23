@@ -25,6 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterDefinitionEntry
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ParameterDefinitionEntry"/> class.
         /// Constructor.
         /// </summary>
         /// <param name="parameterSetName"></param>
@@ -70,6 +71,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterSetEntry
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// Constructor.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
@@ -81,6 +83,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// Constructor.
         /// </summary>
         /// <param name="toClone"></param>
@@ -92,6 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// Constructor.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
@@ -217,6 +221,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterBinder
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ParameterBinder"/> class.
         /// Constructor.
         /// </summary>
         /// <param name="parameters"></param>
@@ -567,6 +572,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// Constructor.
         /// </summary>
         internal CimBaseCommand()
@@ -576,6 +582,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// Constructor.
         /// </summary>
         internal CimBaseCommand(Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,

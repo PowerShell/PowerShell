@@ -56,6 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly Exception exception;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimIndicationEventExceptionEventArgs"/> class.
         /// <para>
         /// Constructor
         /// </para>
@@ -108,6 +109,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimIndicationEventInstanceEventArgs"/> class.
         /// <para>
         /// Constructor
         /// </para>
@@ -154,6 +156,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public event EventHandler<CimIndicationEventArgs> CimIndicationArrived;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimIndicationWatcher"/> class.
         /// <para>
         /// Constructor with given computerName, namespace, queryExpression and timeout
         /// </para>
@@ -176,6 +179,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimIndicationWatcher"/> class.
         /// <para>
         /// Constructor with given cimsession, namespace, queryExpression and timeout
         /// </para>
