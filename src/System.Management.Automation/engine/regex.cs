@@ -325,7 +325,7 @@ namespace System.Management.Automation
         /// converted to their unescaped form.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="pattern" /> is null.
+        /// If <paramref name="pattern"/> is null.
         /// </exception>
         public static string Unescape(string pattern)
         {

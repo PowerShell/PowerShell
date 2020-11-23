@@ -2241,7 +2241,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specify "directory" or "container" to create a directory.
         /// </param>
         /// <param name="value">
-        /// If <paramref name="type" /> is "file" then this parameter becomes the content
+        /// If <paramref name="type"/> is "file" then this parameter becomes the content
         /// of the file to be created.
         /// </param>
         /// <returns>

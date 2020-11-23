@@ -111,7 +111,7 @@ namespace System.Management.Automation
         /// the provider has already been notified.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="newDrive" /> is null.
+        /// If <paramref name="newDrive"/> is null.
         /// </exception>
         /// <exception cref="SessionStateException">
         /// If a drive of the same name already exists in this scope.
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         /// by the provider.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="drive" /> is null.
+        /// If <paramref name="drive"/> is null.
         /// </exception>
         internal void RemoveDrive(PSDriveInfo drive)
         {
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         /// exists in this scope or null if one does not exist.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="name" /> is null.
+        /// If <paramref name="name"/> is null.
         /// </exception>
         internal PSDriveInfo GetDrive(string name)
         {
