@@ -429,7 +429,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// <param name="strNative"></param>
         /// <param name="strSize"></param>
         /// <param name="strColl"></param>
-        private void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)
+        private static void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)
         {
             Debug.Assert(strSize >= 2);
             int offset = 0;
@@ -452,7 +452,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             strColl.AddRange(allSubstringsWithNulls.Split('\0'));
         }
 
-        private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
+        private static uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
         {
             counterType = 0;
             defaultScale = 0;
@@ -824,7 +824,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return (PdhValidatePathEx(_hDataSource, path) == PdhResults.PDH_CSTATUS_VALID_DATA);
         }
 
-        private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
+        private static uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
         {
             outPath = string.Empty;
             IntPtr pPathBufferSize = new IntPtr(0);
@@ -861,7 +861,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        private uint MakeAllInstancePath(string origPath, out string unifiedPath)
+        private static uint MakeAllInstancePath(string origPath, out string unifiedPath)
         {
             unifiedPath = origPath;
 
@@ -876,7 +876,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return MakePath(elts, out unifiedPath, true);
         }
 
-        private uint ParsePath(string fullPath, ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements)
+        private static uint ParsePath(string fullPath, ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements)
         {
             IntPtr bufSize = new IntPtr(0);
 
