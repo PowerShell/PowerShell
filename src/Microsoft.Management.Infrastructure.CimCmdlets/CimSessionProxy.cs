@@ -2154,7 +2154,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
 
-
         internal CimNewCimInstance NewCimInstanceOperation { get; } = null;
 
         #endregion
