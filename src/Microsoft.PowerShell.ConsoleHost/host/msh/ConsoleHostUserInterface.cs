@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
+        private static void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
         {
             if (newLine)
             {
@@ -1847,7 +1847,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="input">The string to process.</param>
         /// <returns>The string with any \0 characters removed...</returns>
-        private string RemoveNulls(string input)
+        private static string RemoveNulls(string input)
         {
             if (input.Contains('\0'))
             {
@@ -2042,7 +2042,7 @@ namespace Microsoft.PowerShell
         }
 
 #if !UNIX
-        private void SendLeftArrows(int length)
+        private static void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
             for (int i = 0; i < length; i++)
