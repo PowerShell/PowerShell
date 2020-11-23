@@ -943,7 +943,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Handle async event triggered by <see cref="CimResultObserver<T>"/>
+        /// Handle async event triggered by <see cref="CimResultObserver{T}"/>
         /// </para>
         /// </summary>
         /// <param name="observer">Object triggered the event.</param>

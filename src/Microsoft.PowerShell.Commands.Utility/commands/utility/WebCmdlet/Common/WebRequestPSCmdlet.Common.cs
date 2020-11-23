@@ -1912,7 +1912,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(object)" /> to convert the objects to strings.
+        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)" /> to convert the objects to strings.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" /></param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
@@ -1929,7 +1929,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(object)" /> to convert the fieldname to a string.
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)" /> to convert the fieldname to a string.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
         /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
