@@ -1884,7 +1884,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Public Methods
 
         #region Private Methods
-        private OSProductSuite[] MakeProductSuites(uint? suiteMask)
+        private static OSProductSuite[] MakeProductSuites(uint? suiteMask)
         {
             if (suiteMask == null)
                 return null;

@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Cmdletization
             return methodInvocationJob;
         }
 
-        private void HandleJobOutput(Job job, TSession sessionForJob, bool discardNonPipelineResults, Action<PSObject> outputAction)
+        private static void HandleJobOutput(Job job, TSession sessionForJob, bool discardNonPipelineResults, Action<PSObject> outputAction)
         {
             Action<PSObject> processOutput =
                     (PSObject pso) =>

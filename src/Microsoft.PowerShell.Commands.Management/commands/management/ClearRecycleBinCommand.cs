@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private bool IsValidPattern(string input)
+        private static bool IsValidPattern(string input)
         {
             return Regex.IsMatch(input, @"^[a-z]{1}$|^[a-z]{1}:$|^[a-z]{1}:\\$", RegexOptions.IgnoreCase);
         }
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="driveName"></param>
         /// <returns></returns>
-        private string GetDrivePath(string driveName)
+        private static string GetDrivePath(string driveName)
         {
             string drivePath;
             if (driveName.EndsWith(":\\", StringComparison.OrdinalIgnoreCase))
