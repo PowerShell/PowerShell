@@ -125,7 +125,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// <para>
         /// The unit is Second.
-        /// <para>
+        /// </para>
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
