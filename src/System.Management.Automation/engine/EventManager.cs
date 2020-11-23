@@ -1544,6 +1544,14 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="PSLocalEventManager"/> class.
+        /// </summary>
+        ~PSLocalEventManager()
+        {
+            Dispose(false);
+        }
     }
 
     /// <summary>

@@ -1251,7 +1251,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Ensure we release the worker thread.
+        /// Finalizes an instance of the <see cref="PipelineThread"/> class.
         /// </summary>
         ~PipelineThread()
         {

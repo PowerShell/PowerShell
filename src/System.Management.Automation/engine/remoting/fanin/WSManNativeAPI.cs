@@ -688,18 +688,6 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// Finalizer
-            ///
-            /// Note: Do not depend on the finalizer! This object should be
-            /// properly disposed of when no longer needed via a direct call
-            /// to Dispose().
-            /// </summary>
-            ~WSManData_ManToUn()
-            {
-                Dispose(false);
-            }
-
-            /// <summary>
             /// Gets the type of data.
             /// </summary>
             internal uint Type
@@ -745,6 +733,14 @@ namespace System.Management.Automation.Remoting.Client
                     Marshal.FreeHGlobal(_marshalledObject);
                     _marshalledObject = IntPtr.Zero;
                 }
+            }
+
+            /// <summary>
+            /// Finalizes an instance of the <see cref="WSManData_ManToUn"/> class.
+            /// </summary>
+            ~WSManData_ManToUn()
+            {
+                Dispose(false);
             }
 
             /// <summary>
