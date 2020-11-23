@@ -1388,7 +1388,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Stops the given process throws non terminating error if can't.
         /// </summary>
-        /// <param name="process" >Process to be stopped.</param>
+        /// <param name="process">Process to be stopped.</param>
         /// <returns>True if process stopped successfully else false.</returns>
         private void StopProcess(Process process)
         {
