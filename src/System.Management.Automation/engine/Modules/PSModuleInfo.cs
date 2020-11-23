@@ -582,7 +582,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool IsScriptModuleFile(string path)
+        private static bool IsScriptModuleFile(string path)
         {
             var ext = System.IO.Path.GetExtension(path);
             return ext != null && s_scriptModuleExtensions.Contains(ext);

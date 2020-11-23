@@ -1043,7 +1043,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ErrorRecord CreateModuleNotFoundError(string modulePath)
+        private static ErrorRecord CreateModuleNotFoundError(string modulePath)
         {
             string errorMessage = StringUtil.Format(Modules.ModuleNotFoundForGetModule, modulePath);
             FileNotFoundException fnf = new FileNotFoundException(errorMessage);
@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ErrorRecord GetErrorRecordIfUnsupportedRootCdxmlAndNestedModuleScenario(
+        private static ErrorRecord GetErrorRecordIfUnsupportedRootCdxmlAndNestedModuleScenario(
             Hashtable data,
             string moduleManifestPath,
             string rootModulePath)
@@ -4203,7 +4203,7 @@ namespace Microsoft.PowerShell.Commands
         /// Search for a localized psd1 manifest file, using the same algorithm
         /// as Import-LocalizedData.
         /// </summary>
-        private ExternalScriptInfo FindLocalizedModuleManifest(string path)
+        private static ExternalScriptInfo FindLocalizedModuleManifest(string path)
         {
             string dir = Path.GetDirectoryName(path);
             string file = Path.GetFileName(path);
@@ -4435,7 +4435,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void SetModuleLoggingInformation(ModuleLoggingGroupPolicyStatus status, PSModuleInfo m, IEnumerable<string> moduleNames)
+        private static void SetModuleLoggingInformation(ModuleLoggingGroupPolicyStatus status, PSModuleInfo m, IEnumerable<string> moduleNames)
         {
             // TODO, insivara : What happens when Enabled but none of the other options (DefaultSystemModules, NonDefaultSystemModule, NonSystemModule, SpecificModules) are set?
             // After input from GP team for this behavior, need to revisit the commented out part
@@ -6073,7 +6073,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static readonly object s_lockObject = new object();
 
-        private void ClearAnalysisCaches()
+        private static void ClearAnalysisCaches()
         {
             lock (s_lockObject)
             {

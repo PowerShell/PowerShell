@@ -1393,7 +1393,7 @@ namespace Microsoft.PowerShell.Commands
             return cimModuleFile.FileCode == RemoteDiscoveryHelper.CimFileCode.CmdletizationV1;
         }
 
-        private IEnumerable<string> CreateCimModuleFiles(
+        private static IEnumerable<string> CreateCimModuleFiles(
             RemoteDiscoveryHelper.CimModule remoteCimModule,
             RemoteDiscoveryHelper.CimFileCode fileCode,
             Func<RemoteDiscoveryHelper.CimModuleFile, bool> filesFilter,
@@ -2068,7 +2068,7 @@ namespace Microsoft.PowerShell.Commands
             return moduleProxyList;
         }
 
-        private void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
+        private static void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
         {
             // Set modulebase of engine modules to point to $pshome
             // This is so that Get-Help can load the correct help.

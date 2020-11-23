@@ -77,7 +77,7 @@ namespace System.Management.Automation
         /// <param name="dotnetBaseType"></param>
         /// <param name="shouldIncludeNamespace"></param>
         /// <returns></returns>
-        private IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
+        private static IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
             string dotnetBaseType, bool shouldIncludeNamespace)
         {
             StringBuilder type = new StringBuilder(200);

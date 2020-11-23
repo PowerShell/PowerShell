@@ -1025,7 +1025,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Loops
 
-        private void CompileLoopExpression(Expression expr)
+        private static void CompileLoopExpression(Expression expr)
         {
             //    var node = (LoopExpression)expr;
             //    var enterLoop = new EnterLoopInstruction(node, _locals, _compilationThreshold, _instructions.Count);
@@ -2004,7 +2004,8 @@ namespace System.Management.Automation.Interpreter
                 case ExpressionType.Index: CompileIndexExpression(expr); break;
                 case ExpressionType.Label: CompileLabelExpression(expr); break;
                 case ExpressionType.RuntimeVariables: CompileRuntimeVariablesExpression(expr); break;
-                case ExpressionType.Loop: CompileLoopExpression(expr); break;
+                case ExpressionType.Loop:
+                    CompileLoopExpression(expr); break;
                 case ExpressionType.Switch: CompileSwitchExpression(expr); break;
                 case ExpressionType.Throw: CompileThrowUnaryExpression(expr, expr.Type == typeof(void)); break;
                 case ExpressionType.Try: CompileTryExpression(expr); break;

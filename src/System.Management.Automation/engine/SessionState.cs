@@ -389,7 +389,7 @@ namespace System.Management.Automation
             return checkPathVisibility(Applications, applicationPath);
         }
 
-        private SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
+        private static SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
         {
             if (list == null || list.Count == 0) return SessionStateEntryVisibility.Private;
             if (string.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;

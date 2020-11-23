@@ -174,7 +174,7 @@ namespace System.Management.Automation.Internal
             Log(message, null, PipelineExecutionStatus.Error);
         }
 
-        private string GetCommand(InvocationInfo invocationInfo)
+        private static string GetCommand(InvocationInfo invocationInfo)
         {
             if (invocationInfo == null)
                 return string.Empty;
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Internal
             return string.Empty;
         }
 
-        private string GetCommand(Exception exception)
+        private static string GetCommand(Exception exception)
         {
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)

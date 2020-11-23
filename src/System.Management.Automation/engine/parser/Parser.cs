@@ -4574,7 +4574,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        private bool TryUseTokenAsSimpleName(Token token)
+        private static bool TryUseTokenAsSimpleName(Token token)
         {
             if (token.Kind == TokenKind.Identifier
                 || token.Kind == TokenKind.DynamicKeyword
@@ -4587,7 +4587,7 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        private void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)
+        private static void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)
         {
             if (errAst == null)
             {
@@ -4602,7 +4602,7 @@ namespace System.Management.Automation.Language
             astsOnError.Add(errAst);
         }
 
-        private void RecordErrorAsts(IEnumerable<Ast> errAsts, ref List<Ast> astsOnError)
+        private static void RecordErrorAsts(IEnumerable<Ast> errAsts, ref List<Ast> astsOnError)
         {
             if (errAsts == null || !errAsts.Any())
             {
@@ -8013,7 +8013,7 @@ namespace System.Management.Automation.Language
             SaveError(error);
         }
 
-        private void ReportErrorsAsWarnings(Collection<Exception> errors)
+        private static void ReportErrorsAsWarnings(Collection<Exception> errors)
         {
             var executionContext = Runspaces.Runspace.DefaultRunspace.ExecutionContext;
             if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)

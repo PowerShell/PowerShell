@@ -308,7 +308,7 @@ namespace System.Management.Automation
                 return exist;
             }
 
-            private bool isUnsigned(Type type)
+            private static bool isUnsigned(Type type)
             {
                 return (type == typeof(ulong) || type == typeof(uint) || type == typeof(ushort) || type == typeof(byte));
             }
@@ -385,7 +385,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A generic list of tokenized input.
         /// </returns>
-        private List<Token> TokenizeInput(string input)
+        private static List<Token> TokenizeInput(string input)
         {
             List<Token> tokenList = new List<Token>();
             int _offset = 0;
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         /// <param name="_offset">
         /// Current offset position for the string parser.
         /// </param>
-        private void FindNextToken(string input, ref int _offset)
+        private static void FindNextToken(string input, ref int _offset)
         {
             while (_offset < input.Length)
             {
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         /// <returns>
         /// The next token on the input string
         /// </returns>
-        private Token GetNextToken(string input, ref int _offset)
+        private static Token GetNextToken(string input, ref int _offset)
         {
             StringBuilder sb = new StringBuilder();
             // bool singleQuoted = false;
@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// <param name="tokenList">
         /// A list of tokenized input.
         /// </param>
-        private void CheckSyntaxError(List<Token> tokenList)
+        private static void CheckSyntaxError(List<Token> tokenList)
         {
             // Initialize, assuming preceded by OR
             TokenKind previous = TokenKind.Or;
@@ -576,7 +576,7 @@ namespace System.Management.Automation
         /// <param name="tokenList">
         /// Tokenized list of the input string.
         /// </param>
-        private Node ConstructExpressionTree(List<Token> tokenList)
+        private static Node ConstructExpressionTree(List<Token> tokenList)
         {
             bool notFlag = false;
             Queue<Node> andQueue = new Queue<Node>();

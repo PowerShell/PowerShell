@@ -925,7 +925,7 @@ namespace System.Management.Automation.Interpreter
             Emit(GetLoadField(field));
         }
 
-        private Instruction GetLoadField(FieldInfo field)
+        private static Instruction GetLoadField(FieldInfo field)
         {
             lock (s_loadFields)
             {

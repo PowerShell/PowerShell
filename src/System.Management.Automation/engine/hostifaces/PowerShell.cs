@@ -4931,7 +4931,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies the settings for ThreadOptions and ApartmentState.
         /// </summary>
-        private void VerifyThreadSettings(PSInvocationSettings settings, ApartmentState runspaceApartmentState, PSThreadOptions runspaceThreadOptions, bool isRemote)
+        private static void VerifyThreadSettings(PSInvocationSettings settings, ApartmentState runspaceApartmentState, PSThreadOptions runspaceThreadOptions, bool isRemote)
         {
             ApartmentState apartmentState;
 
@@ -5827,7 +5827,7 @@ namespace System.Management.Automation
             return powerShellAsPSObject;
         }
 
-        private List<PSObject> CommandsAsListOfPSObjects(CommandCollection commands, Version psRPVersion)
+        private static List<PSObject> CommandsAsListOfPSObjects(CommandCollection commands, Version psRPVersion)
         {
             List<PSObject> commandsAsListOfPSObjects = new List<PSObject>(commands.Count);
             foreach (Command command in commands)
