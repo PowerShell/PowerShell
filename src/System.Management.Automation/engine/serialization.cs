@@ -2828,7 +2828,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the real workhorse that encodes strings.
-        /// See <see cref="EncodeString(string)" /> for more information.
+        /// See <see cref="EncodeString(string)"/> for more information.
         /// </summary>
         /// <param name="s">String to encode.</param>
         /// <param name="indexOfFirstEncodableCharacter">IndexOfFirstEncodableCharacter.</param>

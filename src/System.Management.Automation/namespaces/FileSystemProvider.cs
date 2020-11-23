@@ -6159,8 +6159,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="providerSpecificPickList">
         /// The list of properties to get.  Examples include "Attributes", "LastAccessTime,"
         /// and other properties defined by
-        /// <see cref="System.IO.DirectoryInfo" /> and
-        /// <see cref="System.IO.FileInfo" />
+        /// <see cref="System.IO.DirectoryInfo"/> and
+        /// <see cref="System.IO.FileInfo"/>
         /// </param>
         public void GetProperty(string path, Collection<string> providerSpecificPickList)
         {

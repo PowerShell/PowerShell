@@ -331,13 +331,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A collection in which objects that are written using the WriteObject(s)
-        /// methods are accumulated if <see cref="PassThru" /> is false.
+        /// methods are accumulated if <see cref="PassThru"/> is false.
         /// </summary>
         private Collection<PSObject> _accumulatedObjects = new Collection<PSObject>();
 
         /// <summary>
         /// A collection in which objects that are written using the WriteError
-        /// method are accumulated if <see cref="PassThru" /> is false.
+        /// method are accumulated if <see cref="PassThru"/> is false.
         /// </summary>
         private Collection<ErrorRecord> _accumulatedErrorObjects = new Collection<ErrorRecord>();
 
