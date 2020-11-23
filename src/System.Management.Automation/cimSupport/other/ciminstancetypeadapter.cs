@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
         {
             if (predicate == null)
