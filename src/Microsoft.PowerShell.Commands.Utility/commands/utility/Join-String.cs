@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             return null;
         }
 
-        private IEnumerable<CompletionResult> CompleteFormatString(string wordToComplete)
+        private static IEnumerable<CompletionResult> CompleteFormatString(string wordToComplete)
         {
             var res = new List<CompletionResult>();
             void AddMatching(string completionText)

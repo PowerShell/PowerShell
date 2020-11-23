@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the items in the input list that match an item in the filter array according to
         /// the given selection criterion.
         /// </summary>
-        private List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
+        private static List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
         {
             List<Breakpoint> output = new List<Breakpoint>();
 

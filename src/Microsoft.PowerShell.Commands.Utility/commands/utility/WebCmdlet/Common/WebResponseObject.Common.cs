@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             this.Content = this.RawContentStream.ToArray();
         }
 
-        private bool IsPrintable(char c)
+        private static bool IsPrintable(char c)
         {
             return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
         }
