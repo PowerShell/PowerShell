@@ -43,20 +43,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             UInt32 thePercentageCompleted,
             UInt32 theSecondsRemaining)
         {
-            this.activity = theActivity;
+            this.Activity = theActivity;
             this.activityID = theActivityID;
-            this.currentOperation = theCurrentOperation;
+            this.CurrentOperation = theCurrentOperation;
             if (string.IsNullOrEmpty(theStatusDescription))
             {
-                this.statusDescription = CimCmdletStrings.DefaultStatusDescription;
+                this.StatusDescription = CimCmdletStrings.DefaultStatusDescription;
             }
             else
             {
-                this.statusDescription = theStatusDescription;
+                this.StatusDescription = theStatusDescription;
             }
 
             this.percentageCompleted = thePercentageCompleted;
-            this.secondsRemaining = theSecondsRemaining;
+            this.SecondsRemaining = theSecondsRemaining;
         }
 
         /// <summary>
@@ -70,19 +70,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLog(
                 "...Activity {0}: id={1}, remain seconds ={2}, percentage completed = {3}",
                 4,
-                this.activity,
+                this.Activity,
                 this.activityID,
-                this.secondsRemaining,
+                this.SecondsRemaining,
                 this.percentageCompleted);
 
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
             ProgressRecord record = new(
                 this.activityID,
-                this.activity,
-                this.statusDescription);
-            record.Activity = this.activity;
+                this.Activity,
+                this.StatusDescription);
+            record.Activity = this.Activity;
             record.ParentActivityId = 0;
-            record.SecondsRemaining = (int)this.secondsRemaining;
+            record.SecondsRemaining = (int)this.SecondsRemaining;
             record.PercentComplete = (int)this.percentageCompleted;
             cmdlet.WriteProgress(record);
         }
@@ -92,7 +92,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Activity of the given activity.
         /// </summary>
-        private readonly string activity;
 
         /// <summary>
         /// Activity identifier of the given activity.
@@ -100,54 +99,27 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly int activityID;
 
         /// <summary>
-        /// Current operation text of the given activity.
-        /// </summary>
-        private readonly string currentOperation;
-
-        /// <summary>
-        /// Status description of the given activity.
-        /// </summary>
-        private readonly string statusDescription;
-
-        /// <summary>
         /// Percentage completed of the given activity.
         /// </summary>
         private readonly UInt32 percentageCompleted;
 
-        /// <summary>
-        /// How many seconds remained for the given activity.
-        /// </summary>
-        private readonly UInt32 secondsRemaining;
-
-        internal string Activity
-        {
-            get { return activity; }
-        }
+        internal string Activity { get; }
 
         internal int ActivityID
         {
             get { return activityID; }
         }
 
-        internal string CurrentOperation
-        {
-            get { return currentOperation; }
-        }
+        internal string CurrentOperation { get; }
 
-        internal string StatusDescription
-        {
-            get { return statusDescription; }
-        }
+        internal string StatusDescription { get; }
 
         internal UInt32 PercentageCompleted
         {
             get { return percentageCompleted; }
         }
 
-        internal UInt32 SecondsRemaining
-        {
-            get { return secondsRemaining; }
-        }
+        internal UInt32 SecondsRemaining { get; }
 
         #endregion
     }

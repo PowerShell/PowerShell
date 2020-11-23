@@ -44,20 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <see cref="CimSession"/>, <see cref="CimOperationOptions"/> object.
         /// </para>
         /// </summary>
-        protected XOperationContextBase Context
-        {
-            get
-            {
-                return this.context;
-            }
-
-            set
-            {
-                this.context = value;
-            }
-        }
-
-        private XOperationContextBase context;
+        protected XOperationContextBase Context { get; set; }
     }
 
     /// <summary>

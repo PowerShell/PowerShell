@@ -416,28 +416,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Specifies the UI Culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public CultureInfo UICulture
-        {
-            get { return uiculture; }
-
-            set { uiculture = value; }
-        }
-
-        private CultureInfo uiculture;
+        public CultureInfo UICulture { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Culture".
         /// Specifies the culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public CultureInfo Culture
-        {
-            get { return culture; }
-
-            set { culture = value; }
-        }
-
-        private CultureInfo culture;
+        public CultureInfo Culture { get; set; }
 
         #endregion
 
