@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a newly allocated SACL with no ACEs in it.
         /// Free the returned SACL by calling Marshal.FreeHGlobal.
         /// </summary>
-        private IntPtr GetEmptySacl()
+        private static IntPtr GetEmptySacl()
         {
             IntPtr pSacl = IntPtr.Zero;
             bool ret = true;
@@ -1246,7 +1246,7 @@ namespace Microsoft.PowerShell.Commands
         /// and the previous state of this privilege. Free the returned token
         /// by calling NativeMethods.CloseHandle.
         /// </summary>
-        private IntPtr GetTokenWithEnabledPrivilege(
+        private static IntPtr GetTokenWithEnabledPrivilege(
             string privilege,
             NativeMethods.TOKEN_PRIVILEGE previousState)
         {

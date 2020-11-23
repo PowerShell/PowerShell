@@ -1373,7 +1373,7 @@ namespace Microsoft.PowerShell.Commands
             _hasAttemptedToLoadPkiModule = true;
         }
 
-        private string MyGetChildName(string path)
+        private static string MyGetChildName(string path)
         {
             // Verify the parameters
 
@@ -1919,7 +1919,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="storeHandle">An IntPtr for store handle.</param>
         /// <returns>No return.</returns>
-        private void CommitUserDS(IntPtr storeHandle)
+        private static void CommitUserDS(IntPtr storeHandle)
         {
             if (!Security.NativeMethods.CertControlStore(
                                         storeHandle,
