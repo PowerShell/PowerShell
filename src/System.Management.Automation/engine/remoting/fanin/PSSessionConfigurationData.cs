@@ -52,6 +52,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether Server Manager is enabled.
         /// </summary>
         public static bool IsServerManager { get; set; }
 
