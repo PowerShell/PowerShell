@@ -2142,16 +2142,16 @@ namespace System.Management.Automation
         /// <param name="hasSeenNonGeneric">
         /// A reference to a value indicating whether a non-generic enumerable type has been
         /// seen. If <see paramref="interfaceType"/> is a non-generic enumerable type this
-        /// value will be set to <see langword="true" />.
+        /// value will be set to <see langword="true"/>.
         /// </param>
         /// <param name="hasSeenDictionaryEnumerator">
         /// A reference to a value indicating whether <see cref="IDictionaryEnumerator" /> has been
         /// seen. If <paramref name="interfaceType"/> is a <see cref="IDictionaryEnumerator" /> this
-        /// value will be set to <see langword="true" />.
+        /// value will be set to <see langword="true"/>.
         /// </param>
         /// <returns>
         /// The value of <paramref name="interfaceType"/> if it can be used to infer a specific
-        /// enumerated type, otherwise <see langword="null" />.
+        /// enumerated type, otherwise <see langword="null"/>.
         /// </returns>
         private Type GetGenericCollectionLikeInterface(
             Type interfaceType,
