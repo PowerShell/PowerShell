@@ -1162,7 +1162,7 @@ dotnet_diagnostic.SA1120.severity = none
 dotnet_diagnostic.SA1121.severity = none
 
 # SA1122: Use string.Empty for empty strings
-dotnet_diagnostic.SA1122.severity = none
+dotnet_diagnostic.SA1122.severity = warning
 
 # SA1123: Do not place regions within elements
 dotnet_diagnostic.SA1123.severity = none

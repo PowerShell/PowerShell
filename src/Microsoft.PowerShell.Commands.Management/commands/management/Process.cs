@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (ArgumentException)
                 {
                     WriteNonTerminatingError(
-                        "",
+                        string.Empty,
                         processId,
                         processId,
                         null,

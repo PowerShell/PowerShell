@@ -2236,7 +2236,7 @@ namespace System.Management.Automation
             }
             else
             {
-                module = new string[] { "" };
+                module = new string[] { string.Empty };
             }
 
             ModuleSpecification[] fullyQualifiedName = null;

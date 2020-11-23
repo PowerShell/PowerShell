@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         /// Run a command.
         /// </summary>
         protected void RunCommand(String command, String args) {
-            String cmd = "";
+            String cmd = string.Empty;
 
             _process = new Process()
             {

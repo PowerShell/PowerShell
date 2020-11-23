@@ -2345,7 +2345,7 @@ namespace Microsoft.PowerShell.Commands
                 key: "FileList",
                 manifestProcessingFlags,
                 moduleBase,
-                extension: "",
+                extension: string.Empty,
                 // Don't check file existence - don't want to change current behavior without feature team discussion.
                 verifyFilesExist: false,
                 out List<string> fileList))
