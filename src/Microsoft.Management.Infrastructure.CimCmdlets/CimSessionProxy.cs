@@ -1036,7 +1036,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CDXML_CLIXML_TEST"));
         }
 
-        private object PostProcessCimInstance(object resultObject)
+        private static object PostProcessCimInstance(object resultObject)
         {
             DebugHelper.WriteLogEx();
             if (isCliXmlTestabilityHookActive && (resultObject is CimInstance))

@@ -93,7 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimSessionProxy proxy = CreateSessionProxy(computerName, targetCimInstance, cmdlet);
                         if (isGetCimInstanceCommand)
                         {
-                            this.SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
+                            SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
 
                         proxys.Add(proxy);
@@ -108,7 +108,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimSessionProxy proxy = CreateSessionProxy(computerName, cmdlet);
                         if (isGetCimInstanceCommand)
                         {
-                            this.SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
+                            SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
 
                         proxys.Add(proxy);
@@ -124,7 +124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         CimSessionProxy proxy = CreateSessionProxy(session, cmdlet);
                         if (isGetCimInstanceCommand)
                         {
-                            this.SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
+                            SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
 
                         proxys.Add(proxy);
@@ -373,7 +373,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
-        private void SetSessionProxyProperties(
+        private static void SetSessionProxyProperties(
             ref CimSessionProxy proxy,
             CimBaseCommand cmdlet)
         {
@@ -514,7 +514,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
-        private void SetPreProcess(CimSessionProxy proxy, GetCimInstanceCommand cmdlet)
+        private static void SetPreProcess(CimSessionProxy proxy, GetCimInstanceCommand cmdlet)
         {
             if (cmdlet.KeyOnly || (cmdlet.SelectProperties != null))
             {
