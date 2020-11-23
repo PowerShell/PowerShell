@@ -1879,7 +1879,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Check the powershell version of the remote server.
         /// </summary>
-        private string GetRemoteServerPsVersion(RemoteRunspace remoteRunspace)
+        private static string GetRemoteServerPsVersion(RemoteRunspace remoteRunspace)
         {
             if (remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
             {
@@ -2427,7 +2427,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="localScriptBlock"></param>
         /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
-        private List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
+        private static List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
             if (localScriptBlock == null)
             {

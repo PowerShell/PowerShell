@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="coreName">Named pipe core name.</param>
         /// <param name="securityDesc"></param>
         /// <returns>NamedPipeServerStream.</returns>
-        private NamedPipeServerStream CreateNamedPipe(
+        private static NamedPipeServerStream CreateNamedPipe(
             string serverName,
             string namespaceName,
             string coreName,

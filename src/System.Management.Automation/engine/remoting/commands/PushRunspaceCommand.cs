@@ -1084,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Create temporary remote runspace.
         /// </summary>
-        private RemoteRunspace CreateTemporaryRemoteRunspaceForPowerShellDirect(PSHost host, RunspaceConnectionInfo connectionInfo)
+        private static RemoteRunspace CreateTemporaryRemoteRunspaceForPowerShellDirect(PSHost host, RunspaceConnectionInfo connectionInfo)
         {
             // Create and open the runspace.
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();

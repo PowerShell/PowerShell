@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Remoting
         /// It can also be used for graceful shutdown of the server process, which is not currently
         /// implemented.
         /// </summary>
-        private void CleanAll()
+        private static void CleanAll()
         {
         }
 

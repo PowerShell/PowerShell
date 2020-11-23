@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentException">
         /// 1. "optionName" is already defined
         /// </exception>
-        private void AssertValueNotAssigned(string optionName, object originalValue)
+        private static void AssertValueNotAssigned(string optionName, object originalValue)
         {
             if (originalValue != null)
             {
@@ -1896,7 +1896,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        private string GetRoleCapabilityPath(string roleCapability)
+        private static string GetRoleCapabilityPath(string roleCapability)
         {
             string moduleName = "*";
             if (roleCapability.Contains('\\'))
@@ -2620,7 +2620,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates an alias entry.
         /// </summary>
-        private SessionStateAliasEntry CreateSessionStateAliasEntry(Hashtable alias, bool isAliasVisibilityDefined)
+        private static SessionStateAliasEntry CreateSessionStateAliasEntry(Hashtable alias, bool isAliasVisibilityDefined)
         {
             string name = TryGetValue(alias, ConfigFileConstants.AliasNameToken);
 
@@ -2660,7 +2660,7 @@ namespace System.Management.Automation.Remoting
         /// Creates a function entry.
         /// </summary>
         /// <returns></returns>
-        private SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
+        private static SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
         {
             string name = TryGetValue(function, ConfigFileConstants.FunctionNameToken);
 
@@ -2700,7 +2700,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a variable entry.
         /// </summary>
-        private SessionStateVariableEntry CreateSessionStateVariableEntry(Hashtable variable, PSLanguageMode languageMode)
+        private static SessionStateVariableEntry CreateSessionStateVariableEntry(Hashtable variable, PSLanguageMode languageMode)
         {
             string name = TryGetValue(variable, ConfigFileConstants.VariableNameToken);
 

@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             return debuggableJobFound;
         }
 
-        private bool GetJobDebuggable(Job job)
+        private static bool GetJobDebuggable(Job job)
         {
             if (job is IJobDebugger)
             {
