@@ -91,14 +91,6 @@ namespace System.Management.Automation.Internal
             _disposed = true;
         }
 
-        /// <summary>
-        /// Finalizer for class PipelineProcessor.
-        /// </summary>
-        ~PipelineProcessor()
-        {
-            Dispose(false);
-        }
-
         #endregion IDispose
 
         #region Execution Logging

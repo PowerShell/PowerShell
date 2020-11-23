@@ -957,14 +957,6 @@ namespace System.Management.Automation
             _disposed = true;
         }
 
-        /// <summary>
-        /// Finalizer for class CommandProcessorBase.
-        /// </summary>
-        ~CommandProcessorBase()
-        {
-            Dispose(false);
-        }
-
         #endregion IDispose
     }
 }

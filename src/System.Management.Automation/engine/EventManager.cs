@@ -1511,14 +1511,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Destructor for the EventManager class.
-        /// </summary>
-        ~PSLocalEventManager()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Disposes the EventManager class.
         /// </summary>
         public void Dispose()
