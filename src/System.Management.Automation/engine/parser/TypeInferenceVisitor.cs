@@ -2141,7 +2141,7 @@ namespace System.Management.Automation
         /// <param name="interfaceType">The interface to test.</param>
         /// <param name="hasSeenNonGeneric">
         /// A reference to a value indicating whether a non-generic enumerable type has been
-        /// seen. If <see paramref="interfaceType" /> is a non-generic enumerable type this
+        /// seen. If <see paramref="interfaceType"/> is a non-generic enumerable type this
         /// value will be set to <see langword="true" />.
         /// </param>
         /// <param name="hasSeenDictionaryEnumerator">
