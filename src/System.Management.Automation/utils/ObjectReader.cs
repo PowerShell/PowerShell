@@ -617,7 +617,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        private ReturnType ConvertToReturnType(object inputObject)
+        private static ReturnType ConvertToReturnType(object inputObject)
         {
             Type resultType = typeof(ReturnType);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)
@@ -793,7 +793,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="inputObject">Input object to convert.</param>
         /// <returns>Input object converted to the specified return type.</returns>
-        private ReturnType ConvertToReturnType(object inputObject)
+        private static ReturnType ConvertToReturnType(object inputObject)
         {
             Type resultType = typeof(ReturnType);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)

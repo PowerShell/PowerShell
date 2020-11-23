@@ -2956,7 +2956,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private bool HasRelativePathTokens(string path)
+        private static bool HasRelativePathTokens(string path)
         {
             return (
                 path.StartsWith('\\') ||
@@ -3195,7 +3195,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// true if the path is empty, a \ or a /, else false
         /// </returns>
-        private bool IsHiveContainer(string path)
+        private static bool IsHiveContainer(string path)
         {
             bool result = false;
             if (path == null)
@@ -4111,7 +4111,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// A string containing the default value name.
         /// </returns>
-        private string GetLocalizedDefaultToken()
+        private static string GetLocalizedDefaultToken()
         {
             // This shouldn't be localized as it will break scripts
 

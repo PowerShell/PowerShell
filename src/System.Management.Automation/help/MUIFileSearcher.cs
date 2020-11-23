@@ -113,7 +113,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string[] GetFiles(string path, string pattern)
+        private static string[] GetFiles(string path, string pattern)
         {
 #if UNIX
             // On Linux, file names are case sensitive, so we need to add

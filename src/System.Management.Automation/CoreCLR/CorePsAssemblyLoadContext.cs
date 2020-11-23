@@ -393,7 +393,7 @@ namespace System.Management.Automation
         }
 
         // Find the assembly under 'gacRoot' and select the latest version.
-        private bool FindInGac(string gacRoot, AssemblyName assemblyName, out string assemblyPath)
+        private static bool FindInGac(string gacRoot, AssemblyName assemblyName, out string assemblyPath)
         {
             bool assemblyFound = false;
             assemblyPath = null;
@@ -430,7 +430,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Try to get the specified assembly from cache.
         /// </summary>
-        private bool TryGetAssemblyFromCache(AssemblyName assemblyName, out Assembly asmLoaded)
+        private static bool TryGetAssemblyFromCache(AssemblyName assemblyName, out Assembly asmLoaded)
         {
             if (s_assemblyCache.TryGetValue(assemblyName.Name, out asmLoaded))
             {
@@ -454,7 +454,7 @@ namespace System.Management.Automation
         /// <param name="requestedAssembly">AssemblyName of the requested assembly.</param>
         /// <param name="loadedAssembly">AssemblyName of the loaded assembly.</param>
         /// <returns></returns>
-        private bool IsAssemblyMatching(AssemblyName requestedAssembly, AssemblyName loadedAssembly)
+        private static bool IsAssemblyMatching(AssemblyName requestedAssembly, AssemblyName loadedAssembly)
         {
             //
             // We use the same rules as CoreCLR loader to compare the requested assembly and loaded assembly:
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         /// <param name="tpaStrongName">
         /// The assembly strong name of a CoreCLR Trusted_Platform_Assembly
         /// </param>
-        private Assembly GetTrustedPlatformAssembly(string tpaStrongName)
+        private static Assembly GetTrustedPlatformAssembly(string tpaStrongName)
         {
             // We always depend on the default context to load the TPAs that are recorded in
             // the type catalog.
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Throw FileLoadException.
         /// </summary>
-        private void ThrowFileLoadException(string errorTemplate, params object[] args)
+        private static void ThrowFileLoadException(string errorTemplate, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, errorTemplate, args);
             throw new FileLoadException(message);
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Throw FileNotFoundException.
         /// </summary>
-        private void ThrowFileNotFoundException(string errorTemplate, params object[] args)
+        private static void ThrowFileNotFoundException(string errorTemplate, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, errorTemplate, args);
             throw new FileNotFoundException(message);

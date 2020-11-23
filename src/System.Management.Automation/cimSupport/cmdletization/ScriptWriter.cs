@@ -234,7 +234,7 @@ function __cmdletization_BindCommonParameters
             return verb + "-" + noun;
         }
 
-        private string GetCmdletAttributes(CommonCmdletMetadata cmdletMetadata)
+        private static string GetCmdletAttributes(CommonCmdletMetadata cmdletMetadata)
         {
             // Generate the script for the Alias and Obsolete Attribute if any is declared in CDXML
             StringBuilder attributes = new StringBuilder(150);
@@ -1444,7 +1444,7 @@ function __cmdletization_BindCommonParameters
             }
         }
 
-        private void GenerateIfBoundParameter(
+        private static void GenerateIfBoundParameter(
             IEnumerable<string> commonParameterSets,
             IEnumerable<string> methodParameterSets,
             ParameterMetadata cmdletParameterMetadata,
@@ -1874,7 +1874,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
 
         private void WriteCmdlet(TextWriter output, StaticCmdletMetadata staticCmdlet)
         {
-            string attributeString = this.GetCmdletAttributes(staticCmdlet.CmdletMetadata);
+            string attributeString = GetCmdletAttributes(staticCmdlet.CmdletMetadata);
 
             Dictionary<string, ParameterMetadata> commonParameters = this.GetCommonParameters();
             List<string> commonParameterSets = GetCommonParameterSets(commonParameters);
@@ -1959,7 +1959,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
 
         private void WriteCmdlet(TextWriter output, InstanceCmdletMetadata instanceCmdlet)
         {
-            string attributeString = this.GetCmdletAttributes(instanceCmdlet.CmdletMetadata);
+            string attributeString = GetCmdletAttributes(instanceCmdlet.CmdletMetadata);
 
             Dictionary<string, ParameterMetadata> commonParameters = this.GetCommonParameters();
             List<string> commonParameterSets = GetCommonParameterSets(commonParameters);
@@ -2066,7 +2066,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             CommonCmdletMetadata cmdletMetadata = this.GetGetCmdletMetadata();
             Dbg.Assert(cmdletMetadata != null, "xsd should ensure that cmdlet metadata element is always present");
             CommandMetadata commandMetadata = this.GetCommandMetadata(cmdletMetadata);
-            string attributeString = this.GetCmdletAttributes(cmdletMetadata);
+            string attributeString = GetCmdletAttributes(cmdletMetadata);
 
             GetCmdletParameters getCmdletParameters = this.GetGetCmdletParameters(null);
             if (!string.IsNullOrEmpty(getCmdletParameters.DefaultCmdletParameterSet))

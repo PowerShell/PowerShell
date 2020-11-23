@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
             return inputData;
         }
 
-        private bool TryConvertFromDeserializedModuleInfo(object inputData, out PSModuleInfo moduleInfo)
+        private static bool TryConvertFromDeserializedModuleInfo(object inputData, out PSModuleInfo moduleInfo)
         {
             moduleInfo = null;
             PSObject pso = inputData as PSObject;

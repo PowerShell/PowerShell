@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return retVal;
             }
 
-            private Assembly ResolveAssemblyNameInLoadedAssemblies(string assemblyName, bool fullName)
+            private static Assembly ResolveAssemblyNameInLoadedAssemblies(string assemblyName, bool fullName)
             {
                 Assembly result = null;
 
