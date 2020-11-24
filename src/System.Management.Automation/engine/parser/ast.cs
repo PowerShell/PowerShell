@@ -1754,7 +1754,7 @@ namespace System.Management.Automation.Language
         /// </exception>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="blockName"/> is not one of the valid kinds for a named block,
-        /// or if <paramref name="unnamed"/> is <c>true</c> and <paramref name="blockName"/> is neither
+        /// or if <paramref name="unnamed"/> is <see langword="true"/> and <paramref name="blockName"/> is neither
         /// <see cref="TokenKind.Process"/> nor <see cref="TokenKind.End"/>.
         /// </exception>
         public NamedBlockAst(IScriptExtent extent, TokenKind blockName, StatementBlockAst statementBlock, bool unnamed)

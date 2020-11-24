@@ -1637,7 +1637,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IObjectPreProcess objectPreprocess;
 
         /// <summary>
-        /// <see cref="isDefaultSession"/> is <c>true</c> if this <see cref="CimSessionProxy"/> was
+        /// <see cref="isDefaultSession"/> is <see langword="true"/> if this <see cref="CimSessionProxy"/> was
         /// created to handle the "default" session, in cases where cmdlets are invoked without
         /// ComputerName and/or CimSession parameters.
         /// </summary>
