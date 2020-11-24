@@ -546,7 +546,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="errRecords"></param>
         /// <param name="propertyName"></param>
         /// <param name="propertyValue"></param>
-        private void AddErrorRecord(
+        private static void AddErrorRecord(
             ref List<ErrorRecord> errRecords,
             string propertyName,
             object propertyValue)
