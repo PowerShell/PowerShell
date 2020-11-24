@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Private Methods
 
-        private string ResolveShellUri(string shell)
+        private static string ResolveShellUri(string shell)
         {
             string resolvedShellUri = shell;
             if (string.IsNullOrEmpty(resolvedShellUri))
@@ -3493,7 +3493,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Run some tasks on MTA thread if needed.
         /// </summary>
-        private void RunOnMTAThread(ThreadStart threadProc)
+        private static void RunOnMTAThread(ThreadStart threadProc)
         {
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.MTA)
             {
@@ -3512,7 +3512,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get error message from the thrown exception.
         /// </summary>
-        private string GetErrorMessageFromException(Exception e)
+        private static string GetErrorMessageFromException(Exception e)
         {
             string errorMessage = e.Message;
 

@@ -1115,7 +1115,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="session">Session to connect.</param>
         /// <param name="ex">Optional exception object.</param>
         /// <returns>Connected session or null.</returns>
-        private PSSession ConnectSession(PSSession session, out Exception ex)
+        private static PSSession ConnectSession(PSSession session, out Exception ex)
         {
             ex = null;
 

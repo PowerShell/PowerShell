@@ -347,7 +347,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="shell">Shell configuration name.</param>
         /// <returns>Display shell name.</returns>
-        private string GetDisplayShellName(string shell)
+        private static string GetDisplayShellName(string shell)
         {
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = shell.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);

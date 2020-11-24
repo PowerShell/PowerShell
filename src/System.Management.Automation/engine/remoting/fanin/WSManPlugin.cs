@@ -640,7 +640,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="shellContext"></param>
         /// <param name="inputFunctionName"></param>
         /// <returns></returns>
-        private bool validateIncomingContexts(
+        private static bool validateIncomingContexts(
             WSManNativeApi.WSManPluginRequest requestDetails,
             IntPtr shellContext,
             string inputFunctionName)
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="senderDetails"></param>
         /// <returns></returns>
-        private PSSenderInfo GetPSSenderInfo(
+        private static PSSenderInfo GetPSSenderInfo(
             WSManNativeApi.WSManSenderDetails senderDetails)
         {
             // senderDetails will not be null.
@@ -1168,7 +1168,7 @@ namespace System.Management.Automation.Remoting
         /// environment variable, which is set in the WSMan layer for Virtual or RunAs accounts.
         /// </summary>
         /// <returns>ClientToken IntPtr.</returns>
-        private IntPtr GetRunAsClientToken()
+        private static IntPtr GetRunAsClientToken()
         {
             string clientTokenStr = System.Environment.GetEnvironmentVariable(WSManRunAsClientTokenName);
             if (clientTokenStr != null)

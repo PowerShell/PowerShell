@@ -641,7 +641,7 @@ else
         /// 1. New shell successfully registered. However cannot delete temporary plugin file {0}.
         ///    Reason for failure: {1}.
         /// </exception>
-        private void DeleteFile(string tmpFileName)
+        private static void DeleteFile(string tmpFileName)
         {
             Dbg.Assert(!string.IsNullOrEmpty(tmpFileName), "tmpFile cannot be null or empty.");
 
@@ -693,7 +693,7 @@ else
         /// 2. Cannot write shell configuration data into temporary file {0}. Try again.
         ///    Reason for failure: {1}.
         /// </exception>
-        private string ConstructTemporaryFile(string pluginContent)
+        private static string ConstructTemporaryFile(string pluginContent)
         {
             // Path.GetTempFileName creates a temporary file whereas GetRandomFileName does not.
             string tmpFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName()) + "psshell.xml";

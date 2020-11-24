@@ -2016,7 +2016,7 @@ namespace System.Management.Automation
             SubmitAndWaitForConnect(connectJobOperations);
         }
 
-        private void SubmitAndWaitForConnect(List<IThrottleOperation> connectJobOperations)
+        private static void SubmitAndWaitForConnect(List<IThrottleOperation> connectJobOperations)
         {
             using (ThrottleManager connectThrottleManager = new ThrottleManager())
             {
@@ -4122,7 +4122,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private void RestoreRemoteOutput(Pipeline runningCmd)
+        private static void RestoreRemoteOutput(Pipeline runningCmd)
         {
             if (runningCmd != null)
             {

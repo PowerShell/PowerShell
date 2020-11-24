@@ -776,7 +776,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion Event Handlers
 
-        private void CleanAll()
+        private static void CleanAll()
         {
         }
 
