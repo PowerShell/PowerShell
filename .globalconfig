@@ -391,7 +391,7 @@ dotnet_diagnostic.CA2207.severity = warning
 dotnet_diagnostic.CA2208.severity = suggestion
 
 # CA2211: Non-constant fields should not be visible
-dotnet_diagnostic.CA2211.severity = suggestion
+dotnet_diagnostic.CA2211.severity = warning
 
 # CA2213: Disposable fields should be disposed
 dotnet_diagnostic.CA2213.severity = none
