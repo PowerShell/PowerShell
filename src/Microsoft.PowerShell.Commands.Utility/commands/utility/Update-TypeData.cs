@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private T GetParameterType<T>(object sourceValue)
+        private static T GetParameterType<T>(object sourceValue)
         {
             return (T)LanguagePrimitives.ConvertTo(sourceValue, typeof(T), CultureInfo.InvariantCulture);
         }
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="targetObject"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        private ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
+        private static ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);
             ErrorRecord errorRecord = new ErrorRecord(
@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
             this.Context.TypeTable.ClearConsolidatedMembers();
         }
 
-        private ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
+        private static ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);
             ErrorRecord errorRecord = new ErrorRecord(

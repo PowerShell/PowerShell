@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Get the -FromMember template for a given language
-        private string GetMethodTemplate(Language language)
+        private static string GetMethodTemplate(Language language)
         {
             switch (language)
             {
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Get the -FromMember namespace template for a given language
-        private string GetNamespaceTemplate(Language language)
+        private static string GetNamespaceTemplate(Language language)
         {
             switch (language)
             {
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Get the -FromMember namespace template for a given language
-        private string GetUsingTemplate(Language language)
+        private static string GetUsingTemplate(Language language)
         {
             switch (language)
             {
@@ -840,7 +840,7 @@ namespace Microsoft.PowerShell.Commands
         // However, this does give us a massive usability improvement, as users can just say
         // Add-Type -AssemblyName Forms (instead of System.Windows.Forms)
         // This is just long, not unmaintainable.
-        private Assembly LoadAssemblyHelper(string assemblyName)
+        private static Assembly LoadAssemblyHelper(string assemblyName)
         {
             Assembly loadedAssembly = null;
 
@@ -898,7 +898,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region SourceCodeProcessing
 
-        private OutputKind OutputAssemblyTypeToOutputKind(OutputAssemblyType outputType)
+        private static OutputKind OutputAssemblyTypeToOutputKind(OutputAssemblyType outputType)
         {
             switch (outputType)
             {
@@ -1136,7 +1136,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CacheNewTypes(ConcurrentBag<string> newTypes)
+        private static void CacheNewTypes(ConcurrentBag<string> newTypes)
         {
             foreach (var typeName in newTypes)
             {
@@ -1266,7 +1266,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string BuildErrorMessage(Diagnostic diagnisticRecord)
+        private static string BuildErrorMessage(Diagnostic diagnisticRecord)
         {
             var location = diagnisticRecord.Location;
 

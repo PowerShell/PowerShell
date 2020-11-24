@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject CreateHtmlObject(string html, string tagName)
+        private static PSObject CreateHtmlObject(string html, string tagName)
         {
             PSObject elementObject = new PSObject();
 
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
             return elementObject;
         }
 
-        private void EnsureHtmlParser()
+        private static void EnsureHtmlParser()
         {
             if (s_tagRegex == null)
             {
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
             this.RawContent = raw.ToString();
         }
 
-        private void ParseAttributes(string outerHtml, PSObject elementObject)
+        private static void ParseAttributes(string outerHtml, PSObject elementObject)
         {
             // We might get an empty input for a directive from the HTML file
             if (!string.IsNullOrEmpty(outerHtml))
