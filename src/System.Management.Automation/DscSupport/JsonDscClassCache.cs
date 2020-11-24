@@ -204,158 +204,54 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         {
             s_tracer.WriteLine("Initializing DSC class cache");
 
-            if (Platform.IsLinux || Platform.IsMacOS)
+            // Load the base schema files.
+            ClearCache();
+            var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME");
+            if (string.IsNullOrEmpty(dscConfigurationDirectory))
             {
-                // Load the base schema files.
-                ClearCache();
-                var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME");
-                if (string.IsNullOrEmpty(dscConfigurationDirectory))
-                {
-                    // if DSC_HOME env var is not set, then use location of system-wide PS module directory (i.e. /usr/local/share/powershell/Modules) as backup
-                    dscConfigurationDirectory = Path.Join(ModuleIntrinsics.GetSharedModulePath(), "PSDesiredStateConfiguration", "Configuration");
-                }
-
-                if (!Directory.Exists(dscConfigurationDirectory))
-                {
-                    throw new DirectoryNotFoundException(string.Format(ParserStrings.PsDscMissingSchemaStore, dscConfigurationDirectory));
-                }
-
-                var resourceBaseFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "BaseResource.schema.json");
-                ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
-                var metaConfigFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
-                ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
-
-                var allResourceRoots = new string[] { dscConfigurationDirectory };
-
-                // Load all of the system resource schema files, searching
-                string resources;
-                foreach (var resourceRoot in allResourceRoots)
-                {
-                    resources = Path.Join(resourceRoot, "schema");
-                    if (!Directory.Exists(resources))
+                var moduleInfos = ModuleCmdletBase.GetModuleIfAvailable(new Microsoft.PowerShell.Commands.ModuleSpecification()
                     {
-                        continue;
-                    }
+                        Name = "PSDesiredStateConfiguration",
+                        Version = new Version(3,0,0)
+                    });
 
-                    foreach (var schemaFile in Directory.EnumerateFiles(resources, "*.schema.json", SearchOption.AllDirectories))
-                    {
-                        ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
-                    }
-                }
-            }
-            else
-            {
-                // DSC SxS scenario
-                var configSystemPath = Utils.DefaultPowerShellAppBase;
-                var systemResourceRoot = Environment.GetEnvironmentVariable("DSC_HOME");
-                var inboxModulePath = Path.Join("Modules", "PSDesiredStateConfiguration");
-
-                if (string.IsNullOrEmpty(systemResourceRoot) || (!Directory.Exists(systemResourceRoot)))
+                if (moduleInfos.Count > 0)
                 {
-                    // if DSC_HOME env var is not set, then use system-wide Windows resource location (i.e. %WINDIR%\System32\Configuration) as backup
-                    configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
-                    systemResourceRoot = Path.Join(configSystemPath, "Configuration");
-                    inboxModulePath = windowsInboxDscResourceModulePath;
-                }
-
-                var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-                var customResourceRoot = Path.Join(programFilesDirectory, "WindowsPowerShell", "Configuration");
-                var allResourceRoots = new string[] { systemResourceRoot, customResourceRoot };
-
-                // Load the base schema files.
-                ClearCache();
-                var resourceBaseFile = Path.Join(systemResourceRoot, "BaseRegistration", "BaseResource.schema.json");
-                ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
-
-                var metaConfigFile = Path.Join(systemResourceRoot, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
-                ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
-
-                var metaConfigExtensionFile = Path.Join(systemResourceRoot, "BaseRegistration", "MSFT_MetaConfigurationExtensionClasses.schema.json");
-                ImportClasses(metaConfigExtensionFile, DefaultModuleInfoForMetaConfigResource, errors);
-
-                // Load all of the system resource schema files, searching
-                string resources;
-                foreach (var resourceRoot in allResourceRoots)
-                {
-                    resources = Path.Join(resourceRoot, "Schema");
-                    if (!Directory.Exists(resources))
-                    {
-                        continue;
-                    }
-
-                    foreach (var schemaFile in Directory.EnumerateFiles(resources, "*.schema.json", SearchOption.AllDirectories))
-                    {
-                        ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
-                    }
-                }
-
-                // Load Regular and DSC PS modules
-                bool importInBoxResourcesImplicitly = false;
-                List<string> modulePaths = new List<string>();
-                if (modulePathList?.Count == 0)
-                {
-                    modulePaths.Add(Path.Join(configSystemPath, inboxModulePath));
-                    importInBoxResourcesImplicitly = true;
+                    var moduleDirectory = Path.GetDirectoryName(moduleInfos[0].Path);
+                    dscConfigurationDirectory = Path.Join(moduleDirectory, "Configuration");
                 }
                 else
                 {
-                    if (modulePathList != null)
-                    {
-                        foreach (string moduleFolderPath in modulePathList)
-                        {
-                            if (!Directory.Exists(moduleFolderPath))
-                            {
-                                continue;
-                            }
+                    // when all else has failed use location of system-wide PS module directory (i.e. /usr/local/share/powershell/Modules) as backup
+                    dscConfigurationDirectory = Path.Join(ModuleIntrinsics.GetSharedModulePath(), "PSDesiredStateConfiguration", "Configuration");
+                }
+            }
 
-                            foreach (string moduleDir in Directory.EnumerateDirectories(moduleFolderPath))
-                            {
-                                modulePaths.Add(moduleDir);
-                            }
-                        }
-                    }
+            if (!Directory.Exists(dscConfigurationDirectory))
+            {
+                throw new DirectoryNotFoundException(string.Format(ParserStrings.PsDscMissingSchemaStore, dscConfigurationDirectory));
+            }
+
+            var resourceBaseFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "BaseResource.schema.json");
+            ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
+            var metaConfigFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
+            ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
+
+            var allResourceRoots = new string[] { dscConfigurationDirectory };
+
+            // Load all of the system resource schema files, searching
+            string resources;
+            foreach (var resourceRoot in allResourceRoots)
+            {
+                resources = Path.Join(resourceRoot, "schema");
+                if (!Directory.Exists(resources))
+                {
+                    continue;
                 }
 
-                LoadDSCResourceIntoCache(errors, modulePaths, importInBoxResourcesImplicitly);
-            }
-        }
-
-        /// <summary>
-        /// Load DSC resources into Cache from moduleFolderPath.
-        /// </summary>
-        /// <param name="errors">Collection of any errors encountered during initialization.</param>
-        /// <param name="modulePathList">Module path from where DSC PS modules will be loaded.</param>
-        /// <param name="importInBoxResourcesImplicitly">
-        /// if module is inbox.
-        /// </param>
-        private static void LoadDSCResourceIntoCache(Collection<Exception> errors, List<string> modulePathList, bool importInBoxResourcesImplicitly)
-        {
-            foreach (string moduleDir in modulePathList)
-            {
-                if (!Directory.Exists(moduleDir)) continue;
-
-                var dscResourcesPath = Path.Join(moduleDir, "DscResources");
-                if (Directory.Exists(dscResourcesPath))
+                foreach (var schemaFile in Directory.EnumerateFiles(resources, "*.schema.json", SearchOption.AllDirectories))
                 {
-                    foreach (string resourceDir in Directory.EnumerateDirectories(dscResourcesPath))
-                    {
-                        IEnumerable<string> schemaFiles = Directory.EnumerateFiles(resourceDir, "*.schema.json");
-                        if (!schemaFiles.Any())
-                        {
-                            continue;
-                        }
-
-                        Tuple<string, Version> moduleInfo = GetModuleInfoHelper(moduleDir, importInBoxResourcesImplicitly, isPsProviderModule: false);
-                        if (moduleInfo == null)
-                        {
-                            continue;
-                        }
-
-                        foreach (string schemaFile in schemaFiles)
-                        {
-                            ImportClasses(schemaFile, moduleInfo, errors, importInBoxResourcesImplicitly);
-                        }
-                    }
+                    ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                 }
             }
         }
@@ -787,28 +683,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 return null;
             }
-        }
-
-        /// <summary>
-        /// Returns the classes associated with the specified module name.
-        /// Per PowerShell the module name is the base name of the schema file.
-        /// </summary>
-        /// <param name="moduleName"></param>
-        /// <returns></returns>
-        public static IEnumerable<PSObject> GetCachedClassByModuleName(string moduleName)
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            if (string.IsNullOrWhiteSpace(moduleName))
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(moduleName));
-            }
-
-            var moduleFileName = moduleName + ".schema.json";
-            return (from filename in ByFileClassCache.Keys where string.Equals(Path.GetFileName(filename), moduleFileName, StringComparison.OrdinalIgnoreCase) select GetCachedClassByFileName(filename)).FirstOrDefault();
         }
 
         private static bool IsMagicProperty(string propertyName)
@@ -1900,42 +1774,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
 
             return new [] {result};
-        }
-
-        /// <summary>
-        /// Gets the line no for DSC Class Resource Get/Set/Test methods.
-        /// </summary>
-        /// <param name="typeDefinitionAst"></param>
-        /// <param name="methodsLinePosition"></param>
-        private static bool GetResourceMethodsLineNumber(TypeDefinitionAst typeDefinitionAst, out Dictionary<string, int> methodsLinePosition)
-        {
-            const string getMethodName = "Get";
-            const string setMethodName = "Set";
-            const string testMethodName = "Test";
-
-            methodsLinePosition = new Dictionary<string, int>();
-            foreach (var member in typeDefinitionAst.Members)
-            {
-                var functionMemberAst = member as FunctionMemberAst;
-                if (functionMemberAst != null)
-                {
-                    if (functionMemberAst.Name.Equals(getMethodName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        methodsLinePosition[getMethodName] = functionMemberAst.NameExtent.StartLineNumber;
-                    }
-                    else if (functionMemberAst.Name.Equals(setMethodName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        methodsLinePosition[setMethodName] = functionMemberAst.NameExtent.StartLineNumber;
-                    }
-                    else if (functionMemberAst.Name.Equals(testMethodName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        methodsLinePosition[testMethodName] = functionMemberAst.NameExtent.StartLineNumber;
-                    }
-                }
-            }
-
-            // All 3 methods (Get/Set/Test) position should be found.
-            return (methodsLinePosition.Count == 3);
         }
 
         private static List<PSObject> ProcessMembers(List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)

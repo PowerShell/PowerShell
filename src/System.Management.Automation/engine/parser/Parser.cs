@@ -3006,14 +3006,11 @@ namespace System.Management.Automation.Language
 
                                 // First check if PSDesiredStateConfiguration is already loaded
                                 // if pre-v3 is already loaded then use old mof-based APIs
-                                // otherwise if v3.0.0 or later is already loaded then use new json-based APIS
-                                // otherwise no version of the module is currently loaded - then try to load v3 and use json-based APIs is loading is successful
-                                // if v3 can not be found/loaded then use old mof-based APIs
+                                // otherwise use json-based APIs
 
                                 p.AddCommand(new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand)));
                                 p.AddParameter("Name", "PSDesiredStateConfiguration");
                                 
-                                bool v3IsLoaded = false;
                                 bool prev3IsLoaded = false;
                                 foreach(PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
                                 {
@@ -3021,41 +3018,11 @@ namespace System.Management.Automation.Language
                                     {
                                         prev3IsLoaded = true;
                                     }
-                                    else
-                                    {
-                                        v3IsLoaded = true;
-                                    }
                                 }
 
                                 p.Commands.Clear();
                                 
-                                if (!prev3IsLoaded)
-                                {
-                                    // if v3 is already loaded we don't need to do anything extra - just use json APIs
-                                    // if it is not loaded - try to load it
-                                    if (v3IsLoaded)
-                                    {
-                                        useJsonSchema = true;
-                                    }
-                                    else
-                                    {
-                                        p.AddCommand(new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand)));
-                                        p.AddParameter("PassThru", true);
-                                        p.AddParameter("FullyQualifiedName", new Microsoft.PowerShell.Commands.ModuleSpecification()
-                                            {
-                                                Name = "PSDesiredStateConfiguration",
-                                                Version = new Version(3,0,0)
-                                            });
-
-                                        var newModuleInfo = p.Invoke();
-                                        p.Commands.Clear();
-                                        if (newModuleInfo.Count > 0)
-                                        {
-                                            // v3 of the module was found/loaded successfully - use new json APIs
-                                            useJsonSchema = true;
-                                        }
-                                    }
-                                }
+                                useJsonSchema = !prev3IsLoaded;
 
                                 if (useJsonSchema)
                                 {
