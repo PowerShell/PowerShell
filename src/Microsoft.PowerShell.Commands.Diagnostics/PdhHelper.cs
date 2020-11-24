@@ -1057,8 +1057,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                    ref StringCollection instances,
                                    ref StringCollection validPaths)
         {
-            uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
-
             PDH_COUNTER_PATH_ELEMENTS pathElts = new();
             pathElts.MachineName = machineName;
             pathElts.ObjectName = objectName;
@@ -1091,7 +1089,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 }
             }
 
-            return res;
+            return PdhResults.PDH_CSTATUS_VALID_DATA;
         }
 
         public uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)

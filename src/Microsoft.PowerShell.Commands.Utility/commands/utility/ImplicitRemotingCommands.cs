@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ErrorRecord GetErrorNoCommandsImportedBecauseOfSkipping()
         {
-            string errorId = "ErrorNoCommandsImportedBecauseOfSkipping";
+            const string errorId = "ErrorNoCommandsImportedBecauseOfSkipping";
 
             ErrorDetails details = this.GetErrorDetails(errorId);
 
@@ -580,7 +580,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandName));
             }
 
-            string errorId = "ErrorMalformedDataFromRemoteCommand";
+            const string errorId = "ErrorMalformedDataFromRemoteCommand";
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandNames));
             }
 
-            string errorId = "ErrorCommandSkippedBecauseOfShadowing";
+            const string errorId = "ErrorCommandSkippedBecauseOfShadowing";
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandNames);
 
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandName));
             }
 
-            string errorId = "ErrorSkippedNonRequestedCommand";
+            const string errorId = "ErrorSkippedNonRequestedCommand";
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
 
-            string errorId = "ErrorSkippedNonRequestedTypeDefinition";
+            const string errorId = "ErrorSkippedNonRequestedTypeDefinition";
 
             ErrorDetails details = this.GetErrorDetails(errorId, typeName);
 
@@ -664,7 +664,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandName));
             }
 
-            string errorId = "ErrorSkippedUnsafeCommandName";
+            const string errorId = "ErrorSkippedUnsafeCommandName";
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
@@ -771,7 +771,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(aliasName));
             }
 
-            string errorId = "ErrorCouldntResolveAlias";
+            const string errorId = "ErrorCouldntResolveAlias";
 
             ErrorDetails details = this.GetErrorDetails(errorId, aliasName);
 
@@ -792,7 +792,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandName));
             }
 
-            string errorId = "ErrorNoResultsFromRemoteEnd";
+            const string errorId = "ErrorNoResultsFromRemoteEnd";
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 

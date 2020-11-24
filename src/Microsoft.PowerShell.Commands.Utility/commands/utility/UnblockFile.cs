@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
         private static bool IsBlocked(string path)
         {
-            uint valueSize = 1024;
+            const uint valueSize = 1024;
             IntPtr value = Marshal.AllocHGlobal((int)valueSize);
             try
             {

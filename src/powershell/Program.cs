@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell
             (string path, int quotedLength) invocationInfo)
         {
             // "exec "
-            string prefix = "exec ";
+            const string prefix = "exec ";
             prefix.AsSpan().CopyTo(strBuf);
 
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell
             i += invocationInfo.quotedLength;
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
-            string suffix = " \"$@\"";
+            const string suffix = " \"$@\"";
             Span<char> bufSuffix = strBuf.Slice(i);
             suffix.AsSpan().CopyTo(bufSuffix);
         }

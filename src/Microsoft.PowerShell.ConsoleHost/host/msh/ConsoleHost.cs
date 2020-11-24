@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                string shellId = "Microsoft.PowerShell";
+                const string shellId = "Microsoft.PowerShell";
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
@@ -2029,7 +2029,7 @@ namespace Microsoft.PowerShell
 
         private void WriteErrorLine(string line)
         {
-            ConsoleColor fg = ConsoleColor.Red;
+            const ConsoleColor fg = ConsoleColor.Red;
             ConsoleColor bg = UI.RawUI.BackgroundColor;
 
             UI.WriteLine(fg, bg, line);

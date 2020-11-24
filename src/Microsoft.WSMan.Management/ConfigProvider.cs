@@ -2531,7 +2531,7 @@ namespace Microsoft.WSMan.Management
                 ResourceURI = ResourceURI.Split('?').GetValue(0).ToString();
             }
 
-            string PTRN_URI_LAST = "([a-z_][-a-z0-9._]*)$";
+            const string PTRN_URI_LAST = "([a-z_][-a-z0-9._]*)$";
             Regex objregex = new Regex(PTRN_URI_LAST, RegexOptions.IgnoreCase);
             MatchCollection regexmatch = objregex.Matches(ResourceURI);
             if (regexmatch.Count > 0)

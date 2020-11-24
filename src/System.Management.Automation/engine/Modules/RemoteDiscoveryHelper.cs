@@ -31,7 +31,7 @@ namespace System.Management.Automation
 
         private static Collection<string> RehydrateHashtableKeys(PSObject pso, string propertyName)
         {
-            var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
+            const DeserializingTypeConverter.RehydrationFlags rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             Hashtable hashtable = DeserializingTypeConverter.GetPropertyValue<Hashtable>(pso, propertyName, rehydrationFlags);
             if (hashtable == null)
@@ -53,7 +53,7 @@ namespace System.Management.Automation
 
         internal static PSModuleInfo RehydratePSModuleInfo(PSObject deserializedModuleInfo)
         {
-            var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
+            const DeserializingTypeConverter.RehydrationFlags rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             string name = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Name", rehydrationFlags);
             string path = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Path", rehydrationFlags);

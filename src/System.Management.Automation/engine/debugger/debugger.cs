@@ -4451,13 +4451,13 @@ namespace System.Management.Automation
             // Nested debugged runspace prompt should look like:
             // [ComputerName]: [DBG]: [Process:<id>]: [RunspaceName]: PS C:\>
             string computerName = _runspace.ConnectionInfo?.ComputerName;
-            string processPartPattern = "{0}[{1}:{2}]:{3}";
+            const string processPartPattern = "{0}[{1}:{2}]:{3}";
             string processPart = StringUtil.Format(processPartPattern,
                 @"""",
                 DebuggerStrings.NestedRunspaceDebuggerPromptProcessName,
                 @"$($PID)",
                 @"""");
-            string locationPart = @"""PS $($executionContext.SessionState.Path.CurrentLocation)> """;
+            const string locationPart = @"""PS $($executionContext.SessionState.Path.CurrentLocation)> """;
             string promptScript = "'[DBG]: '" + " + " + processPart + " + " + "' [" + CodeGeneration.EscapeSingleQuotedStringContent(_runspace.Name) + "]: '" + " + " + locationPart;
 
             // Get the command prompt from the wrapped debugger.

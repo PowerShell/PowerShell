@@ -791,12 +791,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingRunspaceId(Guid remoteRunspaceId)
         {
-            Predicate<PSSession> condition = (PSSession info) => info.InstanceId == remoteRunspaceId;
-            PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
-            PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId;
-            string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedRunspaceId;
-            string tooManyResourceString = RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId;
-            return GetRunspaceMatchingCondition(condition, tooFew, tooMany, tooFewResourceString, tooManyResourceString, remoteRunspaceId);
+            return GetRunspaceMatchingCondition(
+                condition: info => info.InstanceId == remoteRunspaceId,
+                tooFew: PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedRunspaceId,
+                tooMany: PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId,
+                tooFewResourceString: RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedRunspaceId,
+                tooManyResourceString: RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId,
+                errorArgument: remoteRunspaceId);
         }
 
         /// <summary>
@@ -804,12 +805,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingSessionId(int sessionId)
         {
-            Predicate<PSSession> condition = (PSSession info) => info.Id == sessionId;
-            PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedSessionId;
-            PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId;
-            string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedSessionId;
-            string tooManyResourceString = RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId;
-            return GetRunspaceMatchingCondition(condition, tooFew, tooMany, tooFewResourceString, tooManyResourceString, sessionId);
+            return GetRunspaceMatchingCondition(
+                condition: info => info.Id == sessionId,
+                tooFew: PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedSessionId,
+                tooMany: PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId,
+                tooFewResourceString: RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedSessionId,
+                tooManyResourceString: RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId,
+                errorArgument: sessionId);
         }
 
         /// <summary>
@@ -817,16 +819,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceMatchingName(string name)
         {
-            Predicate<PSSession> condition = (PSSession info) =>
-            {
-                // doing case-insensitive match for session name
-                return info.Name.Equals(name, StringComparison.OrdinalIgnoreCase);
-            };
-            PSRemotingErrorId tooFew = PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedName;
-            PSRemotingErrorId tooMany = PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedName;
-            string tooFewResourceString = RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedName;
-            string tooManyResourceString = RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedName;
-            return GetRunspaceMatchingCondition(condition, tooFew, tooMany, tooFewResourceString, tooManyResourceString, name);
+            return GetRunspaceMatchingCondition(
+                condition: info => info.Name.Equals(name, StringComparison.OrdinalIgnoreCase),
+                tooFew: PSRemotingErrorId.RemoteRunspaceNotAvailableForSpecifiedName,
+                tooMany: PSRemotingErrorId.RemoteRunspaceHasMultipleMatchesForSpecifiedName,
+                tooFewResourceString: RemotingErrorIdStrings.RemoteRunspaceNotAvailableForSpecifiedName,
+                tooManyResourceString: RemotingErrorIdStrings.RemoteRunspaceHasMultipleMatchesForSpecifiedName,
+                errorArgument: name);
         }
 
         private Job FindJobForRunspace(Guid id)

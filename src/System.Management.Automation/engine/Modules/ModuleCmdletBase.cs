@@ -1141,7 +1141,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // If first conversion fails, try to convert * to maximum version
-                string maxRange = "999999999";
+                const string maxRange = "999999999";
                 if (stringVersion[stringVersion.Length - 1] == '*')
                 {
                     stringVersion = stringVersion.Substring(0, stringVersion.Length - 1);

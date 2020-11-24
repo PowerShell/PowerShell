@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
             // make sure we do not have too many properties
 
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            int nMax = 256;
+            const int nMax = 256;
 
             if (activeAssociationList.Count > nMax)
             {

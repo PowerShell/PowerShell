@@ -1735,8 +1735,13 @@ namespace System.Management.Automation
         {
             bool yesToAll = false;
             bool noToAll = false;
-            bool hasSecurityImpact = false;
-            return DoShouldContinue(query, caption, hasSecurityImpact, false, ref yesToAll, ref noToAll);
+            return DoShouldContinue(
+                query,
+                caption,
+                hasSecurityImpact: false,
+                supportsToAllOptions: false,
+                ref yesToAll,
+                ref noToAll);
         }
 
         /// <summary>

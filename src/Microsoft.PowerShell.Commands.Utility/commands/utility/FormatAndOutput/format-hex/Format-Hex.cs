@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">Offset in the file.</param>
         private void WriteHexadecimal(Span<byte> inputBytes, string path, long offset)
         {
-            var bytesPerObject = 16;
+            const int bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
             {
                 var count = inputBytes.Length - index < bytesPerObject
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void WriteHexadecimal(Span<byte> inputBytes, long offset, string label)
         {
-            var bytesPerObject = 16;
+            const int bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
             {
                 var count = inputBytes.Length - index < bytesPerObject

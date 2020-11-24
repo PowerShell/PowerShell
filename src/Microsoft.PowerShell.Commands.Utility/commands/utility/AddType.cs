@@ -914,12 +914,11 @@ namespace Microsoft.PowerShell.Commands
         {
             string sdkDirectory = s_defaultSdkDirectory;
             string baseDirectory = this.SessionState.Path.CurrentLocation.Path;
-            string additionalReferenceDirectories = null;
 
             switch (Language)
             {
                 case Language.CSharp:
-                    return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
+                    return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory);
 
                 default:
                     throw PSTraceSource.NewNotSupportedException();

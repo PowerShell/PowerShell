@@ -912,7 +912,7 @@ namespace System.Management.Automation.Internal.Host
 
             // Construct the caption + message + list of choices + default choices
             Text.StringBuilder choicesMessage = new Text.StringBuilder();
-            char newLine = '\n';
+            const char newLine = '\n';
             if (!string.IsNullOrEmpty(caption))
             {
                 choicesMessage.Append(caption);
@@ -928,7 +928,7 @@ namespace System.Management.Automation.Internal.Host
             string[,] hotkeysAndPlainLabels = null;
             HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
 
-            string choiceTemplate = "[{0}] {1}  ";
+            const string choiceTemplate = "[{0}] {1}  ";
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
                 string choice =

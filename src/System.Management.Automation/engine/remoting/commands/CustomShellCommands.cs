@@ -798,7 +798,7 @@ else
             destConfigFilePath = null;
             StringBuilder initParameters = new StringBuilder();
 
-            bool assemblyAndTypeTokensSet = false;
+            const bool assemblyAndTypeTokensSet = false;
 
             // DISC endpoint
             if (Path != null)

@@ -261,8 +261,7 @@ namespace System.Management.Automation.Language
         /// <returns>The StaticBindingResult that represents the binding.</returns>
         public static StaticBindingResult BindCommand(CommandAst commandAst)
         {
-            bool resolve = true;
-            return BindCommand(commandAst, resolve);
+            return BindCommand(commandAst, resolve: true);
         }
 
         /// <summary>

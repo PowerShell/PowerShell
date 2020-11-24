@@ -680,7 +680,7 @@ namespace System.Management.Automation
                 }
 
                 // Retrieve the event from the object
-                BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
+                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(eventName, bindingFlags);
 
                 // If we can't find the event, throw an exception
@@ -844,7 +844,7 @@ namespace System.Management.Automation
 
                 Type sourceType = subscriber.SourceObject as Type ?? subscriber.SourceObject.GetType();
 
-                BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
+                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(subscriber.EventName, bindingFlags);
 
                 if ((eventInfo != null) && (existingSubscriber != null))

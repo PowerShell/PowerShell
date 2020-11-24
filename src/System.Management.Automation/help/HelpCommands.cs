@@ -516,7 +516,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // categories that support -Parameter, -Role, -Functionality, -Component parameters
-            HelpCategory supportedCategories =
+            const HelpCategory supportedCategories =
                 HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.ExternalScript |
                 HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand;
 

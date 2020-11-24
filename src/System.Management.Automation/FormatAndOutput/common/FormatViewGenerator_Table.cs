@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // make sure we do not have too many properties
 
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            int nMax = 10;
+            const int nMax = 10;
 
             if (activeAssociationList.Count > nMax)
             {

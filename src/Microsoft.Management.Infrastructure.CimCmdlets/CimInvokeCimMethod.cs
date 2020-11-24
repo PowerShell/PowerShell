@@ -357,7 +357,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 string parameterName = enumerator.Key.ToString();
 
-                CimFlags parameterFlags = CimFlags.In;
+                const CimFlags parameterFlags = CimFlags.In;
                 object parameterValue = GetBaseObject(enumerator.Value);
 
                 DebugHelper.WriteLog(@"Create parameter name= {0}, value= {1}, flags= {2}.", 4,
