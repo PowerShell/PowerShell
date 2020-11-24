@@ -1313,14 +1313,6 @@ namespace System.Management.Automation
             _disposed = true;
         }
 
-        /// <summary>
-        /// Finalizer for class SteppablePipeline.
-        /// </summary>
-        ~SteppablePipeline()
-        {
-            Dispose(false);
-        }
-
         #endregion IDispose
     }
 

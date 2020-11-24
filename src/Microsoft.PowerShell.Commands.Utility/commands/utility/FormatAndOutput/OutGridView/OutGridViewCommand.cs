@@ -492,13 +492,5 @@ namespace Microsoft.PowerShell.Commands
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~OutGridViewCommand()
-        {
-            Dispose(false);
-        }
     }
 }
