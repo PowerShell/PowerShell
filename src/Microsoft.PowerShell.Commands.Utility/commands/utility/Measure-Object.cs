@@ -635,8 +635,8 @@ namespace Microsoft.PowerShell.Commands
                 return objValue;
             }
 
-            int comp = LanguagePrimitives.Compare(statValue, currentValue, false, CultureInfo.CurrentCulture);
-            return (isMin ? comp : -comp) > 0
+            int comparisonResult = LanguagePrimitives.Compare(statValue, currentValue, ignoreCase: false, CultureInfo.CurrentCulture);
+            return (isMin ? comparisonResult : -comparisonResult) > 0
                 ? objValue
                 : statMinOrMaxValue;
         }
