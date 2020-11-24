@@ -189,15 +189,35 @@ namespace Microsoft.PowerShell.Commands
                             targetObject: null));
                 }
 
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage  ||
-                    (Context.LanguageMode == PSLanguageMode.NoLanguage && 
-                    (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() == System.Management.Automation.Security.SystemEnforcementMode.Enforce)))
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     if (!CoreTypes.Contains(type))
                     {
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
+                    }
+                }
+
+                if (Context.LanguageMode == PSLanguageMode.NoLanguage && 
+                   (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() == System.Management.Automation.Security.SystemEnforcementMode.Enforce))
+                {
+                    if (!CoreTypes.Contains(type))
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                new PSNotSupportedException(NewObjectStrings.CannotCreateTypeNoLanguage), "CannotCreateTypeNoLanguage", ErrorCategory.PermissionDenied, null));
+                    }
+                }
+
+                if (Context.LanguageMode == PSLanguageMode.RestrictedLanguage && 
+                   (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() == System.Management.Automation.Security.SystemEnforcementMode.Enforce))
+                {
+                    if (!CoreTypes.Contains(type))
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                new PSNotSupportedException(NewObjectStrings.CannotCreateTypeRestrictedLanguage), "CannotCreateTypeRestrictedLanguage", ErrorCategory.PermissionDenied, null));
                     }
                 }
 
