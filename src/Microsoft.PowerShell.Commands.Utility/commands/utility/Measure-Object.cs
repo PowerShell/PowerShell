@@ -619,7 +619,6 @@ namespace Microsoft.PowerShell.Commands
         {
             object currentValue = objValue;
             object statValue = statMinOrMaxValue;
-            int factor = isMin ? 1 : -1;
 
             double temp;
             currentValue = ((objValue != null) && LanguagePrimitives.TryConvertTo<double>(objValue, out temp)) ? temp : currentValue;
@@ -631,13 +630,15 @@ namespace Microsoft.PowerShell.Commands
                 statValue = PSObject.AsPSObject(statValue).ToString();
             }
 
-            if ((statValue == null) ||
-                ((LanguagePrimitives.Compare(statValue, currentValue, false, CultureInfo.CurrentCulture) * factor) > 0))
+            if (statValue == null)
             {
                 return objValue;
             }
 
-            return statMinOrMaxValue;
+            int comp = LanguagePrimitives.Compare(statValue, currentValue, false, CultureInfo.CurrentCulture);
+            return (isMin ? comp : -comp) > 0
+                ? objValue
+                : statMinOrMaxValue;
         }
 
         /// <summary>
