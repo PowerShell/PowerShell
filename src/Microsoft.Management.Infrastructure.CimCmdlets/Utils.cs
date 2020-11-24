@@ -138,31 +138,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Flag used to control generating log message into file.
         /// </summary>
-        private static bool generateLog = true;
-
-        internal static bool GenerateLog
-        {
-            get { return generateLog; }
-
-            set { generateLog = value; }
-        }
+        internal static bool GenerateLog { get; set; } = true;
 
         /// <summary>
         /// Whether the log been initialized.
         /// </summary>
         private static bool logInitialized = false;
 
-        /// <summary>
-        /// Flag used to control generating message into powershell.
-        /// </summary>
-        private static bool generateVerboseMessage = true;
-
-        internal static bool GenerateVerboseMessage
-        {
-            get { return generateVerboseMessage; }
-
-            set { generateVerboseMessage = value; }
-        }
+        internal static bool GenerateVerboseMessage { get; set; } = true;
 
         /// <summary>
         /// Flag used to control generating message into powershell.
@@ -189,7 +172,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock the log file.
         /// </summary>
-        internal static readonly object logLock = new object();
+        internal static readonly object logLock = new();
 
         #endregion
 
@@ -214,7 +197,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region runtime methods
         internal static string GetSourceCodeInformation(bool withFileName, int depth)
         {
-            StackTrace trace = new StackTrace();
+            StackTrace trace = new();
             StackFrame frame = trace.GetFrame(depth);
             // if (withFileName)
             // {
@@ -337,7 +320,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (generateLog)
+            if (GenerateLog)
             {
                 if (indent < 0)
                 {
@@ -364,8 +347,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 lock (logLock)
                 {
-                    using (FileStream fs = new FileStream(logFile, FileMode.OpenOrCreate))
-                    using (StreamWriter writer = new StreamWriter(fs))
+                    using (FileStream fs = new(logFile, FileMode.OpenOrCreate))
+                    using (StreamWriter writer = new(fs))
                     {
                         writer.WriteLineAsync(spaces[indent] + sourceInformation + @"        " + message);
                     }
@@ -423,7 +406,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 string trimed = value.Trim();
                 // The first character should be contained in set: [A-Za-z_]
                 // Inner characters should be contained in set: [A-Za-z0-9_]
-                Regex regex = new Regex(@"^[a-zA-Z_][a-zA-Z0-9_]*\z");
+                Regex regex = new(@"^[a-zA-Z_][a-zA-Z0-9_]*\z");
                 if (regex.IsMatch(trimed))
                 {
                     DebugHelper.WriteLogEx("A valid name: {0}={1}", 0, parameterName, value);

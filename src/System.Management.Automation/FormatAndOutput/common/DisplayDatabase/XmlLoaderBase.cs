@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class XmlLoaderLoggerEntry
     {
-        internal enum EntryType { Error, Trace };
+        internal enum EntryType { Error, Trace }
 
         /// <summary>
         /// Type of information being logged.

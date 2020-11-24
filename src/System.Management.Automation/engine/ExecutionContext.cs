@@ -679,6 +679,7 @@ namespace System.Management.Automation
         #endregion
 
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
         /// <summary>
@@ -906,7 +907,7 @@ namespace System.Management.Automation
             const int maxErrorCount = 256;
 
             int numToErase = arraylist.Count - (maxErrorCount - 1);
-            if (0 < numToErase)
+            if (numToErase > 0)
             {
                 arraylist.RemoveRange(
                     maxErrorCount - 1,
@@ -1698,5 +1699,5 @@ namespace System.Management.Automation
         /// Engine is stopped.
         /// </summary>
         Stopped = 4
-    };
+    }
 }

@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// Specifies culture-invariant matching.
         /// </summary>
         CultureInvariant = 4
-    };
+    }
 
     /// <summary>
     /// Represents a wildcard pattern.
@@ -729,7 +729,7 @@ namespace System.Management.Automation
 
             return e;
         }
-    };
+    }
 
     /// <summary>
     /// Convert a string with wild cards into its equivalent regex.

@@ -23,16 +23,14 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Microsoft.PowerShell.Telemetry;
 using Microsoft.PowerShell.Commands;
-
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using Dbg = System.Management.Automation.Diagnostics;
-using Debugger = System.Management.Automation.Debugger;
-
+using Microsoft.PowerShell.Telemetry;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
+using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
+using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
@@ -226,7 +224,7 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
-                    if (s_theConsoleHost.LoadPSReadline())
+                    if (LoadPSReadline())
                     {
                         ProfileOptimization.StartProfile("StartupProfileData-Interactive");
 
@@ -1158,6 +1156,10 @@ namespace Microsoft.PowerShell
             AppDomain.CurrentDomain.UnhandledException += handler;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private void BindBreakHandler()
         {
 #if UNIX
@@ -1600,7 +1602,7 @@ namespace Microsoft.PowerShell
             return _screenReaderActive.Value;
         }
 
-        private bool LoadPSReadline()
+        private static bool LoadPSReadline()
         {
             // Don't load PSReadline if:
             //   * we don't think the process will be interactive, e.g. -command or -file
@@ -1708,7 +1710,7 @@ namespace Microsoft.PowerShell
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
-        private void OpenConsoleRunspace(Runspace runspace, bool staMode)
+        private static void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
             if (staMode && Platform.IsWindowsDesktop)
             {
@@ -2728,7 +2730,7 @@ namespace Microsoft.PowerShell
                 return results ?? new DebuggerCommandResults(DebuggerResumeAction.Continue, false);
             }
 
-            private bool IsIncompleteParseException(Exception e)
+            private static bool IsIncompleteParseException(Exception e)
             {
                 // Check e's type.
                 if (e is IncompleteParseException)
@@ -2743,7 +2745,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                return remoteException.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name;
+                return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
             }
 
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)
@@ -2988,9 +2990,13 @@ namespace Microsoft.PowerShell
         }
 
         internal string InitialCommand { get; set; }
+
         internal bool SkipProfiles { get; set; }
+
         internal bool StaMode { get; set; }
+
         internal string ConfigurationName { get; set; }
+
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace

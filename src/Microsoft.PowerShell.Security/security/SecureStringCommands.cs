@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Security;

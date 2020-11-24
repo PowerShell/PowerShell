@@ -25,12 +25,19 @@ namespace System.Management.Automation.Language
         }
 
         public int BitIndex { get; set; }
+
         public int LocalTupleIndex { get; set; }
+
         public Type Type { get; set; }
+
         public string Name { get; set; }
+
         public bool Automatic { get; set; }
+
         public bool PreferenceVariable { get; set; }
+
         public bool Assigned { get; set; }
+
         public List<Ast> AssociatedAsts { get; }
     }
 

@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="zeroBasedIndex">The index to wrap.</param>
             /// <exception cref="ArgumentOutOfRangeException">If <paramref name="zeroBasedIndex" /> is out of range.</exception>
             /// <returns>
-            /// The actual index that <param ref="zeroBasedIndex" />
+            /// The actual index that <paramref name="zeroBasedIndex" />
             /// maps to.
             /// </returns>
             private int WrapIndex(int zeroBasedIndex)

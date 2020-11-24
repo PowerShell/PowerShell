@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
             //     Add differenceEntry to differenceEntryBacklog
             if (differenceEntry != null)
             {
-                if (0 < SyncWindow)
+                if (SyncWindow > 0)
                 {
                     while (_differenceEntryBacklog.Count >= SyncWindow)
                     {
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
             //     Add referenceEntry to referenceEntryBacklog
             if (referenceEntry != null)
             {
-                if (0 < SyncWindow)
+                if (SyncWindow > 0)
                 {
                     while (_referenceEntryBacklog.Count >= SyncWindow)
                     {
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_comparer == null && 0 < DifferenceObject.Length)
+            if (_comparer == null && DifferenceObject.Length > 0)
             {
                 InitComparer();
             }

@@ -90,6 +90,7 @@ namespace System.Management.Automation.Subsystem
         }
 
         private protected abstract void AddImplementation(ISubsystem rawImpl);
+
         private protected abstract ISubsystem RemoveImplementation(Guid id);
 
         internal void RegisterImplementation(ISubsystem impl)

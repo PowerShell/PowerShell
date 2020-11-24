@@ -517,7 +517,7 @@ namespace System.Management.Automation.Internal.Host
                         endLoop = false;
                         break;
                 }
-            } while (endLoop != true);
+            } while (!endLoop);
 
             return shouldContinue;
         }
@@ -680,12 +680,12 @@ namespace System.Management.Automation.Internal.Host
 
         internal static bool IsSecuritySensitiveType(string typeName)
         {
-            if (typeName.Equals(typeof(PSCredential).Name, StringComparison.OrdinalIgnoreCase))
+            if (typeName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (typeName.Equals(typeof(SecureString).Name, StringComparison.OrdinalIgnoreCase))
+            if (typeName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

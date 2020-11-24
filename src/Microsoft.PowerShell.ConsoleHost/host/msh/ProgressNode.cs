@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell
             /// The node will be displayed the same as Full, plus, the whole StatusDescription and CurrentOperation will be displayed (in multiple lines if needed).
             /// </summary>
             FullPlus = 4,
-        };
+        }
 
         /// <summary>
         /// Constructs an instance from a ProgressRecord.

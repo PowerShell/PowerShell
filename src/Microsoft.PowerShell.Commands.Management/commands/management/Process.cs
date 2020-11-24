@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             /// Select the processes specified as input.
             /// </summary>
             ByInput
-        };
+        }
         /// <summary>
         /// The current process selection mode.
         /// </summary>
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (ArgumentException)
                 {
                     WriteNonTerminatingError(
-                        "",
+                        string.Empty,
                         processId,
                         processId,
                         null,
@@ -974,7 +974,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // It cannot wait on itself
-                if (process.Id.Equals(System.Diagnostics.Process.GetCurrentProcess().Id))
+                if (process.Id.Equals(Environment.ProcessId))
                 {
                     WriteNonTerminatingError(process, null, ProcessResources.WaitOnItself, "WaitOnItself", ErrorCategory.ObjectNotFound);
                     continue;
@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (Process.GetCurrentProcess().Id == SafeGetProcessId(process))
+                    if (Environment.ProcessId == SafeGetProcessId(process))
                     {
                         _shouldKillCurrentProcess = true;
                         continue;
@@ -1387,9 +1387,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Stops the given process throws non terminating error if can't.
-        /// <param name="process" >Process to be stopped.</param>
-        /// <returns>True if process stopped successfully else false.</returns>
         /// </summary>
+        /// <param name="process">Process to be stopped.</param>
+        /// <returns>True if process stopped successfully else false.</returns>
         private void StopProcess(Process process)
         {
             Exception exception = null;
@@ -1578,7 +1578,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Map the return code from 'AttachDebugger' to error message.
         /// </summary>
-        private string MapReturnCodeToErrorMessage(int returnCode)
+        private static string MapReturnCodeToErrorMessage(int returnCode)
         {
             string errorMessage = string.Empty;
             switch (returnCode)
@@ -2106,7 +2106,7 @@ namespace Microsoft.PowerShell.Commands
             return filepath;
         }
 
-        private void LoadEnvironmentVariable(ProcessStartInfo startinfo, IDictionary EnvironmentVariables)
+        private static void LoadEnvironmentVariable(ProcessStartInfo startinfo, IDictionary EnvironmentVariables)
         {
             var processEnvironment = startinfo.EnvironmentVariables;
             foreach (DictionaryEntry entry in EnvironmentVariables)
@@ -2327,7 +2327,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < sd.Count; i++)
             {
-                builder.Append(array[i]);//
+                builder.Append(array[i]);
                 builder.Append('=');
                 builder.Append(strArray2[i]);
                 builder.Append('\0');

@@ -2721,7 +2721,7 @@ namespace Microsoft.PowerShell.Commands
             SymbolicLink,
             Junction,
             HardLink
-        };
+        }
 
         private static ItemType GetItemType(string input)
         {

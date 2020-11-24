@@ -16,6 +16,7 @@ namespace System.Management.Automation
         private readonly HashSet<string> _validVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
         internal bool UsesParameter { get; private set; }
 
         internal bool HasUsingExpr { get; private set; }

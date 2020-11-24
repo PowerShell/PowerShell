@@ -645,7 +645,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
                     RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
-                    Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
+                    Exception closeReason = sessionEventArgs?.SessionStateInfo.Reason;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
 
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
         }
 
-        private bool IsFinished(PSInvocationState state)
+        private static bool IsFinished(PSInvocationState state)
         {
             return (state == PSInvocationState.Completed ||
                     state == PSInvocationState.Failed ||
@@ -977,7 +977,7 @@ namespace System.Management.Automation.Runspaces.Internal
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// PSConnectionRetryStatusEventArgs.

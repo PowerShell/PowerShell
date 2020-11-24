@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ReadHostCommand : PSCmdlet
     {
         /// <summary>
-        /// Constructs a new instance.
+        /// Initializes a new instance of the <see cref="ReadHostCommand"/> class.
         /// </summary>
         public
         ReadHostCommand()

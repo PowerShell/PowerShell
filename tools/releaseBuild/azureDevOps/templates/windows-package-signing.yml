@@ -8,13 +8,17 @@ jobs:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    vmImage: windows-latest
   variables:
-    BuildConfiguration: release
-    BuildPlatform: any cpu
+    - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+      value: 1
+    - group: ESRP
 
   steps:
   - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
     clean: true
 
   - template: shouldSign.yml
@@ -36,36 +40,15 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - powershell: |
-      $authenticodefiles = @(
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
-      )
-
-      $msixFiles = @(
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
-      )
-
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml" -MsixCertType $env:MSIX_TYPE -MsixFiles $msixFiles
-    displayName: 'Generate Package Signing Xml'
-
-  - powershell: |
-      Get-Content "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Capture signing xml'
-
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\signed
+        signOutputPath: $(Build.StagingDirectory)\signedPackages
+        certificateId: "CP-230012"
+        pattern: |
+          **\*.msi
+          **\*.msix
+        useMinimatch: true
 
   - powershell: |
       new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
@@ -110,8 +93,17 @@ jobs:
       msi: no
       msix: no
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run Defender Scan'
+  - task: SFP.build-tasks.custom-build-task-2.EsrpMalwareScanning@1
+    displayName: 'Malware Scanning'
+    inputs:
+      ConnectedServiceName: pwshEsrpScanning
+      FolderPath: '$(Build.StagingDirectory)'
+      Pattern: |
+        **\*.msix
+        **\*.msi
+        **\*.zip
+      UseMinimatch: true
+      SessionTimeout: 30
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

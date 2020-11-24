@@ -449,7 +449,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
-                    commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
+                    commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
                 }
@@ -551,10 +551,10 @@ namespace System.Management.Automation
                     }
 
                     // Skip PowerShell magic variables
-                    if (Regex.Match(
+                    if (!Regex.Match(
                             variableName,
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false)
+                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
                     {
                         updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
                         updatedScriptblock.Append("${using:");

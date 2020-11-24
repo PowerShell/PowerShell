@@ -327,6 +327,7 @@ namespace Microsoft.PowerShell
                 AssertArgumentsParsed();
                 return _configurationName;
             }
+
             set
             {
                 if (!string.IsNullOrEmpty(value))
@@ -1073,7 +1074,7 @@ namespace Microsoft.PowerShell
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
             // Try parse '$true', 'true', '$false' and 'false' values.
-            object ConvertToBoolIfPossible(string arg)
+            static object ConvertToBoolIfPossible(string arg)
             {
                 // Before parsing we skip '$' if present.
                 return arg.Length > 0 && bool.TryParse(arg.AsSpan().Slice(arg[0] == '$' ? 1 : 0), out bool boolValue)

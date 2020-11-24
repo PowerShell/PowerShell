@@ -2237,7 +2237,7 @@ namespace System.Management.Automation
             }
             else
             {
-                module = new string[] { "" };
+                module = new string[] { string.Empty };
             }
 
             ModuleSpecification[] fullyQualifiedName = null;
@@ -2281,7 +2281,7 @@ namespace System.Management.Automation
         /// Gets the NoInput setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is no pipeline input; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is no pipeline input; <see langword="false"/> otherwise.</returns>
         internal static bool GetNoInput(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2298,7 +2298,7 @@ namespace System.Management.Automation
         /// Gets the AddToHistory setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is addToHistory data; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is addToHistory data; <see langword="false"/> otherwise.</returns>
         internal static bool GetAddToHistory(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2315,7 +2315,7 @@ namespace System.Management.Automation
         /// Gets the IsNested setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is IsNested data; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is IsNested data; <see langword="false"/> otherwise.</returns>
         internal static bool GetIsNested(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);

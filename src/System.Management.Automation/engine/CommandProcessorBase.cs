@@ -149,6 +149,7 @@ namespace System.Management.Automation
         {
             get { return null; }
         }
+
         // Full Qualified ID for the obsolete command warning
         private const string FQIDCommandObsolete = "CommandObsolete";
 
@@ -256,7 +257,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">Help target to request.</param>
         /// <param name="helpCategory">Help category to request.</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if user requested help; <see langword="false"/> otherwise.</returns>
         internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             // by default we don't handle "-?" parameter at all

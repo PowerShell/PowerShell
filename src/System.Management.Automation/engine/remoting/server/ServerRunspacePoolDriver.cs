@@ -31,7 +31,9 @@ namespace System.Management.Automation
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
 
@@ -831,7 +833,7 @@ namespace System.Management.Automation
                 {
                     if (_driverNestedInvoker != null && _driverNestedInvoker.IsActive)
                     {
-                        if (_driverNestedInvoker.IsAvailable == false)
+                        if (!_driverNestedInvoker.IsAvailable)
                         {
                             // A nested command is already running.
                             throw new PSInvalidOperationException(
@@ -1246,7 +1248,7 @@ namespace System.Management.Automation
             /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
-        };
+        }
 
         private class DebuggerCommandArgument
         {

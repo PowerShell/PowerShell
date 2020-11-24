@@ -4223,7 +4223,7 @@ namespace System.Management.Automation
 
                     if (error != null)
                     {
-                        Type specifiedType = (argumentToBind.ArgumentValue == null) ? null : argumentToBind.ArgumentValue.GetType();
+                        Type specifiedType = argumentToBind.ArgumentValue?.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 error,

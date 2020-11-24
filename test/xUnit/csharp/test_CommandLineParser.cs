@@ -976,6 +976,7 @@ namespace PSTests.Parallel
                 yield return new object[] { "-settingsfile", _fileName };
                 yield return new object[] { "-settings", _fileName };
             }
+
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 

@@ -185,7 +185,6 @@ namespace Microsoft.PowerShell
                     // We can reuse this value later to prevent needing to call a .NET API
                     // to generate our exec invocation.
 
-
                     // We don't care about argc's value, since argv[0] must always exist.
                     // Skip over argc, but remember where exec_path is for later
                     executablePathPtr = IntPtr.Add(procargs, sizeof(int));
@@ -321,7 +320,7 @@ namespace Microsoft.PowerShell
             //
             // Since command_name is ignored and we can't use null (it's the terminator)
             // we use empty string
-            execArgs[4] = "";
+            execArgs[4] = string.Empty;
 
             // Add the arguments passed to pwsh on the end.
             args.CopyTo(execArgs, 5);

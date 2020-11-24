@@ -49,7 +49,7 @@ namespace System.Management.Automation.Remoting
         /// Check lengths non negative.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        private bool CheckLengthsNonNegative(int[] lengths)
+        private static bool CheckLengthsNonNegative(int[] lengths)
         {
             for (int i = 0; i < lengths.Length; ++i)
             {

@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="coreName">Named pipe core name.</param>
         /// <param name="securityDesc"></param>
         /// <returns>NamedPipeServerStream.</returns>
-        private NamedPipeServerStream CreateNamedPipe(
+        private static NamedPipeServerStream CreateNamedPipe(
             string serverName,
             string namespaceName,
             string coreName,
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
-            string processId = System.Diagnostics.Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture);
+            string processId = Environment.ProcessId.ToString(CultureInfo.InvariantCulture);
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
             // Logging.

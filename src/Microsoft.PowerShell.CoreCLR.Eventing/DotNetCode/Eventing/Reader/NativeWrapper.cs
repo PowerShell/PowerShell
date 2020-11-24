@@ -17,8 +17,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Security.Principal;
+using System.Text;
 
 namespace System.Diagnostics.Eventing.Reader
 {

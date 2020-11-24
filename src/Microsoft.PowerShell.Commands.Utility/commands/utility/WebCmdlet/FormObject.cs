@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         public Dictionary<string, string> Fields { get; }
 
         /// <summary>
-        /// Constructor for FormObject.
+        /// Initializes a new instance of the <see cref="FormObject"/> class.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="method"></param>

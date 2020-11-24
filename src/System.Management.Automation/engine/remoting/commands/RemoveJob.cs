@@ -540,7 +540,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="matches"></param>
         /// <param name="jobsToSearch"></param>
         /// <returns></returns>
-        private bool FindJobsMatchingByFilterHelper(List<Job> matches, List<Job> jobsToSearch)
+        private static bool FindJobsMatchingByFilterHelper(List<Job> matches, List<Job> jobsToSearch)
         {
             // check that filter only has job properties
             // if so, filter on one at a time using helpers.

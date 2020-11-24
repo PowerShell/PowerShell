@@ -62,6 +62,7 @@ namespace System.Management.Automation
         #region Events and Handlers
 
         public event EventHandler<EventArgs> StartSteppablePipeline;
+
         public event EventHandler<EventArgs> RunProcessRecord;
 
         /// <summary>

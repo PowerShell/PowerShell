@@ -249,7 +249,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                 default:
-                    Debug.Fail("");
+                    Debug.Fail(string.Empty);
                     break;
             }
         }
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation.Runspaces
         {
             try
             {
-                if (_disposed == false)
+                if (!_disposed)
                 {
                     _disposed = true;
                     if (disposing)

@@ -36,7 +36,7 @@ namespace System.Management.Automation
             {
                 string key = pair.Key;
                 RuntimeDefinedParameter pp = pair.Value;
-                string ppName = (pp == null) ? null : pp.Name;
+                string ppName = pp?.Name;
                 if (pp == null || key != ppName)
                 {
                     ParameterBindingException bindingException =

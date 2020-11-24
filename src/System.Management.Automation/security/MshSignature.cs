@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// with the current system.
         /// </summary>
         Incompatible
-    };
+    }
 
     /// <summary>
     /// Defines the valid types of signatures.
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         /// The signature is a catalog signature.
         /// </summary>
         Catalog = 2
-    };
+    }
 
     /// <summary>
     /// Represents a digital signature on a signed
@@ -389,5 +389,5 @@ namespace System.Management.Automation
 
             return message;
         }
-    };
+    }
 }

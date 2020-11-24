@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
                     string moduleName = Path.GetFileName(folder);
-                    if (string.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Equals(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase))
                     {
                         fileBaseName = moduleName;
 #endif
@@ -644,8 +644,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSModuleInfo LoadModuleNamedInManifest(PSModuleInfo parentModule, ModuleSpecification moduleSpecification, string moduleBase, bool searchModulePath,
-            string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, bool loadTypesFiles,
-            bool loadFormatFiles, object privateData, out bool found, string shortModuleName, PSLanguageMode? manifestLanguageMode)
+            string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, bool loadTypes,
+            bool loadFormats, object privateData, out bool found, string shortModuleName, PSLanguageMode? manifestLanguageMode)
         {
             PSModuleInfo module = null;
             PSModuleInfo tempModuleInfoFromVerification = null;
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
                     // NestedModules = 'test2' ---> test2 is a directory under current module directory (e.g - Test1)
                     // We also need to look for Test1\Test2\Test2.(psd1/psm1/dll)
                     // With the call above, we are only looking at Test1\Test2.(psd1/psm1/dll)
-                    if (found == false && moduleFileFound == false)
+                    if (!found && !moduleFileFound)
                     {
                         string newRootedPath = Path.Combine(rootedPath, moduleSpecification.Name);
                         string newModuleBase = Path.Combine(moduleBase, moduleSpecification.Name);
@@ -764,7 +764,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Win8: 262157 - Import-Module is giving errors while loading Nested Modules. (This is a V2 bug)
                     // Only look for the file if the file was not found with the previous search
-                    if (found == false && moduleFileFound == false)
+                    if (!found && !moduleFileFound)
                     {
                         string newRootedPath = Path.Combine(rootedPath, moduleSpecification.Name);
                         string newModuleBase = Path.Combine(moduleBase, moduleSpecification.Name);
@@ -786,10 +786,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The rooted files wasn't found, so don't search anymore...
-                if (found == false && wasRooted)
+                if (!found && wasRooted)
                     return null;
 
-                if (searchModulePath && found == false && moduleFileFound == false)
+                if (searchModulePath && !found && !moduleFileFound)
                 {
                     if (VerifyIfNestedModuleIsAvailable(moduleSpecification, null, null, out tempModuleInfoFromVerification))
                     {
@@ -846,7 +846,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // At this point, we haven't found an actual module, so try loading it as a
                 // PSSnapIn and then finally as an assembly in the GAC...
-                if ((found == false) && (moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.RequiredVersion == null) && (moduleSpecification.MaximumVersion == null))
+                if (!found && (moduleSpecification.Guid == null) && (moduleSpecification.Version == null) && (moduleSpecification.RequiredVersion == null) && (moduleSpecification.MaximumVersion == null))
                 {
                     // If we are in module analysis and the parent module declares non-wildcarded ExportedCmdlets, then we don't need to
                     // actually process the binary module.
@@ -878,19 +878,20 @@ namespace Microsoft.PowerShell.Commands
                             // At this point, we are already exhaust all possible ways to load the nested module. The last option is to load it as a binary module/snapin.
                             module = LoadBinaryModule(
                                 parentModule,
-                                true, // trySnapInName
+                                trySnapInName: true,
                                 moduleSpecification.Name,
-                                null, // fileName
-                                null, // assemblyToLoad
+                                fileName: null,
+                                assemblyToLoad: null,
                                 moduleBase,
                                 ss,
                                 options,
                                 manifestProcessingFlags,
                                 prefix,
-                                loadTypesFiles,
-                                loadFormatFiles,
+                                loadTypes,
+                                loadFormats,
                                 out found,
-                                shortModuleName, false);
+                                shortModuleName,
+                                disableFormatUpdates: false);
                         }
                         catch (FileNotFoundException)
                         {
@@ -2189,10 +2190,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set up to load any types files that have been specified...
-            List<string> exportedTypeFiles;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "TypesToProcess", manifestProcessingFlags, moduleBase,
-                    ".ps1xml", true, out exportedTypeFiles))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "TypesToProcess",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: ".ps1xml",
+                verifyFilesExist: true,
+                out List<string> exportedTypeFiles))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2234,10 +2240,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set up to load any format files that have been specified...
-            List<string> exportedFormatFiles;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "FormatsToProcess", manifestProcessingFlags,
-                    moduleBase, ".ps1xml", true, out exportedFormatFiles))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "FormatsToProcess",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: ".ps1xml",
+                verifyFilesExist: true,
+                out List<string> exportedFormatFiles))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2276,10 +2287,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // scripts to process
-            List<string> scriptsToProcess;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "ScriptsToProcess", manifestProcessingFlags,
-                    moduleBase, ".ps1", true, out scriptsToProcess))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "ScriptsToProcess",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: ".ps1",
+                verifyFilesExist: true,
+                out List<string> scriptsToProcess))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2323,13 +2339,16 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Process "FileList"
-            List<string> fileList;
-            if (
-                !GetListOfFilesFromData(data, moduleManifestPath, "FileList", manifestProcessingFlags, moduleBase, ""
-                    /*extension*/,
-                    false
-                    /* don't check file existence - don't want to change current behavior without feature team discussion */,
-                    out fileList))
+            if (!GetListOfFilesFromData(
+                data,
+                moduleManifestPath,
+                key: "FileList",
+                manifestProcessingFlags,
+                moduleBase,
+                extension: string.Empty,
+                // Don't check file existence - don't want to change current behavior without feature team discussion.
+                verifyFilesExist: false,
+                out List<string> fileList))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2927,8 +2946,8 @@ namespace Microsoft.PowerShell.Commands
                             ss: null,
                             options: nestedModuleOptions,
                             manifestProcessingFlags: manifestProcessingFlags,
-                            loadTypesFiles: true,
-                            loadFormatFiles: true,
+                            loadTypes: true,
+                            loadFormats: true,
                             privateData: privateData,
                             found: out found,
                             shortModuleName: null,
@@ -3030,8 +3049,8 @@ namespace Microsoft.PowerShell.Commands
                         ss: ss,
                         options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
-                        loadTypesFiles: (exportedTypeFiles == null || exportedTypeFiles.Count == 0),        // If types files already loaded, don't load snapin files
-                        loadFormatFiles: (exportedFormatFiles == null || exportedFormatFiles.Count == 0),   // if format files already loaded, don't load snapin files
+                        loadTypes: (exportedTypeFiles == null || exportedTypeFiles.Count == 0),        // If types files already loaded, don't load snapin files
+                        loadFormats: (exportedFormatFiles == null || exportedFormatFiles.Count == 0),   // if format files already loaded, don't load snapin files
                         privateData: privateData,
                         found: out found,
                         shortModuleName: null,
@@ -3531,7 +3550,7 @@ namespace Microsoft.PowerShell.Commands
                 if (nestedModule != null)
                 {
                     var exportedTypes = nestedModule.GetExportedTypeDefinitions();
-                    if (exportedTypes != null && exportedTypes.Count != 0)
+                    if (exportedTypes != null && exportedTypes.Count > 0)
                     {
                         foreach (var t in exportedTypes)
                         {
@@ -4242,7 +4261,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <c>null</c>
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4281,7 +4300,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <c>null</c>.
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4334,7 +4353,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <c>null</c>
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4342,7 +4361,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="moduleBase">Base directory of a module.</param>
         /// <param name="extension">Expected file extension (added to strings that didn't have an extension).</param>
-        /// <param name="verifyFilesExist">If <c>true</c> then we want to error out if the specified files don't exist.</param>
+        /// <param name="verifyFilesExist">If <see langword="true"/> then we want to error out if the specified files don't exist.</param>
         /// <param name="list">Returns the extracted version.</param>
         /// <returns></returns>
         private bool GetListOfFilesFromData(
@@ -4489,16 +4508,16 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
-        /// If it does and it can be converted to the expected type, then it returns <c>true</c> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <c>true</c> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
-        /// If the key is invalid then it returns <c>false</c>.
+        /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
         /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="result">Value from the manifest converted to the right type.</param>
-        /// <returns><c>true</c> if success; <c>false</c> if there were errors.</returns>
+        /// <returns><see langword="true"/> if success; <see langword="false"/> if there were errors.</returns>
         internal bool GetScalarFromData<T>(
             Hashtable data,
             string moduleManifestPath,
@@ -4956,7 +4975,7 @@ namespace Microsoft.PowerShell.Commands
                             args: new object[] { module });
                     }
 
-                    if (module.ImplementingAssembly != null && module.ImplementingAssembly.IsDynamic == false)
+                    if (module.ImplementingAssembly != null && !module.ImplementingAssembly.IsDynamic)
                     {
                         var exportedTypes = PSSnapInHelpers.GetAssemblyTypes(module.ImplementingAssembly, module.Name);
                         foreach (var type in exportedTypes)
@@ -5230,7 +5249,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="options"></param>
         /// <returns>
         /// Returns PSModuleInfo of an already loaded module if that module can be simply reimported and there is no need to proceed with a regular import.
-        /// Returns <c>null</c> if the caller should proceed with a regular import (either because there is no previously loaded module, or because the -Force flag was specified and the previously loaded module has been removed by this method).
+        /// Returns <see langword="null"/> if the caller should proceed with a regular import (either because there is no previously loaded module, or because the -Force flag was specified and the previously loaded module has been removed by this method).
         /// </returns>
         internal PSModuleInfo IsModuleImportUnnecessaryBecauseModuleIsAlreadyLoaded(string modulePath, string prefix, ImportModuleOptions options)
         {
@@ -5872,8 +5891,20 @@ namespace Microsoft.PowerShell.Commands
                          ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
                          ext.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(fileName), fileName, null,
-                        moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);
+                    module = LoadBinaryModule(
+                        trySnapInName: false,
+                        ModuleIntrinsics.GetModuleName(fileName),
+                        fileName,
+                        assemblyToLoad: null,
+                        moduleBase,
+                        ss,
+                        options,
+                        manifestProcessingFlags,
+                        prefix,
+                        loadTypes: true,
+                        loadFormats: true,
+                        out found);
+
                     if (found && module != null)
                     {
                         // LanguageMode does not apply to binary modules
@@ -6510,13 +6541,36 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="prefix">Command name prefix.</param>
         /// <param name="found">Sets this to true if an assembly was found.</param>
         /// <returns>THe module info object that was created...</returns>
-        internal PSModuleInfo LoadBinaryModule(bool trySnapInName, string moduleName, string fileName,
-            Assembly assemblyToLoad, string moduleBase, SessionState ss, ImportModuleOptions options,
-            ManifestProcessingFlags manifestProcessingFlags, string prefix,
-            bool loadTypes, bool loadFormats, out bool found)
+        internal PSModuleInfo LoadBinaryModule(
+            bool trySnapInName,
+            string moduleName,
+            string fileName,
+            Assembly assemblyToLoad,
+            string moduleBase,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            string prefix,
+            bool loadTypes,
+            bool loadFormats,
+            out bool found)
         {
-            return LoadBinaryModule(null, trySnapInName, moduleName, fileName, assemblyToLoad, moduleBase, ss, options,
-                                    manifestProcessingFlags, prefix, loadTypes, loadFormats, out found, null, false);
+            return LoadBinaryModule(
+                parentModule: null,
+                trySnapInName,
+                moduleName,
+                fileName,
+                assemblyToLoad,
+                moduleBase,
+                ss,
+                options,
+                manifestProcessingFlags,
+                prefix,
+                loadTypes,
+                loadFormats,
+                out found,
+                shortModuleName: null,
+                disableFormatUpdates: false);
         }
 
         /// <summary>
@@ -6542,7 +6596,22 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="shortModuleName">Short name for module.</param>
         /// <param name="disableFormatUpdates"></param>
         /// <returns>THe module info object that was created...</returns>
-        internal PSModuleInfo LoadBinaryModule(PSModuleInfo parentModule, bool trySnapInName, string moduleName, string fileName, Assembly assemblyToLoad, string moduleBase, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, string prefix, bool loadTypes, bool loadFormats, out bool found, string shortModuleName, bool disableFormatUpdates)
+        internal PSModuleInfo LoadBinaryModule(
+            PSModuleInfo parentModule,
+            bool trySnapInName,
+            string moduleName,
+            string fileName,
+            Assembly assemblyToLoad,
+            string moduleBase,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            string prefix,
+            bool loadTypes,
+            bool loadFormats,
+            out bool found,
+            string shortModuleName,
+            bool disableFormatUpdates)
         {
             PSModuleInfo module = null;
 
@@ -6666,7 +6735,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (importSuccessful == false)
+                if (!importSuccessful)
                 {
                     if (importingModule)
                     {
@@ -7087,7 +7156,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var privateDataHashTable = module.PrivateData as Hashtable;
-            if (context.Modules.IsImplicitRemotingModuleLoaded == false &&
+            if (!context.Modules.IsImplicitRemotingModuleLoaded &&
                 privateDataHashTable != null && privateDataHashTable.ContainsKey("ImplicitRemoting"))
             {
                 context.Modules.IsImplicitRemotingModuleLoaded = true;

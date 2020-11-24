@@ -19,7 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         public CimWriteResultObject(object result, XOperationContextBase theContext)
         {
-            this.result = result;
+            this.Result = result;
             this.Context = theContext;
         }
 
@@ -32,22 +32,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public override void Execute(CmdletOperationBase cmdlet)
         {
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
-            cmdlet.WriteObject(result, this.Context);
+            cmdlet.WriteObject(Result, this.Context);
         }
 
         #region members
         /// <summary>
         /// Result object.
         /// </summary>
-        internal object Result
-        {
-            get
-            {
-                return result;
-            }
-        }
-
-        private readonly object result;
+        internal object Result { get; }
         #endregion
     }
 }

@@ -4,7 +4,6 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
-using System.Security.Permissions;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands
@@ -24,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         #region TraceListener constructors and disposer
 
         /// <summary>
-        /// Default constructor used if no.
+        /// Initializes a new instance of the <see cref="PSHostTraceListener"/> class.
         /// </summary>
         internal PSHostTraceListener(PSCmdlet cmdlet)
             : base(string.Empty)

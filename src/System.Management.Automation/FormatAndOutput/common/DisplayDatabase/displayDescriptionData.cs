@@ -774,7 +774,7 @@ namespace System.Management.Automation
                 return new PSControlGroupBy
                 {
                     Expression = new DisplayEntry(expressionToken),
-                    Label = (groupBy.startGroup.labelTextToken != null) ? groupBy.startGroup.labelTextToken.text : null
+                    Label = groupBy.startGroup.labelTextToken?.text
                 };
             }
 

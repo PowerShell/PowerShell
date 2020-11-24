@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
+        private static string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 

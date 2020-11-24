@@ -41,7 +41,7 @@ namespace System.Management.Automation.Language
         /// Name may be optionally present, expression or bare word.
         /// </summary>
         OptionalName = 4,
-    };
+    }
 
     /// <summary>
     /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body.
@@ -721,6 +721,7 @@ namespace System.Management.Automation.Language
         }
 
         internal TokenizerMode Mode { get; set; }
+
         internal bool AllowSignedNumbers { get; set; }
 
         // TODO: use auto-properties when making 'ternary operator' an official feature.
@@ -733,8 +734,11 @@ namespace System.Management.Automation.Language
         }
 
         internal bool WantSimpleName { get; set; }
+
         internal bool InWorkflowContext { get; set; }
+
         internal List<Token> TokenList { get; set; }
+
         internal Token FirstToken { get; private set; }
 
         internal Token LastToken { get; private set; }
@@ -826,7 +830,7 @@ namespace System.Management.Automation.Language
 
         private char GetChar()
         {
-            Diagnostics.Assert(0 <= _currentIndex, "GetChar reading before start of input.");
+            Diagnostics.Assert(_currentIndex >= 0, "GetChar reading before start of input.");
             Diagnostics.Assert(_currentIndex <= _script.Length + 1, "GetChar reading after end of input.");
 
             // Increment _currentIndex, even if it goes over the Length so callers can call UngetChar to unget EOF.
@@ -848,7 +852,7 @@ namespace System.Management.Automation.Language
 
         private char PeekChar()
         {
-            Diagnostics.Assert(0 <= _currentIndex && _currentIndex <= _script.Length, "PeekChar out of range.");
+            Diagnostics.Assert(_currentIndex >= 0 && _currentIndex <= _script.Length, "PeekChar out of range.");
 
             if (_currentIndex == _script.Length)
             {
@@ -1045,7 +1049,7 @@ namespace System.Management.Automation.Language
             {
                 _currentIndex = _script.Length + 1;
             }
-            else if (0 > _currentIndex)
+            else if (_currentIndex < 0)
             {
                 _currentIndex = 0;
             }
