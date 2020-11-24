@@ -138,31 +138,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Flag used to control generating log message into file.
         /// </summary>
-        private static bool generateLog = true;
-
-        internal static bool GenerateLog
-        {
-            get { return generateLog; }
-
-            set { generateLog = value; }
-        }
+        internal static bool GenerateLog { get; set; } = true;
 
         /// <summary>
         /// Whether the log been initialized.
         /// </summary>
         private static bool logInitialized = false;
 
-        /// <summary>
-        /// Flag used to control generating message into powershell.
-        /// </summary>
-        private static bool generateVerboseMessage = true;
-
-        internal static bool GenerateVerboseMessage
-        {
-            get { return generateVerboseMessage; }
-
-            set { generateVerboseMessage = value; }
-        }
+        internal static bool GenerateVerboseMessage { get; set; } = true;
 
         /// <summary>
         /// Flag used to control generating message into powershell.
@@ -337,7 +320,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            if (generateLog)
+            if (GenerateLog)
             {
                 if (indent < 0)
                 {

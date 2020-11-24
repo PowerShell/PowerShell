@@ -30,10 +30,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string thePropertyName,
             string theQualifierName)
         {
-            this.className = theClassName;
-            this.methodName = theMethodName;
-            this.propertyName = thePropertyName;
-            this.qualifierName = theQualifierName;
+            this.ClassName = theClassName;
+            this.MethodName = theMethodName;
+            this.PropertyName = thePropertyName;
+            this.QualifierName = theQualifierName;
         }
 
         /// <summary>
@@ -44,14 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Wildcard expansion should be allowed.
         /// </para>
         /// </summary>
-        public string ClassName
-        {
-            get { return className; }
-
-            set { className = value; }
-        }
-
-        private string className;
+        public string ClassName { get; set; }
 
         /// <summary>
         /// <para>
@@ -60,12 +53,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then Filter the <see cref="CimClass"/> by given methodname
         /// </para>
         /// </summary>
-        internal string MethodName
-        {
-            get { return methodName; }
-        }
-
-        private readonly string methodName;
+        internal string MethodName { get; }
 
         /// <summary>
         /// <para>
@@ -74,12 +62,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Filter the <see cref="CimClass"/> by given property name.
         /// </para>
         /// </summary>
-        internal string PropertyName
-        {
-            get { return propertyName; }
-        }
-
-        private readonly string propertyName;
+        internal string PropertyName { get; }
 
         /// <summary>
         /// <para>
@@ -88,12 +71,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Filter the <see cref="CimClass"/> by given methodname
         /// </para>
         /// </summary>
-        internal string QualifierName
-        {
-            get { return qualifierName; }
-        }
-
-        private readonly string qualifierName;
+        internal string QualifierName { get; }
     }
 
     /// <summary>

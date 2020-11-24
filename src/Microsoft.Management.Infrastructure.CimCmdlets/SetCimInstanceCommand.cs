@@ -139,14 +139,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -165,11 +158,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return cimInstance; }
+            get { return CimInstance; }
 
             set
             {
-                cimInstance = value;
+                CimInstance = value;
                 base.SetParameter(value, nameCimInstance);
             }
         }
@@ -177,12 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property for internal usage purpose.
         /// </summary>
-        internal CimInstance CimInstance
-        {
-            get { return cimInstance; }
-        }
-
-        private CimInstance cimInstance;
+        internal CimInstance CimInstance { get; private set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Query".
@@ -277,20 +265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public SwitchParameter PassThru
-        {
-            get
-            {
-                return this.passThru;
-            }
-
-            set
-            {
-                this.passThru = value;
-            }
-        }
-
-        private SwitchParameter passThru;
+        public SwitchParameter PassThru { get; set; }
 
         #endregion
 

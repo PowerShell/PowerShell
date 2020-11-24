@@ -35,14 +35,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         [Parameter]
-        public string Namespace
-        {
-            get { return nameSpace; }
-
-            set { nameSpace = value; }
-        }
-
-        private string nameSpace;
+        public string Namespace { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ClassName".
@@ -122,14 +115,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(CimBaseCommand.AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Session".

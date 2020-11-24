@@ -241,14 +241,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// <para>The following is the definition of the input parameter "InputObject".
@@ -276,11 +269,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return cimInstance; }
+            get { return CimInstance; }
 
             set
             {
-                cimInstance = value;
+                CimInstance = value;
                 base.SetParameter(value, nameCimInstance);
             }
         }
@@ -288,12 +281,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property for internal usage purpose.
         /// </summary>
-        internal CimInstance CimInstance
-        {
-            get { return cimInstance; }
-        }
-
-        private CimInstance cimInstance;
+        internal CimInstance CimInstance { get; private set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Query".
@@ -421,23 +409,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias("SelectProperties")]
         public string[] Property
         {
-            get { return property; }
+            get { return SelectProperties; }
 
             set
             {
-                property = value;
+                SelectProperties = value;
                 base.SetParameter(value, nameSelectProperties);
             }
         }
         /// <summary>
         /// Property for internal usage.
         /// </summary>
-        internal string[] SelectProperties
-        {
-            get { return property; }
-        }
-
-        private string[] property;
+        internal string[] SelectProperties { get; private set; }
 
         #endregion
 
@@ -519,7 +502,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ClassNameSessionSet:
                     // validate the classname & property
                     this.className = ValidationHelper.ValidateArgumentIsValidName(nameClassName, this.className);
-                    this.property = ValidationHelper.ValidateArgumentIsValidName(nameSelectProperties, this.property);
+                    this.SelectProperties = ValidationHelper.ValidateArgumentIsValidName(nameSelectProperties, this.SelectProperties);
                     break;
                 default:
                     break;

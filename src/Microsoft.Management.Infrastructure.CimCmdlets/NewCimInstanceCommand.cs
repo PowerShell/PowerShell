@@ -169,14 +169,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true)]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("Arguments")]
-        public IDictionary Property
-        {
-            get { return property; }
-
-            set { property = value; }
-        }
-
-        private IDictionary property;
+        public IDictionary Property { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
@@ -215,14 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// <para>

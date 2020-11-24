@@ -40,36 +40,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimSessionProxy theProxy)
             {
                 this.proxy = theProxy;
-                this.methodName = theMethodName;
-                this.collection = theCollection;
+                this.MethodName = theMethodName;
+                this.ParametersCollection = theCollection;
                 this.nameSpace = theNamespace;
             }
 
             /// <summary>
             /// <para>namespace</para>
             /// </summary>
-            internal string MethodName
-            {
-                get
-                {
-                    return this.methodName;
-                }
-            }
-
-            private readonly string methodName;
+            internal string MethodName { get; }
 
             /// <summary>
             /// <para>parameters collection</para>
             /// </summary>
-            internal CimMethodParametersCollection ParametersCollection
-            {
-                get
-                {
-                    return this.collection;
-                }
-            }
-
-            private readonly CimMethodParametersCollection collection;
+            internal CimMethodParametersCollection ParametersCollection { get; }
         }
 
         /// <summary>
