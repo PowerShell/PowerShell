@@ -793,7 +793,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Users most often use the default buffer size so we cache the buffer.
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
-        private byte[] GetSendBuffer(int bufferSize)
+        private static byte[] GetSendBuffer(int bufferSize)
         {
             if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
             {

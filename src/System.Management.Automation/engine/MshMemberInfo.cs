@@ -162,7 +162,7 @@ namespace System.Management.Automation
         IncludeHidden = 1,
 
         /// <summary>
-        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <c>true</c>
+        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <see langword="true"/>
         /// </summary>
         OnlySerializable = 2
     }
@@ -1915,12 +1915,12 @@ namespace System.Management.Automation
         }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public Type MethodTargetType { get; }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
@@ -3732,7 +3732,7 @@ namespace System.Management.Automation
     /// A Predicate that determine if a member name matches a criterion.
     /// </summary>
     /// <param name="memberName"></param>
-    /// <returns><c>true</c> if the <paramref name="memberName"/> matches the predicate, otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the <paramref name="memberName"/> matches the predicate, otherwise <see langword="false"/>.</returns>
     public delegate bool MemberNamePredicate(string memberName);
 
     /// <summary>

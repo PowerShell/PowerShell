@@ -1085,7 +1085,7 @@ namespace Microsoft.PowerShell.Commands
         /// True if all dependent services are stopped
         /// False if not all dependent services are stopped
         /// </returns>
-        private bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
+        private static bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
             return Array.TrueForAll(dependentServices, service => service.Status == ServiceControllerStatus.Stopped);
         }

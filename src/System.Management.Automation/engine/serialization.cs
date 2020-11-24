@@ -201,7 +201,7 @@ namespace System.Management.Automation
         /// <param name="writer">Writer to be used for serialization.</param>
         /// <param name="depth">Depth of serialization.</param>
         /// <param name="useDepthFromTypes">
-        /// if <c>true</c> then types.ps1xml can override depth
+        /// if <see langword="true"/> then types.ps1xml can override depth
         /// for a particular types (using SerializationDepth property)
         /// </param>
         internal Serializer(XmlWriter writer, int depth, bool useDepthFromTypes)
@@ -661,7 +661,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="o"></param>
         /// <param name="type"></param>
-        /// <returns><c>true</c> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <see langword="false"/> otherwise.</returns>
         internal static bool IsInstanceOfType(object o, Type type)
         {
             if (type == null)
@@ -682,7 +682,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="o"></param>
         /// <param name="type"></param>
-        /// <returns><c>true</c> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <see langword="false"/> otherwise.</returns>
         internal static bool IsDeserializedInstanceOfType(object o, Type type)
         {
             if (type == null)
@@ -4969,7 +4969,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a RefId already assigned for the given object or <c>null</c> if there is no associated ref id.
+        /// Gets a RefId already assigned for the given object or <see langword="null"/> if there is no associated ref id.
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
@@ -6041,7 +6041,7 @@ namespace System.Management.Automation
         /// <param name="key">The key whose value to get or set.</param>
         /// <returns>The value associated with the specified key.</returns>
         /// <remarks>
-        /// If the specified key is not found, attempting to get it returns <c>null</c>
+        /// If the specified key is not found, attempting to get it returns <see langword="null"/>
         /// and attempting to set it creates a new element using the specified key.
         /// </remarks>
         /// <exception cref="ArgumentException">
@@ -6070,7 +6070,7 @@ namespace System.Management.Automation
         /// <param name="key">The key whose value to get or set.</param>
         /// <returns>The value associated with the specified key.</returns>
         /// <remarks>
-        /// If the specified key is not found, attempting to get it returns <c>null</c>
+        /// If the specified key is not found, attempting to get it returns <see langword="null"/>
         /// and attempting to set it creates a new element using the specified key.
         /// </remarks>
         /// <exception cref="ArgumentException">
@@ -6532,7 +6532,7 @@ namespace System.Management.Automation
         /// <param name="data">The root dictionary.</param>
         /// <param name="result"></param>
         /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value.</param>
-        /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the value was found and was of the correct type; <see langword="false"/> otherwise.</returns>
         internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
             Dbg.Assert(keys != null, "Caller should verify that keys != null");

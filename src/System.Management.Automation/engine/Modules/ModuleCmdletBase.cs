@@ -4261,7 +4261,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <c>null</c>
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4300,7 +4300,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <c>null</c>.
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4353,7 +4353,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <c>null</c>
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4361,7 +4361,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="moduleBase">Base directory of a module.</param>
         /// <param name="extension">Expected file extension (added to strings that didn't have an extension).</param>
-        /// <param name="verifyFilesExist">If <c>true</c> then we want to error out if the specified files don't exist.</param>
+        /// <param name="verifyFilesExist">If <see langword="true"/> then we want to error out if the specified files don't exist.</param>
         /// <param name="list">Returns the extracted version.</param>
         /// <returns></returns>
         private bool GetListOfFilesFromData(
@@ -4508,16 +4508,16 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
-        /// If it does and it can be converted to the expected type, then it returns <c>true</c> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <c>true</c> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
-        /// If the key is invalid then it returns <c>false</c>.
+        /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
         /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="result">Value from the manifest converted to the right type.</param>
-        /// <returns><c>true</c> if success; <c>false</c> if there were errors.</returns>
+        /// <returns><see langword="true"/> if success; <see langword="false"/> if there were errors.</returns>
         internal bool GetScalarFromData<T>(
             Hashtable data,
             string moduleManifestPath,
@@ -5249,7 +5249,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="options"></param>
         /// <returns>
         /// Returns PSModuleInfo of an already loaded module if that module can be simply reimported and there is no need to proceed with a regular import.
-        /// Returns <c>null</c> if the caller should proceed with a regular import (either because there is no previously loaded module, or because the -Force flag was specified and the previously loaded module has been removed by this method).
+        /// Returns <see langword="null"/> if the caller should proceed with a regular import (either because there is no previously loaded module, or because the -Force flag was specified and the previously loaded module has been removed by this method).
         /// </returns>
         internal PSModuleInfo IsModuleImportUnnecessaryBecauseModuleIsAlreadyLoaded(string modulePath, string prefix, ImportModuleOptions options)
         {

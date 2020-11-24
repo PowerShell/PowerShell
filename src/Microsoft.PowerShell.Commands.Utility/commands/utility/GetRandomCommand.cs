@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = RandomNumberParameterSet)]
         public object Minimum { get; set; }
 
-        private bool IsInt(object o)
+        private static bool IsInt(object o)
         {
             if (o == null || o is int)
             {
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private bool IsInt64(object o)
+        private static bool IsInt64(object o)
         {
             if (o == null || o is Int64)
             {
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private object ProcessOperand(object o)
+        private static object ProcessOperand(object o)
         {
             if (o == null)
             {
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
             return baseObject;
         }
 
-        private double ConvertToDouble(object o, double defaultIfNull)
+        private static double ConvertToDouble(object o, double defaultIfNull)
         {
             if (o == null)
             {

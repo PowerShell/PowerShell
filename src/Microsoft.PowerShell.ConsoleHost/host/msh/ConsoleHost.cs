@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
-                    if (s_theConsoleHost.LoadPSReadline())
+                    if (LoadPSReadline())
                     {
                         ProfileOptimization.StartProfile("StartupProfileData-Interactive");
 
@@ -1156,6 +1156,10 @@ namespace Microsoft.PowerShell
             AppDomain.CurrentDomain.UnhandledException += handler;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private void BindBreakHandler()
         {
 #if UNIX
@@ -1598,7 +1602,7 @@ namespace Microsoft.PowerShell
             return _screenReaderActive.Value;
         }
 
-        private bool LoadPSReadline()
+        private static bool LoadPSReadline()
         {
             // Don't load PSReadline if:
             //   * we don't think the process will be interactive, e.g. -command or -file
@@ -1706,7 +1710,7 @@ namespace Microsoft.PowerShell
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
-        private void OpenConsoleRunspace(Runspace runspace, bool staMode)
+        private static void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
             if (staMode && Platform.IsWindowsDesktop)
             {
@@ -2726,7 +2730,7 @@ namespace Microsoft.PowerShell
                 return results ?? new DebuggerCommandResults(DebuggerResumeAction.Continue, false);
             }
 
-            private bool IsIncompleteParseException(Exception e)
+            private static bool IsIncompleteParseException(Exception e)
             {
                 // Check e's type.
                 if (e is IncompleteParseException)

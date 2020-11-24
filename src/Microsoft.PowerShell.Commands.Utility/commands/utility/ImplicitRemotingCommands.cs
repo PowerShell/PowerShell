@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="name">Name to validate.</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the name is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeNameOrIdentifier(string name)
         {
             // '.' is needed for stuff like net.exe
@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="parameterName">Parameter name to validate.</param>
-        /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the name is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
             return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(":");
@@ -1136,7 +1136,7 @@ namespace Microsoft.PowerShell.Commands
         /// (i.e. it doesn't introduce any side effects on the client).
         /// </summary>
         /// <param name="type">Type to validate.</param>
-        /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the type is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeTypeConstraint(Type type)
         {
             if (type == null)
@@ -1179,7 +1179,7 @@ namespace Microsoft.PowerShell.Commands
         /// Writes error messages if necessary.  Modifies command metadata to make it safe if necessary.
         /// </summary>
         /// <param name="commandMetadata">Command metadata to verify.</param>
-        /// <returns><c>true</c> if the command metadata is safe; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the command metadata is safe; <see langword="false"/> otherwise.</returns>
         private bool IsSafeCommandMetadata(CommandMetadata commandMetadata)
         {
             if (!IsCommandNameMatchingParameters(commandMetadata.Name))
@@ -1306,7 +1306,7 @@ namespace Microsoft.PowerShell.Commands
                 parameterType);
         }
 
-        private bool IsProxyForCmdlet(Dictionary<string, ParameterMetadata> parameters)
+        private static bool IsProxyForCmdlet(Dictionary<string, ParameterMetadata> parameters)
         {
             // we are not sending CmdletBinding/DefaultParameterSet over the wire anymore
             // we need to infer IsProxyForCmdlet from presence of all common parameters
@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands
             return new CommandMetadata(
                                    name: name,
                             commandType: commandType,
-                       isProxyForCmdlet: this.IsProxyForCmdlet(parameters),
+                       isProxyForCmdlet: IsProxyForCmdlet(parameters),
                 defaultParameterSetName: ParameterAttribute.AllParameterSets,
                   supportsShouldProcess: false,
                           confirmImpact: ConfirmImpact.None,
@@ -1365,7 +1365,7 @@ namespace Microsoft.PowerShell.Commands
                              parameters: parameters);
         }
 
-        private int GetCommandTypePriority(CommandTypes commandType)
+        private static int GetCommandTypePriority(CommandTypes commandType)
         {
             switch (commandType)
             {
@@ -1434,8 +1434,8 @@ namespace Microsoft.PowerShell.Commands
             CommandMetadata previousCommandWithSameName;
             if (name2commandMetadata.TryGetValue(commandMetadata.Name, out previousCommandWithSameName))
             {
-                int previousCommandPriority = this.GetCommandTypePriority(previousCommandWithSameName.WrappedCommandType);
-                int currentCommandPriority = this.GetCommandTypePriority(commandMetadata.WrappedCommandType);
+                int previousCommandPriority = GetCommandTypePriority(previousCommandWithSameName.WrappedCommandType);
+                int currentCommandPriority = GetCommandTypePriority(commandMetadata.WrappedCommandType);
                 if (previousCommandPriority < currentCommandPriority)
                 {
                     return;
@@ -1975,7 +1975,7 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-        private string EscapeFunctionNameForRemoteHelp(string name)
+        private static string EscapeFunctionNameForRemoteHelp(string name)
         {
             if (name == null)
             {
@@ -2000,7 +2000,7 @@ namespace Microsoft.PowerShell.Commands
 ##############################################################################
 ";
 
-        private void GenerateSectionSeparator(TextWriter writer)
+        private static void GenerateSectionSeparator(TextWriter writer)
         {
             writer.Write(SectionSeparator);
         }
@@ -2135,7 +2135,7 @@ function Write-PSImplicitRemotingMessage
 }
 ";
 
-        private void GenerateHelperFunctionsWriteMessage(TextWriter writer)
+        private static void GenerateHelperFunctionsWriteMessage(TextWriter writer)
         {
             if (writer == null)
             {
@@ -2190,7 +2190,7 @@ function Set-PSImplicitRemotingSession
 if ($PSSessionOverride) {{ Set-PSImplicitRemotingSession $PSSessionOverride }}
 ";
 
-        private void GenerateHelperFunctionsSetImplicitRunspace(TextWriter writer)
+        private static void GenerateHelperFunctionsSetImplicitRunspace(TextWriter writer)
         {
             if (writer == null)
             {
@@ -2767,7 +2767,7 @@ function Get-PSImplicitRemotingClientSideParameters
 }
 ";
 
-        private void GenerateHelperFunctionsClientSideParameters(TextWriter writer)
+        private static void GenerateHelperFunctionsClientSideParameters(TextWriter writer)
         {
             if (writer == null)
             {
@@ -2781,12 +2781,12 @@ function Get-PSImplicitRemotingClientSideParameters
 
         private void GenerateHelperFunctions(TextWriter writer)
         {
-            this.GenerateSectionSeparator(writer);
-            this.GenerateHelperFunctionsWriteMessage(writer);
+            GenerateSectionSeparator(writer);
+            GenerateHelperFunctionsWriteMessage(writer);
             this.GenerateHelperFunctionsGetSessionOption(writer);
-            this.GenerateHelperFunctionsSetImplicitRunspace(writer);
+            GenerateHelperFunctionsSetImplicitRunspace(writer);
             this.GenerateHelperFunctionsGetImplicitRunspace(writer);
-            this.GenerateHelperFunctionsClientSideParameters(writer);
+            GenerateHelperFunctionsClientSideParameters(writer);
         }
 
         #endregion
@@ -2846,7 +2846,7 @@ function Get-PSImplicitRemotingClientSideParameters
 }}
         ";
 
-        private void GenerateCommandProxy(TextWriter writer, CommandMetadata commandMetadata)
+        private static void GenerateCommandProxy(TextWriter writer, CommandMetadata commandMetadata)
         {
             if (writer == null)
             {
@@ -2854,7 +2854,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             string functionNameForString = CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name);
-            string functionNameForHelp = this.EscapeFunctionNameForRemoteHelp(commandMetadata.Name);
+            string functionNameForHelp = EscapeFunctionNameForRemoteHelp(commandMetadata.Name);
             writer.Write(
                 CommandProxyTemplate,
                 /* 0 */ functionNameForString,
@@ -2868,7 +2868,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 /* 8 */ commandMetadata.WrappedAnyCmdlet);
         }
 
-        private void GenerateCommandProxy(TextWriter writer, IEnumerable<CommandMetadata> listOfCommandMetadata)
+        private static void GenerateCommandProxy(TextWriter writer, IEnumerable<CommandMetadata> listOfCommandMetadata)
         {
             if (writer == null)
             {
@@ -2880,7 +2880,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
 
-            this.GenerateSectionSeparator(writer);
+            GenerateSectionSeparator(writer);
             foreach (CommandMetadata commandMetadata in listOfCommandMetadata)
             {
                 GenerateCommandProxy(writer, commandMetadata);
@@ -2895,7 +2895,7 @@ function Get-PSImplicitRemotingClientSideParameters
 & $script:ExportModuleMember -Function {0}
         ";
 
-        private void GenerateExportDeclaration(TextWriter writer, IEnumerable<CommandMetadata> listOfCommandMetadata)
+        private static void GenerateExportDeclaration(TextWriter writer, IEnumerable<CommandMetadata> listOfCommandMetadata)
         {
             if (writer == null)
             {
@@ -2907,14 +2907,14 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
 
-            this.GenerateSectionSeparator(writer);
+            GenerateSectionSeparator(writer);
 
             List<string> listOfCommandNames = GetListOfCommandNames(listOfCommandMetadata);
             string exportString = GenerateArrayString(listOfCommandNames);
             writer.Write(ExportFunctionsTemplate, exportString);
         }
 
-        private List<string> GetListOfCommandNames(IEnumerable<CommandMetadata> listOfCommandMetadata)
+        private static List<string> GetListOfCommandNames(IEnumerable<CommandMetadata> listOfCommandMetadata)
         {
             if (listOfCommandMetadata == null)
             {
@@ -2930,7 +2930,7 @@ function Get-PSImplicitRemotingClientSideParameters
             return listOfCommandNames;
         }
 
-        private string GenerateArrayString(IEnumerable<string> listOfStrings)
+        private static string GenerateArrayString(IEnumerable<string> listOfStrings)
         {
             if (listOfStrings == null)
             {
@@ -2968,9 +2968,9 @@ function Get-PSImplicitRemotingClientSideParameters
 & $script:ExportModuleMember -Alias {0}
         ";
 
-        private void GenerateAliases(TextWriter writer, Dictionary<string, string> alias2resolvedCommandName)
+        private static void GenerateAliases(TextWriter writer, Dictionary<string, string> alias2resolvedCommandName)
         {
-            this.GenerateSectionSeparator(writer);
+            GenerateSectionSeparator(writer);
 
             foreach (KeyValuePair<string, string> pair in alias2resolvedCommandName)
             {
@@ -2991,7 +2991,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
         #region Generating format.ps1xml file
 
-        private void GenerateFormatFile(TextWriter writer, List<ExtendedTypeDefinition> listOfFormatData)
+        private static void GenerateFormatFile(TextWriter writer, List<ExtendedTypeDefinition> listOfFormatData)
         {
             if (writer == null)
             {

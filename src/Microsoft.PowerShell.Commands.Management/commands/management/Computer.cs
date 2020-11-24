@@ -1639,7 +1639,7 @@ $result
         /// <param name="HasSucceeded"></param>
         /// <param name="computername"></param>
         /// <returns></returns>
-        private string FormatLine(string HasSucceeded, string computername)
+        private static string FormatLine(string HasSucceeded, string computername)
         {
             return StringUtil.Format(MatchFormat, HasSucceeded, computername);
         }
@@ -1683,7 +1683,7 @@ $result
         /// <param name="newcomputername"></param>
         /// <param name="oldcomputername"></param>
         /// <returns></returns>
-        private string FormatLine(string HasSucceeded, string newcomputername, string oldcomputername)
+        private static string FormatLine(string HasSucceeded, string newcomputername, string oldcomputername)
         {
             return StringUtil.Format(MatchFormat, HasSucceeded, newcomputername, oldcomputername);
         }

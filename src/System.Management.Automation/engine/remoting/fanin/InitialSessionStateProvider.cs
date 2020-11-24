@@ -401,7 +401,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
         /// </param>
-        /// <returns>Application private data or <c>null</c></returns>
+        /// <returns>Application private data or <see langword="null"/></returns>
         public virtual PSPrimitiveDictionary GetApplicationPrivateData(PSSenderInfo senderInfo)
         {
             return null;
