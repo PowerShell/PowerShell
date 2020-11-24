@@ -44,7 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             UInt32 theSecondsRemaining)
         {
             this.Activity = theActivity;
-            this.activityID = theActivityID;
+            this.ActivityID = theActivityID;
             this.CurrentOperation = theCurrentOperation;
             if (string.IsNullOrEmpty(theStatusDescription))
             {
@@ -55,7 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.StatusDescription = theStatusDescription;
             }
 
-            this.percentageCompleted = thePercentageCompleted;
+            this.PercentageCompleted = thePercentageCompleted;
             this.SecondsRemaining = theSecondsRemaining;
         }
 
@@ -71,54 +71,52 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 "...Activity {0}: id={1}, remain seconds ={2}, percentage completed = {3}",
                 4,
                 this.Activity,
-                this.activityID,
+                this.ActivityID,
                 this.SecondsRemaining,
-                this.percentageCompleted);
+                this.PercentageCompleted);
 
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
             ProgressRecord record = new(
-                this.activityID,
+                this.ActivityID,
                 this.Activity,
                 this.StatusDescription);
             record.Activity = this.Activity;
             record.ParentActivityId = 0;
             record.SecondsRemaining = (int)this.SecondsRemaining;
-            record.PercentComplete = (int)this.percentageCompleted;
+            record.PercentComplete = (int)this.PercentageCompleted;
             cmdlet.WriteProgress(record);
         }
 
         #region members
 
         /// <summary>
-        /// Activity of the given activity.
+        /// Gets the activity of the given activity.
         /// </summary>
-
-        /// <summary>
-        /// Activity identifier of the given activity.
-        /// </summary>
-        private readonly int activityID;
-
-        /// <summary>
-        /// Percentage completed of the given activity.
-        /// </summary>
-        private readonly UInt32 percentageCompleted;
-
         internal string Activity { get; }
 
-        internal int ActivityID
-        {
-            get { return activityID; }
-        }
+        /// <summary>
+        /// Gets the activity identifier of the given activity.
+        /// </summary>
+        internal int ActivityID { get; }
 
+        /// <summary>
+        /// Gets the current operation text of the given activity.
+        /// </summary>
         internal string CurrentOperation { get; }
 
+        /// <summary>
+        /// Gets the status description of the given activity.
+        /// </summary>
         internal string StatusDescription { get; }
 
-        internal UInt32 PercentageCompleted
-        {
-            get { return percentageCompleted; }
-        }
+        /// <summary>
+        /// Gets the percentage completed of the given activity.
+        /// </summary>
+        internal UInt32 PercentageCompleted { get; }
 
+        /// <summary>
+        /// Gets the number of seconds remaining for the given activity.
+        /// </summary>
         internal UInt32 SecondsRemaining { get; }
 
         #endregion
