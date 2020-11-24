@@ -39,9 +39,18 @@ namespace PSTests.Parallel
             File.AppendAllText(testPath, testContent);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            File.Delete(testPath);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }        
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                File.Delete(testPath);
+            }
         }
 
         private ExecutionContext GetExecutionContext()

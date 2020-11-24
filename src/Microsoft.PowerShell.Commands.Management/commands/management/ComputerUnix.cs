@@ -101,11 +101,28 @@ namespace Microsoft.PowerShell.Commands
 #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method.
+        /// Releases all resources used by the <see cref="CommandLineCmdletBase"/>.
         /// </summary>
         public void Dispose()
         {
-            _process?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="CommandLineCmdletBase"/>
+        /// and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// <see langword="true"/> to release both managed and unmanaged resources;
+        /// <see langword="false"/> to release only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _process?.Dispose();
+            }
         }
 
 #endregion "IDisposable Members"
