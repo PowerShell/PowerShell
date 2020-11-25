@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            ProgressRecord pr = new ProgressRecord(Id, Activity, Status);
+            ProgressRecord pr = new(Id, Activity, Status);
             pr.ParentActivityId = ParentId;
             pr.PercentComplete = PercentComplete;
             pr.SecondsRemaining = SecondsRemaining;

@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            List<string> pathsToProcess = new List<string>();
+            List<string> pathsToProcess = new();
             ProviderInfo provider = null;
 
             if (string.Equals(this.ParameterSetName, "ByLiteralPath", StringComparison.OrdinalIgnoreCase))
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!WildcardPattern.ContainsWildcardCharacters(path))
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(e,
+                            ErrorRecord errorRecord = new(e,
                                 "FileNotFound",
                                 ErrorCategory.ObjectNotFound,
                                 path);
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!System.IO.File.Exists(resolvedpath))
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new System.IO.FileNotFoundException(resolvedpath),
                         "FileNotFound",
                         ErrorCategory.ObjectNotFound,
