@@ -1196,10 +1196,10 @@ namespace System.Management.Automation
             // Add Reason property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
-                // created using this errorId
-                string errorId = "RemoteRunspaceStateInfoReason";
-                PSNoteProperty exceptionProperty = GetExceptionProperty(stateInfo.Reason, errorId, ErrorCategory.NotSpecified);
+                PSNoteProperty exceptionProperty = GetExceptionProperty(
+                    exception: stateInfo.Reason,
+                    errorId: "RemoteRunspaceStateInfoReason",
+                    category: ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
 
@@ -1515,12 +1515,10 @@ namespace System.Management.Automation
             // Add exception property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord,
-                // a new ErrorRecord is created using this errorId
-                string errorId = "RemotePSInvocationStateInfoReason";
-                PSNoteProperty exceptionProperty =
-                    GetExceptionProperty(stateInfo.Reason, errorId,
-                        ErrorCategory.NotSpecified);
+                PSNoteProperty exceptionProperty = GetExceptionProperty(
+                    exception: stateInfo.Reason,
+                    errorId: "RemotePSInvocationStateInfoReason",
+                    category: ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
 
@@ -1563,6 +1561,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a Note Property for the exception.
         /// </summary>
+        /// <remarks>
+        /// If <paramref name="exception"/> is of not type IContainsErrorRecord, a new ErrorRecord is created.
+        /// </remarks>
         /// <param name="exception"></param>
         /// <param name="errorId">ErrorId to use if exception is not of type IContainsErrorRecord.</param>
         /// <param name="category">ErrorCategory to use if exception is not of type IContainsErrorRecord.</param>
@@ -2088,8 +2089,7 @@ namespace System.Management.Automation
         /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.DecodingErrorForPowerShellStateInfo);
@@ -2237,7 +2237,7 @@ namespace System.Management.Automation
             }
             else
             {
-                module = new string[] { "" };
+                module = new string[] { string.Empty };
             }
 
             ModuleSpecification[] fullyQualifiedName = null;
@@ -2281,7 +2281,7 @@ namespace System.Management.Automation
         /// Gets the NoInput setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is no pipeline input; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is no pipeline input; <see langword="false"/> otherwise.</returns>
         internal static bool GetNoInput(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2298,7 +2298,7 @@ namespace System.Management.Automation
         /// Gets the AddToHistory setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is addToHistory data; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is addToHistory data; <see langword="false"/> otherwise.</returns>
         internal static bool GetAddToHistory(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2315,7 +2315,7 @@ namespace System.Management.Automation
         /// Gets the IsNested setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is IsNested data; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is IsNested data; <see langword="false"/> otherwise.</returns>
         internal static bool GetIsNested(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2357,9 +2357,7 @@ namespace System.Management.Automation
         /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.CantCastRemotingDataToPSObject, data.GetType().FullName);

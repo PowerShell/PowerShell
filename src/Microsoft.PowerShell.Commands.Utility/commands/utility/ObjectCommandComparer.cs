@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ObjectCommandPropertyValue constructor.
+        /// Initializes a new instance of the <see cref="ObjectCommandPropertyValue"/> class.
         /// </summary>
         /// <param name="propVal">Property Value.</param>
         /// <param name="isCaseSensitive">Indicates if the Property value comparison has to be case sensitive or not.</param>
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static readonly ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
         internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
-        private bool _caseSensitive;
+        private readonly bool _caseSensitive;
         internal CultureInfo cultureInfo = null;
 
         /// <summary>
@@ -77,8 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if both the objects are same or else returns false.</returns>
         public override bool Equals(object inputObject)
         {
-            ObjectCommandPropertyValue objectCommandPropertyValueObject = inputObject as ObjectCommandPropertyValue;
-            if (objectCommandPropertyValueObject == null)
+            if (!(inputObject is ObjectCommandPropertyValue objectCommandPropertyValueObject))
             {
                 return false;
             }
@@ -140,6 +139,7 @@ namespace Microsoft.PowerShell.Commands
     internal class ObjectCommandComparer : IComparer
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectCommandComparer"/> class.
         /// Constructor that doesn't set any private field.
         /// Necessary because compareTo can compare two objects by calling
         /// ((ICompare)obj1).CompareTo(obj2) without using a key.
@@ -225,11 +225,11 @@ namespace Microsoft.PowerShell.Commands
             return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
         }
 
-        private CultureInfo _cultureInfo = null;
+        private readonly CultureInfo _cultureInfo = null;
 
-        private bool _ascendingOrder = true;
+        private readonly bool _ascendingOrder = true;
 
-        private bool _caseSensitive = false;
+        private readonly bool _caseSensitive = false;
     }
     #endregion
 }

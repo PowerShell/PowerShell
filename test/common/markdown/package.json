@@ -7,8 +7,11 @@
     "dependencies": {
         "gulp": "^4.0.2",
         "markdownlint": "^0.21.0",
-        "through2": "^4.0.2",
-        "yargs-parser": "13.1.2"
+        "through2": "^4.0.2"
+    },
+    "resolutions": {
+        "yargs-parser": "^13.1.2" ,
+        "y18n": "^5.0.5"
     },
     "devDependencies": {
         "gulp-concat": "^2.6.1",

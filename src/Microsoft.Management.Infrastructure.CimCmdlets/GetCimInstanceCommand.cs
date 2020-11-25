@@ -5,9 +5,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation;
 
 #endregion
 
@@ -242,14 +241,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// <para>The following is the definition of the input parameter "InputObject".
@@ -277,11 +269,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return cimInstance; }
+            get { return CimInstance; }
 
             set
             {
-                cimInstance = value;
+                CimInstance = value;
                 base.SetParameter(value, nameCimInstance);
             }
         }
@@ -289,12 +281,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property for internal usage purpose.
         /// </summary>
-        internal CimInstance CimInstance
-        {
-            get { return cimInstance; }
-        }
-
-        private CimInstance cimInstance;
+        internal CimInstance CimInstance { get; private set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Query".
@@ -422,23 +409,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias("SelectProperties")]
         public string[] Property
         {
-            get { return property; }
+            get { return SelectProperties; }
 
             set
             {
-                property = value;
+                SelectProperties = value;
                 base.SetParameter(value, nameSelectProperties);
             }
         }
         /// <summary>
         /// Property for internal usage.
         /// </summary>
-        internal string[] SelectProperties
-        {
-            get { return property; }
-        }
-
-        private string[] property;
+        internal string[] SelectProperties { get; private set; }
 
         #endregion
 
@@ -504,7 +486,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimGetInstance CreateOperationAgent()
         {
-            CimGetInstance cimGetInstance = new CimGetInstance();
+            CimGetInstance cimGetInstance = new();
             this.AsyncOperation = cimGetInstance;
             return cimGetInstance;
         }
@@ -520,7 +502,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ClassNameSessionSet:
                     // validate the classname & property
                     this.className = ValidationHelper.ValidateArgumentIsValidName(nameClassName, this.className);
-                    this.property = ValidationHelper.ValidateArgumentIsValidName(nameSelectProperties, this.property);
+                    this.SelectProperties = ValidationHelper.ValidateArgumentIsValidName(nameSelectProperties, this.SelectProperties);
                     break;
                 default:
                     break;
@@ -549,7 +531,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
@@ -652,7 +634,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.CimInstanceComputerSet, new ParameterSetEntry(1)     },
             {   CimBaseCommand.CimInstanceSessionSet, new ParameterSetEntry(2)     },

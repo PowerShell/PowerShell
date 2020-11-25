@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -23,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
             return Definition;
         }
         /// <summary>
-        /// Initializes a new instance of this class.
+        /// Initializes a new instance of the <see cref="MemberDefinition"/> class.
         /// </summary>
         public MemberDefinition(string typeName, string name, PSMemberTypes memberType, string definition)
         {
@@ -65,21 +64,21 @@ namespace Microsoft.PowerShell.Commands
         /// The object to retrieve properties from.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; }
+        public PSObject InputObject { get; set; }
 
         /// <summary>
         /// The member names to be retrieved.
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
-        public string[] Name { set; get; } = new string[] { "*" };
+        public string[] Name { get; set; } = new string[] { "*" };
 
         /// <summary>
         /// The member types to be retrieved.
         /// </summary>
         [Parameter]
         [Alias("Type")]
-        public PSMemberTypes MemberType { set; get; } = PSMemberTypes.All;
+        public PSMemberTypes MemberType { get; set; } = PSMemberTypes.All;
 
         /// <summary>
         /// View from which the members are retrieved.
@@ -94,9 +93,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Static
         {
-            set { _staticParameter = value; }
-
             get { return _staticParameter; }
+
+            set { _staticParameter = value; }
         }
 
         /// <summary>
@@ -132,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
 
         private MshMemberMatchOptions _matchOptions = MshMemberMatchOptions.None;
 
-        private HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
+        private readonly HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
 
         /// <summary>
         /// This method implements the ProcessRecord method for get-member command.

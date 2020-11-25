@@ -233,9 +233,9 @@ namespace System.Management.Automation
     /// </summary>
     public class CommandInvocationIntrinsics
     {
-        private ExecutionContext _context;
-        private PSCmdlet _cmdlet;
-        private MshCommandRuntime _commandRuntime;
+        private readonly ExecutionContext _context;
+        private readonly PSCmdlet _cmdlet;
+        private readonly MshCommandRuntime _commandRuntime;
 
         internal CommandInvocationIntrinsics(ExecutionContext context, PSCmdlet cmdlet)
         {
@@ -956,7 +956,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If the cmdlet declares paging support (via <see cref="CmdletCommonMetadataAttribute.SupportsPaging"/>),
         /// then <see cref="PagingParameters"/> property contains arguments of the paging parameters.
-        /// Otherwise <see cref="PagingParameters"/> property is <c>null</c>.
+        /// Otherwise <see cref="PagingParameters"/> property is <see langword="null"/>.
         /// </summary>
         public PagingParameters PagingParameters
         {
@@ -1009,4 +1009,3 @@ namespace System.Management.Automation
 
     }
 }
-

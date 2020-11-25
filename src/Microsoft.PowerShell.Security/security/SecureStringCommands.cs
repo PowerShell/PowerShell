@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -35,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string _commandName;
+        private readonly string _commandName;
 
         /// <summary>
         /// Initializes a new instance of the SecureStringCommandBase
@@ -391,4 +389,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

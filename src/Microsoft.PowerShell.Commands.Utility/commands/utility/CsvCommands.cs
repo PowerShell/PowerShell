@@ -11,8 +11,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
 namespace Microsoft.PowerShell.Commands
@@ -504,7 +502,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 CleanUp();
             }
@@ -879,13 +877,13 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
-        private char _delimiter;
+        private readonly char _delimiter;
         private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
         private readonly HashSet<string> _quoteFields;
         private readonly StringBuilder _outputString;
 
         /// <summary>
-        /// Create ExportCsvHelper instance.
+        /// Initializes a new instance of the <see cref="ExportCsvHelper"/> class.
         /// </summary>
         /// <param name="delimiter">Delimiter char.</param>
         /// <param name="quoteKind">Kind of quoting.</param>
@@ -1171,7 +1169,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 GC.SuppressFinalize(this);
             }

@@ -19,7 +19,10 @@ param (
     [string]$RuntimeSourceFeedKey,
 
     [Parameter()]
-    [switch]$InteractiveAuth
+    [switch]$InteractiveAuth,
+
+    [Parameter()]
+    [switch]$UseRTMFeed
 )
 
 <#
@@ -94,7 +97,7 @@ function Update-PackageVersion {
 
     $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
-    $source = if ($UseNuGetOrg) { 'nuget.org' } else { 'dotnet5' }
+    $source = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseRTMFeed) { 'dotnet5-rtm' } else { 'dotnet5' }
     $packages.GetEnumerator() | ForEach-Object {
         $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
 
@@ -102,7 +105,13 @@ function Update-PackageVersion {
             $version = $v.Version
 
             foreach ($p in $pkgs) {
-                if ($p.Version -like "$versionPattern*") {
+                if ($UseRTMFeed -and $p.Version -eq $versionPattern) {
+                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                        $v.NewVersion = $p.Version
+                        break
+                    }
+                }
+                elseif ($p.Version -like "$versionPattern*") {
                     if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
                         $v.NewVersion = $p.Version
                         break
@@ -201,19 +210,26 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Find-Dotnet
 
-    $addDotnet5Source = (-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
-    $addDotnet5InternalSource = (-not (Get-PackageSource -Name 'dotnet5-internal' -ErrorAction SilentlyContinue))
+    $feedname = if ($UseRTMFeed) {
+        'dotnet5-rtm'
+    } elseif ($UseNuGetOrg) {
+        'dotnet5'
+    } else {
+        'dotnet-internal'
+    }
+
+    $addDotnet5Source = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
 
     if (!$UseNuGetOrg -and ($addDotnet5Source -or $addDotnet5InternalSource)) {
         $nugetFileSources = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add
 
-        if ($addDotnet5Source) {
-            $dotnet5Feed = $nugetFileSources | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-            Register-PackageSource -Name 'dotnet5' -Location $dotnet5Feed -ProviderName NuGet
-            Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
+        if ($addDotnet5Source -and $feedname -ne 'dotnet-internal') {
+            $dotnet5Feed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name $feedname -Location $dotnet5Feed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source $feedname" -verbose
         }
 
-        if ($addDotnet5InternalSource -and $InteractiveAuth) {
+        if ($addDotnet5Source -and $InteractiveAuth -and $feedname -eq 'dotnet-internal') {
             # This NuGet feed is for internal to Microsoft use only.
             $dotnet5InternalFeed = 'https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet5-internal/nuget/v3/index.json'
             $updatedNugetFile = (Get-Content .\nuget.config -Raw) -replace "</packageSources>", "  <add key=`"dotnet5-internal`" value=`"$dotnet5InternalFeed`" />`r`n  </packageSources>"

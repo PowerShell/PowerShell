@@ -3,8 +3,6 @@
 
 #region Using directives
 
-using System.Collections;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -62,7 +60,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:

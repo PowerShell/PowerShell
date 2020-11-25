@@ -331,12 +331,12 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private Dictionary<PSEventSubscriber, Delegate> _eventSubscribers;
-        private Dictionary<string, List<PSEventSubscriber>> _engineEventSubscribers;
-        private Queue<EventAction> _actionQueue;
-        private ExecutionContext _context;
+        private readonly Dictionary<PSEventSubscriber, Delegate> _eventSubscribers;
+        private readonly Dictionary<string, List<PSEventSubscriber>> _engineEventSubscribers;
+        private readonly Queue<EventAction> _actionQueue;
+        private readonly ExecutionContext _context;
         private int _nextSubscriptionId = 1;
-        private double _throttleLimit = 1;
+        private readonly double _throttleLimit = 1;
         private int _throttleChecks = 0;
 
         // The assembly and module to hold our event registrations
@@ -599,7 +599,7 @@ namespace System.Management.Automation
                     if (_engineEventSubscribers.TryGetValue(PSEngineEvent.OnIdle, out subscribers) && subscribers.Count > 0)
                     {
                         // We send out on-idle event and keep enabling the timer only if there still are subscribers to the on-idle event
-                        GenerateEvent(PSEngineEvent.OnIdle, null, new object[] { }, null, false, false);
+                        GenerateEvent(PSEngineEvent.OnIdle, null, Array.Empty<object>(), null, false, false);
                         EnableTimer();
                     }
                     else
@@ -640,7 +640,7 @@ namespace System.Management.Automation
 
         #endregion OnIdleProcessing
 
-        private static Dictionary<string, Type> s_generatedEventHandlers = new Dictionary<string, Type>();
+        private static readonly Dictionary<string, Type> s_generatedEventHandlers = new Dictionary<string, Type>();
 
         private void ProcessNewSubscriber(PSEventSubscriber subscriber, object source, string eventName, string sourceIdentifier, PSObject data, bool supportEvent, bool forwardEvent)
         {
@@ -680,7 +680,7 @@ namespace System.Management.Automation
                 }
 
                 // Retrieve the event from the object
-                BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
+                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(eventName, bindingFlags);
 
                 // If we can't find the event, throw an exception
@@ -844,7 +844,7 @@ namespace System.Management.Automation
 
                 Type sourceType = subscriber.SourceObject as Type ?? subscriber.SourceObject.GetType();
 
-                BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
+                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(subscriber.EventName, bindingFlags);
 
                 if ((eventInfo != null) && (existingSubscriber != null))
@@ -953,11 +953,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ThreadPool.QueueUserWorkItem(new WaitCallback(
-                    delegate (object unused)
-                    {
-                        ProcessNewEventImplementation(newEvent, false);
-                    }));
+                ThreadPool.QueueUserWorkItem(new WaitCallback((_) => ProcessNewEventImplementation(newEvent, false)));
             }
         }
 
@@ -1137,7 +1133,7 @@ namespace System.Management.Automation
                     // teardown event. That can result in starvation of
                     // foreground threads that also want to use the runspace.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(
-                        delegate (object unused)
+                        (_) =>
                         {
                             System.Threading.Thread.Sleep(100);
                             this.PulseEngine();
@@ -1168,7 +1164,7 @@ namespace System.Management.Automation
             }
         }
 
-        private object _actionProcessingLock = new object();
+        private readonly object _actionProcessingLock = new object();
         private EventAction _processingAction = null;
 
         /// <summary>
@@ -1515,14 +1511,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Destructor for the EventManager class.
-        /// </summary>
-        ~PSLocalEventManager()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Disposes the EventManager class.
         /// </summary>
         public void Dispose()
@@ -1564,10 +1552,10 @@ namespace System.Management.Automation
     internal class PSRemoteEventManager : PSEventManager
     {
         /// <summary>Computer on which the event was generated</summary>
-        private string _computerName;
+        private readonly string _computerName;
 
         /// <summary>Runspace on which the event was generated</summary>
-        private Guid _runspaceId;
+        private readonly Guid _runspaceId;
 
         /// <summary>
         /// Creates an event manager for the given runspace.
@@ -1935,7 +1923,7 @@ namespace System.Management.Automation
             HandlerDelegate = handlerDelegate;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// Create a bound script block.
@@ -2338,7 +2326,7 @@ namespace System.Management.Automation
         /// </summary>
         public event PSEventReceivedEventHandler PSEventReceived;
 
-        private List<PSEventArgs> _eventCollection = new List<PSEventArgs>();
+        private readonly List<PSEventArgs> _eventCollection = new List<PSEventArgs>();
 
         /// <summary>
         /// Add add an event to the collection.
@@ -2461,7 +2449,7 @@ namespace System.Management.Automation
         /// </param>
         /// </summary>
         public PSEventJob(PSEventManager eventManager, PSEventSubscriber subscriber, ScriptBlock action, string name) :
-            base(action == null ? null : action.ToString(), name)
+            base(action?.ToString(), name)
         {
             if (eventManager == null)
                 throw new ArgumentNullException(nameof(eventManager));
@@ -2474,8 +2462,8 @@ namespace System.Management.Automation
             _subscriber = subscriber;
         }
 
-        private PSEventManager _eventManager = null;
-        private PSEventSubscriber _subscriber = null;
+        private readonly PSEventManager _eventManager = null;
+        private readonly PSEventSubscriber _subscriber = null;
         private int _highestErrorIndex = 0;
 
         /// <summary>

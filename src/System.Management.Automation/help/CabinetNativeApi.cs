@@ -164,7 +164,7 @@ namespace System.Management.Automation.Internal
                 _fdiNotifyHandle.Free();
             }
         }
-    };
+    }
 
     // CabinetExtractor loader implementation
     internal class CabinetExtractorLoader : ICabinetExtractorLoader
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Internal
 
         internal static CabinetExtractorLoader GetInstance()
         {
-            if (0 == System.Threading.Interlocked.CompareExchange(ref s_created, 1, 0))
+            if (System.Threading.Interlocked.CompareExchange(ref s_created, 1, 0) == 0)
             {
                 s_instance = new CabinetExtractorLoader();
                 s_extractorInstance = new CabinetExtractor();
@@ -188,7 +188,7 @@ namespace System.Management.Automation.Internal
         {
             return s_extractorInstance;
         }
-    };
+    }
 
     internal static class CabinetNativeApi
     {
@@ -458,27 +458,27 @@ namespace System.Management.Automation.Internal
         {
             // Note: This is not done in a switch because the order of tests matters.
 
-            if ((int)(OpFlags.Create | OpFlags.Excl) == (oflag & (int)(OpFlags.Create | OpFlags.Excl)))
+            if ((oflag & (int)(OpFlags.Create | OpFlags.Excl)) == (int)(OpFlags.Create | OpFlags.Excl))
             {
                 return FileMode.CreateNew;
             }
-            else if ((int)(OpFlags.Create | OpFlags.Truncate) == (oflag & (int)(OpFlags.Create | OpFlags.Truncate)))
+            else if ((oflag & (int)(OpFlags.Create | OpFlags.Truncate)) == (int)(OpFlags.Create | OpFlags.Truncate))
             {
                 return FileMode.OpenOrCreate;
             }
-            else if (0 != (oflag & (int)OpFlags.Append))
+            else if ((oflag & (int)OpFlags.Append) != 0)
             {
                 return FileMode.Append;
             }
-            else if (0 != (oflag & (int)OpFlags.Create))
+            else if ((oflag & (int)OpFlags.Create) != 0)
             {
                 return FileMode.Create;
             }
-            else if (0 != (oflag & (int)OpFlags.RdWr))
+            else if ((oflag & (int)OpFlags.RdWr) != 0)
             {
                 return FileMode.Open;
             }
-            else if (0 != (oflag & (int)OpFlags.Truncate))
+            else if ((oflag & (int)OpFlags.Truncate) != 0)
             {
                 return FileMode.Truncate;
             }
@@ -497,15 +497,15 @@ namespace System.Management.Automation.Internal
         {
             // Note: This is not done in a switch because the order of tests matters.
 
-            if ((int)(PermissionMode.Read | PermissionMode.Write) == (pmode & (int)(PermissionMode.Read | PermissionMode.Write)))
+            if ((pmode & (int)(PermissionMode.Read | PermissionMode.Write)) == (int)(PermissionMode.Read | PermissionMode.Write))
             {
                 return FileAccess.ReadWrite;
             }
-            else if (0 != (pmode & (int)PermissionMode.Read))
+            else if ((pmode & (int)PermissionMode.Read) != 0)
             {
                 return FileAccess.Read;
             }
-            else if (0 != (pmode & (int)PermissionMode.Write))
+            else if ((pmode & (int)PermissionMode.Write) != 0)
             {
                 return FileAccess.Write;
             }
@@ -524,15 +524,15 @@ namespace System.Management.Automation.Internal
         {
             // Note: This is not done in a switch because the order of tests matters.
 
-            if ((int)(PermissionMode.Read | PermissionMode.Write) == (pmode & (int)(PermissionMode.Read | PermissionMode.Write)))
+            if ((pmode & (int)(PermissionMode.Read | PermissionMode.Write)) == (int)(PermissionMode.Read | PermissionMode.Write))
             {
                 return FileShare.ReadWrite;
             }
-            else if (0 != (pmode & (int)PermissionMode.Read))
+            else if ((pmode & (int)PermissionMode.Read) != 0)
             {
                 return FileShare.Read;
             }
-            else if (0 != (pmode & (int)PermissionMode.Write))
+            else if ((pmode & (int)PermissionMode.Write) != 0)
             {
                 return FileShare.Write;
             }
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Internal
             internal short iCabinet; // USHORT
             internal short iFolder; // USHORT
             internal int fdie; // FDIERROR
-        };
+        }
 
         internal enum FdiNotificationType : int
         {
@@ -607,7 +607,7 @@ namespace System.Management.Automation.Internal
             internal int erfOper;
             internal int erfType;
             internal bool fError;
-        };
+        }
 
         internal sealed class FdiContextHandle : SafeHandleZeroOrMinusOneIsInvalid
         {

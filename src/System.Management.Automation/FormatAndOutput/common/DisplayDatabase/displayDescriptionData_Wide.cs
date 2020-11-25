@@ -130,7 +130,7 @@ namespace System.Management.Automation
             OutOfBand = viewDefinition.outOfBand;
             GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
 
-            AutoSize = widecontrolbody.autosize.HasValue && widecontrolbody.autosize.Value;
+            AutoSize = widecontrolbody.autosize.GetValueOrDefault();
             Columns = (uint)widecontrolbody.columns;
 
             Entries.Add(new WideControlEntryItem(widecontrolbody.defaultEntryDefinition));

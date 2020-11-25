@@ -24,8 +24,8 @@ namespace PSTests.Parallel
 {
     public class FileSystemProviderTests : IDisposable
     {
-        private string testPath;
-        private string testContent;
+        private readonly string testPath;
+        private readonly string testContent;
 
         public FileSystemProviderTests()
         {
@@ -39,9 +39,18 @@ namespace PSTests.Parallel
             File.AppendAllText(testPath, testContent);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            File.Delete(testPath);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }        
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                File.Delete(testPath);
+            }
         }
 
         private ExecutionContext GetExecutionContext()

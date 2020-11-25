@@ -20,7 +20,7 @@ namespace System.Diagnostics.Eventing
         private long _anyKeywordMask;                  // Trace Enable Flags
         private long _allKeywordMask;                  // Match all keyword
         private int _enabled;                           // Enabled flag from Trace callback
-        private Guid _providerId;                       // Control Guid
+        private readonly Guid _providerId;              // Control Guid
         private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]
@@ -99,7 +99,7 @@ namespace System.Diagnostics.Eventing
 
             _etwCallback = new UnsafeNativeMethods.EtwEnableCallback(EtwEnableCallBack);
 
-            status = UnsafeNativeMethods.EventRegister(ref _providerId, _etwCallback, null, ref _regHandle);
+            status = UnsafeNativeMethods.EventRegister(in _providerId, _etwCallback, null, ref _regHandle);
             if (status != 0)
             {
                 throw new Win32Exception((int)status);

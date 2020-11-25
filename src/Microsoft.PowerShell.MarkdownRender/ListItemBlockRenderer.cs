@@ -1,12 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.IO;
 using System.Threading;
-
-using Markdig;
-using Markdig.Renderers;
 using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender

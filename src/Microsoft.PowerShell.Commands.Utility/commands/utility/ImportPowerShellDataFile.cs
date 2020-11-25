@@ -78,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePathNotFoundError(string path)
         {
-            var errorId = "PathNotFound";
-            var errorCategory = ErrorCategory.InvalidArgument;
+            const string errorId = "PathNotFound";
+            const ErrorCategory errorCategory = ErrorCategory.InvalidArgument;
             var errorMessage = string.Format(UtilityCommonStrings.PathDoesNotExist, path);
             var exception = new ArgumentException(errorMessage);
             var errorRecord = new ErrorRecord(exception, errorId, errorCategory, path);
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteInvalidDataFileError(string resolvedPath, string errorId)
         {
-            var errorCategory = ErrorCategory.InvalidData;
+            const ErrorCategory errorCategory = ErrorCategory.InvalidData;
             var errorMessage = string.Format(UtilityCommonStrings.CouldNotParseAsPowerShellDataFile, resolvedPath);
             var exception = new InvalidOperationException(errorMessage);
             var errorRecord = new ErrorRecord(exception, errorId, errorCategory, resolvedPath);

@@ -337,7 +337,7 @@ namespace System.Management.Automation
             {
                 // Generate Path for Catalog Definition File
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
-                cdfFilePath = cdfFilePath + ".cdf";
+                cdfFilePath += ".cdf";
                 try
                 {
                     cdfFilePath = GenerateCDFFile(Path, catalogFilePath, cdfFilePath, catalogVersion, hashAlgorithm);
@@ -409,8 +409,8 @@ namespace System.Management.Automation
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
-            DWORD GENERIC_READ = 0x80000000;
-            DWORD OPEN_EXISTING = 3;
+            const DWORD GENERIC_READ = 0x80000000;
+            const DWORD OPEN_EXISTING = 3;
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
             // Open the file that is to be hashed for reading and get its handle

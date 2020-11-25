@@ -489,7 +489,7 @@ namespace System.Management.Automation
             }
             else
             {
-                variable = (LocalsTuple != null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
+                variable = (LocalsTuple?.TrySetVariable(name, value)) ?? new PSVariable(name, value);
             }
 
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
 
         #region Alias mapping
 
-        private Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the aliases by command name (used by metadata-driven help)
@@ -1980,4 +1980,3 @@ namespace System.Management.Automation
         #endregion
     }
 }
-

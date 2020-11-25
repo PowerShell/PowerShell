@@ -5,18 +5,18 @@
 #pragma warning disable 56506
 
 using System;
-using System.Management.Automation;
-using Dbg = System.Management.Automation;
-using System.Management.Automation.Security;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using System.Globalization;
 using System.ComponentModel;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Management.Automation;
+using System.Management.Automation.Security;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -208,8 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -248,8 +247,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -588,8 +586,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if (sd == null)
+            if (!(instance.BaseObject is ObjectSecurity sd))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -1063,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a newly allocated SACL with no ACEs in it.
         /// Free the returned SACL by calling Marshal.FreeHGlobal.
         /// </summary>
-        private IntPtr GetEmptySacl()
+        private static IntPtr GetEmptySacl()
         {
             IntPtr pSacl = IntPtr.Zero;
             bool ret = true;
@@ -1249,7 +1246,7 @@ namespace Microsoft.PowerShell.Commands
         /// and the previous state of this privilege. Free the returned token
         /// by calling NativeMethods.CloseHandle.
         /// </summary>
-        private IntPtr GetTokenWithEnabledPrivilege(
+        private static IntPtr GetTokenWithEnabledPrivilege(
             string privilege,
             NativeMethods.TOKEN_PRIVILEGE previousState)
         {
@@ -1591,4 +1588,3 @@ namespace Microsoft.PowerShell.Commands
 }
 
 #pragma warning restore 56506
-

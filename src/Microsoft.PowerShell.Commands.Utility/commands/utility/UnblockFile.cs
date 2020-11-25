@@ -6,14 +6,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+#if UNIX
 using System.Globalization;
-using System.IO;
+using System.Management.Automation;
+using System.Runtime.InteropServices;
+#else
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Runtime.InteropServices;
+#endif
 
 #endregion
 
@@ -196,9 +197,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if UNIX
-        private bool IsBlocked(string path)
+        private static bool IsBlocked(string path)
         {
-            uint valueSize = 1024;
+            const uint valueSize = 1024;
             IntPtr value = Marshal.AllocHGlobal((int)valueSize);
             try
             {

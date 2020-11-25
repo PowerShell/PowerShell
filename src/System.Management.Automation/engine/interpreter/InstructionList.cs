@@ -312,7 +312,7 @@ namespace System.Management.Automation.Interpreter
                 _maxStackDepth,
                 _maxContinuationDepth,
                 _instructions.ToArray(),
-                (_objects != null) ? _objects.ToArray() : null,
+                _objects?.ToArray(),
                 BuildRuntimeLabels(),
                 _debugCookies
             );
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation.Interpreter
 
         #endregion
 
-        private static Dictionary<Type, Func<CallSiteBinder, Instruction>> s_factories =
+        private static readonly Dictionary<Type, Func<CallSiteBinder, Instruction>> s_factories =
             new Dictionary<Type, Func<CallSiteBinder, Instruction>>();
 
         internal static Instruction CreateDynamicInstruction(Type delegateType, CallSiteBinder binder)

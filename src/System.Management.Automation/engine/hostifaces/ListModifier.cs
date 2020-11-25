@@ -151,7 +151,7 @@ namespace System.Management.Automation
             get { return _itemsToAdd; }
         }
 
-        private Collection<object> _itemsToAdd;
+        private readonly Collection<object> _itemsToAdd;
 
         /// <summary>
         /// The list of items to remove when AppyTo is called.
@@ -161,7 +161,7 @@ namespace System.Management.Automation
             get { return _itemsToRemove; }
         }
 
-        private Collection<object> _itemsToRemove;
+        private readonly Collection<object> _itemsToRemove;
 
         /// <summary>
         /// The list of items to replace an existing list with.
@@ -171,7 +171,7 @@ namespace System.Management.Automation
             get { return _replacementItems; }
         }
 
-        private Collection<object> _replacementItems;
+        private readonly Collection<object> _replacementItems;
 
         /// <summary>
         /// Update the given collection with the items in Add and Remove.
@@ -219,8 +219,7 @@ namespace System.Management.Automation
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);
 
-            IList list = collectionToUpdate as IList;
-            if (list == null)
+            if (!(collectionToUpdate is IList list))
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
             }

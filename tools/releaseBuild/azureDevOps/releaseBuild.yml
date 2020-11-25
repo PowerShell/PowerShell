@@ -10,9 +10,19 @@ pr:
     - master
     - release*
 
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+
 variables:
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  POWERSHELL_TELEMETRY_OPTOUT: 1
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
 
 stages:
   - stage: prep
@@ -146,6 +156,8 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
+        - checkout: self
+          clean: true
         - template: templates/SetVersionVariables.yml
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)

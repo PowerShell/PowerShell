@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Text;
 
 using System.Management.Automation.Internal;
@@ -66,7 +64,7 @@ namespace System.Management.Automation
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
                 // Write a warning if using utf7 as it is obsolete in .NET5
-                if (string.Compare(encoding, Utf7, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
                 {
                     cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }

@@ -61,10 +61,10 @@ namespace System.Management.Automation
         private readonly List<string> _links = new List<string>();
         internal bool isExternalHelpSet = false;
 
-        private ScriptBlock _scriptBlock;
-        private CommandMetadata _commandMetadata;
-        private string _commandName;
-        private List<string> _parameterDescriptions;
+        private readonly ScriptBlock _scriptBlock;
+        private readonly CommandMetadata _commandMetadata;
+        private readonly string _commandName;
+        private readonly List<string> _parameterDescriptions;
         private XmlDocument _doc;
         internal static readonly string mshURI = "http://msh";
         internal static readonly string mamlURI = "http://schemas.microsoft.com/maml/2004/10";
@@ -496,7 +496,7 @@ namespace System.Management.Automation
 
         private static void GetExampleSections(string content, out string prompt_str, out string code_str, out string remarks_str)
         {
-            string default_prompt_str = "PS > ";
+            const string default_prompt_str = "PS > ";
 
             var promptMatch = Regex.Match(content, "^.*?>");
             prompt_str = promptMatch.Success ? promptMatch.Value : default_prompt_str;

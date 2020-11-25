@@ -25,12 +25,19 @@ namespace System.Management.Automation.Language
         }
 
         public int BitIndex { get; set; }
+
         public int LocalTupleIndex { get; set; }
+
         public Type Type { get; set; }
+
         public string Name { get; set; }
+
         public bool Automatic { get; set; }
+
         public bool PreferenceVariable { get; set; }
+
         public bool Assigned { get; set; }
+
         public List<Ast> AssociatedAsts { get; }
     }
 
@@ -626,7 +633,7 @@ namespace System.Management.Automation.Language
                         var varName = GetUnaliasedVariableName(variablePath);
                         var details = _variables[varName];
                         details.Assigned = true;
-                        type = type ?? details.Type ?? typeof(object);
+                        type ??= details.Type ?? typeof(object);
 
                         // automatic and preference variables are pre-allocated, so they can't be unallocated
                         // and forced to be dynamic.

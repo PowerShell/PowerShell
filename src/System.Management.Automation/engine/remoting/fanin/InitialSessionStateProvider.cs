@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentException">
         /// 1. "optionName" is already defined
         /// </exception>
-        private void AssertValueNotAssigned(string optionName, object originalValue)
+        private static void AssertValueNotAssigned(string optionName, object originalValue)
         {
             if (originalValue != null)
             {
@@ -401,7 +401,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
         /// </param>
-        /// <returns>Application private data or <c>null</c></returns>
+        /// <returns>Application private data or <see langword="null"/></returns>
         public virtual PSPrimitiveDictionary GetApplicationPrivateData(PSSenderInfo senderInfo)
         {
             return null;
@@ -785,10 +785,10 @@ namespace System.Management.Automation.Remoting
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
 
-        private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
+        private static readonly Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
 
         #endregion
     }
@@ -1326,7 +1326,7 @@ namespace System.Management.Automation.Remoting
 
         private static bool IntegerTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
-            if (!(obj is int) && !(obj is long))
+            if (obj is not int && obj is not long)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeInteger, key, path));
                 return false;
@@ -1686,8 +1686,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal sealed class DISCPowerShellConfiguration : PSSessionConfiguration
     {
-        private string _configFile;
-        private Hashtable _configHash;
+        private readonly string _configFile;
+        private readonly Hashtable _configHash;
 
         /// <summary>
         /// Gets the configuration hashtable that results from parsing the specified configuration file.
@@ -1896,7 +1896,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        private string GetRoleCapabilityPath(string roleCapability)
+        private static string GetRoleCapabilityPath(string roleCapability)
         {
             string moduleName = "*";
             if (roleCapability.Contains('\\'))
@@ -2395,7 +2395,7 @@ namespace System.Management.Automation.Remoting
                 if (Convert.ToBoolean(_configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture))
                 {
                     iss.UserDriveEnabled = true;
-                    iss.UserDriveUserName = (senderInfo != null) ? senderInfo.UserInfo.Identity.Name : null;
+                    iss.UserDriveUserName = senderInfo?.UserInfo.Identity.Name;
 
                     // Set user drive max drive if provided.
                     if (_configHash.ContainsKey(ConfigFileConstants.UserDriveMaxSize))
@@ -2620,7 +2620,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates an alias entry.
         /// </summary>
-        private SessionStateAliasEntry CreateSessionStateAliasEntry(Hashtable alias, bool isAliasVisibilityDefined)
+        private static SessionStateAliasEntry CreateSessionStateAliasEntry(Hashtable alias, bool isAliasVisibilityDefined)
         {
             string name = TryGetValue(alias, ConfigFileConstants.AliasNameToken);
 
@@ -2660,7 +2660,7 @@ namespace System.Management.Automation.Remoting
         /// Creates a function entry.
         /// </summary>
         /// <returns></returns>
-        private SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
+        private static SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
         {
             string name = TryGetValue(function, ConfigFileConstants.FunctionNameToken);
 
@@ -2700,7 +2700,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a variable entry.
         /// </summary>
-        private SessionStateVariableEntry CreateSessionStateVariableEntry(Hashtable variable, PSLanguageMode languageMode)
+        private static SessionStateVariableEntry CreateSessionStateVariableEntry(Hashtable variable, PSLanguageMode languageMode)
         {
             string name = TryGetValue(variable, ConfigFileConstants.VariableNameToken);
 
@@ -2804,9 +2804,7 @@ namespace System.Management.Automation.Remoting
 
                     for (int i = 0; i < hashArray.Length; i++)
                     {
-                        Hashtable hash = objArray[i] as Hashtable;
-
-                        if (hash == null)
+                        if (!(objArray[i] is Hashtable hash))
                         {
                             return null;
                         }

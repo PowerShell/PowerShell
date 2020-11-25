@@ -391,7 +391,7 @@ namespace Microsoft.WSMan.Management
 
         #endregion parameter
 
-        #  region private
+        #region private
         private WSManHelper helper;
 
         private string GetFilter()
@@ -413,7 +413,7 @@ namespace Microsoft.WSMan.Management
                 filter = filter + "<wsman:Selector Name='" + name + "'>" + value + "</wsman:Selector>";
             }
 
-            filter = filter + "</wsman:SelectorSet>";
+            filter += "</wsman:SelectorSet>";
             return (filter);
         }
 

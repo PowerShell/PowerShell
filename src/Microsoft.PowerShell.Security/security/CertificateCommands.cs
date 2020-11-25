@@ -1,11 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Management.Automation;
 using System.Security;
 using System.Security.Cryptography;
@@ -80,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // list of files that were not found
         //
-        private List<string> _filesNotFound = new List<string>();
+        private readonly List<string> _filesNotFound = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the GetPfxCertificateCommand
@@ -216,4 +213,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

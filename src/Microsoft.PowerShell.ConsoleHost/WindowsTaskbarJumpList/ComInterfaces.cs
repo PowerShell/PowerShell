@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -58,6 +57,7 @@ namespace Microsoft.PowerShell
                 uint fFlags);
 
             void GetIDList(out IntPtr ppidl);
+
             void SetIDList(IntPtr pidl);
 
             void GetDescription(
@@ -83,8 +83,11 @@ namespace Microsoft.PowerShell
                 [MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
 
             void GetHotKey(out short wHotKey);
+
             void SetHotKey(short wHotKey);
+
             void GetShowCmd(out uint iShowCmd);
+
             void SetShowCmd(uint iShowCmd);
 
             void GetIconLocation(
@@ -235,6 +238,7 @@ namespace Microsoft.PowerShell
                 [MarshalAs(UnmanagedType.Interface)] IObjectArray poaSource);
 
             void RemoveObject(uint uiIndex);
+
             void Clear();
         }
 
@@ -253,6 +257,7 @@ namespace Microsoft.PowerShell
             Int32 RemoveDataBlock(UInt32 dwSig);
 
             void GetFlags(out uint pdwFlags);
+
             void SetFlags(uint dwFlags);
         }
 

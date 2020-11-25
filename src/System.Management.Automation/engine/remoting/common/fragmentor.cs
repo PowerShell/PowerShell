@@ -205,10 +205,10 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         internal byte[] GetBytes()
         {
-            int objectIdSize = 8; // number of bytes of long
-            int fragmentIdSize = 8; // number of bytes of long
-            int flagsSize = 1; // 1 byte for IsEndOfFrag and IsControl
-            int blobLengthSize = 4; // number of bytes of int
+            const int objectIdSize = 8; // number of bytes of long
+            const int fragmentIdSize = 8; // number of bytes of long
+            const int flagsSize = 1; // 1 byte for IsEndOfFrag and IsControl
+            const int blobLengthSize = 4; // number of bytes of int
 
             int totalLength = objectIdSize + fragmentIdSize + flagsSize + blobLengthSize + BlobLength;
 
@@ -427,7 +427,7 @@ namespace System.Management.Automation.Remoting
     internal class SerializedDataStream : Stream, IDisposable
     {
         [TraceSourceAttribute("SerializedDataStream", "SerializedDataStream")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
         #region Global Constants
 
         private static long s_objectIdSequenceNumber = 0;
@@ -437,20 +437,20 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         private bool _isEntered;
-        private FragmentedRemoteObject _currentFragment;
+        private readonly FragmentedRemoteObject _currentFragment;
         private long _fragmentId;
 
-        private int _fragmentSize;
-        private object _syncObject;
+        private readonly int _fragmentSize;
+        private readonly object _syncObject;
         private bool _isDisposed;
-        private bool _notifyOnWriteFragmentImmediately;
+        private readonly bool _notifyOnWriteFragmentImmediately;
 
         // MemoryStream does not dynamically resize as data is read. This will waste
         // lot of memory as data sent on the network will still be there in memory.
         // To avoid this a queue of memory streams (each stream is of fragmentsize)
         // is created..so after data is sent the MemoryStream is disposed there by
         // clearing resources.
-        private Queue<MemoryStream> _queuedStreams;
+        private readonly Queue<MemoryStream> _queuedStreams;
         private MemoryStream _writeStream;
         private MemoryStream _readStream;
         private int _writeOffset;
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Remoting
                 if (dataLeftInTheFragment > 0)
                 {
                     int amountToWriteIntoFragment = (amountLeft > dataLeftInTheFragment) ? dataLeftInTheFragment : amountLeft;
-                    amountLeft = amountLeft - amountToWriteIntoFragment;
+                    amountLeft -= amountToWriteIntoFragment;
 
                     // Write data into fragment
                     Array.Copy(buffer, offsetToReadFrom, _currentFragment.Blob, _currentFragment.BlobLength, amountToWriteIntoFragment);
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Remoting
                         }
 
                         int amountToWriteIntoStream = (amountLeft > dataLeftInWriteStream) ? dataLeftInWriteStream : amountLeft;
-                        amountLeft = amountLeft - amountToWriteIntoStream;
+                        amountLeft -= amountToWriteIntoStream;
                         // write data
                         _writeStream.Position = _writeOffset;
                         _writeStream.Write(data, offSetToReadFrom, amountToWriteIntoStream);
@@ -883,9 +883,11 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         public override bool CanRead { get { return true; } }
+
         /// <summary>
         /// </summary>
         public override bool CanSeek { get { return false; } }
+
         /// <summary>
         /// </summary>
         public override bool CanWrite { get { return true; } }
@@ -893,6 +895,7 @@ namespace System.Management.Automation.Remoting
         /// Gets the length of the stream in bytes.
         /// </summary>
         public override long Length { get { return _length; } }
+
         /// <summary>
         /// </summary>
         public override long Position
@@ -908,6 +911,7 @@ namespace System.Management.Automation.Remoting
         public override void Flush()
         {
         }
+
         /// <summary>
         /// </summary>
         /// <param name="offset"></param>
@@ -917,6 +921,7 @@ namespace System.Management.Automation.Remoting
         {
             throw new NotSupportedException();
         }
+
         /// <summary>
         /// </summary>
         /// <param name="value"></param>
@@ -954,13 +959,13 @@ namespace System.Management.Automation.Remoting
     internal class Fragmentor
     {
         #region Global Constants
-        private static UTF8Encoding s_utf8Encoding = new UTF8Encoding();
+        private static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding();
         // This const defines the default depth to be used for serializing objects for remoting.
         private const int SerializationDepthForRemoting = 1;
         #endregion
 
         private int _fragmentSize;
-        private SerializationContext _serializationContext;
+        private readonly SerializationContext _serializationContext;
 
         #region Constructor
 

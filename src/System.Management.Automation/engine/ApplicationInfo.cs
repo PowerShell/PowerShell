@@ -52,7 +52,7 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
         #endregion ctor
 
         /// <summary>

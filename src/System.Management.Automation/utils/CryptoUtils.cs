@@ -64,7 +64,7 @@ namespace System.Management.Automation.Internal
 
         private static int ToInt32LE(byte[] bytes, int offset)
         {
-            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1 ] << 8) | bytes[offset];
+            return (bytes[offset + 3] << 24) | (bytes[offset + 2] << 16) | (bytes[offset + 1] << 8) | bytes[offset];
         }
 
         private static uint ToUInt32LE(byte[] bytes, int offset)
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Internal
 
             try
             {
-                if ((blob[offset]   != PUBLICKEYBLOB) ||            // PUBLICKEYBLOB (0x06)
+                if ((blob[offset] != PUBLICKEYBLOB) ||            // PUBLICKEYBLOB (0x06)
                     (blob[offset + 1] != CUR_BLOB_VERSION) ||       // Version (0x02)
                     (blob[offset + 2] != 0x00) ||                   // Reserved (word)
                     (blob[offset + 3] != 0x00) ||
@@ -278,7 +278,7 @@ namespace System.Management.Automation.Internal
     {
         #region Private Members
 
-        private uint _errorCode;
+        private readonly uint _errorCode;
 
         #endregion Private Members
 
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Internal
         // bool indicating if session key was generated before
         private bool _sessionKeyGenerated = false;
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
 
         #endregion Private Members
 
@@ -625,18 +625,6 @@ namespace System.Management.Automation.Internal
                     _aes.Dispose();
                 }
             }
-        }
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~PSRSACryptoServiceProvider()
-        {
-            // When Dispose() is called, GC.SuppressFinalize()
-            // is called and therefore this finalizer will not
-            // be invoked. Hence this is run only on process
-            // shutdown
-            Dispose(true);
         }
 
         #endregion IDisposable

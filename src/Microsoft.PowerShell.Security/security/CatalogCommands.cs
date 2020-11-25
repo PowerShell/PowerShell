@@ -4,14 +4,10 @@
 #if !UNIX
 
 using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Collections;
-using System.IO;
-using System.Management.Automation.Provider;
-using System.Runtime.InteropServices;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -60,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string commandName;
+        private readonly string commandName;
 
         /// <summary>
         /// Initializes a new instance of the CatalogCommandsBase class,

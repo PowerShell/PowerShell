@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #if CORECLR
-using System.ComponentModel;
 
 namespace System.Diagnostics
 {

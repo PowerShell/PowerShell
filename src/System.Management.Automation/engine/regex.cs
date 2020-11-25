@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// Specifies culture-invariant matching.
         /// </summary>
         CultureInvariant = 4
-    };
+    }
 
     /// <summary>
     /// Represents a wildcard pattern.
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ErrorRecord _errorRecord;
+        private readonly ErrorRecord _errorRecord;
 
         /// <summary>
         /// Constructs an instance of the WildcardPatternException object.
@@ -729,7 +729,7 @@ namespace System.Management.Automation
 
             return e;
         }
-    };
+    }
 
     /// <summary>
     /// Convert a string with wild cards into its equivalent regex.
@@ -1271,10 +1271,10 @@ namespace System.Management.Automation
 
             public CharacterNormalizer(WildcardOptions options)
             {
-                _caseInsensitive = 0 != (options & WildcardOptions.IgnoreCase);
+                _caseInsensitive = (options & WildcardOptions.IgnoreCase) != 0;
                 if (_caseInsensitive)
                 {
-                    _cultureInfo = 0 != (options & WildcardOptions.CultureInvariant)
+                    _cultureInfo = (options & WildcardOptions.CultureInvariant) != 0
                         ? CultureInfo.InvariantCulture
                         : CultureInfo.CurrentCulture;
                 }
@@ -1348,4 +1348,3 @@ namespace System.Management.Automation
         }
     }
 }
-

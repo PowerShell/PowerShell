@@ -4,12 +4,7 @@
 using System;
 using System.IO;
 using System.Text;
-
-using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using Dbg = System.Management.Automation.Diagnostics;
-using DWORD = System.UInt32;
-using HRESULT = System.UInt32;
-using NakedWin32Handle = System.IntPtr;
 
 namespace Microsoft.PowerShell
 {
@@ -93,6 +88,6 @@ namespace Microsoft.PowerShell
             _ui.WriteToConsole(a, transcribeResult: true);
         }
 
-        private ConsoleHostUserInterface _ui;
+        private readonly ConsoleHostUserInterface _ui;
     }
 }

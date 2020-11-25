@@ -341,7 +341,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         private const string _threadName = "IPC Listener Thread";
         private const int _namedPipeBufferSizeForRemoting = 32768;
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Remoting
         private const int _maxPipePathLengthMacOS = 104;
 
         // Singleton server.
-        private static object s_syncObject;
+        private static readonly object s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
 
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="coreName">Named pipe core name.</param>
         /// <param name="securityDesc"></param>
         /// <returns>NamedPipeServerStream.</returns>
-        private NamedPipeServerStream CreateNamedPipe(
+        private static NamedPipeServerStream CreateNamedPipe(
             string serverName,
             string namespaceName,
             string coreName,
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
-            string processId = System.Diagnostics.Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture);
+            string processId = Environment.ProcessId.ToString(CultureInfo.InvariantCulture);
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
             // Logging.
@@ -900,10 +900,7 @@ namespace System.Management.Automation.Remoting
 
             ManualResetEventSlim clientConnectionEnded = new ManualResetEventSlim(false);
             IPCNamedPipeServer.ListenerEnded -= OnIPCNamedPipeServerEnded;
-            IPCNamedPipeServer.ListenerEnded += (sender, e) =>
-                {
-                    clientConnectionEnded.Set();
-                };
+            IPCNamedPipeServer.ListenerEnded += (sender, e) => clientConnectionEnded.Set();
 
             // Wait for server to service a single client connection.
             clientConnectionEnded.Wait();
@@ -1010,7 +1007,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private NamedPipeClientStream _clientPipeStream;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         protected string _pipeName;
 
@@ -1294,9 +1291,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
-            // Create pipe flags.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
-
             //
             // WaitNamedPipe API is not supported by Windows Server container now, so we need to repeatedly
             // attempt connection to pipe server until timeout expires.
@@ -1309,13 +1303,13 @@ namespace System.Management.Automation.Remoting
             {
                 // Get handle to pipe.
                 pipeHandle = NamedPipeNative.CreateFile(
-                    _pipeName,
-                    NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                    0,
-                    IntPtr.Zero,
-                    NamedPipeNative.OPEN_EXISTING,
-                    pipeFlags,
-                    IntPtr.Zero);
+                    lpFileName: _pipeName,
+                    dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
+                    dwShareMode: 0,
+                    SecurityAttributes: IntPtr.Zero,
+                    dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
+                    dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED,
+                    hTemplateFile: IntPtr.Zero);
 
                 int lastError = Marshal.GetLastWin32Error();
                 if (pipeHandle.IsInvalid)

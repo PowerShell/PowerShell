@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>Breakpoint on a command</summary>
         Command
-    };
+    }
 
     /// <summary>
     /// This class implements Get-PSBreakpoint.
@@ -107,22 +107,16 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Id,
-                    delegate (Breakpoint breakpoint, int id)
-                    {
-                        return breakpoint.Id == id;
-                    }
-                );
+                    (Breakpoint breakpoint, int id) => breakpoint.Id == id);
             }
             else if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
                 breakpoints = Filter(
                     breakpoints,
                     Command,
-                    delegate (Breakpoint breakpoint, string command)
+                    (Breakpoint breakpoint, string command) =>
                     {
-                        CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
-
-                        if (commandBreakpoint == null)
+                        if (!(breakpoint is CommandBreakpoint commandBreakpoint))
                         {
                             return false;
                         }
@@ -135,11 +129,9 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Variable,
-                    delegate (Breakpoint breakpoint, string variable)
+                    (Breakpoint breakpoint, string variable) =>
                     {
-                        VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
-
-                        if (variableBreakpoint == null)
+                        if (!(breakpoint is VariableBreakpoint variableBreakpoint))
                         {
                             return false;
                         }
@@ -152,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Type,
-                    delegate (Breakpoint breakpoint, BreakpointType type)
+                    (Breakpoint breakpoint, BreakpointType type) =>
                     {
                         switch (type)
                         {
@@ -195,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Script,
-                    delegate (Breakpoint breakpoint, string script)
+                    (Breakpoint breakpoint, string script) =>
                     {
                         if (breakpoint.Script == null)
                         {
@@ -230,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the items in the input list that match an item in the filter array according to
         /// the given selection criterion.
         /// </summary>
-        private List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
+        private static List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
         {
             List<Breakpoint> output = new List<Breakpoint>();
 

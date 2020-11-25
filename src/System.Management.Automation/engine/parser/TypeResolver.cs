@@ -246,7 +246,7 @@ namespace System.Management.Automation.Language
             try
             {
                 exception = null;
-                var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
+                var currentScope = context?.EngineSessionState.CurrentScope;
                 Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                 if (exception == null && result == null)
@@ -615,9 +615,7 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            var other = obj as TypeResolutionState;
-
-            if (other == null)
+            if (!(obj is TypeResolutionState other))
                 return false;
 
             if (this.attribute != other.attribute)

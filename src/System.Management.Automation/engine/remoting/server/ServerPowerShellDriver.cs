@@ -23,31 +23,31 @@ namespace System.Management.Automation
         private bool _extraPowerShellAlreadyScheduled;
 
         // extra PowerShell at the server to be run after localPowerShell
-        private PowerShell _extraPowerShell;
+        private readonly PowerShell _extraPowerShell;
 
         // output buffer for the local PowerShell that is associated with this powershell driver
         // associated with this powershell data structure handler object to handle all communications with the client
-        private PSDataCollection<PSObject> _localPowerShellOutput;
+        private readonly PSDataCollection<PSObject> _localPowerShellOutput;
 
         // if the remaining data has been sent to the client before sending state information
-        private bool[] _datasent = new bool[2];
+        private readonly bool[] _datasent = new bool[2];
 
         // sync object for synchronizing sending data to client
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         // there is no input when this driver was created
-        private bool _noInput;
-        private bool _addToHistory;
+        private readonly bool _noInput;
+        private readonly bool _addToHistory;
 
         // the server remote host instance
         // associated with this powershell
-        private ServerRemoteHost _remoteHost;
+        private readonly ServerRemoteHost _remoteHost;
 
         // apartment state for this powershell
-        private ApartmentState apartmentState;
+        private readonly ApartmentState apartmentState;
 
         // Handles nested invocation of PS drivers.
-        private IRSPDriverInvoke _psDriverInvoker;
+        private readonly IRSPDriverInvoke _psDriverInvoker;
 
         #endregion Private Members
 

@@ -467,7 +467,7 @@ namespace Microsoft.WSMan.Management
                                     }
                                     else
                                     {
-                                        XmlNode tmpNode = node.ChildNodes[0];//.Item[0];
+                                        XmlNode tmpNode = node.ChildNodes[0]; //.Item[0];
                                         if (!tmpNode.NodeType.ToString().Equals("text", StringComparison.OrdinalIgnoreCase))
                                         {
                                             throw new ArgumentException(_resourceMgr.GetString("NOAttributeMatch"));
@@ -562,7 +562,7 @@ namespace Microsoft.WSMan.Management
 
             if (selectorset != null)
             {
-                resource = resource + "?";
+                resource += "?";
                 int i = 0;
                 foreach (DictionaryEntry entry in selectorset)
                 {
@@ -656,7 +656,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (authentication.Equals(AuthenticationMechanism.None))
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseNoAuthentication;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagUseNoAuthentication;
                 }
 
                 if (authentication.Equals(AuthenticationMechanism.Basic))
@@ -666,12 +666,12 @@ namespace Microsoft.WSMan.Management
 
                 if (authentication.Equals(AuthenticationMechanism.Negotiate))
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseNegotiate;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagUseNegotiate;
                 }
 
                 if (authentication.Equals(AuthenticationMechanism.Kerberos))
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseKerberos;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagUseKerberos;
                 }
 
                 if (authentication.Equals(AuthenticationMechanism.Digest))
@@ -686,7 +686,7 @@ namespace Microsoft.WSMan.Management
 
                 if (authentication.Equals(AuthenticationMechanism.ClientCertificate))
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseClientCertificate;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagUseClientCertificate;
                 }
             }
 
@@ -718,7 +718,7 @@ namespace Microsoft.WSMan.Management
                     connObject.Password = nwCredential.Password;
                     if (!authentication.Equals(AuthenticationMechanism.Credssp) || !authentication.Equals(AuthenticationMechanism.Digest) || authentication.Equals(AuthenticationMechanism.Basic))
                     {
-                        sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagCredUserNamePassword;
+                        sessionFlags |= (int)WSManSessionFlags.WSManFlagCredUserNamePassword;
                     }
                 }
             }
@@ -726,7 +726,7 @@ namespace Microsoft.WSMan.Management
             if (certificateThumbprint != null)
             {
                 connObject.CertificateThumbprint = certificateThumbprint;
-                sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseClientCertificate;
+                sessionFlags |= (int)WSManSessionFlags.WSManFlagUseClientCertificate;
             }
 
             if (sessionoption != null)
@@ -784,48 +784,48 @@ namespace Microsoft.WSMan.Management
 
                 if (sessionoption.SkipCACheck)
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagSkipCACheck;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagSkipCACheck;
                 }
 
                 if (sessionoption.SkipCNCheck)
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagSkipCNCheck;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagSkipCNCheck;
                 }
 
                 if (sessionoption.SPNPort > 0)
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagEnableSpnServerPort;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagEnableSpnServerPort;
                 }
 
                 if (sessionoption.UseUtf16)
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUtf16;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagUtf16;
                 }
                 else
                 {
                     // If UseUtf16 is false, then default Encoding is Utf8
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUtf8;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagUtf8;
                 }
 
                 if (!sessionoption.UseEncryption)
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagNoEncryption;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagNoEncryption;
                 }
 
                 if (sessionoption.SkipRevocationCheck)
                 {
-                    sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagSkipRevocationCheck;
+                    sessionFlags |= (int)WSManSessionFlags.WSManFlagSkipRevocationCheck;
                 }
             }
             else
             {
                 // If SessionOption is null then, default Encoding is Utf8
-                sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUtf8;
+                sessionFlags |= (int)WSManSessionFlags.WSManFlagUtf8;
             }
 
             if (usessl)
             {
-                sessionFlags = sessionFlags | (int)WSManSessionFlags.WSManFlagUseSsl;
+                sessionFlags |= (int)WSManSessionFlags.WSManFlagUseSsl;
             }
 
             IWSManSession m_SessionObj = null;
@@ -871,9 +871,9 @@ namespace Microsoft.WSMan.Management
                 if (entry.Key != null && entry.Value != null)
                 {
                     filter.Append(entry.Key.ToString());
-                    filter.Append("=");
+                    filter.Append('=');
                     filter.Append(entry.Value.ToString());
-                    filter.Append("+");
+                    filter.Append('+');
                 }
             }
 
@@ -917,7 +917,7 @@ namespace Microsoft.WSMan.Management
         {
             StringBuilder sburi = new StringBuilder();
             sburi.Append(uri);
-            sburi.Append("?");
+            sburi.Append('?');
 
             if (operation.Equals("remove", StringComparison.OrdinalIgnoreCase))
             {

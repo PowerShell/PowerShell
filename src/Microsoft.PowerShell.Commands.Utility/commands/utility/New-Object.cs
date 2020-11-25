@@ -10,10 +10,14 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+#if !UNIX
 using System.Management.Automation.Security;
+#endif
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if !UNIX
 using System.Threading;
+#endif
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -207,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
                     ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
                     if (ci != null && ci.IsPublic)
                     {
-                        _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });
+                        _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, Array.Empty<object>());
                         if (_newObject != null && Property != null)
                         {
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2

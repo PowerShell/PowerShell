@@ -172,8 +172,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <returns><see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.</returns>
         internal override StartableJob CreateQueryJob(CimSession session, QueryBuilder baseQuery)
         {
-            CimQuery query = baseQuery as CimQuery;
-            if (query == null)
+            if (!(baseQuery is CimQuery query))
             {
                 throw new ArgumentNullException(nameof(baseQuery));
             }
@@ -201,7 +200,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="session">Remote session to invoke the method in.</param>
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         /// <returns></returns>
         internal override StartableJob CreateInstanceMethodInvocationJob(CimSession session, CimInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {

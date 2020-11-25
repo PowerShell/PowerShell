@@ -157,6 +157,7 @@ namespace System.Management.Automation
             public Node Operand1 { get; set; }
 
             internal abstract bool Eval(object val);
+
             internal abstract bool ExistEnum(object enumVal);
         }
 
@@ -318,7 +319,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private Type _underType = null;
+        private readonly Type _underType = null;
 
         #endregion
 

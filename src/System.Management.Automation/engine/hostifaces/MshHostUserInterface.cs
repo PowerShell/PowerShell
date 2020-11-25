@@ -398,7 +398,7 @@ namespace System.Management.Automation.Host
 
         private sealed class TranscribeOnlyCookie : IDisposable
         {
-            private PSHostUserInterface _ui;
+            private readonly PSHostUserInterface _ui;
             private bool _disposed = false;
 
             public TranscribeOnlyCookie(PSHostUserInterface ui)
@@ -511,7 +511,7 @@ namespace System.Management.Automation.Host
                         Environment.MachineName,
                         Environment.OSVersion.VersionString,
                         string.Join(" ", Environment.GetCommandLineArgs()),
-                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        Environment.ProcessId,
                         versionInfoFooter.ToString().TrimEnd());
             }
 
@@ -953,9 +953,9 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new object();
+        private static readonly object s_systemTranscriptLock = new object();
 
-        private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
+        private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
@@ -1051,8 +1051,11 @@ namespace System.Management.Automation.Host
         internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
+
         internal string CommandBeingIgnored { get; set; }
+
         internal bool IsHelperCommand { get; set; }
+
         internal string PromptText { get; set; }
     }
 
@@ -1332,4 +1335,3 @@ namespace System.Management.Automation.Host
         }
     }
 }
-

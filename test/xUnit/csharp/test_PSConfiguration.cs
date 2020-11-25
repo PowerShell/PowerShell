@@ -97,18 +97,27 @@ namespace PSTests.Sequential
 
         public void Dispose()
         {
-            CleanupConfigFiles();
-            if (systemWideConfigBackupFile != null)
-            {
-                File.Move(systemWideConfigBackupFile, systemWideConfigFile);
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }        
 
-            if (currentUserConfigBackupFile != null)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                File.Move(currentUserConfigBackupFile, currentUserConfigFile);
-            }
+                CleanupConfigFiles();
+                if (systemWideConfigBackupFile != null)
+                {
+                    File.Move(systemWideConfigBackupFile, systemWideConfigFile);
+                }
 
-            InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
+                if (currentUserConfigBackupFile != null)
+                {
+                    File.Move(currentUserConfigBackupFile, currentUserConfigFile);
+                }
+
+                InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
+            }
         }
 
         internal PowerShellPolicies SystemWidePolicies
@@ -362,6 +371,22 @@ namespace PSTests.Sequential
             File.Create(fileName).Dispose();
         }
 
+        public void SetupConfigFile5()
+        {
+            CleanupConfigFiles();
+
+            // System wide config file is broken
+            CreateBrokenConfigFile(systemWideConfigFile);
+
+            // Current user config file is broken
+            CreateBrokenConfigFile(currentUserConfigFile);
+        }
+
+        private void CreateBrokenConfigFile(string fileName)
+        {
+            File.WriteAllText(fileName, "[abbra");
+        }
+
         internal void ForceReadingFromFile()
         {
             // Reset the cached roots.
@@ -376,7 +401,7 @@ namespace PSTests.Sequential
 
     public class PowerShellPolicyTests : IClassFixture<PowerShellPolicyFixture>
     {
-        private PowerShellPolicyFixture fixture;
+        private readonly PowerShellPolicyFixture fixture;
 
         public PowerShellPolicyTests(PowerShellPolicyFixture fixture)
         {
@@ -951,6 +976,16 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
+        }
+
+        [Fact, Priority(11)]
+        public void PowerShellConfig_GetPowerShellPolicies_BrokenSystemConfig()
+        {
+            fixture.SetupConfigFile5();
+            fixture.ForceReadingFromFile();
+
+            Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers));
+            Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
         }
     }
 }

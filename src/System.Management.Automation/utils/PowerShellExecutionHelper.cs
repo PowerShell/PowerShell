@@ -189,7 +189,7 @@ namespace System.Management.Automation
                 if (pso != null)
                 {
                     object baseObject = pso.BaseObject;
-                    if (baseObject != null && !(baseObject is PSCustomObject))
+                    if (baseObject != null && baseObject is not PSCustomObject)
                         result = baseObject.ToString();
                     else
                         result = pso.ToString();

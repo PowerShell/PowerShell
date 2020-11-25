@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool _stopping;
 
         internal int activityId;
-        private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
+        private readonly Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
 
         #region Parameters
 
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor
 
-        private static Dictionary<string, string> s_metadataCache;
+        private static readonly Dictionary<string, string> s_metadataCache;
 
         /// <summary>
         /// Static constructor
@@ -299,9 +299,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Match wildcards
-            WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { moduleNamePattern }, wildcardOptions);
+            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                globPatterns: new[] { moduleNamePattern },
+                options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             foreach (KeyValuePair<string, string> name in s_metadataCache)
             {

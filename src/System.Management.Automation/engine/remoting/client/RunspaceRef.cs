@@ -22,10 +22,10 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Runspace ref.
         /// </summary>
-        private ObjectRef<Runspace> _runspaceRef;
+        private readonly ObjectRef<Runspace> _runspaceRef;
         private bool _stopInvoke;
-        private object _localSyncObject;
-        private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
+        private readonly object _localSyncObject;
+        private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         /// <summary>
         /// Constructor for RunspaceRef.
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates the PSCommand when the runspace is not overridden.
         /// </summary>
-        private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
+        private static PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
             PSCommand command = new PSCommand();
 
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        private void StopProgressBar(
+        private static void StopProgressBar(
             long sourceId)
         {
             s_RCProgress.StopProgress(sourceId);

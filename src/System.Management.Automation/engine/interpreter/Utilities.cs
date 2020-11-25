@@ -779,7 +779,7 @@ namespace System.Management.Automation.Interpreter
 
         private StorageInfo GetStorageInfo(StorageInfo[] curStorage)
         {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
 
             // fast path if we already have a value in the array
             if (curStorage != null && curStorage.Length > threadId)
@@ -829,7 +829,7 @@ namespace System.Management.Automation.Interpreter
             StorageInfo[] curStorage = s_updating;
             try
             {
-                int threadId = Thread.CurrentThread.ManagedThreadId;
+                int threadId = Environment.CurrentManagedThreadId;
                 StorageInfo newInfo = new StorageInfo(Thread.CurrentThread);
 
                 // set to updating while potentially resizing/mutating, then we'll

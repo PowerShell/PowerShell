@@ -12,21 +12,17 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
-using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
-
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Win32.SafeHandles;
-
-using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;
+using FileNakedHandle = System.IntPtr;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -58,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             /// Select the processes specified as input.
             /// </summary>
             ByInput
-        };
+        }
         /// <summary>
         /// The current process selection mode.
         /// </summary>
@@ -153,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
                 StringComparison.OrdinalIgnoreCase);
-            if (0 != diff)
+            if (diff != 0)
                 return diff;
             return SafeGetProcessId(x) - SafeGetProcessId(y);
         }
@@ -237,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (ArgumentException)
                 {
                     WriteNonTerminatingError(
-                        "",
+                        string.Empty,
                         processId,
                         processId,
                         null,
@@ -925,7 +921,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 if (_waitHandle != null)
                 {
@@ -943,7 +939,7 @@ namespace Microsoft.PowerShell.Commands
         // Handle Exited event and display process information.
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            if (0 == System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor))
+            if (System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0)
             {
                 if (_waitHandle != null)
                 {
@@ -978,7 +974,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // It cannot wait on itself
-                if (process.Id.Equals(System.Diagnostics.Process.GetCurrentProcess().Id))
+                if (process.Id.Equals(Environment.ProcessId))
                 {
                     WriteNonTerminatingError(process, null, ProcessResources.WaitOnItself, "WaitOnItself", ErrorCategory.ObjectNotFound);
                     continue;
@@ -1218,7 +1214,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (Process.GetCurrentProcess().Id == SafeGetProcessId(process))
+                    if (Environment.ProcessId == SafeGetProcessId(process))
                     {
                         _shouldKillCurrentProcess = true;
                         continue;
@@ -1391,9 +1387,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Stops the given process throws non terminating error if can't.
-        /// <param name="process" >Process to be stopped.</param>
-        /// <returns>True if process stopped successfully else false.</returns>
         /// </summary>
+        /// <param name="process">Process to be stopped.</param>
+        /// <returns>True if process stopped successfully else false.</returns>
         private void StopProcess(Process process)
         {
             Exception exception = null;
@@ -1582,7 +1578,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Map the return code from 'AttachDebugger' to error message.
         /// </summary>
-        private string MapReturnCodeToErrorMessage(int returnCode)
+        private static string MapReturnCodeToErrorMessage(int returnCode)
         {
             string errorMessage = string.Empty;
             switch (returnCode)
@@ -2110,7 +2106,7 @@ namespace Microsoft.PowerShell.Commands
             return filepath;
         }
 
-        private void LoadEnvironmentVariable(ProcessStartInfo startinfo, IDictionary EnvironmentVariables)
+        private static void LoadEnvironmentVariable(ProcessStartInfo startinfo, IDictionary EnvironmentVariables)
         {
             var processEnvironment = startinfo.EnvironmentVariables;
             foreach (DictionaryEntry entry in EnvironmentVariables)
@@ -2331,7 +2327,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < sd.Count; i++)
             {
-                builder.Append(array[i]);//
+                builder.Append(array[i]);
                 builder.Append('=');
                 builder.Append(strArray2[i]);
                 builder.Append('\0');
@@ -2351,82 +2347,82 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
-                // RedirectionStandardInput
-                if (_redirectstandardinput != null)
-                {
-                    startinfo.RedirectStandardInput = true;
-                    _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
-                    lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, ProcessNativeMethods.OPEN_EXISTING);
-                }
-                else
-                {
-                    lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
-                }
+            // RedirectionStandardInput
+            if (_redirectstandardinput != null)
+            {
+                startinfo.RedirectStandardInput = true;
+                _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
+                lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, ProcessNativeMethods.OPEN_EXISTING);
+            }
+            else
+            {
+                lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
+            }
 
-                // RedirectionStandardOutput
-                if (_redirectstandardoutput != null)
-                {
-                    startinfo.RedirectStandardOutput = true;
-                    _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, ProcessNativeMethods.CREATE_ALWAYS);
-                }
-                else
-                {
-                    lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
-                }
+            // RedirectionStandardOutput
+            if (_redirectstandardoutput != null)
+            {
+                startinfo.RedirectStandardOutput = true;
+                _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
+                lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, ProcessNativeMethods.CREATE_ALWAYS);
+            }
+            else
+            {
+                lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
+            }
 
-                // RedirectionStandardError
-                if (_redirectstandarderror != null)
+            // RedirectionStandardError
+            if (_redirectstandarderror != null)
+            {
+                startinfo.RedirectStandardError = true;
+                _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
+                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, ProcessNativeMethods.CREATE_ALWAYS);
+            }
+            else
+            {
+                lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
+            }
+
+            // STARTF_USESTDHANDLES
+            lpStartupInfo.dwFlags = 0x100;
+
+            if (startinfo.CreateNoWindow)
+            {
+                // No new window: Inherit the parent process's console window
+                creationFlags = 0x00000000;
+            }
+            else
+            {
+                // CREATE_NEW_CONSOLE
+                creationFlags |= 0x00000010;
+
+                // STARTF_USESHOWWINDOW
+                lpStartupInfo.dwFlags |= 0x00000001;
+
+                // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
+                switch (startinfo.WindowStyle)
                 {
-                    startinfo.RedirectStandardError = true;
-                    _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                    lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, ProcessNativeMethods.CREATE_ALWAYS);
+                    case ProcessWindowStyle.Normal:
+                        // SW_SHOWNORMAL
+                        lpStartupInfo.wShowWindow = 1;
+                        break;
+                    case ProcessWindowStyle.Minimized:
+                        // SW_SHOWMINIMIZED
+                        lpStartupInfo.wShowWindow = 2;
+                        break;
+                    case ProcessWindowStyle.Maximized:
+                        // SW_SHOWMAXIMIZED
+                        lpStartupInfo.wShowWindow = 3;
+                        break;
+                    case ProcessWindowStyle.Hidden:
+                        // SW_HIDE
+                        lpStartupInfo.wShowWindow = 0;
+                        break;
                 }
-                else
-                {
-                    lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
-                }
+            }
 
-                // STARTF_USESTDHANDLES
-                lpStartupInfo.dwFlags = 0x100;
-
-                if (startinfo.CreateNoWindow)
-                {
-                    // No new window: Inherit the parent process's console window
-                    creationFlags = 0x00000000;
-                }
-                else
-                {
-                    // CREATE_NEW_CONSOLE
-                    creationFlags |= 0x00000010;
-
-                    // STARTF_USESHOWWINDOW
-                    lpStartupInfo.dwFlags |= 0x00000001;
-
-                    // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
-                    switch (startinfo.WindowStyle)
-                    {
-                        case ProcessWindowStyle.Normal:
-                            // SW_SHOWNORMAL
-                            lpStartupInfo.wShowWindow = 1;
-                            break;
-                        case ProcessWindowStyle.Minimized:
-                            // SW_SHOWMINIMIZED
-                            lpStartupInfo.wShowWindow = 2;
-                            break;
-                        case ProcessWindowStyle.Maximized:
-                            // SW_SHOWMAXIMIZED
-                            lpStartupInfo.wShowWindow = 3;
-                            break;
-                        case ProcessWindowStyle.Hidden:
-                            // SW_HIDE
-                            lpStartupInfo.wShowWindow = 0;
-                            break;
-                    }
-                }
-
-                // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
-                creationFlags |= 0x00000004;
+            // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
+            creationFlags |= 0x00000004;
         }
 
         /// <summary>
@@ -2505,7 +2501,7 @@ namespace Microsoft.PowerShell.Commands
                                 message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
                             }
 
-                            er = er ?? new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                            er ??= new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                             ThrowTerminatingError(er);
                         }
 
@@ -3029,4 +3025,3 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion ProcessCommandException
 }
-
