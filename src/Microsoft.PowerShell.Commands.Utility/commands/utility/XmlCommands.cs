@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(1, int.MaxValue)]
-        public int Depth { get; set; } = 0;
+        public int Depth { get; set; }
 
         /// <summary>
         /// Mandatory file name to write to.
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(HelpMessage = "Specifies how many levels of contained objects should be included in the XML representation")]
         [ValidateRange(1, int.MaxValue)]
-        public int Depth { get; set; } = 0;
+        public int Depth { get; set; }
 
         /// <summary>
         /// Input Object which is written to XML format.

@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
         /// be ReadOnly, Constant, and/or Private.
         /// </summary>
         [Parameter]
-        public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
+        public ScopedItemOptions Option { get; set; }
 
         /// <summary>
         /// Specifies the visibility of the new variable...

@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 2)]
         [ValidateRange(0, Int32.MaxValue)]
-        public int Id { get; set; } = 0;
+        public int Id { get; set; }
 
         /// <summary>
         /// Percentage completion of the activity, or -1 if n/a.

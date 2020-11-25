@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property name.
         /// </summary>
-        public string Property { get; set; } = null;
+        public string Property { get; set; }
     }
 
     /// <summary>
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public PSPropertyExpression[] Property { get; set; } = null;
+        public PSPropertyExpression[] Property { get; set; }
 
         #endregion Common parameters in both sets
 

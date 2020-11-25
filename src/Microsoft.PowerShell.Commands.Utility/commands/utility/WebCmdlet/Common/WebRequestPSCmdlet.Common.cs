@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         /// OAuth/Bearer: Requires Token.
         /// </summary>
         [Parameter]
-        public virtual WebAuthenticationType Authentication { get; set; } = WebAuthenticationType.None;
+        public virtual WebAuthenticationType Authentication { get; set; }
 
         /// <summary>
         /// Gets or sets the Credential property.
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the TLS/SSL protocol used by the Web Cmdlet.
         /// </summary>
         [Parameter]
-        public virtual WebSslProtocol SslProtocol { get; set; } = WebSslProtocol.Default;
+        public virtual WebSslProtocol SslProtocol { get; set; }
 
         /// <summary>
         /// Gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
-        public virtual int MaximumRetryCount { get; set; } = 0;
+        public virtual int MaximumRetryCount { get; set; }
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
