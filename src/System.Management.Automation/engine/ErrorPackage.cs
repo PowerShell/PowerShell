@@ -1480,7 +1480,7 @@ namespace System.Management.Automation
         /// for that ErrorCategory.
         /// </summary>
         /// <value>never null</value>
-        public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ?? (_categoryInfo = new ErrorCategoryInfo(this)); }
+        public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ??= new ErrorCategoryInfo(this); }
 
         private ErrorCategoryInfo _categoryInfo;
 

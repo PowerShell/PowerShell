@@ -238,7 +238,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<CommandParameterCollection> Parameters
         {
-            get { return _parameters ?? (_parameters = new List<CommandParameterCollection>()); }
+            get { return _parameters ??= new List<CommandParameterCollection>(); }
         }
 
         /// <summary>

@@ -1893,9 +1893,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _extendedMembersCollection ??
-                       (_extendedMembersCollection =
-                           PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
+                return _extendedMembersCollection ??=
+                    PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable);
             }
         }
 
@@ -1905,8 +1904,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _allPropertiesCollection ??
-                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
+                return _allPropertiesCollection ??= PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
             }
         }
 

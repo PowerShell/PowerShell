@@ -94,11 +94,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                return _cmdletInvocationContext ??
-                    (_cmdletInvocationContext = new CimCmdletInvocationContext(
-                        this.CmdletDefinitionContext,
-                        this.Cmdlet,
-                        this.GetDynamicNamespace()));
+                return _cmdletInvocationContext ??= new CimCmdletInvocationContext(
+                    this.CmdletDefinitionContext,
+                    this.Cmdlet,
+                    this.GetDynamicNamespace());
             }
         }
 

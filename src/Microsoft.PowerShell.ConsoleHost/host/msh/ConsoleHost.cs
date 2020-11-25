@@ -935,7 +935,7 @@ namespace Microsoft.PowerShell
             get
             {
                 if (ui == null) return null;
-                return _consoleColorProxy ?? (_consoleColorProxy = PSObject.AsPSObject(new ConsoleColorProxy(ui)));
+                return _consoleColorProxy ??= PSObject.AsPSObject(new ConsoleColorProxy(ui));
             }
         }
 

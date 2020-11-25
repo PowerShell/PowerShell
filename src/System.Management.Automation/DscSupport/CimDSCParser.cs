@@ -3710,8 +3710,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             get
             {
                 // The scriptblock cache will handle mutual exclusion
-                return s_cimKeywordImplementationFunction ??
-                       (s_cimKeywordImplementationFunction = ScriptBlock.Create(CimKeywordImplementationFunctionText));
+                return s_cimKeywordImplementationFunction ??= ScriptBlock.Create(CimKeywordImplementationFunctionText);
             }
         }
 

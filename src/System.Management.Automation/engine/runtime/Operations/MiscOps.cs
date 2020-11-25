@@ -1308,7 +1308,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(_scriptBlock == null || _scriptBlock.SessionStateInternal == null,
                 "Cached script block should not hold on to session state");
 
-            var result = (_scriptBlock ?? (_scriptBlock = new ScriptBlock(_ast, isFilter))).Clone();
+            var result = (_scriptBlock ??= new ScriptBlock(_ast, isFilter)).Clone();
             result.SessionStateInternal = context.EngineSessionState;
             return result;
         }

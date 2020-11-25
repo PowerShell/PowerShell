@@ -299,8 +299,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _moduleBase ??
-                       (_moduleBase = !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty);
+                return _moduleBase ??= !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty;
             }
         }
 
@@ -922,8 +921,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _readonlyNestedModules ??
-                       (_readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(_nestedModules));
+                return _readonlyNestedModules ??= new ReadOnlyCollection<PSModuleInfo>(_nestedModules);
             }
         }
 
@@ -1014,8 +1012,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _readonlyRequiredModules ??
-                       (_readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(_requiredModules));
+                return _readonlyRequiredModules ??= new ReadOnlyCollection<PSModuleInfo>(_requiredModules);
             }
         }
 
@@ -1040,8 +1037,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _readonlyRequiredModulesSpecification ??
-                       (_readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification));
+                return _readonlyRequiredModulesSpecification ??= new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification);
             }
         }
 

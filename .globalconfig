@@ -949,7 +949,7 @@ dotnet_diagnostic.IDE0072.severity = silent
 dotnet_diagnostic.IDE0073.severity = suggestion
 
 # IDE0074: UseCoalesceCompoundAssignment
-dotnet_diagnostic.IDE0074.severity = silent
+dotnet_diagnostic.IDE0074.severity = warning
 
 # IDE0075: SimplifyConditionalExpression
 dotnet_diagnostic.IDE0075.severity = silent

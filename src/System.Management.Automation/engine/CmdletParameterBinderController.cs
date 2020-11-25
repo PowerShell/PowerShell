@@ -3927,8 +3927,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _boundObsoleteParameterNames ??
-                       (_boundObsoleteParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+                return _boundObsoleteParameterNames ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
