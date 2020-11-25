@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Otherwise, render the full context.
-            List<string> lines = new List<string>(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
+            List<string> lines = new(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
 
             int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
             foreach (string contextLine in Context.DisplayPreContext)
@@ -851,14 +851,14 @@ namespace Microsoft.PowerShell.Commands
 
             public void TrackLine(string line)
             {
-                ContextEntry entry = new ContextEntry(line);
+                ContextEntry entry = new(line);
                 _collectedContext.Add(entry);
                 UpdateQueue();
             }
 
             public void TrackMatch(MatchInfo match)
             {
-                ContextEntry entry = new ContextEntry(match);
+                ContextEntry entry = new(match);
                 _collectedContext.Add(entry);
                 UpdateQueue();
             }
@@ -1436,8 +1436,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(Culture)) && !this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
             {
-                InvalidOperationException exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
+                InvalidOperationException exception = new(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
 
@@ -1471,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
             _globalContextTracker = GetContextTracker();
         }
 
-        private readonly List<string> _inputObjectFileList = new List<string>(1) { string.Empty };
+        private readonly List<string> _inputObjectFileList = new(1) { string.Empty };
 
         /// <summary>
         /// Process the input.
@@ -1600,9 +1600,9 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream fs = new(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (StreamReader sr = new StreamReader(fs, Encoding))
+                    using (StreamReader sr = new(fs, Encoding))
                     {
                         string line;
                         int lineNo = 0;
@@ -1940,7 +1940,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The resolved (absolute) paths.</returns>
         private List<string> ResolveFilePaths(string[] filePaths, bool isLiteralPath)
         {
-            List<string> allPaths = new List<string>();
+            List<string> allPaths = new();
 
             foreach (string path in filePaths)
             {
@@ -1983,7 +1983,7 @@ namespace Microsoft.PowerShell.Commands
         private static ErrorRecord BuildErrorRecord(string messageId, object[] arguments, string errorId, Exception innerException)
         {
             string fmtedMsg = StringUtil.Format(messageId, arguments);
-            ArgumentException e = new ArgumentException(fmtedMsg, innerException);
+            ArgumentException e = new(fmtedMsg, innerException);
             return new ErrorRecord(e, errorId, ErrorCategory.InvalidArgument, null);
         }
 

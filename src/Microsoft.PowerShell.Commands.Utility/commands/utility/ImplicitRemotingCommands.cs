@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                ErrorRecord error = new(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
 
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
+                ErrorRecord error = new(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
 
@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
@@ -584,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
@@ -605,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandNames);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.ResourceExists,
@@ -647,7 +647,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, typeName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.ResourceExists,
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
@@ -700,7 +700,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName, name);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidData,
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, aliasName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.OperationTimeout,
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorDetails details = this.GetErrorDetails(errorId, commandName);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
                 errorId,
                 ErrorCategory.InvalidResult,
@@ -806,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private readonly List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
+        private readonly List<string> _commandsSkippedBecauseOfShadowing = new();
 
         private void ReportSkippedCommands()
         {
@@ -847,7 +847,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_existingCommands == null)
                 {
                     _existingCommands = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                    CommandSearcher searcher = new CommandSearcher(
+                    CommandSearcher searcher = new(
                         "*",
                         SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveAliasPatterns | SearchResolutionOptions.ResolveFunctionPatterns,
                         CommandTypes.All,
@@ -866,7 +866,7 @@ namespace Microsoft.PowerShell.Commands
         {
             commandName = ModuleCmdletBase.AddPrefixToCommandName(commandName, this.Prefix);
 
-            CommandSearcher searcher = new CommandSearcher(commandName, SearchResolutionOptions.None, CommandTypes.All, this.Context);
+            CommandSearcher searcher = new(commandName, SearchResolutionOptions.None, CommandTypes.All, this.Context);
             foreach (string expandedCommandName in searcher.ConstructSearchPatternsFromName(commandName))
             {
                 if (this.ExistingCommands.ContainsKey(expandedCommandName))
@@ -1076,7 +1076,7 @@ namespace Microsoft.PowerShell.Commands
                 valueRehydrator = (PSObject pso) => ConvertTo<V>(commandName, pso);
             }
 
-            Dictionary<K, V> result = new Dictionary<K, V>();
+            Dictionary<K, V> result = new();
             PSPropertyInfo deserializedDictionaryProperty = deserializedObject.Properties[propertyName];
             if (deserializedDictionaryProperty != null)
             {
@@ -1294,8 +1294,8 @@ namespace Microsoft.PowerShell.Commands
             Type parameterType = RehydrateParameterType(deserializedParameterMetadata);
             List<string> aliases = RehydrateList<string>("Get-Command", deserializedParameterMetadata, "Aliases", null);
 
-            ParameterSetMetadata parameterSetMetadata = new ParameterSetMetadata(int.MinValue, 0, null);
-            Dictionary<string, ParameterSetMetadata> parameterSets = new Dictionary<string, ParameterSetMetadata>(StringComparer.OrdinalIgnoreCase);
+            ParameterSetMetadata parameterSetMetadata = new(int.MinValue, 0, null);
+            Dictionary<string, ParameterSetMetadata> parameterSets = new(StringComparer.OrdinalIgnoreCase);
             parameterSets.Add(ParameterAttribute.AllParameterSets, parameterSetMetadata);
 
             return new ParameterMetadata(
@@ -1349,7 +1349,7 @@ namespace Microsoft.PowerShell.Commands
 
             // add client-side AsJob parameter
             parameters.Remove("AsJob");
-            ParameterMetadata asJobParameter = new ParameterMetadata("AsJob", typeof(SwitchParameter));
+            ParameterMetadata asJobParameter = new("AsJob", typeof(SwitchParameter));
             parameters.Add(asJobParameter.Name, asJobParameter);
 
             return new CommandMetadata(
@@ -1622,12 +1622,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         DateTime startTime = DateTime.UtcNow;
 
-                        PSDataCollection<PSObject> asyncOutput = new PSDataCollection<PSObject>();
+                        PSDataCollection<PSObject> asyncOutput = new();
 
                         // process output and errors as soon as possible
                         asyncResult = powerShell.BeginInvoke<PSObject, PSObject>(null, asyncOutput);
                         int numberOfReceivedObjects = 0;
-                        List<ExtendedTypeDefinition> result = new List<ExtendedTypeDefinition>();
+                        List<ExtendedTypeDefinition> result = new();
                         foreach (PSObject deserializedFormatData in asyncOutput)
                         {
                             AddRemoteTypeDefinition(result, deserializedFormatData);
@@ -1733,14 +1733,14 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     Dictionary<string, CommandMetadata> name2commandMetadata =
-                        new Dictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
+                        new(StringComparer.OrdinalIgnoreCase);
 
                     // invoke
                     using (new PowerShellStopper(this.Context, powerShell))
                     {
                         DateTime startTime = DateTime.UtcNow;
 
-                        PSDataCollection<PSObject> asyncOutput = new PSDataCollection<PSObject>();
+                        PSDataCollection<PSObject> asyncOutput = new();
 
                         // process output and errors as soon as possible
                         asyncResult = powerShell.BeginInvoke<PSObject, PSObject>(null, asyncOutput);
@@ -1815,7 +1815,7 @@ namespace Microsoft.PowerShell.Commands
             _lastTimeProgressWasWritten = DateTime.UtcNow;
 
             string activityDescription = StringUtil.Format(ImplicitRemotingStrings.ProgressActivity);
-            ProgressRecord progressRecord = new ProgressRecord(
+            ProgressRecord progressRecord = new(
                 1905347799, // unique id for ImplicitRemoting (I just picked a random number)
                 activityDescription,
                 statusDescription);
@@ -1890,7 +1890,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            ImplicitRemotingCodeGenerator codeGenerator = new ImplicitRemotingCodeGenerator(
+            ImplicitRemotingCodeGenerator codeGenerator = new(
                 this.Session,
                 this.ModuleGuid,
                 this.MyInvocation);
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ImplicitRemotingCodeGenerator
     {
-        internal static readonly Version VersionOfScriptWriter = new Version(1, 0);
+        internal static readonly Version VersionOfScriptWriter = new(1, 0);
 
         #region Constructor and shared private data
 
@@ -1982,7 +1982,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
-            StringBuilder result = new StringBuilder(name.Length);
+            StringBuilder result = new(name.Length);
             foreach (char c in name)
             {
                 if (("\"'`$".IndexOf(c) == (-1)) &&
@@ -2247,7 +2247,7 @@ function Get-PSImplicitRemotingSessionOption
 
         private string GenerateNewPSSessionOption()
         {
-            StringBuilder result = new StringBuilder("& $script:NewPSSessionOption ");
+            StringBuilder result = new("& $script:NewPSSessionOption ");
 
             RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
             if (runspaceConnectionInfo != null)
@@ -2455,7 +2455,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateReimportingOfModules()
         {
-            StringBuilder result = new StringBuilder();
+            StringBuilder result = new();
 
             if (_invocationInfo.BoundParameters.ContainsKey(nameof(Module)))
             {
@@ -2921,7 +2921,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfCommandMetadata));
             }
 
-            List<string> listOfCommandNames = new List<string>();
+            List<string> listOfCommandNames = new();
             foreach (CommandMetadata commandMetadata in listOfCommandMetadata)
             {
                 listOfCommandNames.Add(commandMetadata.Name);
@@ -2937,7 +2937,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfStrings));
             }
 
-            StringBuilder arrayString = new StringBuilder();
+            StringBuilder arrayString = new();
             foreach (string s in listOfStrings)
             {
                 if (arrayString.Length != 0)
@@ -3003,7 +3003,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 throw PSTraceSource.NewArgumentNullException(nameof(listOfFormatData));
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings();
+            XmlWriterSettings settings = new();
             settings.CloseOutput = false;
             settings.ConformanceLevel = ConformanceLevel.Document;
             settings.Encoding = writer.Encoding;
@@ -3038,7 +3038,7 @@ function Get-PSImplicitRemotingClientSideParameters
             List<ExtendedTypeDefinition> listOfFormatData,
             X509Certificate2 certificate)
         {
-            List<string> result = new List<string>();
+            List<string> result = new();
 
             Dbg.Assert(moduleRootDirectory != null, "Caller should validate moduleRootDirectory != null");
             Dbg.Assert(Directory.Exists(moduleRootDirectory.FullName), "Caller should validate moduleRootDirectory exists");
@@ -3048,7 +3048,7 @@ function Get-PSImplicitRemotingClientSideParameters
             FileMode fileMode = force ? FileMode.OpenOrCreate : FileMode.CreateNew;
 
             result.Add(baseName + ".psm1");
-            FileStream psm1 = new FileStream(
+            FileStream psm1 = new(
                 baseName + ".psm1",
                 fileMode,
                 FileAccess.Write,
@@ -3069,7 +3069,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             result.Add(baseName + ".format.ps1xml");
-            FileStream formatPs1xml = new FileStream(
+            FileStream formatPs1xml = new(
                 baseName + ".format.ps1xml",
                 fileMode,
                 FileAccess.Write,
@@ -3114,8 +3114,8 @@ function Get-PSImplicitRemotingClientSideParameters
             }
 
             result.Add(baseName + ".psd1");
-            FileInfo manifestFile = new FileInfo(baseName + ".psd1");
-            FileStream psd1 = new FileStream(
+            FileInfo manifestFile = new(baseName + ".psd1");
+            FileStream psd1 = new(
                 manifestFile.FullName,
                 fileMode,
                 FileAccess.Write,
@@ -3135,7 +3135,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 using (var stream = new FileStream(applicationArgumentsFile, FileMode.Create, FileAccess.Write, FileShare.Read))
                 using (var xmlWriter = XmlWriter.Create(stream))
                 {
-                    Serializer serializer = new Serializer(xmlWriter);
+                    Serializer serializer = new(xmlWriter);
                     serializer.Serialize(applicationArguments);
                     serializer.Done();
                 }
