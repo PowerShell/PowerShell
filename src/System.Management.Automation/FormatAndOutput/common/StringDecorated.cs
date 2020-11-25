@@ -92,14 +92,9 @@ namespace System.Management.Automation.Internal
             if (outputRendering == OutputRendering.Automatic)
             {
                 outputRendering = OutputRendering.Ansi;
-                ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if (context != null)
+                if (Utils.OutputRenderingSetting == OutputRendering.PlainText)
                 {
-                    PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
-                    if (psstyle != null && psstyle.OutputRendering == OutputRendering.PlainText)
-                    {
-                        outputRendering = OutputRendering.PlainText;
-                    }
+                    outputRendering = OutputRendering.PlainText;
                 }
             }
 

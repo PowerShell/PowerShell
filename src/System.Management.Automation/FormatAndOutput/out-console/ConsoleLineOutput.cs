@@ -223,8 +223,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             CheckStopProcessing();
 
-            s = GetOutputString(s, isHost: true, supportsVirtualTerminal: _console.SupportsVirtualTerminal);
-
             // delegate the action to the helper,
             // that will properly break the string into
             // screen lines

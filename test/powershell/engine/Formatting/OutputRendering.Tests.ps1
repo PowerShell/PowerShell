@@ -44,7 +44,7 @@ Describe 'OutputRendering tests' {
     ) {
         param($outputRendering, $ansi)
 
-        $out = pwsh -noprofile -command "`$PSStyle.OutputRendering = '$outputRendering'; write-host '$($PSStyle.Foreground.Green)hello' | out-string"
+        $out = pwsh -noprofile -command "`$PSStyle.OutputRendering = '$outputRendering'; '$($PSStyle.Foreground.Green)hello'"
 
         if ($ansi) {
             $out | Should -BeLike "*`e*"

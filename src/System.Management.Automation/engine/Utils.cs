@@ -1787,30 +1787,26 @@ namespace System.Management.Automation
             return true;
         }
 
+        internal static OutputRendering OutputRenderingSetting = OutputRendering.Ansi;
         internal static bool OutputIsPlainText(bool isHost, bool? supportsVirtualTerminal)
         {
-            var outputRendering = OutputRendering.PlainText;
+            var outputRendering = OutputRendering.Ansi;
 
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
-                ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if (supportsVirtualTerminal != false && context != null)
+                if (supportsVirtualTerminal != false)
                 {
-                    PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
-                    if (psstyle != null)
+                    switch (OutputRenderingSetting)
                     {
-                        switch (psstyle.OutputRendering)
-                        {
-                            case OutputRendering.Automatic:
-                                outputRendering = OutputRendering.Ansi;
-                                break;
-                            case OutputRendering.Host:
-                                outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
-                                break;
-                            default:
-                                outputRendering = psstyle.OutputRendering;
-                                break;
-                        }
+                        case OutputRendering.Automatic:
+                            outputRendering = OutputRendering.Ansi;
+                            break;
+                        case OutputRendering.Host:
+                            outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                            break;
+                        default:
+                            outputRendering = OutputRenderingSetting;
+                            break;
                     }
                 }
             }
@@ -1826,26 +1822,10 @@ namespace System.Management.Automation
 
                 if (sd.IsDecorated)
                 {
-                    var outputRendering = OutputRendering.PlainText;
-                    ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                    if (supportsVirtualTerminal != false && context != null)
+                    var outputRendering = OutputRendering.Ansi;
+                    if (OutputIsPlainText(isHost, supportsVirtualTerminal))
                     {
-                        PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
-                        if (psstyle != null)
-                        {
-                            switch (psstyle.OutputRendering)
-                            {
-                                case OutputRendering.Automatic:
-                                    outputRendering = OutputRendering.Ansi;
-                                    break;
-                                case OutputRendering.Host:
-                                    outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
-                                    break;
-                                default:
-                                    outputRendering = psstyle.OutputRendering;
-                                    break;
-                            }
-                        }
+                        outputRendering = OutputRendering.PlainText;
                     }
 
                     s = sd.ToString(outputRendering);
