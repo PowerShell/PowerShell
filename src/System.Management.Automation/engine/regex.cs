@@ -184,7 +184,7 @@ namespace System.Management.Automation
             if (index == Pattern.Length - 1 && Pattern[index] == '*')
             {
                 // No special characters present in the pattern before last position and last character is asterisk.
-                var patternWithoutAsterisk = Pattern.AsMemory().Slice(0, index);
+                var patternWithoutAsterisk = Pattern.AsMemory(0, index);
                 _isMatch = str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
                 return;
             }
