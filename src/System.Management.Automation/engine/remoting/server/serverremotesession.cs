@@ -285,10 +285,10 @@ namespace System.Management.Automation.Remoting
         /// This parameter contains the remote data received from client.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If the parameter <paramref name="dataEventArg" /> is null.
+        /// If the parameter <paramref name="dataEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
+        /// If the parameter <paramref name="dataEventArg"/> does not contain remote data.
         /// </exception>
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.

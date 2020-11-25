@@ -4038,7 +4038,7 @@ namespace System.Management.Automation
         #region CopyItem
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4106,7 +4106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.

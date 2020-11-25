@@ -2241,7 +2241,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specify "directory" or "container" to create a directory.
         /// </param>
         /// <param name="value">
-        /// If <paramref name="type" /> is "file" then this parameter becomes the content
+        /// If <paramref name="type"/> is "file" then this parameter becomes the content
         /// of the file to be created.
         /// </param>
         /// <returns>
@@ -6159,8 +6159,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="providerSpecificPickList">
         /// The list of properties to get.  Examples include "Attributes", "LastAccessTime,"
         /// and other properties defined by
-        /// <see cref="System.IO.DirectoryInfo" /> and
-        /// <see cref="System.IO.FileInfo" />
+        /// <see cref="System.IO.DirectoryInfo"/> and
+        /// <see cref="System.IO.FileInfo"/>
         /// </param>
         public void GetProperty(string path, Collection<string> providerSpecificPickList)
         {

@@ -3010,7 +3010,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the location as a
-        /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation" />
+        /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation"/>
         /// </summary>
         public StoreLocation Location
         {

@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         [Parameter(ValueFromPipeline = true)]
         public PSObject[] InputObject { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void BeginProcessing()
         {
             _quoteChar = SingleQuote ? '\'' : DoubleQuote ? '"' : char.MinValue;
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void ProcessRecord()
         {
             if (InputObject != null)
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void EndProcessing()
         {
             _outputBuilder.Append(OutputSuffix);
