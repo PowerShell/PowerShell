@@ -33,7 +33,7 @@ namespace System.Management.Automation
 
         // This dictionary shouldn't see much use, so low concurrency and capacity
         private static readonly ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
-            new ConcurrentDictionary<string, string>( /*concurrency*/1, /*capacity*/2, StringComparer.OrdinalIgnoreCase);
+            new(concurrencyLevel: 1, capacity: 2, StringComparer.OrdinalIgnoreCase);
 
         internal static readonly char[] InvalidCommandNameCharacters = new[]
         {
@@ -384,8 +384,10 @@ namespace System.Management.Automation
                 }
             }
 
-            var exportedClasses = new ConcurrentDictionary<string, TypeAttributes>( /*concurrency*/
-                1, scriptAnalysis.DiscoveredClasses.Count, StringComparer.OrdinalIgnoreCase);
+            ConcurrentDictionary<string, TypeAttributes> exportedClasses = new(
+                concurrencyLevel: 1,
+                capacity: scriptAnalysis.DiscoveredClasses.Count,
+                StringComparer.OrdinalIgnoreCase);
             foreach (var exportedClass in scriptAnalysis.DiscoveredClasses)
             {
                 exportedClasses[exportedClass.Name] = exportedClass.TypeAttributes;
