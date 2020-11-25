@@ -14,6 +14,8 @@ namespace System.Management.Automation.Internal
         private readonly bool _isDecorated;
         private readonly string _text;
         private readonly string _plaintext;
+
+        // replace regex with .NET 6 API once available
         private static readonly Regex _ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>
