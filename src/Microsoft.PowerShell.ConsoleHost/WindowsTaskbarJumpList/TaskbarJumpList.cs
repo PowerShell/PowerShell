@@ -59,8 +59,8 @@ namespace Microsoft.PowerShell
             // Check startupInfo first to know if the current shell is interactive and owns a window before proceeding
             // This check is fast (less than 1ms) and allows for quick-exit
             GetStartupInfo(out StartUpInfo startupInfo);
-            var STARTF_USESHOWWINDOW = 0x00000001;
-            var SW_HIDE = 0;
+            const uint STARTF_USESHOWWINDOW = 0x00000001;
+            const ushort SW_HIDE = 0;
             if (((startupInfo.dwFlags & STARTF_USESHOWWINDOW) == 1) && (startupInfo.wShowWindow != SW_HIDE))
             {
                 string cmdPath = Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe");

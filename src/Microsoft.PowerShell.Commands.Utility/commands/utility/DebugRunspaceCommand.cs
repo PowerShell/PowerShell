@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void SetLocalMode(System.Management.Automation.Debugger debugger, bool localMode)
+        private static void SetLocalMode(System.Management.Automation.Debugger debugger, bool localMode)
         {
             ServerRemoteDebugger remoteDebugger = debugger as ServerRemoteDebugger;
             if (remoteDebugger != null)

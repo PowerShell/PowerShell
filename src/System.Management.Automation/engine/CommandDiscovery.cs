@@ -784,7 +784,7 @@ namespace System.Management.Automation
             // Check the module auto-loading preference
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
-            if (eventArgs == null || eventArgs.StopSearch != true)
+            if (eventArgs == null || !eventArgs.StopSearch)
             {
                 do
                 {
@@ -1737,4 +1737,3 @@ namespace System.Management.Automation
         public void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
     }
 }
-

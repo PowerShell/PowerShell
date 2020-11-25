@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -161,7 +162,7 @@ namespace System.Management.Automation
         IncludeHidden = 1,
 
         /// <summary>
-        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <c>true</c>
+        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <see langword="true"/>
         /// </summary>
         OnlySerializable = 2
     }
@@ -875,6 +876,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="GetValueException">When getting and there is no getter or when the getter throws an exception.</exception>
         /// <exception cref="SetValueException">When setting and there is no setter or when the setter throws an exception.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -964,6 +966,7 @@ namespace System.Management.Automation
         /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="GetValueException">If there is no property getter.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override string TypeNameOfValue
         {
             get
@@ -1786,6 +1789,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="SetValueException">When setting and there is no setter,
         /// when the setter throws an exception or when there is no Runspace to run the script.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -1911,12 +1915,12 @@ namespace System.Management.Automation
         }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public Type MethodTargetType { get; }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
@@ -1971,7 +1975,7 @@ namespace System.Management.Automation
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }
@@ -3728,7 +3732,7 @@ namespace System.Management.Automation
     /// A Predicate that determine if a member name matches a criterion.
     /// </summary>
     /// <param name="memberName"></param>
-    /// <returns><c>true</c> if the <paramref name="memberName"/> matches the predicate, otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the <paramref name="memberName"/> matches the predicate, otherwise <see langword="false"/>.</returns>
     public delegate bool MemberNamePredicate(string memberName);
 
     /// <summary>

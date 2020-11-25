@@ -398,7 +398,7 @@ namespace Microsoft.PowerShell
                         reason = new UnauthorizedAccessException(reasonMessage);
                         policyCheckPassed = false;
                     }
-                    
+
                     break;
             }
 
@@ -783,4 +783,3 @@ namespace Microsoft.PowerShell
         }
     }
 }
-

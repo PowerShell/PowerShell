@@ -16,7 +16,7 @@ namespace System.Management.Automation.Internal
         Error,
         Warning,
         Information
-    };
+    }
 
     /// <summary>
     /// Pipe provides a way to stitch two commands.

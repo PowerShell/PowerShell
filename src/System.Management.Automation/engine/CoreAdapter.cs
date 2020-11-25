@@ -1395,8 +1395,8 @@ namespace System.Management.Automation
             // We also skip the optimization if the number of arguments and parameters is different
             // so we let the loop deal with possible optional parameters.
             if ((methods.Length == 1) &&
-                (methods[0].hasVarArgs == false) &&
-                (methods[0].isGeneric == false) &&
+                (!methods[0].hasVarArgs) &&
+                (!methods[0].isGeneric) &&
                 (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 (methods[0].parameters.Length == arguments.Length))
@@ -2747,6 +2747,7 @@ namespace System.Management.Automation
         internal class PropertyCacheEntry : CacheEntry
         {
             internal delegate object GetterDelegate(object instance);
+
             internal delegate void SetterDelegate(object instance, object setValue);
 
             internal PropertyCacheEntry(PropertyInfo property)
@@ -5939,7 +5940,7 @@ namespace System.Management.Automation
 
             using (s_tracer.TraceScope("Inferring type parameters for the following method: {0}", genericMethod))
             {
-                if (PSTraceSourceOptions.WriteLine == (s_tracer.Options & PSTraceSourceOptions.WriteLine))
+                if ((s_tracer.Options & PSTraceSourceOptions.WriteLine) == PSTraceSourceOptions.WriteLine)
                 {
                     s_tracer.WriteLine(
                         "Types of method arguments: {0}",

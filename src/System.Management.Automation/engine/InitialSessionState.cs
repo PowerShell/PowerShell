@@ -1346,7 +1346,7 @@ namespace System.Management.Automation.Runspaces
         public static InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
         {
             // only remote server has been requested
-            if (SessionCapabilities.RemoteServer == sessionCapabilities)
+            if (sessionCapabilities == SessionCapabilities.RemoteServer)
             {
                 return CreateRestrictedForRemoteServer();
             }

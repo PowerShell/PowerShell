@@ -705,14 +705,6 @@ namespace Microsoft.PowerShell.Commands
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~ContentCommandBase()
-        {
-            Dispose(false);
-        }
         #endregion IDisposable
-
     }
 }

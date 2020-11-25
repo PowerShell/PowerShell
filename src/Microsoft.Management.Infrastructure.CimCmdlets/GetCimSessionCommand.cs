@@ -173,7 +173,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
@@ -200,7 +200,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.ComputerNameSet, new ParameterSetEntry(0, true)     },
             {   CimBaseCommand.SessionIdSet, new ParameterSetEntry(1)     },

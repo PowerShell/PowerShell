@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 exception: exception,
                 errorId: errorId,
                 errorCategory: errorCategory,
-                targetObject: jobContext != null ? jobContext.TargetObject : null);
+                targetObject: jobContext?.TargetObject);
 
             if (jobContext != null)
             {
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (cimException.ErrorData != null)
             {
                 _errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
-                _errorRecord.CategoryInfo.TargetType = jobContext != null ? jobContext.CmdletizationClassName : null;
+                _errorRecord.CategoryInfo.TargetType = jobContext?.CmdletizationClassName;
             }
         }
 

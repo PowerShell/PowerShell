@@ -154,7 +154,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (t_activity.HasValue == false)
+                if (!t_activity.HasValue)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
                     t_activity = Guid.NewGuid();

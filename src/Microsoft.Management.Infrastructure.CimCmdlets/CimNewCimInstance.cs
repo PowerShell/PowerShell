@@ -133,7 +133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // create ciminstance on server
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
 
             switch (cmdlet.ParameterSetName)
             {
@@ -203,7 +203,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
-        private void SetSessionProxyProperties(
+        private static void SetSessionProxyProperties(
             ref CimSessionProxy proxy,
             NewCimInstanceCommand cmdlet)
         {
@@ -267,13 +267,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(className, cimNamespace);
+            CimInstance cimInstance = new(className, cimNamespace);
             if (properties == null)
             {
                 return cimInstance;
             }
 
-            List<string> keys = new List<string>();
+            List<string> keys = new();
             if (key != null)
             {
                 foreach (string keyName in key)
@@ -331,13 +331,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(cimClass);
+            CimInstance cimInstance = new(cimClass);
             if (properties == null)
             {
                 return cimInstance;
             }
 
-            List<string> notfoundProperties = new List<string>();
+            List<string> notfoundProperties = new();
             foreach (string property in properties.Keys)
             {
                 if (cimInstance.CimInstanceProperties[property] == null)

@@ -83,4 +83,3 @@ namespace System.Management.Automation
         private static readonly Collection<CommandParameterInternal> s_emptyReturnCollection = new Collection<CommandParameterInternal>();
     }
 }
-

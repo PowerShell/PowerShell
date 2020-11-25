@@ -1191,4 +1191,3 @@ namespace System.Management.Automation
         #endregion Public methods
     }
 }
-

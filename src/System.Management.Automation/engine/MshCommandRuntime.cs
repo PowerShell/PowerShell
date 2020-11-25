@@ -1735,8 +1735,13 @@ namespace System.Management.Automation
         {
             bool yesToAll = false;
             bool noToAll = false;
-            bool hasSecurityImpact = false;
-            return DoShouldContinue(query, caption, hasSecurityImpact, false, ref yesToAll, ref noToAll);
+            return DoShouldContinue(
+                query,
+                caption,
+                hasSecurityImpact: false,
+                supportsToAllOptions: false,
+                ref yesToAll,
+                ref noToAll);
         }
 
         /// <summary>
@@ -2844,20 +2849,20 @@ namespace System.Management.Automation
                 }
 
                 // No trace of the error in the 'Ignore' case
-                if (ActionPreference.Ignore == preference)
+                if (preference == ActionPreference.Ignore)
                 {
                     return; // do not write or record to output pipe
                 }
 
                 // 2004/05/26-JonN
                 // The object is not written in the SilentlyContinue case
-                if (ActionPreference.SilentlyContinue == preference)
+                if (preference == ActionPreference.SilentlyContinue)
                 {
                     AppendErrorToVariables(errorRecord);
                     return; // do not write to output pipe
                 }
 
-                if (ContinueStatus.YesToAll == lastErrorContinueStatus)
+                if (lastErrorContinueStatus == ContinueStatus.YesToAll)
                 {
                     preference = ActionPreference.Continue;
                 }
@@ -3384,7 +3389,7 @@ namespace System.Management.Automation
             No,
             YesToAll,
             NoToAll
-        };
+        }
 
         internal ContinueStatus lastShouldProcessContinueStatus = ContinueStatus.Yes;
         internal ContinueStatus lastErrorContinueStatus = ContinueStatus.Yes;
@@ -3684,7 +3689,7 @@ namespace System.Management.Automation
                     CBhost.EnterNestedPrompt(_thisCommand);
                     // continue loop
                 }
-                else if (-1 == response)
+                else if (response == -1)
                 {
                     ActionPreferenceStopException e =
                         new ActionPreferenceStopException(

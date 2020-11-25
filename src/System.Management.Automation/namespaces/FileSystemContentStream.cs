@@ -1515,7 +1515,7 @@ namespace Microsoft.PowerShell.Commands
 
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
                 public byte[] LeadBytes;
-            };
+            }
 
             /// <summary>
             /// Get information on a named code page.

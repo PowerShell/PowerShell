@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -608,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// To write the Property name.
         /// </summary>
-        private void WritePropertyName(StringBuilder Listtag, MshParameter p)
+        private static void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
             // for writing the property name
             string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
@@ -653,7 +652,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// To write the Table header for the object property names.
         /// </summary>
-        private void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
+        private static void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
         {
             // write the property names
             foreach (MshParameter p in resolvedNameMshParameters)

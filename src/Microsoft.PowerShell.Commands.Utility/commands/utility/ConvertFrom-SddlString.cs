@@ -5,8 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Management.Automation;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -45,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         private AccessRightTypeNames _type;
         private bool _isTypeSet = false;
 
-        private string ConvertToNTAccount(SecurityIdentifier securityIdentifier)
+        private static string ConvertToNTAccount(SecurityIdentifier securityIdentifier)
         {
             try
             {
@@ -57,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private List<string> GetApplicableAccessRights(int accessMask, AccessRightTypeNames? typeName)
+        private static List<string> GetApplicableAccessRights(int accessMask, AccessRightTypeNames? typeName)
         {
             List<Type> typesToExamine = new List<Type>();
             List<string> foundAccessRightNames = new List<string>();
@@ -95,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             return foundAccessRightNames;
         }
 
-        private Type GetRealAccessRightType(AccessRightTypeNames typeName)
+        private static Type GetRealAccessRightType(AccessRightTypeNames typeName)
         {
             switch (typeName)
             {
@@ -116,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] ConvertAccessControlListToStrings(CommonAcl acl, AccessRightTypeNames? typeName)
+        private static string[] ConvertAccessControlListToStrings(CommonAcl acl, AccessRightTypeNames? typeName)
         {
             if (acl == null || acl.Count == 0)
             {

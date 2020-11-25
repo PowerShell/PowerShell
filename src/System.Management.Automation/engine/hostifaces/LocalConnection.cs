@@ -1593,4 +1593,3 @@ namespace System.Management.Automation.Runspaces
 
     #endregion Helper Class
 }
-

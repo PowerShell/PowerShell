@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -11,8 +10,6 @@ using System.Security;
 using System.Threading.Tasks;
 
 using Microsoft.PowerShell.MarkdownRender;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {

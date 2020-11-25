@@ -1217,7 +1217,7 @@ namespace System.Management.Automation
             }
 
             var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
-            var typeName = "Microsoft.PowerShell.Commands.GroupInfo";
+            const string typeName = "Microsoft.PowerShell.Commands.GroupInfo";
             var members = new List<PSMemberNameAndType>();
             foreach (var prevType in InferTypes(previousPipelineElement))
             {

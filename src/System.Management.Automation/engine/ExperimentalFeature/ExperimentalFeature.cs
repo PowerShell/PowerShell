@@ -345,20 +345,21 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(experimentName))
             {
-                string paramName = nameof(experimentName);
+                const string paramName = nameof(experimentName);
                 throw PSTraceSource.NewArgumentNullException(paramName, Metadata.ArgumentNullOrEmpty, paramName);
             }
 
             if (experimentAction == ExperimentAction.None)
             {
-                string paramName = nameof(experimentAction);
-                string invalidMember = nameof(ExperimentAction.None);
+                const string paramName = nameof(experimentAction);
+                const string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }
         }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>

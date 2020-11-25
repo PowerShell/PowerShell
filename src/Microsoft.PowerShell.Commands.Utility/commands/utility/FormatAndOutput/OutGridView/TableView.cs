@@ -191,13 +191,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <returns>None.</returns>
         /// <remarks>This method updates "activeAssociationList" instance property.</remarks>
-        private void FilterActiveAssociationList(List<MshResolvedExpressionParameterAssociation> activeAssociationList)
+        private static void FilterActiveAssociationList(List<MshResolvedExpressionParameterAssociation> activeAssociationList)
         {
             // we got a valid set of properties from the default property set
             // make sure we do not have too many properties
 
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            int nMax = 256;
+            const int nMax = 256;
 
             if (activeAssociationList.Count > nMax)
             {

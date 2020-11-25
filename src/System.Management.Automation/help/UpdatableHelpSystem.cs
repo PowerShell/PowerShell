@@ -513,6 +513,9 @@ namespace System.Management.Automation.Help
 
         private const string HelpInfoXmlNamespace = "http://schemas.microsoft.com/powershell/help/2010/05";
         private const string HelpInfoXmlValidationFailure = "HelpInfoXmlValidationFailure";
+        private const string MamlXmlNamespace = "http://schemas.microsoft.com/maml/2004/10";
+        private const string CommandXmlNamespace = "http://schemas.microsoft.com/maml/dev/command/2004/10";
+        private const string DscResourceXmlNamespace = "http://schemas.microsoft.com/maml/dev/dscResource/2004/10";
 
         /// <summary>
         /// Creates a HelpInfo object.
@@ -586,8 +589,9 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
+                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                    globPatterns: new[] { currentCulture },
+                    options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {
@@ -1305,8 +1309,6 @@ namespace System.Management.Automation.Help
 
                         Debug.Assert(helpItemsNode != null, "helpItemsNode must not be null");
 
-                        string targetNamespace = "http://schemas.microsoft.com/maml/2004/10";
-
                         foreach (XmlNode node in helpItemsNode.ChildNodes)
                         {
                             if (node.NodeType == XmlNodeType.Element)
@@ -1315,11 +1317,11 @@ namespace System.Management.Automation.Help
                                 {
                                     if (node.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        if (!node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/2004/10", StringComparison.OrdinalIgnoreCase))
+                                        if (!node.NamespaceURI.Equals(MamlXmlNamespace, StringComparison.OrdinalIgnoreCase))
                                         {
                                             throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
                                                 StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
-                                                StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, targetNamespace)), ErrorCategory.InvalidData, null, null);
+                                                StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
                                         }
                                         else
                                         {
@@ -1327,16 +1329,16 @@ namespace System.Management.Automation.Help
                                         }
                                     }
 
-                                    if (!node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/command/2004/10", StringComparison.OrdinalIgnoreCase) &&
-                                        !node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/dscResource/2004/10", StringComparison.OrdinalIgnoreCase))
+                                    if (!node.NamespaceURI.Equals(CommandXmlNamespace, StringComparison.OrdinalIgnoreCase) &&
+                                        !node.NamespaceURI.Equals(DscResourceXmlNamespace, StringComparison.OrdinalIgnoreCase))
                                     {
                                         throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
                                             StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
-                                            StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, targetNamespace)), ErrorCategory.InvalidData, null, null);
+                                            StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
                                     }
                                 }
 
-                                CreateValidXmlDocument(node.OuterXml, targetNamespace, xsd,
+                                CreateValidXmlDocument(node.OuterXml, MamlXmlNamespace, xsd,
                                     new ValidationEventHandler(HelpContentValidationHandler),
                                     false);
                             }

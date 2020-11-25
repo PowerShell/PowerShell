@@ -238,4 +238,3 @@ namespace Microsoft.PowerShell
         private readonly ConsoleHostUserInterface _ui;
     }
 }   // namespace
-

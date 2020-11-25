@@ -32,7 +32,7 @@ namespace System.Management.Automation
     {
         Text,
         Xml
-    };
+    }
 
     /// <summary>
     /// Different streams produced by minishell output.
@@ -504,7 +504,7 @@ namespace System.Management.Automation
                         // we will try launching one last time using ShellExecute...
                         if (notDone)
                         {
-                            if (soloCommand && startInfo.UseShellExecute == false)
+                            if (soloCommand && !startInfo.UseShellExecute)
                             {
                                 startInfo.UseShellExecute = true;
                                 startInfo.RedirectStandardInput = false;
@@ -531,7 +531,7 @@ namespace System.Management.Automation
                 else
                 {
                     _isRunningInBackground = true;
-                    if (startInfo.UseShellExecute == false)
+                    if (!startInfo.UseShellExecute)
                     {
                         _isRunningInBackground = isWindowsApplication;
                     }
@@ -563,7 +563,7 @@ namespace System.Management.Automation
                     throw;
                 }
 
-                if (_isRunningInBackground == false)
+                if (!_isRunningInBackground)
                 {
                     InitOutputQueue();
                 }
@@ -654,7 +654,7 @@ namespace System.Management.Automation
         /// </summary>
         private void ConsumeAvailableNativeProcessOutput(bool blocking)
         {
-            if (_isRunningInBackground == false)
+            if (!_isRunningInBackground)
             {
                 if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
                 {
@@ -678,7 +678,7 @@ namespace System.Management.Automation
             Exception exceptionToRethrow = null;
             try
             {
-                if (_isRunningInBackground == false)
+                if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
                     _inputWriter.Done();
@@ -824,7 +824,7 @@ namespace System.Management.Automation
                 get
                 {
                     // Construct parent id only once.
-                    if (int.MinValue == _parentId)
+                    if (_parentId == int.MinValue)
                     {
                         ConstructParentId();
                     }
@@ -1251,7 +1251,7 @@ namespace System.Management.Automation
 
             // In minishell scenario, if output is redirected
             // then error should also be redirected.
-            if (redirectError == false && redirectOutput && _isMiniShell)
+            if (!redirectError && redirectOutput && _isMiniShell)
             {
                 redirectError = true;
             }
@@ -1419,7 +1419,7 @@ namespace System.Management.Automation
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
-        };
+        }
 
         private const uint SHGFI_EXETYPE = 0x000002000; // flag used to ask to return exe type
 

@@ -12,7 +12,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandModuleInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandModuleInfo class based on a CommandInfo object.
+        /// Initializes a new instance of the <see cref="ShowCommandModuleInfo"/> class
+        /// with the specified <see cref="CommandInfo"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -28,7 +29,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object.
+        /// Initializes a new instance of the <see cref="ShowCommandModuleInfo"/> class
+        /// with the specified <see cref="PSObject"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.

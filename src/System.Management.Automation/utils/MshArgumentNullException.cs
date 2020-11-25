@@ -151,4 +151,3 @@ namespace System.Management.Automation
         private readonly string _message;
     }
 }
-

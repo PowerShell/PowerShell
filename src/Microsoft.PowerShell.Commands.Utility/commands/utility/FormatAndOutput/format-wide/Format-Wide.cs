@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -17,7 +16,8 @@ namespace Microsoft.PowerShell.Commands
     public class FormatWideCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
-        /// Constructor to se the inner command.
+        /// Initializes a new instance of the <see cref="FormatWideCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public FormatWideCommand()
         {
@@ -145,4 +145,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

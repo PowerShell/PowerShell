@@ -212,4 +212,3 @@ namespace System.Management.Automation
         private readonly ParameterAttribute _attribute;
     }
 }
-

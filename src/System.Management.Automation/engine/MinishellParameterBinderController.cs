@@ -254,7 +254,7 @@ namespace System.Management.Automation
             Arguments = 0x02,
             InputFormat = 0x04,
             OutputFormat = 0x08
-        };
+        }
 
         /// <summary>
         /// Handles error handling if some parameter is specified more than once.

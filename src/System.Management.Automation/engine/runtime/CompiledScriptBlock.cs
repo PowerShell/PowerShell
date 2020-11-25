@@ -307,18 +307,29 @@ namespace System.Management.Automation
         }
 
         internal Type LocalsMutableTupleType { get; set; }
+
         internal Type UnoptimizedLocalsMutableTupleType { get; set; }
+
         internal Func<MutableTuple> LocalsMutableTupleCreator { get; set; }
+
         internal Func<MutableTuple> UnoptimizedLocalsMutableTupleCreator { get; set; }
+
         internal Dictionary<string, int> NameToIndexMap { get; set; }
 
         internal Action<FunctionContext> DynamicParamBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; set; }
+
         internal Action<FunctionContext> BeginBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedBeginBlock { get; set; }
+
         internal Action<FunctionContext> ProcessBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedProcessBlock { get; set; }
+
         internal Action<FunctionContext> EndBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
 
         internal IScriptExtent[] SequencePoints { get; set; }
@@ -332,11 +343,15 @@ namespace System.Management.Automation
         private bool? _isProductCode;
 
         internal bool DebuggerHidden { get; set; }
+
         internal bool DebuggerStepThrough { get; set; }
+
         internal Guid Id { get; private set; }
 
         internal bool HasLogged { get; set; }
+
         internal bool SkipLogging { get; set; }
+
         internal bool IsFilter { get; }
 
         internal bool IsProductCode

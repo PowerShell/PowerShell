@@ -105,7 +105,7 @@ namespace System.Management.Automation
                     result.Append(']');
                 });
 
-          return result.ToString();
+            return result.ToString();
         }
 
         /// <summary>
@@ -339,4 +339,3 @@ namespace System.Management.Automation
         #endregion private members
     }
 }
-

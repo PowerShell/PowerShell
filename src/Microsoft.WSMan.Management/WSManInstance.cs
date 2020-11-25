@@ -391,7 +391,7 @@ namespace Microsoft.WSMan.Management
 
         #endregion parameter
 
-        #  region private
+        #region private
         private WSManHelper helper;
 
         private string GetFilter()

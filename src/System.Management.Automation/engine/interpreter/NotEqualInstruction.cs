@@ -188,4 +188,3 @@ namespace System.Management.Automation.Interpreter
         }
     }
 }
-

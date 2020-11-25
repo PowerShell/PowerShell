@@ -495,7 +495,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string Ellipsize(CultureInfo uiCultureInfo, string original)
         {
-            if (40 >= original.Length)
+            if (original.Length <= 40)
             {
                 return original;
             }
@@ -1336,7 +1336,7 @@ namespace System.Management.Automation
             string errorDetails_ScriptStackTrace =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_ScriptStackTrace") as string;
 
-            RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
+            RemoteException re = new RemoteException((!string.IsNullOrWhiteSpace(exceptionMessage)) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
             // Create ErrorRecord
             PopulateProperties(
