@@ -57,9 +57,9 @@ namespace Microsoft.PowerShell.Commands
 
         private List<string> GetApplicableAccessRights(int accessMask, AccessRightTypeNames? typeName)
         {
-            List<Type> typesToExamine = new List<Type>();
-            List<string> foundAccessRightNames = new List<string>();
-            HashSet<int> foundAccessRightValues = new HashSet<int>();
+            List<Type> typesToExamine = new();
+            List<string> foundAccessRightNames = new();
+            HashSet<int> foundAccessRightValues = new();
 
             if (typeName != null)
             {
@@ -121,10 +121,10 @@ namespace Microsoft.PowerShell.Commands
                 return Array.Empty<string>();
             }
 
-            List<string> aceStringList = new List<string>(acl.Count);
+            List<string> aceStringList = new(acl.Count);
             foreach (CommonAce ace in acl)
             {
-                StringBuilder aceString = new StringBuilder();
+                StringBuilder aceString = new();
                 string ntAccount = ConvertToNTAccount(ace.SecurityIdentifier);
                 aceString.Append($"{ntAccount}: {ace.AceQualifier}");
 

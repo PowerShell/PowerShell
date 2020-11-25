@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
         {
-            List<Breakpoint> output = new List<Breakpoint>();
+            List<Breakpoint> output = new();
 
             for (int i = 0; i < input.Count; i++)
             {
