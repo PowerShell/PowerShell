@@ -299,9 +299,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Match wildcards
-            WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { moduleNamePattern }, wildcardOptions);
+            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                globPatterns: new[] { moduleNamePattern },
+                options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             foreach (KeyValuePair<string, string> name in s_metadataCache)
             {

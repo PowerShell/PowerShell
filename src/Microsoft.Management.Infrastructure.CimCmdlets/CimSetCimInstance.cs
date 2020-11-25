@@ -3,11 +3,10 @@
 
 #region Using directives
 
-using System.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Management.Automation;
 
 #endregion
 
@@ -34,50 +33,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             bool passThru)
         {
             this.proxy = theProxy;
-            this.property = theProperty;
+            this.Property = theProperty;
             this.nameSpace = theNamespace;
-            this.parameterSetName = theParameterSetName;
-            this.passThru = passThru;
+            this.ParameterSetName = theParameterSetName;
+            this.PassThru = passThru;
         }
 
         /// <summary>
         /// <para>property value</para>
         /// </summary>
-        internal IDictionary Property
-        {
-            get
-            {
-                return this.property;
-            }
-        }
-
-        private readonly IDictionary property;
+        internal IDictionary Property { get; }
 
         /// <summary>
         /// <para>parameter set name</para>
         /// </summary>
-        internal string ParameterSetName
-        {
-            get
-            {
-                return this.parameterSetName;
-            }
-        }
-
-        private readonly string parameterSetName;
+        internal string ParameterSetName { get; }
 
         /// <summary>
         /// <para>PassThru value</para>
         /// </summary>
-        internal bool PassThru
-        {
-            get
-            {
-                return this.passThru;
-            }
-        }
-
-        private readonly bool passThru;
+        internal bool PassThru { get; }
     }
 
     /// <summary>
@@ -107,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:

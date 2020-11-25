@@ -596,7 +596,7 @@ namespace System.Management.Automation
         /// Get the PSModuleInfo object for the module that defined this
         /// scriptblock.
         /// </summary>
-        public PSModuleInfo Module { get => SessionStateInternal != null ? SessionStateInternal.Module : null; }
+        public PSModuleInfo Module { get => SessionStateInternal?.Module; }
 
         /// <summary>
         /// Return the PSToken object for this function definition...
@@ -709,7 +709,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
+                return SessionStateInternal?.PublicSessionState;
             }
 
             set
@@ -1120,14 +1120,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         public void Begin(bool expectInput) => Begin(expectInput, commandRuntime: (ICommandRuntime)null);
 
         /// <summary>
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
-            ICommandRuntime crt = commandProcessor == null ? null : commandProcessor.CommandRuntime;
+            ICommandRuntime crt = commandProcessor?.CommandRuntime;
             Begin(expectInput, crt);
         }
 
@@ -1313,14 +1313,6 @@ namespace System.Management.Automation
             _disposed = true;
         }
 
-        /// <summary>
-        /// Finalizer for class SteppablePipeline.
-        /// </summary>
-        ~SteppablePipeline()
-        {
-            Dispose(false);
-        }
-
         #endregion IDispose
     }
 
@@ -1447,13 +1439,21 @@ namespace System.Management.Automation
         }
 
         internal ScriptBlock ScriptBlock { get; set; }
+
         internal bool UseLocalScope { get; set; }
+
         internal ScriptBlock.ErrorHandlingBehavior ErrorHandlingBehavior { get; set; }
+
         internal object DollarUnder { get; set; }
+
         internal object Input { get; set; }
+
         internal object ScriptThis { get; set; }
+
         internal Pipe OutputPipe { get; set; }
+
         internal InvocationInfo InvocationInfo { get; set; }
+
         internal object[] Args { get; set; }
 
         /// <summary>

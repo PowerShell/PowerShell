@@ -607,6 +607,7 @@ namespace System.Management.Automation
         public ExperimentAction ExperimentAction { get; }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>
@@ -1092,7 +1093,7 @@ namespace System.Management.Automation
                     innerException: null,
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name,
-                    typeof(int).Name);
+                    nameof(Int32));
             }
 
             object resultValue;
@@ -1618,6 +1619,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the valid values in the set.
         /// </summary>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public IList<string> ValidValues
         {
             get
@@ -1731,13 +1733,16 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows dynamically generate set of values for <see cref="ValidateSetAttribute"/>
     /// </summary>
+#nullable enable
     public interface IValidateSetValuesGenerator
     {
         /// <summary>
         /// Gets valid values.
         /// </summary>
+        /// <returns>A non-null array of non-null strings.</returns>
         string[] GetValidValues();
     }
+#nullable restore
 
     /// <summary>
     /// Validates that each parameter argument is Trusted data.

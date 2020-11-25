@@ -3,11 +3,8 @@
 
 #region Using directives
 
-using System.Collections;
-using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Globalization;
 
 #endregion
 
@@ -33,10 +30,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string thePropertyName,
             string theQualifierName)
         {
-            this.className = theClassName;
-            this.methodName = theMethodName;
-            this.propertyName = thePropertyName;
-            this.qualifierName = theQualifierName;
+            this.ClassName = theClassName;
+            this.MethodName = theMethodName;
+            this.PropertyName = thePropertyName;
+            this.QualifierName = theQualifierName;
         }
 
         /// <summary>
@@ -47,14 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Wildcard expansion should be allowed.
         /// </para>
         /// </summary>
-        public string ClassName
-        {
-            get { return className; }
-
-            set { className = value; }
-        }
-
-        private string className;
+        public string ClassName { get; set; }
 
         /// <summary>
         /// <para>
@@ -63,12 +53,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Then Filter the <see cref="CimClass"/> by given methodname
         /// </para>
         /// </summary>
-        internal string MethodName
-        {
-            get { return methodName; }
-        }
-
-        private readonly string methodName;
+        internal string MethodName { get; }
 
         /// <summary>
         /// <para>
@@ -77,12 +62,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Filter the <see cref="CimClass"/> by given property name.
         /// </para>
         /// </summary>
-        internal string PropertyName
-        {
-            get { return propertyName; }
-        }
-
-        private readonly string propertyName;
+        internal string PropertyName { get; }
 
         /// <summary>
         /// <para>
@@ -91,12 +71,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Filter the <see cref="CimClass"/> by given methodname
         /// </para>
         /// </summary>
-        internal string QualifierName
-        {
-            get { return qualifierName; }
-        }
-
-        private readonly string qualifierName;
+        internal string QualifierName { get; }
     }
 
     /// <summary>
@@ -124,10 +99,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object.</param>
         public void GetCimClass(GetCimClassCommand cmdlet)
         {
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             string nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
             string className = (cmdlet.ClassName == null) ? @"*" : cmdlet.ClassName;
-            CimGetCimClassContext context = new CimGetCimClassContext(
+            CimGetCimClassContext context = new(
                 cmdlet.ClassName,
                 cmdlet.MethodName,
                 cmdlet.PropertyName,
@@ -189,7 +164,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
-        private void SetSessionProxyProperties(
+        private static void SetSessionProxyProperties(
             ref CimSessionProxy proxy,
             GetCimClassCommand cmdlet)
         {

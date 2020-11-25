@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Management.Automation;
 
 #endregion
 
@@ -41,36 +40,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimSessionProxy theProxy)
             {
                 this.proxy = theProxy;
-                this.methodName = theMethodName;
-                this.collection = theCollection;
+                this.MethodName = theMethodName;
+                this.ParametersCollection = theCollection;
                 this.nameSpace = theNamespace;
             }
 
             /// <summary>
             /// <para>namespace</para>
             /// </summary>
-            internal string MethodName
-            {
-                get
-                {
-                    return this.methodName;
-                }
-            }
-
-            private readonly string methodName;
+            internal string MethodName { get; }
 
             /// <summary>
             /// <para>parameters collection</para>
             /// </summary>
-            internal CimMethodParametersCollection ParametersCollection
-            {
-                get
-                {
-                    return this.collection;
-                }
-            }
-
-            private readonly CimMethodParametersCollection collection;
+            internal CimMethodParametersCollection ParametersCollection { get; }
         }
 
         /// <summary>
@@ -93,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             string nameSpace;
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cmdlet.MethodName);
 
             switch (cmdlet.ParameterSetName)
@@ -195,7 +178,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (CimSessionProxy proxy in proxys)
                     {
                         // create context object
-                        CimInvokeCimMethodContext context = new CimInvokeCimMethodContext(
+                        CimInvokeCimMethodContext context = new(
                             nameSpace,
                             cmdlet.MethodName,
                             paramsCollection,
@@ -275,7 +258,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
-        private void SetSessionProxyProperties(
+        private static void SetSessionProxyProperties(
             ref CimSessionProxy proxy,
             InvokeCimMethodCommand cmdlet)
         {
@@ -374,7 +357,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 string parameterName = enumerator.Key.ToString();
 
-                CimFlags parameterFlags = CimFlags.In;
+                const CimFlags parameterFlags = CimFlags.In;
                 object parameterValue = GetBaseObject(enumerator.Value);
 
                 DebugHelper.WriteLog(@"Create parameter name= {0}, value= {1}, flags= {2}.", 4,

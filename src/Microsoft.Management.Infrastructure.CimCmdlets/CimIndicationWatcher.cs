@@ -45,15 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Returns an exception
         /// </para>
         /// </summary>
-        public Exception Exception
-        {
-            get
-            {
-                return exception;
-            }
-        }
-
-        private readonly Exception exception;
+        public Exception Exception { get; }
 
         /// <summary>
         /// <para>
@@ -64,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimIndicationEventExceptionEventArgs(Exception theException)
         {
             context = null;
-            this.exception = theException;
+            this.Exception = theException;
         }
     }
 
@@ -81,7 +73,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Instance;
+                return result?.Instance;
             }
         }
 
@@ -92,7 +84,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.MachineId;
+                return result?.MachineId;
             }
         }
 
@@ -103,7 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Bookmark;
+                return result?.Bookmark;
             }
         }
 

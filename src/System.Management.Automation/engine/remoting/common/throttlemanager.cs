@@ -675,9 +675,9 @@ namespace System.Management.Automation.Remoting
         private Thread workerThreadStart;
         private Thread workerThreadStop;
 
-        public bool Done { set; get; }
+        public bool Done { get; set; }
 
-        public int SleepTime { set; get; } = 100;
+        public int SleepTime { get; set; } = 100;
 
         private void WorkerThreadMethodStart()
         {

@@ -1250,7 +1250,7 @@ namespace System.Management.Automation
         /// <returns>The result helpInfo objects after processing.</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            HelpCategory categoriesHandled = (HelpCategory.Alias
+            const HelpCategory categoriesHandled = (HelpCategory.Alias
                 | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand);
 
             if ((helpInfo.HelpCategory & categoriesHandled) != 0)

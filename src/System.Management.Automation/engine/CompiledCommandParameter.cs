@@ -625,7 +625,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            bool implementsIList = (type.GetInterface(typeof(IList).Name) != null);
+            bool implementsIList = (type.GetInterface(nameof(IList)) != null);
 
             // Look for class Collection<T>.  Collection<T> implements IList, and also IList
             // is more efficient to bind than ICollection<T>.  This optimization

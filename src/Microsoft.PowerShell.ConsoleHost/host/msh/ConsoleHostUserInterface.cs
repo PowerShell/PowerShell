@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell
                     // Handle Ctrl-C ending input
                     if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
 #else
-                    if (string.IsNullOrEmpty(key) || (char)3 == key[0])
+                    if (string.IsNullOrEmpty(key) || key[0] == (char)3)
 #endif
                     {
                         PipelineStoppedException e = new PipelineStoppedException();
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                    if ((char)13 == key[0])
+                    if (key[0] == (char)13)
 #endif
                     {
                         //
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Backspace)
 #else
-                    if ((char)8 == key[0])
+                    if (key[0] == (char)8)
 #endif
                     {
                         //
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
+        private static void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
         {
             if (newLine)
             {
@@ -1340,28 +1340,28 @@ namespace Microsoft.PowerShell
             }
         }
 
-        // Format colors
         public ConsoleColor FormatAccentColor { get; set; } = ConsoleColor.Green;
 
-        // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
+
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
+
         public ConsoleColor ErrorBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Warning colors
         public ConsoleColor WarningForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor WarningBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Debug colors
         public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor DebugBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Verbose colors
         public ConsoleColor VerboseForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor VerboseBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Progress colors
         public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Black;
+
         public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.Yellow;
 
         #endregion Line-oriented interaction
@@ -1847,7 +1847,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="input">The string to process.</param>
         /// <returns>The string with any \0 characters removed...</returns>
-        private string RemoveNulls(string input)
+        private static string RemoveNulls(string input)
         {
             if (input.Contains('\0'))
             {
@@ -2042,7 +2042,7 @@ namespace Microsoft.PowerShell
         }
 
 #if !UNIX
-        private void SendLeftArrows(int length)
+        private static void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
             for (int i = 0; i < length; i++)
@@ -2193,4 +2193,3 @@ namespace Microsoft.PowerShell
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
 }   // namespace
-

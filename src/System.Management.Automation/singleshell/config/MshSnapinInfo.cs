@@ -1342,4 +1342,3 @@ namespace System.Management.Automation
         private static readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
     }
 }
-

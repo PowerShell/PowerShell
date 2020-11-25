@@ -19,10 +19,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         // callbacks declarations
         internal delegate OutputContext FormatContextCreationCallback(OutputContext parentContext, FormatInfoData formatData);
+
         internal delegate void FormatStartCallback(OutputContext c);
+
         internal delegate void FormatEndCallback(FormatEndData fe, OutputContext c);
+
         internal delegate void GroupStartCallback(OutputContext c);
+
         internal delegate void GroupEndCallback(GroupEndData fe, OutputContext c);
+
         internal delegate void PayloadCallback(FormatEntryData formatEntryData, OutputContext c);
 
         // callback instances

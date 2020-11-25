@@ -730,4 +730,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }
-

@@ -511,7 +511,7 @@ namespace System.Management.Automation.Host
                         Environment.MachineName,
                         Environment.OSVersion.VersionString,
                         string.Join(" ", Environment.GetCommandLineArgs()),
-                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        Environment.ProcessId,
                         versionInfoFooter.ToString().TrimEnd());
             }
 
@@ -1051,8 +1051,11 @@ namespace System.Management.Automation.Host
         internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
+
         internal string CommandBeingIgnored { get; set; }
+
         internal bool IsHelperCommand { get; set; }
+
         internal string PromptText { get; set; }
     }
 
@@ -1332,4 +1335,3 @@ namespace System.Management.Automation.Host
         }
     }
 }
-

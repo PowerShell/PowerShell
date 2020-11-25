@@ -51,7 +51,7 @@ namespace System.Management.Automation
         {
             get
             {
-                string GetFullName(string name, string psSnapInName, string moduleName)
+                static string GetFullName(string name, string psSnapInName, string moduleName)
                 {
                     string result = name;
                     if (!string.IsNullOrEmpty(psSnapInName))
@@ -686,4 +686,3 @@ namespace System.Management.Automation
         }
     }
 }
-

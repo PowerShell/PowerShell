@@ -6,8 +6,6 @@ using System.IO;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace Microsoft.PowerShell
 {
     internal sealed partial class ConsoleHost : PSHost, IDisposable
@@ -130,4 +128,3 @@ namespace Microsoft.PowerShell
         private readonly object _transcriptionStateLock = new object();
     }
 }   // namespace
-

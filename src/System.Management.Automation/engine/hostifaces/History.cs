@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
 
                 HistoryInfo entry = CoreGetEntry(id);
                 if (entry != null)
-                    if (entry.Cleared == false)
+                    if (!entry.Cleared)
                         return entry.Clone();
 
                 return null;
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        index = _countEntriesAdded;//SmallestIDinBuffer
+                        index = _countEntriesAdded; //SmallestIDinBuffer
 
                         for (long i = count - 1; i >= 0;)
                         {
@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
                         for (long i = 0; i <= count - 1;)
                         {
                             if (id > _countEntriesAdded) break;
-                            if (_buffer[GetIndexFromId(id)].Cleared == false && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
+                            if (!_buffer[GetIndexFromId(id)].Cleared && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
                                 cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
                             }
@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             if (id < 1) break;
-                            if (_buffer[GetIndexFromId(id)].Cleared == false && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
+                            if (!_buffer[GetIndexFromId(id)].Cleared && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
                                 cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
                             }
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     for (long i = 1; i <= _countEntriesAdded; i++)
                     {
-                        if (_buffer[GetIndexFromId(i)].Cleared == false && wildcardpattern.IsMatch(_buffer[GetIndexFromId(i)].CommandLine.Trim()))
+                        if (!_buffer[GetIndexFromId(i)].Cleared && wildcardpattern.IsMatch(_buffer[GetIndexFromId(i)].CommandLine.Trim()))
                         {
                             cmdlist.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell.Commands
             for (int i = 0; i < _buffer.Length; i++)
             {
                 // assign the first entry in the buffer as min.
-                if (_buffer[i] != null && _buffer[i].Cleared == false)
+                if (_buffer[i] != null && !_buffer[i].Cleared)
                 {
                     minID = _buffer[i].Id;
                     break;
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
             // check for the minimum id that is not cleared
             for (int i = 0; i < _buffer.Length; i++)
             {
-                if (_buffer[i] != null && _buffer[i].Cleared == false)
+                if (_buffer[i] != null && !_buffer[i].Cleared)
                     if (minID > _buffer[i].Id)
                         minID = _buffer[i].Id;
             }
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int historySize = 0;
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            object obj = (executionContext != null) ? executionContext.GetVariableValue(SpecialVariables.HistorySizeVarPath) : null;
+            object obj = executionContext?.GetVariableValue(SpecialVariables.HistorySizeVarPath);
             if (obj != null)
             {
                 try
@@ -1814,9 +1814,9 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // confirmation message if all the clearhistory cmdlet is used without any parameters
-                if (_countParameterSpecified == false)
+                if (!_countParameterSpecified)
                 {
-                    string message = StringUtil.Format(HistoryStrings.ClearHistoryWarning, "Warning");// "The command would clear all the entry(s) from the session history,Are you sure you want to continue ?";
+                    string message = StringUtil.Format(HistoryStrings.ClearHistoryWarning, "Warning"); // "The command would clear all the entry(s) from the session history,Are you sure you want to continue ?";
                     if (!ShouldProcess(message))
                     {
                         return;
@@ -1897,10 +1897,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Clears the session history based on the input parameter
-        /// <param name="id" >Id of the entry to be cleared.</param>
-        /// <param name="count" >Count of entries to be cleared.</param>
-        /// <param name="cmdline" >Cmdline string to be cleared.</param>
-        /// <param name="newest" >Order of the entries.</param>
+        /// <param name="id">Id of the entry to be cleared.</param>
+        /// <param name="count">Count of entries to be cleared.</param>
+        /// <param name="cmdline">Cmdline string to be cleared.</param>
+        /// <param name="newest">Order of the entries.</param>
         /// <returns>Nothing.</returns>
         /// </summary>
         private void ClearHistoryEntries(long id, int count, string cmdline, SwitchParameter newest)
@@ -1955,7 +1955,7 @@ namespace Microsoft.PowerShell.Commands
             // Clear the History value.
             foreach (HistoryInfo entry in _entries)
             {
-                if (entry != null && entry.Cleared == false)
+                if (entry != null && !entry.Cleared)
                     _history.ClearEntry(entry.Id);
             }
 
@@ -1975,4 +1975,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Private
     }
 }
-

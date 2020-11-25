@@ -2,10 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands.GetCounter
@@ -91,7 +89,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         {
             get
             {
-                StringCollection retColl = new StringCollection();
+                StringCollection retColl = new();
                 foreach (string counterName in this.CounterInstanceMapping.Keys)
                 {
                     string path;
@@ -119,7 +117,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         {
             get
             {
-                StringCollection retColl = new StringCollection();
+                StringCollection retColl = new();
                 foreach (string counterName in CounterInstanceMapping.Keys)
                 {
                     foreach (string instanceName in CounterInstanceMapping[counterName])

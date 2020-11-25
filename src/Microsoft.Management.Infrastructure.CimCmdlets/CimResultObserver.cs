@@ -4,8 +4,8 @@
 #region Using directives
 
 using System;
-using System.Management.Automation;
 using System.Globalization;
+using System.Management.Automation;
 
 #endregion
 
@@ -37,21 +37,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="ErrorSource"></param>
         internal CimResultContext(object ErrorSource)
         {
-            this.errorSource = ErrorSource;
+            this.ErrorSource = ErrorSource;
         }
 
         /// <summary>
         /// ErrorSource property.
         /// </summary>
-        internal object ErrorSource
-        {
-            get
-            {
-                return this.errorSource;
-            }
-        }
-
-        private readonly object errorSource;
+        internal object ErrorSource { get; }
     }
     #endregion
 
@@ -69,7 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
-        public AsyncResultEventArgsBase(
+        protected AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType)
@@ -86,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="observable"></param>
         /// <param name="resultType"></param>
         /// <param name="context"></param>
-        public AsyncResultEventArgsBase(
+        protected AsyncResultEventArgsBase(
             CimSession session,
             IObservable<object> observable,
             AsyncResultType resultType,
@@ -228,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="observable">Operation that can be observed.</param>
         public CimResultObserver(CimSession session, IObservable<object> observable)
         {
-            this.session = session;
+            this.CurrentSession = session;
             this.observable = observable;
         }
 
@@ -241,7 +233,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IObservable<object> observable,
             CimResultContext cimResultContext)
         {
-            this.session = session;
+            this.CurrentSession = session;
             this.observable = observable;
             this.context = cimResultContext;
         }
@@ -259,8 +251,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // OnNext, OnError
             try
             {
-                AsyncResultCompleteEventArgs completeArgs = new AsyncResultCompleteEventArgs(
-                    this.session, this.observable);
+                AsyncResultCompleteEventArgs completeArgs = new(
+                    this.CurrentSession, this.observable);
                 this.OnNewResult(this, completeArgs);
             }
             catch (Exception ex)
@@ -280,8 +272,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             try
             {
-                AsyncResultErrorEventArgs errorArgs = new AsyncResultErrorEventArgs(
-                    this.session, this.observable, error, this.context);
+                AsyncResultErrorEventArgs errorArgs = new(
+                    this.CurrentSession, this.observable, error, this.context);
                 this.OnNewResult(this, errorArgs);
             }
             catch (Exception ex)
@@ -300,8 +292,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx("value = {0}.", 1, value);
             try
             {
-                AsyncResultObjectEventArgs resultArgs = new AsyncResultObjectEventArgs(
-                    this.session, this.observable, value);
+                AsyncResultObjectEventArgs resultArgs = new(
+                    this.CurrentSession, this.observable, value);
                 this.OnNewResult(this, resultArgs);
             }
             catch (Exception ex)
@@ -334,15 +326,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Session object of the operation.
         /// </summary>
-        protected CimSession CurrentSession
-        {
-            get
-            {
-                return session;
-            }
-        }
-
-        private readonly CimSession session;
+        protected CimSession CurrentSession { get; }
 
         /// <summary>
         /// Async operation that can be observed.

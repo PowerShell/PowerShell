@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for OutGridView.
+        /// Initializes a new instance of the <see cref="OutGridViewCommand"/> class.
         /// </summary>
         public OutGridViewCommand()
         {
@@ -491,14 +491,6 @@ namespace Microsoft.PowerShell.Commands
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~OutGridViewCommand()
-        {
-            Dispose(false);
         }
     }
 }

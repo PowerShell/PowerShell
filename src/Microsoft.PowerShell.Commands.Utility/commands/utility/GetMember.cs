@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -23,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
             return Definition;
         }
         /// <summary>
-        /// Initializes a new instance of this class.
+        /// Initializes a new instance of the <see cref="MemberDefinition"/> class.
         /// </summary>
         public MemberDefinition(string typeName, string name, PSMemberTypes memberType, string definition)
         {

@@ -1085,7 +1085,7 @@ namespace System.Management.Automation
         /// Informational.
         /// </summary>
         Informational
-    };
+    }
 
     /// <summary>
     /// Enum for command states.
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         Terminated = 2
-    };
+    }
 
     /// <summary>
     /// Enum for provider states.
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         Stopped = 1,
-    };
+    }
 
     #endregion
 }

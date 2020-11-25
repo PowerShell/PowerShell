@@ -31,4 +31,3 @@ namespace System.Management.Automation.Internal
         #endregion public_property
     }
 }
-

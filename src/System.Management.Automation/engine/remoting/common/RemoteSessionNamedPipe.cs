@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="coreName">Named pipe core name.</param>
         /// <param name="securityDesc"></param>
         /// <returns>NamedPipeServerStream.</returns>
-        private NamedPipeServerStream CreateNamedPipe(
+        private static NamedPipeServerStream CreateNamedPipe(
             string serverName,
             string namespaceName,
             string coreName,
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void ProcessListeningThread(object state)
         {
-            string processId = System.Diagnostics.Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture);
+            string processId = Environment.ProcessId.ToString(CultureInfo.InvariantCulture);
             string appDomainName = NamedPipeUtils.GetCurrentAppDomainName();
 
             // Logging.
@@ -1291,9 +1291,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
-            // Create pipe flags.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
-
             //
             // WaitNamedPipe API is not supported by Windows Server container now, so we need to repeatedly
             // attempt connection to pipe server until timeout expires.
@@ -1306,13 +1303,13 @@ namespace System.Management.Automation.Remoting
             {
                 // Get handle to pipe.
                 pipeHandle = NamedPipeNative.CreateFile(
-                    _pipeName,
-                    NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                    0,
-                    IntPtr.Zero,
-                    NamedPipeNative.OPEN_EXISTING,
-                    pipeFlags,
-                    IntPtr.Zero);
+                    lpFileName: _pipeName,
+                    dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
+                    dwShareMode: 0,
+                    SecurityAttributes: IntPtr.Zero,
+                    dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
+                    dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED,
+                    hTemplateFile: IntPtr.Zero);
 
                 int lastError = Marshal.GetLastWin32Error();
                 if (pipeHandle.IsInvalid)

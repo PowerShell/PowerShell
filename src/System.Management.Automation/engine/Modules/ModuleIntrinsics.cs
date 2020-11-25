@@ -703,9 +703,9 @@ namespace System.Management.Automation
             }
 
 #if UNIX
-            StringComparison strcmp = StringComparison.Ordinal;
+            const StringComparison strcmp = StringComparison.Ordinal;
 #else
-            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+            const StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
             // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:

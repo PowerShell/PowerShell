@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
-using System.Management.Automation.Host;
 using System.Text;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
@@ -63,7 +61,8 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// Set inner command.
+        /// Initializes a new instance of the <see cref="OutStringCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public OutStringCommand()
         {

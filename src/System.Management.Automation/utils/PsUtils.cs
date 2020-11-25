@@ -78,7 +78,7 @@ namespace System.Management.Automation
 
         // Cache of the current process' parentId
         private static int? s_currentParentProcessId;
-        private static readonly int s_currentProcessId = Process.GetCurrentProcess().Id;
+        private static readonly int s_currentProcessId = Environment.ProcessId;
 
         /// <summary>
         /// Retrieve the parent process of a process.
@@ -645,4 +645,3 @@ namespace System.Management.Automation
 
     #endregion
 }
-

@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
 
             lock (_syncRoot)
             {
-                if (_bypassRunspaceStateCheck == false &&
+                if (!_bypassRunspaceStateCheck &&
                     _runspaceStateInfo.State != RunspaceState.Opened &&
                     _runspaceStateInfo.State != RunspaceState.Disconnected) // Disconnected runspaces can have running pipelines.
                 {
@@ -1936,17 +1936,17 @@ namespace System.Management.Automation
                     {
                         // Allow the IncompleteParseException to throw so that the console
                         // can handle here strings and continued parsing.
-                        if (re.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name)
+                        if (re.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException))
                         {
                             throw new IncompleteParseException(
-                                (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : null,
+                                re.ErrorRecord.Exception?.Message,
                                 re.ErrorRecord.FullyQualifiedErrorId);
                         }
 
                         // Allow the RemoteException and InvalidRunspacePoolStateException to propagate so that the host can
                         // clean up the debug session.
-                        if ((re.ErrorRecord.CategoryInfo.Reason == typeof(InvalidRunspacePoolStateException).Name) ||
-                            (re.ErrorRecord.CategoryInfo.Reason == typeof(RemoteException).Name))
+                        if ((re.ErrorRecord.CategoryInfo.Reason == nameof(InvalidRunspacePoolStateException)) ||
+                            (re.ErrorRecord.CategoryInfo.Reason == nameof(RemoteException)))
                         {
                             throw new PSRemotingTransportException(
                                 (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : string.Empty);
@@ -2660,7 +2660,7 @@ namespace System.Management.Automation
             // Attempt to process debugger stop event on original thread if it
             // is available (i.e., if it is blocked by EndInvoke).
             PowerShell powershell = _runspace.RunspacePool.RemoteRunspacePoolInternal.GetCurrentRunningPowerShell();
-            AsyncResult invokeAsyncResult = (powershell != null) ? powershell.EndInvokeAsyncResult : null;
+            AsyncResult invokeAsyncResult = powershell?.EndInvokeAsyncResult;
 
             bool invokedOnBlockedThread = false;
             if ((invokeAsyncResult != null) && (!invokeAsyncResult.IsCompleted))
