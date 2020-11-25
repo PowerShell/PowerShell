@@ -1787,7 +1787,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        internal static OutputRendering OutputRenderingSetting = OutputRendering.Ansi;
+        internal static OutputRendering OutputRenderingSetting = OutputRendering.Automatic;
 
         internal static bool OutputIsPlainText(bool isHost, bool? supportsVirtualTerminal)
         {

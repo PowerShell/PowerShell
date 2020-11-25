@@ -21,12 +21,12 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
 
         $formattingDefaults = @{
-            FormatAccent = "`e[32m"
-            ErrorAccent = "`e[36m"
-            Error = "`e[35m"
-            Debug = "`e[33m"
-            Verbose = "`e[33m"
-            Warning = "`e[33m"
+            FormatAccent = "`e[32;1m"
+            ErrorAccent = "`e[36;1m"
+            Error = "`e[31;1m"
+            Debug = "`e[33;1m"
+            Verbose = "`e[33;1m"
+            Warning = "`e[33;1m"
             Progress = "`e[30;43m"
         }
 
@@ -80,7 +80,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle has correct defaults for styles' {
         foreach ($style in $styleDefaults.Keys) {
-            $PSStyle.$style | Should -BeExactly $styleDefaults[$style]
+            $PSStyle.$style | Should -BeExactly $styleDefaults[$style] -Because "Style = $style"
         }
     }
 
@@ -92,7 +92,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle.Formatting has correct defaults' {
         foreach ($style in $formattingDefaults.Keys) {
-            $PSStyle.Formatting.$style | Should -BeExactly $formattingDefaults[$style]
+            $PSStyle.Formatting.$style | Should -BeExactly $formattingDefaults[$style] -Because "Style = $style"
         }
     }
 
@@ -104,7 +104,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle.Foreground has correct defaults' {
         foreach ($style in $foregroundDefaults.Keys) {
-            $PSStyle.Foreground.$style | Should -BeExactly $foregroundDefaults[$style]
+            $PSStyle.Foreground.$style | Should -BeExactly $foregroundDefaults[$style] -Because "Style = $style"
         }
     }
 
@@ -116,7 +116,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle.Background has correct defaults' {
         foreach ($style in $backgroundDefaults.Keys) {
-            $PSStyle.Background.$style | Should -BeExactly $backgroundDefaults[$style]
+            $PSStyle.Background.$style | Should -BeExactly $backgroundDefaults[$style] -Because "Style = $style"
         }
     }
 }

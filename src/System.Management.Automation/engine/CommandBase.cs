@@ -530,32 +530,32 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the accent style for formatting.
             /// </summary>
-            public string FormatAccent { get; set; } = "\x1b[32m";
+            public string FormatAccent { get; set; } = "\x1b[32;1m";
 
             /// <summary>
             /// Gets or sets the accent style for errors.
             /// </summary>
-            public string ErrorAccent { get; set; } = "\x1b[36m";
+            public string ErrorAccent { get; set; } = "\x1b[36;1m";
 
             /// <summary>
             /// Gets or sets the style for error messages.
             /// </summary>
-            public string Error { get; set; } = "\x1b[31m";
+            public string Error { get; set; } = "\x1b[31;1m";
 
             /// <summary>
             /// Gets or sets the style for warning messages.
             /// </summary>
-            public string Warning { get; set; } = "\x1b[33m";
+            public string Warning { get; set; } = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets the style for verbose messages.
             /// </summary>
-            public string Verbose { get; set; } = "\x1b[33m";
+            public string Verbose { get; set; } = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets the style for debug messages.
             /// </summary>
-            public string Debug { get; set; } = "\x1b[33m";
+            public string Debug { get; set; } = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets the style for progress messages.
