@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const int maxDepthAllowed = 100;
 
-        private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private readonly List<object> _inputObjects = new List<object>();
+        private readonly List<object> _inputObjects = new();
 
         /// <summary>
         /// Caching the input objects for the command.
