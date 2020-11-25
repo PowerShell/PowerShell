@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         private LineOutput InstantiateLineOutputInterface()
         {
             // set up the streaming text writer
-            StreamingTextWriter.WriteLineCallback callback = new StreamingTextWriter.WriteLineCallback(this.OnWriteLine);
+            StreamingTextWriter.WriteLineCallback callback = new(this.OnWriteLine);
 
             _writer = new StreamingTextWriter(callback, Host.CurrentCulture);
 
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use it to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput(_writer, computedWidth);
+            TextWriterLineOutput twlo = new(_writer, computedWidth);
 
             // finally have the LineOutput interface extracted
             return (LineOutput)twlo;
@@ -164,6 +164,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Buffer used when buffering until the end.
         /// </summary>
-        private readonly StringBuilder _buffer = new StringBuilder();
+        private readonly StringBuilder _buffer = new();
     }
 }

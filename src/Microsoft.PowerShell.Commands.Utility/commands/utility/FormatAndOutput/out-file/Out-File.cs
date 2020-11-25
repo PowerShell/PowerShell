@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use the stream writer to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput(_sw, computedWidth, _suppressNewline);
+            TextWriterLineOutput twlo = new(_sw, computedWidth, _suppressNewline);
 
             // finally have the ILineOutput interface extracted
             return (LineOutput)twlo;
