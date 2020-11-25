@@ -511,7 +511,7 @@ namespace System.Management.Automation
                 && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith('-'))
             {
                 var lastAst = context.RelatedAsts.Last();
-                var wordToMatch = string.Concat(context.WordToComplete.AsSpan().Slice(1), "*");
+                var wordToMatch = string.Concat(context.WordToComplete.AsSpan(1), "*");
                 var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
                 var parameterNames = keywordAst.CommandElements.Where(ast => ast is CommandParameterAst).Select(ast => (ast as CommandParameterAst).ParameterName);
                 foreach (var parameterName in s_parameterNamesOfImportDSCResource)
@@ -4707,7 +4707,7 @@ namespace System.Management.Automation
                 provider = wordToComplete.Substring(0, colon + 1);
                 if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
                 {
-                    pattern = string.Concat("variable:", wordToComplete.AsSpan().Slice(colon + 1), "*");
+                    pattern = string.Concat("variable:", wordToComplete.AsSpan(colon + 1), "*");
                 }
                 else
                 {
