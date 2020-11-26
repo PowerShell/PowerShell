@@ -3927,8 +3927,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _boundObsoleteParameterNames ??
-                       (_boundObsoleteParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+                return _boundObsoleteParameterNames ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -4223,7 +4222,7 @@ namespace System.Management.Automation
 
                     if (error != null)
                     {
-                        Type specifiedType = (argumentToBind.ArgumentValue == null) ? null : argumentToBind.ArgumentValue.GetType();
+                        Type specifiedType = argumentToBind.ArgumentValue?.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 error,

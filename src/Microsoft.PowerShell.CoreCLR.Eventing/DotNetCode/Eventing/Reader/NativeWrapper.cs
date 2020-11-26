@@ -958,7 +958,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr pointer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-            UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues;
+            const UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues;
 
             try
             {
@@ -1124,7 +1124,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-            UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderBookmark;
+            const UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderBookmark;
 
             try
             {

@@ -2241,7 +2241,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specify "directory" or "container" to create a directory.
         /// </param>
         /// <param name="value">
-        /// If <paramref name="type" /> is "file" then this parameter becomes the content
+        /// If <paramref name="type"/> is "file" then this parameter becomes the content
         /// of the file to be created.
         /// </param>
         /// <returns>
@@ -2721,7 +2721,7 @@ namespace Microsoft.PowerShell.Commands
             SymbolicLink,
             Junction,
             HardLink
-        };
+        }
 
         private static ItemType GetItemType(string input)
         {
@@ -4195,7 +4195,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            string remoteScript = @"
+            const string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyFromSessionHelper -ea SilentlyContinue -Force
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyRemoteUtils -ea SilentlyContinue -Force
             ";
@@ -4373,7 +4373,7 @@ namespace Microsoft.PowerShell.Commands
                     wStream = AlternateDataStreamUtilities.CreateFileStream(destinationFile.FullName, streamName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                 }
 #endif
-                long fragmentSize = FILETRANSFERSIZE;
+                const long fragmentSize = FILETRANSFERSIZE;
                 long copiedSoFar = 0;
                 long currentIndex = 0;
 
@@ -4506,7 +4506,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
 
-            string remoteScript = @"
+            const string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyToSessionHelper -ea SilentlyContinue -Force
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyRemoteUtils -ea SilentlyContinue -Force
             ";
@@ -4624,7 +4624,7 @@ namespace Microsoft.PowerShell.Commands
             WriteProgress(progress);
 
             // 4MB gives the best results without spiking the resources on the remote connection.
-            int fragmentSize = FILETRANSFERSIZE;
+            const int fragmentSize = FILETRANSFERSIZE;
             byte[] fragment = null;
             int iteration = 0;
             bool success = false;
@@ -6159,8 +6159,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="providerSpecificPickList">
         /// The list of properties to get.  Examples include "Attributes", "LastAccessTime,"
         /// and other properties defined by
-        /// <see cref="System.IO.DirectoryInfo" /> and
-        /// <see cref="System.IO.FileInfo" />
+        /// <see cref="System.IO.DirectoryInfo"/> and
+        /// <see cref="System.IO.FileInfo"/>
         /// </param>
         public void GetProperty(string path, Collection<string> providerSpecificPickList)
         {
@@ -6771,7 +6771,7 @@ namespace Microsoft.PowerShell.Commands
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
             Encoding encoding = ClrFacade.GetDefaultEncoding();
-            FileMode filemode = FileMode.OpenOrCreate;
+            const FileMode filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
 
@@ -8287,10 +8287,10 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
         {
-            var access = FileAccess.Read;
-            var share = FileShare.Read;
-            var creation = FileMode.Open;
-            var attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const FileAccess access = FileAccess.Read;
+            const FileShare share = FileShare.Read;
+            const FileMode creation = FileMode.Open;
+            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
 
             using (var sfOne = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathOne, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
             using (var sfTwo = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathTwo, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
@@ -8326,10 +8326,10 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            var access = FileAccess.Read;
-            var share = FileShare.Read;
-            var creation = FileMode.Open;
-            var attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const FileAccess access = FileAccess.Read;
+            const FileShare share = FileShare.Read;
+            const FileMode creation = FileMode.Open;
+            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
 
             using (var sf = AlternateDataStreamUtilities.NativeMethods.CreateFile(path, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
             {
@@ -8629,7 +8629,7 @@ namespace System.Management.Automation.Internal
                     findStreamData.Name = findStreamData.Name.Substring(1);
 
                     // And trailing :$DATA (as long as it's not the default data stream)
-                    string dataStream = ":$DATA";
+                    const string dataStream = ":$DATA";
                     if (!string.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
                     {
                         findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);

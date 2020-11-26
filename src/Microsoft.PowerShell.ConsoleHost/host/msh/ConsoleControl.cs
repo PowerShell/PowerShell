@@ -2477,7 +2477,7 @@ namespace Microsoft.PowerShell
         internal static string GetConsoleWindowTitle()
         {
             const int MaxWindowTitleLength = 1024;
-            DWORD bufferSize = MaxWindowTitleLength;
+            const DWORD bufferSize = MaxWindowTitleLength;
             DWORD result;
             StringBuilder consoleTitle = new StringBuilder((int)bufferSize);
 

@@ -1086,7 +1086,7 @@ function __cmdletization_BindCommonParameters
                     prefix);
             }
 
-            if (MethodParameterBindings.In == (methodParameterBindings & MethodParameterBindings.In))
+            if ((methodParameterBindings & MethodParameterBindings.In) == MethodParameterBindings.In)
             {
                 Dbg.Assert(cmdletParameterName != null, "Called should verify cmdletParameterName!=null for 'in' parameters");
 
@@ -1114,7 +1114,7 @@ function __cmdletization_BindCommonParameters
                 CodeGeneration.EscapeSingleQuotedStringContent(cmdletParameterTypeName),
                 CodeGeneration.EscapeSingleQuotedStringContent(methodParameterBindings.ToString()));
 
-            if (MethodParameterBindings.In == (methodParameterBindings & MethodParameterBindings.In))
+            if ((methodParameterBindings & MethodParameterBindings.In) == MethodParameterBindings.In)
             {
                 output.WriteLine("{0}}}", prefix);
             }
@@ -1222,7 +1222,7 @@ function __cmdletization_BindCommonParameters
                             methodParameter.ParameterName,
                             methodParameterBindings);
 
-                        if (MethodParameterBindings.Out == (methodParameterBindings & MethodParameterBindings.Out))
+                        if ((methodParameterBindings & MethodParameterBindings.Out) == MethodParameterBindings.Out)
                         {
                             typesOfOutParameters.Add(dotNetTypeOfParameter);
                             etsTypesOfOutParameters.Add(methodParameter.Type.ETSType);
@@ -1246,7 +1246,7 @@ function __cmdletization_BindCommonParameters
                             CodeGeneration.EscapeSingleQuotedStringContent(method.ReturnValue.Type.ETSType));
                     }
 
-                    if (MethodParameterBindings.Out == (methodParameterBindings & MethodParameterBindings.Out))
+                    if ((methodParameterBindings & MethodParameterBindings.Out) == MethodParameterBindings.Out)
                     {
                         typesOfOutParameters.Add(dotNetTypeOfParameter);
                         etsTypesOfOutParameters.Add(method.ReturnValue.Type.ETSType);
@@ -1363,7 +1363,7 @@ function __cmdletization_BindCommonParameters
                         methodParameter.ParameterName,
                         methodParameterBindings);
 
-                    if (MethodParameterBindings.Out == (methodParameterBindings & MethodParameterBindings.Out))
+                    if ((methodParameterBindings & MethodParameterBindings.Out) == MethodParameterBindings.Out)
                     {
                         typesOfOutParameters.Add(dotNetTypeOfParameter);
                         etsTypesOfOutParameters.Add(methodParameter.Type.ETSType);
@@ -1387,7 +1387,7 @@ function __cmdletization_BindCommonParameters
                         CodeGeneration.EscapeSingleQuotedStringContent(method.ReturnValue.Type.ETSType));
                 }
 
-                if (MethodParameterBindings.Out == (methodParameterBindings & MethodParameterBindings.Out))
+                if ((methodParameterBindings & MethodParameterBindings.Out) == MethodParameterBindings.Out)
                 {
                     typesOfOutParameters.Add(dotNetTypeOfParameter);
                     etsTypesOfOutParameters.Add(method.ReturnValue.Type.ETSType);
@@ -1861,7 +1861,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
         {
             StringBuilder output = new StringBuilder();
 
-            if (GenerationOptions.HelpXml == (_generationOptions & GenerationOptions.HelpXml))
+            if ((_generationOptions & GenerationOptions.HelpXml) == GenerationOptions.HelpXml)
             {
                 output.AppendFormat(
                     CultureInfo.InvariantCulture,

@@ -31,7 +31,9 @@ namespace System.Management.Automation
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
 
@@ -1246,7 +1248,7 @@ namespace System.Management.Automation
             /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
-        };
+        }
 
         private class DebuggerCommandArgument
         {
@@ -2064,7 +2066,7 @@ namespace System.Management.Automation
         public override void SetDebuggerStepMode(bool enabled)
         {
             // Enable both the wrapper and wrapped debuggers for debugging before setting step mode.
-            DebugModes mode = DebugModes.LocalScript | DebugModes.RemoteScript;
+            const DebugModes mode = DebugModes.LocalScript | DebugModes.RemoteScript;
             base.SetDebugMode(mode);
             _wrappedDebugger.Value.SetDebugMode(mode);
 
@@ -2710,7 +2712,7 @@ namespace System.Management.Automation
                 powershell.InvocationStateChanged += HandlePowerShellInvocationStateChanged;
                 powershell.SetIsNested(false);
 
-                string script = @"
+                const string script = @"
                     param ($Debugger, $Commands, $output)
                     trap { throw $_ }
 

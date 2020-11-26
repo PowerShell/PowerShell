@@ -507,7 +507,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ParameterSetName
         {
-            get => _parameterSetName ?? (_parameterSetName = new[] { ParameterAttribute.AllParameterSets });
+            get => _parameterSetName ??= new[] { ParameterAttribute.AllParameterSets };
 
             set => _parameterSetName = value;
         }
@@ -607,6 +607,7 @@ namespace System.Management.Automation
         public ExperimentAction ExperimentAction { get; }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>
@@ -1092,7 +1093,7 @@ namespace System.Management.Automation
                     innerException: null,
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name,
-                    typeof(int).Name);
+                    nameof(Int32));
             }
 
             object resultValue;
@@ -1618,6 +1619,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the valid values in the set.
         /// </summary>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public IList<string> ValidValues
         {
             get

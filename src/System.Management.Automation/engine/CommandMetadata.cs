@@ -680,7 +680,7 @@ namespace System.Management.Automation
 
             // Determine if the cmdlet implements dynamic parameters by looking for the interface
 
-            Type dynamicParametersType = CommandType.GetInterface(typeof(IDynamicParameters).Name, true);
+            Type dynamicParametersType = CommandType.GetInterface(nameof(IDynamicParameters), true);
 
             if (dynamicParametersType != null)
             {
@@ -1316,7 +1316,7 @@ end
             List<CommandMetadata> restrictedCommands = new List<CommandMetadata>();
 
             // all remoting cmdlets need to be included for workflow scenarios as wel
-            if (SessionCapabilities.RemoteServer == (sessionCapabilities & SessionCapabilities.RemoteServer))
+            if ((sessionCapabilities & SessionCapabilities.RemoteServer) == SessionCapabilities.RemoteServer)
             {
                 restrictedCommands.AddRange(GetRestrictedRemotingCommands());
             }

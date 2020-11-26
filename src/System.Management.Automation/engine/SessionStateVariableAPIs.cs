@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable. If any other drive specifier
         /// is found the lookup goes in the following order.
@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable. If any other drive specifier
         /// is found the lookup goes in the following order.
@@ -523,7 +523,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable.
         ///     - current scope
@@ -575,7 +575,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable.
         ///     - current scope

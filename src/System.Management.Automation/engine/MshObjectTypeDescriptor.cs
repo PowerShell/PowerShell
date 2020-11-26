@@ -92,6 +92,7 @@ namespace System.Management.Automation
     public class PSObjectPropertyDescriptor : PropertyDescriptor
     {
         internal event EventHandler<SettingValueExceptionEventArgs> SettingValueException;
+
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)
@@ -222,8 +223,8 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
                                                              "component",
-                                                             typeof(PSObject).Name,
-                                                             typeof(PSObjectTypeDescriptor).Name);
+                                                             nameof(PSObject),
+                                                             nameof(PSObjectTypeDescriptor));
                 }
 
                 mshObj = descriptor.Instance;

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
@@ -21,8 +20,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-
-using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -658,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.Proxy = webProxy;
             }
 
-            if (-1 < MaximumRedirection)
+            if (MaximumRedirection > -1)
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
@@ -754,7 +751,7 @@ namespace Microsoft.PowerShell.Commands
             return uri;
         }
 
-        private Uri CheckProtocol(Uri uri)
+        private static Uri CheckProtocol(Uri uri)
         {
             if (uri == null) { throw new ArgumentNullException(nameof(uri)); }
 
@@ -772,7 +769,7 @@ namespace Microsoft.PowerShell.Commands
             return resolvedFilePath;
         }
 
-        private string FormatDictionary(IDictionary content)
+        private static string FormatDictionary(IDictionary content)
         {
             if (content == null)
                 throw new ArgumentNullException(nameof(content));
@@ -780,7 +777,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder bodyBuilder = new StringBuilder();
             foreach (string key in content.Keys)
             {
-                if (0 < bodyBuilder.Length)
+                if (bodyBuilder.Length > 0)
                 {
                     bodyBuilder.Append('&');
                 }
@@ -866,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class HttpResponseException : HttpRequestException
     {
         /// <summary>
-        /// Constructor for HttpResponseException.
+        /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
         /// </summary>
         /// <param name="message">Message for the exception.</param>
         /// <param name="response">Response from the HTTP server.</param>
@@ -1834,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
+            const string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {
@@ -1859,12 +1856,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is string, File, or Collection.
+        /// Adds content to a <see cref="MultipartFormDataContent"/>. Object type detection is used to determine if the value is string, File, or Collection.
         /// </summary>
         /// <param name="fieldName">The Field Name to use.</param>
         /// <param name="fieldValue">The Field Value to use.</param>
-        /// <param name="formData">The <see cref="MultipartFormDataContent" />> to update.</param>
-        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" /> will be enumerated. If false, collections will be treated as single value.</param>
+        /// <param name="formData">The <see cref="MultipartFormDataContent"/>> to update.</param>
+        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
         private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             if (formData == null)
@@ -1915,11 +1912,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(object)" /> to convert the objects to strings.
+        /// Gets a <see cref="StringContent"/> from the supplied field name and field value. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the objects to strings.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" /></param>
-        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
-        private StringContent GetMultipartStringContent(object fieldName, object fieldValue)
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/></param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
+        private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
@@ -1932,11 +1929,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(object)" /> to convert the fieldname to a string.
+        /// Gets a <see cref="StreamContent"/> from the supplied field name and <see cref="Stream"/>. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the fieldname to a string.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
-        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
-        private StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
+        /// <param name="stream">The <see cref="Stream"/> to use for the <see cref="StreamContent"/></param>
+        private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
@@ -1950,11 +1947,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
+        /// Gets a <see cref="StreamContent"/> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)"/> to create the <see cref="StreamContent"/> and then sets the file name.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
-        /// <param name="file">The file to use for the <see cref="StreamContent" /></param>
-        private StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
+        /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
+        private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.

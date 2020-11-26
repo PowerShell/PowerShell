@@ -607,7 +607,7 @@ namespace System.Management.Automation
             string errorId,
             params object[] args)
         {
-            Type inputObjectType = (inputObject == null) ? null : inputObject.GetType();
+            Type inputObjectType = inputObject?.GetType();
 
             ParameterBindingException bindingException = new ParameterBindingException(
                 ErrorCategory.InvalidArgument,
@@ -824,7 +824,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">Help target to request.</param>
         /// <param name="helpCategory">Help category to request.</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if user requested help; <see langword="false"/> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (this.arguments != null)

@@ -9227,7 +9227,6 @@ namespace System.Management.Automation.Runspaces
 #if UNIX
             #region UnixStat
 
-
             if (ExperimentalFeature.IsEnabled("PSUnixFileStat"))
             {
                 typeName = @"System.IO.FileSystemInfo";

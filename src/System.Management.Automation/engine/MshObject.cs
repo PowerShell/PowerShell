@@ -651,6 +651,7 @@ namespace System.Management.Automation
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.DotNetInstanceAdapter);
+
 #if !UNIX
         private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
         private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
@@ -946,6 +947,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -954,6 +956,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -962,6 +965,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -970,6 +974,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>

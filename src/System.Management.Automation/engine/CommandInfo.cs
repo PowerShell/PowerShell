@@ -583,7 +583,7 @@ namespace System.Management.Automation
 
         internal CommandMetadata ExternalCommandMetadata
         {
-            get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+            get { return _externalCommandMetadata ??= new CommandMetadata(this, true); }
 
             set { _externalCommandMetadata = value; }
         }

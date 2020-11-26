@@ -376,7 +376,7 @@ namespace Microsoft.WSMan.Management
         /// <summary><para><c>ProxyAuthenticationUseDigest</c> method of <c>IWSManConnectionOptionsEx2</c> interface.</para></summary>
         [DispId(11)]
         int ProxyAuthenticationUseDigest();
-    };
+    }
 
     #endregion IWSManConnectionOptions
 

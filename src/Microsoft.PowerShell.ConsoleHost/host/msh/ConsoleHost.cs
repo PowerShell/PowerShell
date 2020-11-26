@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
-                    if (s_theConsoleHost.LoadPSReadline())
+                    if (LoadPSReadline())
                     {
                         ProfileOptimization.StartProfile("StartupProfileData-Interactive");
 
@@ -935,7 +935,7 @@ namespace Microsoft.PowerShell
             get
             {
                 if (ui == null) return null;
-                return _consoleColorProxy ?? (_consoleColorProxy = PSObject.AsPSObject(new ConsoleColorProxy(ui)));
+                return _consoleColorProxy ??= PSObject.AsPSObject(new ConsoleColorProxy(ui));
             }
         }
 
@@ -1156,6 +1156,10 @@ namespace Microsoft.PowerShell
             AppDomain.CurrentDomain.UnhandledException += handler;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private void BindBreakHandler()
         {
 #if UNIX
@@ -1188,14 +1192,6 @@ namespace Microsoft.PowerShell
                 ui.RawUI.BackgroundColor,
                 ConsoleHostStrings.UnhandledExceptionShutdownMessage);
             ui.WriteLine();
-        }
-
-        /// <summary>
-        /// Finalizes the instance.
-        /// </summary>
-        ~ConsoleHost()
-        {
-            Dispose(false);
         }
 
         /// <summary>
@@ -1254,6 +1250,14 @@ namespace Microsoft.PowerShell
             }
 
             _isDisposed = true;
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="ConsoleHost"/> class.
+        /// </summary>
+        ~ConsoleHost()
+        {
+            Dispose(false);
         }
 
         /// <summary>
@@ -1598,7 +1602,7 @@ namespace Microsoft.PowerShell
             return _screenReaderActive.Value;
         }
 
-        private bool LoadPSReadline()
+        private static bool LoadPSReadline()
         {
             // Don't load PSReadline if:
             //   * we don't think the process will be interactive, e.g. -command or -file
@@ -1706,7 +1710,7 @@ namespace Microsoft.PowerShell
             DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
-        private void OpenConsoleRunspace(Runspace runspace, bool staMode)
+        private static void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
             if (staMode && Platform.IsWindowsDesktop)
             {
@@ -1775,7 +1779,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                string shellId = "Microsoft.PowerShell";
+                const string shellId = "Microsoft.PowerShell";
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
@@ -2025,7 +2029,7 @@ namespace Microsoft.PowerShell
 
         private void WriteErrorLine(string line)
         {
-            ConsoleColor fg = ConsoleColor.Red;
+            const ConsoleColor fg = ConsoleColor.Red;
             ConsoleColor bg = UI.RawUI.BackgroundColor;
 
             UI.WriteLine(fg, bg, line);
@@ -2726,7 +2730,7 @@ namespace Microsoft.PowerShell
                 return results ?? new DebuggerCommandResults(DebuggerResumeAction.Continue, false);
             }
 
-            private bool IsIncompleteParseException(Exception e)
+            private static bool IsIncompleteParseException(Exception e)
             {
                 // Check e's type.
                 if (e is IncompleteParseException)
@@ -2741,7 +2745,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                return remoteException.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name;
+                return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
             }
 
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)
@@ -2986,9 +2990,13 @@ namespace Microsoft.PowerShell
         }
 
         internal string InitialCommand { get; set; }
+
         internal bool SkipProfiles { get; set; }
+
         internal bool StaMode { get; set; }
+
         internal string ConfigurationName { get; set; }
+
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace

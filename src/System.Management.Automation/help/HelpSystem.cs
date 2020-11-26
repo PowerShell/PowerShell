@@ -803,7 +803,9 @@ namespace System.Management.Automation
     internal class HelpProgressEventArgs : EventArgs
     {
         internal bool Completed { get; set; }
+
         internal string Activity { get; set; }
+
         internal int PercentComplete { get; set; }
     }
 

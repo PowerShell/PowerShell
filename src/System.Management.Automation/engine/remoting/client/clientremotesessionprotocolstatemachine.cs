@@ -48,6 +48,7 @@ namespace System.Management.Automation.Remoting
 
         private readonly Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
+
         // all events raised through the state machine
         // will be queued in this
         private readonly object _syncObject = new object();
@@ -775,7 +776,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion Event Handlers
 
-        private void CleanAll()
+        private static void CleanAll()
         {
         }
 

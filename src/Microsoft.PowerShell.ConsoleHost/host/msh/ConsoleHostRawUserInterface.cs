@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell
         /// Helper method to create and trace PipelineStoppedException.
         /// </summary>
         /// <returns></returns>
-        private PipelineStoppedException NewPipelineStoppedException()
+        private static PipelineStoppedException NewPipelineStoppedException()
         {
             PipelineStoppedException e = new PipelineStoppedException();
             return e;

@@ -132,7 +132,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypeInferenceContext" /> class.
+        /// Initializes a new instance of the <see cref="TypeInferenceContext"/> class.
         /// The powerShell instance passed need to have a non null Runspace.
         /// </summary>
         /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>
@@ -1217,7 +1217,7 @@ namespace System.Management.Automation
             }
 
             var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
-            var typeName = "Microsoft.PowerShell.Commands.GroupInfo";
+            const string typeName = "Microsoft.PowerShell.Commands.GroupInfo";
             var members = new List<PSMemberNameAndType>();
             foreach (var prevType in InferTypes(previousPipelineElement))
             {
@@ -2141,17 +2141,17 @@ namespace System.Management.Automation
         /// <param name="interfaceType">The interface to test.</param>
         /// <param name="hasSeenNonGeneric">
         /// A reference to a value indicating whether a non-generic enumerable type has been
-        /// seen. If <see paramref="interfaceType" /> is a non-generic enumerable type this
-        /// value will be set to <see langword="true" />.
+        /// seen. If <see paramref="interfaceType"/> is a non-generic enumerable type this
+        /// value will be set to <see langword="true"/>.
         /// </param>
         /// <param name="hasSeenDictionaryEnumerator">
-        /// A reference to a value indicating whether <see cref="IDictionaryEnumerator" /> has been
-        /// seen. If <paramref name="interfaceType" /> is a <see cref="IDictionaryEnumerator" /> this
-        /// value will be set to <see langword="true" />.
+        /// A reference to a value indicating whether <see cref="IDictionaryEnumerator"/> has been
+        /// seen. If <paramref name="interfaceType"/> is a <see cref="IDictionaryEnumerator"/> this
+        /// value will be set to <see langword="true"/>.
         /// </param>
         /// <returns>
-        /// The value of <paramref name="interfaceType" /> if it can be used to infer a specific
-        /// enumerated type, otherwise <see langword="null" />.
+        /// The value of <paramref name="interfaceType"/> if it can be used to infer a specific
+        /// enumerated type, otherwise <see langword="null"/>.
         /// </returns>
         private Type GetGenericCollectionLikeInterface(
             Type interfaceType,
@@ -2250,8 +2250,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Infers the types as if they were enumerated. For example, a <see cref="List{T}" />
-        /// of type <see cref="string" /> would be returned as <see cref="string" />.
+        /// Infers the types as if they were enumerated. For example, a <see cref="List{T}"/>
+        /// of type <see cref="string"/> would be returned as <see cref="string"/>.
         /// </summary>
         /// <param name="enumerableTypes">
         /// The potentially enumerable types to infer enumerated type from.

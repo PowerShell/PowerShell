@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             using (System.Management.Automation.PowerShell powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
-                string script = "param($targetType,$moduleName) & (Microsoft.PowerShell.Core\\Get-Module $moduleName) { New-Object $targetType } ";
+                const string script = "param($targetType,$moduleName) & (Microsoft.PowerShell.Core\\Get-Module $moduleName) { New-Object $targetType } ";
 
                 powerShell.AddScript(script);
                 powerShell.AddArgument(targetType);
@@ -324,6 +324,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     {
         private CimMofDeserializer _deserializer;
         private CimMofDeserializer.OnClassNeeded _onClassNeeded;
+
         /// <summary>
         /// </summary>
         internal CimDSCParser(CimMofDeserializer.OnClassNeeded onClassNeeded)
@@ -3709,8 +3710,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             get
             {
                 // The scriptblock cache will handle mutual exclusion
-                return s_cimKeywordImplementationFunction ??
-                       (s_cimKeywordImplementationFunction = ScriptBlock.Create(CimKeywordImplementationFunctionText));
+                return s_cimKeywordImplementationFunction ??= ScriptBlock.Create(CimKeywordImplementationFunctionText);
             }
         }
 

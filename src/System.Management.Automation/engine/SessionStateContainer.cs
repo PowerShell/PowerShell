@@ -4038,7 +4038,7 @@ namespace System.Management.Automation
         #region CopyItem
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4106,7 +4106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4790,9 +4790,8 @@ namespace System.Management.Automation
                 if (languageMode.HasValue &&
                     (languageMode.Value == PSLanguageMode.ConstrainedLanguage || languageMode.Value == PSLanguageMode.NoLanguage))
                 {
-                    var psRemoteUtilsName = CopyFileRemoteUtils.PSCopyRemoteUtilsName;
                     ps.Runspace = session.Runspace;
-                    ps.AddCommand("Get-Command").AddArgument(psRemoteUtilsName);
+                    ps.AddCommand("Get-Command").AddArgument(CopyFileRemoteUtils.PSCopyRemoteUtilsName);
                     var result = ps.Invoke<bool>();
 
                     if (result.Count == 0)
@@ -4816,12 +4815,11 @@ namespace System.Management.Automation
 
                     ps.Commands.Clear();
                     ps.Streams.ClearStreams();
-                    ps.AddCommand(psRemoteUtilsName);
+                    ps.AddCommand(CopyFileRemoteUtils.PSCopyRemoteUtilsName);
                 }
                 else
                 {
-                    string remoteScript = CopyFileRemoteUtils.PSValidatePathDefinition;
-                    ps.AddScript(remoteScript);
+                    ps.AddScript(CopyFileRemoteUtils.PSValidatePathDefinition);
                 }
 
                 ps.AddParameter("pathToValidate", path);

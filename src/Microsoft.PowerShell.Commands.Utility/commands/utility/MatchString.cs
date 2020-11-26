@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                     return s_inputStream;
                 }
 
-                return _filename ?? (_filename = System.IO.Path.GetFileName(_path));
+                return _filename ??= System.IO.Path.GetFileName(_path);
             }
         }
 
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
             /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
             /// </summary>
             /// <param name="capacity">The maximum capacity of the buffer.</param>
-            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity" /> is negative.</exception>
+            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity"/> is negative.</exception>
             public CircularBuffer(int capacity)
             {
                 if (capacity < 0)
@@ -455,9 +455,9 @@ namespace Microsoft.PowerShell.Commands
             /// has been properly offset and wrapped.
             /// </summary>
             /// <param name="zeroBasedIndex">The index to wrap.</param>
-            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="zeroBasedIndex" /> is out of range.</exception>
+            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="zeroBasedIndex"/> is out of range.</exception>
             /// <returns>
-            /// The actual index that <param ref="zeroBasedIndex" />
+            /// The actual index that <paramref name="zeroBasedIndex"/>
             /// maps to.
             /// </returns>
             private int WrapIndex(int zeroBasedIndex)

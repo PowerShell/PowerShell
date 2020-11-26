@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// Create a property expression with a wildcard pattern.
         /// </summary>
         /// <param name="s">Property name pattern to match.</param>
-        /// <param name="isResolved"><c>true</c> if no further attempts should be made to resolve wildcards.</param>
+        /// <param name="isResolved"><see langword="true"/> if no further attempts should be made to resolve wildcards.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public PSPropertyExpression(string s, bool isResolved)
         {

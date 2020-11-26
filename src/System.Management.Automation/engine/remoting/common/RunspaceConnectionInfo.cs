@@ -642,7 +642,7 @@ namespace System.Management.Automation.Runspaces
         public bool UseCompression { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
+        /// If <see langword="true"/> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session).
         /// </summary>
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Private Methods
 
-        private string ResolveShellUri(string shell)
+        private static string ResolveShellUri(string shell)
         {
             string resolvedShellUri = shell;
             if (string.IsNullOrEmpty(resolvedShellUri))
@@ -2050,9 +2050,9 @@ namespace System.Management.Automation.Runspaces
         {
             string filePath = string.Empty;
 #if UNIX
-            string sshCommand = "ssh";
+            const string sshCommand = "ssh";
 #else
-            string sshCommand = "ssh.exe";
+            const string sshCommand = "ssh.exe";
 #endif
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
@@ -2297,7 +2297,7 @@ namespace System.Management.Automation.Runspaces
                     case '"':
                         // Special case for arguments within quotes
                         // Just return argument value within the quotes
-                        while ((++i < argsLength) && argsToParse[i] != '"') { };
+                        while ((++i < argsLength) && argsToParse[i] != '"') { }
                         if (iStart < argsLength - 1)
                         {
                             iStart++;
@@ -2307,12 +2307,12 @@ namespace System.Management.Automation.Runspaces
 
                     default:
                         // Common case for parsing arguments with space character delimiter
-                        while ((++i < argsLength) && argsToParse[i] != ' ') { };
+                        while ((++i < argsLength) && argsToParse[i] != ' ') { }
                         break;
                 }
 
                 argvList.Add(argsToParse.Substring(iStart, (i-iStart)));
-                while ((++i < argsLength) && argsToParse[i] == ' ') { };
+                while ((++i < argsLength) && argsToParse[i] == ' ') { }
             }
 
             return argvList.ToArray();
@@ -2625,21 +2625,15 @@ namespace System.Management.Automation.Runspaces
 
         private static SafePipeHandle GetNamedPipeHandle(string pipeName)
         {
-            // Create pipe flags for asynchronous pipes.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
-
-            // We want an inheritable handle.
-            PlatformInvokes.SECURITY_ATTRIBUTES securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
-
             // Get handle to pipe.
             var fileHandle = PlatformInvokes.CreateFileW(
-                pipeName,
-                NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                0,
-                securityAttributes,
-                NamedPipeNative.OPEN_EXISTING,
-                pipeFlags,
-                IntPtr.Zero);
+                lpFileName: pipeName,
+                dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
+                dwShareMode: 0,
+                lpSecurityAttributes: new PlatformInvokes.SECURITY_ATTRIBUTES(), // Create an inheritable handle.
+                dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
+                dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED, // Open in asynchronous mode.
+                hTemplateFile: IntPtr.Zero);
 
             int lastError = Marshal.GetLastWin32Error();
             if (fileHandle == PlatformInvokes.INVALID_HANDLE_VALUE)
@@ -3458,7 +3452,7 @@ namespace System.Management.Automation.Runspaces
                             }
                         }
 
-                        if (ContainerObRoot == null) 
+                        if (ContainerObRoot == null)
                         {
                             throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
                         }
@@ -3493,7 +3487,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Run some tasks on MTA thread if needed.
         /// </summary>
-        private void RunOnMTAThread(ThreadStart threadProc)
+        private static void RunOnMTAThread(ThreadStart threadProc)
         {
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.MTA)
             {
@@ -3512,7 +3506,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get error message from the thrown exception.
         /// </summary>
-        private string GetErrorMessageFromException(Exception e)
+        private static string GetErrorMessageFromException(Exception e)
         {
             string errorMessage = e.Message;
 

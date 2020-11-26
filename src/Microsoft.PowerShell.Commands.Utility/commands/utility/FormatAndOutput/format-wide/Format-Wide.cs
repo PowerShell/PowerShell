@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -17,7 +16,8 @@ namespace Microsoft.PowerShell.Commands
     public class FormatWideCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
-        /// Constructor to se the inner command.
+        /// Initializes a new instance of the <see cref="FormatWideCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public FormatWideCommand()
         {
@@ -83,12 +83,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            FormattingCommandLineParameters parameters = new();
 
             if (_prop != null)
             {
-                ParameterProcessor processor = new ParameterProcessor(new FormatWideParameterDefinition());
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                ParameterProcessor processor = new(new FormatWideParameterDefinition());
+                TerminatingErrorContext invocationContext = new(this);
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
                     // the user specified -autosize:true AND a column number
                     string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new InvalidDataException(),
                         "FormatCannotSpecifyAutosizeAndColumns",
                         ErrorCategory.InvalidArgument,
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             if (_autosize.HasValue)
                 parameters.autosize = _autosize.Value;
 
-            WideSpecificParameters wideSpecific = new WideSpecificParameters();
+            WideSpecificParameters wideSpecific = new();
             parameters.shapeParameters = wideSpecific;
             if (_column.HasValue)
             {

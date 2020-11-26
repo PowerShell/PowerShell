@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private abstract class CimInstancePropertyBasedFilter : CimInstanceFilterBase
         {
-            private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
+            private readonly List<PropertyValueFilter> _propertyValueFilters = new();
 
             protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
 
@@ -624,8 +624,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private int _numberOfResultsFromMi;
         private int _numberOfMatchingResults;
 
-        private readonly List<CimInstanceFilterBase> _filters = new List<CimInstanceFilterBase>();
-        private readonly object _myLock = new object();
+        private readonly List<CimInstanceFilterBase> _filters = new();
+        private readonly object _myLock = new();
 
         #region "Public" interface for client-side filtering
 

@@ -50,7 +50,7 @@ namespace System.Management.Automation
         /// Stop executing the script.
         /// </summary>
         Stop = 4,
-    };
+    }
 
     /// <summary>
     /// Arguments for the DebuggerStop event.
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// leave pending runspace debug sessions suspended until a debugger is attached.
         /// </summary>
         internal bool SuspendRemote { get; set; }
-    };
+    }
 
     /// <summary>
     /// Kinds of breakpoint updates.
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// A breakpoint was disabled.
         /// </summary>
         Disabled = 3
-    };
+    }
 
     /// <summary>
     /// Arguments for the BreakpointUpdated event.
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// Gets the current breakpoint count.
         /// </summary>
         public int BreakpointCount { get; }
-    };
+    }
 
     #region PSJobStartEventArgs
 
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         /// PowerShell remote script debugging.
         /// </summary>
         RemoteScript = 0x4
-    };
+    }
 
     /// <summary>
     /// Defines unhandled breakpoint processing behavior.
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation
                     return null;
 
                 var callStackInfo = _callStack.Last();
-                var currentScriptFile = (callStackInfo != null) ? callStackInfo.File : null;
+                var currentScriptFile = callStackInfo?.File;
                 return breakpoints.Values.Where(bp => bp.Trigger(currentScriptFile, read: read)).ToList();
             }
             finally
@@ -1578,8 +1578,11 @@ namespace System.Management.Automation
         private class CallStackInfo
         {
             internal InvocationInfo InvocationInfo { get; set; }
+
             internal string File { get; set; }
+
             internal bool DebuggerStepThrough { get; set; }
+
             internal FunctionContext FunctionContext { get; set; }
 
             /// <summary>
@@ -1589,7 +1592,7 @@ namespace System.Management.Automation
             internal bool IsFrameHidden { get; set; }
 
             internal bool TopFrameAtBreakpoint { get; set; }
-        };
+        }
 
         private struct CallStackList
         {
@@ -1633,7 +1636,7 @@ namespace System.Management.Automation
             internal FunctionContext LastFunctionContext()
             {
                 var last = Last();
-                return last != null ? last.FunctionContext : null;
+                return last?.FunctionContext;
             }
 
             internal bool Any()
@@ -3677,7 +3680,7 @@ namespace System.Management.Automation
             }
 
             // Clean up nested debugger.
-            NestedRunspaceDebugger nestedDebugger = (runspaceInfo != null) ? runspaceInfo.NestedDebugger : null;
+            NestedRunspaceDebugger nestedDebugger = runspaceInfo?.NestedDebugger;
             if (nestedDebugger != null)
             {
                 nestedDebugger.DebuggerStop -= HandleMonitorRunningRSDebuggerStop;
@@ -4138,7 +4141,7 @@ namespace System.Management.Automation
             // because 'ToStringParser' would iterate through the enumerator to get the individual elements, which will
             // make irreversible changes to the enumerator.
             bool isValueAnIEnumerator = PSObject.Base(value) is IEnumerator;
-            string valAsString = isValueAnIEnumerator ? typeof(IEnumerator).Name : PSObject.ToStringParser(_context, value);
+            string valAsString = isValueAnIEnumerator ? nameof(IEnumerator) : PSObject.ToStringParser(_context, value);
             int msgLength = 60 - varName.Length;
 
             if (valAsString.Length > msgLength)
@@ -4195,7 +4198,7 @@ namespace System.Management.Automation
         /// <param name="runspace">Runspace.</param>
         /// <param name="runspaceType">Runspace type.</param>
         /// <param name="parentDebuggerId">Debugger Id of parent.</param>
-        public NestedRunspaceDebugger(
+        protected NestedRunspaceDebugger(
             Runspace runspace,
             PSMonitorRunspaceType runspaceType,
             Guid parentDebuggerId)
@@ -4447,14 +4450,14 @@ namespace System.Management.Automation
         {
             // Nested debugged runspace prompt should look like:
             // [ComputerName]: [DBG]: [Process:<id>]: [RunspaceName]: PS C:\>
-            string computerName = (_runspace.ConnectionInfo != null) ? _runspace.ConnectionInfo.ComputerName : null;
-            string processPartPattern = "{0}[{1}:{2}]:{3}";
+            string computerName = _runspace.ConnectionInfo?.ComputerName;
+            const string processPartPattern = "{0}[{1}:{2}]:{3}";
             string processPart = StringUtil.Format(processPartPattern,
                 @"""",
                 DebuggerStrings.NestedRunspaceDebuggerPromptProcessName,
                 @"$($PID)",
                 @"""");
-            string locationPart = @"""PS $($executionContext.SessionState.Path.CurrentLocation)> """;
+            const string locationPart = @"""PS $($executionContext.SessionState.Path.CurrentLocation)> """;
             string promptScript = "'[DBG]: '" + " + " + processPart + " + " + "' [" + CodeGeneration.EscapeSingleQuotedStringContent(_runspace.Name) + "]: '" + " + " + locationPart;
 
             // Get the command prompt from the wrapped debugger.

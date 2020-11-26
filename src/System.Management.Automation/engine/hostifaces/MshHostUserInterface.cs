@@ -1051,8 +1051,11 @@ namespace System.Management.Automation.Host
         internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
+
         internal string CommandBeingIgnored { get; set; }
+
         internal bool IsHelperCommand { get; set; }
+
         internal string PromptText { get; set; }
     }
 

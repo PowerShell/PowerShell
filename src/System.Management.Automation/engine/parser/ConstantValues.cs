@@ -53,7 +53,9 @@ namespace System.Management.Automation.Language
         }
 
         internal bool CheckingAttributeArgument { get; set; }
+
         internal bool CheckingClassAttributeArguments { get; set; }
+
         internal bool CheckingRequiresArgument { get; set; }
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return false; }
@@ -322,6 +324,7 @@ namespace System.Management.Automation.Language
     internal class ConstantValueVisitor : ICustomAstVisitor2
     {
         internal bool AttributeArgument { get; set; }
+
         internal bool RequiresArgument { get; set; }
 
         [Conditional("DEBUG")]

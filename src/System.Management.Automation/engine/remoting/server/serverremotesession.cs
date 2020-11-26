@@ -206,7 +206,7 @@ namespace System.Management.Automation.Remoting
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
 
-            string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
+            const string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
             ServerRemoteSession result = new ServerRemoteSession(
@@ -285,10 +285,10 @@ namespace System.Management.Automation.Remoting
         /// This parameter contains the remote data received from client.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If the parameter <paramref name="dataEventArg" /> is null.
+        /// If the parameter <paramref name="dataEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
+        /// If the parameter <paramref name="dataEventArg"/> does not contain remote data.
         /// </exception>
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Remoting
             // as this is executed only when connecting from a new client that does not have any previous fragments context.
             // no problem even if fragment Ids in this response and the sessiontransport stream clash (interfere) and its guaranteed
             // that the fragments in connect response are always complete (enclose a complete object).
-            SerializedDataStream stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
+            SerializedDataStream stream = new SerializedDataStream(4 * 1024); //Each message with fragment headers cannot cross 4k
             stream.Enter();
             capability.Serialize(stream, fragmentor);
             stream.Exit();

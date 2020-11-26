@@ -9,5 +9,5 @@ namespace System.Management.Automation.ComInterop
     {
         public Guid SourceIID;
         public int Dispid;
-    };
+    }
 }

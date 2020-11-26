@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// Specifies culture-invariant matching.
         /// </summary>
         CultureInvariant = 4
-    };
+    }
 
     /// <summary>
     /// Represents a wildcard pattern.
@@ -325,7 +325,7 @@ namespace System.Management.Automation
         /// converted to their unescaped form.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="pattern" /> is null.
+        /// If <paramref name="pattern"/> is null.
         /// </exception>
         public static string Unescape(string pattern)
         {
@@ -729,7 +729,7 @@ namespace System.Management.Automation
 
             return e;
         }
-    };
+    }
 
     /// <summary>
     /// Convert a string with wild cards into its equivalent regex.

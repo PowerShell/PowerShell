@@ -172,7 +172,7 @@ namespace System.Management.Automation
         /// </summary>
         internal CommandLineParameters CommandLineParameters
         {
-            get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
+            get { return _commandLineParameters ??= new CommandLineParameters(); }
 
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
@@ -439,7 +439,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            parameterValue?.GetType(),
                                             ParameterBinderStrings.ParameterArgumentTransformationError,
                                             "ParameterArgumentTransformationError",
                                             e.Message);
@@ -522,7 +522,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            parameterValue?.GetType(),
                                             ParameterBinderStrings.ParameterArgumentValidationError,
                                             "ParameterArgumentValidationError",
                                             e.Message);
@@ -586,7 +586,7 @@ namespace System.Management.Automation
 
                     if (bindError != null)
                     {
-                        Type specifiedType = (parameterValue == null) ? null : parameterValue.GetType();
+                        Type specifiedType = parameterValue?.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 bindError,
@@ -736,7 +736,7 @@ namespace System.Management.Automation
                             GetErrorExtent(parameter),
                             parameterMetadata.Name,
                             parameterMetadata.Type,
-                            (parameterValue == null) ? null : parameterValue.GetType(),
+                            parameterValue?.GetType(),
                             ParameterBinderStrings.ParameterArgumentValidationErrorEmptyStringNotAllowed,
                             "ParameterArgumentValidationErrorEmptyStringNotAllowed");
                     throw bindingException;
@@ -813,7 +813,7 @@ namespace System.Management.Automation
                         GetErrorExtent(parameter),
                         parameterMetadata.Name,
                         parameterMetadata.Type,
-                        (parameterValue == null) ? null : parameterValue.GetType(),
+                        parameterValue?.GetType(),
                         resourceString,
                         errorId);
                 throw bindingException;
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation
                                     GetErrorExtent(argument),
                                     parameterName,
                                     toType,
-                                    (currentValueElement == null) ? null : currentValueElement.GetType(),
+                                    currentValueElement?.GetType(),
                                     ParameterBinderStrings.CannotConvertArgument,
                                     "CannotConvertArgument",
                                     currentValueElement ?? "null",
@@ -1878,7 +1878,7 @@ namespace System.Management.Automation
                                 GetErrorExtent(argument),
                                 parameterName,
                                 toType,
-                                (currentValue == null) ? null : currentValue.GetType(),
+                                currentValue?.GetType(),
                                 ParameterBinderStrings.CannotConvertArgument,
                                 "CannotConvertArgument",
                                 currentValue ?? "null",

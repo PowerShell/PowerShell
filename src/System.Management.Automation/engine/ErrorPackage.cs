@@ -495,7 +495,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string Ellipsize(CultureInfo uiCultureInfo, string original)
         {
-            if (40 >= original.Length)
+            if (original.Length <= 40)
             {
                 return original;
             }
@@ -1480,7 +1480,7 @@ namespace System.Management.Automation
         /// for that ErrorCategory.
         /// </summary>
         /// <value>never null</value>
-        public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ?? (_categoryInfo = new ErrorCategoryInfo(this)); }
+        public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ??= new ErrorCategoryInfo(this); }
 
         private ErrorCategoryInfo _categoryInfo;
 

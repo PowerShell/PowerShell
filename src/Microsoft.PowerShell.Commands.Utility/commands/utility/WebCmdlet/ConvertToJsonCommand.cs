@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies how strings are escaped when writing JSON text.
         /// If the EscapeHandling property is set to EscapeHtml, the result JSON string will
-        /// be returned with HTML (<, >, &, ', ") and control characters (e.g. newline) are escaped.
+        /// be returned with HTML (&lt;, &gt;, &amp;, ', ") and control characters (e.g. newline) are escaped.
         /// </summary>
         [Parameter]
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;

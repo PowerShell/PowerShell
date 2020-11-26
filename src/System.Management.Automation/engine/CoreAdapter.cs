@@ -2747,6 +2747,7 @@ namespace System.Management.Automation
         internal class PropertyCacheEntry : CacheEntry
         {
             internal delegate object GetterDelegate(object instance);
+
             internal delegate void SetterDelegate(object instance, object setValue);
 
             internal PropertyCacheEntry(PropertyInfo property)
@@ -5939,7 +5940,7 @@ namespace System.Management.Automation
 
             using (s_tracer.TraceScope("Inferring type parameters for the following method: {0}", genericMethod))
             {
-                if (PSTraceSourceOptions.WriteLine == (s_tracer.Options & PSTraceSourceOptions.WriteLine))
+                if ((s_tracer.Options & PSTraceSourceOptions.WriteLine) == PSTraceSourceOptions.WriteLine)
                 {
                     s_tracer.WriteLine(
                         "Types of method arguments: {0}",

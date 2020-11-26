@@ -16,6 +16,7 @@ namespace System.Management.Automation
         private readonly HashSet<string> _validVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
         internal bool UsesParameter { get; private set; }
 
         internal bool HasUsingExpr { get; private set; }
@@ -546,7 +547,6 @@ namespace System.Management.Automation
                 Diagnostics.Assert(commandAst.Redirections.Count == 1, "only 1 kind of redirection is supported");
                 Diagnostics.Assert(commandAst.Redirections[0] is MergingRedirectionAst, "unexpected redirection type");
 
-                PipelineResultTypes toType = PipelineResultTypes.Output;
                 PipelineResultTypes fromType;
                 switch (commandAst.Redirections[0].FromStream)
                 {
@@ -580,7 +580,7 @@ namespace System.Management.Automation
                         break;
                 }
 
-                command.MergeMyResults(fromType, toType);
+                command.MergeMyResults(fromType, toResult: PipelineResultTypes.Output);
             }
 
             _powershell.AddCommand(command);

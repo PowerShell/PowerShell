@@ -535,8 +535,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _cmdletMetadata ??
-                       (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
+                return _cmdletMetadata ??= CommandMetadata.Get(this.Name, this.ImplementingType, Context);
             }
         }
 
@@ -548,7 +547,7 @@ namespace System.Management.Automation
             {
                 if (ImplementingType != null)
                 {
-                    return (ImplementingType.GetInterface(typeof(IDynamicParameters).Name, true) != null);
+                    return (ImplementingType.GetInterface(nameof(IDynamicParameters), true) != null);
                 }
                 else
                 {

@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
         {
             if (predicate == null)
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Cim
                 return false;
             }
 
-            bool isReadOnly = (CimFlags.ReadOnly == (cimProperty.Flags & CimFlags.ReadOnly));
+            bool isReadOnly = ((cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly);
             bool isSettable = !isReadOnly;
             return isSettable;
         }

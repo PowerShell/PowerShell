@@ -285,9 +285,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_providerInvocationException == null)
-                    ? null
-                    : _providerInvocationException.ProviderInfo;
+                return _providerInvocationException?.ProviderInfo;
             }
         }
 
@@ -296,7 +294,7 @@ namespace System.Management.Automation
         #region Internal
         private static Exception GetInnerException(Exception e)
         {
-            return (e == null) ? null : e.InnerException;
+            return e?.InnerException;
         }
         #endregion Internal
     }
@@ -709,7 +707,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : string.Empty);
+                return _message ??= (_wrapperException != null) ? _wrapperException.Message : string.Empty;
             }
         }
 

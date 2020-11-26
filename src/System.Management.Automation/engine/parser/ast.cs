@@ -53,8 +53,11 @@ namespace System.Management.Automation.Language
     internal interface IParameterMetadataProvider
     {
         bool HasAnyScriptBlockAttributes();
+
         RuntimeDefinedParameterDictionary GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding);
+
         IEnumerable<Attribute> GetScriptBlockAttributes();
+
         IEnumerable<ExperimentalAttribute> GetExperimentalAttributes();
 
         bool UsesCmdletBinding();
@@ -286,6 +289,7 @@ namespace System.Management.Automation.Language
         }
 
         internal abstract object Accept(ICustomAstVisitor visitor);
+
         internal abstract AstVisitAction InternalVisit(AstVisitor visitor);
 
         internal static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
@@ -770,6 +774,7 @@ namespace System.Management.Automation.Language
             Utils.EmptyReadOnlyCollection<UsingStatementAst>();
 
         internal bool HadErrors { get; set; }
+
         internal bool IsConfiguration { get; private set; }
 
         internal bool PostParseChecksPerformed { get; set; }
@@ -1749,7 +1754,7 @@ namespace System.Management.Automation.Language
         /// </exception>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="blockName"/> is not one of the valid kinds for a named block,
-        /// or if <paramref name="unnamed"/> is <c>true</c> and <paramref name="blockName"/> is neither
+        /// or if <paramref name="unnamed"/> is <see langword="true"/> and <paramref name="blockName"/> is neither
         /// <see cref="TokenKind.Process"/> nor <see cref="TokenKind.End"/>.
         /// </exception>
         public NamedBlockAst(IScriptExtent extent, TokenKind blockName, StatementBlockAst statementBlock, bool unnamed)
@@ -2656,7 +2661,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitTypeDefinition(this) : null;
+            return visitor2?.VisitTypeDefinition(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -2904,7 +2909,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitUsingStatement(this) : null;
+            return visitor2?.VisitUsingStatement(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -3132,7 +3137,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitPropertyMember(this) : null;
+            return visitor2?.VisitPropertyMember(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -3352,7 +3357,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitFunctionMember(this) : null;
+            return visitor2?.VisitFunctionMember(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -3829,7 +3834,7 @@ namespace System.Management.Automation.Language
 
         ReadOnlyCollection<ParameterAst> IParameterMetadataProvider.Parameters
         {
-            get { return Parameters ?? (Body.ParamBlock != null ? Body.ParamBlock.Parameters : null); }
+            get { return Parameters ?? (Body.ParamBlock?.Parameters); }
         }
 
         PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
@@ -5879,7 +5884,7 @@ namespace System.Management.Automation.Language
         public string GetCommandName()
         {
             var name = CommandElements[0] as StringConstantExpressionAst;
-            return name != null ? name.Value : null;
+            return name?.Value;
         }
 
         /// <summary>
@@ -6422,7 +6427,7 @@ namespace System.Management.Automation.Language
             {
                 LCurlyToken = this.LCurlyToken,
                 ConfigurationToken = this.ConfigurationToken,
-                CustomAttributes = this.CustomAttributes == null ? null : this.CustomAttributes.Select(e => (AttributeAst)e.Copy())
+                CustomAttributes = this.CustomAttributes?.Select(e => (AttributeAst)e.Copy())
             };
         }
 
@@ -6431,7 +6436,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitConfigurationDefinition(this) : null;
+            return visitor2?.VisitConfigurationDefinition(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -6463,7 +6468,9 @@ namespace System.Management.Automation.Language
         #region Internal methods/properties
 
         internal Token LCurlyToken { get; set; }
+
         internal Token ConfigurationToken { get; set; }
+
         internal IEnumerable<AttributeAst> CustomAttributes { get; set; }
 
         /// <summary>
@@ -6521,7 +6528,7 @@ namespace System.Management.Automation.Language
             cea.Add(new CommandParameterAst(PositionUtilities.EmptyExtent, "ResourceModuleTuplesToImport", new ConstantExpressionAst(PositionUtilities.EmptyExtent, resourceModulePairsToImport), PositionUtilities.EmptyExtent));
 
             var scriptBlockBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes?.Select(att => (AttributeAst)att.Copy()).ToList(),
                 null,
                 new StatementBlockAst(Body.Extent, resourceBody, null),
                 false, false);
@@ -6580,7 +6587,7 @@ namespace System.Management.Automation.Language
             var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
 
             var funcBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes?.Select(att => (AttributeAst)att.Copy()).ToList(),
                 paramBlockAst, statmentBlockAst, false, true);
             var funcBodyExp = new ScriptBlockExpressionAst(this.Extent, funcBody);
 
@@ -6898,7 +6905,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitDynamicKeywordStatement(this) : null;
+            return visitor2?.VisitDynamicKeywordStatement(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -6945,10 +6952,15 @@ namespace System.Management.Automation.Language
         private DynamicKeyword _keyword;
 
         internal Token LCurly { get; set; }
+
         internal Token FunctionName { get; set; }
+
         internal ExpressionAst InstanceName { get; set; }
+
         internal ExpressionAst OriginalInstanceName { get; set; }
+
         internal ExpressionAst BodyExpression { get; set; }
+
         internal string ElementName { get; set; }
 
         private PipelineAst _commandCallPipelineAst;
@@ -8103,7 +8115,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitBaseCtorInvokeMemberExpression(this) : null;
+            return visitor2?.VisitBaseCtorInvokeMemberExpression(this);
         }
     }
 
@@ -9233,6 +9245,7 @@ namespace System.Management.Automation.Language
         internal int TupleIndex { get; set; } = VariableAnalysis.Unanalyzed;
 
         internal bool Automatic { get; set; }
+
         internal bool Assigned { get; set; }
 
         IAssignableValue ISupportsAssignment.GetAssignableValue()

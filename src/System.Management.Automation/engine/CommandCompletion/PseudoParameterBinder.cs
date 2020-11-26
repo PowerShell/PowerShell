@@ -201,9 +201,9 @@ namespace System.Management.Automation.Language
             ParameterArgumentType = AstParameterArgumentType.AstPair;
             ParameterSpecified = parameterAst != null;
             ArgumentSpecified = argumentAst != null;
-            ParameterName = parameterAst != null ? parameterAst.ParameterName : null;
-            ParameterText = parameterAst != null ? parameterAst.ParameterName : null;
-            ArgumentType = argumentAst != null ? argumentAst.StaticType : null;
+            ParameterName = parameterAst?.ParameterName;
+            ParameterText = parameterAst?.ParameterName;
+            ArgumentType = argumentAst?.StaticType;
 
             ParameterContainsArgument = false;
             Argument = argumentAst;
@@ -261,8 +261,7 @@ namespace System.Management.Automation.Language
         /// <returns>The StaticBindingResult that represents the binding.</returns>
         public static StaticBindingResult BindCommand(CommandAst commandAst)
         {
-            bool resolve = true;
-            return BindCommand(commandAst, resolve);
+            return BindCommand(commandAst, resolve: true);
         }
 
         /// <summary>

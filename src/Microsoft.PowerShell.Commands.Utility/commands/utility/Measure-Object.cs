@@ -8,8 +8,6 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-using Microsoft.PowerShell.Commands.Internal.Format;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -29,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericMeasureInfo : MeasureInfo
     {
         /// <summary>
-        /// Default ctor.
+        /// Initializes a new instance of the <see cref="GenericMeasureInfo"/> class.
         /// </summary>
         public GenericMeasureInfo()
         {
@@ -79,6 +77,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GenericObjectMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="GenericObjectMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public GenericObjectMeasureInfo()
@@ -124,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class TextMeasureInfo : MeasureInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextMeasureInfo"/> class.
         /// Default ctor.
         /// </summary>
         public TextMeasureInfo()
@@ -164,6 +164,7 @@ namespace Microsoft.PowerShell.Commands
             where V : new()
         {
             /// <summary>
+            /// Initializes a new instance of the <see cref="MeasureObjectDictionary{V}"/> class.
             /// Default ctor.
             /// </summary>
             internal MeasureObjectDictionary() : base(StringComparer.OrdinalIgnoreCase)
@@ -218,6 +219,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MeasureObjectCommand"/> class.
         /// Default constructor.
         /// </summary>
         public MeasureObjectCommand()
@@ -494,8 +496,8 @@ namespace Microsoft.PowerShell.Commands
         /// Analyze an object on a property-by-property basis instead
         /// of as a simple value.
         /// Side effects: Updates statistics.
-        /// <param name="inObj">The object to analyze.</param>
         /// </summary>
+        /// <param name="inObj">The object to analyze.</param>
         private void AnalyzeObjectProperties(PSObject inObj)
         {
             // Keep track of which properties are counted for an
@@ -554,9 +556,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Analyze a value for generic/text statistics.
         /// Side effects: Updates statistics. May set nonNumericError.
+        /// </summary>
         /// <param name="propertyName">The property this value corresponds to.</param>
         /// <param name="objValue">The value to analyze.</param>
-        /// </summary>
         private void AnalyzeValue(string propertyName, object objValue)
         {
             if (propertyName == null)
@@ -617,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true is passed in then the minimum of the two values would be returned.
         /// If false is passed in then maximum of the two values will be returned.</param>
         /// <returns></returns>
-        private object Compare(object objValue, object statMinOrMaxValue, bool isMin)
+        private static object Compare(object objValue, object statMinOrMaxValue, bool isMin)
         {
             object currentValue = objValue;
             object statValue = statMinOrMaxValue;
@@ -744,9 +746,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Update text statistics.
+        /// </summary>
         /// <param name="strValue">The text to analyze.</param>
         /// <param name="stat">The Statistics object to update.</param>
-        /// </summary>
         private void AnalyzeString(string strValue, Statistics stat)
         {
             if (_measureCharacters)
@@ -759,9 +761,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Update number statistics.
+        /// </summary>
         /// <param name="numValue">The number to analyze.</param>
         /// <param name="stat">The Statistics object to update.</param>
-        /// </summary>
         private void AnalyzeNumber(double numValue, Statistics stat)
         {
             if (_measureSum || _measureAverage || _measureStandardDeviation)
@@ -850,10 +852,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Create a MeasureInfo object for generic stats.
-        /// <param name="stat">The statistics to use.</param>
-        /// <returns>A new GenericMeasureInfo object.</returns>
         /// </summary>
+        /// <param name="stat">The statistics to use.</param>
         /// <param name="shouldUseGenericMeasureInfo"></param>
+        /// <returns>A new GenericMeasureInfo object.</returns>
         private MeasureInfo CreateGenericMeasureInfo(Statistics stat, bool shouldUseGenericMeasureInfo)
         {
             double? sum = null;
@@ -938,9 +940,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Create a MeasureInfo object for text stats.
+        /// </summary>
         /// <param name="stat">The statistics to use.</param>
         /// <returns>A new TextMeasureInfo object.</returns>
-        /// </summary>
         private TextMeasureInfo CreateTextMeasureInfo(Statistics stat)
         {
             TextMeasureInfo tmi = new TextMeasureInfo();

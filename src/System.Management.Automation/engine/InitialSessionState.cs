@@ -949,7 +949,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Collection<Attribute> Attributes
         {
-            get { return _attributes ?? (_attributes = new Collection<Attribute>()); }
+            get { return _attributes ??= new Collection<Attribute>(); }
         }
 
         private Collection<Attribute> _attributes;
@@ -1346,7 +1346,7 @@ namespace System.Management.Automation.Runspaces
         public static InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
         {
             // only remote server has been requested
-            if (SessionCapabilities.RemoteServer == sessionCapabilities)
+            if (sessionCapabilities == SessionCapabilities.RemoteServer)
             {
                 return CreateRestrictedForRemoteServer();
             }
@@ -4762,22 +4762,8 @@ end {
 
         internal const string DefaultPromptFunctionText = @"
 ""PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "";
-# .ForwardHelpTargetName about_Prompts
-# .SYNOPSIS
-# The PowerShell command prompt indicates
-# that PowerShell is ready to run a command.
-# .DESCRIPTION
-# To customize the prompt, write a new Prompt function.
-# The function is not protected, so you can overwrite it.
-# .OUTPUTS
-# The Prompt function must return an object.
-# As a best practice, return a string
-# or an object that is formatted as a string.
-# The maximum recommended length is 80 characters.
 # .Link
-# https://go.microsoft.com/fwlink/?LinkId=2136843
-# .Link
-# about_Prompts
+# https://go.microsoft.com/fwlink/?LinkID=225750
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 

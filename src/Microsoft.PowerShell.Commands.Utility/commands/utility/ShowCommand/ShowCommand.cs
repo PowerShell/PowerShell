@@ -63,14 +63,6 @@ namespace Microsoft.PowerShell.Commands
         private object _commandViewModelObj;
         #endregion
 
-        /// <summary>
-        /// Finalizes an instance of the ShowCommandCommand class.
-        /// </summary>
-        ~ShowCommandCommand()
-        {
-            this.Dispose(false);
-        }
-
         #region Input Cmdlet Parameter
         /// <summary>
         /// Gets or sets the command name.

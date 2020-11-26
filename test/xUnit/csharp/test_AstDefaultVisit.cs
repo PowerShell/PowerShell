@@ -44,7 +44,7 @@ namespace PSTests.Parallel
         public static void TestCustomAstVisitor()
         {
             var ast = Parser.ParseInput("a | b", out _, out _);
-            var expected = typeof(NamedBlockAst).Name;
+            var expected = nameof(NamedBlockAst);
 
             var myVisitor1 = new MyICustomAstVisitor2();
             var result1 = ast.EndBlock.Accept(myVisitor1);

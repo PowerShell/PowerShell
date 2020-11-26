@@ -201,7 +201,7 @@ namespace System.Management.Automation
         /// <param name="writer">Writer to be used for serialization.</param>
         /// <param name="depth">Depth of serialization.</param>
         /// <param name="useDepthFromTypes">
-        /// if <c>true</c> then types.ps1xml can override depth
+        /// if <see langword="true"/> then types.ps1xml can override depth
         /// for a particular types (using SerializationDepth property)
         /// </param>
         internal Serializer(XmlWriter writer, int depth, bool useDepthFromTypes)
@@ -540,7 +540,7 @@ namespace System.Management.Automation
 
             // If version is not provided, we assume it is the default
             string version = InternalSerializer.DefaultVersion;
-            if (DeserializationOptions.NoRootElement == (_context.options & DeserializationOptions.NoRootElement))
+            if ((_context.options & DeserializationOptions.NoRootElement) == DeserializationOptions.NoRootElement)
             {
                 _done = _reader.EOF;
             }
@@ -571,7 +571,7 @@ namespace System.Management.Automation
         {
             if (!_done)
             {
-                if (DeserializationOptions.NoRootElement == (_context.options & DeserializationOptions.NoRootElement))
+                if ((_context.options & DeserializationOptions.NoRootElement) == DeserializationOptions.NoRootElement)
                 {
                     _done = _reader.EOF;
                 }
@@ -661,7 +661,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="o"></param>
         /// <param name="type"></param>
-        /// <returns><c>true</c> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="o"/> is either a live or deserialized instance of class <paramref name="type"/> or one of its subclasses;  <see langword="false"/> otherwise.</returns>
         internal static bool IsInstanceOfType(object o, Type type)
         {
             if (type == null)
@@ -682,7 +682,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="o"></param>
         /// <param name="type"></param>
-        /// <returns><c>true</c> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if <paramref name="o"/> is a deserialized instance of class <paramref name="type"/> or one of its subclasses;  <see langword="false"/> otherwise.</returns>
         internal static bool IsDeserializedInstanceOfType(object o, Type type)
         {
             if (type == null)
@@ -791,7 +791,7 @@ namespace System.Management.Automation
         List,
         Enumerable,
         None
-    };
+    }
 
     /// <summary>
     /// This internal helper class provides methods for serializing mshObject.
@@ -866,7 +866,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void Start()
         {
-            if (SerializationOptions.NoRootElement != (_context.options & SerializationOptions.NoRootElement))
+            if ((_context.options & SerializationOptions.NoRootElement) != SerializationOptions.NoRootElement)
             {
                 this.WriteStartElement(SerializationStrings.RootElementTag);
                 this.WriteAttribute(SerializationStrings.VersionAttribute, InternalSerializer.DefaultVersion);
@@ -878,7 +878,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void End()
         {
-            if (SerializationOptions.NoRootElement != (_context.options & SerializationOptions.NoRootElement))
+            if ((_context.options & SerializationOptions.NoRootElement) != SerializationOptions.NoRootElement)
             {
                 _writer.WriteEndElement();
             }
@@ -1893,9 +1893,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _extendedMembersCollection ??
-                       (_extendedMembersCollection =
-                           PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
+                return _extendedMembersCollection ??=
+                    PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable);
             }
         }
 
@@ -1905,8 +1904,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _allPropertiesCollection ??
-                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
+                return _allPropertiesCollection ??= PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
             }
         }
 
@@ -2750,7 +2748,7 @@ namespace System.Management.Automation
         private void WriteStartElement(string elementTag)
         {
             Dbg.Assert(!string.IsNullOrEmpty(elementTag), "Caller should validate the parameter");
-            if (SerializationOptions.NoNamespace == (_context.options & SerializationOptions.NoNamespace))
+            if ((_context.options & SerializationOptions.NoNamespace) == SerializationOptions.NoNamespace)
             {
                 _writer.WriteStartElement(elementTag);
             }
@@ -2828,7 +2826,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the real workhorse that encodes strings.
-        /// See <see cref="EncodeString(string)" /> for more information.
+        /// See <see cref="EncodeString(string)"/> for more information.
         /// </summary>
         /// <param name="s">String to encode.</param>
         /// <param name="indexOfFirstEncodableCharacter">IndexOfFirstEncodableCharacter.</param>
@@ -2908,7 +2906,7 @@ namespace System.Management.Automation
 
             value = EncodeString(value);
 
-            if (SerializationOptions.NoNamespace == (_context.options & SerializationOptions.NoNamespace))
+            if ((_context.options & SerializationOptions.NoNamespace) == SerializationOptions.NoNamespace)
             {
                 _writer.WriteElementString(name, value);
             }
@@ -4418,7 +4416,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(deserializer != null, "Caller should validate the parameter");
             string scriptBlockBody = deserializer.ReadDecodedElementString(SerializationStrings.ScriptBlockTag);
-            if (DeserializationOptions.DeserializeScriptBlocks == (deserializer._context.options & DeserializationOptions.DeserializeScriptBlocks))
+            if ((deserializer._context.options & DeserializationOptions.DeserializeScriptBlocks) == DeserializationOptions.DeserializeScriptBlocks)
             {
                 return ScriptBlock.Create(scriptBlockBody);
             }
@@ -4652,7 +4650,7 @@ namespace System.Management.Automation
                 activityId = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordActivityId), CultureInfo.InvariantCulture);
 
                 object tmp = deserializer.ReadOneObject();
-                currentOperation = (tmp == null) ? null : tmp.ToString();
+                currentOperation = tmp?.ToString();
 
                 parentActivityId = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordParentActivityId), CultureInfo.InvariantCulture);
                 percentComplete = int.Parse(deserializer.ReadDecodedElementString(SerializationStrings.ProgressRecordPercentComplete), CultureInfo.InvariantCulture);
@@ -4768,7 +4766,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(!string.IsNullOrEmpty(element), "Caller should validate the parameter");
 
-            if (DeserializationOptions.NoNamespace == (_context.options & DeserializationOptions.NoNamespace))
+            if ((_context.options & DeserializationOptions.NoNamespace) == DeserializationOptions.NoNamespace)
             {
                 _reader.ReadStartElement(element);
             }
@@ -4792,7 +4790,7 @@ namespace System.Management.Automation
             this.CheckIfStopping();
 
             string temp = null;
-            if (DeserializationOptions.NoNamespace == (_context.options & DeserializationOptions.NoNamespace))
+            if ((_context.options & DeserializationOptions.NoNamespace) == DeserializationOptions.NoNamespace)
             {
                 temp = _reader.ReadElementContentAsString(element, string.Empty);
             }
@@ -4969,7 +4967,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a RefId already assigned for the given object or <c>null</c> if there is no associated ref id.
+        /// Gets a RefId already assigned for the given object or <see langword="null"/> if there is no associated ref id.
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
@@ -6041,7 +6039,7 @@ namespace System.Management.Automation
         /// <param name="key">The key whose value to get or set.</param>
         /// <returns>The value associated with the specified key.</returns>
         /// <remarks>
-        /// If the specified key is not found, attempting to get it returns <c>null</c>
+        /// If the specified key is not found, attempting to get it returns <see langword="null"/>
         /// and attempting to set it creates a new element using the specified key.
         /// </remarks>
         /// <exception cref="ArgumentException">
@@ -6070,7 +6068,7 @@ namespace System.Management.Automation
         /// <param name="key">The key whose value to get or set.</param>
         /// <returns>The value associated with the specified key.</returns>
         /// <remarks>
-        /// If the specified key is not found, attempting to get it returns <c>null</c>
+        /// If the specified key is not found, attempting to get it returns <see langword="null"/>
         /// and attempting to set it creates a new element using the specified key.
         /// </remarks>
         /// <exception cref="ArgumentException">
@@ -6532,7 +6530,7 @@ namespace System.Management.Automation
         /// <param name="data">The root dictionary.</param>
         /// <param name="result"></param>
         /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value.</param>
-        /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if the value was found and was of the correct type; <see langword="false"/> otherwise.</returns>
         internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
             Dbg.Assert(keys != null, "Caller should verify that keys != null");
@@ -6850,14 +6848,14 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "Caller should verify propertyName != null");
 
             PSPropertyInfo property = pso.Properties[propertyName];
-            if ((property == null) && (RehydrationFlags.MissingPropertyOk == (flags & RehydrationFlags.MissingPropertyOk)))
+            if ((property == null) && ((flags & RehydrationFlags.MissingPropertyOk) == RehydrationFlags.MissingPropertyOk))
             {
                 return default(T);
             }
             else
             {
                 object propertyValue = property.Value;
-                if ((propertyValue == null) && (RehydrationFlags.NullValueOk == (flags & RehydrationFlags.NullValueOk)))
+                if ((propertyValue == null) && ((flags & RehydrationFlags.NullValueOk) == RehydrationFlags.NullValueOk))
                 {
                     return default(T);
                 }
@@ -6875,7 +6873,7 @@ namespace Microsoft.PowerShell
             ArrayList deserializedList = GetPropertyValue<ArrayList>(pso, propertyName, flags);
             if (deserializedList == null)
             {
-                if (RehydrationFlags.NullValueMeansEmptyList == (flags & RehydrationFlags.NullValueMeansEmptyList))
+                if ((flags & RehydrationFlags.NullValueMeansEmptyList) == RehydrationFlags.NullValueMeansEmptyList)
                 {
                     return new ListType();
                 }

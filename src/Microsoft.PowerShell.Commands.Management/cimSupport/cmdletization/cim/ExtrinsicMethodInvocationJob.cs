@@ -58,10 +58,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
 
             CimMethodParameter outParameter = methodResult.OutParameters[methodParameter.Name];
-            object valueReturnedFromMethod = (outParameter == null) ? null : outParameter.Value;
+            object valueReturnedFromMethod = outParameter?.Value;
 
             object dotNetValue = CimValueConverter.ConvertFromCimToDotNet(valueReturnedFromMethod, methodParameter.ParameterType);
-            if (MethodParameterBindings.Out == (methodParameter.Bindings & MethodParameterBindings.Out))
+            if ((methodParameter.Bindings & MethodParameterBindings.Out) == MethodParameterBindings.Out)
             {
                 methodParameter.Value = dotNetValue;
                 cmdletOutput.Add(methodParameter.Name, methodParameter);
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     CimCmdletAdapter.AssociateSessionOfOriginWithInstance(cimInstance, this.JobContext.Session);
                 }
             }
-            else if (MethodParameterBindings.Error == (methodParameter.Bindings & MethodParameterBindings.Error))
+            else if ((methodParameter.Bindings & MethodParameterBindings.Error) == MethodParameterBindings.Error)
             {
                 var gotError = (bool)LanguagePrimitives.ConvertTo(dotNetValue, typeof(bool), CultureInfo.InvariantCulture);
                 if (gotError)

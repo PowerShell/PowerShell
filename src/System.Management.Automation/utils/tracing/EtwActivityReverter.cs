@@ -20,7 +20,7 @@ namespace System.Management.Automation.Tracing
         ///     Reverts the ETW activity ID of the current thread to its original value.
         /// </summary>
         /// <remarks>
-        ///     <para>Calling <see cref="IDisposable.Dispose" /> has the same effect as
+        ///     <para>Calling <see cref="IDisposable.Dispose"/> has the same effect as
         ///         calling this method and is useful in the C# "using" syntax.</para>
         /// </remarks>
         void RevertCurrentActivityId();
