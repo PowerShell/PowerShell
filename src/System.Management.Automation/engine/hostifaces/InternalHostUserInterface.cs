@@ -281,7 +281,7 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.WriteErrorLine(Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal));
+            _externalUI.WriteErrorLine(Utils.GetFormatStyleString(Utils.FormatStyle.Error) + Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal) + Utils.GetFormatStyleString(Utils.FormatStyle.Reset));
         }
 
         /// <summary>
@@ -347,7 +347,7 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.WriteDebugLine(record.Message);
+            _externalUI.WriteDebugLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + Utils.GetOutputString(record.Message, isHost: true, SupportsVirtualTerminal) + Utils.GetFormatStyleString(Utils.FormatStyle.Reset));
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            WriteDebugRecord(new DebugRecord(Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal)));
+            WriteDebugRecord(new DebugRecord(message));
         }
 
         /// <summary>
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.WriteVerboseLine(Utils.GetOutputString(record.Message, isHost: true, SupportsVirtualTerminal));
+            _externalUI.WriteVerboseLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + Utils.GetOutputString(record.Message, isHost: true, SupportsVirtualTerminal) + Utils.GetFormatStyleString(Utils.FormatStyle.Reset));
         }
 
         /// <summary>
@@ -640,7 +640,7 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.WriteWarningLine(Utils.GetOutputString(record.Message, isHost: true, SupportsVirtualTerminal));
+            _externalUI.WriteWarningLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + Utils.GetOutputString(record.Message, isHost: true, SupportsVirtualTerminal) + Utils.GetFormatStyleString(Utils.FormatStyle.Reset));
         }
 
         /// <summary>

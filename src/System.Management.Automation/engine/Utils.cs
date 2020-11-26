@@ -1836,6 +1836,50 @@ namespace System.Management.Automation
             return s;
         }
 
+        internal enum FormatStyle
+        {
+            Reset,
+            FormatAccent,
+            ErrorAccent,
+            Error,
+            Warning,
+            Verbose,
+            Debug,
+        }
+
+        internal static string GetFormatStyleString(FormatStyle formatStyle)
+        {
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+                PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
+                if (psstyle is object)
+                {
+                    switch(formatStyle)
+                    {
+                        case FormatStyle.Reset:
+                            return psstyle.Reset;
+                        case FormatStyle.FormatAccent:
+                            return psstyle.Formatting.FormatAccent;
+                        case FormatStyle.ErrorAccent:
+                            return psstyle.Formatting.ErrorAccent;
+                        case FormatStyle.Error:
+                            return psstyle.Formatting.Error;
+                        case FormatStyle.Warning:
+                            return psstyle.Formatting.Warning;
+                        case FormatStyle.Verbose:
+                            return psstyle.Formatting.Verbose;
+                        case FormatStyle.Debug:
+                            return psstyle.Formatting.Debug;
+                        default:
+                            return string.Empty;
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
         #endregion
     }
 

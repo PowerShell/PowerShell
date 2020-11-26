@@ -2044,8 +2044,8 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Formatting.ErrorAccent)Example Text$($PSStyle.Reset)""", label: "Formatting.ErrorAccent")
                         .AddItemScriptBlock(@"""$($_.Formatting.Error)Example Text$($PSStyle.Reset)""", label: "Formatting.Error")
                         .AddItemScriptBlock(@"""$($_.Formatting.Warning)Example Text$($PSStyle.Reset)""", label: "Formatting.Warning")
+                        .AddItemScriptBlock(@"""$($_.Formatting.Verbose)Example Text$($PSStyle.Reset)""", label: "Formatting.Verbose")
                         .AddItemScriptBlock(@"""$($_.Formatting.Debug)Example Text$($PSStyle.Reset)""", label: "Formatting.Debug")
-                        .AddItemScriptBlock(@"""$($_.Formatting.Progress)Example Text$($PSStyle.Reset)""", label: "Formatting.Progress")
                         .AddItemScriptBlock(@"""$($_.Foreground.Black)Example Text$($PSStyle.Reset)""", label: "Foreground.Black")
                         .AddItemScriptBlock(@"""$($_.Foreground.White)Example Text$($PSStyle.Reset)""", label: "Foreground.White")
                         .AddItemScriptBlock(@"""$($_.Foreground.DarkGray)Example Text$($PSStyle.Reset)""", label: "Foreground.DarkGray")
@@ -2092,7 +2092,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Error)Example Text$($PSStyle.Reset)""", label: "Error")
                         .AddItemScriptBlock(@"""$($_.Warning)Example Text$($PSStyle.Reset)""", label: "Warning")
                         .AddItemScriptBlock(@"""$($_.Debug)Example Text$($PSStyle.Reset)""", label: "Debug")
-                        .AddItemScriptBlock(@"""$($_.Progress)Example Text$($PSStyle.Reset)""", label: "Progress")
                     .EndEntry()
                 .EndList());
         }

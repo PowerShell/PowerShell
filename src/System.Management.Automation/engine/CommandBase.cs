@@ -556,11 +556,6 @@ namespace System.Management.Automation
             /// Gets or sets the style for debug messages.
             /// </summary>
             public string Debug { get; set; } = "\x1b[33;1m";
-
-            /// <summary>
-            /// Gets or sets the style for progress messages.
-            /// </summary>
-            public string Progress { get; set; } = "\x1b[30;43m";
         }
 
         /// <summary>
