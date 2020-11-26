@@ -238,7 +238,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// implementation by overriding.
         /// </summary>
         protected static DisplayCells _displayCellsDefault = new DisplayCells();
-
     }
 
     /// <summary>
