@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
-        private readonly ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
+        private readonly ManualResetEventSlim _newRunningScriptEvent = new(true);
         private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion
