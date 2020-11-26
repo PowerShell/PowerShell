@@ -1531,7 +1531,7 @@ dotnet_diagnostic.SA1641.severity = none
 dotnet_diagnostic.SA1642.severity = none
 
 # SA1643: Destructor summary documentation should begin with standard text
-dotnet_diagnostic.SA1643.severity = none
+dotnet_diagnostic.SA1643.severity = warning
 
 # SA1648: inheritdoc should be used with inheriting class
 dotnet_diagnostic.SA1648.severity = none

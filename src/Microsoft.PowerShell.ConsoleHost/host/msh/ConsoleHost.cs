@@ -1195,14 +1195,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizes the instance.
-        /// </summary>
-        ~ConsoleHost()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Disposes of this instance, per the IDisposable pattern.
         /// </summary>
         public void Dispose()
@@ -1258,6 +1250,14 @@ namespace Microsoft.PowerShell
             }
 
             _isDisposed = true;
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="ConsoleHost"/> class.
+        /// </summary>
+        ~ConsoleHost()
+        {
+            Dispose(false);
         }
 
         /// <summary>
