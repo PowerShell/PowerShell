@@ -13,7 +13,19 @@ namespace System.Management.Automation.Internal
         private const char ESC = '\x1b';
         private readonly bool _isDecorated;
         private readonly string _text;
-        private readonly string _plaintext;
+        private string _plaintextcontent;
+        private string _plaintext
+        {
+            get
+            {
+                if (_plaintextcontent.Length == 0)
+                {
+                    _plaintextcontent = _ansiRegex.Replace(_text, string.Empty);
+                }
+
+                return _plaintextcontent;
+            }
+        }
 
         // replace regex with .NET 6 API once available
         private static readonly Regex _ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
@@ -26,7 +38,6 @@ namespace System.Management.Automation.Internal
         {
             _text = text;
             _isDecorated = text.Contains(ESC);
-            _plaintext = _ansiRegex.Replace(text, string.Empty);
         }
 
         /// <summary>

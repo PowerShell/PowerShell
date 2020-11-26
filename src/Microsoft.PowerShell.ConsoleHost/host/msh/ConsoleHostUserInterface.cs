@@ -1181,7 +1181,7 @@ namespace Microsoft.PowerShell
             {
                 if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
                 }
                 else
                 {
@@ -1286,7 +1286,7 @@ namespace Microsoft.PowerShell
             {
                 if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
                 }
                 else
                 {
@@ -1365,7 +1365,9 @@ namespace Microsoft.PowerShell
                     }
                 }
                 else
+                {
                     Console.Error.WriteLine(value);
+                }
             }
         }
 

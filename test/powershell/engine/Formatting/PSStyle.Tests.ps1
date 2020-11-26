@@ -27,7 +27,6 @@ Describe 'Tests for $PSStyle automatic variable' {
             Debug = "`e[33;1m"
             Verbose = "`e[33;1m"
             Warning = "`e[33;1m"
-            Progress = "`e[30;43m"
         }
 
         $foregroundDefaults = @{

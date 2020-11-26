@@ -1333,7 +1333,7 @@ namespace System.Management.Automation.Runspaces
                                             $err.CategoryInfo.GetMessage()
                                         }
                                         elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            $err.Exception.Message + $posmsg + $newline
+                                            $err.Exception.Message + $posmsg
                                         } else {
                                             $err.ErrorDetails.Message + $posmsg
                                         }
