@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class CimCustomOptionsDictionary
     {
         private readonly IDictionary<string, object> _dict;
-        private readonly object _dictModificationLock = new object();
+        private readonly object _dictModificationLock = new();
 
         private CimCustomOptionsDictionary(IEnumerable<KeyValuePair<string, object>> wrappedDictionary)
         {
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return new CimCustomOptionsDictionary(wrappedDictionary);
         }
 
-        private static readonly ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary> s_cimInstanceToCustomOptions = new ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary>();
+        private static readonly ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary> s_cimInstanceToCustomOptions = new();
 
         internal static void AssociateCimInstanceWithCustomOptions(CimInstance cimInstance, CimCustomOptionsDictionary newCustomOptions)
         {

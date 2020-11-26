@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                 cimSession.ComputerName,
                                 nameOfUnsupportedSwitch);
                             Exception exception = new NotSupportedException(errorMessage);
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            ErrorRecord errorRecord = new(
                                 exception,
                                 "NoExtendedSemanticsSupportInRemoteDcomProtocol",
                                 ErrorCategory.NotImplemented,
@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Session affinity management
 
-        private static readonly ConditionalWeakTable<CimInstance, CimSession> s_cimInstanceToSessionOfOrigin = new ConditionalWeakTable<CimInstance, CimSession>();
+        private static readonly ConditionalWeakTable<CimInstance, CimSession> s_cimInstanceToSessionOfOrigin = new();
 
         internal static void AssociateSessionOfOriginWithInstance(CimInstance cimInstance, CimSession sessionOfOrigin)
         {
@@ -394,10 +394,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (this.CmdletDefinitionContext.ExposeCimNamespaceParameter)
                 {
-                    Collection<Attribute> namespaceAttributes = new Collection<Attribute>();
+                    Collection<Attribute> namespaceAttributes = new();
                     namespaceAttributes.Add(new ValidateNotNullOrEmptyAttribute());
                     namespaceAttributes.Add(new ParameterAttribute());
-                    RuntimeDefinedParameter namespaceRuntimeParameter = new RuntimeDefinedParameter(
+                    RuntimeDefinedParameter namespaceRuntimeParameter = new(
                         CimNamespaceParameter,
                         typeof(string),
                         namespaceAttributes);

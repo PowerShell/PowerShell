@@ -103,8 +103,8 @@ namespace Microsoft.PowerShell.Commands
 
         // We use a Dictionary to optimize the check whether the object
         // is already in the list.
-        private List<Process> _matchingProcesses = new List<Process>();
-        private readonly Dictionary<int, Process> _keys = new Dictionary<int, Process>();
+        private List<Process> _matchingProcesses = new();
+        private readonly Dictionary<int, Process> _keys = new();
 
         /// <summary>
         /// Retrieve the list of all processes matching the Name, Id
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_allProcesses == null)
                 {
-                    List<Process> processes = new List<Process>();
+                    List<Process> processes = new();
                     processes.AddRange(Process.GetProcesses());
                     _allProcesses = processes.ToArray();
                 }
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
                 processId,
                 (innerException == null) ? string.Empty : innerException.Message);
             ProcessCommandException exception =
-                new ProcessCommandException(message, innerException);
+                new(message, innerException);
             exception.ProcessName = processName;
 
             WriteError(new ErrorRecord(
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
             string userName = RetrieveProcessUserName(process);
 
             PSObject processAsPsobj = PSObject.AsPSObject(process);
-            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
+            PSNoteProperty noteProperty = new("UserName", userName);
 
             processAsPsobj.Properties.Add(noteProperty, true);
             processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
@@ -952,7 +952,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
 
-        private readonly List<Process> _processList = new List<Process>();
+        private readonly List<Process> _processList = new();
 
         // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
@@ -1029,7 +1029,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!process.HasExited)
                     {
                         string message = StringUtil.Format(ProcessResources.ProcessNotTerminated, new object[] { process.ProcessName, process.Id });
-                        ErrorRecord errorRecord = new ErrorRecord(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
+                        ErrorRecord errorRecord = new(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
                         WriteError(errorRecord);
                     }
                 }
@@ -1822,7 +1822,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_nonewwindow && _windowstyleSpecified)
                 {
                     message = StringUtil.Format(ProcessResources.ContradictParametersSpecified, "-NoNewWindow", "-WindowStyle");
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -1840,12 +1840,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(message))
                 {
-                    ErrorRecord er = new ErrorRecord(new NotSupportedException(message), "NotSupportedException", ErrorCategory.NotImplemented, null);
+                    ErrorRecord er = new(new NotSupportedException(message), "NotSupportedException", ErrorCategory.NotImplemented, null);
                     ThrowTerminatingError(er);
                 }
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            ProcessStartInfo startInfo = new();
             // Use ShellExecute by default if we are running on full windows SKUs
             startInfo.UseShellExecute = Platform.IsWindowsDesktop;
 
@@ -1883,7 +1883,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!Directory.Exists(WorkingDirectory))
                 {
                     message = StringUtil.Format(ProcessResources.InvalidInput, "WorkingDirectory");
-                    ErrorRecord er = new ErrorRecord(new DirectoryNotFoundException(message), "DirectoryNotFoundException", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new(new DirectoryNotFoundException(message), "DirectoryNotFoundException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -1942,7 +1942,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!File.Exists(_redirectstandardinput))
                     {
                         message = StringUtil.Format(ProcessResources.InvalidInput, "RedirectStandardInput '" + this.RedirectStandardInput + "'");
-                        ErrorRecord er = new ErrorRecord(new FileNotFoundException(message), "FileNotFoundException", ErrorCategory.InvalidOperation, null);
+                        ErrorRecord er = new(new FileNotFoundException(message), "FileNotFoundException", ErrorCategory.InvalidOperation, null);
                         WriteError(er);
                         return;
                     }
@@ -1956,7 +1956,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_redirectstandardinput.Equals(_redirectstandardoutput, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardInput", "RedirectStandardOutput");
-                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                        ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                         WriteError(er);
                         return;
                     }
@@ -1970,7 +1970,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_redirectstandardinput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardInput", "RedirectStandardError");
-                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                        ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                         WriteError(er);
                         return;
                     }
@@ -1984,7 +1984,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardOutput", "RedirectStandardError");
-                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                        ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                         WriteError(er);
                         return;
                     }
@@ -2011,7 +2011,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     message = StringUtil.Format(ProcessResources.CannotStarttheProcess);
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     ThrowTerminatingError(er);
                 }
             }
@@ -2028,7 +2028,7 @@ namespace Microsoft.PowerShell.Commands
                         _waithandle = new ManualResetEvent(false);
 
                         // Create and start the job object
-                        ProcessCollection jobObject = new ProcessCollection();
+                        ProcessCollection jobObject = new();
                         if (jobObject.AssignProcessToJobObject(process))
                         {
                             // Wait for the job object to finish
@@ -2047,7 +2047,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     message = StringUtil.Format(ProcessResources.CannotStarttheProcess);
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     ThrowTerminatingError(er);
                 }
             }
@@ -2269,7 +2269,7 @@ namespace Microsoft.PowerShell.Commands
         private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, uint dwCreationDisposition)
         {
             System.IntPtr hFileHandle = System.IntPtr.Zero;
-            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
+            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new();
 
             hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
                 ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
@@ -2281,19 +2281,19 @@ namespace Microsoft.PowerShell.Commands
             if (hFileHandle == System.IntPtr.Zero)
             {
                 int error = Marshal.GetLastWin32Error();
-                Win32Exception win32ex = new Win32Exception(error);
+                Win32Exception win32ex = new(error);
                 string message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
 
-            SafeFileHandle sf = new SafeFileHandle(hFileHandle, true);
+            SafeFileHandle sf = new(hFileHandle, true);
             return sf;
         }
 
         private static StringBuilder BuildCommandLine(string executableFileName, string arguments)
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
             string str = executableFileName.Trim();
             bool flag = str.StartsWith('"') && str.EndsWith('"');
             if (!flag)
@@ -2324,7 +2324,7 @@ namespace Microsoft.PowerShell.Commands
             string[] strArray2 = new string[sd.Count];
             sd.Values.CopyTo(strArray2, 0);
             Array.Sort(array, strArray2, StringComparer.OrdinalIgnoreCase);
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
             for (int i = 0; i < sd.Count; i++)
             {
                 builder.Append(array[i]);
@@ -2430,10 +2430,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private Process StartWithCreateProcess(ProcessStartInfo startinfo)
         {
-            ProcessNativeMethods.STARTUPINFO lpStartupInfo = new ProcessNativeMethods.STARTUPINFO();
-            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
+            ProcessNativeMethods.STARTUPINFO lpStartupInfo = new();
+            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new();
             int error = 0;
-            GCHandle pinnedEnvironmentBlock = new GCHandle();
+            GCHandle pinnedEnvironmentBlock = new();
             IntPtr AddressOfEnvironmentBlock = IntPtr.Zero;
             string message = string.Empty;
 
@@ -2497,7 +2497,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                Win32Exception win32ex = new Win32Exception(error);
+                                Win32Exception win32ex = new(error);
                                 message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
                             }
 
@@ -2525,23 +2525,23 @@ namespace Microsoft.PowerShell.Commands
                     IntPtr token = WindowsIdentity.GetCurrent().Token;
                     if (!ProcessNativeMethods.CreateEnvironmentBlock(out AddressOfEnvironmentBlock, token, false))
                     {
-                        Win32Exception win32ex = new Win32Exception(error);
+                        Win32Exception win32ex = new(error);
                         message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
                         var errorRecord = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                         ThrowTerminatingError(errorRecord);
                     }
                 }
 
-                ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
-                ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
+                ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new();
+                ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new();
                 flag = ProcessNativeMethods.CreateProcess(null, cmdLine, lpProcessAttributes, lpThreadAttributes, true, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
                 if (!flag)
                 {
                     error = Marshal.GetLastWin32Error();
 
-                    Win32Exception win32ex = new Win32Exception(error);
+                    Win32Exception win32ex = new(error);
                     message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     ThrowTerminatingError(er);
                 }
 
@@ -2583,7 +2583,7 @@ namespace Microsoft.PowerShell.Commands
             catch (Win32Exception ex)
             {
                 string message = StringUtil.Format(ProcessResources.InvalidStartProcess, ex.Message);
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
 
@@ -2634,7 +2634,7 @@ namespace Microsoft.PowerShell.Commands
             ManualResetEvent emptyJobAutoEvent = (ManualResetEvent)stateInfo;
             int dwSize = 0;
             const int JOB_OBJECT_BASIC_PROCESS_ID_LIST = 3;
-            JOBOBJECT_BASIC_PROCESS_ID_LIST JobList = new JOBOBJECT_BASIC_PROCESS_ID_LIST();
+            JOBOBJECT_BASIC_PROCESS_ID_LIST JobList = new();
 
             dwSize = Marshal.SizeOf(JobList);
             if (NativeMethods.QueryInformationJobObject(_jobObjectHandle,
@@ -2659,7 +2659,7 @@ namespace Microsoft.PowerShell.Commands
         internal void WaitOne(ManualResetEvent waitHandleToUse)
         {
             TimerCallback jobObjectStatusCb = this.CheckJobStatus;
-            using (Timer stateTimer = new Timer(jobObjectStatusCb, waitHandleToUse, 0, 1000))
+            using (Timer stateTimer = new(jobObjectStatusCb, waitHandleToUse, 0, 1000))
             {
                 waitHandleToUse.WaitOne();
             }

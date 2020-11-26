@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var type = typeof(T);
                 const BindingFlags binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-                T rv = new T();
+                T rv = new();
 
                 using (var instance = session.QueryFirstInstance(nameSpace, CIMHelper.WqlQueryAll(wmiClassName)))
                 {
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (var instance in instances)
                     {
-                        T objT = new T();
+                        T objT = new();
 
                         using (instance)
                         {
