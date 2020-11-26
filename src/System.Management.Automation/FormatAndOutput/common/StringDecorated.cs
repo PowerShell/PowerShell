@@ -14,6 +14,7 @@ namespace System.Management.Automation.Internal
         private readonly bool _isDecorated;
         private readonly string _text;
         private string _plaintextcontent;
+
         private string _plaintext
         {
             get
