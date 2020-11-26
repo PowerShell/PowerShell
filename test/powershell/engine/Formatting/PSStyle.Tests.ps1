@@ -67,6 +67,17 @@ Describe 'Tests for $PSStyle automatic variable' {
             Yellow = "`e[43m"
             LightYellow = "`e[103m"
         }
+
+        function Get-TestCases($hashtable) {
+            $testcases = [System.Collections.Generic.List[hashtable]]::new()
+            foreach ($key in $hashtable.Keys) {
+                $testcases.Add(
+                    @{ Key = $key; Value = $hashtable[$key] }
+                )
+            }
+
+            return $testcases
+        }
     }
 
     AfterAll {
@@ -78,45 +89,27 @@ Describe 'Tests for $PSStyle automatic variable' {
         $PSStyle.OutputRendering | Should -BeExactly 'Automatic'
     }
 
-    It '$PSStyle has correct defaults for styles' {
-        foreach ($style in $styleDefaults.Keys) {
-            $PSStyle.$style | Should -BeExactly $styleDefaults[$style] -Because "Style = $style"
-        }
+    It '$PSStyle has correct defaults for style <key>' -TestCases (Get-TestCases $styleDefaults) {
+        param($key, $value)
+
+        $PSStyle.$key | Should -BeExactly $value
     }
 
-    It '$PSStyle.Formatting has expected members' {
-        $psstyle.Formatting.psobject.properties.name | ForEach-Object {
-            $formattingDefaults.Keys | Should -Contain $_
-        }
+    It '$PSStyle.Formatting has correct default for <key>' -TestCases (Get-TestCases $formattingDefaults) {
+        param($key, $value)
+
+        $PSStyle.Formatting.$key | Should -BeExactly $value
     }
 
-    It '$PSStyle.Formatting has correct defaults' {
-        foreach ($style in $formattingDefaults.Keys) {
-            $PSStyle.Formatting.$style | Should -BeExactly $formattingDefaults[$style] -Because "Style = $style"
-        }
+    It '$PSStyle.Foreground has correct default for <key>' -TestCases (Get-TestCases $foregroundDefaults) {
+        param($key, $value)
+
+        $PSStyle.Foreground.$key | Should -BeExactly $value
     }
 
-    It '$PSStyle.Foreground has expected members' {
-        $psstyle.Foreground.psobject.properties.name | ForEach-Object {
-            $foregroundDefaults.Keys | Should -Contain $_
-        }
-    }
+    It '$PSStyle.Background has correct default for <key>' -TestCases (Get-TestCases $backgroundDefaults) {
+        param($key, $value)
 
-    It '$PSStyle.Foreground has correct defaults' {
-        foreach ($style in $foregroundDefaults.Keys) {
-            $PSStyle.Foreground.$style | Should -BeExactly $foregroundDefaults[$style] -Because "Style = $style"
-        }
-    }
-
-    It '$PSStyle.Background has expected members' {
-        $psstyle.Background.psobject.properties.name | ForEach-Object {
-            $backgroundDefaults.Keys | Should -Contain $_
-        }
-    }
-
-    It '$PSStyle.Background has correct defaults' {
-        foreach ($style in $backgroundDefaults.Keys) {
-            $PSStyle.Background.$style | Should -BeExactly $backgroundDefaults[$style] -Because "Style = $style"
-        }
+        $PSStyle.Background.$key | Should -BeExactly $value
     }
 }
