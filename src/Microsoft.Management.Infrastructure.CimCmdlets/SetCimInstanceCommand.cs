@@ -256,8 +256,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IDictionary property;
 
         /// <summary>
+        /// <para>
         /// The following is the definition of the input parameter "PassThru",
         /// indicate whether Set-CimInstance should output modified result instance or not.
+        /// </para>
         /// <para>
         /// True indicates output the result instance, otherwise output nothing as by default
         /// behavior.

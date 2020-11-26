@@ -91,20 +91,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// ComputerName of the session
         /// </para>
+        /// </summary>
         /// <remarks>
         /// return value could be null
         /// </remarks>
-        /// </summary>
         internal virtual string ComputerName { get; }
 
         /// <summary>
         /// <para>
         /// CimInstance on which the current operation against.
         /// </para>
+        /// </summary>
         /// <remarks>
         /// return value could be null
         /// </remarks>
-        /// </summary>
         internal virtual CimInstance TargetCimInstance { get; }
     }
     #endregion

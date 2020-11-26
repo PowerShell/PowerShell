@@ -97,7 +97,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// <para>
         /// The unit is Second.
-        /// <para>
+        /// </para>
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -153,9 +153,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If the argument is not given, a default SessionOption will be created for
         /// the session in .NET API layer.
         /// </para>
+        /// <para>
         /// If a <see cref="DCOMSessionOption"/> object is passed, then
         /// connection is made using DCOM. If a <see cref="WsManSessionOption"/>
         /// object is passed, then connection is made using WsMan.
+        /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public Microsoft.Management.Infrastructure.Options.CimSessionOptions SessionOption { get; set; }
