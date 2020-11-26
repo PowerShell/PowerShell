@@ -77,6 +77,19 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $actualDebug.Message | Should -BeExactly 'Debug!'
     }
 
+    It 'Verifies progress data streaming' {
+
+        $ps = [Powershell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace)
+
+        $ps.Commands.AddScript("`$ProgressPreference='Continue'; 1..2 | ForEach-Object -Parallel { Write-Progress -Activity Progress -Status Running }") | Out-Null
+        $ps.Invoke()
+        $pr = $ps.Streams.Progress.ReadAll()
+        $pr.Count | Should -be 2
+        $pr[0].Activity | Should -be Progress
+        $pr[0].StatusDescription | Should -be Running
+        $ps.Dispose()
+    }
+ 
     It 'Verifies information data streaming' {
 
         $actualInformation = 1..1 | ForEach-Object -Parallel { Write-Information "Information!" } 6>&1
