@@ -268,7 +268,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void GetModuleNameAndVersion(string psmodulePathRoot, string filePath, out string moduleName, out Version moduleVersion)
+        private static void GetModuleNameAndVersion(string psmodulePathRoot, string filePath, out string moduleName, out Version moduleVersion)
         {
             moduleVersion = null;
             moduleName = null;

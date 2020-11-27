@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path"></param>
         /// <param name="e"></param>
-        private void ThrowPathMustBeValidContainersException(string path, Exception e)
+        private static void ThrowPathMustBeValidContainersException(string path, Exception e)
         {
             throw new UpdatableHelpSystemException("PathMustBeValidContainers",
                 StringUtil.Format(HelpDisplayStrings.PathMustBeValidContainers, path), ErrorCategory.InvalidArgument,

@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject IfHashtableWrapAsPSCustomObject(PSObject target, out bool wrapped)
+        private static PSObject IfHashtableWrapAsPSCustomObject(PSObject target, out bool wrapped)
         {
             wrapped = false;
 

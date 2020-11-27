@@ -2272,7 +2272,7 @@ namespace System.Management.Automation
             return driveRootRelativeWorkingPath;
         }
 
-        private bool HasRelativePathTokens(string path)
+        private static bool HasRelativePathTokens(string path)
         {
             string comparePath = path.Replace('/', '\\');
 

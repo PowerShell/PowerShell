@@ -988,7 +988,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public PowerShellTraceTask Task { get; set; } = PowerShellTraceTask.None;
 
-        private bool IsEtwSupported
+        private static bool IsEtwSupported
         {
             get
             {

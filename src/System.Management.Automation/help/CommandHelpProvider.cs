@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
         #region Help Provider Interface
 
-        private void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
+        private static void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -132,7 +132,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string GetHelpName(CommandInfo commandInfo)
+        private static string GetHelpName(CommandInfo commandInfo)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 

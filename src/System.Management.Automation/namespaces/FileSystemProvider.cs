@@ -709,7 +709,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="drive"></param>
         /// <returns></returns>
-        private bool IsNetworkMappedDrive(PSDriveInfo drive)
+        private static bool IsNetworkMappedDrive(PSDriveInfo drive)
         {
             bool shouldMapNetworkDrive = (drive != null && !string.IsNullOrEmpty(drive.Root) && PathIsNetworkPath(drive.Root)) &&
                                          (drive.Persist || (drive.Credential != null && !drive.Credential.Equals(PSCredential.Empty)));
@@ -789,7 +789,7 @@ namespace Microsoft.PowerShell.Commands
         /// PS Drive Info.
         /// </param>
         /// <returns>True if the drive can be persisted or else false.</returns>
-        private bool IsSupportedDriveForPersistence(PSDriveInfo drive)
+        private static bool IsSupportedDriveForPersistence(PSDriveInfo drive)
         {
             bool isSupportedDriveForPersistence = false;
             if (drive != null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
@@ -4203,7 +4203,7 @@ namespace Microsoft.PowerShell.Commands
             SafeInvokeCommand.Invoke(ps, this, null, false);
         }
 
-        private bool ValidRemoteSessionForScripting(Runspace runspace)
+        private static bool ValidRemoteSessionForScripting(Runspace runspace)
         {
             if (runspace is not RemoteRunspace)
             {
@@ -4768,7 +4768,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Returns a hash table with metadata about this file info.
         //
-        private Hashtable GetFileMetadata(FileInfo file)
+        private static Hashtable GetFileMetadata(FileInfo file)
         {
             Hashtable metadata = new Hashtable();
 
@@ -6137,7 +6137,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if !UNIX
-        private bool IsSameWindowsVolume(string source, string destination)
+        private static bool IsSameWindowsVolume(string source, string destination)
         {
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
