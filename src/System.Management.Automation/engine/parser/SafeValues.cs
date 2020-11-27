@@ -480,7 +480,7 @@ namespace System.Management.Automation.Language
         // this can throw, but there really isn't useful information we can add, as the
         // offending expression will be presented in the case of any failure
         //
-        private object GetSingleValueFromTarget(object target, object index)
+        private static object GetSingleValueFromTarget(object target, object index)
         {
             var targetString = target as string;
             if (targetString != null)
@@ -517,7 +517,7 @@ namespace System.Management.Automation.Language
             throw new Exception();
         }
 
-        private object GetIndexedValueFromTarget(object target, object index)
+        private static object GetIndexedValueFromTarget(object target, object index)
         {
             var indexArray = index as object[];
             return indexArray != null ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);

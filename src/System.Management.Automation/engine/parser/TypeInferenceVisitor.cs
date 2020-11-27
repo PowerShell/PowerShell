@@ -1699,7 +1699,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private void AddTypesFromMethodCacheEntry(
+        private static void AddTypesFromMethodCacheEntry(
             DotNetAdapter.MethodCacheEntry methodCacheEntry,
             List<PSTypeName> result,
             bool isInvokeMemberExpressionAst)
@@ -2021,7 +2021,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="inferredTypes">The inferred types all the items in the array.</param>
         /// <returns>The inferred strongly typed array type.</returns>
-        private PSTypeName GetArrayType(IEnumerable<PSTypeName> inferredTypes)
+        private static PSTypeName GetArrayType(IEnumerable<PSTypeName> inferredTypes)
         {
             PSTypeName foundType = null;
             foreach (PSTypeName inferredType in inferredTypes)
@@ -2077,7 +2077,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="enumerableType">The type to infer enumerated item type from.</param>
         /// <returns>The inferred enumerated item type.</returns>
-        private Type GetMostSpecificEnumeratedItemType(Type enumerableType)
+        private static Type GetMostSpecificEnumeratedItemType(Type enumerableType)
         {
             if (enumerableType.IsArray)
             {
@@ -2153,7 +2153,7 @@ namespace System.Management.Automation
         /// The value of <paramref name="interfaceType"/> if it can be used to infer a specific
         /// enumerated type, otherwise <see langword="null"/>.
         /// </returns>
-        private Type GetGenericCollectionLikeInterface(
+        private static Type GetGenericCollectionLikeInterface(
             Type interfaceType,
             ref bool hasSeenNonGeneric,
             ref bool hasSeenDictionaryEnumerator)
@@ -2257,7 +2257,7 @@ namespace System.Management.Automation
         /// The potentially enumerable types to infer enumerated type from.
         /// </param>
         /// <returns>The enumerated item types.</returns>
-        private IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
+        private static IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
         {
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
             {

@@ -49,8 +49,7 @@ namespace System.Management.Automation.Internal.Host
             _internalRawUI.ThrowNotInteractive();
         }
 
-        private
-        void
+        private static void
         ThrowPromptNotInteractive(string promptMessage)
         {
             string message = StringUtil.Format(HostInterfaceExceptionsStrings.HostFunctionPromptNotImplemented, promptMessage);

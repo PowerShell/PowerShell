@@ -895,7 +895,7 @@ namespace System.Management.Automation
         /// <returns>
         /// Attribute's proxy string.
         /// </returns>
-        private string GetProxyAttributeData(Attribute attrib, string prefix)
+        private static string GetProxyAttributeData(Attribute attrib, string prefix)
         {
             string result;
 
@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void CheckForReservedParameter(string name)
+        private static void CheckForReservedParameter(string name)
         {
             if (name.Equals("SelectProperty", StringComparison.OrdinalIgnoreCase)
                 ||

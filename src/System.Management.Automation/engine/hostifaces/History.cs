@@ -755,7 +755,7 @@ namespace Microsoft.PowerShell.Commands
         /// Get the current history size.
         /// </summary>
         /// <returns></returns>
-        private int GetHistorySize()
+        private static int GetHistorySize()
         {
             int historySize = 0;
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
@@ -1315,7 +1315,7 @@ namespace Microsoft.PowerShell.Commands
         /// in the pipeline. If there are more than one element in pipeline
         /// (ex A | Invoke-History 2 | B) then we cannot do this replacement.
         /// </summary>
-        private void ReplaceHistoryString(HistoryInfo entry, LocalRunspace localRunspace)
+        private static void ReplaceHistoryString(HistoryInfo entry, LocalRunspace localRunspace)
         {
             var pipeline = (LocalPipeline)localRunspace.GetCurrentlyRunningPipeline();
             if (pipeline.AddToHistory)

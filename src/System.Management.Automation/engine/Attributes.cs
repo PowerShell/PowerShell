@@ -1083,7 +1083,7 @@ namespace System.Management.Automation
             _rangeKind = kind;
         }
 
-        private void ValidateRange(object element, ValidateRangeKind rangeKind)
+        private static void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
             Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)

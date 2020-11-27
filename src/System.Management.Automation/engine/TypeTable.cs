@@ -277,7 +277,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
+        private static bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
         {
             var propertySet = member as PropertySetData;
             if (propertySet != null)
@@ -4567,7 +4567,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Helper method to load content for a module.
         /// </summary>
-        private string GetModuleContents(
+        private static string GetModuleContents(
             string moduleName,
             string fileToLoad,
             ConcurrentBag<string> errors,

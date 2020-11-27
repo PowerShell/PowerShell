@@ -1816,7 +1816,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
+        private static void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
         {
             foreach (KeyValuePair<string, PSVariable> entry in scope.Variables)
             {

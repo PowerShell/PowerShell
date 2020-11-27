@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        private bool IsValidGacAssembly(string assemblyName)
+        private static bool IsValidGacAssembly(string assemblyName)
         {
 #if UNIX
             return false;

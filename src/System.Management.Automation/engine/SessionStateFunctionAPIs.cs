@@ -220,7 +220,7 @@ namespace System.Management.Automation
             return GetFunction(name, CommandOrigin.Internal);
         }
 
-        private IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
+        private static IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
         {
             if (ipmp == null || ipmp.Body.ParamBlock == null)
                 yield break;

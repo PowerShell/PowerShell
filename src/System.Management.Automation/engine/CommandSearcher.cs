@@ -842,7 +842,7 @@ namespace System.Management.Automation
         // Don't return commands to the user if that might result in:
         //     - Trusted commands calling untrusted functions that the user has overridden
         //     - Debug prompts calling internal functions that are likely to have code injection
-        private bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo? result, ExecutionContext executionContext)
+        private static bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo? result, ExecutionContext executionContext)
         {
             if (result == null)
             {

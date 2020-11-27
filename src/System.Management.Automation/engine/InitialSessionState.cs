@@ -2584,7 +2584,7 @@ namespace System.Management.Automation.Runspaces
             return null;
         }
 
-        private string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
+        private static string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
         {
             Collection<string> modulesToImport = new Collection<string>();
             HashSet<string> commandsToResolve = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -3072,7 +3072,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="moduleName"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private IEnumerable<CommandInfo> LookupCommands(
+        private static IEnumerable<CommandInfo> LookupCommands(
             string commandPattern,
             string moduleName,
             ExecutionContext context)

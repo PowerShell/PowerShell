@@ -2955,6 +2955,10 @@ namespace System.Management.Automation
             }
         }
 
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private bool DuplicateRefIdsAllowed
         {
             get
@@ -3194,7 +3198,7 @@ namespace System.Management.Automation
         internal const string CimHashCodeProperty = "Hash";
         internal const string CimMiXmlProperty = "MiXml";
 
-        private bool RehydrateCimInstanceProperty(
+        private static bool RehydrateCimInstanceProperty(
             CimInstance cimInstance,
             PSPropertyInfo deserializedProperty,
             HashSet<string> namesOfModifiedProperties)
@@ -5928,7 +5932,7 @@ namespace System.Management.Automation
 
         #region Plumbing to make Hashtable reject all non-primitive types
 
-        private string VerifyKey(object key)
+        private static string VerifyKey(object key)
         {
             key = PSObject.Base(key);
             string keyAsString = key as string;
@@ -6028,7 +6032,7 @@ namespace System.Management.Automation
         /// </exception>
         public override void Add(object key, object value)
         {
-            string keyAsString = this.VerifyKey(key);
+            string keyAsString = VerifyKey(key);
             this.VerifyValue(value);
             base.Add(keyAsString, value);
         }
@@ -6056,7 +6060,7 @@ namespace System.Management.Automation
 
             set
             {
-                string keyAsString = this.VerifyKey(key);
+                string keyAsString = VerifyKey(key);
                 this.VerifyValue(value);
                 base[keyAsString] = value;
             }
