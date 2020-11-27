@@ -382,7 +382,7 @@ namespace PSTests.Sequential
             CreateBrokenConfigFile(currentUserConfigFile);
         }
 
-        private void CreateBrokenConfigFile(string fileName)
+        private static void CreateBrokenConfigFile(string fileName)
         {
             File.WriteAllText(fileName, "[abbra");
         }
