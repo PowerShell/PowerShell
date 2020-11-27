@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)
         {
-            StringBuilder raw = new StringBuilder();
+            StringBuilder raw = new();
 
             string protocol = WebResponseHelper.GetProtocol(response);
             if (!string.IsNullOrEmpty(protocol))
