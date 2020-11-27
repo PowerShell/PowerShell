@@ -123,7 +123,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationBase"/> class.
         /// </summary>
         public CmdletOperationBase(Cmdlet cmdlet)
         {
@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationRemoveCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationRemoveCimInstance"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationRemoveCimInstance(Cmdlet cmdlet,
@@ -207,7 +207,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationSetCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationSetCimInstance"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationSetCimInstance(Cmdlet cmdlet,
@@ -285,7 +285,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationInvokeCimMethod : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationInvokeCimMethod"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationInvokeCimMethod(Cmdlet cmdlet,
@@ -350,7 +350,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationTestCimSession : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationTestCimSession"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationTestCimSession(Cmdlet cmdlet,

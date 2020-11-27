@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="RemoveCimSessionCommand"/> class.
         /// </summary>
         public RemoveCimSessionCommand()
             : base(parameters, parameterSets)

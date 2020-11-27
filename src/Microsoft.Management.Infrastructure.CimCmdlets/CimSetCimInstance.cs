@@ -19,9 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSetCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimSetCimInstanceContext"/> class.
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theCollection"></param>
@@ -63,9 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimSetCimInstance : CimGetInstance
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimSetCimInstance"/> class.
         /// </summary>
         public CimSetCimInstance()
             : base()

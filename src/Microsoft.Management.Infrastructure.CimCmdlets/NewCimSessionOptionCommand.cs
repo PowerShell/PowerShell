@@ -45,7 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NewCimSessionOptionCommand"/> class.
         /// </summary>
         public NewCimSessionOptionCommand()
             : base(parameters, parameterSets)

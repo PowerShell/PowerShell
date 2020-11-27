@@ -65,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class InvocationContext
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="InvocationContext"/> class.
         /// </summary>
         /// <param name="proxy"></param>
         internal InvocationContext(CimSessionProxy proxy)
@@ -78,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="InvocationContext"/> class.
         /// </summary>
         /// <param name="proxy"></param>
         internal InvocationContext(string computerName, CimInstance targetCimInstance)
@@ -135,7 +135,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CmdletActionEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CmdletActionEventArgs"/> class.
         /// </summary>
         /// <param name="action">CimBaseAction object bound to the event.</param>
         public CmdletActionEventArgs(CimBaseAction action)
@@ -152,7 +152,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class OperationEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="OperationEventArgs"/> class.
         /// </summary>
         /// <param name="operationCancellation">Object used to cancel the operation.</param>
         /// <param name="operation">Async observable operation.</param>
@@ -317,8 +317,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
-        /// Then create wrapper object by given CimSessionProxy object.
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
         /// </summary>
+        /// <remarks>
+        /// Then create wrapper object by given CimSessionProxy object.
+        /// </remarks>
         /// <param name="computerName"></param>
         public CimSessionProxy(CimSessionProxy proxy)
         {
@@ -331,9 +334,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         public CimSessionProxy(string computerName)
         {
@@ -342,10 +348,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
         public CimSessionProxy(string computerName, CimSessionOptions sessionOptions)
@@ -355,9 +364,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and cimInstance. Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
         public CimSessionProxy(string computerName, CimInstance cimInstance)
@@ -397,9 +409,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name,
         /// session options.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
         /// <param name="operOptions">Used when create async operation.</param>
@@ -410,9 +425,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(string computerName, CimOperationOptions operOptions)
@@ -422,8 +440,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create wrapper object by given session object.
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
         /// </summary>
+        /// <remarks>
+        /// Create wrapper object by given session object.
+        /// </remarks>
         /// <param name="session"></param>
         public CimSessionProxy(CimSession session)
         {
@@ -431,8 +452,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Create wrapper object by given session object.
+        /// Initializes a new instance of the <see cref="CimSessionProxy"/> class.
         /// </summary>
+        /// <remarks>
+        /// Create wrapper object by given session object.
+        /// </remarks>
         /// <param name="session"></param>
         /// <param name="operOptions">Used when create async operation.</param>
         public CimSessionProxy(CimSession session, CimOperationOptions operOptions)
@@ -1900,10 +1924,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxyTestConnection"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
         public CimSessionProxyTestConnection(string computerName, CimSessionOptions sessionOptions)
@@ -1949,9 +1976,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxyGetCimClass"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         public CimSessionProxyGetCimClass(string computerName)
             : base(computerName)
@@ -1959,10 +1989,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxyGetCimClass"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
         public CimSessionProxyGetCimClass(CimSession session)
@@ -2100,9 +2133,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxyNewCimInstance"/> class.
+        /// <summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         public CimSessionProxyNewCimInstance(string computerName, CimNewCimInstance operation)
             : base(computerName)
@@ -2111,10 +2147,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxyNewCimInstance"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
         public CimSessionProxyNewCimInstance(CimSession session, CimNewCimInstance operation)
@@ -2172,9 +2211,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         #region constructors
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxySetCimInstance"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given <see cref="CimSessionProxy"/> object.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="originalProxy"><see cref="CimSessionProxy"/> object to clone.</param>
         /// <param name="passThru">PassThru, true means output the modified instance; otherwise does not output.</param>
         public CimSessionProxySetCimInstance(CimSessionProxy originalProxy, bool passThru)
@@ -2184,9 +2226,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxySetCimInstance"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
         /// <param name="passThru"></param>
@@ -2199,10 +2244,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimSessionProxySetCimInstance"/> class.
+        /// </summary>
+        /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.
         /// Then create wrapper object.
-        /// </summary>
+        /// </remarks>
         /// <param name="computerName"></param>
         /// <param name="sessionOptions"></param>
         public CimSessionProxySetCimInstance(CimSession session, bool passThru)

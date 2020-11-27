@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="GetCimSessionCommand"/> class.
         /// </summary>
         public GetCimSessionCommand()
             : base(parameters, parameterSets)

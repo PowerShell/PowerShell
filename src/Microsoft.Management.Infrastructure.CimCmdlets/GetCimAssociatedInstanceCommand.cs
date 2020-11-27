@@ -33,7 +33,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="GetCimAssociatedInstanceCommand"/> class.
         /// </summary>
         public GetCimAssociatedInstanceCommand()
             : base(parameters, parameterSets)

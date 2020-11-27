@@ -224,9 +224,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// <para>
-        /// The constructor.
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimSessionState"/> class.
         /// </summary>
         internal CimSessionState()
         {
@@ -745,7 +743,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimSessionBase"/> class.
         /// </summary>
         public CimSessionBase()
         {
@@ -868,9 +866,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal class CimTestCimSessionContext : XOperationContextBase
         {
             /// <summary>
-            /// <para>
-            /// The constructor.
-            /// </para>
+            /// Initializes a new instance of the <see cref="CimTestCimSessionContext"/> class.
             /// </summary>
             /// <param name="theProxy"></param>
             /// <param name="wrapper"></param>
@@ -890,9 +886,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
-        /// The constructor.
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimNewSession"/> class.
         /// </summary>
         internal CimNewSession() : base()
         {
@@ -1074,7 +1068,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetSession : CimSessionBase
     {
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimGetSession"/> class.
         /// </summary>
         public CimGetSession() : base()
         {
@@ -1156,7 +1150,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static readonly string RemoveCimSessionActionName = "Remove CimSession";
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimRemoveSession"/> class.
         /// </summary>
         public CimRemoveSession() : base()
         {
@@ -1226,7 +1220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimTestSession : CimAsyncOperation
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimTestSession"/> class.
         /// </summary>
         internal CimTestSession()
             : base()
