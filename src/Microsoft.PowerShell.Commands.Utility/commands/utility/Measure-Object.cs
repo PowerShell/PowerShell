@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell.Commands
             // Keep track of which properties are counted for an
             // input object so that repeated properties won't be
             // counted twice.
-            MeasureObjectDictionary<object> countedProperties = new MeasureObjectDictionary<object>();
+            MeasureObjectDictionary<object> countedProperties = new();
 
             // First iterate over the user-specified list of
             // properties...
@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!LanguagePrimitives.TryConvertTo(objValue, out numValue))
                 {
                     _nonNumericError = true;
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         PSTraceSource.NewInvalidOperationException(MeasureObjectStrings.NonNumericInputObject, objValue),
                         "NonNumericInputObject",
                         ErrorCategory.InvalidType,
@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
         private void WritePropertyNotFoundError(string propertyName, string errorId)
         {
             Diagnostics.Assert(Property != null, "no property and no InputObject should have been addressed");
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                     PSTraceSource.NewArgumentException("Property"),
                     errorId,
                     ErrorCategory.InvalidArgument,
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (shouldUseGenericMeasureInfo)
             {
-                GenericMeasureInfo gmi = new GenericMeasureInfo();
+                GenericMeasureInfo gmi = new();
                 gmi.Count = stat.count;
                 gmi.Sum = sum;
                 gmi.Average = average;
@@ -927,7 +927,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                GenericObjectMeasureInfo gomi = new GenericObjectMeasureInfo();
+                GenericObjectMeasureInfo gomi = new();
                 gomi.Count = stat.count;
                 gomi.Sum = sum;
                 gomi.Average = average;
@@ -945,7 +945,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A new TextMeasureInfo object.</returns>
         private TextMeasureInfo CreateTextMeasureInfo(Statistics stat)
         {
-            TextMeasureInfo tmi = new TextMeasureInfo();
+            TextMeasureInfo tmi = new();
 
             if (_measureCharacters)
                 tmi.Characters = stat.characters;
@@ -961,7 +961,7 @@ namespace Microsoft.PowerShell.Commands
         /// The observed statistics keyed by property name.
         /// If Property is not set, then the key used will be the value of thisObject.
         /// </summary>
-        private readonly MeasureObjectDictionary<Statistics> _statistics = new MeasureObjectDictionary<Statistics>();
+        private readonly MeasureObjectDictionary<Statistics> _statistics = new();
 
         /// <summary>
         /// Whether or not a numeric conversion error occurred.

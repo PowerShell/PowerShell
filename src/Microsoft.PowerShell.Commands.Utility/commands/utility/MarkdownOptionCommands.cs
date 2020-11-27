@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         var errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
 
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             new ArgumentException(errorMessage),
                             "InvalidObject",
                             ErrorCategory.InvalidArgument,
