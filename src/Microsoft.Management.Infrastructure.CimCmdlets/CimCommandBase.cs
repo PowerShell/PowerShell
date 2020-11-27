@@ -38,12 +38,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property ParameterSetName.
         /// </summary>
-        internal string ParameterSetName { get; } = null;
+        internal string ParameterSetName { get; }
 
         /// <summary>
         /// Whether the parameter is mandatory to the set.
         /// </summary>
-        internal bool IsMandatory { get; } = false;
+        internal bool IsMandatory { get; }
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>DefaultParameterSet</c>
         /// </summary>
-        internal bool IsDefaultParameterSet { get; } = false;
+        internal bool IsDefaultParameterSet { get; }
 
         /// <summary>
         /// Property <c>MandatoryParameterCount</c>
@@ -109,12 +109,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>IsValueSet</c>
         /// </summary>
-        internal bool IsValueSet { get; set; } = false;
+        internal bool IsValueSet { get; set; }
 
         /// <summary>
         /// Property <c>IsValueSetAtBeginProcess</c>
         /// </summary>
-        internal bool IsValueSetAtBeginProcess { get; set; } = false;
+        internal bool IsValueSetAtBeginProcess { get; set; }
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCount</c>

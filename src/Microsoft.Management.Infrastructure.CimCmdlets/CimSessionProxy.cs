@@ -1481,7 +1481,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// The current CimInstance object, against which issued
         /// current operation, it could be null.
         /// </summary>
-        internal CimInstance TargetCimInstance { get; private set; } = null;
+        internal CimInstance TargetCimInstance { get; private set; }
 
         internal bool IsTemporaryCimSession { get; private set; }
 
@@ -2193,7 +2193,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
 
-        internal CimNewCimInstance NewCimInstanceOperation { get; } = null;
+        internal CimNewCimInstance NewCimInstanceOperation { get; }
 
         #endregion
     }
