@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                     // unroll enumerables, including arrays.
 
                     bool printSeparator = false;
-                    StringBuilder result = new StringBuilder();
+                    StringBuilder result = new();
 
                     foreach (object element in enumerable)
                     {
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = ProcessObject(Object) ?? string.Empty;
 
-            HostInformationMessage informationMessage = new HostInformationMessage();
+            HostInformationMessage informationMessage = new();
             informationMessage.Message = result;
             informationMessage.NoNewLine = NoNewline.IsPresent;
 

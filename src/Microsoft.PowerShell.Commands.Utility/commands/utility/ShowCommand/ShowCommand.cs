@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Record the EndProcessing error.
         /// </summary>
-        private PSDataCollection<ErrorRecord> _errors = new PSDataCollection<ErrorRecord>();
+        private PSDataCollection<ErrorRecord> _errors = new();
 
         /// <summary>
         /// Field used for the NoCommonParameter parameter.
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_showCommandProxy.ScreenHeight < this.Height)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                                     new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_showCommandProxy.ScreenWidth < this.Width)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                                     new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder errorString = new StringBuilder();
+            StringBuilder errorString = new();
 
             for (int i = 0; i < _errors.Count; i++)
             {
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         private void RunScriptSilentlyAndWithErrorHookup(string script)
         {
             // errors are not created here, because there is a field for it used in the final pop up
-            PSDataCollection<object> output = new PSDataCollection<object>();
+            PSDataCollection<object> output = new();
 
             output.DataAdded += this.Output_DataAdded;
             _errors.DataAdded += this.Error_DataAdded;
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void IssueErrorForNoCommand()
         {
-            InvalidOperationException errorException = new InvalidOperationException(
+            InvalidOperationException errorException = new(
                 string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void IssueErrorForMoreThanOneCommand()
         {
-            InvalidOperationException errorException = new InvalidOperationException(
+            InvalidOperationException errorException = new(
                 string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,

@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                DebugRecord record = new DebugRecord(Message);
+                DebugRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                VerboseRecord record = new VerboseRecord(Message);
+                VerboseRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                WarningRecord record = new WarningRecord(Message);
+                WarningRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (tag.StartsWith("PS", StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        ErrorRecord er = new(
                             new InvalidOperationException(StringUtil.Format(UtilityCommonStrings.PSPrefixReservedInInformationTag, tag)),
                             "PSPrefixReservedInInformationTag", ErrorCategory.InvalidArgument, tag);
                         ThrowTerminatingError(er);

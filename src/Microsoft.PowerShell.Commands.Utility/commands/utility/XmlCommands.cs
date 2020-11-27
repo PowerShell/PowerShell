@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                 );
 
             // create xml writer
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            XmlWriterSettings xmlSettings = new();
             xmlSettings.CloseOutput = true;
             xmlSettings.Encoding = sw.Encoding;
             xmlSettings.Indent = true;
@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 // Loading to the XML Document
                 _ms.Position = 0;
-                StreamReader read = new StreamReader(_ms);
+                StreamReader read = new(_ms);
                 string data = read.ReadToEnd();
                 WriteObject(data);
 
@@ -498,13 +498,13 @@ namespace Microsoft.PowerShell.Commands
                 if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
                     // this is a trusted xml doc - the cmdlet generated the doc into a private memory stream
-                    XmlDocument xmldoc = new XmlDocument();
+                    XmlDocument xmldoc = new();
                     xmldoc.Load(_ms);
                     WriteObject(xmldoc);
                 }
                 else if (As.Equals("String", StringComparison.OrdinalIgnoreCase))
                 {
-                    StreamReader read = new StreamReader(_ms);
+                    StreamReader read = new(_ms);
                     string data = read.ReadToEnd();
                     WriteObject(data);
                 }
@@ -892,7 +892,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (XmlNode foundXmlNode in foundXmlNodes)
             {
-                SelectXmlInfo selectXmlInfo = new SelectXmlInfo();
+                SelectXmlInfo selectXmlInfo = new();
                 selectXmlInfo.Node = foundXmlNode;
                 selectXmlInfo.Pattern = XPath;
                 selectXmlInfo.Path = filePath;
@@ -968,8 +968,8 @@ namespace Microsoft.PowerShell.Commands
                 filePath,
                 exception.Message);
 
-            ArgumentException argumentException = new ArgumentException(errorMessage, exception);
-            ErrorRecord errorRecord = new ErrorRecord(argumentException, "ProcessingFile", ErrorCategory.InvalidArgument, filePath);
+            ArgumentException argumentException = new(errorMessage, exception);
+            ErrorRecord errorRecord = new(argumentException, "ProcessingFile", ErrorCategory.InvalidArgument, filePath);
 
             this.WriteError(errorRecord);
         }
@@ -996,15 +996,15 @@ namespace Microsoft.PowerShell.Commands
                 catch (NullReferenceException)
                 {
                     string message = StringUtil.Format(UtilityCommonStrings.SearchXMLPrefixNullError);
-                    InvalidOperationException e = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(e, "PrefixError", ErrorCategory.InvalidOperation, namespacetable);
+                    InvalidOperationException e = new(message);
+                    ErrorRecord er = new(e, "PrefixError", ErrorCategory.InvalidOperation, namespacetable);
                     WriteError(er);
                 }
                 catch (ArgumentNullException)
                 {
                     string message = StringUtil.Format(UtilityCommonStrings.SearchXMLPrefixNullError);
-                    InvalidOperationException e = new InvalidOperationException(message);
-                    ErrorRecord er = new ErrorRecord(e, "PrefixError", ErrorCategory.InvalidOperation, namespacetable);
+                    InvalidOperationException e = new(message);
+                    ErrorRecord er = new(e, "PrefixError", ErrorCategory.InvalidOperation, namespacetable);
                     WriteError(er);
                 }
             }
@@ -1033,7 +1033,7 @@ namespace Microsoft.PowerShell.Commands
                 (ParameterSetName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))))
             {
                 // If any file not resolved, execution stops. this is to make consistent with select-string.
-                List<string> fullresolvedPaths = new List<string>();
+                List<string> fullresolvedPaths = new();
                 foreach (string fpath in Path)
                 {
                     if (_isLiteralPath)
@@ -1049,8 +1049,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Cannot open File error
                             string message = StringUtil.Format(UtilityCommonStrings.FileOpenError, provider.FullName);
-                            InvalidOperationException e = new InvalidOperationException(message);
-                            ErrorRecord er = new ErrorRecord(e, "ProcessingFile", ErrorCategory.InvalidOperation, fpath);
+                            InvalidOperationException e = new(message);
+                            ErrorRecord er = new(e, "ProcessingFile", ErrorCategory.InvalidOperation, fpath);
                             WriteError(er);
                             continue;
                         }

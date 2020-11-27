@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private variables and methods
 
         // Instantiate a new instance of MailMessage
-        private readonly MailMessage _mMailMessage = new MailMessage();
+        private readonly MailMessage _mMailMessage = new();
 
         private SmtpClient _mSmtpClient = null;
 
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (FormatException e)
                 {
-                    ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, null);
+                    ErrorRecord er = new(e, "FormatException", ErrorCategory.InvalidType, null);
                     WriteError(er);
                     continue;
                 }
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (FormatException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, From);
+                ErrorRecord er = new(e, "FormatException", ErrorCategory.InvalidType, From);
                 ThrowTerminatingError(er);
             }
 
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(SmtpServer))
             {
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
+                ErrorRecord er = new(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
                 this.ThrowTerminatingError(er);
             }
 
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
                         PathUtils.ReportFileOpenFailure(this, filepath, e);
                     }
 
-                    Attachment mailAttachment = new Attachment(filepath);
+                    Attachment mailAttachment = new(filepath);
                     _mMailMessage.Attachments.Add(mailAttachment);
                 }
             }
@@ -362,30 +362,30 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (SmtpFailedRecipientsException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (SmtpException ex)
             {
                 if (ex.InnerException != null)
                 {
-                    ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                    ErrorRecord er = new(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
                 else
                 {
-                    ErrorRecord er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                    ErrorRecord er = new(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
             }
             catch (InvalidOperationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (System.Security.Authentication.AuthenticationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             finally
