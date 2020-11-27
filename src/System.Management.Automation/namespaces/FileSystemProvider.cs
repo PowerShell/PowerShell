@@ -2376,7 +2376,7 @@ namespace Microsoft.PowerShell.Commands
                             if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
                                 strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
                             {
-                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan().Slice(2));
+                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan(2));
                             }
 
                             GetFileSystemInfo(normalizedTargetPath, out isDirectory);

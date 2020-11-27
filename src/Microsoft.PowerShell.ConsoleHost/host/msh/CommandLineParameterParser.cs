@@ -1077,7 +1077,7 @@ namespace Microsoft.PowerShell
             static object ConvertToBoolIfPossible(string arg)
             {
                 // Before parsing we skip '$' if present.
-                return arg.Length > 0 && bool.TryParse(arg.AsSpan().Slice(arg[0] == '$' ? 1 : 0), out bool boolValue)
+                return arg.Length > 0 && bool.TryParse(arg.AsSpan(arg[0] == '$' ? 1 : 0), out bool boolValue)
                     ? (object)boolValue
                     : (object)arg;
             }
