@@ -1532,10 +1532,8 @@ namespace Microsoft.PowerShell.Commands
             if (e.JobStateInfo.State == JobState.Blocked)
             {
                 // increment count of blocked child jobs
-                lock (_syncObject)
-                {
-                    _blockedChildJobsCount++;
-                }
+                Interlocked.Increment(ref _blockedChildJobsCount);
+
                 // if any of the child job is blocked, we set state to blocked
                 SetJobState(JobState.Blocked, null);
                 return;
@@ -1553,19 +1551,8 @@ namespace Microsoft.PowerShell.Commands
                 _atleastOneChildJobFailed = true;
             }
 
-            bool allChildJobsFinished = false;
-            lock (_syncObject)
-            {
-                _finishedChildJobsCount++;
-
-                // We are done
-                if (_finishedChildJobsCount == ChildJobs.Count)
-                {
-                    allChildJobsFinished = true;
-                }
-            }
-
-            if (allChildJobsFinished)
+            // We are done
+            if (Interlocked.Increment(ref _blockedChildJobsCount) == ChildJobs.Count)
             {
                 // if any child job failed, set status to failed
                 // If stop was called set, status to stopped
@@ -1742,27 +1729,13 @@ namespace Microsoft.PowerShell.Commands
         /// case</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
         {
-            bool unblockjob = false;
-
-            lock (_syncObject)
-            {
-                _blockedChildJobsCount--;
-
-                if (_blockedChildJobsCount == 0)
-                {
-                    unblockjob = true;
-                }
-            }
-
-            if (unblockjob)
+            if (Interlocked.Decrement(ref _blockedChildJobsCount) == 0)
             {
                 SetJobState(JobState.Running, null);
             }
         }
 
         private ThrottleManager _throttleManager = new ThrottleManager();
-
-        private object _syncObject = new object();           // sync object
     }
 
     /// <summary>

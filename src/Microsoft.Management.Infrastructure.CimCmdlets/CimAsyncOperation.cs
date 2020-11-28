@@ -87,10 +87,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            lock (this.a_lock)
-            {
-                this.operationCount++;
-            }
+            Interlocked.Increment(ref this.operationCount);
         }
 
         /// <summary>
@@ -107,13 +104,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            lock (this.a_lock)
+            if (Interlocked.Decrement(ref this.operationCount) == 0)
             {
-                this.operationCount--;
-                if (this.operationCount == 0)
-                {
-                    this.moreActionEvent.Set();
-                }
+                this.moreActionEvent.Set();
             }
         }
 
@@ -542,11 +535,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         #region private members
-
-        /// <summary>
-        /// Lock object.
-        /// </summary>
-        private readonly object a_lock = new();
 
         /// <summary>
         /// Number of active operations.

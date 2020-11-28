@@ -18,6 +18,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web.Services;
 using System.Web.Services.Description;
 using System.Web.Services.Discovery;
@@ -273,7 +274,6 @@ namespace Microsoft.PowerShell.Commands
         #region private
 
         private static ulong s_sequenceNumber = 1;
-        private static object s_sequenceNumberLock = new object();
 
         /// <summary>
         /// Generates a random name.
@@ -296,11 +296,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            string sequenceString;
-            lock (s_sequenceNumberLock)
-            {
-                sequenceString = (s_sequenceNumber++).ToString(CultureInfo.InvariantCulture);
-            }
+            string sequenceString = Interlocked.Increment(ref s_sequenceNumber).ToString(CultureInfo.InvariantCulture);
 
             if (rndname.Length > 30)
             {

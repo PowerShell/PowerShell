@@ -12,6 +12,7 @@ using System.Management.Automation.Tracing;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Microsoft.PowerShell.ScheduledJob
 {
@@ -44,7 +45,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         // Task Action strings.
         private const string TaskExecutionPath = @"pwsh.exe";
         private const string TaskArguments = @"-NoLogo -NonInteractive -WindowStyle Hidden -Command ""Import-Module PSScheduledJob; $jobDef = [Microsoft.PowerShell.ScheduledJob.ScheduledJobDefinition]::LoadFromStore('{0}', '{1}'); $jobDef.Run()""";
-        private static object LockObject = new object();
         private static int CurrentId = 0;
         private static int DefaultExecutionHistoryLength = 32;
 
@@ -1883,10 +1883,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private static int GetCurrentId()
         {
-            lock (LockObject)
-            {
-                return ++CurrentId;
-            }
+            return Interlocked.Increment(ref CurrentId);
         }
 
         /// <summary>
