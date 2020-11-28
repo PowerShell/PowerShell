@@ -694,17 +694,20 @@ namespace Microsoft.PowerShell.Telemetry
         /// </summary>
         internal static void SendExperimentalFeatureStartupTelemetry()
         {
-            foreach (string name in ExperimentalFeature.EnabledExperimentalFeatureNames)
+            if (ExperimentalFeature.EnabledExperimentalFeatureNames is not null)
             {
-                if (ExperimentalFeature.IsModuleFeatureName(name))
+                foreach (string name in ExperimentalFeature.EnabledExperimentalFeatureNames)
                 {
-                    s_telemetryClient.GetMetric(TelemetryType.ExperimentalModuleFeatureActivation.ToString(), "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, name);
-                }
-                else if (ExperimentalFeature.IsEngineFeatureName(name))
-                {
-                    if (ExperimentalFeature.EngineExperimentalFeatureMap.TryGetValue(name, out ExperimentalFeature feature))
+                    if (ExperimentalFeature.IsModuleFeatureName(name))
                     {
-                        s_telemetryClient.GetMetric(TelemetryType.ExperimentalEngineFeatureActivation.ToString(), "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, feature.Name);
+                        s_telemetryClient.GetMetric(TelemetryType.ExperimentalModuleFeatureActivation.ToString(), "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, name);
+                    }
+                    else if (ExperimentalFeature.IsEngineFeatureName(name))
+                    {
+                        if (ExperimentalFeature.EngineExperimentalFeatureMap.TryGetValue(name, out ExperimentalFeature feature))
+                        {
+                            s_telemetryClient.GetMetric(TelemetryType.ExperimentalEngineFeatureActivation.ToString(), "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, feature.Name);
+                        }
                     }
                 }
             }
