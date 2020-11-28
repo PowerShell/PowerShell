@@ -694,6 +694,11 @@ namespace Microsoft.PowerShell.Telemetry
         /// </summary>
         internal static void SendExperimentalFeatureStartupTelemetry()
         {
+            if (!CanSendTelemetry)
+            {
+                return;
+            }
+
             if (ExperimentalFeature.EnabledExperimentalFeatureNames is not null)
             {
                 foreach (string name in ExperimentalFeature.EnabledExperimentalFeatureNames)
