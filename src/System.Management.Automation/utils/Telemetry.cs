@@ -7,6 +7,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -689,6 +690,28 @@ namespace Microsoft.PowerShell.Telemetry
         }
 
         /// <summary>
+        /// Send telemetry about enabled experimental features.
+        /// </summary>
+        internal static void SendExperimentalFeatureStartupTelemetry()
+        {
+            foreach (string name in ExperimentalFeature.EnabledExperimentalFeatureNames)
+            {
+                if (ExperimentalFeature.IsModuleFeatureName(name))
+                {
+                    s_telemetryClient.GetMetric(TelemetryType.ExperimentalModuleFeatureActivation.ToString(), "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, name);
+                }
+                else if (ExperimentalFeature.IsEngineFeatureName(name))
+                {
+                    if (ExperimentalFeature.EngineExperimentalFeatureMap.TryGetValue(name, out ExperimentalFeature feature))
+                    {
+                        s_telemetryClient.GetMetric(TelemetryType.ExperimentalEngineFeatureActivation.ToString(), "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, feature.Name);
+                    }
+                }
+            }
+
+        }
+
+        /// <summary>
         /// Try to read the file and collect the guid.
         /// </summary>
         /// <param name="telemetryFilePath">The path to the telemetry file.</param>
@@ -825,6 +848,47 @@ namespace Microsoft.PowerShell.Telemetry
             // something bad happened, turn off telemetry since the unique id wasn't set.
             CanSendTelemetry = false;
             return id;
+        }
+    }
+
+    /// <summary>
+    /// Send up telemetry lazy.
+    /// </summary>
+    /// <remarks>
+    /// This class allows to delay the initialization of the ApplicationInsightsTelemetry static class at startup.
+    /// </remarks>
+    internal static class PSTelemetry
+    {
+        internal static void SendExperimentalFeatureTelemetryMetricInBackground()
+        {
+            Task.Run(SendExperimentalFeatureTelemetryMetricAction());
+        }
+
+        // The dedicated method allows deferring ApplicationInsightsTelemetry static class initialization.
+        private static Action SendExperimentalFeatureTelemetryMetricAction()
+        {
+            return async () =>
+            {
+                await Task.Delay(500).ConfigureAwait(false);
+
+                ApplicationInsightsTelemetry.SendExperimentalFeatureStartupTelemetry();
+            };
+        }
+
+        internal static void SendPSCoreStartupTelemetryInBackground(string mode)
+        {
+            Task.Run(SendPSCoreStartupTelemetry(mode));
+        }
+
+        // The dedicated method allows deferring ApplicationInsightsTelemetry static class initialization.
+        private static Action SendPSCoreStartupTelemetry(string mode)
+        {
+            return async () =>
+            {
+                await Task.Delay(500).ConfigureAwait(false);
+
+                ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry(mode);
+            };
         }
     }
 }
