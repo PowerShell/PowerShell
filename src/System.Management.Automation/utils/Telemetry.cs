@@ -708,7 +708,6 @@ namespace Microsoft.PowerShell.Telemetry
                     }
                 }
             }
-
         }
 
         /// <summary>
