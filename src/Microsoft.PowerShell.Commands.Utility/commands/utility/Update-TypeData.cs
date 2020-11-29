@@ -905,6 +905,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true,
             ParameterSetName = FormatViewDefinitionSet, Mandatory = true)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = DynamicFormatSet, Mandatory = true)]
         [ValidateNotNullOrEmpty]
         public string TypeName { get; set; }
 
@@ -916,6 +918,34 @@ namespace Microsoft.PowerShell.Commands
         [Alias("FormatData")]
         [ValidateNotNull]
         public FormatViewDefinition[] FormatViewDefinition { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties to display in Table view.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = DynamicFormatSet)]
+        [ValidateNotNullOrEmpty]
+        public string[] TableProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties to display in List view.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = DynamicFormatSet)]
+        [ValidateNotNullOrEmpty]
+        public string[] ListProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets Property to display in Wide view.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = DynamicFormatSet)]
+        [ValidateNotNullOrEmpty]
+        public string WideProperty { get; set; }
+
+        /// <summary>
+        /// Gets or sets DefaultView.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = DynamicFormatSet)]
+        [ValidateNotNullOrEmpty]
+        public DefaultView DefaultView { get; set; } = DefaultView.Table;
 
         /// <summary>
         /// This method verifies if the Format database manager is shared and cannot be updated.
@@ -1084,7 +1114,81 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessDynamicFormat()
         {
-            throw new NotImplementedException();
+            TableControl tableControl;
+            ListControl listControl;
+            WideControl wideControl;
+
+            if (TableProperties != null)
+            {
+                var buildTableControl = TableControl
+                    .Create()
+                    .StartRowDefinition();
+
+                foreach (string tableProp in TableProperties)
+                {
+                    buildTableControl.AddPropertyColumn(tableProp);
+                }
+
+                tableControl = buildTableControl
+                    .EndRowDefinition()
+                    .EndTable();
+            }
+
+            if (ListProperties != null)
+            {
+                var buildListControl = ListControl
+                    .Create()
+                    .StartEntry();
+
+                foreach (string listProp in ListProperties)
+                {
+                    buildListControl.AddItemProperty(listProp);
+                }
+
+                listControl = buildListControl
+                    .EndEntry()
+                    .EndList();
+            }
+
+            if (WideProperty != null)
+            {
+                wideControl = WideControl
+                   .Create()
+                   .AddPropertyEntry(WideProperty)
+                   .EndWideControl();
+            }
+
+            
+
+            switch (DefaultView)
+            {
+                case DefaultView.Table:
+                    ProcessFormatFiles(
+                        new SessionStateFormatEntry(
+                            new ExtendedTypeDefinition(
+                                TypeName,
+                                new List<FormatViewDefinition> {
+                                    new FormatViewDefinition(
+                                        TypeName,
+                                        tableControl
+                                    ),
+                                    new FormatViewDefinition(
+                                        TypeName,
+                                        listControl
+                                     ),
+                                    new FormatViewDefinition(
+                                        TypeName,
+                                        wideControl
+                                    )
+                                }
+                    break;
+                case DefaultView.List:
+                    throw new NotImplementedException();
+                    break;
+                case DefaultView.Wide:
+                    throw new NotImplementedException();
+                    break;
+            }
         }
 
         private void ProcessStrongTypedFormatData()
@@ -1417,6 +1521,27 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(typedef);
             }
         }
+    }
+
+    /// <summary>
+    /// Enum to make auto comletion for view order parameter easy.
+    /// </summary>
+    public enum DefaultView
+    {
+        /// <summary>
+        /// Table view.
+        /// </summary>
+        Table,
+
+        /// <summary>
+        /// List view.
+        /// </summary>
+        List,
+
+        /// <summary>
+        /// Wide view.
+        /// </summary>
+        Wide
     }
 
     /// <summary>
