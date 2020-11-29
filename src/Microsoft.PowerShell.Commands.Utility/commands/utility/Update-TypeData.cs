@@ -901,15 +901,15 @@ namespace Microsoft.PowerShell.Commands
         protected const string DynamicFormatSet = "DynamicFormat";
 
         /// <summary>
-        /// TypeName to add
+        /// Gets or sets TypeName to add.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true,
             ParameterSetName = FormatViewDefinitionSet, Mandatory = true)]
         [ValidateNotNullOrEmpty]
-        public string TypeName {get; set;}
+        public string TypeName { get; set; }
 
         /// <summary>
-        /// FormatViewDefinition to add for given TypeName
+        /// Gets or sets FormatViewDefinition to add for given TypeName.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true,
             ParameterSetName = FormatViewDefinitionSet, Mandatory = true)]
@@ -948,7 +948,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ProcessFormatFiles(SessionStateFormatEntry strongEntry = null) {
+        private void ProcessFormatFiles(SessionStateFormatEntry strongEntry = null)
+        {
             Collection<string> prependPathTotal = Glob(this.PrependPath, "FormatPrependPathException", this);
             Collection<string> appendPathTotal = Glob(this.AppendPath, "FormatAppendPathException", this);
 
@@ -963,129 +964,131 @@ namespace Microsoft.PowerShell.Commands
             // filename is available
             string target = UpdateDataStrings.UpdateTarget;
 
-            if (Context.InitialSessionState != null)
+            if (Context.InitialSessionState == null)
             {
-                if (Context.InitialSessionState.DisableFormatUpdates)
+                Dbg.Assert(false, "InitialSessionState must be non-null for Update-FormatData to work");
+                return;
+            }
+
+            if (Context.InitialSessionState.DisableFormatUpdates)
+            {
+                throw new PSInvalidOperationException(UpdateDataStrings.FormatUpdatesDisabled);
+            }
+
+            // This hashSet is to detect if there are duplicate format files
+            var fullFileNameHash = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            var newFormats = new Collection<SessionStateFormatEntry>();
+
+            // Insert strongly typed format information here, as if they were prepended paths.
+            if (strongEntry != null)
+            { newFormats.Add(strongEntry); }
+
+            for (int i = prependPathTotal.Count - 1; i >= 0; i--)
+            {
+                string formattedTarget = string.Format(CultureInfo.CurrentCulture, target, prependPathTotal[i]);
+
+                if (ShouldProcess(formattedTarget, action))
                 {
-                    throw new PSInvalidOperationException(UpdateDataStrings.FormatUpdatesDisabled);
-                }
-
-                // This hashSet is to detect if there are duplicate format files
-                var fullFileNameHash = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-                var newFormats = new Collection<SessionStateFormatEntry>();
-
-                // Insert strongly typed format information here, as if they were prepended paths.
-                if (strongEntry != null)
-                    newFormats.Add(strongEntry);
-
-                for (int i = prependPathTotal.Count - 1; i >= 0; i--)
-                {
-                    string formattedTarget = string.Format(CultureInfo.CurrentCulture, target, prependPathTotal[i]);
-
-                    if (ShouldProcess(formattedTarget, action))
+                    if (!fullFileNameHash.Contains(prependPathTotal[i]))
                     {
-                        if (!fullFileNameHash.Contains(prependPathTotal[i]))
-                        {
-                            fullFileNameHash.Add(prependPathTotal[i]);
-                            newFormats.Add(new SessionStateFormatEntry(prependPathTotal[i]));
-                        }
+                        fullFileNameHash.Add(prependPathTotal[i]);
+                        newFormats.Add(new SessionStateFormatEntry(prependPathTotal[i]));
                     }
                 }
+            }
 
-                // Always add InitialSessionState.Formats to the new list
-                foreach (SessionStateFormatEntry entry in Context.InitialSessionState.Formats)
+            // Always add InitialSessionState.Formats to the new list
+            foreach (SessionStateFormatEntry entry in Context.InitialSessionState.Formats)
+            {
+                if (entry.FileName != null)
                 {
-                    if (entry.FileName != null)
+                    if (!fullFileNameHash.Contains(entry.FileName))
                     {
-                        if (!fullFileNameHash.Contains(entry.FileName))
-                        {
-                            fullFileNameHash.Add(entry.FileName);
-                            newFormats.Add(entry);
-                        }
-                    }
-                    else
-                    {
+                        fullFileNameHash.Add(entry.FileName);
                         newFormats.Add(entry);
                     }
                 }
-
-                foreach (string appendPathTotalItem in appendPathTotal)
+                else
                 {
-                    string formattedTarget = string.Format(CultureInfo.CurrentCulture, target, appendPathTotalItem);
-
-                    if (ShouldProcess(formattedTarget, action))
-                    {
-                        if (!fullFileNameHash.Contains(appendPathTotalItem))
-                        {
-                            fullFileNameHash.Add(appendPathTotalItem);
-                            newFormats.Add(new SessionStateFormatEntry(appendPathTotalItem));
-                        }
-                    }
-                }
-
-                var originalFormats = Context.InitialSessionState.Formats;
-                try
-                {
-                    // Always rebuild the format information
-                    Context.InitialSessionState.Formats.Clear();
-                    var entries = new Collection<PSSnapInTypeAndFormatErrors>();
-
-                    // Now update the formats...
-                    foreach (SessionStateFormatEntry ssfe in newFormats)
-                    {
-                        string name = ssfe.FileName;
-                        PSSnapInInfo snapin = ssfe.PSSnapIn;
-                        if (snapin != null && !string.IsNullOrEmpty(snapin.Name))
-                        {
-                            name = snapin.Name;
-                        }
-
-                        if (ssfe.Formattable != null)
-                        {
-                            var ex = new PSInvalidOperationException(UpdateDataStrings.CannotUpdateFormatWithFormatTable);
-                            this.WriteError(new ErrorRecord(ex, "CannotUpdateFormatWithFormatTable", ErrorCategory.InvalidOperation, null));
-                            continue;
-                        }
-                        else if (ssfe.FormatData != null)
-                        {
-                            entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FormatData));
-                        }
-                        else
-                        {
-                            entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FileName));
-                        }
-
-                        Context.InitialSessionState.Formats.Add(ssfe);
-                    }
-
-                    if (entries.Count > 0)
-                    {
-                        Context.FormatDBManager.UpdateDataBase(entries, this.Context.AuthorizationManager, this.Context.EngineHostInterface, preValidated: false);
-                        FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingFormats",
-                            null,
-                            entries,
-                            FormatAndTypeDataHelper.Category.Formats);
-                    }
-                }
-                catch (RuntimeException e)
-                {
-                    // revert Formats if there is a failure
-                    Context.InitialSessionState.Formats.Clear();
-                    Context.InitialSessionState.Formats.Add(originalFormats);
-                    this.WriteError(new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation, null));
+                    newFormats.Add(entry);
                 }
             }
-            else
+
+            foreach (string appendPathTotalItem in appendPathTotal)
             {
-                Dbg.Assert(false, "InitialSessionState must be non-null for Update-FormatData to work");
+                string formattedTarget = string.Format(CultureInfo.CurrentCulture, target, appendPathTotalItem);
+
+                if (ShouldProcess(formattedTarget, action))
+                {
+                    if (!fullFileNameHash.Contains(appendPathTotalItem))
+                    {
+                        fullFileNameHash.Add(appendPathTotalItem);
+                        newFormats.Add(new SessionStateFormatEntry(appendPathTotalItem));
+                    }
+                }
+            }
+
+            var originalFormats = Context.InitialSessionState.Formats;
+            try
+            {
+                // Always rebuild the format information
+                Context.InitialSessionState.Formats.Clear();
+                var entries = new Collection<PSSnapInTypeAndFormatErrors>();
+
+                // Now update the formats...
+                foreach (SessionStateFormatEntry ssfe in newFormats)
+                {
+                    string name = ssfe.FileName;
+                    PSSnapInInfo snapin = ssfe.PSSnapIn;
+                    if (snapin != null && !string.IsNullOrEmpty(snapin.Name))
+                    {
+                        name = snapin.Name;
+                    }
+
+                    if (ssfe.Formattable != null)
+                    {
+                        var ex = new PSInvalidOperationException(UpdateDataStrings.CannotUpdateFormatWithFormatTable);
+                        this.WriteError(new ErrorRecord(ex, "CannotUpdateFormatWithFormatTable", ErrorCategory.InvalidOperation, null));
+                        continue;
+                    }
+                    else if (ssfe.FormatData != null)
+                    {
+                        entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FormatData));
+                    }
+                    else
+                    {
+                        entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FileName));
+                    }
+
+                    Context.InitialSessionState.Formats.Add(ssfe);
+                }
+
+                if (entries.Count > 0)
+                {
+                    Context.FormatDBManager.UpdateDataBase(entries, this.Context.AuthorizationManager, this.Context.EngineHostInterface, preValidated: false);
+                    FormatAndTypeDataHelper.ThrowExceptionOnError(
+                        "ErrorsUpdatingFormats",
+                        null,
+                        entries,
+                        FormatAndTypeDataHelper.Category.Formats);
+                }
+            }
+            catch (RuntimeException e)
+            {
+                // revert Formats if there is a failure
+                Context.InitialSessionState.Formats.Clear();
+                Context.InitialSessionState.Formats.Add(originalFormats);
+                this.WriteError(new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation, null));
             }
         }
 
-        private void ProcessDynamicFormat() {
+        private void ProcessDynamicFormat()
+        {
             throw new NotImplementedException();
         }
 
-        private void ProcessStrongTypedFormatData() {
+        private void ProcessStrongTypedFormatData()
+        {
             ProcessFormatFiles(
                 new SessionStateFormatEntry(
                     new ExtendedTypeDefinition(
