@@ -986,7 +986,9 @@ namespace Microsoft.PowerShell.Commands
             // There are file path input but they did not pass the validation in the method Glob
             if ((PrependPath.Length > 0 || AppendPath.Length > 0) &&
                 prependPathTotal.Count == 0 && appendPathTotal.Count == 0)
-            { return; }
+            { 
+                return; 
+            }
 
             string action = UpdateDataStrings.UpdateFormatDataAction;
 
@@ -1011,7 +1013,9 @@ namespace Microsoft.PowerShell.Commands
 
             // Insert strongly typed format information here, as if they were prepended paths.
             if (strongEntry != null)
-            { newFormats.Add(strongEntry); }
+            { 
+                newFormats.Add(strongEntry); 
+            }
 
             for (int i = prependPathTotal.Count - 1; i >= 0; i--)
             {
@@ -1122,14 +1126,7 @@ namespace Microsoft.PowerShell.Commands
             listView = TryGetListView(listView);
             wideView = TryGetWideView(wideView);
 
-            if (tableView == null
-                && listView == null
-                && wideView == null)
-            {
-                throw new ArgumentException("At least one of the views (Table, List or Wide) must be set.");
-            }
-
-            SetOrderedViewDefinitions(tableView, listView, wideView, formatViewDefinitions);
+            SetViewDefinitionOrder(tableView, listView, wideView, formatViewDefinitions);
 
             ProcessFormatFiles(
                 new SessionStateFormatEntry(
@@ -1138,54 +1135,35 @@ namespace Microsoft.PowerShell.Commands
                         formatViewDefinitions)));
         }
 
-        private void SetOrderedViewDefinitions(FormatViewDefinition tableView, FormatViewDefinition listView, FormatViewDefinition wideView, List<FormatViewDefinition> formatViewDefinitions)
+        private void SetViewDefinitionOrder(FormatViewDefinition tableView, FormatViewDefinition listView, FormatViewDefinition wideView, List<FormatViewDefinition> formatViewDefinitions)
         {
             switch (DefaultView)
             {
                 case DefaultView.Table:
-                    if (tableView != null)
-                    {
-                        formatViewDefinitions.Add(tableView);
-                    }
-                    if (listView != null)
-                    {
-                        formatViewDefinitions.Add(listView);
-                    }
-                    if (wideView != null)
-                    {
-                        formatViewDefinitions.Add(wideView);
-                    }
+                    TryAddView(tableView, formatViewDefinitions);
+                    TryAddView(listView, formatViewDefinitions);
+                    TryAddView(wideView, formatViewDefinitions);
                     break;
 
                 case DefaultView.List:
-                    if (listView != null)
-                    {
-                        formatViewDefinitions.Add(listView);
-                    }
-                    if (tableView != null)
-                    {
-                        formatViewDefinitions.Add(tableView);
-                    }
-                    if (wideView != null)
-                    {
-                        formatViewDefinitions.Add(wideView);
-                    }
+                    TryAddView(listView, formatViewDefinitions);
+                    TryAddView(tableView, formatViewDefinitions);
+                    TryAddView(wideView, formatViewDefinitions);
                     break;
 
                 case DefaultView.Wide:
-                    if (wideView != null)
-                    {
-                        formatViewDefinitions.Add(wideView);
-                    }
-                    if (tableView != null)
-                    {
-                        formatViewDefinitions.Add(tableView);
-                    }
-                    if (listView != null)
-                    {
-                        formatViewDefinitions.Add(listView);
-                    }
+                    TryAddView(wideView, formatViewDefinitions);
+                    TryAddView(tableView, formatViewDefinitions);
+                    TryAddView(listView, formatViewDefinitions);
                     break;
+            }
+
+            static void TryAddView(FormatViewDefinition tableView, List<FormatViewDefinition> formatViewDefinitions)
+            {
+                if (tableView != null)
+                {
+                    formatViewDefinitions.Add(tableView);
+                }
             }
         }
 
