@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Net;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 [assembly: CLSCompliant(true)]
 
