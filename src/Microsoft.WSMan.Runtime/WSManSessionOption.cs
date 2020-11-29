@@ -2,19 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
-using System.ComponentModel;
-using System.IO;
 using System.Net;
-using System.Reflection;
-using System.Resources;
-using System.Xml;
-
-using System.Collections;
-using System.Collections.Generic;
-
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
 
