@@ -1139,7 +1139,7 @@ dotnet_diagnostic.IDE0029.severity = silent
 
 # IDE0030: UseCoalesceExpressionForNullable
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0030
-dotnet_diagnostic.IDE0030.severity = silent
+dotnet_diagnostic.IDE0030.severity = warning
 
 # IDE0031: UseNullPropagation
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0031
