@@ -1114,9 +1114,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessDynamicFormat()
         {
-            TableControl tableControl;
-            ListControl listControl;
-            WideControl wideControl;
+            FormatViewDefinition tableView = null, listView = null, wideView = null;
+
+            List<FormatViewDefinition> formatViewDefinitions = new List<FormatViewDefinition>();
 
             if (TableProperties != null)
             {
@@ -1129,9 +1129,11 @@ namespace Microsoft.PowerShell.Commands
                     buildTableControl.AddPropertyColumn(tableProp);
                 }
 
-                tableControl = buildTableControl
-                    .EndRowDefinition()
-                    .EndTable();
+                tableView = new FormatViewDefinition(
+                    TypeName,
+                    buildTableControl
+                        .EndRowDefinition()
+                        .EndTable());
             }
 
             if (ListProperties != null)
@@ -1145,50 +1147,63 @@ namespace Microsoft.PowerShell.Commands
                     buildListControl.AddItemProperty(listProp);
                 }
 
-                listControl = buildListControl
-                    .EndEntry()
-                    .EndList();
+                listView = new FormatViewDefinition(
+                    TypeName,
+                    buildListControl
+                        .EndEntry()
+                        .EndList());
             }
 
             if (WideProperty != null)
-            {
-                wideControl = WideControl
-                   .Create()
-                   .AddPropertyEntry(WideProperty)
-                   .EndWideControl();
+            { 
+                wideView = new FormatViewDefinition(
+                    TypeName,
+                    WideControl
+                       .Create()
+                       .AddPropertyEntry(WideProperty)
+                       .EndWideControl());
             }
 
-            
-
+            if (tableView == null
+                && listView == null
+                && wideView == null)
+            {
+                throw new ArgumentException("At least one of the views (Table, List or Wide) must be set.");
+            }
+           
             switch (DefaultView)
             {
                 case DefaultView.Table:
-                    ProcessFormatFiles(
-                        new SessionStateFormatEntry(
-                            new ExtendedTypeDefinition(
-                                TypeName,
-                                new List<FormatViewDefinition> {
-                                    new FormatViewDefinition(
-                                        TypeName,
-                                        tableControl
-                                    ),
-                                    new FormatViewDefinition(
-                                        TypeName,
-                                        listControl
-                                     ),
-                                    new FormatViewDefinition(
-                                        TypeName,
-                                        wideControl
-                                    )
-                                }
+                    if (tableView != null)
+                    { formatViewDefinitions.Add(tableView); }
+                    if (listView != null)
+                    { formatViewDefinitions.Add(listView); }
+                    if (wideView != null)
+                    { formatViewDefinitions.Add(wideView); }
                     break;
                 case DefaultView.List:
-                    throw new NotImplementedException();
+                    if (listView != null)
+                    { formatViewDefinitions.Add(listView); }
+                    if (tableView != null)
+                    { formatViewDefinitions.Add(tableView); }
+                    if (wideView != null)
+                    { formatViewDefinitions.Add(wideView); }
                     break;
                 case DefaultView.Wide:
-                    throw new NotImplementedException();
+                    if (wideView != null)
+                    { formatViewDefinitions.Add(wideView); }
+                    if (tableView != null)
+                    { formatViewDefinitions.Add(tableView); }
+                    if (listView != null)
+                    { formatViewDefinitions.Add(listView); }
                     break;
-            }
+            }       
+
+            ProcessFormatFiles(
+                new SessionStateFormatEntry(
+                    new ExtendedTypeDefinition(
+                        TypeName,
+                        formatViewDefinitions)));
         }
 
         private void ProcessStrongTypedFormatData()

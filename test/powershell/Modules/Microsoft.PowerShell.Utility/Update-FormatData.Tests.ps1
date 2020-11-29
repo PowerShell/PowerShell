@@ -58,7 +58,7 @@ Describe "Update-FormatData" -Tags "CI" {
         }
     }
 
-    Context "Validate Update-FormatData updates correctly with strongly typed format data " {
+    Context "Validate Update-FormatData updates correctly with strongly typed format data" {
 
         It "Should validly load strongly typed formatting data" {
 
@@ -76,6 +76,21 @@ Describe "Update-FormatData" -Tags "CI" {
 "@)
 
             $null = $ps.AddScript("Update-FormatData -TypeName TestType -FormatViewDefinition `$formatViewDefinition")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+            $null = $ps.AddScript("Get-FormatData -TypeName TestType")
+            $formatData = $ps.Invoke()
+            $formatData | Should -HaveCount 1
+            $formatData.TypeNames | Should -BeExactly "TestType"
+        }
+    }
+
+    Context "Validate Update-FormatData updates correctly with dynamic format data" {
+
+        It "Should validly load dynamic formatting data" {
+
+            $null = $ps.AddScript("Update-FormatData -TypeName TestType -ListProperties 'Test'")
             $ps.Invoke()
             $ps.HadErrors | Should -BeFalse
             $ps.Commands.Clear()
