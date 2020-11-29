@@ -57,6 +57,35 @@ Describe "Update-FormatData" -Tags "CI" {
             $formatData.FormatViewDefinition.Name | Should -BeExactly "Test"
         }
     }
+
+    Context "Validate Update-FormatData updates correctly with strongly typed format data " {
+
+        It "Should validly load strongly typed formatting data" {
+
+            $null = $ps.AddScript("[System.Collections.Generic.IEnumerable[System.Management.Automation.FormatViewDefinition]]`$formatViewDefinition = New-Object 'System.Collections.Generic.List[System.Management.Automation.FormatViewDefinition]'")
+
+            $null = $ps.AddScript(@"
+            `$formatViewDefinition.Add(
+                [System.Management.Automation.FormatViewDefinition]::new(
+                    "TestType",
+                    [System.Management.Automation.ListControl]::Create().
+                        StartEntry().
+                            AddItemProperty("Test").
+                        EndEntry().
+                    EndList()))
+"@)
+
+            $null = $ps.AddScript("Update-FormatData -TypeName TestType -FormatViewDefinition `$formatViewDefinition")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+            $null = $ps.AddScript("Get-FormatData -TypeName TestType")
+            $formatData = $ps.Invoke()
+            $formatData | Should -HaveCount 1
+            $formatData.TypeNames | Should -BeExactly "TestType"
+        }
+    }
+
 }
 
 Describe "Update-FormatData basic functionality" -Tags "CI" {

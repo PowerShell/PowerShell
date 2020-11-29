@@ -891,7 +891,34 @@ namespace Microsoft.PowerShell.Commands
     public class UpdateFormatDataCommand : UpdateData
     {
         /// <summary>
-        /// This method verify if the Format database manager is shared and cannot be updated.
+        /// FormatViewDefinition parameter set name.
+        /// </summary>
+        protected const string FormatViewDefinitionSet = "FormatViewDefinition";
+
+        /// <summary>
+        /// DynamicFormat parameter set name.
+        /// </summary>
+        protected const string DynamicFormatSet = "DynamicFormat";
+
+        /// <summary>
+        /// TypeName to add
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = FormatViewDefinitionSet, Mandatory = true)]
+        [ValidateNotNullOrEmpty]
+        public string TypeName {get; set;}
+
+        /// <summary>
+        /// FormatViewDefinition to add for given TypeName
+        /// </summary>
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = FormatViewDefinitionSet, Mandatory = true)]
+        [Alias("FormatData")]
+        [ValidateNotNull]
+        public FormatViewDefinition[] FormatViewDefinition { get; set; }
+
+        /// <summary>
+        /// This method verifies if the Format database manager is shared and cannot be updated.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -907,6 +934,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            switch (ParameterSetName)
+            {
+                case FileParameterSet:
+                    ProcessFormatFiles();
+                    break;
+                case DynamicFormatSet:
+                    ProcessDynamicFormat();
+                    break;
+                case FormatViewDefinitionSet:
+                    ProcessStrongTypedFormatData();
+                    break;
+            }
+        }
+
+        private void ProcessFormatFiles(SessionStateFormatEntry strongEntry = null) {
             Collection<string> prependPathTotal = Glob(this.PrependPath, "FormatPrependPathException", this);
             Collection<string> appendPathTotal = Glob(this.AppendPath, "FormatAppendPathException", this);
 
@@ -931,6 +973,10 @@ namespace Microsoft.PowerShell.Commands
                 // This hashSet is to detect if there are duplicate format files
                 var fullFileNameHash = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
                 var newFormats = new Collection<SessionStateFormatEntry>();
+
+                // Insert strongly typed format information here, as if they were prepended paths.
+                if (strongEntry != null)
+                    newFormats.Add(strongEntry);
 
                 for (int i = prependPathTotal.Count - 1; i >= 0; i--)
                 {
@@ -1014,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (entries.Count > 0)
                     {
-                        Context.FormatDBManager.UpdateDataBase(entries, this.Context.AuthorizationManager, this.Context.EngineHostInterface, false);
+                        Context.FormatDBManager.UpdateDataBase(entries, this.Context.AuthorizationManager, this.Context.EngineHostInterface, preValidated: false);
                         FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingFormats",
                             null,
                             entries,
@@ -1033,6 +1079,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 Dbg.Assert(false, "InitialSessionState must be non-null for Update-FormatData to work");
             }
+        }
+
+        private void ProcessDynamicFormat() {
+            throw new NotImplementedException();
+        }
+
+        private void ProcessStrongTypedFormatData() {
+            ProcessFormatFiles(
+                new SessionStateFormatEntry(
+                    new ExtendedTypeDefinition(
+                        TypeName,
+                        FormatViewDefinition)));
         }
     }
 
@@ -1115,7 +1173,8 @@ namespace Microsoft.PowerShell.Commands
                 string removeFileTarget = UpdateDataStrings.UpdateTarget;
 
                 Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
-                if (typeFileTotal.Count == 0) { return; }
+                if (typeFileTotal.Count == 0)
+                { return; }
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
@@ -1127,7 +1186,8 @@ namespace Microsoft.PowerShell.Commands
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
                         string fileName = Context.InitialSessionState.Types[index].FileName;
-                        if (fileName == null) { continue; }
+                        if (fileName == null)
+                        { continue; }
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
