@@ -1118,51 +1118,9 @@ namespace Microsoft.PowerShell.Commands
 
             List<FormatViewDefinition> formatViewDefinitions = new List<FormatViewDefinition>();
 
-            if (TableProperties != null)
-            {
-                var buildTableControl = TableControl
-                    .Create()
-                    .StartRowDefinition();
-
-                foreach (string tableProp in TableProperties)
-                {
-                    buildTableControl.AddPropertyColumn(tableProp);
-                }
-
-                tableView = new FormatViewDefinition(
-                    TypeName,
-                    buildTableControl
-                        .EndRowDefinition()
-                        .EndTable());
-            }
-
-            if (ListProperties != null)
-            {
-                var buildListControl = ListControl
-                    .Create()
-                    .StartEntry();
-
-                foreach (string listProp in ListProperties)
-                {
-                    buildListControl.AddItemProperty(listProp);
-                }
-
-                listView = new FormatViewDefinition(
-                    TypeName,
-                    buildListControl
-                        .EndEntry()
-                        .EndList());
-            }
-
-            if (WideProperty != null)
-            { 
-                wideView = new FormatViewDefinition(
-                    TypeName,
-                    WideControl
-                       .Create()
-                       .AddPropertyEntry(WideProperty)
-                       .EndWideControl());
-            }
+            tableView = TryGetTableView(tableView);
+            listView = TryGetListView(listView);
+            wideView = TryGetWideView(wideView);
 
             if (tableView == null
                 && listView == null
@@ -1170,40 +1128,132 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentException("At least one of the views (Table, List or Wide) must be set.");
             }
-           
-            switch (DefaultView)
-            {
-                case DefaultView.Table:
-                    if (tableView != null)
-                    { formatViewDefinitions.Add(tableView); }
-                    if (listView != null)
-                    { formatViewDefinitions.Add(listView); }
-                    if (wideView != null)
-                    { formatViewDefinitions.Add(wideView); }
-                    break;
-                case DefaultView.List:
-                    if (listView != null)
-                    { formatViewDefinitions.Add(listView); }
-                    if (tableView != null)
-                    { formatViewDefinitions.Add(tableView); }
-                    if (wideView != null)
-                    { formatViewDefinitions.Add(wideView); }
-                    break;
-                case DefaultView.Wide:
-                    if (wideView != null)
-                    { formatViewDefinitions.Add(wideView); }
-                    if (tableView != null)
-                    { formatViewDefinitions.Add(tableView); }
-                    if (listView != null)
-                    { formatViewDefinitions.Add(listView); }
-                    break;
-            }       
+
+            SetOrderedViewDefinitions(tableView, listView, wideView, formatViewDefinitions);
 
             ProcessFormatFiles(
                 new SessionStateFormatEntry(
                     new ExtendedTypeDefinition(
                         TypeName,
                         formatViewDefinitions)));
+        }
+
+        private void SetOrderedViewDefinitions(FormatViewDefinition tableView, FormatViewDefinition listView, FormatViewDefinition wideView, List<FormatViewDefinition> formatViewDefinitions)
+        {
+            switch (DefaultView)
+            {
+                case DefaultView.Table:
+                    if (tableView != null)
+                    {
+                        formatViewDefinitions.Add(tableView);
+                    }
+                    if (listView != null)
+                    {
+                        formatViewDefinitions.Add(listView);
+                    }
+                    if (wideView != null)
+                    {
+                        formatViewDefinitions.Add(wideView);
+                    }
+                    break;
+
+                case DefaultView.List:
+                    if (listView != null)
+                    {
+                        formatViewDefinitions.Add(listView);
+                    }
+                    if (tableView != null)
+                    {
+                        formatViewDefinitions.Add(tableView);
+                    }
+                    if (wideView != null)
+                    {
+                        formatViewDefinitions.Add(wideView);
+                    }
+                    break;
+
+                case DefaultView.Wide:
+                    if (wideView != null)
+                    {
+                        formatViewDefinitions.Add(wideView);
+                    }
+                    if (tableView != null)
+                    {
+                        formatViewDefinitions.Add(tableView);
+                    }
+                    if (listView != null)
+                    {
+                        formatViewDefinitions.Add(listView);
+                    }
+                    break;
+            }
+        }
+
+        private FormatViewDefinition TryGetWideView(FormatViewDefinition wideView)
+        {
+            if (WideProperty != null)
+            {
+                var control = WideControl
+                                    .Create()
+                                    .AddPropertyEntry(WideProperty)
+                                    .EndWideControl();
+
+                wideView = new FormatViewDefinition(
+                    TypeName,
+                    control);
+            }
+
+            return wideView;
+        }
+
+        private FormatViewDefinition TryGetListView(FormatViewDefinition listView)
+        {
+            if (ListProperties != null)
+            {
+                var buildListControl = ListControl
+                                            .Create()
+                                            .StartEntry();
+
+                foreach (string listProp in ListProperties)
+                {
+                    buildListControl.AddItemProperty(listProp);
+                }
+
+                var listControl = buildListControl
+                                    .EndEntry()
+                                    .EndList();
+
+                listView = new FormatViewDefinition(
+                    TypeName,
+                    listControl);
+            }
+
+            return listView;
+        }
+
+        private FormatViewDefinition TryGetTableView(FormatViewDefinition tableView)
+        {
+            if (TableProperties != null)
+            {
+                var buildTableControl = TableControl
+                                            .Create()
+                                            .StartRowDefinition();
+
+                foreach (string tableProp in TableProperties)
+                {
+                    buildTableControl.AddPropertyColumn(tableProp);
+                }
+
+                var tableControl = buildTableControl
+                                        .EndRowDefinition()
+                                        .EndTable();
+
+                tableView = new FormatViewDefinition(
+                    TypeName,
+                    tableControl);
+            }
+
+            return tableView;
         }
 
         private void ProcessStrongTypedFormatData()
