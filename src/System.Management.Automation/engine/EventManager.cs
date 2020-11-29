@@ -2040,10 +2040,14 @@ namespace System.Management.Automation
 
         #region IComparable<PSEventSubscriber> Members
 
-        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>
-        /// <see langword="true" /> if the specified object is equal to the current object; otherwise, <see langword="false" />.</returns>
+        /// <see langword="true"/> if the specified object is equal to the current object;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as PSEventSubscriber);
