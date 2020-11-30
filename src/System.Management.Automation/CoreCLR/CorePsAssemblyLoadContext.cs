@@ -404,12 +404,12 @@ namespace System.Management.Automation
             if (Directory.Exists(tempAssemblyDirPath))
             {
                 // Enumerate all directories, sort by name and select the last. This selects the latest version.
-                var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
+                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
                     // Select first or default as the directory will contain only one assembly. If nothing then default is null;
-                    var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
+                    var foundAssemblyPath = Directory.EnumerateFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
                     if (!string.IsNullOrEmpty(foundAssemblyPath))
                     {
