@@ -88,7 +88,7 @@ When you would want to do this:
 
 ### xUnit
 
-For those tests which are not easily run via Pester, we have decided to use [xUnit](https://xunit.github.io/) as the test framework.
+For those tests which are not easily run via Pester, we have decided to use [xUnit](https://xunit.net/) as the test framework.
 Currently, we have a minuscule number of tests which are run by using xUnit.
 
 ## Running tests outside of CI
