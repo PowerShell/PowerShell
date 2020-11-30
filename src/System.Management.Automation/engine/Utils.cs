@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
             return outputRendering == OutputRendering.PlainText;
         }
 
-        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal)
+        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal, bool isOutputRedirected = false)
         {
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
@@ -1824,7 +1824,7 @@ namespace System.Management.Automation
                 if (sd.IsDecorated)
                 {
                     var outputRendering = OutputRendering.Ansi;
-                    if (OutputIsPlainText(isHost, supportsVirtualTerminal))
+                    if (isOutputRedirected || OutputIsPlainText(isHost, supportsVirtualTerminal))
                     {
                         outputRendering = OutputRendering.PlainText;
                     }
@@ -1849,6 +1849,14 @@ namespace System.Management.Automation
 
         internal static string GetFormatStyleString(FormatStyle formatStyle)
         {
+            // redirected console gets plaintext output to preserve existing behavior
+            if ((OutputRenderingSetting == OutputRendering.PlainText) ||
+                (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
+                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected))
+            {
+                return string.Empty;
+            }
+
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
                 ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();

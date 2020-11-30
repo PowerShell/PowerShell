@@ -19,7 +19,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_plaintextcontent.Length == 0)
+                if (_plaintextcontent == null)
                 {
                     _plaintextcontent = _ansiRegex.Replace(_text, string.Empty);
                 }
