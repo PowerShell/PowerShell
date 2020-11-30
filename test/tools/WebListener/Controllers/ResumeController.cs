@@ -30,12 +30,12 @@ namespace mvc.Controllers
             if (TryGetRangeHeader(out rangeHeader))
             {
                 var range = GetRange(rangeHeader);
-                if(range.From != null)
+                if (range.From != null)
                 {
                     from = (int)range.From;
                 }
 
-                if(range.To != null)
+                if (range.To != null)
                 {
                     to = (int)range.To;
                 }
@@ -49,7 +49,7 @@ namespace mvc.Controllers
                 return;
             }
 
-            if(to >= FileBytes.Length || from >= FileBytes.Length)
+            if (to >= FileBytes.Length || from >= FileBytes.Length)
             {
                 Response.StatusCode = StatusCodes.Status416RequestedRangeNotSatisfiable;
                 Response.Headers[HeaderNames.ContentRange] = $"bytes */{FileBytes.Length}";
@@ -113,7 +113,7 @@ namespace mvc.Controllers
         private bool TryGetRangeHeader(out string rangeHeader)
         {
             var rangeHeaderSv = new StringValues();
-            if(Request.Headers.TryGetValue("Range", out rangeHeaderSv))
+            if (Request.Headers.TryGetValue("Range", out rangeHeaderSv))
             {
                 rangeHeader = rangeHeaderSv.FirstOrDefault();
                 return true;

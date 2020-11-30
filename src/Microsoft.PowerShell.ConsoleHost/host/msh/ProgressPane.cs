@@ -102,9 +102,9 @@ namespace Microsoft.PowerShell
 
                 // create cleared region to clear progress bar later
                 _savedRegion = tempProgressRegion;
-                for(int row = 0; row < rows; row++)
+                for (int row = 0; row < rows; row++)
                 {
-                    for(int col = 0; col < cols; col++)
+                    for (int col = 0; col < cols; col++)
                     {
                         _savedRegion[row, col].Character = ' ';
                     }

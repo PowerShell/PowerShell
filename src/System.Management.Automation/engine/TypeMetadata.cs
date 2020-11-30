@@ -978,7 +978,7 @@ namespace System.Management.Automation
                 string or = string.Empty;
                 string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
 
-                foreach(string regexOption in regexOptionEnumValues)
+                foreach (string regexOption in regexOptionEnumValues)
                 {
                     System.Text.RegularExpressions.RegexOptions option = (System.Text.RegularExpressions.RegexOptions) Enum.Parse(
                         typeof(System.Text.RegularExpressions.RegexOptions),

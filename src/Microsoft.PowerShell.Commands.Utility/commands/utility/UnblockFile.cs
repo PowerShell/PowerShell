@@ -147,10 +147,10 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
-                if(IsBlocked(path))
+                if (IsBlocked(path))
                 {
                     UInt32 result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
-                    if(result != 0)
+                    if (result != 0)
                     {
                         string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
                         Exception e = new InvalidOperationException(errorMessage);
