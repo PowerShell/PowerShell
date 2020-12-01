@@ -54,16 +54,6 @@ namespace System.Management.Automation.Internal
         public int ContentLength => _plaintext.Length;
 
         /// <summary>
-        /// Return a substring based on content length starting from index 0.
-        /// </summary>
-        /// <param name="length">Number of characters from content to return.</param>
-        /// <returns>A string up to the number of specified characters including decoration up to that length.</returns>
-        public string Substring(int length)
-        {
-            return _text;
-        }
-
-        /// <summary>
         /// Render the decorarted string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
