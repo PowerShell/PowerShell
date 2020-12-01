@@ -45,7 +45,7 @@ namespace System.Management.Automation.Internal
         /// Gets a value indicating whether the string contains decoration.
         /// </summary>
         /// <returns>Boolean if the string contains decoration.</returns>
-        public bool IsDecorated
+        public bool IsDecorated => _isDecorated;
         {
             get
             {
