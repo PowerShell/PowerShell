@@ -57,7 +57,7 @@ namespace System.Management.Automation.Internal
         /// Gets the length of content sans escape sequences.
         /// </summary>
         /// <returns>Length of content sans escape sequences.</returns>
-        public int ContentLength
+        public int ContentLength => _plaintext.Length;
         {
             get
             {
