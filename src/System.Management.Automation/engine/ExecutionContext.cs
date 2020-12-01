@@ -113,8 +113,7 @@ namespace System.Management.Automation
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
 
-            return (context != null)
-&& context.IsStrictVersion(majorVersion);
+            return (context != null) && context.IsStrictVersion(majorVersion);
         }
         /// <summary>
         /// Check to see a specific version of strict mode is enabled.  The check is always scoped,
