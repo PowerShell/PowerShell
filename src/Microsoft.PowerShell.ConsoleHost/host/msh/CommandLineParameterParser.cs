@@ -15,6 +15,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Threading.Tasks;
 using System.Security;
 using System.Text;
 
@@ -325,15 +326,29 @@ namespace Microsoft.PowerShell
             get
             {
                 AssertArgumentsParsed();
-                return _configurationName;
-            }
 
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
+                if (_configNameFromGPOTask is null)
                 {
-                    _configurationName = value;
+                    return _configurationName;
                 }
+
+                // Querying the configuration name from group policy (both registry and setting files) is expensive,
+                // so we push the work to a thread pool worker to avoid blocking the main thread as much as possible.
+                lock (this)
+                {
+                    if (_configNameFromGPOTask is not null)
+                    {
+                        string nameFromGPO = _configNameFromGPOTask.GetAwaiter().GetResult();
+                        if (!string.IsNullOrEmpty(nameFromGPO))
+                        {
+                            _configurationName = nameFromGPO;
+                        }
+
+                        _configNameFromGPOTask = null;
+                    }
+                }
+
+                return _configurationName;
             }
         }
 
@@ -573,13 +588,17 @@ namespace Microsoft.PowerShell
             return true;
         }
 
-        internal static string GetConfigurationNameFromGroupPolicy()
+        internal void GetConfigurationNameFromGroupPolicy()
         {
-            // Current user policy takes precedence.
-            var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
+            _configNameFromGPOTask = Task.Run<string>(GetFromGPOImpl);
 
-            return (consoleSessionSetting?.EnableConsoleSessionConfiguration == true && !string.IsNullOrEmpty(consoleSessionSetting?.ConsoleSessionConfigurationName)) ?
-                    consoleSessionSetting.ConsoleSessionConfigurationName : string.Empty;
+            static string GetFromGPOImpl()
+            {
+                // Current user policy takes precedence.
+                var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
+                return (consoleSessionSetting?.EnableConsoleSessionConfiguration == true && !string.IsNullOrEmpty(consoleSessionSetting?.ConsoleSessionConfigurationName)) ?
+                        consoleSessionSetting.ConsoleSessionConfigurationName : string.Empty;
+            }
         }
 
         /// <summary>
@@ -1333,6 +1352,7 @@ namespace Microsoft.PowerShell
         private bool _sshServerMode;
         private bool _showVersion;
         private string? _configurationName;
+        private Task<string>? _configNameFromGPOTask;
         private string? _error;
         private bool _showHelp;
         private bool _showExtendedHelp;

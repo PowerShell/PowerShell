@@ -23,6 +23,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Telemetry;
 #if LEGACYTELEMETRY
@@ -138,8 +139,8 @@ namespace Microsoft.PowerShell
                 // improve startup performance.
             }
 
+            Task telemetryTask = null;
             uint exitCode = ExitCodeSuccess;
-
             Thread.CurrentThread.Name = "ConsoleHost main thread";
 
             try
@@ -183,18 +184,17 @@ namespace Microsoft.PowerShell
 #if !UNIX
                 TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
-
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
+                    telemetryTask = SendStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
                     System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand, s_cpp.WorkingDirectory);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
+                    telemetryTask = SendStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
                         s_cpp.ConfigurationName);
@@ -202,14 +202,14 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SSHServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
+                    telemetryTask = SendStartupTelemetry("SSHServer");
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
+                    telemetryTask = SendStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
                         s_cpp.ConfigurationName);
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");
+                    telemetryTask = SendStartupTelemetry("Normal");
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
@@ -257,12 +257,24 @@ namespace Microsoft.PowerShell
 #endif
                     s_theConsoleHost.Dispose();
                 }
+
+                telemetryTask?.Wait();
             }
 
             unchecked
             {
                 return (int)exitCode;
             }
+        }
+
+        private static Task SendStartupTelemetry(string mode)
+        {
+            return Task.Factory.StartNew(
+                state => ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry((string)state),
+                mode,
+                CancellationToken.None,
+                TaskCreationOptions.DenyChildAttach,
+                TaskScheduler.Default);
         }
 
         internal static void ParseCommandLine(string[] args)
@@ -284,7 +296,7 @@ namespace Microsoft.PowerShell
             // Check registry setting for a Group Policy ConfigurationName entry and
             // use it to override anything set by the user.
             // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
-            s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
+            s_cpp.GetConfigurationNameFromGroupPolicy();
         }
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
@@ -2953,7 +2965,32 @@ namespace Microsoft.PowerShell
 
         private static ConsoleHost s_theConsoleHost;
 
-        internal static InitialSessionState DefaultInitialSessionState;
+        private static InitialSessionState s_defaultISS;
+        private static Task<InitialSessionState> s_defaultISSTask;
+
+        internal static InitialSessionState DefaultInitialSessionState
+        {
+            get
+            {
+                if (s_defaultISS is not null)
+                {
+                    return s_defaultISS;
+                }
+
+                s_defaultISS = s_defaultISSTask.GetAwaiter().GetResult();
+                return s_defaultISS;
+            }
+
+            set
+            {
+                s_defaultISS = value;
+            }
+        }
+
+        internal static void CreateDefaultInitialSessionState()
+        {
+            s_defaultISSTask = Task.Run(InitialSessionState.CreateDefault2);
+        }
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost");

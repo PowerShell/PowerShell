@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell
                     ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
                     PSVersionInfo.GitCommitId);
 
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
+                ConsoleHost.CreateDefaultInitialSessionState();
 
                 exitCode = ConsoleHost.Start(banner, ManagedEntranceStrings.UsageHelp);
             }
