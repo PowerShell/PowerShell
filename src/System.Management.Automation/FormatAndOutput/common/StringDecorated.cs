@@ -79,7 +79,7 @@ namespace System.Management.Automation.Internal
         /// Render the decorarted string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
-        public override string ToString()
+        public override string ToString() => _isDecorated ? ToString(OutputRendering.Automatic) : _text;
         {
             if (_isDecorated)
             {
