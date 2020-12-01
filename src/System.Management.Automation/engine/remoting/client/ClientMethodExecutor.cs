@@ -98,7 +98,7 @@ namespace System.Management.Automation.Remoting
                 if (hostPrivateData != null)
                 {
                     PSNoteProperty allowSetShouldExit = hostPrivateData.Properties["AllowSetShouldExitFromRemote"] as PSNoteProperty;
-                    hostAllowSetShouldExit = (allowSetShouldExit != null && allowSetShouldExit.Value is bool) && (bool)allowSetShouldExit.Value;
+                    hostAllowSetShouldExit = allowSetShouldExit != null && allowSetShouldExit.Value is bool && (bool)allowSetShouldExit.Value;
                 }
             }
 

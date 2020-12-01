@@ -2968,7 +2968,7 @@ namespace System.Management.Automation
             get
             {
                 RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-                return (remoteRS != null) && remoteRS.CanDisconnect;
+                return remoteRS != null && remoteRS.CanDisconnect;
             }
         }
 
