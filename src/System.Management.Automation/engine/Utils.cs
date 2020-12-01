@@ -1789,7 +1789,7 @@ namespace System.Management.Automation
 
         internal static OutputRendering OutputRenderingSetting = OutputRendering.Automatic;
 
-        internal static bool OutputIsPlainText(bool isHost, bool? supportsVirtualTerminal)
+        internal static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
         {
             var outputRendering = OutputRendering.Ansi;
 
@@ -1829,7 +1829,7 @@ namespace System.Management.Automation
                         isOutputRedirected = false;
                     }
 
-                    if (isOutputRedirected || OutputIsPlainText(isHost, supportsVirtualTerminal))
+                    if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
                     {
                         outputRendering = OutputRendering.PlainText;
                     }

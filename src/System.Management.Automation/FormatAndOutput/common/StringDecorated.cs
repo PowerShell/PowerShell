@@ -46,24 +46,12 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>Boolean if the string contains decoration.</returns>
         public bool IsDecorated => _isDecorated;
-        {
-            get
-            {
-                return _isDecorated;
-            }
-        }
 
         /// <summary>
         /// Gets the length of content sans escape sequences.
         /// </summary>
         /// <returns>Length of content sans escape sequences.</returns>
         public int ContentLength => _plaintext.Length;
-        {
-            get
-            {
-                return _plaintext.Length;
-            }
-        }
 
         /// <summary>
         /// Return a substring based on content length starting from index 0.
@@ -80,16 +68,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
         public override string ToString() => _isDecorated ? ToString(OutputRendering.Automatic) : _text;
-        {
-            if (_isDecorated)
-            {
-                return ToString(OutputRendering.Automatic);
-            }
-            else
-            {
-                return _text;
-            }
-        }
 
         /// <summary>
         /// Return string representation of content depending on output rendering mode.
