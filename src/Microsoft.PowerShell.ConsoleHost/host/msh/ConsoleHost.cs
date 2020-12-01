@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell
             {
                 Environment.SetEnvironmentVariable("PATH", pshome);
             }
-            else if (!path.StartsWith(pshome))
+            else if (!path.StartsWith(pshome, StringComparison.Ordinal))
             {
                 Environment.SetEnvironmentVariable("PATH", pshome + path);
             }
