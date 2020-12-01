@@ -1824,6 +1824,11 @@ namespace System.Management.Automation
                 if (sd.IsDecorated)
                 {
                     var outputRendering = OutputRendering.Ansi;
+                    if (InternalTestHooks.BypassOutputRedirectionCheck)
+                    {
+                        isOutputRedirected = false;
+                    }
+
                     if (isOutputRedirected || OutputIsPlainText(isHost, supportsVirtualTerminal))
                     {
                         outputRendering = OutputRendering.PlainText;
@@ -1850,9 +1855,10 @@ namespace System.Management.Automation
         internal static string GetFormatStyleString(FormatStyle formatStyle)
         {
             // redirected console gets plaintext output to preserve existing behavior
-            if ((OutputRenderingSetting == OutputRendering.PlainText) ||
+            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
+                ((OutputRenderingSetting == OutputRendering.PlainText) ||
                 (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
-                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected))
+                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected)))
             {
                 return string.Empty;
             }
@@ -2071,6 +2077,7 @@ namespace System.Management.Automation.Internal
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
         internal static bool ForcePromptForChoiceDefaultOption;
+        internal static bool BypassOutputRedirectionCheck;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
