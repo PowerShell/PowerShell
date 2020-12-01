@@ -84,7 +84,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static string GetMessage(int errorCode)
         {
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = new(512);
             int result = UnsafeNativeMethods.FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS |
                 FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY,
                 UnsafeNativeMethods.s_NULL, errorCode, 0, sb, sb.Capacity, UnsafeNativeMethods.s_NULL);
