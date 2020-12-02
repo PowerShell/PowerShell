@@ -779,7 +779,7 @@ namespace System.Diagnostics.Eventing
         [System.Security.SecurityCritical]
         public static Guid CreateActivityId()
         {
-            Guid newId = new Guid();
+            Guid newId = new();
             UnsafeNativeMethods.EventActivityIdControl((int)ActivityControl.EVENT_ACTIVITY_CTRL_CREATE_ID, ref newId);
             return newId;
         }
