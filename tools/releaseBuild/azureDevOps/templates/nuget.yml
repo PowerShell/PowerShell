@@ -35,8 +35,12 @@ jobs:
   - checkout: ComplianceRepo
     clean: true
 
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
   - powershell: |
-      $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
+      $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
       $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
       Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
@@ -102,8 +106,8 @@ jobs:
     displayName: 'Install NuGet.exe'
 
   - powershell: |
-      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
-      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+      Import-Module $env:REPOROOT\build.psm1
+      Import-Module $env:REPOROOT\tools\packaging
       Find-Dotnet
       New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
@@ -115,8 +119,8 @@ jobs:
     displayName: Capture fxd folders
 
   - powershell: |
-      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
-      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+      Import-Module $env:REPOROOT\build.psm1
+      Import-Module $env:REPOROOT\tools\packaging
       Find-Dotnet
       # Create unified package first
       New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
@@ -146,7 +150,7 @@ jobs:
     condition: eq(variables['SHOULD_SIGN'], 'false')
 
   - powershell: |
-      Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
+      Import-Module "${env:REPOROOT}\build.psm1" -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
     condition: eq(variables['SHOULD_SIGN'], 'true')
