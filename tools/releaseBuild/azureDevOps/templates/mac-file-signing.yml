@@ -9,8 +9,7 @@ jobs:
     pool:
       name: Package ES Standard Build
     variables:
-      BuildConfiguration: release
-      BuildPlatform: any cpu
+      - group: ESRP
 
     steps:
     - checkout: self
