@@ -155,8 +155,8 @@ namespace System.Management.Automation
 #endif
 
         // format files
-        internal static readonly List<string> FormatFileNames = new List<string>
-            {
+        internal static readonly List<string> FormatFileNames = new()
+        {
                 "Certificate.format.ps1xml",
                 "Diagnostics.format.ps1xml",
                 "DotNetTypes.format.ps1xml",
@@ -566,8 +566,8 @@ namespace System.Management.Automation
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            private static Dictionary<int, string> usernameCache = new Dictionary<int, string>();
-            private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
+            private static Dictionary<int, string> usernameCache = new();
+            private static Dictionary<int, string> groupnameCache = new();
 
             /// <summary>The type of a Unix file system item.</summary>
             public enum ItemType
@@ -699,7 +699,7 @@ namespace System.Management.Automation
                 private const char CanExecute = 'x';
 
                 // helper for getting unix mode
-                private Dictionary<StatMask, char> modeMap = new Dictionary<StatMask, char>()
+                private Dictionary<StatMask, char> modeMap = new()
                 {
                         { StatMask.OwnerRead, CanRead },
                         { StatMask.OwnerWrite, CanWrite },
@@ -726,7 +726,7 @@ namespace System.Management.Automation
                 };
 
                 // The item type and the character representation for the first element in the stat string
-                private Dictionary<ItemType, char> itemTypeTable = new Dictionary<ItemType, char>()
+                private Dictionary<ItemType, char> itemTypeTable = new()
                 {
                     { ItemType.BlockDevice, 'b' },
                     { ItemType.CharacterDevice, 'c' },
@@ -860,7 +860,7 @@ namespace System.Management.Automation
             /// <returns>A managed common stat class instance.</returns>
             private static CommonStat CopyStatStruct(NativeMethods.CommonStatStruct css)
             {
-                CommonStat cs = new CommonStat();
+                CommonStat cs = new();
                 cs.Inode = css.Inode;
                 cs.Mode = css.Mode;
                 cs.UserId = css.UserId;

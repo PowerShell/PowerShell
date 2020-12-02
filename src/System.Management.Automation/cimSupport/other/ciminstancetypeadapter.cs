@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cim
     {
         private static PSAdaptedProperty GetCimPropertyAdapter(CimProperty property, object baseObject, string propertyName)
         {
-            PSAdaptedProperty propertyToAdd = new PSAdaptedProperty(propertyName, property);
+            PSAdaptedProperty propertyToAdd = new(propertyName, property);
             propertyToAdd.baseObject = baseObject;
             // propertyToAdd.adapter = this;
             return propertyToAdd;
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Cim
 
         private static PSAdaptedProperty GetPSComputerNameAdapter(CimInstance cimInstance)
         {
-            PSAdaptedProperty psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
+            PSAdaptedProperty psComputerNameProperty = new(RemotingConstants.ComputerNameNoteProperty, cimInstance);
             psComputerNameProperty.baseObject = cimInstance;
             // psComputerNameProperty.adapter = this;
             return psComputerNameProperty;
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new PSInvalidOperationException(msg);
             }
 
-            Collection<PSAdaptedProperty> result = new Collection<PSAdaptedProperty>();
+            Collection<PSAdaptedProperty> result = new();
 
             if (cimInstance.CimInstanceProperties != null)
             {
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Cim
 
         private static List<CimClass> GetInheritanceChain(CimInstance cimInstance)
         {
-            List<CimClass> inheritanceChain = new List<CimClass>();
+            List<CimClass> inheritanceChain = new();
             CimClass cimClass = cimInstance.CimClass;
             Dbg.Assert(cimClass != null, "CimInstance should always have ClassDecl");
             while (cimClass != null)
