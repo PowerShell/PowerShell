@@ -5546,7 +5546,7 @@ namespace System.Management.Automation
                         LocalPipeline localPipeline = new LocalPipeline(
                             lrs,
                             _shell.Commands.Commands,
-                            ((_settings != null) && (_settings.AddToHistory)) ? true : false,
+                            (_settings != null && _settings.AddToHistory),
                             _shell.IsNested,
                             _inputStream,
                             _outputStream,

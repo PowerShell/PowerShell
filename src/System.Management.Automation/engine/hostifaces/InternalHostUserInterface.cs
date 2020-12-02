@@ -78,7 +78,7 @@ namespace System.Management.Automation.Internal.Host
 
         public override bool SupportsVirtualTerminal
         {
-            get { return (_externalUI != null) ? _externalUI.SupportsVirtualTerminal : false; }
+            get { return _externalUI != null && _externalUI.SupportsVirtualTerminal; }
         }
 
         /// <summary>

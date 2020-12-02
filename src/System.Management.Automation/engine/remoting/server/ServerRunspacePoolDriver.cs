@@ -1486,9 +1486,7 @@ namespace System.Management.Automation
 
                 Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 preProcessOutput.Add(
-                    breakpoint == null
-                        ? false
-                        : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
+                    breakpoint != null && serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
             }
@@ -1628,7 +1626,7 @@ namespace System.Management.Automation
                         pump = null;
                     }
 
-                    return (pump != null) ? !(pump.IsBusy) : false;
+                    return (pump != null) && !(pump.IsBusy);
                 }
             }
 

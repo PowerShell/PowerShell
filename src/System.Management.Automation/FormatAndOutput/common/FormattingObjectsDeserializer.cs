@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool DeserializeBoolMemberVariable(PSObject so, string property, bool cannotBeNull = true)
         {
             var val = DeserializeMemberVariable(so, property, typeof(bool), cannotBeNull);
-            return (val == null) ? false : (bool)val;
+            return val != null && (bool)val;
         }
 
         internal WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)

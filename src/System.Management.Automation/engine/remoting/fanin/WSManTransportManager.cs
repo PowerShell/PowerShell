@@ -1925,7 +1925,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // check if the session supports disconnect
-            sessionTM.SupportsDisconnect = ((flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0) ? true : false;
+            sessionTM.SupportsDisconnect = (flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0;
 
             // openContent is used by redirection ie., while redirecting to
             // a new machine.. this is not needed anymore as the connection

@@ -3449,7 +3449,7 @@ namespace System.Management.Automation.Language
             if (ReturnType == null)
                 return true;
             var typeName = ReturnType.TypeName as TypeName;
-            return typeName == null ? false : typeName.IsType(typeof(void));
+            return typeName != null && typeName.IsType(typeof(void));
         }
 
         internal Type GetReturnType()

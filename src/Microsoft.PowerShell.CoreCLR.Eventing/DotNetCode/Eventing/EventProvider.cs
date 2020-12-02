@@ -202,7 +202,7 @@ namespace System.Diagnostics.Eventing
         /// </summary>
         public bool IsEnabled()
         {
-            return (_enabled != 0) ? true : false;
+            return _enabled != 0;
         }
 
         /// <summary>

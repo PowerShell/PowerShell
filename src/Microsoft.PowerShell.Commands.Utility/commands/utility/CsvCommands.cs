@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 using (StreamReader streamReader = PathUtils.OpenStreamReader(this, this.Path, Encoding, _isLiteralPath))
                 {
-                    isCsvFileEmpty = streamReader.Peek() == -1 ? true : false;
+                    isCsvFileEmpty = streamReader.Peek() == -1;
                 }
             }
 

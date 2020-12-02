@@ -3003,9 +3003,9 @@ namespace Microsoft.PowerShell.Commands
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(session.VMName)
                                                                       : inputName.Equals(session.ContainerId)) &&
-                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
+                                                     (sessionNamePattern == null || sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -3063,7 +3063,7 @@ namespace Microsoft.PowerShell.Commands
                                                                       : inputName.Equals(session.ContainerId)) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -3106,9 +3106,9 @@ namespace Microsoft.PowerShell.Commands
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
-                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
+                                                     (sessionNamePattern == null || sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 
@@ -3143,7 +3143,7 @@ namespace Microsoft.PowerShell.Commands
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 

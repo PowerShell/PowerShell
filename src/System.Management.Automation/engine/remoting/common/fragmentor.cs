@@ -105,7 +105,7 @@ namespace System.Management.Automation.Remoting
             ObjectId = objectId;
             FragmentId = fragmentId;
 
-            IsStartFragment = (fragmentId == 0) ? true : false;
+            IsStartFragment = fragmentId == 0;
             IsEndFragment = isEndFragment;
 
             _blob = blob;
