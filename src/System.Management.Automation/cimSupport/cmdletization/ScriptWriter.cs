@@ -1764,7 +1764,7 @@ function __cmdletization_BindCommonParameters
                 ParameterSetMetadata inputObjectPSet = new(
                     int.MinValue, // non-positional
                     inputObjectFlags,
-                    null); // no help message
+                    helpMessage: null);
                 inputObjectParameter.ParameterSets.Add(ScriptWriter.InputObjectQueryParameterSetName, inputObjectPSet);
                 queryParameters.Add(inputObjectParameter.Name, inputObjectParameter);
             }

@@ -157,18 +157,18 @@ namespace System.Management.Automation
         // format files
         internal static readonly List<string> FormatFileNames = new()
         {
-                "Certificate.format.ps1xml",
-                "Diagnostics.format.ps1xml",
-                "DotNetTypes.format.ps1xml",
-                "Event.format.ps1xml",
-                "FileSystem.format.ps1xml",
-                "Help.format.ps1xml",
-                "HelpV3.format.ps1xml",
-                "PowerShellCore.format.ps1xml",
-                "PowerShellTrace.format.ps1xml",
-                "Registry.format.ps1xml",
-                "WSMan.format.ps1xml"
-            };
+            "Certificate.format.ps1xml",
+            "Diagnostics.format.ps1xml",
+            "DotNetTypes.format.ps1xml",
+            "Event.format.ps1xml",
+            "FileSystem.format.ps1xml",
+            "Help.format.ps1xml",
+            "HelpV3.format.ps1xml",
+            "PowerShellCore.format.ps1xml",
+            "PowerShellTrace.format.ps1xml",
+            "Registry.format.ps1xml",
+            "WSMan.format.ps1xml"
+        };
 
         /// <summary>
         /// Some common environment variables used in PS have different

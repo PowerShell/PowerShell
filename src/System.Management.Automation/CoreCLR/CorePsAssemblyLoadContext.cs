@@ -114,9 +114,8 @@ namespace System.Management.Automation
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
-        private readonly HashSet<string> _denyListedAssemblies = new(StringComparer.OrdinalIgnoreCase){
-                "System.Windows.Forms"
-            };
+        private readonly HashSet<string> _denyListedAssemblies =
+            new(StringComparer.OrdinalIgnoreCase) { "System.Windows.Forms" };
 
 #if !UNIX
         private string _winDir;

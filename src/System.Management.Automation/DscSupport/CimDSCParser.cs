@@ -544,15 +544,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1
         private static readonly string[] s_hiddenResourceList =
-    {
-        "MSFT_BaseConfigurationProviderRegistration",
-        "MSFT_CimConfigurationProviderRegistration",
-        "MSFT_PSConfigurationProviderRegistration",
-    };
+        {
+            "MSFT_BaseConfigurationProviderRegistration",
+            "MSFT_CimConfigurationProviderRegistration",
+            "MSFT_PSConfigurationProviderRegistration",
+        };
 
         // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
-        private static readonly HashSet<string> s_hiddenResourceCache = new(s_hiddenResourceList,
-            StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> s_hiddenResourceCache =
+            new(s_hiddenResourceList, StringComparer.OrdinalIgnoreCase);
 
         // a collection to hold current importing script based resource file
         // this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
@@ -638,12 +638,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Default ModuleName and ModuleVersion to use.
         /// </summary>
-        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new("PSDesiredStateConfiguration", new Version("1.1"));
+        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource =
+            new("PSDesiredStateConfiguration", new Version("1.1"));
 
         /// <summary>
         /// Default ModuleName and ModuleVersion to use for meta configuration resources.
         /// </summary>
-        internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource = new("PSDesiredStateConfigurationEngine", new Version("2.0"));
+        internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource =
+            new("PSDesiredStateConfigurationEngine", new Version("2.0"));
 
         /// <summary>
         /// A set of dynamic keywords that can be used in both configuration and meta configuration.
