@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
                     // Win8:649519
                     comObject = LanguagePrimitives.SetObjectProperties(comObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                 }
- 
+
                 WriteObject(comObject);
             }
 #endif
