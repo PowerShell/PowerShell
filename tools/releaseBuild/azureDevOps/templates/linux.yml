@@ -21,6 +21,9 @@ jobs:
   - checkout: self
     clean: true
 
+  - checkout: ComplianceRepo
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
