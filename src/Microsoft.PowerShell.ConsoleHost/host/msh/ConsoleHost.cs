@@ -1489,10 +1489,16 @@ namespace Microsoft.PowerShell
 
             while (!ShouldEndSession)
             {
-                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
-                CreateRunspace(args);
-
-                if (ExitCode == ExitCodeInitFailure) { break; }
+                try
+                {
+                    DoCreateRunspace(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
+                }
+                catch (ConsoleHostStartupException startupException)
+                {
+                    ReportExceptionFallback(startupException.InnerException, startupException.Message);
+                    ExitCode = ExitCodeInitFailure;
+                    break;
+                }
 
                 if (!_noExit)
                 {
@@ -1563,22 +1569,6 @@ namespace Microsoft.PowerShell
             }
 
             return e;
-        }
-
-        private void CreateRunspace(object runspaceCreationArgs)
-        {
-            RunspaceCreationEventArgs args = null;
-            try
-            {
-                args = runspaceCreationArgs as RunspaceCreationEventArgs;
-                Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
-            }
-            catch (ConsoleHostStartupException startupException)
-            {
-                ReportExceptionFallback(startupException.InnerException, startupException.Message);
-                ExitCode = ExitCodeInitFailure;
-            }
         }
 
         /// <summary>
@@ -2998,38 +2988,5 @@ namespace Microsoft.PowerShell
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
         private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
-    }
-
-    /// <summary>
-    /// Defines arguments passed to ConsoleHost.CreateRunspace.
-    /// </summary>
-    internal sealed class RunspaceCreationEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Constructs RunspaceCreationEventArgs.
-        /// </summary>
-        internal RunspaceCreationEventArgs(
-            string initialCommand,
-            bool skipProfiles,
-            bool staMode,
-            string configurationName,
-            Collection<CommandParameter> initialCommandArgs)
-        {
-            InitialCommand = initialCommand;
-            SkipProfiles = skipProfiles;
-            StaMode = staMode;
-            ConfigurationName = configurationName;
-            InitialCommandArgs = initialCommandArgs;
-        }
-
-        internal string InitialCommand { get; set; }
-
-        internal bool SkipProfiles { get; set; }
-
-        internal bool StaMode { get; set; }
-
-        internal string ConfigurationName { get; set; }
-
-        internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace
