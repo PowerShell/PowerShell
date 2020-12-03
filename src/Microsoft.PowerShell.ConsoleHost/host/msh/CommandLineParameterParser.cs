@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell
         /// </returns>
         private (string switchKey, bool shouldBreak) GetSwitchKey(string[] args, ref int argIndex, ref bool noexitSeen)
         {
-            string switchKey = args[argIndex].Trim().ToLowerInvariant();
+            string switchKey = args[argIndex].Trim();
             if (string.IsNullOrEmpty(switchKey))
             {
                 return (switchKey: string.Empty, shouldBreak: false);
@@ -648,7 +648,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
 
             return (switchKey.Length >= smallestUnambiguousMatch.Length
-                    && match.IndexOf(switchKey, StringComparison.Ordinal) == 0);
+                    && match.StartsWith(switchKey, StringComparison.OrdinalIgnoreCase));
         }
 
         #endregion
@@ -1131,11 +1131,11 @@ namespace Microsoft.PowerShell
                 {
                     if (args[i].StartsWith('-') && args[i].Length > 1)
                     {
-                        string param = args[i].Substring(1, args[i].Length - 1).ToLower();
+                        string param = args[i].Substring(1, args[i].Length - 1);
                         StringBuilder possibleParameters = new StringBuilder();
                         foreach (string validParameter in s_validParameters)
                         {
-                            if (validParameter.Contains(param))
+                            if (validParameter.Contains(param, StringComparison.OrdinalIgnoreCase))
                             {
                                 possibleParameters.Append("\n  -");
                                 possibleParameters.Append(validParameter);
