@@ -51,6 +51,12 @@ jobs:
       $env:AZDEVOPSFEEDPAT = $null
     displayName: 'Build'
 
+  - template: EsrpScan.yml@ComplianceRepo
+    parameters:
+        scanPath: $(Build.SourcesDirectory)/macosBinResults
+        pattern: |
+          **\*.zip
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
