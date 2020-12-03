@@ -59,10 +59,12 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
         Setup -Directory "$ADSTestDir"
         Setup -File "$ADSTestFile"
       }
+
       It "Should add an alternate data stream on a directory" -Skip:(!$IsWindows) {
         Add-Content -Path TestDrive:\$ADSTestDir -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
         Get-Content -Path TestDrive:\$ADSTestDir -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
       }
+
       It "Should add an alternate data stream on a file" -Skip:(!$IsWindows) {
         Add-Content -Path TestDrive:\$ADSTestFile -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
         Get-Content -Path TestDrive:\$ADSTestFile -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent

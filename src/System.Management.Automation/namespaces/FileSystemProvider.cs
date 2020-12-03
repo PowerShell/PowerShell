@@ -1326,7 +1326,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 string outputPath = result.FullName + ":" + stream.Stream;
                                 // Alternate data streams can never be containers.
-                                WriteItemObject(stream, outputPath, false);
+                                WriteItemObject(stream, outputPath, isContainer: false);
                                 foundStream = true;
                             }
 
@@ -6971,7 +6971,7 @@ namespace Microsoft.PowerShell.Commands
                 // alternate data streams on them that are not child items. These alternate data streams
                 // must be treated as data streams, even if they're attached to directories. However,
                 // if asked to work with a directory without a data stream specified, write a non-terminating
-                // error instead of clearing all child items of the directory.  (On non-Windows, alternate
+                // error instead of clearing all child items of the directory. (On non-Windows, alternate
                 // data streams don't exist, so in that environment always write the error when addressing
                 // a directory.)
                 if (Directory.Exists(path)
@@ -8650,6 +8650,7 @@ namespace System.Management.Automation.Internal
             SafeFindHandle handle = NativeMethods.FindFirstStreamW(
                 path, NativeMethods.StreamInfoLevels.FindStreamInfoStandard,
                 findStreamData, 0);
+
             if (handle.IsInvalid)
             {
                 int error = Marshal.GetLastWin32Error();
