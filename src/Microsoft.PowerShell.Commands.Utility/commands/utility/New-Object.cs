@@ -10,9 +10,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-#if !UNIX
 using System.Management.Automation.Security;
-#endif
 using System.Reflection;
 using System.Runtime.InteropServices;
 #if !UNIX
