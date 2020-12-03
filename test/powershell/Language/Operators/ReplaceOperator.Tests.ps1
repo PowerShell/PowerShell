@@ -29,6 +29,18 @@ Describe "Replace Operator" -Tags CI {
             $res = "PowerPoint" -replace "Point"
             $res | Should -BeExactly "Power"
         }
+
+        It "Replace operator can take an enumerable as first argument, a mandatory pattern, and an optional substitution" {
+            $res = "PowerPoint1","PowerPoint2" -replace "Point","Shell"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "PowerShell1"
+            $res[1] | Should -BeExactly "PowerShell2"
+
+            $res = "PowerPoint1","PowerPoint2" -replace "Point"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "Power1"
+            $res[1] | Should -BeExactly "Power2"
+        }
     }
 
     Context "Replace operator substitutions" {
