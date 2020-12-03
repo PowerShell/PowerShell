@@ -213,8 +213,7 @@ namespace Microsoft.PowerShell.Commands
                                     targetObject: null));
                         }
 
-                        break;
-                    }
+                    break;
                 }
 
                 // WinRT does not support creating instances of attribute & delegate WinRT types.
