@@ -213,6 +213,7 @@ namespace Microsoft.PowerShell.Commands
                                     ErrorCategory.PermissionDenied,
                                     targetObject: null));
                         }
+
                         break;
                     }
                 }
