@@ -186,8 +186,6 @@ namespace System.Management.Automation
                 }
             }
 
-            PSTelemetry.SendExperimentalFeatureTelemetryMetricInBackground();
-
             return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 

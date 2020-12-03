@@ -250,6 +250,8 @@ namespace Microsoft.PowerShell
             }
             finally
             {
+                PSTelemetry.ContinueSendTelemetry();
+
                 if (s_theConsoleHost != null)
                 {
 #if LEGACYTELEMETRY
@@ -257,6 +259,8 @@ namespace Microsoft.PowerShell
 #endif
                     s_theConsoleHost.Dispose();
                 }
+
+                PSTelemetry.EnsureSendTelemetry();
             }
 
             unchecked

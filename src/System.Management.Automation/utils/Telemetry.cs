@@ -682,17 +682,20 @@ namespace Microsoft.PowerShell.Telemetry
             try
             {
                 s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
+
+                SendExperimentalFeatureStartupTelemetry();
             }
             catch
             {
                 // do nothing, telemetry cannot be sent
             }
+
         }
 
         /// <summary>
         /// Send telemetry about enabled experimental features.
         /// </summary>
-        internal static void SendExperimentalFeatureStartupTelemetry()
+        private static void SendExperimentalFeatureStartupTelemetry()
         {
             if (!CanSendTelemetry)
             {
@@ -856,6 +859,11 @@ namespace Microsoft.PowerShell.Telemetry
             CanSendTelemetry = false;
             return id;
         }
+
+        internal static void Flush()
+        {
+            s_telemetryClient.Flush();
+        }
     }
 
     /// <summary>
@@ -866,25 +874,28 @@ namespace Microsoft.PowerShell.Telemetry
     /// </remarks>
     internal static class PSTelemetry
     {
-        internal static void SendExperimentalFeatureTelemetryMetricInBackground()
+        // Used to terminate Task.Delay() early
+        // if a script has been executed fast and PowerShell is ready to exit.
+        private static CancellationTokenSource s_cts = new();
+        private static Task s_sendPSCoreStartupTelemetryInBackground;
+
+        internal static void ContinueSendTelemetry()
         {
-            Task.Run(SendExperimentalFeatureTelemetryMetricAction());
+            // Tertinate Task.Delay().
+            s_cts.Cancel();
         }
 
-        // The dedicated method allows deferring ApplicationInsightsTelemetry static class initialization.
-        private static Action SendExperimentalFeatureTelemetryMetricAction()
+        internal static void EnsureSendTelemetry()
         {
-            return async () =>
-            {
-                await Task.Delay(500).ConfigureAwait(false);
+            s_sendPSCoreStartupTelemetryInBackground?.Wait();
 
-                ApplicationInsightsTelemetry.SendExperimentalFeatureStartupTelemetry();
-            };
+            // Ensure all telemetry has been sent before PowerShell exit.
+            ApplicationInsightsTelemetry.Flush();
         }
 
         internal static void SendPSCoreStartupTelemetryInBackground(string mode)
         {
-            Task.Run(SendPSCoreStartupTelemetry(mode));
+            s_sendPSCoreStartupTelemetryInBackground = Task.Run(SendPSCoreStartupTelemetry(mode));
         }
 
         // The dedicated method allows deferring ApplicationInsightsTelemetry static class initialization.
@@ -892,7 +903,16 @@ namespace Microsoft.PowerShell.Telemetry
         {
             return async () =>
             {
-                await Task.Delay(500).ConfigureAwait(false);
+                try
+                {
+                    // On slow systems the delay postpones ApplicationInsightsTelemetry static class initialization
+                    // so that do more useful work first.
+                    await Task.Delay(500, s_cts.Token).ConfigureAwait(true);
+                }
+                catch
+                {
+                    // Ignore TaskCanceledException.
+                }
 
                 ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry(mode);
             };
