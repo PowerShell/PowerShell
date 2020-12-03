@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
-
+ 
                 // WinRT does not support creating instances of attribute & delegate WinRT types.
                 if (WinRTHelper.IsWinRTType(type) && ((typeof(System.Attribute)).IsAssignableFrom(type) || (typeof(System.Delegate)).IsAssignableFrom(type)))
                 {
