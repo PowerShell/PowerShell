@@ -965,8 +965,7 @@ namespace System.Management.Automation
                 }
             }
 
-            MatchEvaluator cachedMatchEvaluator = null;
-            string cachedReplacementString = null;
+            var replacer = OperatorReplacer.Create(context);
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
@@ -980,7 +979,7 @@ namespace System.Management.Automation
                     lvalString = lval?.ToString() ?? string.Empty;
                 }
 
-                return ReplaceOperatorImpl(context, lvalString, rr, substitute, ref cachedReplacementString, ref cachedMatchEvaluator);
+                return replacer.ReplaceOperator(lvalString, rr, substitute);
             }
             else
             {
@@ -988,78 +987,88 @@ namespace System.Management.Automation
                 while (ParserOps.MoveNext(context, errorPosition, list))
                 {
                     string lvalString = PSObject.ToStringParser(context, ParserOps.Current(errorPosition, list));
-                    resultList.Add(ReplaceOperatorImpl(context, lvalString, rr, substitute, ref cachedReplacementString, ref cachedMatchEvaluator));
+                    resultList.Add(replacer.ReplaceOperator(lvalString, rr, substitute));
                 }
 
                 return resultList.ToArray();
             }
         }
 
-        /// <summary>
-        /// ReplaceOperator implementation.
-        /// Abstracts away conversion of the optional substitute parameter to either a string or a MatchEvaluator delegate
-        /// and finally returns the result of the final Regex.Replace operation.
-        /// </summary>
-        /// <param name="context">The execution context in which to evaluate the expression.</param>
-        /// <param name="input">The input string.</param>
-        /// <param name="regex">A Regex instance.</param>
-        /// <param name="substitute">The substitute value.</param>
-        /// <param name="cachedReplacementString">Cached replacement string.</param>
-        /// <param name="cachedMatchEvaluator">Cached MatchEvaluator.</param>
-        /// <returns>The result of the regex.Replace operation.</returns>
-        private static object ReplaceOperatorImpl(
-            ExecutionContext context,
-            string input,
-            Regex regex,
-            object substitute,
-            ref string cachedReplacementString,
-            ref MatchEvaluator cachedMatchEvaluator)
+        private struct OperatorReplacer
         {
-            // After first call we will have necessarily either cachedReplacementString or cachedMatchEvaluator.
-            if (cachedReplacementString is not null)
+            public static OperatorReplacer Create(ExecutionContext context)
             {
-                return regex.Replace(input, cachedReplacementString);
+                return new OperatorReplacer(context, replacementString: null, matchEvaluator: null);
             }
 
-            if (cachedMatchEvaluator is not null)
+            private readonly ExecutionContext _context;
+
+            private string _cachedReplacementString;
+
+            private MatchEvaluator _cachedMatchEvaluator;
+
+            private OperatorReplacer(
+                ExecutionContext context,
+                string replacementString,
+                MatchEvaluator matchEvaluator)
             {
-                return regex.Replace(input, cachedMatchEvaluator);
+                _context = context;
+                _cachedReplacementString = replacementString;
+                _cachedMatchEvaluator = matchEvaluator;
             }
 
-            switch (substitute)
+            /// <summary>
+            /// ReplaceOperator implementation.
+            /// Abstracts away conversion of the optional substitute parameter to either a string or a MatchEvaluator delegate
+            /// and finally returns the result of the final Regex.Replace operation.
+            /// </summary>
+            public object ReplaceOperator(string input, Regex regex, object substitute)
             {
-                case string replacement:
-                    cachedReplacementString = replacement;
-                    return regex.Replace(input, cachedReplacementString);
-
-                case ScriptBlock sb:
-                    cachedMatchEvaluator = GetMatchEvaluator(context, sb);
-                    return regex.Replace(input, cachedMatchEvaluator);
-
-                case object val when LanguagePrimitives.TryConvertTo(val, out cachedMatchEvaluator):
-                    return regex.Replace(input, cachedMatchEvaluator);
-
-                default:
-                    cachedReplacementString = PSObject.ToStringParser(context, substitute);
-                    return regex.Replace(input, cachedReplacementString);
-            }
-
-            // Local helper function to avoid creating an instance of the generated delegate helper class
-            // every time 'ReplaceOperatorImpl' is invoked.
-            static MatchEvaluator GetMatchEvaluator(ExecutionContext context, ScriptBlock sb)
-            {
-                return match =>
+                if (_cachedReplacementString is not null)
                 {
-                    var result = sb.DoInvokeReturnAsIs(
-                        useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: match,
-                        input: AutomationNull.Value,
-                        scriptThis: AutomationNull.Value,
-                        args: Array.Empty<object>());
+                    return regex.Replace(input, _cachedReplacementString);
+                }
 
-                    return PSObject.ToStringParser(context, result);
-                };
+                if (_cachedMatchEvaluator is not null)
+                {
+                    return regex.Replace(input, _cachedMatchEvaluator);
+                }
+
+                switch (substitute)
+                {
+                    case string replacement:
+                        _cachedReplacementString = replacement;
+                        return regex.Replace(input, _cachedReplacementString);
+
+                    case ScriptBlock sb:
+                        _cachedMatchEvaluator = GetMatchEvaluator(_context, sb);
+                        return regex.Replace(input, _cachedMatchEvaluator);
+
+                    case object val when LanguagePrimitives.TryConvertTo(val, out _cachedMatchEvaluator):
+                        return regex.Replace(input, _cachedMatchEvaluator);
+
+                    default:
+                        _cachedReplacementString = PSObject.ToStringParser(_context, substitute);
+                        return regex.Replace(input, _cachedReplacementString);
+                }
+
+                // Local helper function to avoid creating an instance of the generated delegate helper class
+                // every time 'ReplaceOperatorImpl' is invoked.
+                static MatchEvaluator GetMatchEvaluator(ExecutionContext context, ScriptBlock sb)
+                {
+                    return match =>
+                    {
+                        var result = sb.DoInvokeReturnAsIs(
+                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                            dollarUnder: match,
+                            input: AutomationNull.Value,
+                            scriptThis: AutomationNull.Value,
+                            args: Array.Empty<object>());
+
+                        return PSObject.ToStringParser(context, result);
+                    };
+                }
             }
         }
 
