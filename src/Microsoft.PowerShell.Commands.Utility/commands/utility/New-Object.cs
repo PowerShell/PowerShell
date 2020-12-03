@@ -197,13 +197,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+                switch (Context.LanguageMode)
                 {
-                    switch (Context.LanguageMode)
-                    {
-                        case PSLanguageMode.NoLanguage:
-                        case PSLanguageMode.RestrictedLanguage:
-                        if (!CoreTypes.Contains(type))
+                    case PSLanguageMode.NoLanguage:
+                    case PSLanguageMode.RestrictedLanguage:
+                        if (SystemLockdownPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
+                            && !CoreTypes.Contains(type))
                         {
                             ThrowTerminatingError(
                                 new ErrorRecord(
