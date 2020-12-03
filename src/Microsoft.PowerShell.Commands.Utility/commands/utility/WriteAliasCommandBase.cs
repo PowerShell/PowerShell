@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// for new aliases).
         /// </summary>
         [Parameter]
-        public ScopedItemOptions Option { get; set; }
+        public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
 
         /// <summary>
         /// If set to true, the alias that is set is passed to the pipeline.

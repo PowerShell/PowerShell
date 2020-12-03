@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// Parameter that determines the format of the file created.
         /// </summary>
         [Parameter]
-        public ExportAliasFormat As { get; set; }
+        public ExportAliasFormat As { get; set; } = ExportAliasFormat.Csv;
 
         /// <summary>
         /// Property that sets append parameter.

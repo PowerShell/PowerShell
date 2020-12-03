@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("Type")]
-        public TestPathType PathType { get; set; }
+        public TestPathType PathType { get; set; } = TestPathType.Any;
 
         /// <summary>
         /// Gets or sets the IsValid parameter.

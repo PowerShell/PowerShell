@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = FromSourceParameterSetName)]
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        public Language Language { get; set; }
+        public Language Language { get; set; } = Language.CSharp;
 
         /// <summary>
         /// Any reference DLLs to use in the compilation.
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("OT")]
-        public OutputAssemblyType OutputType { get; set; }
+        public OutputAssemblyType OutputType { get; set; } = OutputAssemblyType.Library;
 
         /// <summary>
         /// Flag to pass the resulting types along.

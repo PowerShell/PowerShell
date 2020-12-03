@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "NoException")]
         [Parameter(ParameterSetName = "WithException")]
-        public ErrorCategory Category { get; set; }
+        public ErrorCategory Category { get; set; } = ErrorCategory.NotSpecified;
 
         /// <summary>
         /// ErrorRecord.ErrorId.
