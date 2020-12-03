@@ -862,7 +862,7 @@ namespace Microsoft.PowerShell.Telemetry
 
         internal static void Flush()
         {
-            s_telemetryClient.Flush();
+            s_telemetryClient?.Flush();
         }
     }
 
