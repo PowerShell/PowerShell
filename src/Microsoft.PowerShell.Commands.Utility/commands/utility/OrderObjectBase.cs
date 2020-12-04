@@ -182,9 +182,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A logical matrix where each row is an input object and its property values specified by Properties.
         /// </summary>
-        internal List<OrderByPropertyEntry> OrderMatrix { get; } = null;
+        internal List<OrderByPropertyEntry> OrderMatrix { get; }
 
-        internal OrderByPropertyComparer Comparer { get; } = null;
+        internal OrderByPropertyComparer Comparer { get; }
 
         internal List<MshParameter> MshParameterList
         {

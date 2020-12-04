@@ -53,14 +53,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Top", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
-        public int Top { get; set; } = 0;
+        public int Top { get; set; }
 
         /// <summary>
         /// Gets or sets the number of items to return in a Bottom N sort.
         /// </summary>
         [Parameter(ParameterSetName = "Bottom", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
-        public int Bottom { get; set; } = 0;
+        public int Bottom { get; set; }
 
         /// <summary>
         /// Moves unique entries to the front of the list.

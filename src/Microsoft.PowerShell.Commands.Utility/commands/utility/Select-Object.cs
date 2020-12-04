@@ -91,14 +91,14 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
-        public string[] ExcludeProperty { get; set; } = null;
+        public string[] ExcludeProperty { get; set; }
 
         /// <summary>
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
-        public string ExpandProperty { get; set; } = null;
+        public string ExpandProperty { get; set; }
 
         /// <summary>
         /// </summary>
@@ -152,14 +152,14 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [ValidateRange(0, int.MaxValue)]
-        public int Skip { get; set; } = 0;
+        public int Skip { get; set; }
 
         /// <summary>
         /// Skip the specified number of items from end.
         /// </summary>
         [Parameter(ParameterSetName = "SkipLastParameter")]
         [ValidateRange(0, int.MaxValue)]
-        public int SkipLast { get; set; } = 0;
+        public int SkipLast { get; set; }
 
         /// <summary>
         /// With this switch present, the cmdlet won't "short-circuit"
