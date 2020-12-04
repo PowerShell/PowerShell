@@ -1066,7 +1066,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // if (_cachedMatchEvaluator is not null)
+                    // _cachedMatchEvaluator is not null when code reach here.
                     return _regex.Replace(input, _cachedMatchEvaluator);
                 }
 
