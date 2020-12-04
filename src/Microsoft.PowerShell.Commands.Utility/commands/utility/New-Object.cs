@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     case PSLanguageMode.NoLanguage:
                     case PSLanguageMode.RestrictedLanguage:
-                        if (SystemLockdownPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
                             && !CoreTypes.Contains(type))
                         {
                             ThrowTerminatingError(
