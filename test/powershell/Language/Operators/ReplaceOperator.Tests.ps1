@@ -11,6 +11,12 @@ Describe "Replace Operator" -Tags CI {
             $res | Should -BeExactly "image.jpg"
         }
 
+        It "Replace operator can convert an substitution object to string" {
+            $substitution = Get-Process -Name pwsh
+            $res = "!3!" -replace "3",$substitution
+            $res | Should -BeExactly "!System.Diagnostics.Process (pwsh)!"
+        }
+
         It "Replace operator can be case-insensitive and case-sensitive" {
             $res = "book" -replace "B","C"
             $res | Should -BeExactly "Cook"

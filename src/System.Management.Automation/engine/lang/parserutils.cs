@@ -965,7 +965,7 @@ namespace System.Management.Automation
                 }
             }
 
-            var replacer = OperatorReplacer.Create(context, rr, substitute);
+            var replacer = ReplacerOperator.Create(context, rr, substitute);
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
@@ -994,28 +994,24 @@ namespace System.Management.Automation
             }
         }
 
-        private struct OperatorReplacer
+        private struct ReplacerOperator
         {
-            public static OperatorReplacer Create(ExecutionContext context, Regex regex, object substitute)
+            public static ReplacerOperator Create(ExecutionContext context, Regex regex, object substitute)
             {
-                return new OperatorReplacer(context, regex, substitute, replacementString: null, matchEvaluator: null);
+                return new ReplacerOperator(context, regex, substitute, replacementString: null, matchEvaluator: null);
             }
 
-            private readonly ExecutionContext _context;
             private readonly Regex _regex;
-
             private string _cachedReplacementString;
-
             private MatchEvaluator _cachedMatchEvaluator;
 
-            private OperatorReplacer(
+            private ReplacerOperator(
                 ExecutionContext context,
                 Regex regex,
                 object substitute,
                 string replacementString,
                 MatchEvaluator matchEvaluator)
             {
-                _context = context;
                 _regex = regex;
                 _cachedReplacementString = replacementString;
                 _cachedMatchEvaluator = matchEvaluator;
@@ -1027,34 +1023,34 @@ namespace System.Management.Automation
                         break;
 
                     case ScriptBlock sb:
-                        _cachedMatchEvaluator = GetMatchEvaluator(_context, sb);
+                        _cachedMatchEvaluator = GetMatchEvaluator(context, sb);
                         break;
 
                     case object val when LanguagePrimitives.TryConvertTo(val, out _cachedMatchEvaluator):
                         break;
 
                     default:
-                        _cachedReplacementString = PSObject.ToStringParser(_context, substitute);
+                        _cachedReplacementString = PSObject.ToStringParser(context, substitute);
                         break;
                 }
+            }
 
-                // Local helper function to avoid creating an instance of the generated delegate helper class
-                // every time 'ReplaceOperatorImpl' is invoked.
-                static MatchEvaluator GetMatchEvaluator(ExecutionContext context, ScriptBlock sb)
+            // Local helper function to avoid creating an instance of the generated delegate helper class
+            // every time 'ReplaceOperatorImpl' is invoked.
+            private static MatchEvaluator GetMatchEvaluator(ExecutionContext context, ScriptBlock sb)
+            {
+                return match =>
                 {
-                    return match =>
-                    {
-                        var result = sb.DoInvokeReturnAsIs(
-                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: match,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: Array.Empty<object>());
+                    var result = sb.DoInvokeReturnAsIs(
+                        useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: match,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: Array.Empty<object>());
 
-                        return PSObject.ToStringParser(context, result);
-                    };
-                }
+                    return PSObject.ToStringParser(context, result);
+                };
             }
 
             /// <summary>
