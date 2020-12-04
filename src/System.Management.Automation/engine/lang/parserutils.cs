@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
                     return _regex.Replace(input, _cachedReplacementString);
                 }
 
-                // _cachedMatchEvaluator is not null when code reach here.
+                Dbg.Assert(_cachedMatchEvaluator is not null, "_cachedMatchEvaluator should be not null when code reach here.");
                 return _regex.Replace(input, _cachedMatchEvaluator);
             }
         }
