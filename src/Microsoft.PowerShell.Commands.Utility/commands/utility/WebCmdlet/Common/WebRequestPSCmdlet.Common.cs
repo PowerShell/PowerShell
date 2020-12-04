@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the TLS/SSL protocol used by the Web Cmdlet.
         /// </summary>
         [Parameter]
-        public virtual WebSslProtocol SslProtocol { get; set; }
+        public virtual WebSslProtocol SslProtocol { get; set; } = WebSslProtocol.Default;
 
         /// <summary>
         /// Gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
