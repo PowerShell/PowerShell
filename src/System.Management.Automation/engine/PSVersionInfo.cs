@@ -593,26 +593,7 @@ namespace System.Management.Automation
         /// <param name="semver"></param>
         public static implicit operator Version(SemanticVersion semver)
         {
-            PSObject psobj;
-
             var result = new Version(semver.Major, semver.Minor, semver.Patch);
-
-            if (!string.IsNullOrEmpty(semver.PreReleaseLabel) || !string.IsNullOrEmpty(semver.BuildLabel))
-            {
-                psobj = new PSObject(result);
-
-                if (!string.IsNullOrEmpty(semver.PreReleaseLabel))
-                {
-                    psobj.Properties.Add(new PSNoteProperty(PreLabelPropertyName, semver.PreReleaseLabel));
-                }
-
-                if (!string.IsNullOrEmpty(semver.BuildLabel))
-                {
-                    psobj.Properties.Add(new PSNoteProperty(BuildLabelPropertyName, semver.BuildLabel));
-                }
-
-                psobj.TypeNames.Insert(0, TypeNameForVersionWithLabel);
-            }
 
             return result;
         }
