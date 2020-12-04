@@ -1064,12 +1064,9 @@ namespace System.Management.Automation
                 {
                     return _regex.Replace(input, _cachedReplacementString);
                 }
-                else
-                {
-                    // _cachedMatchEvaluator is not null when code reach here.
-                    return _regex.Replace(input, _cachedMatchEvaluator);
-                }
 
+                // _cachedMatchEvaluator is not null when code reach here.
+                return _regex.Replace(input, _cachedMatchEvaluator);
             }
         }
 
