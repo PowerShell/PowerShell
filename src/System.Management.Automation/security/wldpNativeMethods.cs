@@ -230,7 +230,7 @@ namespace System.Management.Automation.Security
 
                                 // AppLocker fails when you try to check a policy on a file
                                 // with no content. So create a scratch file and test on that.
-                                string dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
+                                string dtAppLockerTestFileContents = AppLockerTestFileContents + Environment.TickCount64;
                                 IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
                                 IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
