@@ -998,7 +998,7 @@ namespace System.Management.Automation
         {
             public static ReplacerOperator Create(ExecutionContext context, Regex regex, object substitute)
             {
-                return new ReplacerOperator(context, regex, substitute, replacementString: null, matchEvaluator: null);
+                return new ReplacerOperator(context, regex, substitute);
             }
 
             private readonly Regex _regex;
@@ -1008,13 +1008,11 @@ namespace System.Management.Automation
             private ReplacerOperator(
                 ExecutionContext context,
                 Regex regex,
-                object substitute,
-                string replacementString,
-                MatchEvaluator matchEvaluator)
+                object substitute)
             {
                 _regex = regex;
-                _cachedReplacementString = replacementString;
-                _cachedMatchEvaluator = matchEvaluator;
+                _cachedReplacementString = null;
+                _cachedMatchEvaluator = null;
 
                 switch (substitute)
                 {
