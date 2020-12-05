@@ -81,7 +81,7 @@ namespace System.Management.Automation.Internal
                 string directoryToCheck = directoriesToCheck.Dequeue();
                 try
                 {
-                    string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
+                    IEnumerable<string> subDirectories = Directory.EnumerateDirectories(directoryToCheck, "*", options);
                     foreach (string toAdd in subDirectories)
                     {
                         if (firstSubDirs || !IsPossibleResourceDirectory(toAdd))
@@ -94,7 +94,7 @@ namespace System.Management.Automation.Internal
                 catch (UnauthorizedAccessException) { }
 
                 firstSubDirs = false;
-                string[] files = Directory.GetFiles(directoryToCheck, "*", options);
+                IEnumerable<string> files = Directory.EnumerateFiles(directoryToCheck, "*", options);
                 foreach (string moduleFile in files)
                 {
                     foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
@@ -332,14 +332,14 @@ namespace System.Management.Automation.Internal
             if (!string.IsNullOrWhiteSpace(moduleBase) && Directory.Exists(moduleBase))
             {
                 var options = Utils.PathIsUnc(moduleBase) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
-                string[] subdirectories = Directory.GetDirectories(moduleBase, "*", options);
+                IEnumerable<string> subdirectories = Directory.EnumerateDirectories(moduleBase, "*", options);
                 ProcessPossibleVersionSubdirectories(subdirectories, versionFolders);
             }
 
             return versionFolders;
         }
 
-        private static void ProcessPossibleVersionSubdirectories(string[] subdirectories, List<Version> versionFolders)
+        private static void ProcessPossibleVersionSubdirectories(IEnumerable<string> subdirectories, List<Version> versionFolders)
         {
             foreach (string subdir in subdirectories)
             {
