@@ -81,8 +81,7 @@ namespace System.Management.Automation.Internal
                 string directoryToCheck = directoriesToCheck.Dequeue();
                 try
                 {
-                    IEnumerable<string> subDirectories = Directory.EnumerateDirectories(directoryToCheck, "*", options);
-                    foreach (string toAdd in subDirectories)
+                    foreach (string toAdd in Directory.EnumerateDirectories(directoryToCheck, "*", options))
                     {
                         if (firstSubDirs || !IsPossibleResourceDirectory(toAdd))
                         {
@@ -94,8 +93,7 @@ namespace System.Management.Automation.Internal
                 catch (UnauthorizedAccessException) { }
 
                 firstSubDirs = false;
-                IEnumerable<string> files = Directory.EnumerateFiles(directoryToCheck, "*", options);
-                foreach (string moduleFile in files)
+                foreach (string moduleFile in Directory.EnumerateFiles(directoryToCheck, "*", options))
                 {
                     foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                     {
