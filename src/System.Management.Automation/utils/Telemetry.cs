@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return defaultValue;
             }
 
-            var boolStr = str.AsSpan().Trim();
+            var boolStr = str.AsSpan();
 
             if (boolStr.Length == 1)
             {
