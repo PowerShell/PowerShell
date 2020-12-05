@@ -7,7 +7,7 @@ Describe "Verify Markdown Links" {
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                sudo yarn global add markdown-link-check@3.8.3
+                sudo yarn global add markdown-link-check@3.8.4
             }
         }
 
