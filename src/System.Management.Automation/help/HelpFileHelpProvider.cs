@@ -368,7 +368,7 @@ namespace System.Management.Automation
                     {
                         // Get all the directories under the module path
                         // * and SearchOption.AllDirectories gets all the version directories.
-                        string[] directories = Directory.GetDirectories(psModulePath, "*", SearchOption.AllDirectories);
+                        IEnumerable<string> directories = Directory.EnumerateDirectories(psModulePath, "*", SearchOption.AllDirectories);
 
                         var possibleModuleDirectories = directories.Where(directory => !ModuleUtils.IsPossibleResourceDirectory(directory));
 
