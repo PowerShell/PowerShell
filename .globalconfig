@@ -742,6 +742,54 @@ dotnet_diagnostic.IL3000.severity = warning
 # IL3001: Avoid using accessing Assembly file path when publishing as a single-file
 dotnet_diagnostic.IL3001.severity = warning
 
+# DOC100: PlaceTextInParagraphs
+dotnet_diagnostic.DOC100.severity = none
+
+# DOC101: UseChildBlocksConsistently
+dotnet_diagnostic.DOC101.severity = none
+
+# DOC102: UseChildBlocksConsistentlyAcrossElementsOfTheSameKind
+dotnet_diagnostic.DOC102.severity = none
+
+# DOC103: UseUnicodeCharacters
+dotnet_diagnostic.DOC103.severity = none
+
+# DOC104: UseSeeLangword
+dotnet_diagnostic.DOC104.severity = none
+
+# DOC105: UseParamref
+dotnet_diagnostic.DOC105.severity = none
+
+# DOC106: UseTypeparamref
+dotnet_diagnostic.DOC106.severity = none
+
+# DOC107: UseSeeCref
+dotnet_diagnostic.DOC107.severity = none
+
+# DOC108: AvoidEmptyParagraphs
+dotnet_diagnostic.DOC108.severity = none
+
+# DOC200: UseXmlDocumentationSyntax
+dotnet_diagnostic.DOC200.severity = none
+
+# DOC201: ItemShouldHaveDescription
+dotnet_diagnostic.DOC201.severity = none
+
+# DOC202: UseSectionElementsCorrectly
+dotnet_diagnostic.DOC202.severity = none
+
+# DOC203: UseBlockElementsCorrectly
+dotnet_diagnostic.DOC203.severity = none
+
+# DOC204: UseInlineElementsCorrectly
+dotnet_diagnostic.DOC204.severity = none
+
+# DOC207: UseSeeLangwordCorrectly
+dotnet_diagnostic.DOC207.severity = none
+
+# DOC209: UseSeeHrefCorrectly
+dotnet_diagnostic.DOC209.severity = none
+
 # IDE0001: SimplifyNames
 dotnet_diagnostic.IDE0001.severity = silent
 
