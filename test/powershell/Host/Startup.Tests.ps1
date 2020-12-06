@@ -22,7 +22,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.ComponentModel.TypeConverter.dll'
             'System.Console.dll'
             'System.Data.Common.dll'
-            'System.Diagnostics.FileVersionInfo.dll'
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
@@ -67,6 +66,7 @@ Describe "Validate start of console host" -Tag CI {
         if ($IsWindows) {
             $allowedAssemblies += @(
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
+                'System.Diagnostics.FileVersionInfo.dll'
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
@@ -76,10 +76,7 @@ Describe "Validate start of console host" -Tag CI {
         }
         else {
             $allowedAssemblies += @(
-                'System.Collections.Immutable.dll'
-                'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
-                'System.Reflection.Metadata.dll'
             )
         }
 
