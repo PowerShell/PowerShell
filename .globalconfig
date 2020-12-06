@@ -755,7 +755,7 @@ dotnet_diagnostic.DOC102.severity = none
 dotnet_diagnostic.DOC103.severity = none
 
 # DOC104: UseSeeLangword
-dotnet_diagnostic.DOC104.severity = none
+dotnet_diagnostic.DOC104.severity = warning
 
 # DOC105: UseParamref
 dotnet_diagnostic.DOC105.severity = none
