@@ -93,17 +93,13 @@ jobs:
       msi: no
       msix: no
 
-  - task: SFP.build-tasks.custom-build-task-2.EsrpMalwareScanning@1
-    displayName: 'Malware Scanning'
-    inputs:
-      ConnectedServiceName: pwshEsrpScanning
-      FolderPath: '$(Build.StagingDirectory)'
-      Pattern: |
-        **\*.msix
-        **\*.msi
-        **\*.zip
-      UseMinimatch: true
-      SessionTimeout: 30
+  - template: EsrpScan.yml@ComplianceRepo
+    parameters:
+        scanPath: $(Build.StagingDirectory)
+        pattern: |
+          **\*.msix
+          **\*.msi
+          **\*.zip
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
