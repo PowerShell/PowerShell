@@ -2401,7 +2401,6 @@ function CleanupGeneratedSourceCode
             if ($assemblyName -in $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
                 $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
                 $lineWasProcessed = $true
-                break
             }
         }
 
