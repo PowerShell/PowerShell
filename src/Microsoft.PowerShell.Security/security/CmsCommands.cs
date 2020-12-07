@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private readonly PSDataCollection<PSObject> _inputObjects = new PSDataCollection<PSObject>();
+        private readonly PSDataCollection<PSObject> _inputObjects = new();
 
         /// <summary>
         /// Gets or sets the content of the CMS Message by path.
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((resolvedPaths.Count > 1) ||
                     (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ErrorRecord error = new ErrorRecord(
+                    ErrorRecord error = new(
                         new ArgumentException(
                             string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_inputObjects.Count > 0)
             {
-                StringBuilder outputString = new StringBuilder();
+                StringBuilder outputString = new();
 
                 Collection<PSObject> output = System.Management.Automation.PowerShell.Create()
                     .AddCommand("Microsoft.PowerShell.Utility\\Out-String")
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private readonly StringBuilder _contentBuffer = new StringBuilder();
+        private readonly StringBuilder _contentBuffer = new();
 
         /// <summary>
         /// Gets or sets the CMS Message by path.
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((resolvedPaths.Count > 1) ||
                     (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ErrorRecord error = new ErrorRecord(
+                    ErrorRecord error = new(
                         new ArgumentException(
                             string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
@@ -304,17 +304,17 @@ namespace Microsoft.PowerShell.Commands
             byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
             if (contentBytes == null)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                     new ArgumentException(CmsCommands.InputContainedNoEncryptedContent),
                     "InputContainedNoEncryptedContent", ErrorCategory.ObjectNotFound, null);
                 ThrowTerminatingError(error);
             }
 
-            EnvelopedCms cms = new EnvelopedCms();
+            EnvelopedCms cms = new();
             cms.Decode(contentBytes);
 
-            PSObject result = new PSObject(cms);
-            List<object> recipients = new List<object>();
+            PSObject result = new(cms);
+            List<object> recipients = new();
             foreach (RecipientInfo recipient in cms.RecipientInfos)
             {
                 recipients.Add(recipient.RecipientIdentifier.Value);
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private readonly StringBuilder _contentBuffer = new StringBuilder();
+        private readonly StringBuilder _contentBuffer = new();
 
         /// <summary>
         /// Gets or sets the Windows Event Log Message with contents to be decrypted.
@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
                 if ((resolvedPaths.Count > 1) ||
                     (!string.Equals(provider.Name, "FileSystem", StringComparison.OrdinalIgnoreCase)))
                 {
-                    ErrorRecord error = new ErrorRecord(
+                    ErrorRecord error = new(
                         new ArgumentException(
                             string.Format(CultureInfo.InvariantCulture,
                                 CmsCommands.FilePathMustBeFileSystemPath, Path)),
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands
             byte[] messageBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
             if ((messageBytes == null) && (!IncludeContext))
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                     new ArgumentException(
                         string.Format(CultureInfo.InvariantCulture,
                             CmsCommands.InputContainedNoEncryptedContentIncludeContext, "-IncludeContext")),
@@ -536,8 +536,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            EnvelopedCms cms = new EnvelopedCms();
-            X509Certificate2Collection certificates = new X509Certificate2Collection();
+            EnvelopedCms cms = new();
+            X509Certificate2Collection certificates = new();
 
             if ((To != null) && (To.Length > 0))
             {
