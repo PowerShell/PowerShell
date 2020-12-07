@@ -6096,7 +6096,7 @@ namespace System.Management.Automation
 
                 foreach (var dir in searchPaths)
                 {
-                    foreach (var file in Directory.GetFiles(dir))
+                    foreach (var file in Directory.EnumerateFiles(dir))
                     {
                         if (wildcardPattern.IsMatch(Path.GetFileName(file)))
                         {
