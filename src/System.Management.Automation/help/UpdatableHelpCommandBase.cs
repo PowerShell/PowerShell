@@ -784,7 +784,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 yield return path;
 
-                foreach (string subDirectory in Directory.GetDirectories(path))
+                foreach (string subDirectory in Directory.EnumerateDirectories(path))
                 {
                     foreach (string subDirectory2 in RecursiveResolvePathHelper(subDirectory))
                     {
