@@ -21,6 +21,9 @@ jobs:
   - checkout: self
     clean: true
 
+  - checkout: ComplianceRepo
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -100,17 +103,13 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)\rpm'
     condition: and(eq(variables['buildName'], 'RPM'),succeeded())
 
-  - task: SFP.build-tasks.custom-build-task-2.EsrpMalwareScanning@1
-    displayName: 'Malware Scanning'
-    inputs:
-      ConnectedServiceName: pwshEsrpScanning
-      FolderPath: $(System.ArtifactsDirectory)
-      Pattern: |
-        **\*.rpm
-        **\*.deb
-        **\*.tar.gz
-      UseMinimatch: true
-      SessionTimeout: 30
+  - template: EsrpScan.yml@ComplianceRepo
+    parameters:
+        scanPath: $(System.ArtifactsDirectory)
+        pattern: |
+          **\*.rpm
+          **\*.deb
+          **\*.tar.gz
 
   - ${{ if eq(variables['buildName'], 'RPM') }}:
     - template: EsrpSign.yml@ComplianceRepo
