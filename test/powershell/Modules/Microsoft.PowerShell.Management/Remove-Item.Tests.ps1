@@ -7,9 +7,7 @@ Describe "Remove-Item" -Tags "CI" {
     Context "File removal Tests" {
 	BeforeEach {
 	    New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
-
 	    Test-Path $testfilepath | Should -BeTrue
-
 	}
 
 	It "Should be able to be called on a regular file without error using the Path parameter" {
@@ -137,5 +135,36 @@ Describe "Remove-Item" -Tags "CI" {
 
 	    Test-Path $testdirectory | Should -BeFalse
 	}
+    }
+
+    Context "Alternate Data Streams should be supported on Windows" {
+      BeforeAll {
+        if (!$IsWindows) {
+          return
+        }
+        $fileName = "ADStest.txt"
+        $streamName = "teststream"
+        $dirName = "ADStestdir"
+        $fileContent =" This is file content."
+        $streamContent = "datastream content here"
+        $streamfile = Join-Path -Path $testpath -ChildPath $fileName
+        $streamdir = Join-Path -Path $testpath -ChildPath $dirName
+
+        $null = New-Item -Path $streamfile -ItemType "File" -force
+        Add-Content -Path $streamfile -Value $fileContent
+        Add-Content -Path $streamfile -Stream $streamName -Value $streamContent
+        $null = New-Item -Path $streamdir -ItemType "Directory" -Force
+        Add-Content -Path $streamdir -Stream $streamName -Value $streamContent
+      }
+      It "Should completely remove a datastream from a file" -Skip:(!$IsWindows) {
+        Get-Item -Path $streamfile -Stream $streamName | Should -Not -BeNullOrEmpty
+        Remove-Item -Path $streamfile -Stream $streamName
+        Get-Item -Path $streamfile -Stream $streamName -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+      }
+      It "Should completely remove a datastream from a directory" -Skip:(!$IsWindows) {
+        Get-Item -Path $streamdir -Stream $streamName | Should -Not -BeNullOrEmpty
+        Remove-Item -Path $streamdir -Stream $streamName
+        Get-Item -Path $streamdir -Stream $streamname -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+      }
     }
 }
