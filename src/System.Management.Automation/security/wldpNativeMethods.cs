@@ -80,7 +80,7 @@ namespace System.Management.Automation.Security
         {
             // Check the WLDP File policy via API
             var wldpFilePolicy = GetWldpPolicy(path, handle);
-            if(wldpFilePolicy == SystemEnforcementMode.Enforce)
+            if (wldpFilePolicy == SystemEnforcementMode.Enforce)
             {
                 return wldpFilePolicy;
             }
