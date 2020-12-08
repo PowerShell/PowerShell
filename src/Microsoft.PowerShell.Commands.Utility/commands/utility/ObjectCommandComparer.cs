@@ -210,19 +210,19 @@ namespace Microsoft.PowerShell.Commands
                 second = secondMsh.BaseObject;
             }
 
-            if (LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
+            if (!LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
             {
-                return result * (_ascendingOrder ? 1 : -1);
+                // Note that this will occur if the objects do not support
+                // IComparable.  We fall back to comparing as strings.
+
+                // being here means the first object doesn't support ICompare
+                string firstString = PSObject.AsPSObject(first).ToString();
+                string secondString = PSObject.AsPSObject(second).ToString();
+
+                result = _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
             }
 
-            // Note that this will occur if the objects do not support
-            // IComparable.  We fall back to comparing as strings.
-
-            // being here means the first object doesn't support ICompare
-            string firstString = PSObject.AsPSObject(first).ToString();
-            string secondString = PSObject.AsPSObject(second).ToString();
-
-            return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
+            return _ascendingOrder ? result : -result;
         }
 
         private readonly CultureInfo _cultureInfo = null;
