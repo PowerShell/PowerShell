@@ -98,7 +98,7 @@ namespace System.Management.Automation.Security
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
-            SystemEnforcementMode systemWldpPolicy = cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+            SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             if ((systemWldpPolicy == SystemEnforcementMode.Audit) ||
                 (systemWldpPolicy == SystemEnforcementMode.Enforce))
             {
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Security
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
             // then return AppLocker's status.
-            if (cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
+            if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
                 SaferPolicy.Disallowed)
             {
                 return appLockerFilePolicy;
