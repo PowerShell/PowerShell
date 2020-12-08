@@ -40,7 +40,7 @@ PrivateData = @{
       }
       @{
         Name        = 'Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck'
-        Description = 'Enable -NoLimit switch for Import-PowerShellDataFile to not enforce built-in hashtable limits'
+        Description = 'Enable -SkipLimitCheck switch for Import-PowerShellDataFile to not enforce built-in hashtable limits'
       }
     )
   }
