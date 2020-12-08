@@ -78,36 +78,39 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
-            // Check the WLDP API
-            SystemEnforcementMode lockdownPolicy = GetWldpPolicy(path, handle);
-            if (lockdownPolicy == SystemEnforcementMode.Enforce)
+            // Check the WLDP File policy via API
+            var wldpFilePolicy = GetWldpPolicy(path, handle);
+            if(wldpFilePolicy == SystemEnforcementMode.Enforce)
             {
-                return lockdownPolicy;
+                return wldpFilePolicy;
+            }
+
+            // Check the AppLocker File policy via API
+            // This needs to be checked before WLDP audit policy
+            // So, that we don't end up in Audit mode,
+            // when we should be enforce mode.
+            var appLockerFilePolicy = GetAppLockerPolicy(path, handle);
+            if (appLockerFilePolicy == SystemEnforcementMode.Enforce)
+            {
+                return appLockerFilePolicy;
             }
 
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
-            SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
-            if ((systemWldpPolicy == SystemEnforcementMode.Enforce) ||
-                (systemWldpPolicy == SystemEnforcementMode.Audit))
+            SystemEnforcementMode systemWldpPolicy = cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+            if ((systemWldpPolicy == SystemEnforcementMode.Audit) ||
+                (systemWldpPolicy == SystemEnforcementMode.Enforce))
             {
-                return lockdownPolicy;
-            }
-
-            // Check the AppLocker API
-            lockdownPolicy = GetAppLockerPolicy(path, handle);
-            if (lockdownPolicy == SystemEnforcementMode.Enforce)
-            {
-                return lockdownPolicy;
+                return wldpFilePolicy;
             }
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
             // then return AppLocker's status.
-            if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
+            if (cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
                 SaferPolicy.Disallowed)
             {
-                return lockdownPolicy;
+                return appLockerFilePolicy;
             }
 
             // If it's not set to 'Enforce' by the platform, allow debug overrides
