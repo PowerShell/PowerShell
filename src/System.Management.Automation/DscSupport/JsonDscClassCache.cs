@@ -78,8 +78,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         Justification = "Needed Internal use only")]
     public static class DscClassCache
     {
-        private const string windowsInboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
-
         private static readonly Regex reservedDynamicKeywordRegex = new Regex("^(Synchronization|Certificate|IIS|SQL)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private static readonly Regex reservedPropertiesRegex = new Regex("^(Require|Trigger|Notify|Before|After|Subscribe)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -97,10 +95,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
         private static readonly HashSet<string> s_hiddenResourceCache =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
-
-        // a collection to hold current importing script based resource file
-        // this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
-        private static readonly HashSet<string> s_currentImportingScriptFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// DSC class cache for this runspace.
@@ -123,6 +117,26 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static Dictionary<string, DscClassCacheEntry> t_classCache;
 
         /// <summary>
+        /// DSC class cache for GuestConfig.
+        /// It is similar to ClassCache, but maintains values between operations.
+        /// </summary>
+        private static Dictionary<string, DscClassCacheEntry> GuestConfigClassCache
+        {
+            get
+            {
+                if (t_guestConfigClassCache == null)
+                {
+                    t_guestConfigClassCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                return t_guestConfigClassCache;
+            }
+        }
+
+        [ThreadStatic]
+        private static Dictionary<string, DscClassCacheEntry> t_guestConfigClassCache;
+
+        /// <summary>
         /// DSC classname to source module mapper.
         /// </summary>
         private static Dictionary<string, Tuple<string, Version>> ByClassModuleCache
@@ -132,38 +146,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static Dictionary<string, Tuple<string, Version>> t_byClassModuleCache;
 
         /// <summary>
-        /// DSC filename to defined class mapper.
-        /// </summary>
-        private static Dictionary<string, IEnumerable<PSObject>> ByFileClassCache
-            => t_byFileClassCache ??= new Dictionary<string, IEnumerable<PSObject>>(StringComparer.OrdinalIgnoreCase);
-
-        [ThreadStatic]
-        private static Dictionary<string, IEnumerable<PSObject>> t_byFileClassCache;
-
-        /// <summary>
-        /// Filenames from which we have imported script dynamic keywords.
-        /// </summary>
-        private static HashSet<string> ScriptKeywordFileCache
-            => t_scriptKeywordFileCache ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        [ThreadStatic]
-        private static HashSet<string> t_scriptKeywordFileCache;
-
-        /// <summary>
         /// Default ModuleName and ModuleVersion to use.
         /// </summary>
-        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version(1, 1));
-
-        /// <summary>
-        /// Default ModuleName and ModuleVersion to use for meta configuration resources.
-        /// </summary>
-        internal static readonly Tuple<string, Version> DefaultModuleInfoForMetaConfigResource = new Tuple<string, Version>("PSDesiredStateConfigurationEngine", new Version(2, 0));
-
-        /// <summary>
-        /// A set of dynamic keywords that can be used in both configuration and meta configuration.
-        /// </summary>
-        internal static readonly HashSet<string> SystemResourceNames =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Node", "OMI_ConfigurationDocument" };
+        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version(3, 0));
 
         /// <summary>
         /// When this property is set to true, DSC Cache will cache multiple versions of a resource.
@@ -187,6 +172,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
+        [ThreadStatic]
+        internal static bool NewApiIsUsed = false;
+
         /// <summary>
         /// Initialize the class cache with the default classes in $ENV:SystemDirectory\Configuration.
         /// </summary>
@@ -196,7 +184,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// Initialize the class cache with the default classes in $ENV:SystemDirectory\Configuration.
+        /// Initialize the class cache with default classes that come with PSDesiredStateConfiguration module.
         /// </summary>
         /// <param name="errors">Collection of any errors encountered during initialization.</param>
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
@@ -212,11 +200,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var moduleInfos = ModuleCmdletBase.GetModuleIfAvailable(new Microsoft.PowerShell.Commands.ModuleSpecification()
                     {
                         Name = "PSDesiredStateConfiguration",
+                        // Version in the next line is actually MinimumVersion
                         Version = new Version(3,0,0)
                     });
 
                 if (moduleInfos.Count > 0)
-                {
+                { 
+                    // to be consistent with Import-Module behavior, we use the fist occurrence that we find in PSModulePath
                     var moduleDirectory = Path.GetDirectoryName(moduleInfos[0].Path);
                     dscConfigurationDirectory = Path.Join(moduleDirectory, "Configuration");
                 }
@@ -233,147 +223,24 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
 
             var resourceBaseFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "BaseResource.schema.json");
-            ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
+            ImportBaseClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors, false);
             var metaConfigFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
-            ImportClasses(metaConfigFile, s_defaultModuleInfoForResource, errors);
-
-            var allResourceRoots = new string[] { dscConfigurationDirectory };
-
-            // Load all of the system resource schema files, searching
-            string resources;
-            foreach (var resourceRoot in allResourceRoots)
-            {
-                resources = Path.Join(resourceRoot, "schema");
-                if (!Directory.Exists(resources))
-                {
-                    continue;
-                }
-
-                foreach (var schemaFile in Directory.EnumerateFiles(resources, "*.schema.json", SearchOption.AllDirectories))
-                {
-                    ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
-                }
-            }
+            ImportBaseClasses(metaConfigFile, s_defaultModuleInfoForResource, errors, false);
         }
 
         /// <summary>
-        /// Get the module name and module version.
-        /// </summary>
-        /// <param name="moduleFolderPath">
-        /// Path to the module folder
-        /// </param>
-        /// <param name="importInBoxResourcesImplicitly">
-        /// if module is inbox and we are importing resources implicitly
-        /// </param>
-        /// <param name="isPsProviderModule">
-        /// Indicate a internal DSC module
-        /// </param>
-        /// <returns></returns>
-        private static Tuple<string, Version> GetModuleInfoHelper(string moduleFolderPath, bool importInBoxResourcesImplicitly, bool isPsProviderModule)
-        {
-            string moduleName = "PsDesiredStateConfiguration";
-            if (!importInBoxResourcesImplicitly)
-            {
-                moduleName = Path.GetFileName(moduleFolderPath);
-            }
-
-            string manifestPath = Path.Join(moduleFolderPath, moduleName + ".psd1");
-            s_tracer.WriteLine("DSC GetModuleVersion: Try retrieving module version information from file: {0}.", manifestPath);
-
-            if (!File.Exists(manifestPath))
-            {
-                if (isPsProviderModule)
-                {
-                    // Some internal PSProviders do not come with a .psd1 file, such
-                    // as MSFT_LogResource. We don't report error in this case.
-                    return new Tuple<string, Version>(moduleName, new Version("1.0"));
-                }
-                else
-                {
-                    s_tracer.WriteLine("DSC GetModuleVersion: Manifest file '{0}' not exist.", manifestPath);
-                    return null;
-                }
-            }
-
-            try
-            {
-                Hashtable dataFileSetting =
-                    PsUtils.GetModuleManifestProperties(
-                        manifestPath,
-                        PsUtils.ManifestModuleVersionPropertyName);
-
-                object versionValue = dataFileSetting["ModuleVersion"];
-                if (versionValue is not null)
-                {
-                    Version moduleVersion;
-                    if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
-                    {
-                        return new Tuple<string, Version>(moduleName, moduleVersion);
-                    }
-                    else
-                    {
-                        s_tracer.WriteLine(
-                            "DSC GetModuleVersion: ModuleVersion value '{0}' cannot be converted to System.Version. Skip the module '{1}'.",
-                            versionValue, moduleName);
-                    }
-                }
-                else
-                {
-                    s_tracer.WriteLine(
-                        "DSC GetModuleVersion: Manifest file '{0}' does not contain ModuleVersion. Skip the module '{1}'.",
-                        manifestPath, moduleName);
-                }
-            }
-            catch (PSInvalidOperationException ex)
-            {
-                s_tracer.WriteLine(
-                    "DSC GetModuleVersion: Error evaluating module manifest file '{0}', with error '{1}'. Skip the module '{2}'.",
-                    manifestPath, ex, moduleName);
-            }
-
-            return null;
-        }
-
-        private static void WriteWarning(string warning)
-        {
-            var executionContext = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
-            if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)
-            {
-                executionContext.InternalHost.UI.WriteWarningLine(warning);
-            }
-        }
-
-        /// <summary>
-        /// Import CIM classes from the given file.
-        /// </summary>
-        /// <param name="path">Path to schema file</param>
-        /// <param name="moduleInfo">Module information</param>
-        /// <param name="errors">Error collection that will be shown to the user</param>
-        /// <returns>Class objects from schema file</returns>
-        public static IEnumerable<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors)
-        {
-            return ImportClasses(path, moduleInfo, errors, false);
-        }
-
-        /// <summary>
-        /// Import CIM classes from the given file.
+        /// Import base classes from the given file.
         /// </summary>
         /// <param name="path">Path to schema file</param>
         /// <param name="moduleInfo">Module information</param>
         /// <param name="errors">Error collection that will be shown to the user</param>
         /// <param name="importInBoxResourcesImplicitly">Flag for implicitly imported resource</param>
         /// <returns>Class objects from schema file</returns>
-        public static IEnumerable<PSObject> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly)
+        public static IEnumerable<PSObject> ImportBaseClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly)
         {
             if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
-            }
-
-            if (!path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-            {
-                WriteWarning(string.Format("Cannot parse non-JSON file {0}", path));
-                return null;
             }
 
             s_tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
@@ -399,12 +266,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 foreach (dynamic c in classes)
                 {
-                    // Only add the class once...
                     var className = c.ClassName;
 
                     if (string.IsNullOrEmpty(className))
                     {
-                        WriteWarning(string.Format("ClassName is empty in file {0}; skipping class import", path));
+                        // ClassName is empty - skipping class import
                         continue;
                     }
 
@@ -415,22 +281,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                     if (ClassCache.TryGetValue(moduleQualifiedResourceName, out cimClassInfo))
                     {
-                        PSObject cimClass = cimClassInfo.CimClassInstance;
-
-                        // If this is a nested object and we already have exactly same nested object, we will
-                        // allow sharing of nested objects.
-                        if (!IsSameNestedObject(cimClass, c))
+                        if (errors != null)
                         {
-                            var files = string.Join(',', GetFileDefiningClass(className));
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                                ParserStrings.DuplicateCimClassDefinition, className, path, files);
+                                ParserStrings.DuplicateCimClassDefinition, className, path, cimClassInfo.ModulePath);
 
                             e.SetErrorId("DuplicateCimClassDefinition");
-                            if (errors != null)
-                            {
-                                errors.Add(e);
-                            }
+                            errors.Add(e);
                         }
+
+                        continue;
                     }
 
                     if (s_hiddenResourceCache.Contains(className))
@@ -438,23 +298,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         continue;
                     }
 
-                    if (!CacheResourcesFromMultipleModuleVersions)
-                    {
-                        // Find & remove the previous version of the resource.
-                        List<KeyValuePair<string, DscClassCacheEntry>> resourceList = FindResourceInCache(moduleInfo.Item1, className, friendlyName);
-                        if (resourceList.Count > 0 && !string.IsNullOrEmpty(resourceList[0].Key))
-                        {
-                            ClassCache.Remove(resourceList[0].Key);
-
-                            // keyword is already defined and it is a Inbox resource, remove it
-                            if (DynamicKeyword.ContainsKeyword(friendlyName) && resourceList[0].Value.IsImportedImplicitly)
-                            {
-                                DynamicKeyword.RemoveKeyword(friendlyName);
-                            }
-                        }
-                    }
-
-                    ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(DSCResourceRunAsCredential.Default, importInBoxResourcesImplicitly, c, path);
+                    var classCacheEntry = new DscClassCacheEntry(DSCResourceRunAsCredential.NotSupported, importInBoxResourcesImplicitly, c, path);
+                    ClassCache[moduleQualifiedResourceName] = classCacheEntry;
+                    GuestConfigClassCache[moduleQualifiedResourceName] = classCacheEntry;
                     ByClassModuleCache[className] = moduleInfo;
                 }
 
@@ -472,7 +318,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added no classes to the cache.");
             }
 
-            ByFileClassCache[path] = classes;
             return classes;
         }
 
@@ -508,8 +353,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             s_tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
             ClassCache.Clear();
             ByClassModuleCache.Clear();
-            ByFileClassCache.Clear();
-            ScriptKeywordFileCache.Clear();
             CacheResourcesFromMultipleModuleVersions = false;
         }
 
@@ -547,116 +390,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// Returns cached classes
-        /// </summary>
-        /// <returns>Returns cached classes</returns>
-        private static List<DscClassCacheEntry> GetCachedClasses()
-        {
-            return ClassCache.Values.ToList();
-        }
-
-        /// <summary>
-        /// Find cached cim classes defined under specified module.
-        /// </summary>
-        /// <param name="module"></param>
-        /// <returns>List of cached cim classes.</returns>
-        public static List<PSObject> GetCachedClassesForModule(PSModuleInfo module)
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            List<PSObject> cachedClasses = new List<PSObject>();
-            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
-            foreach (var dscClassCacheEntry in ClassCache)
-            {
-                if (dscClassCacheEntry.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
-                {
-                    cachedClasses.Add(dscClassCacheEntry.Value.CimClassInstance);
-                }
-            }
-
-            return cachedClasses;
-        }
-
-        /// <summary>
-        /// Get the file that defined this class.
-        /// </summary>
-        /// <param name="className"></param>
-        /// <returns></returns>
-        public static List<string> GetFileDefiningClass(string className)
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            List<string> files = new List<string>();
-            foreach (var pair in ByFileClassCache)
-            {
-                var file = pair.Key;
-                var classList = pair.Value;
-                if (classList != null)
-                {
-                    foreach(dynamic c in classList)
-                    {
-                        if (string.Equals(c.ClassName, className, StringComparison.OrdinalIgnoreCase))
-                        {
-                            files.Add(file);
-                        }
-                    }
-                }
-            }
-
-            return files;
-        }
-
-        /// <summary>
-        /// Get a list of files from which classes have been loaded.
-        /// </summary>
-        /// <returns></returns>
-        public static string[] GetLoadedFiles()
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            return ByFileClassCache.Keys.ToArray();
-        }
-
-        /// <summary>
-        /// Returns the classes that we loaded from the specified file name.
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static IEnumerable<PSObject> GetCachedClassByFileName(string fileName)
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(fileName));
-            }
-
-            IEnumerable<PSObject> listCimClass;
-            ByFileClassCache.TryGetValue(fileName, out listCimClass);
-            return listCimClass;
-        }
-
-        /// <summary>
-        /// Returns class declaration from cache.
+        /// Returns class declaration from GuestConfigClassCache.
         /// </summary>
         /// <param name="moduleName">Module name</param>
         /// <param name="moduleVersion">Module version</param>
         /// <param name="className">Name of the class</param>
         /// <param name="resourceName">Friendly name of the resource</param>
         /// <returns>Class declaration from cache.</returns>
-        public static PSObject GetCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
+        public static PSObject GetGuestConfigCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
         {
             if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
             {
@@ -665,7 +406,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             var moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleName, moduleVersion, className, string.IsNullOrEmpty(resourceName) ? className : resourceName);
             DscClassCacheEntry classCacheEntry = null;
-            if(ClassCache.TryGetValue(moduleQualifiedResourceName, out classCacheEntry))
+            if(GuestConfigClassCache.TryGetValue(moduleQualifiedResourceName, out classCacheEntry))
             {
                 return classCacheEntry.CimClassInstance;
             }
@@ -673,16 +414,24 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 // if class was not found with current ResourceName then it may be a class with non-empty FriendlyName that caller does not know, so perform a broad search
                 string partialClassPath = string.Join('\\', moduleName, moduleVersion, className, string.Empty);
-                foreach(string key in ClassCache.Keys)
+                foreach(string key in GuestConfigClassCache.Keys)
                 {
                     if (key.StartsWith(partialClassPath))
                     {
-                        return ClassCache[key].CimClassInstance;
+                        return GuestConfigClassCache[key].CimClassInstance;
                     }
                 }
 
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Clears GuestConfigClassCache.
+        /// </summary>
+        public static void ClearGuestConfigClassCache()
+        {
+            GuestConfigClassCache.Clear();
         }
 
         private static bool IsMagicProperty(string propertyName)
@@ -700,7 +449,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Method to get the cached classes in the form of DynamicKeyword.
         /// </summary>
-        public static Collection<DynamicKeyword> GetCachedKeywords()
+        public static Collection<DynamicKeyword> GetKeywordsFromCachedClasses()
         {
             if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
             {
@@ -806,7 +555,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             // previous version of this code was the only place that referenced CimSuperClass
             // so to simplify things we just check superclass to be OMI_BaseResource
             // with assumption that current code will not work for multi-level class inheritance (which is never used in practice according to DSC team)
-            // this simplification allows us to avoid linking objects together using CimSuperClass field during deserialization from json schema
+            // this simplification allows us to avoid linking objects together using CimSuperClass field during deserialization
             if ((!string.IsNullOrEmpty(cimClass.SuperClassName)) && string.Equals("OMI_BaseResource", cimClass.SuperClassName, StringComparison.OrdinalIgnoreCase))
             {
                 isResourceType = true;
@@ -991,23 +740,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
         /// </summary>
-        public static void LoadDefaultCimKeywords()
-        {
-            LoadDefaultCimKeywords(functionsToDefine: null, errors: null, modulePathList: null, cacheResourcesFromMultipleModuleVersions: false);
-        }
-
-        /// <summary>
-        /// Load the default system CIM classes and create the corresponding keywords.
-        /// </summary>
-        /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
-        public static void LoadDefaultCimKeywords(List<string> modulePathList)
-        {
-            LoadDefaultCimKeywords(functionsToDefine: null, errors: null, modulePathList, cacheResourcesFromMultipleModuleVersions: false);
-        }
-
-        /// <summary>
-        /// Load the default system CIM classes and create the corresponding keywords.
-        /// </summary>
         /// <param name="errors">Collection of any errors encountered while loading keywords.</param>
         public static void LoadDefaultCimKeywords(Collection<Exception> errors)
         {
@@ -1049,7 +781,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 errors.Add(exception);
                 return;
             }
-
+            
+            NewApiIsUsed = true;
             DynamicKeyword.Reset();
             Initialize(errors, modulePathList);
 
@@ -1059,7 +792,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             // of the module, so it is ok if this property is not set during cache initialization.
             CacheResourcesFromMultipleModuleVersions = cacheResourcesFromMultipleModuleVersions;
 
-            foreach (dynamic cimClass in GetCachedClasses())
+            foreach (dynamic cimClass in ClassCache.Values)
             {
                 var className = cimClass.CimClassInstance.ClassName;
                 var moduleInfo = ByClassModuleCache[className];
@@ -1468,8 +1201,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             foreach (var moduleInfo in modules)
             {
-                var dscResourcesPath = Path.Join(moduleInfo.ModuleBase, "DscResources");
-
                 var resourcesFound = new List<string>();
                 var exceptionList = new System.Collections.ObjectModel.Collection<Exception>();
                 LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, exceptionList, null, true, scriptExtent);
@@ -1478,91 +1209,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     errorList.Add(new ParseError(scriptExtent,
                         "ClassResourcesLoadingFailed",
                         ex.Message));
-                }
-
-                if (Directory.Exists(dscResourcesPath))
-                {
-                    foreach (var resourceToImport in resourcesToImport)
-                    {
-                        bool foundResources = false;
-                        foreach (var resourceDir in Directory.EnumerateDirectories(dscResourcesPath, resourceToImport))
-                        {
-                            var resourceName = Path.GetFileName(resourceDir);
-
-                            bool foundCimSchema = false;
-                            bool foundScriptSchema = false;
-                            string schemaMofFilePath = string.Empty;
-
-                            try
-                            {
-                                foundCimSchema = ImportCimKeywordsFromModule(moduleInfo, resourceName, out schemaMofFilePath);
-                            }
-                            catch (FileNotFoundException)
-                            {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "SchemaFileNotFound",
-                                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.SchemaFileNotFound, schemaMofFilePath)));
-                            }
-                            catch (PSInvalidOperationException e)
-                            {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                            e.ErrorRecord.FullyQualifiedErrorId,
-                                                            e.Message));
-                            }
-                            catch (Exception e)
-                            {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "ExceptionParsingMOFFile",
-                                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.ExceptionParsingMOFFile, schemaMofFilePath, e.Message)));
-                            }
-
-                            var schemaScriptFilePath = string.Empty;
-
-                            try
-                            {
-                                foundScriptSchema = ImportScriptKeywordsFromModule(moduleInfo, resourceName, out schemaScriptFilePath);
-                            }
-                            catch (FileNotFoundException)
-                            {
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "SchemaFileNotFound",
-                                                             string.Format(CultureInfo.CurrentCulture, ParserStrings.SchemaFileNotFound, schemaScriptFilePath)));
-                            }
-                            catch (Exception e)
-                            {
-                                // This shouldn't happen so just report the error as is
-                                errorList.Add(new ParseError(scriptExtent,
-                                                             "UnexpectedParseError",
-                                                             string.Format(CultureInfo.CurrentCulture, e.ToString())));
-                            }
-
-                            if (foundCimSchema || foundScriptSchema)
-                            {
-                                foundResources = true;
-                            }
-                        }
-
-                        //
-                        // resourceToImport may be the friendly name of the DSC resource
-                        //
-                        if (!foundResources)
-                        {
-                            try
-                            {
-                                string unused;
-                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out unused);
-                            }
-                            catch (Exception)
-                            {
-                            }
-                        }
-
-                        // resource name without wildcard (*) should be imported only once
-                        if (!resourceToImport.Contains("*") && foundResources)
-                        {
-                            resourcesFound.Add(resourceToImport);
-                        }
-                    }
                 }
 
                 foreach (var resource in resourcesFound)
@@ -1618,7 +1264,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     scriptPath = moduleInfo.Path;
                 }
 
-                ImportKeywordsFromScriptFile(scriptPath, primaryModuleInfo, resourcesToImport, resourcesFound, functionsToDefine, errorList, extent);
+                LoadPowerShellClassResourcesFromModule(scriptPath, primaryModuleInfo, resourcesToImport, resourcesFound, functionsToDefine, errorList, extent);
             }
 
             if (moduleInfo.NestedModules != null && recurse)
@@ -1693,7 +1339,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 string alias = GetFriendlyName(c);
                 var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
                 var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className, friendlyName);
-                ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c, module.Path);
+                var classCacheEntry = new DscClassCacheEntry(runAsBehavior, false, c, module.Path);
+                ClassCache[moduleQualifiedResourceName] = classCacheEntry;
+                GuestConfigClassCache[moduleQualifiedResourceName] = classCacheEntry;
                 ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
             }
         }
@@ -1743,7 +1391,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static PSObject[] GenerateJsonClassesForAst(TypeDefinitionAst typeAst, List<object> embeddedInstanceTypes)
         {
             // MOF-based implementation of this used to generate MOF string representing classes/typeAst and pass it to MMI/MOF deserializer to get CimClass array
-            // Here we are avoiding that roundtrip just constructing the resulting PSObjects
+            // Here we are avoiding that roundtrip by constructing the resulting PSObjects directly
 
             var className = typeAst.Name;
 
@@ -1755,23 +1403,43 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             var _CimClassProperties = ProcessMembers(embeddedInstanceTypes, typeAst, className).ToArray();
 
-            var result = new PSObject();
-            result.Properties.Add(new PSNoteProperty("ClassName", className));
-            result.Properties.Add(new PSNoteProperty("ClassVersion", "1.0.0"));
-            result.Properties.Add(new PSNoteProperty("FriendlyName", className));
-            result.Properties.Add(new PSNoteProperty("SuperClassName", cimSuperClassName));
-            result.Properties.Add(new PSNoteProperty("ClassProperties", _CimClassProperties));
-
             Queue<object> bases = new Queue<object>();
             foreach (var b in typeAst.BaseTypes)
             {
                 bases.Enqueue(b);
             }
 
-            if (bases.Count > 0)
+            while (bases.Count > 0)
             {
-                WriteWarning(string.Format("BaseTypes count for type {0} is {1} and not implemented yet", className, bases.Count));
+                var b = bases.Dequeue();
+                var tc = b as TypeConstraintAst;
+
+                if (tc != null)
+                {
+                    b = tc.TypeName.GetReflectionType();
+                    if (b == null)
+                    {
+                        var td = tc.TypeName as TypeName;
+                        if (td != null && td._typeDefinitionAst != null)
+                        {
+                            ProcessMembers(embeddedInstanceTypes, td._typeDefinitionAst, className);
+                            foreach (var b1 in td._typeDefinitionAst.BaseTypes)
+                            {
+                                bases.Enqueue(b1);
+                            }
+                        }
+
+                        continue;
+                    }
+                }
             }
+
+            var result = new PSObject();
+            result.Properties.Add(new PSNoteProperty("ClassName", className));
+            result.Properties.Add(new PSNoteProperty("ClassVersion", "1.0.0"));
+            result.Properties.Add(new PSNoteProperty("FriendlyName", className));
+            result.Properties.Add(new PSNoteProperty("SuperClassName", cimSuperClassName));
+            result.Properties.Add(new PSNoteProperty("ClassProperties", _CimClassProperties));
 
             return new [] {result};
         }
@@ -1807,7 +1475,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 if (memberType != null)
                 {
-                    // TODO - validate type and name
                     mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
                         out embeddedInstanceType,
                         embeddedInstanceTypes);
@@ -1909,15 +1576,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 return false;
             }
 
-            // If script dynamic keywords has already been loaded from the file, don't load them again.
-            // The ScriptKeywordFile cache is always initialized from scratch by the top-level
-            // configuration statement so within a single compile, things shouldn't change.
-            if (!File.Exists(fileName) || ScriptKeywordFileCache.Contains(fileName))
-            {
-                return false;
-            }
-
-            // BUGBUG - need to fix up how the module gets set.
             Token[] tokens;
             ParseError[] errors;
             var ast = Parser.ParseFile(fileName, out tokens, out errors);
@@ -1968,7 +1626,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="errorList"></param>
         /// <param name="extent"></param>
         /// <returns></returns>
-        private static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errorList, IScriptExtent extent)
+        private static bool LoadPowerShellClassResourcesFromModule(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errorList, IScriptExtent extent)
         {
             IEnumerable<Ast> resourceDefinitions;
             if (!GetResourceDefinitionsFromModule(fileName, out resourceDefinitions, errorList, extent))
@@ -2049,18 +1707,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             { typeof(PSCredential), "string" },
             { typeof(char), "char16" },
         };
-
-        private static bool IsSameNestedObject(dynamic oldClass, dynamic newClass)
-        {
-            // #1 both the classes should be nested class and not DSC resource
-            if ((oldClass.SuperClassName != null && string.Equals("OMI_BaseResource", oldClass.SuperClassName, StringComparison.OrdinalIgnoreCase)) ||
-                (newClass.SuperClassName != null && string.Equals("OMI_BaseResource", newClass.SuperClassName, StringComparison.OrdinalIgnoreCase)))
-            {
-                return false;
-            }
-
-            return true;
-        }
 
         internal static string MapTypeToMofType(Type type, string memberName, string className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
         {
@@ -2203,199 +1849,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
                 else
                 {
-                    ClassCache[moduleQualifiedResourceName] = new DscClassCacheEntry(runAsBehavior, false, c, module.Path);
+                    var classCacheEntry = new DscClassCacheEntry(runAsBehavior, false, c, module.Path);
+                    ClassCache[moduleQualifiedResourceName] = classCacheEntry;
+                    GuestConfigClassCache[moduleQualifiedResourceName] = classCacheEntry;
                     ByClassModuleCache[className] = new Tuple<string, Version>(module.Name, module.Version);
                     resourcesFound.Add(className);
                     CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, runAsBehavior);
                 }
             }
-        }
-
-        /// <summary>
-        /// Import the CIM keywords from a module...
-        /// </summary>
-        /// <param name="module"></param>
-        /// <param name="resourceName"></param>
-        /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
-        /// <returns></returns>
-        public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath)
-        {
-            return ImportCimKeywordsFromModule(module, resourceName, out schemaFilePath, null);
-        }
-
-        /// <summary>
-        /// Import the CIM functions from a module...
-        /// </summary>
-        /// <param name="module"></param>
-        /// <param name="resourceName"></param>
-        /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
-        /// <param name="functionsToDefine"></param>
-        /// <returns></returns>
-        public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine)
-        {
-            return ImportCimKeywordsFromModule(module, resourceName, out schemaFilePath, functionsToDefine, null);
-        }
-
-        /// <summary>
-        /// Import the CIM functions from a module...
-        /// </summary>
-        /// <param name="module"></param>
-        /// <param name="resourceName"></param>
-        /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
-        /// <param name="functionsToDefine"></param>
-        /// <param name="errors">Error reported during deserialization.</param>
-        /// <returns></returns>
-        public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            if (module == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(module));
-            }
-
-            if (resourceName == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(resourceName));
-            }
-
-            string dscResourcesPath = Path.Join(module.ModuleBase, "DscResources");
-            schemaFilePath = Path.Join(dscResourcesPath, resourceName, resourceName + ".schema.json");
-
-            if (File.Exists(schemaFilePath))
-            {
-                // If the file has already been loaded, don't load it again.
-                // The class cache is always initialized from scratch by the top-level
-                // configuration statement so within a single compile, things shouldn't
-                // change.
-                var classes = GetCachedClassByFileName(schemaFilePath) ?? ImportClasses(schemaFilePath, new Tuple<string, Version>(module.Name, module.Version), errors);
-                if (classes != null)
-                {
-                    foreach (var c in classes)
-                    {
-                        CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
-                        ClearImplicitlyImportedFlagFromResourceInClassCache(module, c);
-                    }
-                }
-
-                return true;
-            }
-            else if (Directory.Exists(dscResourcesPath))
-            {
-                // Cannot find the schema file, then resourceName may be a friendly name,
-                // try to search all DscResources' schemas under DscResources folder
-                try
-                {
-                    var dscResourceDirectories = Directory.GetDirectories(dscResourcesPath);
-                    foreach (var directory in dscResourceDirectories)
-                    {
-                        var schemaFiles = Directory.GetFiles(directory, "*.schema.json", SearchOption.TopDirectoryOnly);
-                        if (schemaFiles.Length > 0)
-                        {
-                            Debug.Assert(schemaFiles.Length == 1, "A valid DSCResource module can have only one schema mof file");
-                            var tempSchemaFilepath = schemaFiles[0];
-                            var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
-                            if (classes != null)
-                            {
-                                // search if class's friendly name is the given resourceName
-                                foreach (var c in classes)
-                                {
-                                    var alias = GetFriendlyName(c);
-                                    if (string.Equals(alias, resourceName, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        CreateAndRegisterKeywordFromCimClass(module.Name, module.Version, c, functionsToDefine, DSCResourceRunAsCredential.Default);
-                                        ClearImplicitlyImportedFlagFromResourceInClassCache(module, c);
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    // silent in case of exception
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Clear the 'IsImportedImplicitly' flag when explicitly importing a resource.
-        /// </summary>
-        /// <param name="module"></param>
-        /// <param name="cimClass"></param>
-        private static void ClearImplicitlyImportedFlagFromResourceInClassCache(PSModuleInfo module, dynamic cimClass)
-        {
-            var className = cimClass.ClassName;
-            var alias = GetFriendlyName(cimClass);
-            var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
-            var moduleQualifiedResourceName = GetModuleQualifiedResourceName(module.Name, module.Version.ToString(), className, friendlyName);
-            ClassCache[moduleQualifiedResourceName].IsImportedImplicitly = false;
-        }
-
-        /// <summary>
-        /// Imports configuration keywords from a .psm1 file.
-        /// </summary>
-        /// <param name="module"></param>
-        /// <param name="resourceName"></param>
-        /// <param name="schemaFilePath"></param>
-        public static bool ImportScriptKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath)
-        {
-            return ImportScriptKeywordsFromModule(module, resourceName, out schemaFilePath, null);
-        }
-
-        /// <summary>
-        /// Imports configuration keywords from a .psm1 file.
-        /// </summary>
-        /// <param name="module"></param>
-        /// <param name="resourceName"></param>
-        /// <param name="schemaFilePath"></param>
-        /// <param name="functionsToDefine"></param>
-        public static bool ImportScriptKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine)
-        {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
-            {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
-            }
-
-            if (module == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(module));
-            }
-
-            if (resourceName == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(resourceName));
-            }
-
-            schemaFilePath = Path.Join(module.ModuleBase, "DscResources", resourceName, resourceName + ".Schema.psm1");
-
-            if (File.Exists(schemaFilePath) && !s_currentImportingScriptFiles.Contains(schemaFilePath))
-            {
-                // If script dynamic keywords has already been loaded from the file, don't load them again.
-                // The ScriptKeywordFile cache is always initialized from scratch by the top-level
-                // configuration statement so within a single compile, things shouldn't change.
-                if (!ScriptKeywordFileCache.Contains(schemaFilePath))
-                {
-                    // Parsing the file is all that needs to be done to add the keywords
-                    // BUGBUG - need to fix up how the module gets set.
-                    // BUGBUG - should fail somehow if errors is not empty
-                    Token[] tokens; ParseError[] errors;
-                    s_currentImportingScriptFiles.Add(schemaFilePath);
-                    Parser.ParseFile(schemaFilePath, out tokens, out errors);
-                    s_currentImportingScriptFiles.Remove(schemaFilePath);
-                    ScriptKeywordFileCache.Add(schemaFilePath);
-                }
-
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>

@@ -2999,12 +2999,7 @@ namespace System.Management.Automation.Language
                             if (ExperimentalFeature.IsEnabled("PSDscJsonSchemaSupport"))
                             {
                                 // In addition to checking if experimental feature is enabled
-                                // also check if v3.0 (or later) of PSDesiredStateConfiguration module is available
-
-                                // pre-v3 module is mof-based
-                                // having a pre-v3 module pre-loaded gives user a way to force usage of mof-based APIs for dsc configuration compilation
-
-                                // First check if PSDesiredStateConfiguration is already loaded
+                                // also check if PSDesiredStateConfiguration is already loaded
                                 // if pre-v3 is already loaded then use old mof-based APIs
                                 // otherwise use json-based APIs
 
