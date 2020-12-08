@@ -10,9 +10,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-#if !UNIX
 using System.Management.Automation.Security;
-#endif
 using System.Reflection;
 using System.Runtime.InteropServices;
 #if !UNIX
@@ -197,6 +195,25 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
                     }
+                }
+
+                switch (Context.LanguageMode)
+                {
+                    case PSLanguageMode.NoLanguage:
+                    case PSLanguageMode.RestrictedLanguage:
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
+                            && !CoreTypes.Contains(type))
+                        {
+                            ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new PSNotSupportedException(
+                                        string.Format(NewObjectStrings.CannotCreateTypeLanguageMode, Context.LanguageMode.ToString())),
+                                    nameof(NewObjectStrings.CannotCreateTypeLanguageMode),
+                                    ErrorCategory.PermissionDenied,
+                                    targetObject: null));
+                        }
+
+                    break;
                 }
 
                 // WinRT does not support creating instances of attribute & delegate WinRT types.
