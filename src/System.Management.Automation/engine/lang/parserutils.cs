@@ -1002,8 +1002,8 @@ namespace System.Management.Automation
             }
 
             private readonly Regex _regex;
-            private string _cachedReplacementString;
-            private MatchEvaluator _cachedMatchEvaluator;
+            private readonly string _cachedReplacementString;
+            private readonly MatchEvaluator _cachedMatchEvaluator;
 
             private ReplacerOperator(
                 ExecutionContext context,
