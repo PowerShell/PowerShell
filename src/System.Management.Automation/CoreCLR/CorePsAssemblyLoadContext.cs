@@ -105,7 +105,7 @@ namespace System.Management.Automation
 
         #region Fields
 
-        private static readonly object s_syncObj = new object();
+        private static readonly object s_syncObj = new();
         private readonly string[] _probingPaths;
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary
@@ -114,9 +114,8 @@ namespace System.Management.Automation
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
-        private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
-                "System.Windows.Forms"
-            };
+        private readonly HashSet<string> _denyListedAssemblies =
+            new(StringComparer.OrdinalIgnoreCase) { "System.Windows.Forms" };
 
 #if !UNIX
         private string _winDir;
@@ -140,7 +139,7 @@ namespace System.Management.Automation
         /// Therefore, there is no need to use the full assembly name as the key. Short assembly name is sufficient.
         /// </remarks>
         private static readonly ConcurrentDictionary<string, Assembly> s_assemblyCache =
-            new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+            new(StringComparer.OrdinalIgnoreCase);
 
         #endregion Fields
 
@@ -509,7 +508,7 @@ namespace System.Management.Automation
             //     it back from the cache of default context.
             //   - If the requested TPA is not loaded yet, then 'Assembly.Load' will make the
             //     default context to load it
-            AssemblyName assemblyName = new AssemblyName(tpaStrongName);
+            AssemblyName assemblyName = new(tpaStrongName);
             Assembly asmLoaded = Assembly.Load(assemblyName);
             return asmLoaded;
         }
