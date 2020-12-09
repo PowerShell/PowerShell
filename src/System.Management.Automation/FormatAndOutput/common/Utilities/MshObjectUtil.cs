@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // use some heuristics to determine if we have "composite formatting"
                     // 2004/11/16-JonN This is heuristic but should be safe enough
-                    if (directive.formatString.Contains("{0") || directive.formatString.Contains("}"))
+                    if (directive.formatString.Contains("{0") || directive.formatString.Contains('}'))
                     {
                         // we do have it, just use it
                         return string.Format(CultureInfo.CurrentCulture, directive.formatString, so);

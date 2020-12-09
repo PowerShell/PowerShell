@@ -994,7 +994,7 @@ namespace System.Management.Automation
             {
                 if (!searcher.MoveNext())
                 {
-                    if (!commandName.Contains("-") && !commandName.Contains("\\"))
+                    if (!commandName.Contains('-') && !commandName.Contains('\\'))
                     {
                         discoveryTracer.WriteLine(
                             "The command [{0}] was not found, trying again with get- prepended",

@@ -1128,7 +1128,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns><see langword="true"/> if the name is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
-            return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(":");
+            return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(':');
         }
 
         /// <summary>

@@ -2148,7 +2148,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         }
 
                         // resource name without wildcard (*) should be imported only once
-                        if (!resourceToImport.Contains("*") && foundResources)
+                        if (!resourceToImport.Contains('*') && foundResources)
                         {
                             resourcesFound.Add(resourceToImport);
                         }
@@ -2170,7 +2170,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 foreach (var resourceNameToImport in resourcesToImport)
                 {
-                    if (!resourceNameToImport.Contains("*"))
+                    if (!resourceNameToImport.Contains('*'))
                     {
                         errorList.Add(new ParseError(scriptExtent,
                                                      "DscResourcesNotFoundDuringParsing",
