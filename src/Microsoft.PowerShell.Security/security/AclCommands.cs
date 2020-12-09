@@ -292,20 +292,17 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Get DACL
-            AuthorizationRuleCollection dacl;
             CommonObjectSecurity cos = sd as CommonObjectSecurity;
             if (cos != null)
             {
-                dacl = cos.GetAccessRules(true, true, typeof(NTAccount));
+                return cos.GetAccessRules(true, true, typeof(NTAccount));
             }
             else
             {
                 DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
-                dacl = dos.GetAccessRules(true, true, typeof(NTAccount));
+                return dos.GetAccessRules(true, true, typeof(NTAccount));
             }
-
-            return dacl;
         }
 
         /// <summary>
@@ -330,20 +327,17 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource.NewArgumentException(nameof(instance));
             }
 
-            AuthorizationRuleCollection sacl;
             CommonObjectSecurity cos = sd as CommonObjectSecurity;
             if (cos != null)
             {
-                sacl = cos.GetAuditRules(true, true, typeof(NTAccount));
+                return cos.GetAuditRules(true, true, typeof(NTAccount));
             }
             else
             {
                 DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
-                sacl = dos.GetAuditRules(true, true, typeof(NTAccount));
+                return dos.GetAuditRules(true, true, typeof(NTAccount));
             }
-
-            return sacl;
         }
 
         /// <summary>
@@ -646,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _inputObject = null;
+        private PSObject _inputObject;
 
         /// <summary>
         /// InputObject Parameter
@@ -688,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Gets or sets the audit flag of the command.  This flag
@@ -913,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _inputObject = null;
+        private PSObject _inputObject;
 
         /// <summary>
         /// InputObject Parameter
@@ -954,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         private object _securityDescriptor;
 
