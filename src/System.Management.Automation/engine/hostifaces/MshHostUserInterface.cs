@@ -1071,22 +1071,7 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// The path that this transcript is being logged to.
         /// </summary>
-        internal string Path
-        {
-            get
-            {
-                return _path;
-            }
-
-            set
-            {
-                _path = value;
-                // Get the encoding from the file, or default (UTF8-NoBom)
-                Encoding = Utils.GetEncoding(value);
-            }
-        }
-
-        private string _path;
+        internal string Path { get; set; }
 
         /// <summary>
         /// Any output to log for this transcript.
@@ -1105,18 +1090,19 @@ namespace System.Management.Automation.Host
         internal bool IncludeInvocationHeader { get; set; }
 
         /// <summary>
-        /// The encoding of this transcript, so that appending to it
-        /// can be done correctly.
-        /// </summary>
-        internal Encoding Encoding { get; private set; }
-
-        /// <summary>
         /// Logs buffered content to disk. We use this instead of File.AppendAllLines
         /// so that we don't need to pay seek penalties all the time, and so that we
         /// don't need append permission to our own files.
         /// </summary>
         internal void FlushContentToDisk()
         {
+            static Encoding GetPathEncoding(string path)
+            {
+                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                _ = reader.Read();
+                return reader.CurrentEncoding;
+            }
+
             lock (OutputBeingLogged)
             {
                 if (!_disposed)
@@ -1125,11 +1111,13 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
+                            var currentEncoding = GetPathEncoding(this.Path);
+
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read),
-                                this.Encoding);
+                                currentEncoding);
                             _contentWriter.BaseStream.Seek(0, SeekOrigin.End);
                         }
                         catch (IOException)
@@ -1138,7 +1126,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                this.Encoding);
+                                Utils.utf8NoBom);
                         }
 
                         _contentWriter.AutoFlush = true;
