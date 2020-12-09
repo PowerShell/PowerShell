@@ -360,8 +360,7 @@ namespace Microsoft.PowerShell.Commands
             SessionState sessionState = new SessionState();
             string path = sessionState.Path.GetUnresolvedProviderPathFromPSPath(
                 GetPath(instance));
-            IntPtr pOwner = IntPtr.Zero, pGroup = IntPtr.Zero;
-            IntPtr pDacl = IntPtr.Zero, pSacl = IntPtr.Zero, pSd = IntPtr.Zero;
+            IntPtr pSd = IntPtr.Zero;
 
             try
             {
@@ -370,10 +369,10 @@ namespace Microsoft.PowerShell.Commands
                     path,
                     NativeMethods.SeObjectType.SE_FILE_OBJECT,
                     NativeMethods.SecurityInformation.SCOPE_SECURITY_INFORMATION,
-                    out pOwner,
-                    out pGroup,
-                    out pDacl,
-                    out pSacl,
+                    out IntPtr pOwner,
+                    out IntPtr pGroup,
+                    out IntPtr pDacl,
+                    out IntPtr pSacl,
                     out pSd);
                 if (rs != NativeMethods.ERROR_SUCCESS)
                 {
@@ -456,12 +455,11 @@ namespace Microsoft.PowerShell.Commands
                 Marshal.Copy(capIdArray, 0, pCapId, capIdSize);
                 IntPtr[] ppCapId = new IntPtr[1];
                 ppCapId[0] = pCapId;
-                uint capCount = 0;
                 uint rs = NativeMethods.LsaQueryCAPs(
                     ppCapId,
                     1,
                     out caps,
-                    out capCount);
+                    out uint capCount);
                 if (rs != NativeMethods.STATUS_SUCCESS)
                 {
                     throw new Win32Exception((int)rs);
@@ -505,12 +503,11 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // Retrieve all CAPs.
-                uint capCount = 0;
                 uint rs = NativeMethods.LsaQueryCAPs(
                     null,
                     0,
                     out caps,
-                    out capCount);
+                    out uint capCount);
                 if (rs != NativeMethods.STATUS_SUCCESS)
                 {
                     throw new Win32Exception((int)rs);
@@ -754,7 +751,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Collection<PSObject> sd = null;
             AccessControlSections sections =
                 AccessControlSections.Owner |
                 AccessControlSections.Group |
@@ -851,7 +847,7 @@ namespace Microsoft.PowerShell.Commands
 
                             InvokeProvider.SecurityDescriptor.Get(rp, sections, context);
 
-                            sd = context.GetAccumulatedObjects();
+                            Collection<PSObject> sd = context.GetAccumulatedObjects();
                             if (sd != null)
                             {
                                 AddBrokeredProperties(
@@ -1121,12 +1117,11 @@ namespace Microsoft.PowerShell.Commands
                     // be deallocated separately (but with the entire buffer
                     // returned by LsaQueryCAPs).
                     freeCapId = false;
-                    uint capCount = 0;
                     rs = NativeMethods.LsaQueryCAPs(
                         null,
                         0,
                         out caps,
-                        out capCount);
+                        out uint capCount);
                     if (rs != NativeMethods.STATUS_SUCCESS)
                     {
                         throw new Win32Exception((int)rs);
@@ -1329,14 +1324,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (methodInfo != null)
                 {
-                    CommonSecurityDescriptor aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
                     string sddl;
 
                     if (aclObjectSecurity != null)
                     {
                         sddl = aclObjectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.All);
                     }
-                    else if (aclCommonSD != null)
+                    else if (_securityDescriptor is CommonSecurityDescriptor aclCommonSD)
                     {
                         sddl = aclCommonSD.GetSddlForm(AccessControlSections.All);
                     }
@@ -1471,9 +1465,8 @@ namespace Microsoft.PowerShell.Commands
                         context.PassThru = Passthru;
                         if (_isLiteralPath)
                         {
-                            ProviderInfo Provider = null;
-                            PSDriveInfo Drive = null;
-                            string pathStr = SessionState.Path.GetUnresolvedProviderPathFromPSPath(p, out Provider, out Drive);
+                            string pathStr = SessionState.Path.GetUnresolvedProviderPathFromPSPath(
+                                p, out ProviderInfo Provider, out PSDriveInfo Drive);
                             pathsToProcess.Add(new PathInfo(Drive, Provider, pathStr, SessionState));
                             context.SuppressWildcardExpansion = true;
                         }
