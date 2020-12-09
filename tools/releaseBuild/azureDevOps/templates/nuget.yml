@@ -148,6 +148,7 @@ jobs:
         pattern: |
           **\*.nupkg
         useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
 
   - pwsh: |
       if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
