@@ -1825,8 +1825,7 @@ function New-ILNugetPackage
         "Microsoft.PowerShell.SDK.dll",
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll",
-        "System.Management.Automation.dll",
-        "Microsoft.PowerShell.MarkdownRender.dll")
+        "System.Management.Automation.dll")
 
     $linuxExceptionList = @(
         "Microsoft.Management.Infrastructure.CimCmdlets.dll",
@@ -1934,7 +1933,6 @@ function New-ILNugetPackage
 
                 'Microsoft.PowerShell.Commands.Utility' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.MarkdownRender'), [tuple]::Create('version', $PackageVersion))) > $null
 
                     foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
                     {
@@ -1991,14 +1989,6 @@ function New-ILNugetPackage
 
                 'System.Management.Automation' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
-
-                'Microsoft.PowerShell.MarkdownRender' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
                     foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
@@ -2321,7 +2311,6 @@ function CleanupGeneratedSourceCode
         '[Microsoft.PowerShell.Commands.AddMemberCommand'
         '[System.Management.Automation.ArgumentCompleterAttribute(typeof(Microsoft.PowerShell.Commands.Utility.JoinItemCompleter))]'
         '[System.Management.Automation.ArgumentCompleterAttribute(typeof(System.Management.Automation.PropertyNameCompleter))]'
-        '[System.Management.Automation.OutputTypeAttribute(typeof(Microsoft.PowerShell.MarkdownRender'
         '[Microsoft.PowerShell.Commands.ArgumentToTypeNameTransformationAttribute]'
         '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
         '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'

@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16 
+# Visual Studio Version 16
 # https://github.com/dotnet/project-system/blob/master/docs/opening-with-new-project-system.md#project-type-guids
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -28,8 +28,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.WSMan.Runtime", "src\Microsoft.WSMan.Runtime\Microsoft.WSMan.Runtime.csproj", "{D9CCCB67-4EBE-4854-AB52-C0129DC5BAE4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "powershell-unix", "src\powershell-unix\powershell-unix.csproj", "{73EA0BE6-C0C5-4B56-A5AA-DADA4C01D690}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.MarkdownRender", "src\Microsoft.PowerShell.MarkdownRender\Microsoft.PowerShell.MarkdownRender.csproj", "{43D4F8DA-A7DE-494B-81B0-BDE3CFD7B1F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnit.tests", "test\xUnit\xUnit.tests.csproj", "{08704934-9764-48CE-86DB-BCF0A1CF7899}"
 EndProject

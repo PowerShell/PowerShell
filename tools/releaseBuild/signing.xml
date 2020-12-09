@@ -8,7 +8,6 @@
     <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.MarkdownRender.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.MarkdownRender.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.GlobalTool.Shim.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.GlobalTool.Shim.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.Security.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.Security.dll" />
     <file src="__INPATHROOT__\Microsoft.WSMan.Management.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.WSMan.Management.dll" />
