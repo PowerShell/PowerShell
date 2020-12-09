@@ -89,11 +89,12 @@ jobs:
         artifactName: signedMacOsBins
         condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-    - template: EsrpScan.yml@ComplianceRepo
-      parameters:
-          scanPath: $(System.ArtifactsDirectory)\azureMacOs
-          pattern: |
-            **\*
+    - ${{ if eq(variables['SHOULD_SIGN'], 'true') }}:
+      - template: EsrpScan.yml@ComplianceRepo
+        parameters:
+            scanPath: $(System.ArtifactsDirectory)\azureMacOs
+            pattern: |
+              **\*
 
     - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
       displayName: 'Component Detection'
