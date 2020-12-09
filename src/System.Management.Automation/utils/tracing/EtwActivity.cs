@@ -255,7 +255,7 @@ namespace System.Management.Automation.Tracing
         private static readonly Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
         private static readonly object syncLock = new object();
 
-        private static EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
+        private static readonly EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
         private EventProvider currentProvider;
 
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Tracing
             if (parentActivityId != Guid.Empty)
             {
                 EventDescriptor transferEvent = TransferEvent;
-                provider.WriteTransferEvent(ref transferEvent, parentActivityId, activityId, parentActivityId);
+                provider.WriteTransferEvent(in transferEvent, parentActivityId, activityId, parentActivityId);
             }
         }
 
@@ -473,7 +473,7 @@ namespace System.Management.Automation.Tracing
                 }
             }
 
-            bool success = provider.WriteEvent(ref ed, payload);
+            bool success = provider.WriteEvent(in ed, payload);
             if (EventWritten != null)
             {
                 EventWritten.Invoke(this, new EtwEventArgs(ed, success, payload));

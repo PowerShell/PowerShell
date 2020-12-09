@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
     /// The structure contains punycode name and unicode name.
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-    public struct DnsNameRepresentation
+    public readonly struct DnsNameRepresentation
     {
         /// <summary>
         /// Punycode version of DNS name.
@@ -3064,7 +3064,7 @@ namespace Microsoft.PowerShell.Commands
     /// The structure contains friendly name and EKU oid.
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-    public struct EnhancedKeyUsageRepresentation
+    public readonly struct EnhancedKeyUsageRepresentation
     {
         /// <summary>
         /// Localized friendly name of EKU.

@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         /// true if no error occured
         /// false if there was an error
         /// </returns>
-        private bool ScanForwardsForTail(ContentHolder holder, CmdletProviderContext currentContext)
+        private bool ScanForwardsForTail(in ContentHolder holder, CmdletProviderContext currentContext)
         {
             var fsReader = holder.Reader as FileSystemContentReaderWriter;
             Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");

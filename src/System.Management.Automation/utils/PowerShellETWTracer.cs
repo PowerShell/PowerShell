@@ -866,7 +866,7 @@ namespace System.Management.Automation.Tracing
                 }
             }
 
-            return _provider.WriteEvent(ref ed, args);
+            return _provider.WriteEvent(in ed, args);
         }
 
         /// <summary>

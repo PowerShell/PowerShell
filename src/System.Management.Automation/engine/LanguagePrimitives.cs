@@ -5104,7 +5104,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private struct SignatureComparator
+        private readonly struct SignatureComparator
         {
             private enum TypeMatchingContext
             {

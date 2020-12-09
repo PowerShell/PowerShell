@@ -98,7 +98,7 @@ namespace System.Management.Automation.Tracing
             if (relatedActivityId != Guid.Empty)
             {
                 var tempTransferEvent = _transferEvent;
-                _transferProvider.WriteTransferEvent(ref tempTransferEvent, relatedActivityId);
+                _transferProvider.WriteTransferEvent(in tempTransferEvent, relatedActivityId);
             }
 
             return retActivity;

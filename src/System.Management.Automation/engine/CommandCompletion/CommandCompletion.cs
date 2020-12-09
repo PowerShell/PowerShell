@@ -740,7 +740,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            private struct CommandAndName
+            private readonly struct CommandAndName
             {
                 internal readonly PSObject Command;
                 internal readonly PSSnapinQualifiedName CommandName;
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation
                 return isAbsolute;
             }
 
-            private struct PathItemAndConvertedPath
+            private readonly struct PathItemAndConvertedPath
             {
                 internal readonly string Path;
                 internal readonly PSObject Item;
