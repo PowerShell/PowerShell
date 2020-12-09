@@ -3282,8 +3282,10 @@ function New-NugetConfigFile
   <packageSources>
     <clear />
     <add key="[FEEDNAME]" value="[FEED]" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
   <packageSourceCredentials>
     <[FEEDNAME]>
       <add key="Username" value="[USERNAME]" />
