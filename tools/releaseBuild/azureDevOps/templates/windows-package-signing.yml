@@ -49,6 +49,7 @@ jobs:
           **\*.msi
           **\*.msix
         useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
 
   - powershell: |
       new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
