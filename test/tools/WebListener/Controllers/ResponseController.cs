@@ -99,7 +99,7 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private List<T> GetSingleOrArray<T>(JToken token)
+        private static List<T> GetSingleOrArray<T>(JToken token)
         {
             if (token.HasValues)
             {

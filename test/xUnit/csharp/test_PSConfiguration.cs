@@ -366,7 +366,7 @@ namespace PSTests.Sequential
             CreateEmptyFile(currentUserConfigFile);
         }
 
-        private void CreateEmptyFile(string fileName)
+        private static void CreateEmptyFile(string fileName)
         {
             File.Create(fileName).Dispose();
         }
@@ -382,7 +382,7 @@ namespace PSTests.Sequential
             CreateBrokenConfigFile(currentUserConfigFile);
         }
 
-        private void CreateBrokenConfigFile(string fileName)
+        private static void CreateBrokenConfigFile(string fileName)
         {
             File.WriteAllText(fileName, "[abbra");
         }

@@ -53,7 +53,7 @@ namespace PSTests.Parallel
             }
         }
 
-        private ExecutionContext GetExecutionContext()
+        private static ExecutionContext GetExecutionContext()
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
@@ -63,7 +63,7 @@ namespace PSTests.Parallel
             return executionContext;
         }
 
-        private ProviderInfo GetProvider()
+        private static ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);

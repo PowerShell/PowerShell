@@ -280,7 +280,8 @@ dotnet_diagnostic.CA1820.severity = none
 dotnet_diagnostic.CA1821.severity = warning
 
 # CA1822: Mark members as static
-dotnet_diagnostic.CA1822.severity = suggestion
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_code_quality.ca1822.api_surface = private
 
 # CA1823: Avoid unused private fields
 dotnet_diagnostic.CA1823.severity = none
