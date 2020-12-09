@@ -60,6 +60,7 @@ jobs:
         pattern: |
           **\*.zip
         useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
 
   - template: upload-final-results.yml
     parameters:

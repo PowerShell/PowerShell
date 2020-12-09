@@ -153,6 +153,7 @@ jobs:
           **\*.ps1
           **\*.exe
         useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -188,6 +189,7 @@ jobs:
         pattern: |
           **\*.dll
         useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
 
   - powershell: |
       Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartySigned\*'

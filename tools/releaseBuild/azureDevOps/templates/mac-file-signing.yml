@@ -73,6 +73,7 @@ jobs:
           pattern: |
             **\*.zip
           useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
 
     - pwsh: |
         $destination = "$(System.ArtifactsDirectory)\azureMacOs"
