@@ -7,7 +7,7 @@ Describe "Verify Markdown Links" {
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                sudo yarn global add markdown-link-check@3.8.4
+                sudo yarn global add markdown-link-check@3.8.5
             }
         }
 
@@ -36,7 +36,7 @@ Describe "Verify Markdown Links" {
             param([object] $group)
             foreach($file in $group.Group)
             {
-                $results = markdown-link-check $file 2>&1
+                $results = markdown-link-check -r $file 2>&1
                 Write-Output ([PSCustomObject]@{
                     file = $file
                     results = $results
@@ -98,6 +98,7 @@ Describe "Verify Markdown Links" {
                         # there could be multiple reasons why a failure is ok
                         # check against the allowed failures
                         $allowedFailures = [System.Net.HttpStatusCode[]](
+                            429, # Rate limited
                             503, # Service Unavailable
                             504  # Gateway Timeout
                         )
