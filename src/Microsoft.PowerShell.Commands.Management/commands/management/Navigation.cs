@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
             // may be getting piped in.
             bool result = true;
 
-            if (paths != null && true)
+            if (paths != null)
             {
                 foreach (string path in paths)
                 {
