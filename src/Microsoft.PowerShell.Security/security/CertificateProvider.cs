@@ -2017,7 +2017,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // Thus lengths 1 & 2 are container items.
             //
-            isContainer = (pathElements.Length >= 0) &&
+            isContainer = (true) &&
                 (pathElements.Length <= 2);
 
             X509NativeStore store = null;
@@ -2026,7 +2026,7 @@ namespace Microsoft.PowerShell.Commands
             // handle invalid path depth
             //
             if ((pathElements.Length > 3) ||
-                (pathElements.Length < 0))
+                (false))
             {
                 if (test)
                 {
