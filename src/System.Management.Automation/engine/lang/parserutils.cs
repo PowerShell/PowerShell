@@ -965,7 +965,7 @@ namespace System.Management.Automation
                 }
             }
 
-            var replacer = ReplaceOperator.Create(context, rr, substitute);
+            var replacer = ReplaceOperatorImpl.Create(context, rr, substitute);
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
@@ -994,18 +994,18 @@ namespace System.Management.Automation
             }
         }
 
-        private struct ReplaceOperator
+        private struct ReplaceOperatorImpl
         {
-            public static ReplaceOperator Create(ExecutionContext context, Regex regex, object substitute)
+            public static ReplaceOperatorImpl Create(ExecutionContext context, Regex regex, object substitute)
             {
-                return new ReplaceOperator(context, regex, substitute);
+                return new ReplaceOperatorImpl(context, regex, substitute);
             }
 
             private readonly Regex _regex;
             private readonly string _cachedReplacementString;
             private readonly MatchEvaluator _cachedMatchEvaluator;
 
-            private ReplaceOperator(
+            private ReplaceOperatorImpl(
                 ExecutionContext context,
                 Regex regex,
                 object substitute)
