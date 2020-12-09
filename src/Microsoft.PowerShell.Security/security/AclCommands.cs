@@ -385,8 +385,7 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
-                NativeMethods.ACL sacl = new NativeMethods.ACL();
-                sacl = Marshal.PtrToStructure<NativeMethods.ACL>(pSacl);
+                NativeMethods.ACL sacl = Marshal.PtrToStructure<NativeMethods.ACL>(pSacl);
                 if (sacl.AceCount == 0)
                 {
                     return null;
@@ -396,8 +395,7 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr pAce = pSacl + Marshal.SizeOf(new NativeMethods.ACL());
                 for (ushort aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
                 {
-                    NativeMethods.ACE_HEADER ace = new NativeMethods.ACE_HEADER();
-                    ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
+                    NativeMethods.ACE_HEADER ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
                     Dbg.Diagnostics.Assert(ace.AceType ==
                         NativeMethods.SYSTEM_SCOPED_POLICY_ID_ACE_TYPE,
                         "Unexpected ACE type: " + ace.AceType.ToString(CultureInfo.CurrentCulture));
@@ -475,8 +473,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Get the CAP name.
-                NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
-                cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(caps);
+                NativeMethods.CENTRAL_ACCESS_POLICY cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(caps);
                 // LSA_UNICODE_STRING is composed of WCHARs, but its length is given in bytes.
                 return Marshal.PtrToStringUni(cap.Name.Buffer, cap.Name.Length / 2);
             }
@@ -528,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Add CAP names and IDs to a string array.
                 string[] policies = new string[capCount];
-                NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
+                NativeMethods.CENTRAL_ACCESS_POLICY cap;
                 IntPtr capPtr = caps;
                 for (uint capIdx = 0; capIdx < capCount; capIdx++)
                 {
@@ -1144,7 +1141,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Find the supplied string among available CAP names, use the corresponding CAPID.
-                    NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
+                    NativeMethods.CENTRAL_ACCESS_POLICY cap;
                     IntPtr capPtr = caps;
                     for (uint capIdx = 0; capIdx < capCount; capIdx++)
                     {
