@@ -120,6 +120,7 @@ jobs:
           pattern: |
             **\*.rpm
           useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
 
   # requires windows
   - task: AzureFileCopy@4
