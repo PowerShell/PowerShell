@@ -12,7 +12,7 @@ Describe "Replace Operator" -Tags CI {
         }
 
         It "Replace operator can convert an substitution object to string" {
-            $substitution = Get-Process -Name pwsh
+            $substitution = Get-Process -Id $pid
             $res = "!3!" -replace "3",$substitution
             $res | Should -BeExactly "!System.Diagnostics.Process (pwsh)!"
         }
