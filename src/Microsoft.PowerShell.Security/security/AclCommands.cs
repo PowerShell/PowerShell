@@ -525,14 +525,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // Add CAP names and IDs to a string array.
                 string[] policies = new string[capCount];
-                NativeMethods.CENTRAL_ACCESS_POLICY cap;
                 IntPtr capPtr = caps;
                 for (uint capIdx = 0; capIdx < capCount; capIdx++)
                 {
                     // Retrieve CAP name.
                     Dbg.Diagnostics.Assert(capPtr != IntPtr.Zero,
                         "Invalid central access policies array");
-                    cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
+                    NativeMethods.CENTRAL_ACCESS_POLICY cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
                     // LSA_UNICODE_STRING is composed of WCHARs, but its length is given in bytes.
                     policies[capIdx] = "\"" + Marshal.PtrToStringUni(
                         cap.Name.Buffer,
@@ -1141,13 +1140,12 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Find the supplied string among available CAP names, use the corresponding CAPID.
-                    NativeMethods.CENTRAL_ACCESS_POLICY cap;
                     IntPtr capPtr = caps;
                     for (uint capIdx = 0; capIdx < capCount; capIdx++)
                     {
                         Dbg.Diagnostics.Assert(capPtr != IntPtr.Zero,
                             "Invalid central access policies array");
-                        cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
+                        NativeMethods.CENTRAL_ACCESS_POLICY cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
                         // LSA_UNICODE_STRING is composed of WCHARs, but its length is given in bytes.
                         string capName = Marshal.PtrToStringUni(
                             cap.Name.Buffer,
