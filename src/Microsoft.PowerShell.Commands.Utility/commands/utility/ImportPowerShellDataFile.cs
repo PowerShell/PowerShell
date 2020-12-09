@@ -40,6 +40,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets switch that determines if built-in limits are applied to the data.
+        /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck", ExperimentAction.Show)]
+        [Parameter]
+        public SwitchParameter SkipLimitCheck { get; set; }
+
+        /// <summary>
         /// For each path, resolve it, parse it and write all hashtables to the output stream.
         /// </summary>
         protected override void ProcessRecord()
@@ -61,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
                         var data = ast.Find(a => a is HashtableAst, false);
                         if (data != null)
                         {
-                            WriteObject(data.SafeGetValue());
+                            WriteObject(data.SafeGetValue(SkipLimitCheck));
                         }
                         else
                         {
