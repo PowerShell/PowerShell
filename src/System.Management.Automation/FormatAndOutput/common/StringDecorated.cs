@@ -114,7 +114,7 @@ namespace System.Management.Automation.Internal
         }
 
         // replace regex with .NET 6 API once available
-        public static readonly Regex s_ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
+        internal static readonly Regex AnsiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of the StringDecorated class.
