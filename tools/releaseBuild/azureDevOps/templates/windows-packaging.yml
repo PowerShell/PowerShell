@@ -124,10 +124,10 @@ jobs:
         "$($fullSymbolsFolder)\System.Management.Automation.dll" = ""
       }
 
-      $itemsToExclude = @{
+      $itemsToExclude = @(
         # This package is retrieved from https://www.github.com/powershell/MarkdownRender
         "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll"
-      }
+      )
 
       if ("$env:Architecture" -notlike 'fxdependent*')
       {
