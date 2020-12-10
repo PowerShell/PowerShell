@@ -628,7 +628,9 @@ function Restore-PSPackage
 
         [switch] $Force,
 
-        [switch] $InteractiveAuth
+        [switch] $InteractiveAuth,
+
+        [switch] $PSModule
     )
 
     if (-not $ProjectDirs)
@@ -652,7 +654,10 @@ function Restore-PSPackage
             'Microsoft.NET.Sdk'
         }
 
-        if ($Options.Runtime -notlike 'fxdependent*') {
+        if ($PSModule.IsPresent) {
+            $RestoreArguments = @("--verbosity")
+        }
+        elseif ($Options.Runtime -notlike 'fxdependent*') {
             $RestoreArguments = @("--runtime", $Options.Runtime, "/property:SDKToUse=$sdkToUse", "--verbosity")
         } else {
             $RestoreArguments = @("/property:SDKToUse=$sdkToUse", "--verbosity")
@@ -2500,7 +2505,7 @@ function Copy-PSGalleryModules
 
     Find-DotNet
 
-    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
+    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent -PSModule
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "global-packages: (.*)") {
