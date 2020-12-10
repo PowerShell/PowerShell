@@ -92,7 +92,7 @@ namespace System.Management.Automation.Internal
 
     internal struct ValueStringDecorated
     {
-        private const char ESC = '\x1b';
+        internal const char ESC = '\x1b';
         private readonly bool _isDecorated;
         private readonly string _text;
         private string _plaintextcontent;
