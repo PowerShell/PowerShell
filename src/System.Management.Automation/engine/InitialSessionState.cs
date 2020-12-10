@@ -4445,10 +4445,9 @@ end {
             // Variable which controls the output rendering
             new SessionStateVariableEntry(
                 SpecialVariables.PSStyle,
-                new PSStyle(),
+                PSStyle.Instance,
                 RunspaceInit.PSStyleDescription,
-                ScopedItemOptions.AllScope)
-            ,
+                ScopedItemOptions.AllScope),
 
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(

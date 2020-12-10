@@ -710,6 +710,8 @@ namespace Microsoft.PowerShell
             }
             else
             {
+                value = Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
+
                 if (newLine)
                 {
                     writer.WriteLine(value);
@@ -1181,6 +1183,7 @@ namespace Microsoft.PowerShell
             {
                 if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
+                    message = Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
                     WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
                 }
                 else
@@ -1242,6 +1245,7 @@ namespace Microsoft.PowerShell
             {
                 if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
+                    message = Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
                     WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
                 }
                 else
@@ -1286,6 +1290,7 @@ namespace Microsoft.PowerShell
             {
                 if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
+                    message = Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
                     WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
                 }
                 else

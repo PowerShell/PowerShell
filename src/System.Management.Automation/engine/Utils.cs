@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
             return outputRendering == OutputRendering.PlainText;
         }
 
-        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal, bool isOutputRedirected = false)
+        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
         {
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
@@ -1865,29 +1865,25 @@ namespace System.Management.Automation
 
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
-                ExecutionContext context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                PSStyle psstyle = (PSStyle)context.GetVariableValue(SpecialVariables.PSStyleVarPath);
-                if (psstyle is object)
+                PSStyle psstyle= PSStyle.Instance;                
+                switch (formatStyle)
                 {
-                    switch (formatStyle)
-                    {
-                        case FormatStyle.Reset:
-                            return psstyle.Reset;
-                        case FormatStyle.FormatAccent:
-                            return psstyle.Formatting.FormatAccent;
-                        case FormatStyle.ErrorAccent:
-                            return psstyle.Formatting.ErrorAccent;
-                        case FormatStyle.Error:
-                            return psstyle.Formatting.Error;
-                        case FormatStyle.Warning:
-                            return psstyle.Formatting.Warning;
-                        case FormatStyle.Verbose:
-                            return psstyle.Formatting.Verbose;
-                        case FormatStyle.Debug:
-                            return psstyle.Formatting.Debug;
-                        default:
-                            return string.Empty;
-                    }
+                    case FormatStyle.Reset:
+                        return psstyle.Reset;
+                    case FormatStyle.FormatAccent:
+                        return psstyle.Formatting.FormatAccent;
+                    case FormatStyle.ErrorAccent:
+                        return psstyle.Formatting.ErrorAccent;
+                    case FormatStyle.Error:
+                        return psstyle.Formatting.Error;
+                    case FormatStyle.Warning:
+                        return psstyle.Formatting.Warning;
+                    case FormatStyle.Verbose:
+                        return psstyle.Formatting.Verbose;
+                    case FormatStyle.Debug:
+                        return psstyle.Formatting.Debug;
+                    default:
+                        return string.Empty;
                 }
             }
 

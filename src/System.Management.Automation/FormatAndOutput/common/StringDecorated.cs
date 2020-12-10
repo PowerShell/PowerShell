@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Text.RegularExpressions;
 
 namespace System.Management.Automation.Internal
@@ -13,15 +15,15 @@ namespace System.Management.Automation.Internal
         private const char ESC = '\x1b';
         private readonly bool _isDecorated;
         private readonly string _text;
-        private string _plaintextcontent;
+        private string? _plaintextcontent;
 
-        private string _plaintext
+        private string PlainText
         {
             get
             {
                 if (_plaintextcontent == null)
                 {
-                    _plaintextcontent = _ansiRegex.Replace(_text, string.Empty);
+                    _plaintextcontent = s_ansiRegex.Replace(_text, string.Empty);
                 }
 
                 return _plaintextcontent;
@@ -29,7 +31,7 @@ namespace System.Management.Automation.Internal
         }
 
         // replace regex with .NET 6 API once available
-        private static readonly Regex _ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
+        private static readonly Regex s_ansiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of the StringDecorated class.
@@ -51,7 +53,7 @@ namespace System.Management.Automation.Internal
         /// Gets the length of content sans escape sequences.
         /// </summary>
         /// <returns>Length of content sans escape sequences.</returns>
-        public int ContentLength => _plaintext.Length;
+        public int ContentLength => PlainText.Length;
 
         /// <summary>
         /// Render the decorarted string using automatic output rendering.
@@ -68,7 +70,7 @@ namespace System.Management.Automation.Internal
         {
             if (!_isDecorated)
             {
-                return _plaintext;
+                return _text;
             }
 
             if (outputRendering == OutputRendering.Automatic)
@@ -82,7 +84,7 @@ namespace System.Management.Automation.Internal
 
             if (outputRendering == OutputRendering.PlainText)
             {
-                return _plaintext;
+                return PlainText;
             }
             else
             {

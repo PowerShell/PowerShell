@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             CheckStopProcessing();
 
-            s = Utils.GetOutputString(s, isHost: false, supportsVirtualTerminal: null);
+            s = Utils.GetOutputString(s, isHost: false);
 
             if (_suppressNewline)
             {
