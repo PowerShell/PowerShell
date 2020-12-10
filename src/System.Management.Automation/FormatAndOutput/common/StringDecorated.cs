@@ -37,7 +37,7 @@ namespace System.Management.Automation.Internal
         public StringDecorated(string text)
         {
             _text = text;
-            _isDecorated = text.Contains(ESC);
+            _isDecorated = text.Contains(ValueStringDecorated.ESC);
         }
 
         /// <summary>
