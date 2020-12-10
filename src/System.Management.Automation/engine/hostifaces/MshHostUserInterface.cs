@@ -622,7 +622,7 @@ namespace System.Management.Automation.Host
 
                     if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                     {
-                        var text = new StringDecorated(resultText);
+                        var text = new ValueStringDecorated(resultText);
                         if (text.IsDecorated)
                         {
                             resultText = text.ToString(OutputRendering.PlainText);

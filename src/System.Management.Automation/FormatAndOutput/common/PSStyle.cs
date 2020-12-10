@@ -295,6 +295,8 @@ namespace System.Management.Automation
             public string Debug { get; set; } = "\x1b[33;1m";
         }
 
+        private static OutputRendering s_outputRendering = OutputRendering.Automatic;        
+
         /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
@@ -302,96 +304,97 @@ namespace System.Management.Automation
         {
             get
             {
-                return Utils.OutputRenderingSetting;
+                return s_outputRendering;
             }
 
             set
             {
-                Utils.OutputRenderingSetting = value;
+                s_outputRendering = value;
             }
         }
 
         /// <summary>
         /// Gets or sets value to turn off all attributes.
         /// </summary>
-        public string Reset { get; set; } = "\x1b[0m";
+        public string Reset { get; } = "\x1b[0m";
 
         /// <summary>
         /// Gets or sets value to turn off blink.
         /// </summary>
-        public string BlinkOff { get; set; } = "\x1b[5m";
+        public string BlinkOff { get; } = "\x1b[5m";
 
         /// <summary>
         /// Gets or sets value to turn on blink.
         /// </summary>
-        public string Blink { get; set; } = "\x1b[25m";
+        public string Blink { get; } = "\x1b[25m";
 
         /// <summary>
         /// Gets or sets value to turn off bold.
         /// </summary>
-        public string BoldOff { get; set; } = "\x1b[22m";
+        public string BoldOff { get; } = "\x1b[22m";
 
         /// <summary>
         /// Gets or sets value to turn on blink.
         /// </summary>
-        public string Bold { get; set; } = "\x1b[1m";
+        public string Bold { get; } = "\x1b[1m";
 
         /// <summary>
         /// Gets or sets value to turn on hidden.
         /// </summary>
-        public string Hidden { get; set; } = "\x1b[8m";
+        public string Hidden { get; } = "\x1b[8m";
 
         /// <summary>
         /// Gets or sets value to turn off hidden.
         /// </summary>
-        public string HiddenOff { get; set; } = "\x1b[28m";
+        public string HiddenOff { get; } = "\x1b[28m";
 
         /// <summary>
         /// Gets or sets value to turn on reverse.
         /// </summary>
-        public string Reverse { get; set; } = "\x1b[7m";
+        public string Reverse { get; } = "\x1b[7m";
 
         /// <summary>
         /// Gets or sets value to turn off reverse.
         /// </summary>
-        public string ReverseOff { get; set; } = "\x1b[27m";
+        public string ReverseOff { get; } = "\x1b[27m";
 
         /// <summary>
         /// Gets or sets value to turn off standout.
         /// </summary>
-        public string ItalicOff { get; set; } = "\x1b[23m";
+        public string ItalicOff { get; } = "\x1b[23m";
 
         /// <summary>
         /// Gets or sets value to turn on standout.
         /// </summary>
-        public string Italic { get; set; } = "\x1b[3m";
+        public string Italic { get; } = "\x1b[3m";
 
         /// <summary>
         /// Gets or sets value to turn off underlined.
         /// </summary>
-        public string UnderlineOff { get; set; } = "\x1b[24m";
+        public string UnderlineOff { get; } = "\x1b[24m";
 
         /// <summary>
         /// Gets or sets value to turn on underlined.
         /// </summary>
-        public string Underline { get; set; } = "\x1b[4m";
+        public string Underline { get; } = "\x1b[4m";
 
         /// <summary>
         /// Gets or sets the formatting rendering settings.
         /// </summary>
-        public FormattingData Formatting { get; set; }
+        public FormattingData Formatting { get; }
 
         /// <summary>
         /// Gets or sets foreground colors.
         /// </summary>
-        public ForegroundColor Foreground { get; set; }
+        public ForegroundColor Foreground { get; }
 
         /// <summary>
         /// Gets or sets background colors.
         /// </summary>
-        public BackgroundColor Background { get; set; }
+        public BackgroundColor Background { get; }
 
-        private static readonly Lazy<PSStyle> _psstyle = new Lazy<PSStyle>(() => new PSStyle());
+        private static readonly PSStyle s_psstyle = new PSStyle();
+
         private PSStyle()
         {
             Formatting = new FormattingData();
@@ -406,7 +409,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _psstyle.Value;
+                return s_psstyle;
             }
         }
     }

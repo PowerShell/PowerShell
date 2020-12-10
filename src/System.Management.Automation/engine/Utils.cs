@@ -1787,8 +1787,6 @@ namespace System.Management.Automation
             return true;
         }
 
-        internal static OutputRendering OutputRenderingSetting = OutputRendering.Automatic;
-
         internal static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
         {
             var outputRendering = OutputRendering.Ansi;
@@ -1797,7 +1795,7 @@ namespace System.Management.Automation
             {
                 if (supportsVirtualTerminal != false)
                 {
-                    switch (OutputRenderingSetting)
+                    switch (PSStyle.Instance.OutputRendering)
                     {
                         case OutputRendering.Automatic:
                             outputRendering = OutputRendering.Ansi;
@@ -1806,7 +1804,7 @@ namespace System.Management.Automation
                             outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
                             break;
                         default:
-                            outputRendering = OutputRenderingSetting;
+                            outputRendering = PSStyle.Instance.OutputRendering;
                             break;
                     }
                 }
@@ -1819,7 +1817,7 @@ namespace System.Management.Automation
         {
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
-                var sd = new StringDecorated(s);
+                var sd = new ValueStringDecorated(s);
 
                 if (sd.IsDecorated)
                 {
@@ -1856,7 +1854,7 @@ namespace System.Management.Automation
         {
             // redirected console gets plaintext output to preserve existing behavior
             if (!InternalTestHooks.BypassOutputRedirectionCheck &&
-                ((OutputRenderingSetting == OutputRendering.PlainText) ||
+                ((PSStyle.Instance.OutputRendering == OutputRendering.PlainText) ||
                 (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
                 (formatStyle != FormatStyle.Error && Console.IsOutputRedirected)))
             {
