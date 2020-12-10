@@ -295,23 +295,10 @@ namespace System.Management.Automation
             public string Debug { get; set; } = "\x1b[33;1m";
         }
 
-        private static OutputRendering s_outputRendering = OutputRendering.Automatic;        
-
         /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
-        public OutputRendering OutputRendering
-        {
-            get
-            {
-                return s_outputRendering;
-            }
-
-            set
-            {
-                s_outputRendering = value;
-            }
-        }
+        public OutputRendering OutputRendering { get; set; } = OutputRendering.Automatic;
 
         /// <summary>
         /// Gets value to turn off all attributes.
