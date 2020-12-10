@@ -26,7 +26,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">Name of the command or script contents.</param>
         /// <exception cref="ArgumentNullException">Command is null.</exception>
         public Command(string command)
-            : this(command, isScript: false, null)
+            : this(command, isScript: false, useLocalScope: null)
         {
         }
 
