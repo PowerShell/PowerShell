@@ -1863,7 +1863,7 @@ namespace System.Management.Automation
 
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
-                PSStyle psstyle= PSStyle.Instance;                
+                PSStyle psstyle = PSStyle.Instance;                
                 switch (formatStyle)
                 {
                     case FormatStyle.Reset:

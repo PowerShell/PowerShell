@@ -35,82 +35,82 @@ namespace System.Management.Automation
         public class ForegroundColor
         {
             /// <summary>
-            /// Gets or sets the color black.
+            /// Gets the color black.
             /// </summary>
             public string Black { get; } = "\x1b[30m";
 
             /// <summary>
-            /// Gets or sets the color blue.
+            /// Gets the color blue.
             /// </summary>
             public string Blue { get; } = "\x1b[34m";
 
             /// <summary>
-            /// Gets or sets the color cyan.
+            /// Gets the color cyan.
             /// </summary>
             public string Cyan { get; } = "\x1b[36m";
 
             /// <summary>
-            /// Gets or sets the color dark gray.
+            /// Gets the color dark gray.
             /// </summary>
             public string DarkGray { get; } = "\x1b[90m";
 
             /// <summary>
-            /// Gets or sets the color green.
+            /// Gets the color green.
             /// </summary>
             public string Green { get; } = "\x1b[32m";
 
             /// <summary>
-            /// Gets or sets the color light blue.
+            /// Gets the color light blue.
             /// </summary>
             public string LightBlue { get; } = "\x1b[94m";
 
             /// <summary>
-            /// Gets or sets the color light cyan.
+            /// Gets the color light cyan.
             /// </summary>
             public string LightCyan { get; } = "\x1b[96m";
 
             /// <summary>
-            /// Gets or sets the color light gray.
+            /// Gets the color light gray.
             /// </summary>
             public string LightGray { get; } = "\x1b[97m";
 
             /// <summary>
-            /// Gets or sets the color light green.
+            /// Gets the color light green.
             /// </summary>
             public string LightGreen { get; } = "\x1b[92m";
 
             /// <summary>
-            /// Gets or sets the color light magenta.
+            /// Gets the color light magenta.
             /// </summary>
             public string LightMagenta { get; } = "\x1b[95m";
 
             /// <summary>
-            /// Gets or sets the color light red.
+            /// Gets the color light red.
             /// </summary>
             public string LightRed { get; } = "\x1b[91m";
 
             /// <summary>
-            /// Gets or sets the color light yellow.
+            /// Gets the color light yellow.
             /// </summary>
             public string LightYellow { get; } = "\x1b[93m";
 
             /// <summary>
-            /// Gets or sets the color magenta.
+            /// Gets the color magenta.
             /// </summary>
             public string Magenta { get; } = "\x1b[35m";
 
             /// <summary>
-            /// Gets or sets the color read.
+            /// Gets the color read.
             /// </summary>
             public string Red { get; } = "\x1b[31m";
 
             /// <summary>
-            /// Gets or sets the color white.
+            /// Gets the color white.
             /// </summary>
             public string White { get; } = "\x1b[37m";
 
             /// <summary>
-            /// Gets or sets the color yellow.
+            /// Gets the color yellow.
             /// </summary>
             public string Yellow { get; } = "\x1b[33m";
 
@@ -150,82 +150,82 @@ namespace System.Management.Automation
         public class BackgroundColor
         {
             /// <summary>
-            /// Gets or sets the color black.
+            /// Gets the color black.
             /// </summary>
             public string Black { get; } = "\x1b[40m";
 
             /// <summary>
-            /// Gets or sets the color blue.
+            /// Gets the color blue.
             /// </summary>
             public string Blue { get; } = "\x1b[44m";
 
             /// <summary>
-            /// Gets or sets the color cyan.
+            /// Gets the color cyan.
             /// </summary>
             public string Cyan { get; } = "\x1b[46m";
 
             /// <summary>
-            /// Gets or sets the color dark gray.
+            /// Gets the color dark gray.
             /// </summary>
             public string DarkGray { get; } = "\x1b[100m";
 
             /// <summary>
-            /// Gets or sets the color green.
+            /// Gets the color green.
             /// </summary>
             public string Green { get; } = "\x1b[42m";
 
             /// <summary>
-            /// Gets or sets the color light blue.
+            /// Gets the color light blue.
             /// </summary>
             public string LightBlue { get; } = "\x1b[104m";
 
             /// <summary>
-            /// Gets or sets the color light cyan.
+            /// Gets the color light cyan.
             /// </summary>
             public string LightCyan { get; } = "\x1b[106m";
 
             /// <summary>
-            /// Gets or sets the color light gray.
+            /// Gets the color light gray.
             /// </summary>
             public string LightGray { get; } = "\x1b[107m";
 
             /// <summary>
-            /// Gets or sets the color light green.
+            /// Gets the color light green.
             /// </summary>
             public string LightGreen { get; } = "\x1b[102m";
 
             /// <summary>
-            /// Gets or sets the color light magenta.
+            /// Gets the color light magenta.
             /// </summary>
             public string LightMagenta { get; } = "\x1b[105m";
 
             /// <summary>
-            /// Gets or sets the color light red.
+            /// Gets the color light red.
             /// </summary>
             public string LightRed { get; } = "\x1b[101m";
 
             /// <summary>
-            /// Gets or sets the color light yellow.
+            /// Gets the color light yellow.
             /// </summary>
             public string LightYellow { get; } = "\x1b[103m";
 
             /// <summary>
-            /// Gets or sets the color magenta.
+            /// Gets the color magenta.
             /// </summary>
             public string Magenta { get; } = "\x1b[45m";
 
             /// <summary>
-            /// Gets or sets the color read.
+            /// Gets the color read.
             /// </summary>
             public string Red { get; } = "\x1b[41m";
 
             /// <summary>
-            /// Gets or sets the color white.
+            /// Gets the color white.
             /// </summary>
             public string White { get; } = "\x1b[47m";
 
             /// <summary>
-            /// Gets or sets the color yellow.
+            /// Gets the color yellow.
             /// </summary>
             public string Yellow { get; } = "\x1b[43m";
 
@@ -314,82 +314,82 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets value to turn off all attributes.
+        /// Gets value to turn off all attributes.
         /// </summary>
         public string Reset { get; } = "\x1b[0m";
 
         /// <summary>
-        /// Gets or sets value to turn off blink.
+        /// Gets value to turn off blink.
         /// </summary>
         public string BlinkOff { get; } = "\x1b[5m";
 
         /// <summary>
-        /// Gets or sets value to turn on blink.
+        /// Gets value to turn on blink.
         /// </summary>
         public string Blink { get; } = "\x1b[25m";
 
         /// <summary>
-        /// Gets or sets value to turn off bold.
+        /// Gets value to turn off bold.
         /// </summary>
         public string BoldOff { get; } = "\x1b[22m";
 
         /// <summary>
-        /// Gets or sets value to turn on blink.
+        /// Gets value to turn on blink.
         /// </summary>
         public string Bold { get; } = "\x1b[1m";
 
         /// <summary>
-        /// Gets or sets value to turn on hidden.
+        /// Gets value to turn on hidden.
         /// </summary>
         public string Hidden { get; } = "\x1b[8m";
 
         /// <summary>
-        /// Gets or sets value to turn off hidden.
+        /// Gets value to turn off hidden.
         /// </summary>
         public string HiddenOff { get; } = "\x1b[28m";
 
         /// <summary>
-        /// Gets or sets value to turn on reverse.
+        /// Gets value to turn on reverse.
         /// </summary>
         public string Reverse { get; } = "\x1b[7m";
 
         /// <summary>
-        /// Gets or sets value to turn off reverse.
+        /// Gets value to turn off reverse.
         /// </summary>
         public string ReverseOff { get; } = "\x1b[27m";
 
         /// <summary>
-        /// Gets or sets value to turn off standout.
+        /// Gets value to turn off standout.
         /// </summary>
         public string ItalicOff { get; } = "\x1b[23m";
 
         /// <summary>
-        /// Gets or sets value to turn on standout.
+        /// Gets value to turn on standout.
         /// </summary>
         public string Italic { get; } = "\x1b[3m";
 
         /// <summary>
-        /// Gets or sets value to turn off underlined.
+        /// Gets value to turn off underlined.
         /// </summary>
         public string UnderlineOff { get; } = "\x1b[24m";
 
         /// <summary>
-        /// Gets or sets value to turn on underlined.
+        /// Gets value to turn on underlined.
         /// </summary>
         public string Underline { get; } = "\x1b[4m";
 
         /// <summary>
-        /// Gets or sets the formatting rendering settings.
+        /// Gets the formatting rendering settings.
         /// </summary>
         public FormattingData Formatting { get; }
 
         /// <summary>
-        /// Gets or sets foreground colors.
+        /// Gets foreground colors.
         /// </summary>
         public ForegroundColor Foreground { get; }
 
         /// <summary>
-        /// Gets or sets background colors.
+        /// Gets background colors.
         /// </summary>
         public BackgroundColor Background { get; }
 
