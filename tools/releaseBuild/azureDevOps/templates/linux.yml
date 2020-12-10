@@ -51,7 +51,9 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
   - powershell: |
+      $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
       & "$env:REPOROOT/tools/releaseBuild/vstsbuild.ps1" -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+      $env:AZDEVOPSFEEDPAT = $null
 
     displayName: 'Build and package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
