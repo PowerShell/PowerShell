@@ -201,35 +201,37 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary/>
+#nullable enable
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
         /// <summary/>
-        object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) => DefaultVisit(typeDefinitionAst);
+        object? VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) => DefaultVisit(typeDefinitionAst);
 
         /// <summary/>
-        object VisitPropertyMember(PropertyMemberAst propertyMemberAst) => DefaultVisit(propertyMemberAst);
+        object? VisitPropertyMember(PropertyMemberAst propertyMemberAst) => DefaultVisit(propertyMemberAst);
 
         /// <summary/>
-        object VisitFunctionMember(FunctionMemberAst functionMemberAst) => DefaultVisit(functionMemberAst);
+        object? VisitFunctionMember(FunctionMemberAst functionMemberAst) => DefaultVisit(functionMemberAst);
 
         /// <summary/>
-        object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) => DefaultVisit(baseCtorInvokeMemberExpressionAst);
+        object? VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) => DefaultVisit(baseCtorInvokeMemberExpressionAst);
 
         /// <summary/>
-        object VisitUsingStatement(UsingStatementAst usingStatement) => DefaultVisit(usingStatement);
+        object? VisitUsingStatement(UsingStatementAst usingStatement) => DefaultVisit(usingStatement);
 
         /// <summary/>
-        object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) => DefaultVisit(configurationDefinitionAst);
+        object? VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) => DefaultVisit(configurationDefinitionAst);
 
         /// <summary/>
-        object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) => DefaultVisit(dynamicKeywordAst);
+        object? VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) => DefaultVisit(dynamicKeywordAst);
 
         /// <summary/>
-        object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
+        object? VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
 
         /// <summary/>
-        object VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
+        object? VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
     }
+#nullable restore
 
 #if DEBUG
     internal class CheckAllParentsSet : AstVisitor2
