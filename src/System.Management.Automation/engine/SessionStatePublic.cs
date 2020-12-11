@@ -336,6 +336,7 @@ namespace System.Management.Automation
         Private = 1
     }
 
+#nullable enable
     internal interface IHasSessionStateEntryVisibility
     {
         SessionStateEntryVisibility Visibility { get; set; }
