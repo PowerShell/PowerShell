@@ -1787,6 +1787,107 @@ namespace System.Management.Automation
             return true;
         }
 
+        internal static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
+        {
+            var outputRendering = OutputRendering.Ansi;
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                if (supportsVirtualTerminal != false)
+                {
+                    switch (PSStyle.Instance.OutputRendering)
+                    {
+                        case OutputRendering.Automatic:
+                            outputRendering = OutputRendering.Ansi;
+                            break;
+                        case OutputRendering.Host:
+                            outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                            break;
+                        default:
+                            outputRendering = PSStyle.Instance.OutputRendering;
+                            break;
+                    }
+                }
+            }
+
+            return outputRendering == OutputRendering.PlainText;
+        }
+
+        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        {
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                var sd = new ValueStringDecorated(s);
+
+                if (sd.IsDecorated)
+                {
+                    var outputRendering = OutputRendering.Ansi;
+                    if (InternalTestHooks.BypassOutputRedirectionCheck)
+                    {
+                        isOutputRedirected = false;
+                    }
+
+                    if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                    {
+                        outputRendering = OutputRendering.PlainText;
+                    }
+
+                    s = sd.ToString(outputRendering);
+                }
+            }
+
+            return s;
+        }
+
+        internal enum FormatStyle
+        {
+            Reset,
+            FormatAccent,
+            ErrorAccent,
+            Error,
+            Warning,
+            Verbose,
+            Debug,
+        }
+
+        internal static string GetFormatStyleString(FormatStyle formatStyle)
+        {
+            // redirected console gets plaintext output to preserve existing behavior
+            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
+                ((PSStyle.Instance.OutputRendering == OutputRendering.PlainText) ||
+                (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
+                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected)))
+            {
+                return string.Empty;
+            }
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                PSStyle psstyle = PSStyle.Instance;                
+                switch (formatStyle)
+                {
+                    case FormatStyle.Reset:
+                        return psstyle.Reset;
+                    case FormatStyle.FormatAccent:
+                        return psstyle.Formatting.FormatAccent;
+                    case FormatStyle.ErrorAccent:
+                        return psstyle.Formatting.ErrorAccent;
+                    case FormatStyle.Error:
+                        return psstyle.Formatting.Error;
+                    case FormatStyle.Warning:
+                        return psstyle.Formatting.Warning;
+                    case FormatStyle.Verbose:
+                        return psstyle.Formatting.Verbose;
+                    case FormatStyle.Debug:
+                        return psstyle.Formatting.Debug;
+                    default:
+                        return string.Empty;
+                }
+            }
+
+            return string.Empty;
+        }
+
         #endregion
     }
 
@@ -1970,6 +2071,7 @@ namespace System.Management.Automation.Internal
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
         internal static bool ForcePromptForChoiceDefaultOption;
+        internal static bool BypassOutputRedirectionCheck;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;

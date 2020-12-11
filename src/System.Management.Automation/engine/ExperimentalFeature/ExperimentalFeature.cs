@@ -126,6 +126,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
+                    name: "PSAnsiRendering",
+                    description: "Enable $PSStyle variable to control ANSI rendering of strings"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

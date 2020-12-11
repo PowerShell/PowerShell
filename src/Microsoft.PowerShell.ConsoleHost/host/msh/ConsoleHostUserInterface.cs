@@ -696,6 +696,7 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
+            value = Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
 
             if (_parent.IsRunningAsync)
             {
@@ -1179,11 +1180,17 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
-                WriteLine(
-                    DebugForegroundColor,
-                    DebugBackgroundColor,
-                    StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                {
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                }
+                else
+                {
+                    WriteLine(
+                        DebugForegroundColor,
+                        DebugBackgroundColor,
+                        StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                }
             }
         }
 
@@ -1234,10 +1241,17 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                WriteLine(
-                    VerboseForegroundColor,
-                    VerboseBackgroundColor,
-                    StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                {
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                }
+                else
+                {
+                    WriteLine(
+                        VerboseForegroundColor,
+                        VerboseBackgroundColor,
+                        StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                }
             }
         }
 
@@ -1271,10 +1285,17 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                WriteLine(
-                    WarningForegroundColor,
-                    WarningBackgroundColor,
-                    StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                {
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                }
+                else
+                {
+                    WriteLine(
+                        WarningForegroundColor,
+                        WarningBackgroundColor,
+                        StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                }
             }
         }
 
@@ -1334,9 +1355,20 @@ namespace Microsoft.PowerShell
             else
             {
                 if (writer == _parent.ConsoleTextWriter)
-                    WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
+                {
+                    if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        WriteLine(value);
+                    }
+                    else
+                    {
+                        WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
+                    }
+                }
                 else
+                {
                     Console.Error.WriteLine(value);
+                }
             }
         }
 
