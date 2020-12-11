@@ -12,6 +12,7 @@ namespace System.Management.Automation.Tracing
     ///     An object that can be used to manage the ETW activity ID of the current thread.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Etw")]
+#nullable enable
     public interface IEtwEventCorrelator
     {
         /// <summary>
@@ -42,6 +43,7 @@ namespace System.Management.Automation.Tracing
         ///     the new activity yields control of the current thread.</returns>
         IEtwActivityReverter StartActivity();
     }
+#nullable restore
 
     /// <summary>
     ///     A simple implementation of <see cref="IEtwEventCorrelator"/>.
