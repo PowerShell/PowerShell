@@ -1492,13 +1492,25 @@ namespace Microsoft.PowerShell.Commands
             bool commandHasModule = command.Module != null;
             foreach (CommandInfo commandInfo in _accumulatedResults)
             {
-                if (command.CommandType != commandInfo.CommandType ||
-                     (!string.Equals(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) &&
+                if (command.CommandType != commandInfo.CommandType)
+                {
+                    continue;
+                }
+
+                if ((!string.Equals(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) &&
                       // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
                       // Hence, an additional check is done with the prefix information
-                      !string.Equals(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase))
-                    || commandInfo.Module == null || !commandHasModule ||
-                    ( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
+                      !string.Equals(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                if (commandInfo.Module == null || !commandHasModule)
+                {
+                    continue;
+                }
+
+                if (( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
                      (!commandInfo.IsImported || !command.IsImported || !commandInfo.Module.Equals(command.Module)) &&
                      ((commandInfo.IsImported && command.IsImported) || !commandInfo.Module.Path.Equals(command.Module.Path, StringComparison.OrdinalIgnoreCase))
                     ))
