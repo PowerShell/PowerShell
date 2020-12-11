@@ -113,7 +113,7 @@ namespace System.Management.Automation.Internal
         internal static readonly Regex AnsiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>
-        /// Initializes a new instance of the StringDecorated class.
+        /// Initializes a new instance of the ValueStringDecorated class.
         /// </summary>
         /// <param name="text">The input string.</param>
         public ValueStringDecorated(string text)
