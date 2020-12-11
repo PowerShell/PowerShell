@@ -177,8 +177,8 @@ namespace System.Management.Automation.Tracing
         /// <returns>True if the specified level and keywords are enabled for logging.</returns>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return ( ((ulong) keywords & _keywordFilter) != 0 &&
-                     ((int) level <= _levelFilter) );
+            return ((ulong)keywords & _keywordFilter) != 0
+                && ((int)level <= _levelFilter);
         }
 
         // NOTE: There are a number of places where PowerShell code sends analytic events
@@ -188,8 +188,8 @@ namespace System.Management.Automation.Tracing
         // filtering is performed to suppress analytic events.
         private bool ShouldLog(PSLevel level, PSKeyword keywords, PSChannel channel)
         {
-            return ((_channelFilter & (ulong)channel) != 0 &&
-                    IsEnabled(level, keywords));
+            return (_channelFilter & (ulong)channel) != 0
+                && IsEnabled(level, keywords);
         }
 
 #region resource manager
