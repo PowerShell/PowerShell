@@ -1104,8 +1104,7 @@ namespace System.Management.Automation.Runspaces
                 resolvedShellUri = DefaultShellUri;
             }
 
-            if (resolvedShellUri.IndexOf(
-                System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) == -1)
+            if (!resolvedShellUri.Contains(System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 resolvedShellUri = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
             }

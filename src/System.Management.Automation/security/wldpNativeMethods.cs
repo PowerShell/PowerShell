@@ -361,7 +361,7 @@ namespace System.Management.Automation.Security
             {
                 // Assume everything under SYSTEM32 is trusted, with a purposefully sloppy
                 // check so that we can actually put it in the filename during testing.
-                if (path.IndexOf("System32", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
                 {
                     return SystemEnforcementMode.None;
                 }
