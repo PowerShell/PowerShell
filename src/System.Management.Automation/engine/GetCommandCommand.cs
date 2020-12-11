@@ -1489,7 +1489,6 @@ namespace Microsoft.PowerShell.Commands
         private bool IsCommandInResult(CommandInfo command)
         {
             bool isPresent = false;
-            bool commandHasModule = command.Module != null;
             foreach (CommandInfo commandInfo in _accumulatedResults)
             {
                 if (command.CommandType != commandInfo.CommandType)
@@ -1505,7 +1504,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (commandInfo.Module == null || !commandHasModule)
+                if (commandInfo.Module == null || !(command.Module != null))
                 {
                     continue;
                 }
