@@ -91,7 +91,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public override PSCredential Credential
         {
-            get { return base.Credential; }
+            get
+            {
+                return base.Credential;
+            }
 
             set
             {

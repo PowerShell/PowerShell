@@ -326,7 +326,10 @@ namespace System.Management.Automation
         /// </summary>
         public bool SupportsTransactions
         {
-            get { return _supportsTransactions; }
+            get
+            {
+                return _supportsTransactions;
+            }
 
             set
             {

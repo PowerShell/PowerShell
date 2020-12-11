@@ -65,7 +65,10 @@ namespace System.Management.Automation
         /// </summary>
         public ScriptBlock CommandScriptBlock
         {
-            get { return _scriptBlock; }
+            get
+            {
+                return _scriptBlock;
+            }
 
             set
             {

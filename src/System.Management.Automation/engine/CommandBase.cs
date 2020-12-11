@@ -89,7 +89,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal PSObject CurrentPipelineObject
         {
-            get { return currentObjectInPipeline; }
+            get
+            {
+                return currentObjectInPipeline;
+            }
 
             set
             {
@@ -155,7 +158,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {

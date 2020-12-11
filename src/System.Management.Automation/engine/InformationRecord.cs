@@ -109,7 +109,10 @@ namespace System.Management.Automation
                 return _user;
             }
 
-            set { _user = value; }
+            set
+            {
+                _user = value;
+            }
         }
 
         private string _user;
@@ -143,7 +146,10 @@ namespace System.Management.Automation
                 return this._processId.Value;
             }
 
-            set { _processId = value; }
+            set
+            {
+                _processId = value;
+            }
         }
 
         private uint? _processId;

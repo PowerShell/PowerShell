@@ -1369,7 +1369,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
 
-            set { Console.SetBufferSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetBufferSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>
@@ -1377,7 +1380,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override Coordinates CursorPosition
         {
-            get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+            get
+            {
+                return new Coordinates(Console.CursorLeft, Console.CursorTop);
+            }
 
             set
             {
@@ -1475,7 +1481,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
 
-            set { Console.SetWindowSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetWindowSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>

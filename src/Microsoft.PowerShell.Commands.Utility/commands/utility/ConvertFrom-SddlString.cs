@@ -31,7 +31,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public AccessRightTypeNames Type
         {
-            get { return _type; }
+            get
+            {
+                return _type;
+            }
 
             set
             {

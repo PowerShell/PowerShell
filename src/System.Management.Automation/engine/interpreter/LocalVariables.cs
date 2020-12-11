@@ -35,7 +35,10 @@ namespace System.Management.Automation.Interpreter
 
         public bool IsBoxed
         {
-            get { return (_flags & IsBoxedFlag) != 0; }
+            get
+            {
+                return (_flags & IsBoxedFlag) != 0;
+            }
 
             set
             {

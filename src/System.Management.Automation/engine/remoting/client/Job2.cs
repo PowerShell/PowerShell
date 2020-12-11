@@ -533,7 +533,10 @@ namespace System.Management.Automation
 
         internal PSEventManager EventManager
         {
-            get { return _eventManager; }
+            get
+            {
+                return _eventManager;
+            }
 
             set
             {

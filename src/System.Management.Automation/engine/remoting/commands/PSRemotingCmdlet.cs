@@ -669,7 +669,10 @@ namespace Microsoft.PowerShell.Commands
                 return _sessionOption;
             }
 
-            set { _sessionOption = value; }
+            set
+            {
+                _sessionOption = value;
+            }
         }
 
         private PSSessionOption _sessionOption;
@@ -707,7 +710,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = NewPSSessionCommand.UriParameterSet)]
         public virtual string CertificateThumbprint
         {
-            get { return _thumbPrint; }
+            get
+            {
+                return _thumbPrint;
+            }
 
             set
             {
@@ -4353,7 +4359,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return _proxyAuthentication; }
+            get
+            {
+                return _proxyAuthentication;
+            }
 
             set
             {

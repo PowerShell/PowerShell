@@ -104,7 +104,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content
         {
-            get { return _content; }
+            get
+            {
+                return _content;
+            }
 
             set
             {
