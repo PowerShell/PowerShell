@@ -667,7 +667,7 @@ function Restore-PSPackage
         if ($VerbosePreference -eq 'Continue') {
             $RestoreArguments += "detailed"
         } else {
-            $RestoreArguments += "quiet"
+            $RestoreArguments += "detailed"
         }
 
         if ($InteractiveAuth) {
