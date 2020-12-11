@@ -379,12 +379,13 @@ namespace System.Management.Automation
     /// <summary>
     /// Interface to expose a job debugger.
     /// </summary>
+#nullable enable
     public interface IJobDebugger
     {
         /// <summary>
         /// Job Debugger.
         /// </summary>
-        Debugger Debugger
+        Debugger? Debugger
         {
             get;
         }
@@ -398,6 +399,7 @@ namespace System.Management.Automation
             set;
         }
     }
+#nullable restore
 
     /// <summary>
     /// Represents a command running in background. A job object can internally
