@@ -1494,12 +1494,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (CommandInfo commandInfo in _accumulatedResults)
                 {
-                    if (commandInfo.Module == null)
-                    {
-                        continue;
-                    }
-
-                    if (commandInfo.CommandType != command.CommandType)
+                    if (commandInfo.Module == null || commandInfo.CommandType != command.CommandType)
                     {
                         continue;
                     }
