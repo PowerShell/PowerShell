@@ -36,6 +36,8 @@ jobs:
     displayName: 'Bootstrap VM'
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
   - pwsh: |
       $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
