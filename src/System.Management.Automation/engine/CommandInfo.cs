@@ -992,6 +992,7 @@ namespace System.Management.Automation
         public IList<PSMemberNameAndType> Members { get; }
     }
 
+#nullable enable
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }
