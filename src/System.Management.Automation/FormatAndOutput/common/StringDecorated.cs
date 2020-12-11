@@ -12,7 +12,6 @@ namespace System.Management.Automation.Internal
     /// </summary>
     public class StringDecorated
     {
-        private const char ESC = '\x1b';
         private readonly bool _isDecorated;
         private readonly string _text;
         private string? _plaintextcontent;
@@ -95,18 +94,15 @@ namespace System.Management.Automation.Internal
         internal const char ESC = '\x1b';
         private readonly bool _isDecorated;
         private readonly string _text;
-        private string _plaintextcontent;
-        private bool _isInitialized;
+        private string? _plaintextcontent;
 
         private string PlainText
         {
             get
             {
-                if (!_isInitialized)
+                if (_plaintextcontent == null)
                 {
                     _plaintextcontent = AnsiRegex.Replace(_text, string.Empty);
-                    _isInitialized = true;
-
                 }
 
                 return _plaintextcontent;
@@ -124,8 +120,7 @@ namespace System.Management.Automation.Internal
         {
             _text = text;
             _isDecorated = text.Contains(ESC);
-            _isInitialized = false;
-            _plaintextcontent = string.Empty;
+            _plaintextcontent = null;
         }
 
         /// <summary>
