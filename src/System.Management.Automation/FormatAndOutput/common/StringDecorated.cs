@@ -30,7 +30,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the StringDecorated class.
+        /// Initializes a new instance of the <see cref="StringDecorated"/> class.
         /// </summary>
         /// <param name="text">The input string.</param>
         public StringDecorated(string text)
@@ -113,7 +113,7 @@ namespace System.Management.Automation.Internal
         internal static readonly Regex AnsiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
 
         /// <summary>
-        /// Initializes a new instance of the ValueStringDecorated class.
+        /// Initializes a new instance of the <see cref="ValueStringDecorated"/> struct.
         /// </summary>
         /// <param name="text">The input string.</param>
         public ValueStringDecorated(string text)
