@@ -3015,6 +3015,7 @@ namespace System.Management.Automation.Remoting.Client
     /// unit testing.
     /// Note: It is implemented as a class to avoid exposing it outside the module.
     /// </summary>
+#nullable enable
     internal interface IWSManNativeApiFacade
     {
         // TODO: Expand this to cover the rest of the API once I prove that it works!
@@ -3033,7 +3034,7 @@ namespace System.Management.Automation.Remoting.Client
         int WSManPluginReceiveResult(
             IntPtr requestDetails,
             int flags,
-            string stream,
+            string? stream,
             IntPtr streamResult,
             string commandState,
             int exitCode);
@@ -3048,6 +3049,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr shutdownCallback,
             IntPtr shutdownContext);
     }
+#nullable restore
 
     /// <summary>
     /// Concrete implementation of the PInvoke facade for use in the production code.
