@@ -1532,7 +1532,9 @@ namespace Microsoft.PowerShell.Commands
             if (e.JobStateInfo.State == JobState.Blocked)
             {
                 // increment count of blocked child jobs
-                Interlocked.Increment(ref _blockedChildJobsCount);
+                int count = Interlocked.Increment(ref _blockedChildJobsCount);
+
+                Debug.Assert(count != int.MinValue, "Underflow detected.");
 
                 // if any of the child job is blocked, we set state to blocked
                 SetJobState(JobState.Blocked, null);
@@ -1552,7 +1554,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // We are done
-            if (Interlocked.Increment(ref _blockedChildJobsCount) == ChildJobs.Count)
+            int count = Interlocked.Increment(ref _blockedChildJobsCount)
+
+            Debug.Assert(count != uint.MinValue, "Overflow detected.");
+
+            if (count == ChildJobs.Count)
             {
                 // if any child job failed, set status to failed
                 // If stop was called set, status to stopped
@@ -1729,7 +1735,11 @@ namespace Microsoft.PowerShell.Commands
         /// case</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
         {
-            if (Interlocked.Decrement(ref _blockedChildJobsCount) == 0)
+            int count = Interlocked.Decrement(ref _blockedChildJobsCount);
+
+            Debug.Assert(count != int.MaxValue, "Underflow detected.");
+
+            if (count == 0)
             {
                 SetJobState(JobState.Running, null);
             }

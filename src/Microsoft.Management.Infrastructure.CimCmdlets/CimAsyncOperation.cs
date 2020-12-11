@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management.Automation;
 using System.Threading;
 
@@ -87,7 +88,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            Interlocked.Increment(ref this.operationCount);
+            uint count = Interlocked.Increment(ref this.operationCount);
+
+            Debug.Assert(count != uint.MinValue, "Overflow detected.");
         }
 
         /// <summary>
@@ -104,7 +107,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (Interlocked.Decrement(ref this.operationCount) == 0)
+            uint count = Interlocked.Decrement(ref this.operationCount);
+
+            Debug.Assert(count != uint.MaxValue, "Underflow detected.");
+
+            if (count == 0)
             {
                 this.moreActionEvent.Set();
             }

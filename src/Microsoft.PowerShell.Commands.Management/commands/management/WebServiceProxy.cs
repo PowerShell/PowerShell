@@ -296,7 +296,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            string sequenceString = Interlocked.Increment(ref s_sequenceNumber).ToString(CultureInfo.InvariantCulture);
+            int count = Interlocked.Increment(ref s_sequenceNumber);
+
+            Debug.Assert(count != uint.MinValue, "Overflow detected.");
+
+            string sequenceString = count.ToString(CultureInfo.InvariantCulture);
 
             if (rndname.Length > 30)
             {
