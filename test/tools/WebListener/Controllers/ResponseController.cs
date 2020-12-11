@@ -41,7 +41,7 @@ namespace mvc.Controllers
             }
 
             StringValues responsePhrase;
-            if ( Request.Query.TryGetValue("responsephrase", out responsePhrase))
+            if (Request.Query.TryGetValue("responsephrase", out responsePhrase))
             {
                 Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = responsePhrase.FirstOrDefault();
             }
