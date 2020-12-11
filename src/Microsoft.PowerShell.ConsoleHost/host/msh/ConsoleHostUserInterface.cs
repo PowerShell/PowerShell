@@ -696,6 +696,7 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
+            value = Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
 
             if (_parent.IsRunningAsync)
             {
@@ -710,8 +711,6 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                value = Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
-
                 if (newLine)
                 {
                     writer.WriteLine(value);
