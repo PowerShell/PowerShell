@@ -1499,7 +1499,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (command.CommandType != commandInfo.CommandType)
+                    if (commandInfo.CommandType != command.CommandType)
                     {
                         continue;
                     }
@@ -1512,10 +1512,10 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if ((!string.Equals(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) &&
+                    if ((!commandInfo.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) &&
                           // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
                           // Hence, an additional check is done with the prefix information
-                          !string.Equals(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase)))
+                          !ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix).Equals(command.Name, StringComparison.OrdinalIgnoreCase)))
                     {
                         continue;
                     }
