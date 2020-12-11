@@ -1180,10 +1180,9 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    message = Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
-                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
                 }
                 else
                 {
@@ -1242,10 +1241,9 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    message = Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
-                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
                 }
                 else
                 {
@@ -1287,10 +1285,9 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    message = Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + Utils.GetOutputString(message, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
-                    WriteLine(StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
                 }
                 else
                 {
@@ -1359,7 +1356,7 @@ namespace Microsoft.PowerShell
             {
                 if (writer == _parent.ConsoleTextWriter)
                 {
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                     {
                         WriteLine(value);
                     }

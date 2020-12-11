@@ -65,4 +65,21 @@ Describe 'OutputRendering tests' {
             $out | Should -Not -BeLike "*`e*" -Because ($out | Format-Hex | Out-String)
         }
     }
+
+    # Error isn't covered here because it has custom formatting
+    It 'OutputRendering is correct for <stream>' -TestCases @(
+        @{ stream = 'Verbose' }
+        @{ stream = 'Debug' }
+        @{ stream = 'Warning' }
+    ) {
+        param($stream)
+
+        if ($stream -ne 'Warning')
+        {
+            $switch = "-$stream"
+        }
+
+        $out = pwsh -noprofile -command "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassOutputRedirectionCheck', `$true); write-$stream $switch 'hello'"
+        $out | Should -BeExactly "$($PSStyle.Formatting.$stream)$($stream.ToUpper()): hello"
+    }
 }
