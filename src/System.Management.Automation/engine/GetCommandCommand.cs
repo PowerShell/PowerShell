@@ -1499,18 +1499,17 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
-                         (!commandInfo.IsImported || !command.IsImported || !commandInfo.Module.Equals(command.Module)) &&
-                         ((commandInfo.IsImported && command.IsImported) || !commandInfo.Module.Path.Equals(command.Module.Path, StringComparison.OrdinalIgnoreCase))
-                        ))
+                    // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
+                    if ((!commandInfo.IsImported || !command.IsImported || !commandInfo.Module.Equals(command.Module))
+                        && ((commandInfo.IsImported && command.IsImported) || !commandInfo.Module.Path.Equals(command.Module.Path, StringComparison.OrdinalIgnoreCase)))
                     {
                         continue;
                     }
 
-                    if ((!commandInfo.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) &&
-                          // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
-                          // Hence, an additional check is done with the prefix information
-                          !ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix).Equals(command.Name, StringComparison.OrdinalIgnoreCase)))
+                    // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
+                    // Hence, an additional check is done with the prefix information
+                    if (!commandInfo.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase)
+                        && !ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix).Equals(command.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
