@@ -1504,7 +1504,12 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (commandInfo.Module == null || !(command.Module != null))
+                if (commandInfo.Module == null)
+                {
+                    continue;
+                }
+
+                if (!(command.Module != null))
                 {
                     continue;
                 }
