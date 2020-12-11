@@ -4520,9 +4520,10 @@ namespace System.Management.Automation
         }
     }
 
+#nullable enable
     internal interface IOutputProcessingState
     {
-        event EventHandler<OutputProcessingStateEventArgs> OutputProcessingStateChanged;
+        event EventHandler<OutputProcessingStateEventArgs>? OutputProcessingStateChanged;
     }
 
     #endregion
