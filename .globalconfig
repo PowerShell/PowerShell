@@ -1463,7 +1463,7 @@ dotnet_diagnostic.SA1614.severity = none
 dotnet_diagnostic.SA1615.severity = none
 
 # SA1616: Element return value documentation should have text
-dotnet_diagnostic.SA1616.severity = none
+dotnet_diagnostic.SA1616.severity = warning
 
 # SA1617: Void return value should not be documented
 dotnet_diagnostic.SA1617.severity = none
