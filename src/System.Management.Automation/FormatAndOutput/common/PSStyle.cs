@@ -348,7 +348,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains formatting styles for FileInfo objects.
         /// </summary>
-
         public class FileInfoFormatting
         {
             /// <summary>
@@ -367,16 +366,16 @@ namespace System.Management.Automation
             public string Executable { get; set; } = "\x1b[32;1m";
 
             /// <summary>
-            /// Gets or sets the style for archive.
+            /// Gets the style for archive.
             /// </summary>
-            public Dictionary<string,string> Extension { get; }
+            public Dictionary<string, string> Extension { get; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FileInfoFormatting"/> class.
             /// </summary>
             public FileInfoFormatting()
             {
-                Extension = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+                Extension = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
                 // archives
                 Extension.Add(".zip", "\x1b[31;1m");

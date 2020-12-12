@@ -2058,7 +2058,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            string[] executableExtensions = {".exe", ".bat", ".com", ".cmd"};
+            string[] executableExtensions = { ".exe", ".bat", ".com", ".cmd" };
 
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && ExperimentalFeature.IsEnabled("PSFileInfoColor"))
             {

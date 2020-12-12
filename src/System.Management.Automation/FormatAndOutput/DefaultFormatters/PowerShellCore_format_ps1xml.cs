@@ -2159,8 +2159,8 @@ namespace System.Management.Automation.Runspaces
                                 $null = $sb.Append([Environment]::NewLine)
                             }
 
-                            $sb.ToString()
-                        ", label: "Extension")
+                            $sb.ToString()",
+                            label: "Extension")
                     .EndEntry()
                 .EndList());
         }
