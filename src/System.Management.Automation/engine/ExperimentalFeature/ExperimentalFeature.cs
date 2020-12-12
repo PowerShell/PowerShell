@@ -140,6 +140,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
+                new ExperimentalFeature(
+                    name: "PSFileInfoColor",
+                    description: "Enable coloring for FileInfo objects"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

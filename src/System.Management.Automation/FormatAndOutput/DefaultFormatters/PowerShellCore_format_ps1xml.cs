@@ -277,6 +277,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_PSStyleProgressConfiguration());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+FileInfoFormatting",
+                ViewsOf_System_Management_Automation_PSStyleFileInfoFormat());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSStyle+ForegroundColor",
                 ViewsOf_System_Management_Automation_PSStyleForegroundColor());
 
@@ -2063,8 +2067,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.FileInfo.Directory)$($_.FileInfo.Directory.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Directory")
                         .AddItemScriptBlock(@"""$($_.FileInfo.SymbolicLink)$($_.FileInfo.SymbolicLink.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.SymbolicLink")
                         .AddItemScriptBlock(@"""$($_.FileInfo.Executable)$($_.FileInfo.Executable.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Executable")
-                        .AddItemScriptBlock(@"""$($_.FileInfo.Archive)$($_.FileInfo.Archive.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Archive")
-                        .AddItemScriptBlock(@"""$($_.FileInfo.PowerShell)$($_.FileInfo.PowerShell.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.PowerShell")
+                        .AddItemScriptBlock(@"""$([string]::Join(',',$_.FileInfo.Extension.Keys))""", label: "FileInfo.Extension")
                         .AddItemScriptBlock(@"""$($_.Foreground.Black)$($_.Foreground.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Black")
                         .AddItemScriptBlock(@"""$($_.Foreground.White)$($_.Foreground.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.White")
                         .AddItemScriptBlock(@"""$($_.Foreground.DarkGray)$($_.Foreground.DarkGray.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.DarkGray")
@@ -2137,8 +2140,27 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Directory)$($_.Directory.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Directory")
                         .AddItemScriptBlock(@"""$($_.SymbolicLink)$($_.SymbolicLink.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "SymbolicLink")
                         .AddItemScriptBlock(@"""$($_.Executable)$($_.Executable.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Executable")
-                        .AddItemScriptBlock(@"""$($_.Archive)$($_.Archive.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Archive")
-                        .AddItemScriptBlock(@"""$($_.PowerShell)$($_.PowerShell.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.PowerShell")
+                        .AddItemScriptBlock(@"
+                            $sb = [System.Text.StringBuilder]::new()
+                            $maxKeyLength = 0
+                            foreach ($key in $_.Extension.Keys) {
+                                if ($key.Length -gt $maxKeyLength) {
+                                    $maxKeyLength = $key.Length
+                                }
+                            }
+
+                            foreach ($key in $_.Extension.Keys) {
+                                $null = $sb.Append($key.PadRight($maxKeyLength))
+                                $null = $sb.Append(' = ""')
+                                $null = $sb.Append($_.Extension[$key])
+                                $null = $sb.Append($_.Extension[$key].Replace(""`e"",'`e'))
+                                $null = $sb.Append($PSStyle.Reset)
+                                $null = $sb.Append('""')
+                                $null = $sb.Append([Environment]::NewLine)
+                            }
+
+                            $sb.ToString()
+                        ", label: "Extension")
                     .EndEntry()
                 .EndList());
         }

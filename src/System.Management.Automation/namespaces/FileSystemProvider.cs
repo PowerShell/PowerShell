@@ -2058,11 +2058,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            string[] archiveExtensions = {".zip", ".tar.gz", ".tgz", ".7z", ".tar", ".cab", ".nupkg"};
             string[] executableExtensions = {".exe", ".bat", ".com", ".cmd"};
-            string[] powershellExtensions = {".ps1", ".psm1", ".psd1", ".ps1xml"};
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && ExperimentalFeature.IsEnabled("PSFileInfoColor"))
             {
                 if (instance?.BaseObject is FileSystemInfo fileInfo)
                 {
@@ -2070,17 +2068,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
                     }
-                    else if (archiveExtensions.Contains(fileInfo.Extension.ToLower()))
-                    {
-                        return $"{PSStyle.Instance.FileInfo.Archive}{fileInfo.Name}{PSStyle.Instance.Reset}";
-                    }
                     else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
                     {
                         return $"{PSStyle.Instance.FileInfo.Directory}{fileInfo.Name}{PSStyle.Instance.Reset}";
                     }
-                    else if (powershellExtensions.Contains(fileInfo.Extension.ToLower()))
+                    else if (PSStyle.Instance.FileInfo.Extension.ContainsKey(fileInfo.Extension))
                     {
-                        return $"{PSStyle.Instance.FileInfo.PowerShell}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                        return $"{PSStyle.Instance.FileInfo.Extension[fileInfo.Extension]}{fileInfo.Name}{PSStyle.Instance.Reset}";
                     }
                     else if ((Platform.IsWindows && executableExtensions.Contains(fileInfo.Extension.ToLower())) ||
                         (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))

@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+
 namespace System.Management.Automation
 {
     #region OutputRendering
@@ -33,6 +35,16 @@ namespace System.Management.Automation
 
         /// <summary>Classic rendering of progress.</summary>
         Classic = 1,
+    }
+    
+    /// Type is used for custom formatting.
+    /// </summary>
+    public class AnsiDictionary : Dictionary<string, string>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnsiDictionary"/> class.
+        /// </summary>
+        public AnsiDictionary():base(StringComparer.OrdinalIgnoreCase){}
     }
 
     #region PSStyle
@@ -357,13 +369,30 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for archive.
             /// </summary>
-            public string Archive { get; set; } = "\x1b[31;1m";
+            public AnsiDictionary Extension { get; }
 
             /// <summary>
-            /// Gets or sets the style for PowerShell files.
+            /// Initializes a new instance of the <see cref="FileInfoFormatting"/> class.
             /// </summary>
+            public FileInfoFormatting()
+            {
+                Extension = new AnsiDictionary();
 
-            public string PowerShell { get; set; } = "\x1b[33;1m";
+                // archives
+                Extension.Add(".zip", "\x1b[31;1m");
+                Extension.Add(".tgz", "\x1b[31;1m");
+                Extension.Add(".gz", "\x1b[31;1m");
+                Extension.Add(".tar", "\x1b[31;1m");
+                Extension.Add(".nupkg", "\x1b[31;1m");
+                Extension.Add(".cab", "\x1b[31;1m");
+                Extension.Add(".7z", "\x1b[31;1m");
+
+                // powershell
+                Extension.Add(".ps1", "\x1b[33;1m");
+                Extension.Add(".psd1", "\x1b[33;1m");
+                Extension.Add(".psm1", "\x1b[33;1m");
+                Extension.Add(".ps1xml", "\x1b[33;1m");
+            }
         }
 
         /// <summary>
