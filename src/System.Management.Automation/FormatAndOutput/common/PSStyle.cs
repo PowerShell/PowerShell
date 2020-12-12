@@ -369,14 +369,14 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for archive.
             /// </summary>
-            public AnsiDictionary Extension { get; }
+            public Dictionary<string,string> Extension { get; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FileInfoFormatting"/> class.
             /// </summary>
             public FileInfoFormatting()
             {
-                Extension = new AnsiDictionary();
+                Extension = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
 
                 // archives
                 Extension.Add(".zip", "\x1b[31;1m");
