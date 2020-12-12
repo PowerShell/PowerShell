@@ -247,6 +247,16 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
 
         $exe.NameString | Should -BeExactly "$($PSStyle.FileInfo.Executable + $exe.Name + $PSStyle.Reset)"
     }
+}
+
+Describe 'Formatting for FileInfo requiring admin' -Tags 'CI','RequireAdminOnWindows' {
+    BeforeAll {
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSFileInfoColor')))
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
+    }
 
     It 'Symlink should have correct color' {
         $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
