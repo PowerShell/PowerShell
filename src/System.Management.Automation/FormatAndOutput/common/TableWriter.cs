@@ -206,7 +206,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows, bool isHeader = false)
         {
             if (_disabled)
+            {
                 return;
+            }
 
             // build the current row alignment settings
             int cols = _si.columnInfo.Length;
@@ -224,9 +226,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 for (int i = 0; i < currentAlignment.Length; i++)
                 {
                     if (alignment[i] == TextAlignment.Undefined)
+                    {
                         currentAlignment[i] = _si.columnInfo[i].alignment;
+                    }
                     else
+                    {
                         currentAlignment[i] = alignment[i];
+                    }
                 }
             }
 
