@@ -1460,7 +1460,7 @@ dotnet_diagnostic.SA1613.severity = none
 dotnet_diagnostic.SA1614.severity = none
 
 # SA1615: Element return value should be documented
-dotnet_diagnostic.SA1615.severity = none
+dotnet_diagnostic.SA1615.severity = suggestion
 
 # SA1616: Element return value documentation should have text
 dotnet_diagnostic.SA1616.severity = warning
