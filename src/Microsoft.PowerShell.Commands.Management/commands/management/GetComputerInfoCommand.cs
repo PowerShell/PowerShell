@@ -339,7 +339,6 @@ namespace Microsoft.PowerShell.Commands
         /// from WMI via the Win32_Processor class.
         /// </summary>
         /// <param name="session"></param>
-        /// <returns></returns>
         private static Processor[] GetProcessors(CimSession session)
         {
             var processors = session.GetAll<WmiProcessor>(CIMHelper.ClassNames.Processor);
@@ -968,7 +967,6 @@ namespace Microsoft.PowerShell.Commands
         /// Get the names of all <see cref="ComputerInfo"/> properties. This is
         /// part of the processes of validating property names provided by the user.
         /// </summary>
-        /// <returns></returns>
         private static List<string> GetComputerInfoPropertyNames()
         {
             var rv = new List<string>();
@@ -989,7 +987,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="pattern">
         /// The wild-card pattern used to perform globbing
         /// </param>
-        /// <returns></returns>
         private static List<string> ExpandWildcardPropertyNames(List<string> propertyNames, string pattern)
         {
             var rv = new List<string>();
@@ -5113,7 +5110,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieve the amount of RAM physically installed in the computer.
         /// </summary>
         /// <param name="MemoryInKilobytes"></param>
-        /// <returns></returns>
         [DllImport(PInvokeDllNames.GetPhysicallyInstalledSystemMemoryDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
@@ -5125,7 +5121,6 @@ namespace Microsoft.PowerShell.Commands
         /// A reference to a <see cref="FirmwareType"/> enumeration to contain
         /// the resultant firmware type
         /// </param>
-        /// <returns></returns>
         [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetFirmwareType(out FirmwareType firmwareType);

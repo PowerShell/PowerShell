@@ -203,7 +203,6 @@ namespace System.Management.Automation.Remoting
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
         /// xml and is in the following format:
         /// </param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">
         /// 1. "optionName" is already defined
         /// </exception>
@@ -293,7 +292,6 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">
         /// 1. Unable to load type "{0}" specified in "InitializationParameters" section.
         /// </exception>
@@ -349,7 +347,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
         /// </param>
-        /// <returns></returns>
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
 
         /// <summary>
@@ -357,7 +354,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
         /// <param name="configProviderId"></param>
-        /// <returns></returns>
         public virtual InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData,
             PSSenderInfo senderInfo, string configProviderId)
         {
@@ -371,7 +367,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
         /// </param>
-        /// <returns></returns>
         public virtual int? GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedObjectSize;
@@ -385,7 +380,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="senderInfo">
         /// User Identity for which this information is requested
         /// </param>
-        /// <returns></returns>
         public virtual int? GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
         {
             return BaseTransportManager.MaximumReceivedDataSize;
@@ -439,7 +433,6 @@ namespace System.Management.Automation.Remoting
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
         /// xml and is in the following format:
         /// </param>
-        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// 1. Non existent InitialSessionState provider for the shellID
         /// </exception>
@@ -588,7 +581,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="applicationBase"></param>
         /// <param name="assemblyName"></param>
-        /// <returns></returns>
         // TODO: Send the exception message back to the client.
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         private static Assembly LoadSsnStateProviderAssembly(string applicationBase, string assemblyName)
@@ -801,7 +793,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         /// <param name="senderInfo"></param>
-        /// <returns></returns>
         public override InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo)
         {
             InitialSessionState result = InitialSessionState.CreateDefault2();
@@ -992,7 +983,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="de"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         internal static bool IsValidKey(DictionaryEntry de, PSCmdlet cmdlet, string path)
         {
             bool validKey = false;
@@ -1024,7 +1014,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool ISSValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             string value = obj as string;
@@ -1055,7 +1044,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool LanguageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             string value = obj as string;
@@ -1086,7 +1074,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool ExecutionPolicyValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             string value = obj as string;
@@ -1117,7 +1104,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool HashtableTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable hash = obj as Hashtable;
@@ -1137,7 +1123,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool AliasDefinitionsTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable[] hashtables = DISCPowerShellConfiguration.TryGetHashtableArray(obj);
@@ -1184,7 +1169,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool FunctionDefinitionsTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable[] hashtables = DISCPowerShellConfiguration.TryGetHashtableArray(obj);
@@ -1236,7 +1220,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool VariableDefinitionsTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable[] hashtables = DISCPowerShellConfiguration.TryGetHashtableArray(obj);
@@ -1282,7 +1265,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="key"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool StringTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             if (obj is not string)
@@ -1301,7 +1283,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="key"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool StringArrayTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             if (DISCPowerShellConfiguration.TryGetStringArray(obj) == null)
@@ -1342,7 +1323,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="key"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static bool StringOrHashtableArrayTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             if (DISCPowerShellConfiguration.TryGetObjectsOfType<object>(obj, new Type[] { typeof(string), typeof(Hashtable) }) == null)
@@ -1943,7 +1923,6 @@ namespace System.Management.Automation.Remoting
         /// Creates an initial session state from a configuration file (DISC)
         /// </summary>
         /// <param name="senderInfo"></param>
-        /// <returns></returns>
         public override InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo)
         {
             InitialSessionState iss = null;
@@ -2659,7 +2638,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates a function entry.
         /// </summary>
-        /// <returns></returns>
         private static SessionStateFunctionEntry CreateSessionStateFunctionEntry(Hashtable function, bool isFunctionVisibilityDefined)
         {
             string name = TryGetValue(function, ConfigFileConstants.FunctionNameToken);
@@ -2740,7 +2718,6 @@ namespace System.Management.Automation.Remoting
         /// Applies the command (cmdlet/function/alias) visibility settings to the <paramref name="iss"/>
         /// </summary>
         /// <param name="configFileKey"></param>
-        /// <returns></returns>
         private bool IsNonDefaultVisibilitySpecified(string configFileKey)
         {
             if (_configHash.ContainsKey(configFileKey))
@@ -2764,7 +2741,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="table"></param>
         /// <param name="key"></param>
-        /// <returns></returns>
         internal static string TryGetValue(Hashtable table, string key)
         {
             if (table.ContainsKey(key))
@@ -2779,7 +2755,6 @@ namespace System.Management.Automation.Remoting
         /// Attempts to get a hashtable array from an object.
         /// </summary>
         /// <param name="hashObj"></param>
-        /// <returns></returns>
         internal static Hashtable[] TryGetHashtableArray(object hashObj)
         {
             // Scalar case
@@ -2821,7 +2796,6 @@ namespace System.Management.Automation.Remoting
         /// Attempts to get a string array from a hashtable.
         /// </summary>
         /// <param name="hashObj"></param>
-        /// <returns></returns>
         internal static string[] TryGetStringArray(object hashObj)
         {
             object[] objs = hashObj as object[];

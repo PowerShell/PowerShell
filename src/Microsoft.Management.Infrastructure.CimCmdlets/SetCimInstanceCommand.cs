@@ -328,7 +328,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Set-CimInstance operations.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimSetCimInstance CreateOperationAgent()
         {
             CimSetCimInstance cimSetCimInstance = new();

@@ -882,7 +882,6 @@ namespace Microsoft.PowerShell.Commands
         /// Returns true if command doesn't shadow OR is in the -AllowShadowing parameter.
         /// </summary>
         /// <param name="commandName"></param>
-        /// <returns></returns>
         private bool IsCommandNameAllowedForImport(string commandName)
         {
             if (string.IsNullOrEmpty(commandName))
@@ -2574,7 +2573,6 @@ function Get-PSImplicitRemotingSession
         /// creates a -ComputerName parameter set or -ConnectionUri parameter
         /// set depending on the situation.
         /// </summary>
-        /// <returns></returns>
         private string GenerateConnectionStringForNewRunspace()
         {
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;

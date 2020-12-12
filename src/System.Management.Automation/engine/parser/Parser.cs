@@ -702,7 +702,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="input">The Hashtable string.</param>
         /// <param name="result">The Hashtable object.</param>
-        /// <returns></returns>
         internal static bool TryParseAsConstantHashtable(string input, out Hashtable result)
         {
             result = null;
@@ -3650,7 +3649,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="functionName">The name of the function to invoke.</param>
         /// <param name="keywordData">The data for this keyword definition.</param>
-        /// <returns></returns>
         private StatementAst DynamicKeywordStatementRule(Token functionName, DynamicKeyword keywordData)
         {
             //////////////////////////////////////////////////////////////////////////////////
@@ -8062,7 +8060,6 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return PositionUtilities.VerboseMessage(Extent) + Environment.NewLine + Message;

@@ -349,7 +349,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="scriptPosition"></param>
-        /// <returns></returns>
         public static InvocationInfo Create(
             CommandInfo commandInfo,
             IScriptExtent scriptPosition)

@@ -58,7 +58,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the Enumerator.
         /// </summary>
-        /// <returns></returns>
         IEnumerator<DscResourceInfo> IEnumerable<DscResourceInfo>.GetEnumerator()
         {
             return this;
@@ -67,7 +66,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the Enumerator.
         /// </summary>
-        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;
@@ -76,7 +74,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Move to the Next value in the enumerator.
         /// </summary>
-        /// <returns></returns>
         public bool MoveNext()
         {
             _currentMatch = GetNextDscResource();

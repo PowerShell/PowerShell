@@ -93,7 +93,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Override for ToString() method.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             if (string.IsNullOrEmpty(CommandLine))
@@ -143,7 +142,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns a clone of this object.
         /// </summary>
-        /// <returns></returns>
         public HistoryInfo Clone()
         {
             return new HistoryInfo(this);
@@ -224,7 +222,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="status">Status to be updated.</param>
         /// <param name="endTime">EndTime to be updated.</param>
         /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked.</param>
-        /// <returns></returns>
         internal void UpdateEntry(long id, PipelineState status, DateTime endTime, bool skipIfLocked)
         {
             if (!System.Threading.Monitor.TryEnter(_syncRoot, skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
@@ -457,7 +454,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="wildcardpattern"></param>
         /// <param name="count"></param>
         /// <param name="newest"></param>
-        /// <returns></returns>
         internal HistoryInfo[] GetEntries(WildcardPattern wildcardpattern, long count, SwitchParameter newest)
         {
             lock (_syncRoot)
@@ -651,7 +647,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the smallest id in the buffer.
         /// </summary>
-        /// <returns></returns>
         private long SmallestIDinBuffer()
         {
             long minID = 0;
@@ -724,7 +719,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets index in buffer for an entry with given Id.
         /// </summary>
-        /// <returns></returns>
         private int GetIndexFromId(long id)
         {
             return (int)((id - 1) % _capacity);
@@ -736,7 +730,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="id"></param>
         /// <param name="capacity"></param>
-        /// <returns></returns>
         private static int GetIndexFromId(long id, int capacity)
         {
             return (int)((id - 1) % capacity);
@@ -754,7 +747,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the current history size.
         /// </summary>
-        /// <returns></returns>
         private static int GetHistorySize()
         {
             int historySize = 0;

@@ -1059,7 +1059,6 @@ namespace System.Management.Automation
         /// <param name="streamName"></param>
         /// <param name="property"></param>
         /// <param name="depth"></param>
-        /// <returns></returns>
         private bool HandlePrimitiveKnownTypeByConvertingToPSObject(
             object source,
             string streamName,
@@ -1084,7 +1083,6 @@ namespace System.Management.Automation
         /// <param name="source"></param>
         /// <param name="streamName"></param>
         /// <param name="property"></param>
-        /// <returns></returns>
         private bool HandleSecureString(object source, string streamName, string property)
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
@@ -1759,7 +1757,6 @@ namespace System.Management.Automation
         /// <param name="writeEnclosingMemberSetElementTag">
         /// if this is true, write an enclosing "<memberset></memberset>" tag.
         /// </param>
-        /// <returns></returns>
         private void WriteMemberInfoCollection
         (
             IEnumerable<PSMemberInfo> me,
@@ -2277,7 +2274,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">PSObject whose serialization depth has to be computed.</param>
         /// <param name="depth">Current depth.</param>
-        /// <returns></returns>
         private int GetDepthOfSerialization(object source, int depth)
         {
             Dbg.Assert(source != null, "Caller should verify source != null");
@@ -3889,7 +3885,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Read note.
         /// </summary>
-        /// <returns></returns>
         private PSNoteProperty ReadNoteProperty()
         {
             string name = ReadNameAttribute();
@@ -3956,7 +3951,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Read List Containers.
         /// </summary>
-        /// <returns></returns>
         private object ReadListContainer(ContainerType ct)
         {
             Dbg.Assert(ct == ContainerType.Enumerable ||
@@ -3991,7 +3985,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserialize Dictionary.
         /// </summary>
-        /// <returns></returns>
         private object ReadDictionary(ContainerType ct)
         {
             Dbg.Assert(ct == ContainerType.Dictionary, "Unrecognized ContainerType enum");
@@ -4732,7 +4725,6 @@ namespace System.Management.Automation
         /// Check if LocalName of next element is "tag"
         /// </summary>
         /// <param name="tag"></param>
-        /// <returns></returns>
         private bool IsNextElement(string tag)
         {
             Dbg.Assert(!string.IsNullOrEmpty(tag), "Caller should validate the parameter");
@@ -4822,7 +4814,6 @@ namespace System.Management.Automation
         /// Reads Primary known type.
         /// </summary>
         /// <param name="pktInfo"></param>
-        /// <returns></returns>
         private object ReadPrimaryKnownType(TypeSerializationInfo pktInfo)
         {
             Dbg.Assert(pktInfo != null, "Deserializer should be available");
@@ -4974,7 +4965,6 @@ namespace System.Management.Automation
         /// Gets a RefId already assigned for the given object or <see langword="null"/> if there is no associated ref id.
         /// </summary>
         /// <param name="t"></param>
-        /// <returns></returns>
         internal string GetRefId(T t)
         {
             UInt64 refId;
@@ -5448,7 +5438,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="derived"></param>
         /// <param name="baseType"></param>
-        /// <returns></returns>
         private static bool DerivesFromGenericType(Type derived, Type baseType)
         {
             Dbg.Assert(derived != null, "caller should validate the parameter");
@@ -6101,7 +6090,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new instance by doing a shallow copy of the current instance.
         /// </summary>
-        /// <returns></returns>
         public override object Clone()
         {
             return new PSPrimitiveDictionary(this);
@@ -6497,7 +6485,6 @@ namespace System.Management.Automation
         /// to the clone and returns.
         /// </summary>
         /// <param name="originalHash"></param>
-        /// <returns></returns>
         internal static PSPrimitiveDictionary CloneAndAddPSVersionTable(PSPrimitiveDictionary originalHash)
         {
             if ((originalHash != null) &&
@@ -6832,7 +6819,6 @@ namespace Microsoft.PowerShell
         /// <typeparam name="T">Expected type of the property</typeparam>
         /// <param name="pso">Deserialized object.</param>
         /// <param name="propertyName">Property name.</param>
-        /// <returns></returns>
         private static T GetPropertyValue<T>(PSObject pso, string propertyName)
         {
             return GetPropertyValue<T>(pso, propertyName, RehydrationFlags.NullValueBad | RehydrationFlags.MissingPropertyBad);
@@ -6845,7 +6831,6 @@ namespace Microsoft.PowerShell
         /// <param name="pso">Deserialized object.</param>
         /// <param name="propertyName">Property name.</param>
         /// <param name="flags"></param>
-        /// <returns></returns>
         internal static T GetPropertyValue<T>(PSObject pso, string propertyName, RehydrationFlags flags)
         {
             Dbg.Assert(pso != null, "Caller should verify pso != null");

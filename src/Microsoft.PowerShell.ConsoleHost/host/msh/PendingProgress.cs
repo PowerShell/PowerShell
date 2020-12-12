@@ -716,7 +716,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="nodes"></param>
         /// <param name="style"></param>
-        /// <returns></returns>
         private
         bool
         AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)

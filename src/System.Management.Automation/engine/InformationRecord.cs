@@ -162,7 +162,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts an InformationRecord to a string-based representation.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             if (MessageData != null)
@@ -251,7 +250,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a string-based representation of the host information message.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return Message;

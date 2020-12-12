@@ -104,7 +104,6 @@ namespace Microsoft.PowerShell.Commands
         /// Returns true if the given drive is 'fixed' and its path exist; otherwise, return false.
         /// </summary>
         /// <param name="drivePath"></param>
-        /// <returns></returns>
         private bool ValidDrivePath(string drivePath)
         {
             DriveInfo actualDrive = null;
@@ -153,7 +152,6 @@ namespace Microsoft.PowerShell.Commands
         /// Returns true if the given input is of the form c, c:, c:\, C, C: or C:\
         /// </summary>
         /// <param name="input"></param>
-        /// <returns></returns>
         private static bool IsValidPattern(string input)
         {
             return Regex.IsMatch(input, @"^[a-z]{1}$|^[a-z]{1}:$|^[a-z]{1}:\\$", RegexOptions.IgnoreCase);
@@ -164,7 +162,6 @@ namespace Microsoft.PowerShell.Commands
         /// Supports the following inputs: C, C:, C:\
         /// </summary>
         /// <param name="driveName"></param>
-        /// <returns></returns>
         private static string GetDrivePath(string driveName)
         {
             string drivePath;

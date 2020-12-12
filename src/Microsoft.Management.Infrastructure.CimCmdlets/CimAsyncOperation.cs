@@ -293,7 +293,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
-        /// <returns></returns>
         protected CimSessionProxy CreateCimSessionProxy(string computerName, CimInstance cimInstance)
         {
             CimSessionProxy proxy = new(computerName, cimInstance);
@@ -344,7 +343,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Retrieve the base object out if wrapped in psobject.
         /// </summary>
         /// <param name="value"></param>
-        /// <returns></returns>
         protected object GetBaseObject(object value)
         {
             PSObject psObject = value as PSObject;

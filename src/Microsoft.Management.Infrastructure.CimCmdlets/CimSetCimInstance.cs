@@ -176,7 +176,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="properties"></param>
         /// <param name="cimInstance"></param>
         /// <param name="terminationMessage"></param>
-        /// <returns></returns>
         private bool SetProperty(IDictionary properties, ref CimInstance cimInstance, ref Exception exception)
         {
             DebugHelper.WriteLogEx();

@@ -618,7 +618,6 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates if minimum or maximum value has to be found.
         /// If true is passed in then the minimum of the two values would be returned.
         /// If false is passed in then maximum of the two values will be returned.</param>
-        /// <returns></returns>
         private static object Compare(object objValue, object statMinOrMaxValue, bool isMin)
         {
             object currentValue = objValue;

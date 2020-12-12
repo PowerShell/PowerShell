@@ -484,7 +484,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// as enumerate instances, get instance, query instance.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimGetInstance CreateOperationAgent()
         {
             CimGetInstance cimGetInstance = new();

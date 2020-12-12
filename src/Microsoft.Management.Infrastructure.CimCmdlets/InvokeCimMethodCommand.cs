@@ -405,7 +405,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Invoke-CimMethod operations.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimInvokeCimMethod CreateOperationAgent()
         {
             CimInvokeCimMethod cimInvokeMethod = new();

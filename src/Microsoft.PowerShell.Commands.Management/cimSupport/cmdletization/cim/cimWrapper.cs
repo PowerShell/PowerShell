@@ -200,7 +200,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
         /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
-        /// <returns></returns>
         internal override StartableJob CreateInstanceMethodInvocationJob(CimSession session, CimInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             TerminatingErrorTracker tracker = TerminatingErrorTracker.GetTracker(this.CmdletInvocationInfo, isStaticCmdlet: false);

@@ -279,7 +279,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="expressionFactory">Expression factory to validate the script block.</param>
         /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
         /// <param name="isForHelp">True when the view is for help output.</param>
-        /// <returns></returns>
         internal bool LoadFormattingData(
             ExtendedTypeDefinition typeDefinition,
             TypeInfoDataBase db,
@@ -456,7 +455,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeNames">The TypeName tag under SelectedBy tag.</param>
         /// <param name="formatView"></param>
         /// <param name="viewIndex"></param>
-        /// <returns></returns>
         private ViewDefinition LoadViewFromObjectModel(List<string> typeNames, FormatViewDefinition formatView, int viewIndex)
         {
             // Get AppliesTo information
@@ -533,7 +531,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="table"></param>
         /// <param name="viewIndex"></param>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         private ControlBase LoadTableControlFromObjectModel(TableControl table, int viewIndex, string typeName)
         {
             TableControlBody tableBody = new TableControlBody { autosize = table.AutoSize };
@@ -700,7 +697,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="displayEntry"></param>
         /// <param name="viewIndex"></param>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         private ExpressionToken LoadExpressionFromObjectModel(DisplayEntry displayEntry, int viewIndex, string typeName)
         {
             ExpressionToken token = new ExpressionToken();
@@ -745,7 +741,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Load EntrySelectedBy (TypeName) into AppliesTo.
         /// </summary>
-        /// <returns></returns>
         private static AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
         {
             AppliesTo appliesTo = new AppliesTo();
@@ -780,7 +775,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="list"></param>
         /// <param name="viewIndex"></param>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         private ListControlBody LoadListControlFromObjectModel(ListControl list, int viewIndex, string typeName)
         {
             ListControlBody listBody = new ListControlBody();
@@ -845,7 +839,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="listEntry"></param>
         /// <param name="viewIndex"></param>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         private ListControlEntryDefinition LoadListControlEntryDefinitionFromObjectModel(ListControlEntry listEntry, int viewIndex, string typeName)
         {
             ListControlEntryDefinition lved = new ListControlEntryDefinition();
@@ -929,7 +922,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="wide"></param>
         /// <param name="viewIndex"></param>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         private WideControlBody LoadWideControlFromObjectModel(WideControl wide, int viewIndex, string typeName)
         {
             WideControlBody wideBody = new WideControlBody();
@@ -1007,7 +999,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="wideItem"></param>
         /// <param name="viewIndex"></param>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         private WideControlEntryDefinition LoadWideControlEntryFromObjectModel(WideControlEntryItem wideItem, int viewIndex, string typeName)
         {
             WideControlEntryDefinition wved = new WideControlEntryDefinition();

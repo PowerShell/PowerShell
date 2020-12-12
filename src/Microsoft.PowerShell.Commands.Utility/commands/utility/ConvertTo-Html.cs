@@ -242,7 +242,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets and Gets the meta property of the HTML head.
         /// </summary>
-        /// <returns></returns>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
         public Hashtable Meta
@@ -289,7 +288,6 @@ namespace Microsoft.PowerShell.Commands
         /// When this switch statement is specified,
         /// it will change the DOCTYPE to XHTML Transitional DTD.
         /// </summary>
-        /// <returns></returns>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
         public SwitchParameter Transitional
@@ -337,7 +335,6 @@ namespace Microsoft.PowerShell.Commands
         /// Create a list of MshParameter from properties.
         /// </summary>
         /// <param name="properties">Can be a string, ScriptBlock, or Hashtable.</param>
-        /// <returns></returns>
         private List<MshParameter> ProcessParameter(object[] properties)
         {
             TerminatingErrorContext invocationContext = new(this);
@@ -417,7 +414,6 @@ namespace Microsoft.PowerShell.Commands
         /// Calls ToString. If an exception occurs, eats it and return string.Empty.
         /// </summary>
         /// <param name="obj"></param>
-        /// <returns></returns>
         private static string SafeToString(object obj)
         {
             if (obj == null)

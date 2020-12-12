@@ -311,7 +311,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         internal string GetProxyParameterData()
         {
             Text.StringBuilder result = new System.Text.StringBuilder();
@@ -674,7 +673,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="cmdParameterMetadata"></param>
-        /// <returns></returns>
         internal static Dictionary<string, ParameterMetadata> GetParameterMetadata(MergedCommandParameterMetadata
             cmdParameterMetadata)
         {
@@ -787,7 +785,6 @@ namespace System.Management.Automation
         /// <param name="isProxyForCmdlet">
         /// The parameter is for a cmdlet and requires a Parameter attribute.
         /// </param>
-        /// <returns></returns>
         internal string GetProxyParameterData(string prefix, string paramNameOverride, bool isProxyForCmdlet)
         {
             Text.StringBuilder result = new System.Text.StringBuilder();

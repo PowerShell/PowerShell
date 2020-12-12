@@ -264,7 +264,6 @@ namespace System.Management.Automation
         ///
         /// If false, searches for pattern in the command names.
         /// </param>
-        /// <returns></returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             int countOfHelpInfoObjectsFound = 0;

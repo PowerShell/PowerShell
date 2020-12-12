@@ -217,7 +217,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Get-CimClass operations.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimGetCimClass CreateOperationAgent()
         {
             CimGetCimClass cimGetCimClass = new();

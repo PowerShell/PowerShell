@@ -542,7 +542,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         /// <remarks></remarks>
         public override Collection<ReturnType> ReadToEnd()
         {
@@ -552,7 +551,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         /// <remarks></remarks>
         public override Collection<ReturnType> NonBlockingRead()
         {
@@ -562,7 +560,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         /// <remarks></remarks>
         /// <param name="maxRequested">
         /// Return no more than maxRequested objects.
@@ -599,7 +596,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         public override ReturnType Peek()
         {
             throw new NotSupportedException();
@@ -724,7 +720,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         /// <remarks></remarks>
         public override Collection<ReturnType> ReadToEnd()
         {
@@ -734,7 +729,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         /// <remarks></remarks>
         public override Collection<ReturnType> NonBlockingRead()
         {
@@ -744,7 +738,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         /// <remarks></remarks>
         /// <param name="maxRequested">
         /// Return no more than maxRequested objects.
@@ -782,7 +775,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// This method is not supported.
         /// </summary>
-        /// <returns></returns>
         public override ReturnType Peek()
         {
             throw new NotSupportedException();

@@ -86,7 +86,6 @@ namespace System.Management.Automation
         /// log provider loading.
         /// </summary>
         /// <param name="shellId"></param>
-        /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(string shellId)
         {
             return s_logProviders.GetOrAdd(shellId, CreateLogProvider);
@@ -96,7 +95,6 @@ namespace System.Management.Automation
         /// Get Log Provider based on Execution Context.
         /// </summary>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(ExecutionContext executionContext)
         {
             if (executionContext == null)
@@ -113,7 +111,6 @@ namespace System.Management.Automation
         /// Get Log Provider based on Log Context.
         /// </summary>
         /// <param name="logContext"></param>
-        /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
         {
             System.Diagnostics.Debug.Assert(logContext != null);
@@ -126,7 +123,6 @@ namespace System.Management.Automation
         /// Create a log provider based on a shell Id.
         /// </summary>
         /// <param name="shellId"></param>
-        /// <returns></returns>
         private static Collection<LogProvider> CreateLogProvider(string shellId)
         {
             Collection<LogProvider> providers = new Collection<LogProvider>();
@@ -715,7 +711,6 @@ namespace System.Management.Automation
         /// Engine state is stored in ExecutionContext.
         /// </summary>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static EngineState GetEngineState(ExecutionContext executionContext)
         {
             return executionContext.EngineState;
@@ -741,7 +736,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="invocationInfo"></param>
-        /// <returns></returns>
         internal static LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo)
         {
             return GetLogContext(executionContext, invocationInfo, Severity.Informational);
@@ -755,7 +749,6 @@ namespace System.Management.Automation
         /// <param name="executionContext"></param>
         /// <param name="invocationInfo"></param>
         /// <param name="severity"></param>
-        /// <returns></returns>
         private static LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo, Severity severity)
         {
             if (executionContext == null)
@@ -861,7 +854,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogEngineHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -879,7 +871,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogEngineLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -897,7 +888,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogCommandHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -915,7 +905,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogCommandLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -938,7 +927,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogPipelineExecutionDetailEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -957,7 +945,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogProviderHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -975,7 +962,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogProviderLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
@@ -993,7 +979,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
-        /// <returns></returns>
         private static bool NeedToLogSettingsEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())

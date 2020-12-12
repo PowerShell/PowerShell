@@ -189,7 +189,6 @@ namespace System.Management.Automation
         ///             attribute => "value"
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private PSObject GetPSObject(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -253,7 +252,6 @@ namespace System.Management.Automation
         ///         2. PSObject wrapping string "note 2"
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private PSObject GetInsidePSObject(XmlNode xmlNode)
         {
             Hashtable properties = GetInsideProperties(xmlNode);
@@ -295,7 +293,6 @@ namespace System.Management.Automation
         /// only one element to PSObject itself.
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private Hashtable GetInsideProperties(XmlNode xmlNode)
         {
             Hashtable properties = new Hashtable(StringComparer.OrdinalIgnoreCase);
@@ -414,7 +411,6 @@ namespace System.Management.Automation
         /// ArrayList into PSObject[].
         /// </summary>
         /// <param name="properties"></param>
-        /// <returns></returns>
         private static Hashtable SimplifyProperties(Hashtable properties)
         {
             if (properties == null)
@@ -455,7 +451,6 @@ namespace System.Management.Automation
         /// An xmlNode is atomic if it contains no structured inside nodes.
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private static bool IsAtomic(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -485,7 +480,6 @@ namespace System.Management.Automation
         /// maml formatting.
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private static bool IncludeMamlFormatting(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -512,7 +506,6 @@ namespace System.Management.Automation
         ///     c. definitionList.
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private static bool IsMamlFormattingNode(XmlNode xmlNode)
         {
             if (xmlNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
@@ -531,7 +524,6 @@ namespace System.Management.Automation
         /// Check whether an mshObject is created from a maml formatting node.
         /// </summary>
         /// <param name="mshObject"></param>
-        /// <returns></returns>
         private static bool IsMamlFormattingPSObject(PSObject mshObject)
         {
             Collection<string> typeNames = mshObject.TypeNames;
@@ -590,7 +582,6 @@ namespace System.Management.Automation
         ///        . a MamlDefinitionListItem based on "definition list item 2"
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private PSObject[] GetMamlFormattingPSObjects(XmlNode xmlNode)
         {
             ArrayList mshObjects = new ArrayList();
@@ -645,7 +636,6 @@ namespace System.Management.Automation
         /// Gets the number of para nodes.
         /// </summary>
         /// <param name="nodes"></param>
-        /// <returns></returns>
         private static int GetParaMamlNodeCount(XmlNodeList nodes)
         {
             int i = 0;
@@ -745,7 +735,6 @@ namespace System.Management.Automation
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
         /// <param name="trim"></param>
-        /// <returns></returns>
         private static PSObject GetParaPSObject(XmlNode xmlNode, bool newLine, bool trim = true)
         {
             if (xmlNode == null)
@@ -805,7 +794,6 @@ namespace System.Management.Automation
         /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private ArrayList GetListPSObjects(XmlNode xmlNode)
         {
             ArrayList mshObjects = new ArrayList();
@@ -845,7 +833,6 @@ namespace System.Management.Automation
         /// Check whether a list is ordered or not.
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private static bool IsOrderedList(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -872,7 +859,6 @@ namespace System.Management.Automation
         /// <param name="xmlNode"></param>
         /// <param name="ordered"></param>
         /// <param name="index"></param>
-        /// <returns></returns>
         private PSObject GetListItemPSObject(XmlNode xmlNode, bool ordered, ref int index)
         {
             if (xmlNode == null)
@@ -936,7 +922,6 @@ namespace System.Management.Automation
         /// each definitionListItem node inside this node.
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private ArrayList GetDefinitionListPSObjects(XmlNode xmlNode)
         {
             ArrayList mshObjects = new ArrayList();
@@ -989,7 +974,6 @@ namespace System.Management.Automation
         ///        b. definition="definition text"
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private PSObject GetDefinitionListItemPSObject(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -1038,7 +1022,6 @@ namespace System.Management.Automation
         /// Get the text for definition. The will treat some intermediate nodes like "definition" and "para"
         /// </summary>
         /// <param name="xmlNode"></param>
-        /// <returns></returns>
         private string GetDefinitionText(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -1102,7 +1085,6 @@ namespace System.Management.Automation
         /// please notice that the indention is reduced.
         /// </summary>
         /// <param name="text"></param>
-        /// <returns></returns>
         private static string GetPreformattedText(string text)
         {
             // we are assuming tabsize=4 here.
@@ -1182,7 +1164,6 @@ namespace System.Management.Automation
         /// Get minimum indentation of a paragraph.
         /// </summary>
         /// <param name="lines"></param>
-        /// <returns></returns>
         private static int GetMinIndentation(string[] lines)
         {
             int minIndentation = -1;
@@ -1206,7 +1187,6 @@ namespace System.Management.Automation
         /// at the beginning of the line.
         /// </summary>
         /// <param name="line"></param>
-        /// <returns></returns>
         private static int GetIndentation(string line)
         {
             if (IsEmptyLine(line))
@@ -1223,7 +1203,6 @@ namespace System.Management.Automation
         /// A line is empty if it contains only white spaces.
         /// </summary>
         /// <param name="line"></param>
-        /// <returns></returns>
         private static bool IsEmptyLine(string line)
         {
             if (string.IsNullOrEmpty(line))

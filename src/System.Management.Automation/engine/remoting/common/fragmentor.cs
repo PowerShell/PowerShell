@@ -301,7 +301,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="fragmentBytes"></param>
         /// <param name="startIndex"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException">
         /// If fragmentBytes is null.
         /// </exception>
@@ -642,7 +641,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Read the currently accumulated data in queued memory streams.
         /// </summary>
-        /// <returns></returns>
         internal byte[] Read()
         {
             lock (_syncObject)
@@ -671,7 +669,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
-        /// <returns></returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             int offSetToWriteTo = offset;
@@ -916,7 +913,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="origin"></param>
-        /// <returns></returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotSupportedException();

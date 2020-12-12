@@ -382,7 +382,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="parentContext">Parent context in the stack.</param>
         /// <param name="formatInfoData">Fromat info data received from the pipeline.</param>
-        /// <returns></returns>
         private FormatMessagesContextManager.OutputContext CreateOutputContext(
                                         FormatMessagesContextManager.OutputContext parentContext,
                                         FormatInfoData formatInfoData)
@@ -835,7 +834,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Helper for consuming the formatting hint.
         /// </summary>
-        /// <returns></returns>
         private FormattingHint RetrieveFormattingHint()
         {
             FormattingHint fh = _formattingHint;

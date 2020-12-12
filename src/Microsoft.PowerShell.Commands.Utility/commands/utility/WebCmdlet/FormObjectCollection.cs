@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the FormObject from the key.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
         public FormObject this[string key]
         {
             get

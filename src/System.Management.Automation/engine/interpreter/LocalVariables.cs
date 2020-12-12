@@ -260,7 +260,6 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// Gets a copy of the local variables which are defined in the current scope.
         /// </summary>
-        /// <returns></returns>
         internal Dictionary<ParameterExpression, LocalVariable> CopyLocals()
         {
             var res = new Dictionary<ParameterExpression, LocalVariable>(_variables.Count);

@@ -179,7 +179,6 @@ namespace System.Management.Automation.Remoting.Client
         /// PowerShell console, it wont work. This escape logic works around the issue.
         /// </summary>
         /// <param name="errorMessage"></param>
-        /// <returns></returns>
         internal static string ParseEscapeWSManErrorMessage(string errorMessage)
         {
             // currently we do special processing only for "@{" construct.
@@ -601,7 +600,6 @@ namespace System.Management.Automation.Remoting.Client
         /// dont set.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -629,7 +627,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Create operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -657,7 +654,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Close operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -685,7 +681,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for SendShellInput operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -713,7 +708,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Receive operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -741,7 +735,6 @@ namespace System.Management.Automation.Remoting.Client
         /// Sets timeout for Signal operation in milliseconds.
         /// </summary>
         /// <param name="milliseconds"></param>
-        /// <returns></returns>
         /// <exception cref="PSInvalidOperationException">
         /// Setting session option failed with a non-zero error code.
         /// </exception>
@@ -1341,7 +1334,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="noInput">
         /// true if the command has input.
         /// </param>
-        /// <returns></returns>
         internal override BaseClientCommandTransportManager CreateClientCommandTransportManager(RunspaceConnectionInfo connectionInfo,
                     ClientRemotePowerShell cmd, bool noInput)
         {

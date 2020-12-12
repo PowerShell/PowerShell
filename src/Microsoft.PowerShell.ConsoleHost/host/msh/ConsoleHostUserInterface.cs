@@ -153,7 +153,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleMode fails
         ///    OR
@@ -176,7 +175,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
@@ -223,7 +221,6 @@ namespace Microsoft.PowerShell
         /// <param name="printToken">
         /// string for output echo
         /// </param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
@@ -1849,7 +1846,6 @@ namespace Microsoft.PowerShell
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
         /// <param name="cursorPosition">The cursor position where 'tab' is hit.</param>
-        /// <returns></returns>
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
             Rectangle region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);

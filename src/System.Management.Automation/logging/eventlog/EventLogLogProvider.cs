@@ -26,7 +26,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <returns></returns>
         internal EventLogLogProvider(string shellId)
         {
             string source = SetupEventSource(shellId);
@@ -185,7 +184,6 @@ namespace System.Management.Automation
         /// Get engine lifecycle event id based on engine state.
         /// </summary>
         /// <param name="engineState"></param>
-        /// <returns></returns>
         private static int GetEngineLifecycleEventId(EngineState engineState)
         {
             switch (engineState)
@@ -288,7 +286,6 @@ namespace System.Management.Automation
         /// Get command lifecycle event id based on command state.
         /// </summary>
         /// <param name="commandState"></param>
-        /// <returns></returns>
         private static int GetCommandLifecycleEventId(CommandState commandState)
         {
             switch (commandState)
@@ -466,7 +463,6 @@ namespace System.Management.Automation
         /// Get provider lifecycle event id based on provider state.
         /// </summary>
         /// <param name="providerState"></param>
-        /// <returns></returns>
         private static int GetProviderLifecycleEventId(ProviderState providerState)
         {
             switch (providerState)

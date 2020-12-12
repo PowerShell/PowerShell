@@ -118,7 +118,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="transportManager">
         /// The transport manager this session should use to send/receive data
         /// </param>
-        /// <returns></returns>
         internal ServerRemoteSession(PSSenderInfo senderInfo,
             string configurationProviderId,
             string initializationParameters,
@@ -175,7 +174,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="transportManager"></param>
         /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
         /// <param name="initialLocation">Optional configuration initial location of the powershell session.</param>
-        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// InitialSessionState provider with <paramref name="configurationProviderId"/> does
         /// not exist on the remote server.
@@ -234,7 +232,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="transportManager"></param>
         /// <param name="configurationName"></param>
         /// <param name="initialLocation"></param>
-        /// <returns></returns>
         internal static ServerRemoteSession CreateServerRemoteSession(
             PSSenderInfo senderInfo,
             string initializationScriptForOutOfProcessRunspace,
@@ -1141,7 +1138,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         /// <param name="clientRunspacePoolId"></param>
-        /// <returns></returns>
         internal ServerRunspacePoolDriver GetRunspacePoolDriver(Guid clientRunspacePoolId)
         {
             if (_runspacePoolDriver == null)

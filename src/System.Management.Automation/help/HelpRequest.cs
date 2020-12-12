@@ -36,7 +36,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a copy of current help request object.
         /// </summary>
-        /// <returns></returns>
         internal HelpRequest Clone()
         {
             HelpRequest helpRequest = new HelpRequest(this.Target, this.HelpCategory);

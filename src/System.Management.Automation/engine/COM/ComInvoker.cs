@@ -96,7 +96,6 @@ namespace System.Management.Automation
         /// <param name="parameters">Parameters retrieved from metadata.</param>
         /// <param name="argumentCount">Count of arguments to pass in IDispatch.Invoke.</param>
         /// <param name="isPropertySet">Indicate if we are handling arguments for PropertyPut/PropertyPutRef.</param>
-        /// <returns></returns>
         internal static bool[] GetByRefArray(ParameterInformation[] parameters, int argumentCount, bool isPropertySet)
         {
             if (parameters.Length == 0)
@@ -134,7 +133,6 @@ namespace System.Management.Automation
         /// <param name="args">Arguments passed in.</param>
         /// <param name="byRef">Boolean array that indicates by-Ref parameters.</param>
         /// <param name="invokeKind">Invocation kind.</param>
-        /// <returns></returns>
         internal static object Invoke(IDispatch target, int dispId, object[] args, bool[] byRef, COM.INVOKEKIND invokeKind)
         {
             Diagnostics.Assert(target != null, "Caller makes sure an IDispatch object passed in.");

@@ -123,7 +123,6 @@ namespace System.Management.Automation.Help
         /// Gets the exception message.
         /// </summary>
         /// <param name="commandType"></param>
-        /// <returns></returns>
         internal string GetExceptionMessage(UpdatableHelpCommandType commandType)
         {
             string message = string.Empty;
@@ -778,7 +777,6 @@ namespace System.Management.Automation.Help
         /// <param name="uri"></param>
         /// <param name="fileName"></param>
         /// <param name="commandType"></param>
-        /// <returns></returns>
         private bool DownloadHelpContentHttpClient(string uri, string fileName, UpdatableHelpCommandType commandType)
         {
             // TODO: Was it intentional for them to remove IDisposable from Task?
@@ -1458,7 +1456,6 @@ namespace System.Management.Automation.Help
         /// Validate the given path. If it exists, return the full path to the file.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         internal static string GetFilePath(string path)
         {
             FileInfo item = new FileInfo(path);
@@ -1495,7 +1492,6 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Gets the default source path from GP.
         /// </summary>
-        /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
             var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);

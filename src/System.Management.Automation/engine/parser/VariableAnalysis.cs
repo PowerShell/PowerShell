@@ -576,7 +576,6 @@ namespace System.Management.Automation.Language
         /// and also analyze the control flow to make sure every block returns (or throws)
         /// </summary>
         /// <param name="ast"></param>
-        /// <returns></returns>
         internal static bool AnalyzeMemberFunction(FunctionMemberAst ast)
         {
             VariableAnalysis va = (new VariableAnalysis());

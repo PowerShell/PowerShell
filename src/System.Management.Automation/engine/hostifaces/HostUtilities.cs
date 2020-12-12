@@ -142,7 +142,6 @@ namespace System.Management.Automation
         /// Gets an array of commands that can be run sequentially to set $profile and run the profile commands.
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
-        /// <returns></returns>
         internal static PSCommand[] GetProfileCommands(string shellId)
         {
             return HostUtilities.GetProfileCommands(shellId, false);
@@ -158,7 +157,6 @@ namespace System.Management.Automation
         /// <param name="allUsersCurrentHost">Path for all users current host.</param>
         /// <param name="currentUserCurrentHost">Path for current user and current host.</param>
         /// <param name="dollarProfile">The object that serves as a value to $profile.</param>
-        /// <returns></returns>
         internal static void GetProfileObjectData(string shellId, bool useTestProfile, out string allUsersAllHosts, out string allUsersCurrentHost, out string currentUserAllHosts, out string currentUserCurrentHost, out PSObject dollarProfile)
         {
             allUsersAllHosts = HostUtilities.GetFullProfileFileName(null, false, useTestProfile);
@@ -173,7 +171,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="shellId">The id identifying the host or shell used in profile file names.</param>
         /// <param name="useTestProfile">Used from test not to overwrite the profile file names from development boxes.</param>
-        /// <returns></returns>
         internal static PSCommand[] GetProfileCommands(string shellId, bool useTestProfile)
         {
             List<PSCommand> commands = new List<PSCommand>();
@@ -524,7 +521,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message"></param>
         /// <param name="matchPattern"></param>
-        /// <returns></returns>
         internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
@@ -744,7 +740,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="configurationName"></param>
         /// <param name="host"></param>
-        /// <returns></returns>
         internal static RemoteRunspace CreateConfiguredRunspace(
             string configurationName,
             PSHost host)

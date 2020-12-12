@@ -121,7 +121,6 @@ namespace Microsoft.PowerShell
             /// Gets the number of properties contained in the property store.
             /// </summary>
             /// <param name="propertyCount"></param>
-            /// <returns></returns>
             [PreserveSig]
             HResult GetCount([Out] out uint propertyCount);
 
@@ -130,7 +129,6 @@ namespace Microsoft.PowerShell
             /// </summary>
             /// <param name="propertyIndex"></param>
             /// <param name="key"></param>
-            /// <returns></returns>
             [PreserveSig]
             HResult GetAt([In] uint propertyIndex, out PropertyKey key);
 
@@ -139,7 +137,6 @@ namespace Microsoft.PowerShell
             /// </summary>
             /// <param name="key"></param>
             /// <param name="pv"></param>
-            /// <returns></returns>
             [PreserveSig]
             HResult GetValue([In] in PropertyKey key, [Out] PropVariant pv);
 
@@ -148,14 +145,12 @@ namespace Microsoft.PowerShell
             /// </summary>
             /// <param name="key"></param>
             /// <param name="pv"></param>
-            /// <returns></returns>
             [PreserveSig]
             HResult SetValue([In] in PropertyKey key, [In] PropVariant pv);
 
             /// <summary>
             /// Commits the changes.
             /// </summary>
-            /// <returns></returns>
             [PreserveSig]
             HResult Commit();
         }

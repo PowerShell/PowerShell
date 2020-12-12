@@ -1847,7 +1847,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message"></param>
         /// <param name="context">The execution context.</param>
-        /// <returns></returns>
         /// <remarks>
         /// This method will allow user to enter suspend mode.
         /// </remarks>
@@ -2535,7 +2534,6 @@ namespace System.Management.Automation
         /// This is of type object to allow either enum values or strings to be passed.
         /// </param>
         /// <param name="numberToReturn">The number of elements to return.</param>
-        /// <returns></returns>
         internal static object Where(IEnumerator enumerator, ScriptBlock expressionSB, WhereOperatorSelectionMode selectionMode, int numberToReturn)
         {
             Diagnostics.Assert(enumerator != null, "The Where() operator should never receive a null enumerator value from the runtime.");
@@ -3383,7 +3381,6 @@ namespace System.Management.Automation
         /// Wrapper caller for enumerator.Current - handles and republishes errors...
         /// </summary>
         /// <param name="enumerator">The enumerator to read from.</param>
-        /// <returns></returns>
         internal static object Current(IEnumerator enumerator)
         {
             try

@@ -1070,7 +1070,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// CreateRunspacesForSSHHostParameterSet.
         /// </summary>
-        /// <returns></returns>
         private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
         {
             // Resolve all the machine names

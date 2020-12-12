@@ -638,7 +638,6 @@ namespace System.Management.Automation.Internal
         /// <param name="pfnseek">_In_ PFNSEEK - File seek delegate.</param>
         /// <param name="cpuType">_In_ int - CPU type.</param>
         /// <param name="erf">_Inout_ PERF - Error structure containing error information.</param>
-        /// <returns></returns>
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern FdiContextHandle FDICreate(
             IntPtr pfnalloc,
@@ -661,7 +660,6 @@ namespace System.Management.Automation.Internal
         /// <param name="pfnfdin">_In_ PFNFDINOTIFY - Pointer to the notification callback delegate.</param>
         /// <param name="pfnfdid">_In_ PFNFDIDECRYPT - Not used.</param>
         /// <param name="pvUser">_In_opt_ void FAR * - Path string passed to the notification function.</param>
-        /// <returns></returns>
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true, BestFitMapping = false)]
         internal static extern bool FDICopy(
             FdiContextHandle hfdi,
@@ -676,7 +674,6 @@ namespace System.Management.Automation.Internal
         /// Deletes an open FDI context.
         /// </summary>
         /// <param name="hfdi">_In_ HFDI - The FDI context handle to destroy.</param>
-        /// <returns></returns>
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         internal static extern bool FDIDestroy(
             IntPtr hfdi);

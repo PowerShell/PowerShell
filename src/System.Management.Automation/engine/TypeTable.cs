@@ -2290,7 +2290,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a TypeData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         public TypeData Copy()
         {
             TypeData newTypeData = new TypeData(this.TypeName);
@@ -2384,7 +2383,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a TypeMemberData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal abstract TypeMemberData Copy();
 
         internal abstract void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride);
@@ -2420,7 +2418,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a new NotePropertyData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             NotePropertyData newNote = new NotePropertyData(this.Name, this.Value) { IsHidden = this.IsHidden };
@@ -2482,7 +2479,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a new AliasPropertyData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             AliasPropertyData newAlias = new AliasPropertyData(this.Name, this.ReferencedMemberName, this.MemberType)
@@ -2546,7 +2542,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a new ScriptPropertyData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             ScriptPropertyData newScriptProperty = new ScriptPropertyData(this.Name, this.GetScriptBlock, this.SetScriptBlock)
@@ -2609,7 +2604,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a CodePropertyData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             CodePropertyData newCodeProperty = new CodePropertyData(this.Name, this.GetCodeReference, this.SetCodeReference)
@@ -2650,7 +2644,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a ScriptMethodData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             ScriptMethodData newScriptMethod = new ScriptMethodData(this.Name, this.Script);
@@ -2688,7 +2681,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a CodeMethodData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             CodeMethodData newCodeMethod = new CodeMethodData(this.Name, this.CodeReference);
@@ -2739,7 +2731,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Return a new PropertySetData that is a copy of this one.
         /// </summary>
-        /// <returns></returns>
         internal override TypeMemberData Copy()
         {
             var newPropertySet = new PropertySetData(this.ReferencedProperties)
@@ -3246,7 +3237,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="type"></param>
         /// <param name="errorFormatString"></param>
         /// <param name="instance"></param>
-        /// <returns></returns>
         private static bool CreateInstance(ConcurrentBag<string> errors, string typeName, Type type, string errorFormatString, out object instance)
         {
             instance = null;
@@ -4014,7 +4004,6 @@ namespace System.Management.Automation.Runspaces
         /// return value for future reference to the same types.
         /// </summary>
         /// <param name="types">List of types to get the member from.</param>
-        /// <returns></returns>
         internal PSMemberInfoInternalCollection<T> GetMembers<T>(ConsolidatedString types) where T : PSMemberInfo
         {
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
@@ -4245,7 +4234,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sourceValue"></param>
-        /// <returns></returns>
         private static T GetParameterType<T>(object sourceValue)
         {
             return (T)LanguagePrimitives.ConvertTo(sourceValue, typeof(T), CultureInfo.InvariantCulture);
@@ -4317,7 +4305,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get all Type configurations, return a Dictionary with typeName as the key, TypeData as the value.
         /// </summary>
-        /// <returns></returns>
         internal Dictionary<string, TypeData> GetAllTypeData()
         {
             Dictionary<string, TypeData> allTypes = new Dictionary<string, TypeData>();

@@ -400,7 +400,6 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Create a stub for the target of the optimized lopop.
         /// </summary>
-        /// <returns></returns>
         private Expression MakeIDispatchInvokeTarget()
         {
             Debug.Assert(_varEnumSelector.VariantBuilders.Length == _totalExplicitArgs);

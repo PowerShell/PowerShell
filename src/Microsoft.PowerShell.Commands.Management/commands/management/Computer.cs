@@ -473,7 +473,6 @@ $result
         /// Calculate the progress percentage.
         /// </summary>
         /// <param name="currentStage"></param>
-        /// <returns></returns>
         private int CalculateProgressPercentage(string currentStage)
         {
             switch (currentStage)
@@ -722,7 +721,6 @@ $result
         /// <param name="nextTestList"></param>
         /// <param name="powershell"></param>
         /// <param name="credential"></param>
-        /// <returns></returns>
         internal static List<string> TestPowerShell(List<string> computerNames, List<string> nextTestList, System.Management.Automation.PowerShell powershell, PSCredential credential)
         {
             List<string> psList = new();
@@ -1627,7 +1625,6 @@ $result
         /// <summary>
         /// Returns the string representation of this object.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return FormatLine(this.HasSucceeded.ToString(), this.ComputerName);
@@ -1638,7 +1635,6 @@ $result
         /// </summary>
         /// <param name="HasSucceeded"></param>
         /// <param name="computername"></param>
-        /// <returns></returns>
         private static string FormatLine(string HasSucceeded, string computername)
         {
             return StringUtil.Format(MatchFormat, HasSucceeded, computername);
@@ -1670,7 +1666,6 @@ $result
         /// <summary>
         /// Returns the string representation of this object.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return FormatLine(this.HasSucceeded.ToString(), this.NewComputerName, this.OldComputerName);
@@ -1682,7 +1677,6 @@ $result
         /// <param name="HasSucceeded"></param>
         /// <param name="newcomputername"></param>
         /// <param name="oldcomputername"></param>
-        /// <returns></returns>
         private static string FormatLine(string HasSucceeded, string newcomputername, string oldcomputername)
         {
             return StringUtil.Format(MatchFormat, HasSucceeded, newcomputername, oldcomputername);
@@ -1787,7 +1781,6 @@ $result
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="psLocalCredential"></param>
-        /// <returns></returns>
         internal static string GetLocalAdminUserName(string computerName, PSCredential psLocalCredential)
         {
             string localUserName = null;
@@ -1817,7 +1810,6 @@ $result
         /// Generate a random password.
         /// </summary>
         /// <param name="passwordLength"></param>
-        /// <returns></returns>
         internal static string GetRandomPassword(int passwordLength)
         {
             const int charMin = 32, charMax = 122;
@@ -1841,7 +1833,6 @@ $result
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="namespaceParameter"></param>
-        /// <returns></returns>
         internal static string GetScopeString(string computer, string namespaceParameter)
         {
             StringBuilder returnValue = new("\\\\");
@@ -1862,7 +1853,6 @@ $result
         /// Returns true if it is a valid drive on the system.
         /// </summary>
         /// <param name="drive"></param>
-        /// <returns></returns>
         internal static bool IsValidDrive(string drive)
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
@@ -1883,7 +1873,6 @@ $result
         /// </summary>
         /// <param name="drives"></param>
         /// <param name="sysdrive"></param>
-        /// <returns></returns>
         internal static bool ContainsSystemDrive(string[] drives, string sysdrive)
         {
             string driveApp;
@@ -1999,7 +1988,6 @@ $result
         /// Check whether the new computer name is valid.
         /// </summary>
         /// <param name="computerName"></param>
-        /// <returns></returns>
         internal static bool IsComputerNameValid(string computerName)
         {
             bool allDigits = true;
@@ -2037,7 +2025,6 @@ $result
         /// System Restore APIs are not supported on the ARM platform. Skip the system restore operation is necessary.
         /// </summary>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         internal static bool SkipSystemRestoreOperationForARMPlatform(PSCmdlet cmdlet)
         {
             bool retValue = false;

@@ -66,7 +66,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Returns a Shallow Copy of the current object.
         /// </summary>
-        /// <returns></returns>
         internal ListControlEntryDefinition Copy()
         {
             ListControlEntryDefinition result = new ListControlEntryDefinition();

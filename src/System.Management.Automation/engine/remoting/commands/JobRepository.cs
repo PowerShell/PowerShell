@@ -67,7 +67,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         public List<T> GetItems()
         {
             return Items;
@@ -109,7 +108,6 @@ namespace System.Management.Automation
         /// Gets the specified Item.
         /// </summary>
         /// <param name="instanceId"></param>
-        /// <returns></returns>
         public T GetItem(Guid instanceId)
         {
             lock (_syncObject)

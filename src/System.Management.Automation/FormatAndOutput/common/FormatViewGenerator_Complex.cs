@@ -684,7 +684,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="val">Object to verify.</param>
         /// <param name="level">Current level of recursion.</param>
-        /// <returns></returns>
         private static bool TreatAsLeafNode(object val, TraversalInfo level)
         {
             if (level.Level >= level.MaxDepth || val == null)

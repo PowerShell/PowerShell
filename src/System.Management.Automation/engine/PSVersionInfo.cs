@@ -646,7 +646,6 @@ namespace System.Management.Automation
         /// Parse <paramref name="version"/> and return the result if it is a valid <see cref="SemanticVersion"/>, otherwise throws an exception.
         /// </summary>
         /// <param name="version">The string to parse.</param>
-        /// <returns></returns>
         /// <exception cref="PSArgumentException"></exception>
         /// <exception cref="FormatException"></exception>
         /// <exception cref="OverflowException"></exception>

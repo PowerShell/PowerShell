@@ -336,7 +336,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="callback"></param>
         /// <param name="state"></param>
-        /// <returns></returns>
         public virtual IAsyncResult BeginDisconnect(AsyncCallback callback, object state)
         {
             throw PSTraceSource.NewInvalidOperationException(RunspacePoolStrings.RunspaceDisconnectConnectNotSupported);
@@ -364,7 +363,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="callback"></param>
         /// <param name="state"></param>
-        /// <returns></returns>
         public virtual IAsyncResult BeginConnect(AsyncCallback callback, object state)
         {
             throw PSTraceSource.NewInvalidOperationException(RunspacePoolStrings.RunspaceDisconnectConnectNotSupported);
@@ -383,7 +381,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Creates an array of PowerShell objects that are in the Disconnected state for
         /// all currently disconnected running commands associated with this runspace pool.
         /// </summary>
-        /// <returns></returns>
         public virtual Collection<PowerShell> CreateDisconnectedPowerShells(RunspacePool runspacePool)
         {
             throw PSTraceSource.NewInvalidOperationException(RunspacePoolStrings.RunspaceDisconnectConnectNotSupported);

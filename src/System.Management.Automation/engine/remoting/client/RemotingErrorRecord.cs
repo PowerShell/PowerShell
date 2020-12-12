@@ -92,7 +92,6 @@ namespace System.Management.Automation.Runspaces
         /// If the wrapped exception contains a ParentContainsErrorRecordException, the new
         /// ErrorRecord should have this exception as its Exception instead.
         /// </param>
-        /// <returns></returns>
         internal override ErrorRecord WrapException(Exception replaceParentContainsErrorRecordException)
         {
             return new RemotingErrorRecord(this, this.OriginInfo, replaceParentContainsErrorRecordException);

@@ -636,7 +636,6 @@ else
         /// <summary>
         /// </summary>
         /// <param name="tmpFileName"></param>
-        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// 1. New shell successfully registered. However cannot delete temporary plugin file {0}.
         ///    Reason for failure: {1}.
@@ -687,7 +686,6 @@ else
         /// <summary>
         /// </summary>
         /// <param name="pluginContent"></param>
-        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// 1. Cannot delete temporary file {0}. Try again. Reason for failure: {1}.
         /// 2. Cannot write shell configuration data into temporary file {0}. Try again.
@@ -1457,7 +1455,6 @@ else
         /// Takes array of group name string objects and returns a semicolon delimited string.
         /// </summary>
         /// <param name="groups"></param>
-        /// <returns></returns>
         internal static string GetRunAsVirtualAccountGroupsString(string[] groups)
         {
             if (groups == null) { return string.Empty; }
@@ -1468,7 +1465,6 @@ else
         /// <summary>
         /// Returns the default WinRM plugin shell name for this instance of PowerShell.
         /// </summary>
-        /// <returns></returns>
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell uses a versioned directory to hold the plugin
@@ -1478,7 +1474,6 @@ else
         /// <summary>
         /// Returns the default WinRM plugin DLL file path for this instance of PowerShell.
         /// </summary>
-        /// <returns></returns>
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell 6+ uses its versioned directory instead of system32
@@ -1588,7 +1583,6 @@ else
         /// </summary>
         /// <param name="sddl"></param>
         /// <param name="conditionalGroupACE"></param>
-        /// <returns></returns>
         internal static string UpdateSDDLUsersWithGroupConditional(
             string sddl,
             string conditionalGroupACE)
@@ -1738,7 +1732,6 @@ else
         /// Parse RequiredGroups configuration and build conditional ACE string.
         /// </summary>
         /// <param name="configTable"></param>
-        /// <returns></returns>
         // RequiredGroups:  @{ And = @{ Or = '2FA_GROUP_1', '2FA_GROUP_2' }, @{ Or = 'TRUSTEDHOSTS_1', 'TRUSTEDHOSTS_2' } }
         // User ACE:        (XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;ConditionalPart)
         // ConditionalPart:   ((Member_of {SID(2FA_GROUP_1)} || Member_of {SID(2FA_GROUP_2)}) && (Member_of {SID(TRUSTEDHOSTS_1)} || Member_of {TRUSTEDHOSTS_2}))

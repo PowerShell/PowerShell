@@ -758,7 +758,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="path"></param>
         /// <param name="definitionName"></param>
         /// <param name="jobRunReturn"></param>
-        /// <returns></returns>
         private static bool GetJobRunInfo(
             string path,
             out string definitionName,

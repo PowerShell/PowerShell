@@ -322,7 +322,6 @@ namespace Microsoft.PowerShell
         /// The break handler for the program.  Dispatches a break event to the current Executor.
         /// </summary>
         /// <param name="signal"></param>
-        /// <returns></returns>
         private static bool MyBreakHandler(ConsoleControl.ConsoleBreakSignal signal)
         {
             switch (signal)
@@ -2005,7 +2004,6 @@ namespace Microsoft.PowerShell
         /// Escapes backtick and tick characters with a backtick, returns the result.
         /// </summary>
         /// <param name="str"></param>
-        /// <returns></returns>
         internal static string EscapeSingleQuotes(string str)
         {
             // worst case we have to escape every character, so capacity is twice as large as input length
@@ -2365,7 +2363,6 @@ namespace Microsoft.PowerShell
             /// where data handling on the base commands needs to be blocked
             /// during remote debug stop handling.
             /// </summary>
-            /// <returns></returns>
             internal static InputLoop GetNonNestedLoop()
             {
                 if (s_instanceStack.Count == 1)

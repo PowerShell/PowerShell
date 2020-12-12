@@ -1642,7 +1642,6 @@ namespace System.Management.Automation
         /// <param name="cursorPosition"></param>
         /// <param name="ast"></param>
         /// <param name="keywordAst"></param>
-        /// <returns></returns>
         private static ConfigurationDefinitionAst GetAncestorConfigurationAstAndKeywordAst(
             IScriptPosition cursorPosition,
             Ast ast,
@@ -1678,7 +1677,6 @@ namespace System.Management.Automation
         /// <param name="configureAst"></param>
         /// <param name="keywordAst"></param>
         /// <param name="matched"></param>
-        /// <returns></returns>
         private static List<CompletionResult> GetResultForIdentifierInConfiguration(
             CompletionContext completionContext,
             ConfigurationDefinitionAst configureAst,
@@ -2143,7 +2141,6 @@ namespace System.Management.Automation
         /// Complete file name as command.
         /// </summary>
         /// <param name="completionContext"></param>
-        /// <returns></returns>
         private static List<CompletionResult> CompleteFileNameAsCommand(CompletionContext completionContext)
         {
             var addAmpersandIfNecessary = CompletionCompleters.IsAmpersandNeeded(completionContext, true);

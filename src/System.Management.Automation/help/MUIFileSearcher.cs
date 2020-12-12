@@ -253,7 +253,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target"></param>
         /// <param name="searchPaths"></param>
-        /// <returns></returns>
         private static Collection<string> NormalizeSearchPaths(string target, Collection<string> searchPaths)
         {
             Collection<string> result = new Collection<string>();
@@ -306,7 +305,6 @@ namespace System.Management.Automation
         /// Search for files in default search paths.
         /// </summary>
         /// <param name="pattern"></param>
-        /// <returns></returns>
         internal static Collection<string> SearchFiles(string pattern)
         {
             return SearchFiles(pattern, new Collection<string>());
@@ -317,7 +315,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern"></param>
         /// <param name="searchPaths"></param>
-        /// <returns></returns>
         internal static Collection<string> SearchFiles(string pattern, Collection<string> searchPaths)
         {
             MUIFileSearcher searcher = new MUIFileSearcher(pattern, searchPaths);
@@ -329,7 +326,6 @@ namespace System.Management.Automation
         /// Locate a file in default search paths.
         /// </summary>
         /// <param name="file"></param>
-        /// <returns></returns>
         internal static string LocateFile(string file)
         {
             return LocateFile(file, new Collection<string>());
@@ -343,7 +339,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="file">This is the path to the file. If it has a path, we need to search under that path first.</param>
         /// <param name="searchPaths">Additional search paths.</param>
-        /// <returns></returns>
         internal static string LocateFile(string file, Collection<string> searchPaths)
         {
             MUIFileSearcher searcher = new MUIFileSearcher(file, searchPaths, SearchMode.First);

@@ -909,7 +909,6 @@ namespace System.Management.Automation.Language
         /// Get the parameter binding metadata.
         /// </summary>
         /// <param name="possibleParameterSets"></param>
-        /// <returns></returns>
         public Dictionary<ParameterMetadata, ExpressionAst> GetPseudoParameterBinding(out Collection<ParameterSetMetadata> possibleParameterSets)
         {
             ExecutionContext contextFromTls =

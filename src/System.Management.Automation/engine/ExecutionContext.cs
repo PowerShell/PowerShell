@@ -120,7 +120,6 @@ namespace System.Management.Automation
         /// even though in version 1 the check was engine wide.
         /// </summary>
         /// <param name="majorVersion">The version for a strict check about to be performed.</param>
-        /// <returns></returns>
         internal bool IsStrictVersion(int majorVersion)
         {
             SessionStateScope scope = EngineSessionState.CurrentScope;
@@ -637,7 +636,6 @@ namespace System.Management.Automation
         /// <param name="preferenceVariablePath"></param>
         /// <param name="defaultPref"></param>
         /// <param name="defaultUsed"></param>
-        /// <returns></returns>
         internal bool GetBooleanPreference(VariablePath preferenceVariablePath, bool defaultPref, out bool defaultUsed)
         {
             CmdletProviderContext context = null;
@@ -799,7 +797,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Host uses this to saves context data when entering a nested prompt.
         /// </summary>
-        /// <returns></returns>
         internal SavedContextData SaveContextData()
         {
             return new SavedContextData(this);
@@ -985,7 +982,6 @@ namespace System.Management.Automation
         /// <summary>
         /// This flag is checked by parser to stop loops etc.
         /// </summary>
-        /// <returns></returns>
         internal bool CurrentPipelineStopping
         {
             get

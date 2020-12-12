@@ -380,7 +380,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all New-CimInstance operations.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimNewCimInstance CreateOperationAgent()
         {
             CimNewCimInstance cimNewCimInstance = new();

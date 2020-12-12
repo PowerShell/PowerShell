@@ -544,7 +544,6 @@ namespace System.Management.Automation
         /// Version should be integer (1, 2, 3 etc)
         /// </summary>
         /// <param name="version"></param>
-        /// <returns></returns>
         private
         static
         bool MeetsVersionFormat(string version)
@@ -745,7 +744,6 @@ namespace System.Management.Automation
         /// <param name="mshsnapinKey"></param>
         /// <param name="name"></param>
         /// <param name="mandatory"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">
         /// if value is not present and mandatory is true
         /// </exception>
@@ -806,7 +804,6 @@ namespace System.Management.Automation
         /// <param name="mshsnapinKey"></param>
         /// <param name="name"></param>
         /// <param name="mandatory"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">
         /// if no value is available and mandatory is true.
         /// </exception>
@@ -922,7 +919,6 @@ namespace System.Management.Automation
         /// PublicKeyToken is in the form of byte[]. Use this function to convert to a string.
         /// </summary>
         /// <param name="tokens">Array of byte's.</param>
-        /// <returns></returns>
         internal static string ConvertByteArrayToString(byte[] tokens)
         {
             Dbg.Assert(tokens != null, "Input tokens should never be null");
@@ -1114,7 +1110,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the key to monad root.
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="SecurityException">
         /// Caller doesn't have access to monad registration information.
         /// </exception>
@@ -1174,7 +1169,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="rootKey"></param>
         /// <param name="psVersion"></param>
-        /// <returns></returns>
         /// <exception cref="SecurityException">
         /// Caller doesn't have permission to read the version key
         /// </exception>
@@ -1203,7 +1197,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="versionRootKey"></param>
         /// <param name="psVersion"></param>
-        /// <returns></returns>
         /// <exception cref="SecurityException">
         /// Caller doesn't have permission to read the mshsnapin key
         /// </exception>
@@ -1230,7 +1223,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="mshSnapInName"></param>
         /// <param name="psVersion"></param>
-        /// <returns></returns>
         /// <exception cref="SecurityException">
         /// Caller doesn't have permission to read the mshsnapin key
         /// </exception>

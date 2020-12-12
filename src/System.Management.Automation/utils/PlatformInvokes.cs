@@ -272,7 +272,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="privilegeName"></param>
         /// <param name="oldPrivilegeState"></param>
-        /// <returns></returns>
         internal static bool EnableTokenPrivilege(string privilegeName, ref TOKEN_PRIVILEGE oldPrivilegeState)
         {
             bool success = false;
@@ -352,7 +351,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="privilegeName"></param>
         /// <param name="previousPrivilegeState"></param>
-        /// <returns></returns>
         internal static bool RestoreTokenPrivilege(string privilegeName, ref TOKEN_PRIVILEGE previousPrivilegeState)
         {
             // The privilege was not changed, do not need to restore it.
@@ -410,7 +408,6 @@ namespace System.Management.Automation
         /// <param name="lpSystemName"></param>
         /// <param name="lpName"></param>
         /// <param name="lpLuid"></param>
-        /// <returns></returns>
         [DllImport(PinvokeDllNames.LookupPrivilegeValueDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -422,7 +419,6 @@ namespace System.Management.Automation
         /// <param name="tokenHandler"></param>
         /// <param name="requiredPrivileges"></param>
         /// <param name="pfResult"></param>
-        /// <returns></returns>
         [DllImport(PinvokeDllNames.PrivilegeCheckDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -439,7 +435,6 @@ namespace System.Management.Automation
         /// <param name="bufferLength"></param>
         /// <param name="previousPrivilegeState"></param>
         /// <param name="returnLength"></param>
-        /// <returns></returns>
         [DllImport(PinvokeDllNames.AdjustTokenPrivilegesDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -480,7 +475,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the pseudo handler of the current process.
         /// </summary>
-        /// <returns></returns>
         [DllImport(PinvokeDllNames.GetCurrentProcessDllName)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern IntPtr GetCurrentProcess();

@@ -564,7 +564,6 @@ namespace System.Management.Automation
         /// This simplifies interacting with the PowerShell workflow activities.
         /// </summary>
         /// <param name="inputValue"></param>
-        /// <returns></returns>
         public static PSDataCollection<PSObject> GetPSDataCollection(object inputValue)
         {
             PSDataCollection<PSObject> result = new PSDataCollection<PSObject>();
@@ -1177,7 +1176,6 @@ namespace System.Management.Automation
         /// Necessary not to return an integer type code for enums.
         /// </summary>
         /// <param name="type"></param>
-        /// <returns></returns>
         internal static TypeCode GetTypeCode(Type type)
         {
             return type.GetTypeCode();
@@ -1761,7 +1759,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="valueToConvert"></param>
-        /// <returns></returns>
         public static T ConvertTo<T>(object valueToConvert)
         {
             if (valueToConvert is T value)
@@ -5293,7 +5290,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fromType"></param>
         /// <param name="toType"></param>
-        /// <returns></returns>
         internal static Tuple<PSConverter<object>, ConversionRank> FigureIEnumerableConstructorConversion(Type fromType, Type toType)
         {
             // Win8: 653180. If toType is an Abstract type then we cannot construct it anyway. So, bailing out fast.

@@ -3988,7 +3988,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks if the command is running.
         /// </summary>
-        /// <returns></returns>
         private bool IsCommandRunning()
         {
             if (InvocationStateInfo.State == PSInvocationState.Running)
@@ -4002,7 +4001,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks if the current state is Disconnected.
         /// </summary>
-        /// <returns></returns>
         private bool IsDisconnected()
         {
             return (InvocationStateInfo.State == PSInvocationState.Disconnected);

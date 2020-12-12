@@ -348,7 +348,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="name"></param>
         /// <param name="computerName"></param>
         /// <param name="protocol"></param>
-        /// <returns></returns>
         internal PSObject AddObjectToCache(
             CimSession session,
             uint sessionId,

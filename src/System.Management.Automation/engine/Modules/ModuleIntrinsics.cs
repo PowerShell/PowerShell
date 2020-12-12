@@ -1013,7 +1013,6 @@ namespace System.Management.Automation
         /// Get the module path that is shared among different users.
         /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
-        /// <returns></returns>
         private static string GetSharedModulePath()
         {
 #if UNIX
@@ -1051,7 +1050,6 @@ namespace System.Management.Automation
         /// Combine the PS system-wide module path and the DSC module path
         /// to get the system module paths.
         /// </summary>
-        /// <returns></returns>
         private static string CombineSystemModulePaths()
         {
             string psHomeModulePath = GetPSHomeModulePath();

@@ -208,7 +208,6 @@ namespace System.Management.Automation
         /// Get TypeAttr for the given type information.
         /// </summary>
         /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
-        /// <returns></returns>
         [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
         {
@@ -223,7 +222,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
-        /// <returns></returns>
         [ArchitectureSensitive]
         internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
         {
@@ -237,7 +235,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="typeinfo"></param>
-        /// <returns></returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCustomInterfaceTypeInfo(COM.ITypeInfo typeinfo)
         {
             int href;

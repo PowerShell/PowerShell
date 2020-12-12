@@ -122,7 +122,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// the name of the assembly to load</param>
         /// <param name="foundInGac"> true if assembly was found in the GAC. NOTE: the current
         /// implementation always return FALSE</param>
-        /// <returns></returns>
         private Assembly LoadAssemblyFromResourceReference(StringResourceReference resourceReference, out bool foundInGac)
         {
             // NOTE: we keep the function signature as and the calling code is able do deal
@@ -148,7 +147,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// Resolve the assembly name against the set of loaded assemblies.
             /// </summary>
             /// <param name="assemblyName"></param>
-            /// <returns></returns>
             internal Assembly ResolveAssemblyName(string assemblyName)
             {
                 if (string.IsNullOrEmpty(assemblyName))

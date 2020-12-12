@@ -1207,7 +1207,6 @@ namespace System.Management.Automation
         /// <param name="isTrusted">When true bypass trust check.</param>
         /// <param name="provider">Provider.</param>
         /// <param name="drive">Drive.</param>
-        /// <returns></returns>
         internal string GetProviderPath(
             string path,
             CmdletProviderContext context,

@@ -538,7 +538,6 @@ namespace System.Management.Automation.Language
         /// So, we use this API to alternate TypeResolutionState, but instead of mutating existing one, we clone it.
         /// </summary>
         /// <param name="types"></param>
-        /// <returns></returns>
         internal TypeResolutionState CloneWithAddTypesDefined(IEnumerable<string> types)
         {
             var newTypesDefined = new HashSet<string>(_typesDefined, StringComparer.OrdinalIgnoreCase);

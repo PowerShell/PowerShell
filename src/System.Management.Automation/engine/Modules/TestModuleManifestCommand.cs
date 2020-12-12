@@ -352,7 +352,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path"></param>
         /// <param name="module"></param>
         /// <param name="verifyPathScope"></param>
-        /// <returns></returns>
         private bool IsValidFilePath(string path, PSModuleInfo module, bool verifyPathScope)
         {
             try
@@ -403,7 +402,6 @@ namespace Microsoft.PowerShell.Commands
         /// Check if the given string is a valid gac assembly.
         /// </summary>
         /// <param name="assemblyName"></param>
-        /// <returns></returns>
         private static bool IsValidGacAssembly(string assemblyName)
         {
 #if UNIX

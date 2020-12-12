@@ -992,7 +992,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="mshObject">PSObject to convert.</param>
         /// <param name="propertyNames">Property names.</param>
-        /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
             if (propertyNames == null)
@@ -1275,7 +1274,6 @@ namespace Microsoft.PowerShell.Commands
         /// Peeks the next character in the stream and returns true if it is same as passed in character.
         /// </summary>
         /// <param name="c"></param>
-        /// <returns></returns>
         private bool PeekNextChar(char c)
         {
             int i = _sr.Peek();

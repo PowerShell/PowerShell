@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Returns the hash code of the object. This is vital for performance of value types.
         /// </summary>
-        /// <returns></returns>
         public override int GetHashCode()
         {
             return FormatId.GetHashCode() ^ PropertyId;

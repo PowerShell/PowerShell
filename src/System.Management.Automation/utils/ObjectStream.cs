@@ -1815,7 +1815,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="enumerateCollection"></param>
-        /// <returns></returns>
         internal override int Write(object obj, bool enumerateCollection)
         {
             // it is permitted to write null objects

@@ -296,7 +296,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Displays the hexadecimal format of the bytes stored in the collection.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             const int BytesPerLine = 16;

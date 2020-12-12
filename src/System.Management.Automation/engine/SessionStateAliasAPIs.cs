@@ -563,7 +563,6 @@ namespace System.Management.Automation
         /// Gets the aliases by command name (used by metadata-driven help)
         /// </summary>
         /// <param name="command"></param>
-        /// <returns></returns>
         internal IEnumerable<string> GetAliasesByCommandName(string command)
         {
             SessionStateScopeEnumerator scopeEnumerator =

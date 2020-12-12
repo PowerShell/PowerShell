@@ -73,7 +73,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>
-        /// <returns></returns>
         internal static bool IsDefaultComputerName(string computerName)
         {
             return string.IsNullOrEmpty(computerName);
@@ -85,7 +84,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="computerNames"></param>
-        /// <returns></returns>
         internal static IEnumerable<string> GetComputerNames(IEnumerable<string> computerNames)
         {
             return (computerNames == null) ? NullComputerNames : computerNames;
@@ -95,7 +93,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Get computer name, if it is null then return default one.
         /// </summary>
         /// <param name="computerName"></param>
-        /// <returns></returns>
         internal static string GetComputerName(string computerName)
         {
             return string.IsNullOrEmpty(computerName) ? NullComputerName : computerName;
@@ -107,7 +104,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="nameSpace"></param>
-        /// <returns></returns>
         internal static string GetNamespace(string nameSpace)
         {
             return (nameSpace == null) ? DefaultNameSpace : nameSpace;
@@ -119,7 +115,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="queryDialect"></param>
-        /// <returns></returns>
         internal static string GetQueryDialectWithDefault(string queryDialect)
         {
             return (queryDialect == null) ? DefaultQueryDialect : queryDialect;
@@ -292,7 +287,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="message"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         [Conditional("LOGENABLE")]
         private static void FormatLogMessage(ref string outMessage, string message, params object[] args)
         {
@@ -396,7 +390,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="value"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if the given value is not a valid name (class name or property name).</exception>
         public static string ValidateArgumentIsValidName(string parameterName, string value)
         {
@@ -424,7 +417,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="value"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if the given value contains any invalid name (class name or property name).</exception>
         public static string[] ValidateArgumentIsValidName(string parameterName, string[] value)
         {

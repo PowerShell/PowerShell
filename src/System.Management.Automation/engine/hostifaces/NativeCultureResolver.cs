@@ -428,7 +428,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Returns the locale identifier for the user default locale.
         /// </summary>
-        /// <returns></returns>
         /// <remarks>
         /// This function can return data from custom locales. Locales are not
         /// guaranteed to be the same from computer to computer or between runs

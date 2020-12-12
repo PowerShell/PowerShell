@@ -125,7 +125,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="resourceString"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         internal string GetMessage(string resourceString, params object[] args)
         {
             string message;
@@ -2008,7 +2007,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="isLiteralPath"></param>
-        /// <returns></returns>
         protected ScriptBlock GetScriptBlockFromFile(string filePath, bool isLiteralPath)
         {
             // Make sure filepath doesn't contain wildcards
@@ -2158,7 +2156,6 @@ namespace Microsoft.PowerShell.Commands
         /// If the remote end is PSv3 or PSv4, and there are UsingExpressions in different scopes, then we have to revert back to the approach
         /// used for PSv2 remote server.
         /// </remarks>
-        /// <returns></returns>
         private System.Management.Automation.PowerShell GetPowerShellForPSv2()
         {
             if (_powershellV2 != null) { return _powershellV2; }
@@ -2229,7 +2226,6 @@ namespace Microsoft.PowerShell.Commands
         /// end is PSv3 or PSv4 as long as no UsingExpression is in a different scope. If the remote end is PSv3 or PSv4 and we do have UsingExpressions
         /// in different scopes, then we will revert back to the approach we use to handle UsingExpression for PSv2 remote server.
         /// </remarks>
-        /// <returns></returns>
         private System.Management.Automation.PowerShell GetPowerShellForPSv3OrLater(string serverPsVersion)
         {
             if (_powershellV3 != null) { return _powershellV3; }
@@ -2328,7 +2324,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newParameterValues">
         /// The new parameter values that need to be added to the powershell instance
         /// </param>
-        /// <returns></returns>
         private string GetConvertedScript(out List<string> newParameterNames, out List<object> newParameterValues)
         {
             newParameterNames = null; newParameterValues = null;
@@ -2383,7 +2378,6 @@ namespace Microsoft.PowerShell.Commands
         /// Get the values for the using variables that are passed in.
         /// </summary>
         /// <param name="paramUsingVars"></param>
-        /// <returns></returns>
         private List<object> GetUsingVariableValues(List<VariableExpressionAst> paramUsingVars)
         {
             var values = new List<object>(paramUsingVars.Count);
@@ -4044,7 +4038,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="existingRunspace"></param>
         /// <param name="queriedrunspace"></param>
-        /// <returns></returns>
         private static bool UseExistingRunspace(
             Runspace existingRunspace,
             Runspace queriedrunspace)

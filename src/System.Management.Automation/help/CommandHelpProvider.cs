@@ -421,7 +421,6 @@ namespace System.Management.Automation
         /// will make sure helpInfo for invalid command will not be returned.
         /// </remarks>
         /// <param name="helpRequest">Help request object.</param>
-        /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             int countHelpInfosFound = 0;
@@ -554,7 +553,6 @@ namespace System.Management.Automation
         /// Finds a help file associated with the given cmdlet.
         /// </summary>
         /// <param name="cmdletInfo"></param>
-        /// <returns></returns>
         private string FindHelpFile(CmdletInfo cmdletInfo)
         {
             if (InternalTestHooks.BypassOnlineHelpRetrieval)
@@ -976,7 +974,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpFile"></param>
         /// <param name="helpItemsNode"></param>
-        /// <returns></returns>
         internal static bool IsMamlHelp(string helpFile, XmlNode helpItemsNode)
         {
             if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
@@ -1005,7 +1002,6 @@ namespace System.Management.Automation
         /// If true, searches for pattern in the help content of all cmdlets.
         /// Otherwise, searches for pattern in the cmdlet names.
         /// </param>
-        /// <returns></returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             string target = helpRequest.Target;
@@ -1165,7 +1161,6 @@ namespace System.Management.Automation
         /// <param name="helpInfo"></param>
         /// <param name="helpRequest"></param>
         /// <param name="commandInfo"></param>
-        /// <returns></returns>
         private static bool Match(HelpInfo helpInfo, HelpRequest helpRequest, CommandInfo commandInfo)
         {
             if (helpRequest == null)
@@ -1312,7 +1307,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="context"></param>
-        /// <returns></returns>
         internal virtual CommandSearcher GetCommandSearcherForExactMatch(string commandName, ExecutionContext context)
         {
             CommandSearcher searcher = new CommandSearcher(
@@ -1329,7 +1323,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern"></param>
         /// <param name="context"></param>
-        /// <returns></returns>
         internal virtual CommandSearcher GetCommandSearcherForSearch(string pattern, ExecutionContext context)
         {
             CommandSearcher searcher =

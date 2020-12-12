@@ -105,7 +105,6 @@ namespace System.Management.Automation
         /// <summary>
         /// True if the log provider needs to use logging variables.
         /// </summary>
-        /// <returns></returns>
         internal virtual bool UseLoggingVariables()
         {
             return true;
@@ -142,7 +141,6 @@ namespace System.Management.Automation
         /// Gets PSLogUserData from execution context.
         /// </summary>
         /// <param name="context"></param>
-        /// <returns></returns>
         protected static string GetPSLogUserData(ExecutionContext context)
         {
             if (context == null)

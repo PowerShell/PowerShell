@@ -592,7 +592,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns IEnumerable of CallStackFrame objects.
         /// </summary>
-        /// <returns></returns>
         public virtual IEnumerable<CallStackFrame> GetCallStack()
         {
             return new Collection<CallStackFrame>();
@@ -2726,7 +2725,6 @@ namespace System.Management.Automation
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
-        /// <returns></returns>
         public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action, string path, int? runspaceId)
         {
             if (runspaceId.HasValue)
@@ -4554,7 +4552,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the callstack of the nested runspace.
         /// </summary>
-        /// <returns></returns>
         internal PSDataCollection<PSObject> GetRSCallStack()
         {
             // Get call stack from wrapped debugger
@@ -5111,7 +5108,6 @@ namespace System.Management.Automation
         /// <param name="command"></param>
         /// <param name="invocationInfo"></param>
         /// <param name="output"></param>
-        /// <returns></returns>
         public DebuggerCommand ProcessCommand(PSHost host, string command, InvocationInfo invocationInfo, IList<PSObject> output)
         {
             DebuggerCommand dbgCommand = DoProcessCommand(host, command, invocationInfo, output);
@@ -5570,7 +5566,6 @@ namespace System.Management.Automation
         /// Return a dictionary with the names and values of variables that are "local"
         /// to the frame.
         /// </summary>
-        /// <returns></returns>
         public Dictionary<string, PSVariable> GetFrameVariables()
         {
             var result = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
@@ -5779,7 +5774,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns a copy of this object.
         /// </summary>
-        /// <returns></returns>
         internal abstract PSMonitorRunspaceInfo Copy();
 
         /// <summary>
@@ -5816,7 +5810,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns a copy of this object.
         /// </summary>
-        /// <returns></returns>
         internal override PSMonitorRunspaceInfo Copy()
         {
             return new PSStandaloneMonitorRunspaceInfo(Runspace);
@@ -5883,7 +5876,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns a copy of this object.
         /// </summary>
-        /// <returns></returns>
         internal override PSMonitorRunspaceInfo Copy()
         {
             return new PSEmbeddedMonitorRunspaceInfo(

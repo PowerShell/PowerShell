@@ -457,7 +457,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns></returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateCmdletEntry entry = new SessionStateCmdletEntry(Name, ImplementingType, HelpFileName, Visibility);
@@ -1029,7 +1028,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// </summary>
         /// <param name="index"></param>
-        /// <returns></returns>
         public T this[int index]
         {
             get
@@ -1050,7 +1048,6 @@ namespace System.Management.Automation.Runspaces
         /// If used on command collection entry, then for the same name, one can have multiple output.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         public Collection<T> this[string name]
         {
             get
@@ -1075,7 +1072,6 @@ namespace System.Management.Automation.Runspaces
         /// Find entries based on string name which can include wildcards.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         internal Collection<T> LookUpByName(string name)
         {
             if (name == null)
@@ -1220,7 +1216,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get enumerator for this collection.
         /// </summary>
-        /// <returns></returns>
         /// <!--
         /// Enumerator work is not thread safe by default. Any code trying
         /// to do enumeration on this collection should lock it first.
@@ -1235,7 +1230,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get enumerator for this collection.
         /// </summary>
-        /// <returns></returns>
         /// <!--
         /// Enumerator work is not thread safe by default. Any code trying
         /// to do enumeration on this collection should lock it first.
@@ -1312,7 +1306,6 @@ namespace System.Management.Automation.Runspaces
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
         /// <param name="path">The path to the PSSC session configuration file.</param>
-        /// <returns></returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path)
         {
             return CreateFromSessionConfigurationFile(path, null);
@@ -1327,7 +1320,6 @@ namespace System.Management.Automation.Runspaces
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
         /// checks windowsPrincipal.IsInRole().
         /// </param>
-        /// <returns></returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path, Func<string, bool> roleVerifier)
         {
             Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier);
@@ -1342,7 +1334,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="sessionCapabilities">
         /// What capabilities the session should have.
         /// </param>
-        /// <returns></returns>
         public static InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
         {
             // only remote server has been requested
@@ -1465,7 +1456,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates an empty InitialSessionState object...
         /// </summary>
-        /// <returns></returns>
         public static InitialSessionState Create()
         {
             InitialSessionState iss = new InitialSessionState();
@@ -1491,7 +1481,6 @@ namespace System.Management.Automation.Runspaces
         /// BuiltIn functions, aliases need to be available through default
         /// InitialSessionstate constructor. Need to have this discussion for packaging as well.
         /// </summary>
-        /// <returns></returns>
         public static InitialSessionState CreateDefault()
         {
             // Read all of the registered PSSnapins
@@ -1562,7 +1551,6 @@ namespace System.Management.Automation.Runspaces
         /// The default cmdlets, provider, etc are loaded via Modules.
         /// For loading Microsoft.PowerShell.Core module only.
         /// </summary>
-        /// <returns></returns>
         public static InitialSessionState CreateDefault2()
         {
             InitialSessionState ss = new InitialSessionState();
@@ -1684,7 +1672,6 @@ namespace System.Management.Automation.Runspaces
         /// Specify the registered SnapIn name or name collection.
         /// </summary>
         /// <param name="snapInName"></param>
-        /// <returns></returns>
         public static InitialSessionState Create(string snapInName)
         {
             return new InitialSessionState();
@@ -1694,7 +1681,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="snapInNameCollection"></param>
         /// <param name="warning"></param>
-        /// <returns></returns>
         public static InitialSessionState Create(string[] snapInNameCollection, out PSConsoleLoadException warning)
         {
             warning = null;
@@ -1705,7 +1691,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="snapInPath"></param>
         /// <param name="warnings"></param>
-        /// <returns></returns>
         public static InitialSessionState CreateFrom(string snapInPath, out PSConsoleLoadException warnings)
         {
             warnings = null;
@@ -1716,7 +1701,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="snapInPathCollection"></param>
         /// <param name="warnings"></param>
-        /// <returns></returns>
         public static InitialSessionState CreateFrom(string[] snapInPathCollection, out PSConsoleLoadException warnings)
         {
             warnings = null;
@@ -1831,7 +1815,6 @@ namespace System.Management.Automation.Runspaces
         /// Add a list of modules to import when the runspace is created.
         /// </summary>
         /// <param name="name">The modules to add.</param>
-        /// <returns></returns>
         public void ImportPSModule(params string[] name)
         {
             if (name == null)
@@ -1890,7 +1873,6 @@ namespace System.Management.Automation.Runspaces
         /// Add a list of core modules to import when the runspace is created.
         /// </summary>
         /// <param name="name">The modules to add.</param>
-        /// <returns></returns>
         internal void ImportPSCoreModule(string[] name)
         {
             if (name == null)
@@ -3071,7 +3053,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="commandPattern"></param>
         /// <param name="moduleName"></param>
         /// <param name="context"></param>
-        /// <returns></returns>
         private static IEnumerable<CommandInfo> LookupCommands(
             string commandPattern,
             string moduleName,
@@ -3778,7 +3759,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="name"></param>
         /// <param name="warning"></param>
-        /// <returns></returns>
         [Obsolete("Custom PSSnapIn is deprecated. Please use a module instead.", true)]
         public PSSnapInInfo ImportPSSnapIn(string name, out PSSnapInException warning)
         {

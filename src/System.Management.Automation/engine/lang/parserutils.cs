@@ -323,7 +323,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
-        /// <returns></returns>
         /// <exception cref="RuntimeException">The result could not be represented as an integer.</exception>
         internal static int FixNum(object obj, IScriptExtent errorPosition)
         {
@@ -1462,7 +1461,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="enumerator">The enumerator to read from.</param>
-        /// <returns></returns>
         internal static object Current(IScriptExtent errorPosition, IEnumerator enumerator)
         {
             try
@@ -1526,7 +1524,6 @@ namespace System.Management.Automation
         /// <param name="valueToSet">If not automation null, then this must be a settable property.</param>
         /// <exception cref="RuntimeException">Wraps the exception returned from the method call.</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement.</exception>
-        /// <returns></returns>
         internal static object CallMethod(
             IScriptExtent errorPosition,
             object target,

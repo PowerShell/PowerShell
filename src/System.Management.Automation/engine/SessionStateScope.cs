@@ -339,7 +339,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="variable"></param>
-        /// <returns></returns>
         internal object GetAutomaticVariableValue(AutomaticVariable variable)
         {
             int index = (int)variable;
@@ -508,7 +507,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="variableToSet">PSVariable to set.</param>
         /// <param name="sessionState">SessionState for variable.</param>
-        /// <returns></returns>
         internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
         {
             if (Parent != null)
@@ -1895,7 +1893,6 @@ namespace System.Management.Automation
         /// Gets the aliases by command name (used by metadata-driven help)
         /// </summary>
         /// <param name="command"></param>
-        /// <returns></returns>
         internal IEnumerable<string> GetAliasesByCommandName(string command)
         {
             List<string> commandsToAliases;

@@ -121,7 +121,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">The pattern.</param>
         /// <param name="options"></param>
-        /// <returns></returns>
         public static WildcardPattern Get(string pattern, WildcardOptions options)
         {
             if (pattern == null)
@@ -407,7 +406,6 @@ namespace System.Management.Automation
         /// Converts this wildcard to a string that can be used as a right-hand-side operand of the LIKE operator of WQL.
         /// For example: "a*" will be converted to "a%".
         /// </summary>
-        /// <returns></returns>
         public string ToWql()
         {
             bool needsClientSideFiltering;

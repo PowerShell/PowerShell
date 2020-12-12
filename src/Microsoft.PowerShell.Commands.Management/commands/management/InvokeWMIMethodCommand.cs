@@ -274,7 +274,6 @@ namespace Microsoft.PowerShell.Commands
         /// Ensure that the argument is a collection containing no PSObjects.
         /// </summary>
         /// <param name="argument"></param>
-        /// <returns></returns>
         private static object MakeBaseObjectArray(object argument)
         {
             if (argument == null)

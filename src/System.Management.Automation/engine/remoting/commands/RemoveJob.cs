@@ -495,7 +495,6 @@ namespace Microsoft.PowerShell.Commands
         /// Find the jobs which match the specified filter.
         /// </summary>
         /// <param name="writeobject"></param>
-        /// <returns></returns>
         internal List<Job> FindJobsMatchingByFilter(bool writeobject)
         {
             List<Job> matches = new List<Job>();
@@ -539,7 +538,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="matches"></param>
         /// <param name="jobsToSearch"></param>
-        /// <returns></returns>
         private static bool FindJobsMatchingByFilterHelper(List<Job> matches, List<Job> jobsToSearch)
         {
             // check that filter only has job properties
@@ -554,7 +552,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned).</param>
         /// <param name="checkIfJobCanBeRemoved">If true, only jobs which can be removed will be checked.</param>
-        /// <returns></returns>
         internal List<Job> CopyJobsToList(Job[] jobs, bool writeobject, bool checkIfJobCanBeRemoved)
         {
             List<Job> matches = new List<Job>();

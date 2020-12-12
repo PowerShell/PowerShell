@@ -28,7 +28,6 @@ namespace System.Management.Automation.Tracing
         /// Converts exception object into a string.
         /// </summary>
         /// <param name="exception"></param>
-        /// <returns></returns>
         public static string GetExceptionString(Exception exception)
         {
             if (exception == null)

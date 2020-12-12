@@ -1023,7 +1023,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Does a shallow copy of the current instance.
         /// </summary>
-        /// <returns></returns>
         public WSManConnectionInfo Copy()
         {
             WSManConnectionInfo result = new WSManConnectionInfo();
@@ -1120,7 +1119,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="rsCI"></param>
         /// <param name="property"></param>
         /// <param name="defaultValue"></param>
-        /// <returns></returns>
         internal static T ExtractPropertyAsWsManConnectionInfo<T>(RunspaceConnectionInfo rsCI,
             string property, T defaultValue)
         {
@@ -1148,7 +1146,6 @@ namespace System.Management.Automation.Runspaces
         /// only when Port is updated. Usages that dont update port, should use null for this parameter.
         /// </param>
         /// <param name="appName"></param>
-        /// <returns></returns>
         internal void ConstructUri(string scheme, string computerName, int? port, string appName)
         {
             // Default scheme is http
@@ -1431,7 +1428,6 @@ namespace System.Management.Automation.Runspaces
         /// Helper property that returns true when the connection has EnableNetworkAccess set
         /// and the connection is localhost (loopback), i.e., not a network connection.
         /// </summary>
-        /// <returns></returns>
         internal bool IsLocalhostAndNetworkAccess
         {
             get
@@ -2026,7 +2022,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="instanceId"></param>
         /// <param name="sessionName"></param>
         /// <param name="cryptoHelper"></param>
-        /// <returns></returns>
         internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new SSHClientSessionTransportManager(
@@ -2042,7 +2037,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// StartSSHProcess.
         /// </summary>
-        /// <returns></returns>
         internal int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,

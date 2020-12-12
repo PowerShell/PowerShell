@@ -40,7 +40,6 @@ namespace Microsoft.PowerShell
         /// <param name="caption"></param>
         /// <param name="message"></param>
         /// <param name="descriptions"></param>
-        /// <returns></returns>
         public override Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
             => throw new PSNotImplementedException();
 
@@ -51,7 +50,6 @@ namespace Microsoft.PowerShell
         /// <param name="message"></param>
         /// <param name="choices"></param>
         /// <param name="defaultChoice"></param>
-        /// <returns></returns>
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
             => throw new PSNotImplementedException();
 
@@ -62,7 +60,6 @@ namespace Microsoft.PowerShell
         /// <param name="message"></param>
         /// <param name="userName"></param>
         /// <param name="targetName"></param>
-        /// <returns></returns>
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
             => throw new PSNotImplementedException();
 
@@ -75,21 +72,18 @@ namespace Microsoft.PowerShell
         /// <param name="targetName"></param>
         /// <param name="allowedCredentialTypes"></param>
         /// <param name="options"></param>
-        /// <returns></returns>
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
             => throw new PSNotImplementedException();
 
         /// <summary>
         /// ReadLine.
         /// </summary>
-        /// <returns></returns>
         public override string ReadLine()
             => throw new PSNotImplementedException();
 
         /// <summary>
         /// ReadLineAsSecureString.
         /// </summary>
-        /// <returns></returns>
         public override SecureString ReadLineAsSecureString()
             => throw new PSNotImplementedException();
 

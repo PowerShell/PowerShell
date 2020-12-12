@@ -609,7 +609,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Returns a ConsoleHandle to the active screen buffer, even if that output has been redirected.
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's CreateFile fails
         /// </exception>
@@ -730,7 +729,6 @@ namespace Microsoft.PowerShell
         /// Bit mask indicating the state of the control/shift keys at the point input was terminated.
         /// </param>
         /// </param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's ReadConsole fails
         /// </exception>
@@ -1765,7 +1763,6 @@ namespace Microsoft.PowerShell
         /// <param name="edge"></param>
         /// <param name="contents"></param>
         /// <param name="contentsRegion"></param>
-        /// <returns></returns>
         private static bool ShouldCheck(int edge, BufferCell[,] contents, Rectangle contentsRegion)
         {
             for (int i = contentsRegion.Top; i <= contentsRegion.Bottom; i++)
@@ -2740,7 +2737,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c.
         /// </summary>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
             MessageId = "Microsoft.PowerShell.ConsoleControl+NativeMethods.ReleaseDC(System.IntPtr,System.IntPtr)")]
         internal static int LengthInBufferCells(string str, int offset, bool checkEscapeSequences)
@@ -2803,7 +2799,6 @@ namespace Microsoft.PowerShell
         /// Check if the output buffer code page is Japanese, Simplified Chinese, Korean, or Traditional Chinese.
         /// </summary>
         /// <param name="codePage"></param>
-        /// <returns></returns>
         internal static bool IsCJKOutputCodePage(out uint codePage)
         {
             codePage = NativeMethods.GetConsoleOutputCP();
@@ -2948,7 +2943,6 @@ namespace Microsoft.PowerShell
         /// <param name="errorId"></param>
         /// <param name="category"></param>
         /// <param name="resourceStr"></param>
-        /// <returns></returns>
         private static HostException CreateHostException(
             int win32Error, string errorId, ErrorCategory category, string resourceStr)
         {

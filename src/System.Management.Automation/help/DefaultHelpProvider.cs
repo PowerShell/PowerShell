@@ -52,7 +52,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="helpRequest">Help request object.</param>
-        /// <returns></returns>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             HelpRequest defaultHelpRequest = helpRequest.Clone();

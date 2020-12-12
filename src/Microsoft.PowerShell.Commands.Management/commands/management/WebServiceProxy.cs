@@ -315,7 +315,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="NameSpace"></param>
         /// <param name="ClassName"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         private Assembly GenerateWebServiceProxyAssembly(string NameSpace, string ClassName)
         {
@@ -460,7 +459,6 @@ namespace Microsoft.PowerShell.Commands
         ///  if a type of WebServiceBindingAttribute is not found, throw an exception.
         /// </summary>
         /// <param name="assembly"></param>
-        /// <returns></returns>
         private object InstantiateWebServiceProxy(Assembly assembly)
         {
             Type proxyType = null;

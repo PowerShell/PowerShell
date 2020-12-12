@@ -172,7 +172,6 @@ namespace System.Management.Automation
         /// content it wants to search.
         /// </summary>
         /// <param name="pattern"></param>
-        /// <returns></returns>
         internal virtual bool MatchPatternInContent(WildcardPattern pattern)
         {
             // this is base class implementation..derived classes can choose
@@ -195,7 +194,6 @@ namespace System.Management.Automation
         ///
         /// This function is normally called at the end of each child class constructor.
         /// </summary>
-        /// <returns></returns>
         protected void AddCommonHelpProperties()
         {
             if (this.FullHelp == null)

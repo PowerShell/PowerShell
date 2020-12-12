@@ -683,7 +683,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Caller call Detach to retrieve the session
         /// object and control the lifecycle of the CimSession object.
         /// </summary>
-        /// <returns></returns>
         public CimSession Detach()
         {
             DebugHelper.WriteLogEx();
@@ -923,7 +922,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="instance"></param>
-        /// <returns></returns>
         public CimResponseType WriteError(CimInstance instance)
         {
             DebugHelper.WriteLogEx("Error:{0}", 0, instance);
@@ -945,7 +943,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="message"></param>
         /// <param name="prompt"></param>
-        /// <returns></returns>
         public CimResponseType PromptUser(string message, CimPromptType prompt)
         {
             DebugHelper.WriteLogEx("message:{0} prompt:{1}", 0, message, prompt);
@@ -1849,7 +1846,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Create <see cref="CimSessionOptions"/> based on the given computerName
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimSession CreateCimSessionByComputerName(string computerName)
         {
             DebugHelper.WriteLogEx("ComputerName {0}", 0, computerName);
@@ -1877,7 +1873,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         /// <param name="timeout"></param>
         /// <param name="credential"></param>
-        /// <returns></returns>
         internal static CimSessionOptions CreateCimSessionOption(string computerName,
             UInt32 timeout, CimCredential credential)
         {

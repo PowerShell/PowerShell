@@ -59,7 +59,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the different method overloads signatures.
         /// </summary>
-        /// <returns></returns>
         internal Collection<string> MethodDefinitions()
         {
             Collection<string> result = new Collection<string>();

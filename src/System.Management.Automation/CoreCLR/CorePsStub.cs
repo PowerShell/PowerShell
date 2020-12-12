@@ -489,7 +489,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// </summary>
         /// <param name="activityId"></param>
-        /// <returns></returns>
         public static bool SetActivityId(Guid activityId)
         {
             return false;
@@ -497,7 +496,6 @@ namespace System.Management.Automation.Tracing
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         public static Guid CreateActivityId()
         {
             return Guid.Empty;
@@ -505,7 +503,6 @@ namespace System.Management.Automation.Tracing
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         public static Guid GetActivityId()
         {
             return Guid.Empty;
@@ -686,7 +683,6 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="message1"></param>
         /// <param name="message2"></param>
-        /// <returns></returns>
         public bool WriteMessage(string message1, string message2)
         {
             return false;
@@ -696,7 +692,6 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="message"></param>
         /// <param name="instanceId"></param>
-        /// <returns></returns>
         public bool WriteMessage(string message, Guid instanceId)
         {
             return false;
@@ -709,7 +704,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="workflowId"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, string message, params string[] parameters)
         {
             return;
@@ -723,7 +717,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="job"></param>
         /// <param name="message"></param>
         /// <param name="parameters"></param>
-        /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, Job job, string message, params string[] parameters)
         {
             return;

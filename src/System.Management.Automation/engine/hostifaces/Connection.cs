@@ -294,7 +294,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Override for ToString()
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return State.ToString();

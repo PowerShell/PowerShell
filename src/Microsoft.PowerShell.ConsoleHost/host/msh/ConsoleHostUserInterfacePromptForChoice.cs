@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell
         /// <param name="message"></param>
         /// <param name="choices"></param>
         /// <param name="defaultChoice"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="choices"/> is null.
         /// </exception>

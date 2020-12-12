@@ -29,7 +29,6 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Gets a <see cref="ComObject"/> that wraps the runtime-callable-wrapper, or creates one if none currently exists.
         /// </summary>
-        /// <returns></returns>
         public static ComObject ObjectToComObject(object rcw)
         {
             Debug.Assert(ComBinder.IsComObject(rcw));

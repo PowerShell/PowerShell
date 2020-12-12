@@ -170,7 +170,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpInfo">HelpInfo passed over by another HelpProvider.</param>
         /// <param name="helpRequest">Help request object.</param>
-        /// <returns></returns>
         internal virtual IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             // Win8: 508648. Remove the current provides category for resolving forward help as the current

@@ -139,7 +139,6 @@ namespace System.Management.Automation
         /// This is the API to use for starting a help trace scope.
         /// </summary>
         /// <param name="helpFile"></param>
-        /// <returns></returns>
         internal IDisposable Trace(string helpFile)
         {
             TraceFrame traceFrame = new TraceFrame(this, helpFile);

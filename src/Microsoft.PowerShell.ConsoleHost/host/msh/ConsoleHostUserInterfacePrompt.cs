@@ -64,7 +64,6 @@ namespace Microsoft.PowerShell
         /// <param name="caption"></param>
         /// <param name="message"></param>
         /// <param name="descriptions"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="descriptions"/> is null
         ///    OR
@@ -491,7 +490,6 @@ namespace Microsoft.PowerShell
         /// <param name="input"></param>
         /// <param name="desc"></param>
         /// <param name="inputDone"></param>
-        /// <returns></returns>
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
             Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),

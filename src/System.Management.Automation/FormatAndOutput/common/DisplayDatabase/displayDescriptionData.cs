@@ -400,7 +400,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Returns a Shallow Copy of the current object.
         /// </summary>
-        /// <returns></returns>
         internal virtual ControlBase Copy()
         {
             System.Management.Automation.Diagnostics.Assert(false,
@@ -621,7 +620,6 @@ namespace System.Management.Automation
         /// Overloaded to string method for
         /// better display.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return TypeName;

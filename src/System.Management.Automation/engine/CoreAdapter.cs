@@ -197,7 +197,6 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMember.</param>
-        /// <returns></returns>
         protected abstract Collection<string> MethodDefinitions(PSMethod method);
 
         /// <summary>
@@ -4527,7 +4526,6 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMember.</param>
-        /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
@@ -4889,7 +4887,6 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMember.</param>
-        /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             Diagnostics.Assert(false, "redirection adapter is not called for methods");

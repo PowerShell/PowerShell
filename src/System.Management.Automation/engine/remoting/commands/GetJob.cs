@@ -271,7 +271,6 @@ namespace Microsoft.PowerShell.Commands
         /// Only Job2 type jobs can be time filtered so older Job types are skipped.
         /// </summary>
         /// <param name="jobList"></param>
-        /// <returns></returns>
         private List<Job> ApplyTimeFiltering(List<Job> jobList)
         {
             bool beforeParameter = MyInvocation.BoundParameters.ContainsKey(nameof(Before));

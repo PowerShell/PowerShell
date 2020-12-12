@@ -392,7 +392,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key"></param>
         /// <param name="dict"></param>
-        /// <returns></returns>
         private static string RetrieveParameterNameForAlias(
             string key,
             IDictionary<string, MergedCompiledCommandParameter> dict)

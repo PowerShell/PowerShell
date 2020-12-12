@@ -316,7 +316,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">Source for the copy operation.</param>
         /// <param name="destination">Destination for the copy operation.</param>
         /// <param name="recurse">Whether to recurse.</param>
-        /// <returns></returns>
         protected override object CopyItemDynamicParameters(string path, string destination, bool recurse)
         {
             return new CopyItemDynamicParameters();
@@ -708,7 +707,6 @@ namespace Microsoft.PowerShell.Commands
         /// requested PSDrive to be created has to be mapped to a network drive.
         /// </summary>
         /// <param name="drive"></param>
-        /// <returns></returns>
         private static bool IsNetworkMappedDrive(PSDriveInfo drive)
         {
             bool shouldMapNetworkDrive = (drive != null && !string.IsNullOrEmpty(drive.Root) && PathIsNetworkPath(drive.Root)) &&
@@ -810,7 +808,6 @@ namespace Microsoft.PowerShell.Commands
         /// using the Windows API.
         /// </summary>
         /// <param name="driveName"></param>
-        /// <returns></returns>
         internal static string GetUNCForNetworkDrive(string driveName)
         {
 #if UNIX
@@ -879,7 +876,6 @@ namespace Microsoft.PowerShell.Commands
         ///         subst y: \\scratch2\scratch\
         /// </summary>
         /// <param name="driveName"></param>
-        /// <returns></returns>
         internal static string GetSubstitutedPathForNetworkDosDevice(string driveName)
         {
 #if UNIX
@@ -969,7 +965,6 @@ namespace Microsoft.PowerShell.Commands
         /// Get the root path for a network drive or MS-DOS device.
         /// </summary>
         /// <param name="driveInfo"></param>
-        /// <returns></returns>
         internal static string GetRootPathForNetworkDriveOrDosDevice(DriveInfo driveInfo)
         {
             Dbg.Diagnostics.Assert(driveInfo.DriveType == DriveType.Network, "Caller should make sure it is a network drive.");
@@ -7121,7 +7116,6 @@ namespace Microsoft.PowerShell.Commands
         /// This implementation is based on the 'PathIsNetworkPath' API.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         internal static bool PathIsNetworkPath(string path)
         {
 #if UNIX
@@ -7197,7 +7191,6 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="remoteNameLength">
             /// length of the remote name of the created PSDrive.
             /// </param>
-            /// <returns></returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
             internal static extern int WNetGetConnection(string localName, StringBuilder remoteName, ref int remoteNameLength);
 
@@ -7219,7 +7212,6 @@ namespace Microsoft.PowerShell.Commands
             /// This implementation is based on the 'PathIsNetworkPath' API.
             /// </summary>
             /// <param name="path"></param>
-            /// <returns></returns>
             internal static bool PathIsNetworkPath(string path)
             {
                 if (string.IsNullOrEmpty(path))
@@ -7295,7 +7287,6 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="ucchMax">
             /// The maximum number of characters that can be stored into the buffer
             /// </param>
-            /// <returns></returns>
             [DllImport(PinvokeDllNames.QueryDosDeviceDllName, CharSet = CharSet.Unicode, SetLastError = true)]
             internal static extern int QueryDosDevice(string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
 
@@ -7338,7 +7329,6 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="name">Name of the hard link.</param>
             /// <param name="existingFileName">Path to the target of the hard link.</param>
             /// <param name="SecurityAttributes"></param>
-            /// <returns></returns>
             [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);

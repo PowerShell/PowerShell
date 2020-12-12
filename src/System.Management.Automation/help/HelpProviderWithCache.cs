@@ -79,7 +79,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">Target to search.</param>
         /// <param name="key">Key used in cache table.</param>
-        /// <returns></returns>
         protected virtual bool CustomMatch(string target, string key)
         {
             return target == key;

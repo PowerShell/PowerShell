@@ -1535,7 +1535,6 @@ namespace Microsoft.PowerShell.Commands
         /// PSInvokeExpressionSyncJob.
         /// </summary>
         /// <param name="job"></param>
-        /// <returns></returns>
         private List<PSSession> GetDisconnectedSessions(PSInvokeExpressionSyncJob job)
         {
             List<PSSession> discSessions = new List<PSSession>();

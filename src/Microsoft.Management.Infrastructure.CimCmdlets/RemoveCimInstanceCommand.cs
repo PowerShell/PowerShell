@@ -282,7 +282,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Remove-CimInstance operations.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimRemoveCimInstance CreateOperationAgent()
         {
             CimRemoveCimInstance cimRemoveInstance = new();

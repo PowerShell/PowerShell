@@ -639,7 +639,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="shellContext"></param>
         /// <param name="inputFunctionName"></param>
-        /// <returns></returns>
         private static bool validateIncomingContexts(
             WSManNativeApi.WSManPluginRequest requestDetails,
             IntPtr shellContext,
@@ -1110,7 +1109,6 @@ namespace System.Management.Automation.Remoting
         /// Used to create PSPrincipal object from senderDetails struct.
         /// </summary>
         /// <param name="senderDetails"></param>
-        /// <returns></returns>
         private static PSSenderInfo GetPSSenderInfo(
             WSManNativeApi.WSManSenderDetails senderDetails)
         {
@@ -1190,7 +1188,6 @@ namespace System.Management.Automation.Remoting
         /// Was private. Made protected internal for easier testing.
         /// </summary>
         /// <param name="requestDetails"></param>
-        /// <returns></returns>
         protected internal bool EnsureOptionsComply(
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
@@ -1249,7 +1246,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="clientVersionString"></param>
-        /// <returns></returns>
         protected internal bool EnsureProtocolVersionComplies(
             WSManNativeApi.WSManPluginRequest requestDetails,
             string clientVersionString)
@@ -1860,7 +1856,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
         /// <param name="errorMessage">Pre-formatted localized string.</param>
-        /// <returns></returns>
         internal static void ReportOperationComplete(
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode,
@@ -1900,7 +1895,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
         /// <param name="errorMessage"></param>
-        /// <returns></returns>
         internal static void ReportOperationComplete(
             IntPtr requestDetails,
             WSManPluginErrorCodes errorCode,

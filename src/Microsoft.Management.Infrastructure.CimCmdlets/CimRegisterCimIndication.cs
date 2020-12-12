@@ -314,7 +314,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="timeout"></param>
-        /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             string computerName,
             UInt32 timeout)
@@ -329,7 +328,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="timeout"></param>
-        /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             CimSession session,
             UInt32 timeout)

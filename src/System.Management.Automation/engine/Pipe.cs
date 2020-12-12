@@ -90,7 +90,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             if (_downstreamCmdlet != null)

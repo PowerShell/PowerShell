@@ -497,7 +497,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="cmdToRun"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         private PSDataCollection<PSObject> InvokeScript(Command cmdToRun, RunspaceCreatedEventArgs args)
         {
             Debug.Assert(cmdToRun != null, "cmdToRun shouldn't be null");
@@ -517,7 +516,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="powershell"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         private PSDataCollection<PSObject> InvokePowerShell(PowerShell powershell, RunspaceCreatedEventArgs args)
         {
             Debug.Assert(powershell != null, "powershell shouldn't be null");
@@ -1132,7 +1130,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Resets the single runspace in the runspace pool.
         /// </summary>
-        /// <returns></returns>
         private bool ResetRunspaceState()
         {
             LocalRunspace runspaceToReset = _rsToUseForSteppablePipeline as LocalRunspace;
@@ -1988,7 +1985,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">Command.</param>
         /// <param name="output">Output.</param>
-        /// <returns></returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
             if (LocalDebugMode)
@@ -2076,7 +2072,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command"></param>
         /// <param name="output"></param>
-        /// <returns></returns>
         internal override DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {
             return _wrappedDebugger.Value.InternalProcessCommand(command, output);
@@ -2204,7 +2199,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns IEnumerable of CallStackFrame objects.
         /// </summary>
-        /// <returns></returns>
         public override IEnumerable<CallStackFrame> GetCallStack()
         {
             return _wrappedDebugger.Value.GetCallStack();

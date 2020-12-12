@@ -699,7 +699,6 @@ namespace System.Management.Automation.Internal
         /// <param name="secureString">
         /// secure string to be encrypted
         /// </param>
-        /// <returns></returns>
         protected string EncryptSecureStringCore(SecureString secureString)
         {
             string encryptedDataAsString = null;
@@ -746,7 +745,6 @@ namespace System.Management.Automation.Internal
         /// <param name="encryptedString">
         /// encrypted string to be decrypted
         /// </param>
-        /// <returns></returns>
         protected SecureString DecryptSecureStringCore(string encryptedString)
         {
             // removing an earlier assert from here. It is
@@ -972,7 +970,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// </summary>
         /// <param name="encryptedSessionKey"></param>
-        /// <returns></returns>
         internal bool ExportEncryptedSessionKey(out string encryptedSessionKey)
         {
             try
@@ -1086,7 +1083,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// </summary>
         /// <param name="encryptedSessionKey"></param>
-        /// <returns></returns>
         internal bool ImportEncryptedSessionKey(string encryptedSessionKey)
         {
             Dbg.Assert(!string.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");

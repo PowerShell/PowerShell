@@ -744,7 +744,6 @@ namespace System.Management.Automation
         /// Calls GetDrive(name, false) internally.
         /// </remarks>
         /// <param name="name">The name of the drive to load.</param>
-        /// <returns></returns>
         internal PSDriveInfo AutomountBuiltInDrive(string name)
         {
             MountDefaultDrive(name, ExecutionContext);

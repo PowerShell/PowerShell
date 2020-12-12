@@ -126,7 +126,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         public static DynamicKeyword GetKeyword(string name)
         {
             DynamicKeyword keywordToReturn;
@@ -137,7 +136,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns a copied list of all of the existing dynamic keyword definitions.
         /// </summary>
-        /// <returns></returns>
         public static List<DynamicKeyword> GetKeyword()
         {
             return new List<DynamicKeyword>(DynamicKeyword.DynamicKeywords.Values);
@@ -146,7 +144,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         public static bool ContainsKeyword(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -200,7 +197,6 @@ namespace System.Management.Automation.Language
         /// Check if it is a hidden keyword.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         internal static bool IsHiddenKeyword(string name)
         {
             if (string.IsNullOrEmpty(name))

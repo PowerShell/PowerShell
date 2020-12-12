@@ -29,7 +29,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Add pstypename to the resultobject if necessary.
         /// </summary>
         /// <param name="resultObject"></param>
-        /// <returns></returns>
         public object Process(object resultObject)
         {
             if (resultObject is CimInstance)
@@ -429,7 +428,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         protected CimSessionProxy CreateSessionProxy(
             string computerName,
             CimBaseCommand cmdlet)
@@ -447,7 +445,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         protected CimSessionProxy CreateSessionProxy(
             string computerName,
             CimInstance cimInstance,
@@ -464,7 +461,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         protected CimSessionProxy CreateSessionProxy(
             CimSession session,
             CimBaseCommand cmdlet)
@@ -482,7 +478,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         protected CimSessionProxy CreateSessionProxy(
             string computerName,
             CimInstance cimInstance,
@@ -498,7 +493,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         protected CimSessionProxy CreateSessionProxy(
             CimSession session,
             CimBaseCommand cmdlet,

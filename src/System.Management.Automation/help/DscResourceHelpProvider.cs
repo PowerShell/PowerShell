@@ -63,7 +63,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">Help request.</param>
         /// <param name="searchOnlyContent">Not used.</param>
-        /// <returns></returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
@@ -176,7 +175,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpFile">File name.</param>
         /// <param name="helpItemsNode">Nodes to check.</param>
-        /// <returns></returns>
         internal static bool IsMamlHelp(string helpFile, XmlNode helpItemsNode)
         {
             Debug.Assert(!string.IsNullOrEmpty(helpFile), "helpFile cannot be null.");

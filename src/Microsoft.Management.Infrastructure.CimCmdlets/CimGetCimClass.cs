@@ -174,7 +174,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             string computerName,
             GetCimClassCommand cmdlet)
@@ -190,7 +189,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             CimSession session,
             GetCimClassCommand cmdlet)

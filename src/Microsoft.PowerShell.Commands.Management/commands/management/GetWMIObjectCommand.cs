@@ -418,7 +418,6 @@ namespace Microsoft.PowerShell.Commands
         /// Get the class name from a query string.
         /// </summary>
         /// <param name="query"></param>
-        /// <returns></returns>
         private string GetClassNameFromQuery(string query)
         {
             System.Management.Automation.Diagnostics.Assert(query.Contains("from"),

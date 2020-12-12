@@ -66,7 +66,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ToString method.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return this.Name;
@@ -189,7 +188,6 @@ $result
         /// Test if an item can be invoked.
         /// </summary>
         /// <param name="item"></param>
-        /// <returns></returns>
         private bool ContainVerbOpen(ShellFolderItem item)
         {
             bool result = false;
@@ -310,7 +308,6 @@ $result
         /// Get control panel item by the category.
         /// </summary>
         /// <param name="controlPanelItems"></param>
-        /// <returns></returns>
         internal List<ShellFolderItem> GetControlPanelItemByCategory(List<ShellFolderItem> controlPanelItems)
         {
             List<ShellFolderItem> list = new List<ShellFolderItem>();
@@ -363,7 +360,6 @@ $result
         /// </summary>
         /// <param name="controlPanelItems"></param>
         /// <param name="withCategoryFilter"></param>
-        /// <returns></returns>
         internal List<ShellFolderItem> GetControlPanelItemByName(List<ShellFolderItem> controlPanelItems, bool withCategoryFilter)
         {
             List<ShellFolderItem> list = new List<ShellFolderItem>();
@@ -411,7 +407,6 @@ $result
         /// </summary>
         /// <param name="controlPanelItems"></param>
         /// <param name="withCategoryFilter"></param>
-        /// <returns></returns>
         internal List<ShellFolderItem> GetControlPanelItemByCanonicalName(List<ShellFolderItem> controlPanelItems, bool withCategoryFilter)
         {
             List<ShellFolderItem> list = new List<ShellFolderItem>();
@@ -503,7 +498,6 @@ $result
         /// Get control panel item by the ControlPanelItem instances.
         /// </summary>
         /// <param name="controlPanelItems"></param>
-        /// <returns></returns>
         internal List<ShellFolderItem> GetControlPanelItemsByInstance(List<ShellFolderItem> controlPanelItems)
         {
             List<ShellFolderItem> list = new List<ShellFolderItem>();

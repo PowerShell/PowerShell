@@ -405,7 +405,6 @@ namespace System.Management.Automation
         /// Thread-Local-Storage. This will return null if ExecutionContext
         /// is not available.
         /// </summary>
-        /// <returns></returns>
         internal static TypeTable GetTypeTableFromExecutionContextTLS()
         {
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
@@ -2223,7 +2222,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Pop item.
         /// </summary>
-        /// <returns></returns>
         internal T Pop()
         {
             if (this.First == null)

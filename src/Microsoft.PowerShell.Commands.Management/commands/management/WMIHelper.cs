@@ -684,7 +684,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="computer"></param>
         /// <param name="methodName"></param>
         /// <param name="isLocal"></param>
-        /// <returns></returns>
         private bool NeedToEnablePrivilege(string computer, string methodName, ref bool isLocal)
         {
             bool result = false;

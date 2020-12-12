@@ -501,7 +501,6 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         string CommandLine
         {
             // IDL: HRESULT CommandLine ([out, retval] BSTR* ReturnValue);
@@ -923,7 +922,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="resourceUri"></param>
         /// <param name="parameters"></param>
         /// <param name="flags"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
         [DispId(5)]

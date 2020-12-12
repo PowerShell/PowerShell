@@ -1228,7 +1228,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="errorId"></param>
         /// <param name="target"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         internal static ErrorRecord GenerateNameParameterError(string paraName, string resourceString, string errorId, object target, params object[] args)
         {
             string message;

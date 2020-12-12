@@ -95,7 +95,6 @@ namespace System.Management.Automation
         /// <summary>
         /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return ScriptBlock.ToString();

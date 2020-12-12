@@ -128,7 +128,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="element"></param>
         /// <param name="psGuid"></param>
-        /// <returns></returns>
         private static string CreatePSGuidPacket(string element, Guid psGuid)
         {
             string result = string.Format(CultureInfo.InvariantCulture,
@@ -609,7 +608,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="connectionInfo"></param>
         /// <param name="cmd"></param>
         /// <param name="noInput"></param>
-        /// <returns></returns>
         internal override BaseClientCommandTransportManager CreateClientCommandTransportManager(
             RunspaceConnectionInfo connectionInfo,
             ClientRemotePowerShell cmd,

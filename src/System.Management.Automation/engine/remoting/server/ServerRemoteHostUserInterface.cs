@@ -70,7 +70,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="message"></param>
         /// <param name="choices"></param>
         /// <param name="defaultChoices"></param>
-        /// <returns></returns>
         public Collection<int> PromptForChoice(string caption,
             string message,
             Collection<ChoiceDescription> choices,

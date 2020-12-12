@@ -123,7 +123,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// in the Task Scheduler.
         /// </summary>
         /// <param name="taskId"></param>
-        /// <returns></returns>
         public bool GetTaskEnabled(
             string taskId)
         {

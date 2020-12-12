@@ -505,7 +505,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Create DComSessionOptions.
         /// </summary>
-        /// <returns></returns>
         internal DComSessionOptions CreateDComSessionOptions()
         {
             DComSessionOptions dcomoptions = new();
@@ -545,7 +544,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Create WSMANSessionOptions.
         /// </summary>
-        /// <returns></returns>
         internal WSManSessionOptions CreateWSMANSessionOptions()
         {
             WSManSessionOptions wsmanoptions = new();

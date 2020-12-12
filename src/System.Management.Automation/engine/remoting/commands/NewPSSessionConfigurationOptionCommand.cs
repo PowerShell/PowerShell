@@ -341,7 +341,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ConstructQuotas.
         /// </summary>
-        /// <returns></returns>
         internal override string ConstructQuotas()
         {
             StringBuilder sb = new StringBuilder();
@@ -396,7 +395,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ConstructOptionsXmlAttributes.
         /// </summary>
-        /// <returns></returns>
         internal override string ConstructOptionsAsXmlAttributes()
         {
             StringBuilder sb = new StringBuilder();
@@ -416,7 +414,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ConstructOptionsXmlAttributes.
         /// </summary>
-        /// <returns></returns>
         internal override Hashtable ConstructOptionsAsHashtable()
         {
             Hashtable table = new Hashtable();

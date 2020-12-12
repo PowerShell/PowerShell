@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell.Cim
         /// <summary>
         /// </summary>
         /// <param name="baseObject"></param>
-        /// <returns></returns>
         public override System.Collections.ObjectModel.Collection<PSAdaptedProperty> GetProperties(object baseObject)
         {
             // baseObject should never be null
@@ -100,7 +99,6 @@ namespace Microsoft.PowerShell.Cim
         /// </summary>
         /// <param name="baseObject"></param>
         /// <param name="propertyName"></param>
-        /// <returns></returns>
         public override PSAdaptedProperty GetProperty(object baseObject, string propertyName)
         {
             if (propertyName == null)
@@ -194,7 +192,6 @@ namespace Microsoft.PowerShell.Cim
         /// <summary>
         /// </summary>
         /// <param name="adaptedProperty"></param>
-        /// <returns></returns>
         public override string GetPropertyTypeName(PSAdaptedProperty adaptedProperty)
         {
             if (adaptedProperty == null)
@@ -219,7 +216,6 @@ namespace Microsoft.PowerShell.Cim
         /// <summary>
         /// </summary>
         /// <param name="adaptedProperty"></param>
-        /// <returns></returns>
         public override object GetPropertyValue(PSAdaptedProperty adaptedProperty)
         {
             if (adaptedProperty == null)
@@ -282,7 +278,6 @@ namespace Microsoft.PowerShell.Cim
         /// <summary>
         /// </summary>
         /// <param name="baseObject"></param>
-        /// <returns></returns>
         public override Collection<string> GetTypeNameHierarchy(object baseObject)
         {
             if (!(baseObject is CimInstance cimInstance))
@@ -333,7 +328,6 @@ namespace Microsoft.PowerShell.Cim
         /// <summary>
         /// </summary>
         /// <param name="adaptedProperty"></param>
-        /// <returns></returns>
         public override bool IsGettable(PSAdaptedProperty adaptedProperty)
         {
             /* I was explicitly asked to only use MI_FLAG_READONLY for now
@@ -347,7 +341,6 @@ namespace Microsoft.PowerShell.Cim
         /// <summary>
         /// </summary>
         /// <param name="adaptedProperty"></param>
-        /// <returns></returns>
         public override bool IsSettable(PSAdaptedProperty adaptedProperty)
         {
             /* I was explicitly asked to only use MI_FLAG_READONLY for now

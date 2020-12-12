@@ -159,7 +159,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="clientRunspacePoolId">
         /// Id of the runspace to get
         /// </param>
-        /// <returns></returns>
         internal RemoteRunspacePoolInternal GetRunspacePool(Guid clientRunspacePoolId)
         {
             if (_remoteRunspacePool != null)

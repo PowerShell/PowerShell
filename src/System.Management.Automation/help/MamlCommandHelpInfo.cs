@@ -314,7 +314,6 @@ namespace System.Management.Automation
         /// <param name="propertyName">
         /// Name of the property for which text needs to be extracted.
         /// </param>
-        /// <returns></returns>
         private string ExtractTextForHelpProperty(PSObject psObject, string propertyName)
         {
             if (psObject == null)
@@ -335,7 +334,6 @@ namespace System.Management.Automation
         /// together and returns.
         /// </summary>
         /// <param name="psObject"></param>
-        /// <returns></returns>
         private string ExtractText(PSObject psObject)
         {
             if (psObject == null)
@@ -394,7 +392,6 @@ namespace System.Management.Automation
         /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
-        /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
             System.Management.Automation.Diagnostics.Assert(pattern != null, "pattern cannot be null");

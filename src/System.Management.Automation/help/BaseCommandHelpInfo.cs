@@ -348,7 +348,6 @@ namespace System.Management.Automation
         /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
-        /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
             Dbg.Assert(pattern != null, "pattern cannot be null");

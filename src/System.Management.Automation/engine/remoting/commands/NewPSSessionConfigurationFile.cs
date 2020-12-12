@@ -1994,7 +1994,6 @@ namespace Microsoft.PowerShell.Commands
         /// -RequiredGroups @{ Or = @{ And = 'Administrators', 'TrustedGroup1' }, @{ And = 'Power Users', 'TrustedGroup1' } }
         /// </summary>
         /// <param name="table"></param>
-        /// <returns></returns>
         internal static string CombineRequiredGroupsHash(IDictionary table)
         {
             if (table.Count != 1)

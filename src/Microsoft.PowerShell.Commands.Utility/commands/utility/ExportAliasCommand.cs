@@ -378,7 +378,6 @@ namespace Microsoft.PowerShell.Commands
         /// was cleared (due to the -Force parameter).  The attribute
         /// should be reset.
         /// </param>
-        /// <returns></returns>
         private StreamWriter OpenFile(out FileInfo readOnlyFileInfo)
         {
             StreamWriter result = null;

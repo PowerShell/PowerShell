@@ -225,7 +225,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="procNameFirstByte">The first byte of the name of the currently running process.</param>
         /// <param name="args">Arguments passed to the program.</param>
-        /// <returns></returns>
         private static bool IsLogin(
             byte procNameFirstByte,
             string[] args)
@@ -251,7 +250,6 @@ namespace Microsoft.PowerShell
         /// <param name="arg">The argument to check.</param>
         /// <param name="paramToCheck">The lowercase name of the parameter to check.</param>
         /// <param name="paramToCheckUpper">The uppercase name of the parameter to check.</param>
-        /// <returns></returns>
         private static bool IsParam(
             string arg,
             string paramToCheck,
@@ -495,7 +493,6 @@ namespace Microsoft.PowerShell
         /// <param name="oldlenp">The size of the object passed out of sysctl.</param>
         /// <param name="newp">The object passed in to sysctl.</param>
         /// <param name="newlenp">The length of the object passed in to sysctl.</param>
-        /// <returns></returns>
         [DllImport("libc",
             EntryPoint = "sysctl",
             CallingConvention = CallingConvention.Cdecl,

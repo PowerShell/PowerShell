@@ -68,7 +68,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cursorIndex"></param>
-        /// <returns></returns>
         public static Tuple<Ast, Token[], IScriptPosition> MapStringInputToParsedInput(string input, int cursorIndex)
         {
             if (cursorIndex > input.Length)
@@ -90,7 +89,6 @@ namespace System.Management.Automation
         /// <param name="input">The input to complete.</param>
         /// <param name="cursorIndex">The index of the cursor in the input.</param>
         /// <param name="options">Optional options to configure how completion is performed.</param>
-        /// <returns></returns>
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options)
         {
             if (input == null)
@@ -108,7 +106,6 @@ namespace System.Management.Automation
         /// <param name="tokens">Tokens for pre-parsed input.</param>
         /// <param name="positionOfCursor"></param>
         /// <param name="options">Optional options to configure how completion is performed.</param>
-        /// <returns></returns>
         public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
         {
             if (ast == null)
@@ -211,7 +208,6 @@ namespace System.Management.Automation
         /// <param name="cursorPosition"></param>
         /// <param name="options">Optional options to configure how completion is performed.</param>
         /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2.</param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, PowerShell powershell)
         {
@@ -717,7 +713,6 @@ namespace System.Management.Automation
             /// </summary>
             /// <param name="lastWord"></param>
             /// <param name="isSnapinSpecified"></param>
-            /// <returns></returns>
             private static bool PSv2IsCommandLikeCmdlet(string lastWord, out bool isSnapinSpecified)
             {
                 isSnapinSpecified = false;
@@ -759,7 +754,6 @@ namespace System.Management.Automation
             /// <param name="lastWord"></param>
             /// <param name="quote"></param>
             /// <param name="completingAtStartOfLine"></param>
-            /// <returns></returns>
             internal static List<CompletionResult> PSv2GenerateMatchSetOfCmdlets(PowerShellExecutionHelper helper, string lastWord, string quote, bool completingAtStartOfLine)
             {
                 var results = new List<CompletionResult>();

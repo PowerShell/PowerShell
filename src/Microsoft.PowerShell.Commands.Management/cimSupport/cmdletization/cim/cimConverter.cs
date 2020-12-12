@@ -588,7 +588,6 @@ namespace Microsoft.PowerShell.Cim
         /// Returns a type of CIM representation if conversion from/to CIM can be done purely with LanguagePrimitives.ConvertTo.
         /// </summary>
         /// <param name="dotNetType"></param>
-        /// <returns></returns>
         private static Type GetConvertibleCimType(Type dotNetType)
         {
             Dbg.Assert(

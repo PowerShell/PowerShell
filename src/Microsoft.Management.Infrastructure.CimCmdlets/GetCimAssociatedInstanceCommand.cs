@@ -245,7 +245,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Get-CimAssociatedInstance operations.
         /// </para>
         /// </summary>
-        /// <returns></returns>
         private CimGetAssociatedInstance CreateOperationAgent()
         {
             this.AsyncOperation = new CimGetAssociatedInstance();

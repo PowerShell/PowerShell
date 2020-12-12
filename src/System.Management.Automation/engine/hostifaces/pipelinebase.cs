@@ -167,7 +167,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// This internal method doesn't do the _disposed check.
         /// </summary>
-        /// <returns></returns>
         internal Runspace GetRunspace()
         {
             return _runspace;
@@ -751,7 +750,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// This returns true if pipeline state is Completed, Failed or Stopped.
         /// </summary>
-        /// <returns></returns>
         protected bool IsPipelineFinished()
         {
             return (PipelineState == PipelineState.Completed ||

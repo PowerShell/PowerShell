@@ -705,7 +705,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="operationContext">PVOID.</param>
         /// <param name="timedOut">BOOLEAN.</param>
-        /// <returns></returns>
         public static void PSPluginOperationShutdownCallback(
             object operationContext,
             bool timedOut)
@@ -777,7 +776,6 @@ namespace System.Management.Automation.Remoting
         /// Matches signature for WSManPluginManagedEntryWrapper.InitPlugin.
         /// </summary>
         /// <param name="wkrPtrs"></param>
-        /// <returns></returns>
         private delegate int InitPluginDelegate(
             IntPtr wkrPtrs);
 

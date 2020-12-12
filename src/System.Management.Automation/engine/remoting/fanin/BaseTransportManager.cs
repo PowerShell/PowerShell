@@ -1040,7 +1040,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="noInput">
         /// true if the command has input.
         /// </param>
-        /// <returns></returns>
         internal virtual BaseClientCommandTransportManager CreateClientCommandTransportManager(RunspaceConnectionInfo connectionInfo,
                     ClientRemotePowerShell cmd, bool noInput)
         {
@@ -1479,7 +1478,6 @@ namespace System.Management.Automation.Remoting.Server
         /// Server RunspacePool driver uses this method to attach to a server transport manager.
         /// </summary>
         /// <param name="powerShellCmdId"></param>
-        /// <returns></returns>
         internal abstract AbstractServerTransportManager GetCommandTransportManager(Guid powerShellCmdId);
         /// <summary>
         /// Server RunspacePool driver uses this method to remove association of a command transport manager

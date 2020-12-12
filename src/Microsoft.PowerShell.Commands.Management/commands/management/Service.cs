@@ -336,7 +336,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieve the list of all services matching the ServiceName,
         /// DisplayName, Include and Exclude parameters, sorted by ServiceName.
         /// </summary>
-        /// <returns></returns>
         internal List<ServiceController> MatchingServices()
         {
             List<ServiceController> matchingServices;
@@ -371,7 +370,6 @@ namespace Microsoft.PowerShell.Commands
         /// service name which is not found even though it contains
         /// no wildcards.
         /// </summary>
-        /// <returns></returns>
         /// <remarks>
         /// We do not use the ServiceController(string serviceName)
         /// constructor variant, since the resultant
@@ -440,7 +438,6 @@ namespace Microsoft.PowerShell.Commands
         /// display name which is not found even though it contains
         /// no wildcards.
         /// </summary>
-        /// <returns></returns>
         private List<ServiceController> MatchingServicesByDisplayName()
         {
             List<ServiceController> matchingServices = new();
@@ -483,7 +480,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieves the list of all services matching the InputObject,
         /// Include and Exclude parameters.
         /// </summary>
-        /// <returns></returns>
         private List<ServiceController> MatchingServicesByInput()
         {
             List<ServiceController> matchingServices = new();
@@ -541,7 +537,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="service"></param>
         /// <param name="matchList"></param>
-        /// <returns></returns>
         private bool Matches(ServiceController service, string[] matchList)
         {
             if (matchList == null)

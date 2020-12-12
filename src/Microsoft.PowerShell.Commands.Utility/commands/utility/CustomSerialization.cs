@@ -517,7 +517,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="derived"></param>
         /// <param name="baseType"></param>
-        /// <returns></returns>
         private static bool DerivesFromGenericType(Type derived, Type baseType)
         {
             Dbg.Assert(derived != null, "caller should validate the parameter");
@@ -696,7 +695,6 @@ namespace System.Management.Automation
         /// <param name="writeEnclosingMemberSetElementTag">
         /// if this is true, write an enclosing "<memberset></memberset>" tag.
         /// </param>
-        /// <returns></returns>
         private void WriteMemberInfoCollection(
             PSMemberInfoCollection<PSMemberInfo> me, int depth, bool writeEnclosingMemberSetElementTag)
         {
@@ -1009,7 +1007,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">PSObject whose serialization depth has to be computed.</param>
         /// <param name="depth">Current depth.</param>
-        /// <returns></returns>
         private static int GetDepthOfSerialization(PSObject source, int depth)
         {
             if (source == null)

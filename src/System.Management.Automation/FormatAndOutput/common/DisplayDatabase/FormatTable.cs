@@ -299,7 +299,6 @@ namespace System.Management.Automation.Runspaces
         /// Returns a format table instance with all default
         /// format files loaded.
         /// </summary>
-        /// <returns></returns>
         public static FormatTable LoadDefaultFormatFiles()
         {
             string psHome = Utils.DefaultPowerShellAppBase;

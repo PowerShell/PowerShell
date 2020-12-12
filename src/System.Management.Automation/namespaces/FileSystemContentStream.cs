@@ -412,7 +412,6 @@ namespace Microsoft.PowerShell.Commands
         /// Read the content regardless of the 'waitForChanges' flag.
         /// </summary>
         /// <param name="readCount"></param>
-        /// <returns></returns>
         internal IList ReadWithoutWaitingChanges(long readCount)
         {
             bool oldWaitChanges = _waitForChanges;
@@ -1173,7 +1172,6 @@ namespace Microsoft.PowerShell.Commands
         /// If the given encoding is OEM or Default, check to see if the code page
         /// is SBCS(single byte character set).
         /// </summary>
-        /// <returns></returns>
         private bool IsSingleByteCharacterSet()
         {
             if (_singleByteCharSet != null)
@@ -1203,7 +1201,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="buffer"></param>
         /// <param name="index"></param>
         /// <param name="count"></param>
-        /// <returns></returns>
         public override int ReadBlock(char[] buffer, int index, int count)
         {
             // This method is not supposed to be used
@@ -1213,7 +1210,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// We don't support this method because it is not used by the ReadBackward method in FileStreamContentReaderWriter.
         /// </summary>
-        /// <returns></returns>
         public override string ReadToEnd()
         {
             // This method is not supposed to be used
@@ -1236,7 +1232,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return the current actual stream position.
         /// </summary>
-        /// <returns></returns>
         internal long GetCurrentPosition()
         {
             if (_charCount == 0)
@@ -1252,7 +1247,6 @@ namespace Microsoft.PowerShell.Commands
         /// be encoded to.
         /// </summary>
         /// <param name="delimiter"></param>
-        /// <returns></returns>
         internal int GetByteCount(string delimiter)
         {
             char[] chars = delimiter.ToCharArray();
@@ -1409,7 +1403,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Refill the internal character buffer.
         /// </summary>
-        /// <returns></returns>
         private int RefillCharBuffer()
         {
             if ((RefillByteBuff()) == -1)
@@ -1424,7 +1417,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Refill the internal byte buffer.
         /// </summary>
-        /// <returns></returns>
         private int RefillByteBuff()
         {
             long lengthLeft = _stream.Position;
@@ -1522,7 +1514,6 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="codePage"></param>
             /// <param name="lpCpInfo"></param>
-            /// <returns></returns>
             [DllImport(PinvokeDllNames.GetCPInfoDllName, CharSet = CharSet.Unicode, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool GetCPInfo(uint codePage, out CPINFO lpCpInfo);

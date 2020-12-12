@@ -913,7 +913,6 @@ namespace System.Management.Automation.Provider
         /// Test if the path is an absolute path.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         private bool IsAbsolutePath(string path)
         {
             bool result = false;

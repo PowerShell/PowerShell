@@ -159,7 +159,6 @@ namespace System.Management.Automation
         /// DetailedDescription.
         /// </summary>
         /// <param name="pattern"></param>
-        /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
             Diagnostics.Assert(pattern != null, "pattern cannot be null");

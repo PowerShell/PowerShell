@@ -495,7 +495,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Queries PSObject and determines if ComputerName property should be shown.
         /// </summary>
         /// <param name="so"></param>
-        /// <returns></returns>
         internal static bool ShouldShowComputerNameProperty(PSObject so)
         {
             bool result = false;

@@ -218,7 +218,6 @@ namespace Microsoft.PowerShell.Commands
         /// Check for debuggable job.  Job must implement IJobDebugger and also
         /// must be running or in Debug stopped state.
         /// </summary>
-        /// <returns></returns>
         private bool CheckForDebuggableJob()
         {
             // Check passed in job object.

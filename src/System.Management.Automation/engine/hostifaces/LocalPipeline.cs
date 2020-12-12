@@ -929,7 +929,6 @@ namespace System.Management.Automation.Runspaces
         /// Resolves command.CommandInfo to an appropriate CommandProcessorBase implementation.
         /// </summary>
         /// <param name="command">Command to resolve.</param>
-        /// <returns></returns>
         private CommandProcessorBase CreateCommandProcessBase(Command command)
         {
             CommandInfo commandInfo = command.CommandInfo;

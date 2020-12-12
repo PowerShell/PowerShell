@@ -434,7 +434,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// is found then validation fails.
         /// </summary>
         /// <param name="definition"></param>
-        /// <returns></returns>
         private bool ValidateJobDefinition(ScheduledJobDefinition definition)
         {
             Exception ex = null;

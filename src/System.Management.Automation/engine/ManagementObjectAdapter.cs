@@ -76,7 +76,6 @@ namespace System.Management.Automation
         /// <param name="managementObj"></param>
         /// <param name="dotnetBaseType"></param>
         /// <param name="shouldIncludeNamespace"></param>
-        /// <returns></returns>
         private static IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
             string dotnetBaseType, bool shouldIncludeNamespace)
         {
@@ -255,7 +254,6 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMember to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMember.</param>
-        /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             WMIMethodCacheEntry methodEntry = (WMIMethodCacheEntry)method.adapterData;
@@ -530,7 +528,6 @@ namespace System.Management.Automation
         /// retrieving method/property/parameter metadata.
         /// </summary>
         /// <param name="mgmtBaseObject"></param>
-        /// <returns></returns>
         private static ManagementClass CreateClassFrmObject(ManagementBaseObject mgmtBaseObject)
         {
             // Construct a ManagementClass object for this object to get the member metadata
@@ -800,7 +797,6 @@ namespace System.Management.Automation
         /// Gets WMI method information.
         /// </summary>
         /// <param name="mData"></param>
-        /// <returns></returns>
         /// <remarks>
         /// Decodes only input parameters.
         /// </remarks>
@@ -989,7 +985,6 @@ namespace System.Management.Automation
         /// <param name="wmiObject">ManagementObject on which the method is invoked.</param>
         /// <param name="methodName">Method data.</param>
         /// <param name="inParams">Method arguments.</param>
-        /// <returns></returns>
         protected override object InvokeManagementMethod(ManagementObject wmiObject,
             string methodName, ManagementBaseObject inParams)
         {
@@ -1179,7 +1174,6 @@ namespace System.Management.Automation
         /// <param name="obj">ManagementObject on which the method is invoked.</param>
         /// <param name="methodName">Method data.</param>
         /// <param name="inParams">Method arguments.</param>
-        /// <returns></returns>
         protected override object InvokeManagementMethod(ManagementObject obj, string methodName, ManagementBaseObject inParams)
         {
             tracer.WriteLine("Invoking class method: {0}", methodName);

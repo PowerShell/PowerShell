@@ -514,7 +514,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// Connects to a single named datasource, initializing m_hDataSource variable.
         /// </summary>
         /// <param name="dataSourceName"></param>
-        /// <returns></returns>
         public uint ConnectToDataSource(string dataSourceName)
         {
             if (_hDataSource != null && !_hDataSource.IsInvalid)

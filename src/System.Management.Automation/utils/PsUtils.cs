@@ -132,7 +132,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Return true/false to indicate whether the processor architecture is ARM.
         /// </summary>
-        /// <returns></returns>
         internal static bool IsRunningOnProcessorArchitectureARM()
         {
             Architecture arch = RuntimeInformation.OSArchitecture;
@@ -245,7 +244,6 @@ namespace System.Management.Automation
         /// <param name="psDataFilePath"></param>
         /// <param name="context"></param>
         /// <param name="skipPathValidation"></param>
-        /// <returns></returns>
         internal static Hashtable EvaluatePowerShellDataFileAsModuleManifest(
                                      string parameterName,
                                      string psDataFilePath,
@@ -288,7 +286,6 @@ namespace System.Management.Automation
         /// <param name="skipPathValidation">
         /// If true, caller guarantees the path is valid
         /// </param>
-        /// <returns></returns>
         internal static Hashtable EvaluatePowerShellDataFile(
                                      string parameterName,
                                      string psDataFilePath,
@@ -516,7 +513,6 @@ namespace System.Management.Automation
         /// Decodes base64 encoded string in to args array.
         /// </summary>
         /// <param name="base64"></param>
-        /// <returns></returns>
         internal static object[] Base64ToArgsConverter(string base64)
         {
             if (string.IsNullOrEmpty(base64))

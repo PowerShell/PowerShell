@@ -935,7 +935,6 @@ namespace System.Management.Automation
         /// Check if the passed in process is a windows application.
         /// </summary>
         /// <param name="fileName"></param>
-        /// <returns></returns>
         [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
@@ -1102,7 +1101,6 @@ namespace System.Management.Automation
         /// <param name="redirectError"></param>
         /// <param name="redirectInput"></param>
         /// <param name="soloCommand"></param>
-        /// <returns></returns>
         private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -1439,7 +1437,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if native command being invoked is mini-shell.
         /// </summary>
-        /// <returns></returns>
         /// <remarks>
         /// If any of the argument supplied to native command is script block,
         /// we assume it is minishell.
@@ -1980,7 +1977,6 @@ namespace System.Management.Automation
         /// hide it and return true. If there's already a console window attached, then
         /// just return false.
         /// </summary>
-        /// <returns></returns>
         internal static bool AllocateHiddenConsole()
         {
             // See if there is already a console attached.

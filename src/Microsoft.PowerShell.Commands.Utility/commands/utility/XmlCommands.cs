@@ -1141,7 +1141,6 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the string representation of this object. The format
         /// depends on whether a path has been set for this object or not.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return ToString(null);
@@ -1151,7 +1150,6 @@ namespace Microsoft.PowerShell.Commands
         /// Return String representation of the object.
         /// </summary>
         /// <param name="directory"></param>
-        /// <returns></returns>
         private string ToString(string directory)
         {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
@@ -1161,7 +1159,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the XmlNode Value or InnerXml.
         /// </summary>
-        /// <returns></returns>
         internal string GetNodeText()
         {
             string nodeText = string.Empty;
@@ -1215,7 +1212,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="text"></param>
         /// <param name="displaypath"></param>
-        /// <returns></returns>
         private string FormatLine(string text, string displaypath)
         {
             if (_path.Equals(inputStream))

@@ -389,7 +389,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">The flag that indicate manifest processing option.</param>
         /// <param name="importModuleOptions">The set of options that are used while importing a module.</param>
         /// <param name="found">True if a module was found.</param>
-        /// <returns></returns>
         internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ManifestProcessingFlags manifestProcessingFlags, ImportModuleOptions importModuleOptions, out bool found)
         {
             PSModuleInfo foundModule = null;
@@ -1170,7 +1169,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="file">The module file.</param>
         /// <param name="refresh">True if we should update any cached module info for this module.</param>
-        /// <returns></returns>
         private PSModuleInfo CreateModuleInfoForGetModule(string file, bool refresh)
         {
             // Ensure we don't have any recursion in module lookup
@@ -1332,7 +1330,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="maximumVersion">The maximum version to check the manifest against.</param>
         /// <param name="requiredVersion">The version to check the manifest against.</param>
         /// <param name="requiredModuleGuid">The module guid to check the manifest against.</param>
-        /// <returns></returns>
         internal PSModuleInfo LoadModuleManifest(
             ExternalScriptInfo scriptInfo,
             ManifestProcessingFlags manifestProcessingFlags,
@@ -1355,7 +1352,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="requiredVersion">The version to check the manifest against.</param>
         /// <param name="requiredModuleGuid">The module guid to check the manifest against.</param>
         /// <param name="options">The set of options that are used while importing a module.</param>
-        /// <returns></returns>
         internal PSModuleInfo LoadModuleManifest(
             ExternalScriptInfo scriptInfo,
             ManifestProcessingFlags manifestProcessingFlags,
@@ -1472,7 +1468,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="requiredModuleGuid">The module guid to check the manifest against.</param>
         /// <param name="options">The set of options that are used while importing a module.</param>
         /// <param name="containedErrors">Tracks if there were errors in the file.</param>
-        /// <returns></returns>
         internal PSModuleInfo LoadModuleManifest(
             string moduleManifestPath,
             ExternalScriptInfo manifestScriptInfo,
@@ -4037,7 +4032,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="rootedModulePath"></param>
         /// <param name="extension"></param>
         /// <param name="nestedModuleInfoIfAvailable"></param>
-        /// <returns></returns>
         internal bool VerifyIfNestedModuleIsAvailable(ModuleSpecification nestedModuleSpec,
             string rootedModulePath,
             string extension,
@@ -4268,7 +4262,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="list">Returns the extracted version.</param>
-        /// <returns></returns>
         internal bool GetListOfStringsFromData(
             Hashtable data,
             string moduleManifestPath,
@@ -4307,7 +4300,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="key">The table key to use.</param>
         /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="list">Returns the extracted version.</param>
-        /// <returns></returns>
         private bool GetListOfWildcardsFromData(
             Hashtable data,
             string moduleManifestPath,
@@ -4363,7 +4355,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="extension">Expected file extension (added to strings that didn't have an extension).</param>
         /// <param name="verifyFilesExist">If <see langword="true"/> then we want to error out if the specified files don't exist.</param>
         /// <param name="list">Returns the extracted version.</param>
-        /// <returns></returns>
         private bool GetListOfFilesFromData(
             Hashtable data,
             string moduleManifestPath,
@@ -4647,7 +4638,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleBase">The base path to use if the file is not rooted.</param>
         /// <param name="path">The file name to resolve.</param>
-        /// <returns></returns>
         internal string GetAbsolutePath(string moduleBase, string path)
         {
             if (!IsRooted(path) && (path.Contains('/') || path.Contains('\\')))
@@ -5328,7 +5318,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="options">The set of options that are used while importing a module.</param>
         /// <param name="manifestProcessingFlags">The processing flags to use when processing the module.</param>
         /// <param name="found">True if a module was found.</param>
-        /// <returns></returns>
         internal PSModuleInfo LoadUsingExtensions(PSModuleInfo parentModule,
             string moduleName, string fileBaseName, string extension, string moduleBase,
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out bool found)
@@ -5355,7 +5344,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="manifestProcessingFlags">The processing flags to use when processing the module.</param>
         /// <param name="found">True if a module was found.</param>
         /// <param name="moduleFileFound">True if a module file was found.</param>
-        /// <returns></returns>
         internal PSModuleInfo LoadUsingExtensions(PSModuleInfo parentModule,
             string moduleName, string fileBaseName, string extension, string moduleBase,
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out bool found, out bool moduleFileFound)

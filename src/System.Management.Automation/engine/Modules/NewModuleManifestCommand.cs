@@ -621,7 +621,6 @@ namespace Microsoft.PowerShell.Commands
         /// object that is not of type hashtable or string.
         /// </summary>
         /// <param name="moduleSpecs"></param>
-        /// <returns></returns>
         private static IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
         {
             if (moduleSpecs != null)
@@ -834,7 +833,6 @@ namespace Microsoft.PowerShell.Commands
         /// Glob a set of files then resolve them to relative paths.
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
         private List<string> TryResolveFilePath(string filePath)
         {
             List<string> result = new List<string>();
@@ -884,7 +882,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resourceString">ResourceString that holds the message.</param>
         /// <param name="value">The formatted manifest fragment.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
-        /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}",

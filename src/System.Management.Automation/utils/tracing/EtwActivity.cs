@@ -286,7 +286,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Creates a new ActivityId that can be used to set in the thread's context.
         /// </summary>
-        /// <returns></returns>
         public static Guid CreateActivityId()
         {
             return EventProvider.CreateActivityId();
@@ -295,7 +294,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Returns the ActivityId set in current thread.
         /// </summary>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         public static Guid GetActivityId()
         {
@@ -368,7 +366,6 @@ namespace System.Management.Automation.Tracing
         /// Wraps a callback with no params.
         /// </summary>
         /// <param name="callback"></param>
-        /// <returns></returns>
         public CallbackNoParameter Correlate(CallbackNoParameter callback)
         {
             if (callback == null)
@@ -383,7 +380,6 @@ namespace System.Management.Automation.Tracing
         /// Wraps a callback with one object param.
         /// </summary>
         /// <param name="callback"></param>
-        /// <returns></returns>
         public CallbackWithState Correlate(CallbackWithState callback)
         {
             if (callback == null)
@@ -398,7 +394,6 @@ namespace System.Management.Automation.Tracing
         /// Wraps a AsyncCallback with IAsyncResult param.
         /// </summary>
         /// <param name="callback"></param>
-        /// <returns></returns>
         public AsyncCallback Correlate(AsyncCallback callback)
         {
             if (callback == null)
@@ -414,7 +409,6 @@ namespace System.Management.Automation.Tracing
         /// This is menat to be used in System.Timers.Timer scenarios.
         /// </summary>
         /// <param name="callback"></param>
-        /// <returns></returns>
         public CallbackWithStateAndArgs Correlate(CallbackWithStateAndArgs callback)
         {
             if (callback == null)

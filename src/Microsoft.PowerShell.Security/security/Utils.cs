@@ -52,7 +52,6 @@ namespace Microsoft.PowerShell
         /// <param name="resourceStr">Resource string.</param>
         /// <param name="errorId">Error identifier.</param>
         /// <param name="args">Replacement params for resource string formatting.</param>
-        /// <returns></returns>
         internal static
         ErrorRecord CreateFileNotFoundErrorRecord(string resourceStr,
                                                   string errorId,
@@ -103,7 +102,6 @@ namespace Microsoft.PowerShell
         /// <param name="resourceStr">Resource string.</param>
         /// <param name="errorId">Error identifier.</param>
         /// <param name="args">Replacement params for resource string formatting.</param>
-        /// <returns></returns>
         internal static
         ErrorRecord CreateNotSupportedErrorRecord(string resourceStr,
                                                   string errorId,
@@ -128,7 +126,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="e">Exception to include in ErrorRecord.</param>
         /// <param name="errorId">Error identifier.</param>
-        /// <returns></returns>
         internal static
         ErrorRecord CreateInvalidArgumentErrorRecord(Exception e,
                                                      string errorId)

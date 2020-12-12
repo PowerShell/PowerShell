@@ -180,7 +180,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="arrayInstance"></param>
-        /// <returns></returns>
         private static object ConvertCimInstanceHashtable(string providerName, CimInstance[] arrayInstance)
         {
             var result = new Hashtable();
@@ -217,7 +216,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="providerName"></param>
         /// <param name="propertyInstance"></param>
-        /// <returns></returns>
         private static object ConvertCimInstancePsCredential(string providerName, CimInstance propertyInstance)
         {
             string errorMessage;
@@ -289,7 +287,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         /// </summary>
         /// <param name="engineIntrinsics"></param>
         /// <param name="inputData"></param>
-        /// <returns></returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
             var configDataPath = inputData as string;
@@ -345,7 +342,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         /// <summary>
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "3#", Justification = "Have to return 2 things.  Wrapping those 2 things in a class will result in a more, not less complexity")]
         internal List<CimInstance> ParseInstanceMof(string filePath)
         {
@@ -370,7 +366,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         /// Read file content to byte array.
         /// </summary>
         /// <param name="fullFilePath"></param>
-        /// <returns></returns>
         internal static byte[] GetFileContent(string fullFilePath)
         {
             if (string.IsNullOrEmpty(fullFilePath))
@@ -413,7 +408,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         /// <summary>
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "3#", Justification = "Have to return 2 things.  Wrapping those 2 things in a class will result in a more, not less complexity")]
         internal List<CimClass> ParseSchemaMof(string filePath)
         {
@@ -864,7 +858,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="isPsProviderModule">
         /// Indicate a internal DSC module
         /// </param>
-        /// <returns></returns>
         private static Tuple<string, Version> GetModuleInfoHelper(string moduleFolderPath, bool importInBoxResourcesImplicitly, bool isPsProviderModule)
         {
             string moduleName = "PsDesiredStateConfiguration";
@@ -952,7 +945,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleInfo"></param>
         /// <param name="errors"></param>
         /// <param name="importInBoxResourcesImplicitly"></param>
-        /// <returns></returns>
         public static List<CimClass> ImportClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly = false)
         {
             if (string.IsNullOrEmpty(path))
@@ -1092,7 +1084,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="moduleVersion"></param>
         /// <param name="className"></param>
         /// <param name="resourceName"></param>
-        /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
@@ -1120,7 +1111,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         private static List<DscClassCacheEntry> GetCachedClasses()
         {
             return ClassCache.Values.ToList();
@@ -1150,7 +1140,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Get the file that defined this class.
         /// </summary>
         /// <param name="className"></param>
-        /// <returns></returns>
         public static List<string> GetFileDefiningClass(string className)
         {
             List<string> files = new();
@@ -1170,7 +1159,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Get a list of files from which classes have been loaded.
         /// </summary>
-        /// <returns></returns>
         public static string[] GetLoadedFiles()
         {
             return ByFileClassCache.Keys.ToArray();
@@ -1180,7 +1168,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Returns the classes that we loaded from the specified file name.
         /// </summary>
         /// <param name="fileName"></param>
-        /// <returns></returns>
         public static List<CimClass> GetCachedClassByFileName(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
@@ -1198,7 +1185,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Per PowerShell the module name is the base name of the schema file.
         /// </summary>
         /// <param name="moduleName"></param>
-        /// <returns></returns>
         public static List<CimClass> GetCachedClassByModuleName(string moduleName)
         {
             if (string.IsNullOrWhiteSpace(moduleName))
@@ -1215,7 +1201,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// current set of cached classes for schema validation.
         /// </summary>
         /// <param name="path">The file to load the classes from.</param>
-        /// <returns></returns>
         public static List<CimInstance> ImportInstances(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -1234,7 +1219,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="path"></param>
         /// <param name="schemaValidationOption"></param>
-        /// <returns></returns>
         public static List<CimInstance> ImportInstances(string path, int schemaValidationOption)
         {
             if (string.IsNullOrEmpty(path))
@@ -2562,7 +2546,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="resourceDefinitions"></param>
         /// <param name="errorList"></param>
         /// <param name="extent"></param>
-        /// <returns></returns>
         private static bool GetResourceDefinitionsFromModule(string fileName, out IEnumerable<Ast> resourceDefinitions, List<ParseError> errorList, IScriptExtent extent)
         {
             resourceDefinitions = null;
@@ -2635,7 +2618,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="functionsToDefine"></param>
         /// <param name="errorList"></param>
         /// <param name="extent"></param>
-        /// <returns></returns>
         private static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, List<ParseError> errorList, IScriptExtent extent)
         {
             IEnumerable<Ast> resourceDefinitions;
@@ -3004,7 +2986,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// </summary>
         /// <param name="type"></param>
-        /// <returns></returns>
         public static string GenerateMofForType(Type type)
         {
             var embeddedInstanceTypes = new List<object>();
@@ -3194,7 +3175,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="module"></param>
         /// <param name="resourceName"></param>
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
-        /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath)
         {
             return ImportCimKeywordsFromModule(module, resourceName, out schemaFilePath, null);
@@ -3207,7 +3187,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="resourceName"></param>
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
         /// <param name="functionsToDefine"></param>
-        /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine)
         {
             return ImportCimKeywordsFromModule(module, resourceName, out schemaFilePath, functionsToDefine, null);
@@ -3221,7 +3200,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="schemaFilePath">Full path of the loaded schema file...</param>
         /// <param name="functionsToDefine"></param>
         /// <param name="errors">Error reported during deserialization.</param>
-        /// <returns></returns>
         public static bool ImportCimKeywordsFromModule(PSModuleInfo module, string resourceName, out string schemaFilePath, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
             if (module == null)
@@ -3376,7 +3354,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="badDependsOnReference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
-        /// <returns></returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3391,7 +3368,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="badExclusiveResourcereference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
-        /// <returns></returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3405,7 +3381,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// If a partial configuration is in 'Pull' Mode, it needs a configuration source.
         /// </summary>
         /// <param name="resourceId"></param>
-        /// <returns></returns>
         public static ErrorRecord GetPullModeNeedConfigurationSource(string resourceId)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3419,7 +3394,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Refresh Mode can not be Disabled for the Partial Configurations.
         /// </summary>
         /// <param name="resourceId"></param>
-        /// <returns></returns>
         public static ErrorRecord DisabledRefreshModeNotValidForPartialConfig(string resourceId)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3448,7 +3422,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Returns an error record to use in the case of a configuration name is invalid.
         /// </summary>
         /// <param name="configurationName"></param>
-        /// <returns></returns>
         public static ErrorRecord InvalidConfigurationNameErrorRecord(string configurationName)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3465,7 +3438,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="value"></param>
         /// <param name="keywordName"></param>
         /// <param name="validValues"></param>
-        /// <returns></returns>
         public static ErrorRecord InvalidValueForPropertyErrorRecord(string propertyName, string value, string keywordName, string validValues)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3480,7 +3452,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="validProperties"></param>
-        /// <returns></returns>
         public static ErrorRecord InvalidLocalConfigurationManagerPropertyErrorRecord(string propertyName, string validProperties)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3497,7 +3468,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="value"></param>
         /// <param name="keywordName"></param>
         /// <param name="validValues"></param>
-        /// <returns></returns>
         public static ErrorRecord UnsupportedValueForPropertyErrorRecord(string propertyName, string value, string keywordName, string validValues)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3513,7 +3483,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="keywordName"></param>
         /// <param name="typeName"></param>
         /// <param name="propertyName"></param>
-        /// <returns></returns>
         public static ErrorRecord MissingValueForMandatoryPropertyErrorRecord(string keywordName, string typeName, string propertyName)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3526,7 +3495,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// Returns an error record to use in the case of more than one values are provided for DebugMode property.
         /// </summary>
-        /// <returns></returns>
         public static ErrorRecord DebugModeShouldHaveOneValue()
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3544,7 +3512,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="providedValue"></param>
         /// <param name="lower"></param>
         /// <param name="upper"></param>
-        /// <returns></returns>
         public static ErrorRecord ValueNotInRangeErrorRecord(string property, string name, int providedValue, int lower, int upper)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3558,7 +3525,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value.
         /// </summary>
         /// <param name="resourceId">ResourceId of resource.</param>
-        /// <returns></returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -3586,7 +3552,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         ///        }
         /// </summary>
         /// <param name="keyword"></param>
-        /// <returns></returns>
         public static string GetDSCResourceUsageString(DynamicKeyword keyword)
         {
             StringBuilder usageString;
@@ -3660,7 +3625,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         /// <param name="prop"></param>
         /// <param name="isOptionalProperty"></param>
-        /// <returns></returns>
         private static StringBuilder FormatCimPropertyType(DynamicKeywordProperty prop, bool isOptionalProperty)
         {
             string cimTypeName = prop.TypeConstraint;

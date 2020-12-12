@@ -167,7 +167,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Computes the total table width from the column width array.
         /// </summary>
         /// <param name="columnWidths">Column widths array.</param>
-        /// <returns></returns>
         private int CurrentTableWidth(Span<int> columnWidths)
         {
             int sum = 0;

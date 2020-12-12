@@ -1115,7 +1115,6 @@ namespace Microsoft.WSMan.Management
         /// from %windir%\system32\winrm\[Hexadecimal Language Folder]\winrm.ini.
         /// </summary>
         /// <param name="Key"></param>
-        /// <returns></returns>
         internal static string GetResourceString(string Key)
         {
             // Checks whether resource values already loaded and loads.

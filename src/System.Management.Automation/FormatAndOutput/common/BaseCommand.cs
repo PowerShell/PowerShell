@@ -327,7 +327,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Get a hold of the Monad outer Cmdlet.
         /// </summary>
-        /// <returns></returns>
         internal virtual PSCmdlet OuterCmdlet()
         {
             // delegate to the front end object

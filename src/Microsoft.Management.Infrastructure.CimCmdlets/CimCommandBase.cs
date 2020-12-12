@@ -327,7 +327,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Get the parameter set name based on current binding results.
         /// </summary>
-        /// <returns></returns>
         internal string GetParameterSet()
         {
             DebugHelper.WriteLogEx();
@@ -870,7 +869,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="psCredentials"></param>
         /// <param name="passwordAuthentication"></param>
-        /// <returns></returns>
         internal CimCredential CreateCimCredentials(PSCredential psCredentials,
             PasswordAuthenticationMechanism passwordAuthentication,
             string operationName,

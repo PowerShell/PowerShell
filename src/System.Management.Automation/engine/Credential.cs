@@ -78,7 +78,6 @@ namespace System.Management.Automation
     /// <param name="context">The streaming context, which contains the serialization context.</param>
     /// <param name="key">Symmetric encryption key.</param>
     /// <param name="iv">Symmetric encryption initialization vector.</param>
-    /// <returns></returns>
     public delegate bool GetSymmetricEncryptionKey(StreamingContext context, out byte[] key, out byte[] iv);
 
     /// <summary>

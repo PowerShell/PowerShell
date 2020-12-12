@@ -346,7 +346,6 @@ namespace System.Management.Automation
         /// <param name="isDynamic">
         /// Special operation needed if the default binding happens at the dynamic binding stage
         /// </param>
-        /// <returns></returns>
         private void ApplyDefaultParameterBinding(string bindingStage, bool isDynamic)
         {
             if (!_useDefaultParameterBinding)
@@ -471,7 +470,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Wrap up current binding state to provide more information to the user.
         /// </summary>
-        /// <returns></returns>
         private PSObject WrapBindingState()
         {
             HashSet<string> boundParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -553,7 +551,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the aliases of the current cmdlet.
         /// </summary>
-        /// <returns></returns>
         private List<string> GetAliasOfCurrentCmdlet()
         {
             var results = Context.SessionState.Internal.GetAliasesByCommandName(_commandMetadata.Name).ToList();
@@ -565,7 +562,6 @@ namespace System.Management.Automation
         /// Check if the passed-in aliasName matches an alias name in _aliasList.
         /// </summary>
         /// <param name="aliasName"></param>
-        /// <returns></returns>
         private bool MatchAnyAlias(string aliasName)
         {
             if (_aliasList == null)
@@ -4451,7 +4447,6 @@ namespace System.Management.Automation
         /// Override the indexing to check for key's format and make it versionable.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
         public override object this[object key]
         {
             get

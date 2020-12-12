@@ -523,7 +523,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the members for the TypeData.
         /// </summary>
-        /// <returns></returns>
         private void GetMembers(Dictionary<string, TypeMemberData> members)
         {
             if (!_isMemberTypeSet)
@@ -745,7 +744,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="template"></param>
         /// <param name="targetObject"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         private static ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);

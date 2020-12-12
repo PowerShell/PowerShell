@@ -150,7 +150,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">The file path to resolve.</param>
         /// <param name="literalPath">The paths to process.</param>
-        /// <returns></returns>
         private List<string> ResolvePaths(string[] path, bool literalPath)
         {
             List<string> pathsToProcess = new();

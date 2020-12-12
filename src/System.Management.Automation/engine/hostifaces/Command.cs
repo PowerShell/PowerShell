@@ -202,7 +202,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return CommandText;
@@ -444,7 +443,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="executionContext"></param>
         /// <param name="addToHistory"></param>
         /// <param name="origin"></param>
-        /// <returns></returns>
         internal
         CommandProcessorBase
         CreateCommandProcessor

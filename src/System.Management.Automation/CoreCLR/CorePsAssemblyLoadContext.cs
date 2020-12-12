@@ -452,7 +452,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="requestedAssembly">AssemblyName of the requested assembly.</param>
         /// <param name="loadedAssembly">AssemblyName of the loaded assembly.</param>
-        /// <returns></returns>
         private static bool IsAssemblyMatching(AssemblyName requestedAssembly, AssemblyName loadedAssembly)
         {
             //

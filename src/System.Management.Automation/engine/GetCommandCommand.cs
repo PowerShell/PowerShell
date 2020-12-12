@@ -655,7 +655,6 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="x"></param>
             /// <param name="y"></param>
-            /// <returns></returns>
             public int Compare(CommandInfo x, CommandInfo y)
             {
                 if ((int)x.CommandType < (int)y.CommandType)

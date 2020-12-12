@@ -220,7 +220,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             string computerName,
             NewCimInstanceCommand cmdlet)
@@ -236,7 +235,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             CimSession session,
             NewCimInstanceCommand cmdlet)
@@ -256,7 +254,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="key"></param>
         /// <param name="properties"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
         /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimInstance CreateCimInstance(
@@ -322,7 +319,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimClass"></param>
         /// <param name="properties"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentNullException">See CimProperty.Create.</exception>
         /// <exception cref="ArgumentException">CimProperty.Create.</exception>
         private CimInstance CreateCimInstance(

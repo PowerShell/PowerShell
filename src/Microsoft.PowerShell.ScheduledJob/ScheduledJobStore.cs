@@ -91,7 +91,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="fileMode">File mode.</param>
         /// <param name="fileAccess">File share.</param>
         /// <param name="fileShare">File share.</param>
-        /// <returns></returns>
         public static FileStream GetFileForJobDefinition(
             string definitionName,
             string definitionPath,
@@ -573,7 +572,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="outputPath">Definition job run output path.</param>
         /// <param name="runItem">Result type.</param>
         /// <param name="runStart">Run date.</param>
-        /// <returns></returns>
         private static string GetRunFilePathNameFromPath(
             string outputPath,
             JobRunItem runItem,
@@ -629,7 +627,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="jobRunName"></param>
         /// <param name="jobRun"></param>
-        /// <returns></returns>
         internal static bool ConvertJobRunNameToDateTime(string jobRunName, out DateTime jobRun)
         {
             if (jobRunName == null || jobRunName.Length != 19)

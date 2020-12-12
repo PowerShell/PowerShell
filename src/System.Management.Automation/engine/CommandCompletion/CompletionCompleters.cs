@@ -49,7 +49,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="commandName"></param>
-        /// <returns></returns>
         public static IEnumerable<CompletionResult> CompleteCommand(string commandName)
         {
             return CompleteCommand(commandName, null);
@@ -60,7 +59,6 @@ namespace System.Management.Automation
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
         /// <param name="commandTypes"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<CompletionResult> CompleteCommand(string commandName, string moduleName, CommandTypes commandTypes = CommandTypes.All)
         {
@@ -590,7 +588,6 @@ namespace System.Management.Automation
         /// <param name="bindingInfo"></param>
         /// <param name="parameterAst"></param>
         /// <param name="withColon"></param>
-        /// <returns></returns>
         private static List<CompletionResult> GetParameterCompletionResults(string parameterName, PseudoBindingInfo bindingInfo, CommandParameterAst parameterAst, bool withColon)
         {
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "The pseudo binding should succeed");
@@ -725,7 +722,6 @@ namespace System.Management.Automation
         /// <param name="validParameterSetFlags"></param>
         /// <param name="parameters"></param>
         /// <param name="withColon"></param>
-        /// <returns></returns>
         private static List<CompletionResult> GetParameterCompletionResults(
             string parameterName,
             uint validParameterSetFlags,
@@ -4001,7 +3997,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="prev">The argument that is right before the 'tab' location.</param>
         /// <param name="position">The number of positional arguments before the 'tab' location.</param>
-        /// <returns></returns>
         private static ArgumentLocation GenerateArgumentLocation(AstParameterArgumentPair prev, int position)
         {
             // Tab is typed before the first argument
@@ -4034,7 +4029,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="parsedArguments"></param>
         /// <param name="expAst"></param>
-        /// <returns></returns>
         private static ArgumentLocation FindTargetArgumentLocation(Collection<AstParameterArgumentPair> parsedArguments, ExpressionAst expAst)
         {
             Diagnostics.Assert(expAst != null, "Caller needs to make sure expAst is not null");
@@ -4099,7 +4093,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="fileName"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public static IEnumerable<CompletionResult> CompleteFilename(string fileName)
         {
@@ -4565,7 +4558,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="variableName"></param>
-        /// <returns></returns>
         public static IEnumerable<CompletionResult> CompleteVariable(string variableName)
         {
             var runspace = Runspace.DefaultRunspace;
@@ -5965,7 +5957,6 @@ namespace System.Management.Automation
         /// Complete a typename.
         /// </summary>
         /// <param name="typeName"></param>
-        /// <returns></returns>
         public static IEnumerable<CompletionResult> CompleteType(string typeName)
         {
             // When completing types, we don't care about the runspace, types are visible across the appdomain
@@ -6218,7 +6209,6 @@ namespace System.Management.Automation
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>
         /// <param name="hashtableAst"></param>
-        /// <returns></returns>
         internal static List<CompletionResult> CompleteHashtableKeyForDynamicKeyword(
             CompletionContext completionContext,
             DynamicKeywordStatementAst ast,
@@ -6784,7 +6774,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="context"></param>
         /// <param name="defaultChoice"></param>
-        /// <returns></returns>
         internal static bool IsAmpersandNeeded(CompletionContext context, bool defaultChoice)
         {
             if (context.RelatedAsts != null && !string.IsNullOrEmpty(context.WordToComplete))

@@ -237,7 +237,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <typeparam name="T">The actual AST type</typeparam>
         /// <param name="elements">Collection of ASTs.</param>
-        /// <returns></returns>
         internal static T[] CopyElements<T>(ReadOnlyCollection<T> elements) where T : Ast
         {
             if (elements == null || elements.Count == 0) { return null; }
@@ -256,7 +255,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <typeparam name="T">The actual AST type</typeparam>
         /// <param name="element">An AST instance.</param>
-        /// <returns></returns>
         internal static T CopyElement<T>(T element) where T : Ast
         {
             if (element == null) { return null; }
@@ -402,7 +400,6 @@ namespace System.Management.Automation.Language
         /// Get ancestor Ast of the given type of the given ast.
         /// </summary>
         /// <param name="ast"></param>
-        /// <returns></returns>
         internal static T GetAncestorAst<T>(Ast ast) where T : Ast
         {
             T targetAst = null;
@@ -3715,7 +3712,6 @@ namespace System.Management.Automation.Language
         /// while repeatedly parsing the parent script blocks of a function (since the parent
         /// script blocks may contain help comments related to this function.
         /// To conserve memory, clear / null-out this cache when done with repeated parsing.</param>
-        /// <returns></returns>
         public CommentHelpInfo GetHelpContent(Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
             if (scriptBlockTokenCache == null)
@@ -6653,7 +6649,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="stmt"></param>
         /// <param name="resourceModulePairsToImport">Item1 - ResourceName, Item2 - ModuleName, Item3 - ModuleVersion.</param>
-        /// <returns></returns>
         private static bool IsImportCommand(StatementAst stmt, List<Tuple<string[], ModuleSpecification[], Version>> resourceModulePairsToImport)
         {
             var dkwsAst = stmt as DynamicKeywordStatementAst;
@@ -7231,7 +7226,6 @@ namespace System.Management.Automation.Language
         ///  1. the SubExpr/ParenExpr is the first expression, and the only element in a pipeline
         ///  2. the pipeline's parent is a StatementBlockAst or NamedBlockAst. e.g. $(1; throw 2) OR if (true) { $(1; throw 2) }
         /// </remarks>
-        /// <returns></returns>
         internal virtual bool ShouldPreserveOutputInCaseOfException()
         {
             var parenExpr = this as ParenExpressionAst;
@@ -8655,7 +8649,6 @@ namespace System.Management.Automation.Language
         /// Get the actual generic type if it's necessary.
         /// </summary>
         /// <param name="generic"></param>
-        /// <returns></returns>
         internal Type GetGenericType(Type generic)
         {
             if (generic == null || !generic.ContainsGenericParameters)
@@ -10211,7 +10204,6 @@ namespace System.Management.Automation.Language
         /// A UsingExpressionAst must contains a VariableExpressionAst.
         /// </summary>
         /// <param name="expression"></param>
-        /// <returns></returns>
         private static VariableExpressionAst ExtractUsingVariableImpl(ExpressionAst expression)
         {
             var usingExpr = expression as UsingExpressionAst;

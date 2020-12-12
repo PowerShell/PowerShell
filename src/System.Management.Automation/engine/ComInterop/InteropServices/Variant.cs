@@ -230,7 +230,6 @@ namespace System.Management.Automation.InteropServices
         /// <summary>
         /// Get the managed object representing the Variant.
         /// </summary>
-        /// <returns></returns>
         public object? ToObject()
         {
             // Check the simple case upfront

@@ -567,7 +567,6 @@ namespace System.Management.Automation.Runspaces
         /// GetProcessSpecificDebugPreference is a helper method used to fetch persisted process specific debug preference.
         /// </summary>
         /// <param name="debugPreference"></param>
-        /// <returns></returns>
         private static DebugPreference GetProcessSpecificDebugPreference(object debugPreference)
         {
             DebugPreference processDebugPreference = null;

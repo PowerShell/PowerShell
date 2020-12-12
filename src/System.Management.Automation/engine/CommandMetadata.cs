@@ -836,7 +836,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the ScriptCmdlet in string format.
         /// </summary>
-        /// <returns></returns>
         internal string GetProxyCommand(string helpComment, bool generateDynamicParameters)
         {
             if (string.IsNullOrEmpty(helpComment))
@@ -1309,7 +1308,6 @@ end
         /// listed in <see cref="CommandMetadata"/>.  Exposing only the restricted proxy function while making
         /// the actual cmdlet and its aliases private can help in reducing attack surface of the remoting server.
         /// </summary>
-        /// <returns></returns>
         /// <seealso cref="System.Management.Automation.Runspaces.InitialSessionState.CreateRestricted(SessionCapabilities)"/>
         public static Dictionary<string, CommandMetadata> GetRestrictedCommands(SessionCapabilities sessionCapabilities)
         {

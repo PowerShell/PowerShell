@@ -867,7 +867,6 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="message"></param>
         /// <param name="choices"></param>
         /// <param name="defaultChoices"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">
         /// 1. Choices is null.
         /// 2. Choices.Count = 0

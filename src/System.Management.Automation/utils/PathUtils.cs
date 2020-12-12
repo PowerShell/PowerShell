@@ -233,7 +233,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="command"></param>
-        /// <returns></returns>
         internal static string ResolveFilePath(string filePath, PSCmdlet command)
         {
             return ResolveFilePath(filePath, command, false);
@@ -246,7 +245,6 @@ namespace System.Management.Automation
         /// <param name="filePath"></param>
         /// <param name="command"></param>
         /// <param name="isLiteralPath"></param>
-        /// <returns></returns>
         internal static string ResolveFilePath(string filePath, PSCmdlet command, bool isLiteralPath)
         {
             string path = null;

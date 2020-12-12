@@ -437,7 +437,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the default help info (normally when help target is empty).
         /// </summary>
-        /// <returns></returns>
         private HelpInfo GetDefaultHelp()
         {
             HelpRequest helpRequest = new HelpRequest("default", HelpCategory.DefaultHelp);
@@ -690,7 +689,6 @@ namespace System.Management.Automation
         /// Start a trace frame for a help file.
         /// </summary>
         /// <param name="helpFile"></param>
-        /// <returns></returns>
         internal IDisposable Trace(string helpFile)
         {
             if (_helpErrorTracer == null)

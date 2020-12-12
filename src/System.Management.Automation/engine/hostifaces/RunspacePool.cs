@@ -997,7 +997,6 @@ namespace System.Management.Automation.Runspaces
         /// Creates an array of PowerShell objects that are in the Disconnected state for
         /// all currently disconnected running commands associated with this runspace pool.
         /// </summary>
-        /// <returns></returns>
         public Collection<PowerShell> CreateDisconnectedPowerShells()
         {
             return _internalPool.CreateDisconnectedPowerShells(this);

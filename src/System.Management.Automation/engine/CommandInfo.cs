@@ -296,7 +296,6 @@ namespace System.Management.Automation
         /// <summary>
         /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return ModuleCmdletBase.AddPrefixToCommandName(Name, Prefix);
@@ -421,7 +420,6 @@ namespace System.Management.Automation
         /// Constructs the MergedCommandParameterMetadata, using any arguments that
         /// may have been specified so that dynamic parameters can be determined, if any.
         /// </summary>
-        /// <returns></returns>
         private MergedCommandParameterMetadata GetMergedCommandParameterMetadataSafely()
         {
             if (_context == null)

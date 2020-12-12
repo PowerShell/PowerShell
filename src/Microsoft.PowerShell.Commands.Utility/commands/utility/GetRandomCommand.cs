@@ -347,7 +347,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
-        /// <returns></returns>
         private Int64 GetRandomInt64(Int64 minValue, Int64 maxValue)
         {
             // Randomly generate eight bytes and convert the byte array to UInt64
@@ -640,7 +639,6 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a random integer that is within a specified range.
         /// </summary>
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
-        /// <returns></returns>
         internal int Next(int maxValue)
         {
             if (maxValue < 0)
@@ -656,7 +654,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
-        /// <returns></returns>
         public int Next(int minValue, int maxValue)
         {
             if (minValue > maxValue)
@@ -716,7 +713,6 @@ namespace Microsoft.PowerShell.Commands
         /// not need to be in the range of -Double.MaxValue .. Double.MaxValue,
         /// just 0.. (2 * Int32.MaxValue) - 1 .
         /// </summary>
-        /// <returns></returns>
         private double InternalSampleLargeRange()
         {
             double randomNumber;

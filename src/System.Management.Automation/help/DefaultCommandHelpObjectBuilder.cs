@@ -22,7 +22,6 @@ namespace System.Management.Automation.Help
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <returns></returns>
         public int Compare(object x, object y)
         {
             CommandParameterInfo a = x as CommandParameterInfo;
@@ -916,7 +915,6 @@ namespace System.Management.Automation.Help
         /// </summary>
         /// <param name="module"></param>
         /// <param name="moduleName"></param>
-        /// <returns></returns>
         private static bool HasHelpInfoUri(PSModuleInfo module, string moduleName)
         {
             // The core module is really a SnapIn, so module will be null

@@ -110,7 +110,6 @@ namespace System.Management.Automation
         /// <summary>
         /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             if (_commandInfo != null)
@@ -3404,7 +3403,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="preference"></param>
         /// <param name="lastContinueStatus"></param>
-        /// <returns></returns>
         /// <exception cref="System.Management.Automation.PipelineStoppedException"></exception>
         /// <exception cref="System.InvalidOperationException"></exception>
         internal bool WriteHelper_ShouldWrite(

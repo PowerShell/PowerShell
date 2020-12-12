@@ -102,7 +102,6 @@ namespace System.Management.Automation
         /// Produces a string that contains all the enumerator names in an enum type.
         /// </summary>
         /// <param name="enumType"></param>
-        /// <returns></returns>
         internal static string EnumAllValues(Type enumType)
         {
             string[] names = Enum.GetNames(enumType);

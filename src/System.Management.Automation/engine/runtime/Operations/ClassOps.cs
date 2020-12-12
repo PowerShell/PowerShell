@@ -249,7 +249,6 @@ namespace System.Management.Automation.Internal
         /// <param name="instance">Target object or null for static call.</param>
         /// <param name="sessionStateInternal">SessionStateInternal from private field of instance or null for static call.</param>
         /// <param name="args"></param>
-        /// <returns></returns>
         public T InvokeHelperT<T>(object instance, object sessionStateInternal, object[] args)
         {
             try

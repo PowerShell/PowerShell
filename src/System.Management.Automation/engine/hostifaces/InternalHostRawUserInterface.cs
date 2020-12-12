@@ -335,7 +335,6 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <param name="options">
         /// </param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
@@ -392,7 +391,6 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
@@ -499,7 +497,6 @@ namespace System.Management.Automation.Internal.Host
         /// See base class.
         /// </summary>
         /// <param name="r"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
@@ -552,7 +549,6 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// </summary>
         /// <param name="str"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
@@ -571,7 +567,6 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <param name="str"></param>
         /// <param name="offset"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
@@ -592,7 +587,6 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// </summary>
         /// <param name="character"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host

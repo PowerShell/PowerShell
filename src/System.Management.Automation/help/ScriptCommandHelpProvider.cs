@@ -46,7 +46,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="context"></param>
-        /// <returns></returns>
         internal override CommandSearcher GetCommandSearcherForExactMatch(string commandName, ExecutionContext context)
         {
             CommandSearcher searcher = new CommandSearcher(
@@ -63,7 +62,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern"></param>
         /// <param name="context"></param>
-        /// <returns></returns>
         internal override CommandSearcher GetCommandSearcherForSearch(string pattern, ExecutionContext context)
         {
             CommandSearcher searcher =

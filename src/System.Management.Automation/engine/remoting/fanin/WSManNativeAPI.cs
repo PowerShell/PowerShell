@@ -203,7 +203,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit cast to IntPtr.
             /// </summary>
             /// <param name="obj"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(MarshalledObject obj)
             {
                 return obj._dataPtr;
@@ -363,7 +362,6 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Marshalled Data.
             /// </summary>
-            /// <returns></returns>
             public override MarshalledObject GetMarshalledObject()
             {
                 return _data;
@@ -429,7 +427,6 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Marshalled Data.
             /// </summary>
-            /// <returns></returns>
             public override MarshalledObject GetMarshalledObject()
             {
                 return _data;
@@ -747,7 +744,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit IntPtr conversion.
             /// </summary>
             /// <param name="data"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManData_ManToUn data)
             {
                 if (data != null)
@@ -817,7 +813,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged structure to a managed class object.
             /// </summary>
             /// <param name="dataStruct"></param>
-            /// <returns></returns>
             internal static WSManData_UnToMan UnMarshal(WSManDataStruct dataStruct)
             {
                 WSManData_UnToMan newData = new WSManData_UnToMan();
@@ -860,7 +855,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManData_UnToMan UnMarshal(IntPtr unmanagedData)
             {
                 WSManData_UnToMan result = null;
@@ -899,7 +893,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Creates an unmanaged ptr which holds the class data.
             /// This unmanaged ptr can be used with WSMan native API.
             /// </summary>
-            /// <returns></returns>
             internal MarshalledObject Marshal()
             {
                 return MarshalledObject.Create<WSManDataDWord>(this);
@@ -994,7 +987,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit cast to IntPtr.
             /// </summary>
             /// <param name="obj"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManStreamIDSet_ManToUn obj)
             {
                 return obj._data.DataPtr;
@@ -1010,7 +1002,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManStreamIDSet_UnToMan UnMarshal(IntPtr unmanagedData)
             {
                 WSManStreamIDSet_UnToMan result = null;
@@ -1149,7 +1140,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit IntPtr cast.
             /// </summary>
             /// <param name="optionSet"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManOptionSet optionSet)
             {
                 return optionSet._data.DataPtr;
@@ -1167,7 +1157,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManOptionSet UnMarshal(IntPtr unmanagedData)
             {
                 if (unmanagedData == IntPtr.Zero)
@@ -1185,7 +1174,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged structure to a managed class object.
             /// </summary>
             /// <param name="resultInternal"></param>
-            /// <returns></returns>
             internal static WSManOptionSet UnMarshal(WSManOptionSetStruct resultInternal)
             {
                 WSManOption[] tempOptions = null;
@@ -1274,7 +1262,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit cast to IntPtr.
             /// </summary>
             /// <param name="obj"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManCommandArgSet obj)
             {
                 return obj._data.DataPtr;
@@ -1293,7 +1280,6 @@ namespace System.Management.Automation.Remoting.Client
             /// TODO: Do I need to worry about intermediate null characters in the arguments? The managed to unmanaged does!
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManCommandArgSet UnMarshal(IntPtr unmanagedData)
             {
                 WSManCommandArgSet result = new WSManCommandArgSet();
@@ -1358,7 +1344,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit IntPtr.
             /// </summary>
             /// <param name="disconnectInfo"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManShellDisconnectInfo disconnectInfo)
             {
                 return disconnectInfo.data.DataPtr;
@@ -1451,7 +1436,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit IntPtr.
             /// </summary>
             /// <param name="startupInfo"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManShellStartupInfo_ManToUn startupInfo)
             {
                 return startupInfo.data.DataPtr;
@@ -1477,7 +1461,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManShellStartupInfo_UnToMan UnMarshal(IntPtr unmanagedData)
             {
                 WSManShellStartupInfo_UnToMan result = null;
@@ -1513,7 +1496,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManEnvironmentVariableSet UnMarshal(IntPtr unmanagedData)
             {
                 WSManEnvironmentVariableSet result = null;
@@ -1607,7 +1589,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Implicit IntPtr.
             /// </summary>
             /// <param name="proxyInfo"></param>
-            /// <returns></returns>
             public static implicit operator IntPtr(WSManProxyInfo proxyInfo)
             {
                 return proxyInfo._data.DataPtr;
@@ -2048,7 +2029,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManPluginRequest UnMarshal(IntPtr unmanagedData)
             {
                 // Dbg.Assert(IntPtr.Zero != unmanagedData, "unmanagedData must be non-null. This means WinRM sent a bad pointer.");
@@ -2107,7 +2087,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManSenderDetails UnMarshal(IntPtr unmanagedData)
             {
                 WSManSenderDetails result = null;
@@ -2160,7 +2139,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManCertificateDetails UnMarshal(IntPtr unmanagedData)
             {
                 WSManCertificateDetails result = null;
@@ -2209,7 +2187,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="unmanagedData"></param>
-            /// <returns></returns>
             internal static WSManOperationInfo UnMarshal(IntPtr unmanagedData)
             {
                 WSManOperationInfo result = null;
@@ -2277,7 +2254,6 @@ namespace System.Management.Automation.Remoting.Client
             /// Converts the unmanaged pointer to a managed class object.
             /// </summary>
             /// <param name="resultInternal"></param>
-            /// <returns></returns>
             internal static WSManSelectorSet UnMarshal(WSManSelectorSetStruct resultInternal)
             {
                 WSManKeyStruct[] tempKeys = null;
@@ -2364,7 +2340,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="wsManAPIHandle"></param>
         /// <param name="flags"></param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManDeinitialize(IntPtr wsManAPIHandle, int flags);
 
@@ -2383,7 +2358,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="proxyInfo">
         /// </param>
         /// <param name="wsManSessionHandle"></param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManCreateSession(IntPtr wsManAPIHandle,
             [MarshalAs(UnmanagedType.LPWStr)] string connection,
@@ -2413,7 +2387,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="data">
         /// An int (DWORD) data.
         /// </param>
-        /// <returns></returns>
         internal static int WSManSetSessionOption(IntPtr wsManSessionHandle,
             WSManSessionOption option,
             WSManDataDWord data)
@@ -2451,7 +2424,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="wsManAPIHandle"></param>
         /// <param name="option">Session option to get.</param>
-        /// <returns></returns>
         internal static string WSManGetSessionOptionAsString(IntPtr wsManAPIHandle,
             WSManSessionOption option)
         {
@@ -2531,7 +2503,6 @@ namespace System.Management.Automation.Remoting.Client
         /// An out parameter referencing a WSMan shell operation handle
         /// for this shell.
         /// </param>
-        /// <returns></returns>
         internal static void WSManCreateShellEx(IntPtr wsManSessionHandle,
             int flags,
             string resourceUri,
@@ -2788,7 +2759,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="operationHandle"></param>
         /// <param name="flags"></param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManCloseOperation(IntPtr operationHandle, int flags);
 
@@ -2798,7 +2768,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="wsManAPIHandle"></param>
         /// <param name="errorCode"></param>
-        /// <returns></returns>
         internal static string WSManGetErrorMessage(IntPtr wsManAPIHandle, int errorCode)
         {
             Dbg.Assert(wsManAPIHandle != IntPtr.Zero, "wsManAPIHandle cannot be null.");
@@ -2906,7 +2875,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
         /// <param name="flags">Specifies the options that are available for retrieval.</param>
         /// <param name="data">Specifies the result object (WSMAN_DATA).</param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginGetOperationParameters(
             IntPtr requestDetails,
@@ -2922,7 +2890,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="flags"></param>
         /// <param name="errorCode">Reports any failure in the operation. Terminates on non-NO_ERROR status.</param>
         /// <param name="extendedInformation">XML document containing extra error information.</param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginOperationComplete(
             IntPtr requestDetails,
@@ -2968,7 +2935,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="streamResult">A pointer to a WSMAN_DATA structure that specifies the result object that is returned to the client.</param>
         /// <param name="commandState">Specifies the state of the command. It must be set to a value specified by the plugin.</param>
         /// <param name="exitCode">Only set when the commandState is terminating.</param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginReceiveResult(
             IntPtr requestDetails,
@@ -2987,7 +2953,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
         /// <param name="flags"></param>
         /// <param name="context">Defines the value to pass into all future shell and command operations. Represents either the shell or the command.</param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginReportContext(
             IntPtr requestDetails,
@@ -3000,7 +2965,6 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
         /// <param name="shutdownCallback">Callback to be executed on shutdown.</param>
         /// <param name="shutdownContext"></param>
-        /// <returns></returns>
         [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManPluginRegisterShutdownCallback(
             IntPtr requestDetails,

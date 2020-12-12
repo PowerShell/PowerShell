@@ -116,7 +116,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspacePoolId"></param>
         /// <param name="powerShellId"></param>
         /// <param name="data"></param>
-        /// <returns></returns>
         internal static RemoteDataObject<T> CreateFrom(RemotingDestination destination,
             RemotingDataType dataType,
             Guid runspacePoolId,
@@ -133,7 +132,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="defragmentor">
         /// Defragmentor used to deserialize an object.
         /// </param>
-        /// <returns></returns>
         internal static RemoteDataObject<T> CreateFrom(Stream serializedDataStream, Fragmentor defragmentor)
         {
             Dbg.Assert(serializedDataStream != null, "cannot construct a RemoteDataObject from null data");
@@ -196,7 +194,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="streamToWriteTo">
         /// place where the serialized data is stored into.
         /// </param>
-        /// <returns></returns>
         private void SerializeHeader(Stream streamToWriteTo)
         {
             Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
@@ -293,7 +290,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspacePoolId"></param>
         /// <param name="powerShellId"></param>
         /// <param name="data"></param>
-        /// <returns></returns>
         internal static new RemoteDataObject CreateFrom(RemotingDestination destination,
             RemotingDataType dataType,
             Guid runspacePoolId,

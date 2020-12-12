@@ -1296,7 +1296,6 @@ namespace System.Management.Automation
         /// or from the toplevel sessionstate if there is no calling module.
         /// </summary>
         /// <param name="variableName"></param>
-        /// <returns></returns>
         public PSVariable GetVariableFromCallersModule(string variableName)
         {
             if (string.IsNullOrEmpty(variableName))
@@ -1489,7 +1488,6 @@ namespace System.Management.Automation
         /// <summary>
         /// A method available in debug mode providing access to the module path cache.
         /// </summary>
-        /// <returns></returns>
         public static object GetAppDomainLevelModuleCache()
         {
             return s_appdomainModulePathCache;

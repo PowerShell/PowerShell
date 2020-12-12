@@ -232,7 +232,6 @@ namespace System.Management.Automation
         /// <summary>
         /// This internal method doesn't do the _disposed check.
         /// </summary>
-        /// <returns></returns>
         internal Runspace GetRunspace()
         {
             return _runspace;

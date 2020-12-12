@@ -58,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="files"></param>
         /// <param name="errorId"></param>
         /// <param name="cmdlet"></param>
-        /// <returns></returns>
         internal static Collection<string> Glob(string[] files, string errorId, PSCmdlet cmdlet)
         {
             Collection<string> retValue = new();

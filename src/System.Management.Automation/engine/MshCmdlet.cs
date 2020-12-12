@@ -288,7 +288,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="type"></param>
-        /// <returns></returns>
         public CommandInfo GetCommand(string commandName, CommandTypes type)
         {
             return GetCommand(commandName, type, null);
@@ -473,7 +472,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a list of all cmdlets...
         /// </summary>
-        /// <returns></returns>
         public List<CmdletInfo> GetCmdlets()
         {
             return GetCmdlets("*");
@@ -701,7 +699,6 @@ namespace System.Management.Automation
         /// <param name="sessionState"></param>
         /// <param name="scriptBlock"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         public Collection<PSObject> InvokeScript(
             SessionState sessionState, ScriptBlock scriptBlock, params object[] args)
         {

@@ -487,7 +487,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             /// <param name="cols">Current number of columns on the screen.</param>
             /// <param name="displayCells">String manipulation helper.</param>
-            /// <returns></returns>
             internal int ComputePromptLines(DisplayCells displayCells, int cols)
             {
                 // split the prompt string into lines

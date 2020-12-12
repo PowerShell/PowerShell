@@ -87,7 +87,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Returns a Shallow Copy of the current object.
         /// </summary>
-        /// <returns></returns>
         internal TableHeaderDefinition Copy()
         {
             TableHeaderDefinition result = new TableHeaderDefinition { hideHeader = this.hideHeader };
@@ -148,7 +147,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Returns a Shallow Copy of the current object.
         /// </summary>
-        /// <returns></returns>
         internal TableRowDefinition Copy()
         {
             TableRowDefinition result = new TableRowDefinition
@@ -381,7 +379,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the value of the entry.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return DisplayEntry.Value;

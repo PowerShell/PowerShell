@@ -85,7 +85,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleSpecification">Object to initialize.</param>
         /// <param name="hashtable">Contains info about object to initialize.</param>
-        /// <returns></returns>
         internal static Exception ModuleSpecificationInitHelper(ModuleSpecification moduleSpecification, Hashtable hashtable)
         {
             StringBuilder badKeys = new StringBuilder();
@@ -187,7 +186,6 @@ namespace Microsoft.PowerShell.Commands
         /// just contains a Name, then that is returned as is. Otherwise, the object is
         /// formatted as a PowerSHell hashtable.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             if (Guid == null && Version == null && RequiredVersion == null && MaximumVersion == null)
@@ -231,7 +229,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="input">The module specification string.</param>
         /// <param name="result">The ModuleSpecification object.</param>
-        /// <returns></returns>
         public static bool TryParse(string input, out ModuleSpecification result)
         {
             result = null;

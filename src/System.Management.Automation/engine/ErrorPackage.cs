@@ -1196,7 +1196,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds the information about this error record to PSObject as notes.
         /// </summary>
-        /// <returns></returns>
         internal void ToPSObjectForRemoting(PSObject dest)
         {
             ToPSObjectForRemoting(dest, SerializeExtendedInfo);
@@ -1436,7 +1435,6 @@ namespace System.Management.Automation
         /// If the wrapped exception contains a ParentContainsErrorRecordException, the new
         /// ErrorRecord should have this exception as its Exception instead.
         /// </param>
-        /// <returns></returns>
         internal virtual ErrorRecord WrapException(Exception replaceParentContainsErrorRecordException)
         {
             return new ErrorRecord(this, replaceParentContainsErrorRecordException);

@@ -265,7 +265,6 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         /// <param name="powerShellCmdId"></param>
-        /// <returns></returns>
         internal override AbstractServerTransportManager GetCommandTransportManager(
             Guid powerShellCmdId)
         {

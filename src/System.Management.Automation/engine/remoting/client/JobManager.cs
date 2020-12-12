@@ -519,7 +519,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Job id.</param>
         /// <param name="name">Adapter name.</param>
-        /// <returns></returns>
         internal bool IsJobFromAdapter(Guid id, string name)
         {
             lock (_syncObject)
@@ -615,7 +614,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sourceAdapter"></param>
         /// <param name="jobSourceAdapterTypes"></param>
-        /// <returns></returns>
         private static bool CheckTypeNames(JobSourceAdapter sourceAdapter, string[] jobSourceAdapterTypes)
         {
             // If no type names were specified then allow all adapter types.

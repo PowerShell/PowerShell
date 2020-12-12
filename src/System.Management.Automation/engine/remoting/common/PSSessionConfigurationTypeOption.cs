@@ -15,7 +15,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a xml formatted data that represents the options.
         /// </summary>
-        /// <returns></returns>
         protected internal virtual string ConstructPrivateData()
         {
             throw new NotImplementedException();
@@ -24,7 +23,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a new instance constructed from privateData string.
         /// </summary>
-        /// <returns></returns>
         protected internal virtual PSSessionTypeOption ConstructObjectFromPrivateData(string privateData)
         {
             throw new NotImplementedException();
@@ -48,7 +46,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all the non-quota options set in this object in a format of xml attributes.
         /// </summary>
-        /// <returns></returns>
         internal virtual string ConstructOptionsAsXmlAttributes()
         {
             throw new NotImplementedException();
@@ -57,7 +54,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all the non-quota options set in this object in a name-value pair (hashtable).
         /// </summary>
-        /// <returns></returns>
         internal virtual Hashtable ConstructOptionsAsHashtable()
         {
             throw new NotImplementedException();
@@ -66,7 +62,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all the quota related options set in this object in a format of xml attributes.
         /// </summary>
-        /// <returns></returns>
         internal virtual string ConstructQuotas()
         {
             throw new NotImplementedException();
@@ -75,7 +70,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all the quota related options in the form of a hashtable.
         /// </summary>
-        /// <returns></returns>
         internal virtual Hashtable ConstructQuotasAsHashtable()
         {
             throw new NotImplementedException();

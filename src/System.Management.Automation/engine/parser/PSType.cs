@@ -314,7 +314,6 @@ namespace System.Management.Automation.Language
             /// <param name="parser"></param>
             /// <param name="typeDefinitionAst"></param>
             /// <param name="interfaces">Return declared interfaces.</param>
-            /// <returns></returns>
             private Type GetBaseTypes(Parser parser, TypeDefinitionAst typeDefinitionAst, out List<Type> interfaces)
             {
                 // Define base types and report errors.

@@ -101,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="destination"></param>
         /// <param name="bufferSize"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
         {
             Initialize();
@@ -113,7 +112,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="count"></param>
-        /// <returns></returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             Initialize();
@@ -126,7 +124,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Initialize();
@@ -135,7 +132,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         public override int ReadByte()
         {
             Initialize();
@@ -153,7 +149,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        /// <returns></returns>
         public override byte[] ToArray()
         {
             Initialize();
@@ -177,7 +172,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Initialize();

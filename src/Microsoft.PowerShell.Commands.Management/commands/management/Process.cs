@@ -110,7 +110,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieve the list of all processes matching the Name, Id
         /// and InputObject parameters, sorted by Id.
         /// </summary>
-        /// <returns></returns>
         internal List<Process> MatchingProcesses()
         {
             _matchingProcesses.Clear();
@@ -161,7 +160,6 @@ namespace Microsoft.PowerShell.Commands
         /// process name which is not found even though it contains
         /// no wildcards.
         /// </summary>
-        /// <returns></returns>
         private void RetrieveMatchingProcessesByProcessName()
         {
             if (processNames == null)
@@ -213,7 +211,6 @@ namespace Microsoft.PowerShell.Commands
         /// Generates a non-terminating error for each specified
         /// process ID which is not found.
         /// </summary>
-        /// <returns></returns>
         private void RetrieveMatchingProcessesById()
         {
             if (processIds == null)
@@ -249,7 +246,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieves the list of all processes matching the InputObject
         /// parameter.
         /// </summary>
-        /// <returns></returns>
         private void RetrieveProcessesByInput()
         {
             if (InputObject == null)
@@ -716,7 +712,6 @@ namespace Microsoft.PowerShell.Commands
         /// Add the 'UserName' NoteProperty to the Process object.
         /// </summary>
         /// <param name="process"></param>
-        /// <returns></returns>
         private static PSObject AddUserNameToProcess(Process process)
         {
             // Return null if we failed to get the owner information
@@ -735,7 +730,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieve the UserName through PInvoke.
         /// </summary>
         /// <param name="process"></param>
-        /// <returns></returns>
         private static string RetrieveProcessUserName(Process process)
         {
             string userName = null;

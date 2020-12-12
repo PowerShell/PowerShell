@@ -58,7 +58,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="helpItemName"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         string ICmdletProviderSupportsHelp.GetHelpMaml(string helpItemName, string path)
         {
             // Get the leaf node from the path for which help is requested.
@@ -185,7 +184,6 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// </summary>
         /// <param name="drive"></param>
-        /// <returns></returns>
         protected override PSDriveInfo NewDrive(PSDriveInfo drive)
         {
             if (drive == null)
@@ -205,7 +203,6 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Adds the required drive.
         /// </summary>
-        /// <returns></returns>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
@@ -217,7 +214,6 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Removes the required drive.
         /// </summary>
-        /// <returns></returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
         {
             WSManHelper.ReleaseSessions();
@@ -234,7 +230,6 @@ namespace Microsoft.WSMan.Management
         /// XML is case sensitive but Powershell is not.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         protected override string GetChildName(string path)
         {
             string result = string.Empty;
@@ -262,7 +257,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="child"></param>
-        /// <returns></returns>
         protected override string MakePath(string parent, string child)
         {
             if (child.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -319,7 +313,6 @@ namespace Microsoft.WSMan.Management
         /// eg. winrm/config/client.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         protected override bool IsValidPath(string path)
         {
             bool result = false;
@@ -331,7 +324,6 @@ namespace Microsoft.WSMan.Management
         /// Check whether an Item Exist in the winrm configuration.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         protected override bool ItemExists(string path)
         {
             bool result = false;
@@ -345,7 +337,6 @@ namespace Microsoft.WSMan.Management
         /// if child items are present.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         protected override bool HasChildItems(string path)
         {
             string childname = string.Empty;
@@ -1363,7 +1354,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="path"></param>
         /// <param name="value"></param>
-        /// <returns></returns>
         protected override object SetItemDynamicParameters(string path, object value)
         {
             if (path.Length != 0)
@@ -1415,7 +1405,6 @@ namespace Microsoft.WSMan.Management
         /// Checks whether the specified path is a container path.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         protected override bool IsItemContainer(string path)
         {
             string childname = string.Empty;
@@ -1910,7 +1899,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="path"></param>
         /// <param name="itemTypeName"></param>
         /// <param name="newItemValue"></param>
-        /// <returns></returns>
         protected override object NewItemDynamicParameters(string path, string itemTypeName, object newItemValue)
         {
             if (path.Length == 0)
@@ -2289,7 +2277,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="ExtendedTypeName"></param>
         /// <param name="WSManElementObjectType"></param>
         /// <param name="input"></param>
-        /// <returns></returns>
         private static PSObject GetItemPSObjectWithTypeName(string Name, string TypeNameOfElement, object Value, string[] keys, string ExtendedTypeName, WsManElementObjectTypes WSManElementObjectType, PSObject input = null)
         {
             PSObject mshObject = null;
@@ -2409,7 +2396,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="ResourceURI"></param>
         /// <param name="value"></param>
         /// <param name="host"></param>
-        /// <returns></returns>
         private static string GetInputStringForCreate(string ResourceURI, Hashtable value, string host)
         {
             string putstr = string.Empty;
@@ -2449,7 +2435,6 @@ namespace Microsoft.WSMan.Management
         /// Reads the file. used by New-Item for Plugin creation from file.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         private string ReadFile(string path)
         {
             string putstr = string.Empty;
@@ -2498,7 +2483,6 @@ namespace Microsoft.WSMan.Management
         /// This is used by most of the methods like GetItem,GetChildItem, NewItem, SetItem,RemoveItem etc...
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         private string GetHostName(string path)
         {
             string sHostname = path;
@@ -2737,7 +2721,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
         /// <param name="cmdlinevalues"></param>
-        /// <returns></returns>
         private XmlDocument GetResourceValue(object sessionobj, string ResourceURI, Hashtable cmdlinevalues)
         {
             XmlDocument xmlResource = null;
@@ -2754,7 +2737,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
-        /// <returns></returns>
         private XmlDocument EnumerateResourceValue(object sessionobj, string ResourceURI)
         {
             XmlDocument xmlEnumResources = null;
@@ -2856,7 +2838,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="sessionobj"></param>
         /// <param name="ResourceURI"></param>
         /// <param name="cmdlinevalues"></param>
-        /// <returns></returns>
         private XmlDocument FindResourceValue(object sessionobj, string ResourceURI, Hashtable cmdlinevalues)
         {
             XmlDocument outval = null;
@@ -2887,7 +2868,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="childname"></param>
         /// <param name="path"></param>
         /// <param name="host"></param>
-        /// <returns></returns>
         private bool ContainResourceValue(object sessionobj, string ResourceURI, string childname, string path, string host)
         {
             bool result = false;
@@ -3194,7 +3174,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="objSessionObject"></param>
         /// <param name="uri"></param>
         /// <param name="IsWsManLevel"></param>
-        /// <returns></returns>
         private PSObject BuildHostLevelPSObjectArrayList(object objSessionObject, string uri, bool IsWsManLevel)
         {
             PSObject mshobject = new PSObject();
@@ -3238,7 +3217,6 @@ namespace Microsoft.WSMan.Management
         /// Converts XmlNodes ChildNodes to Properties of PSObject.
         /// </summary>
         /// <param name="xmlnode"></param>
-        /// <returns></returns>
         private static PSObject ConvertToPSObject(XmlNode xmlnode)
         {
             PSObject mshObject = new PSObject();
@@ -3333,7 +3311,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="path"></param>
         /// <param name="host"></param>
-        /// <returns></returns>
         private static string NormalizePath(string path, string host)
         {
             string uri = string.Empty;
@@ -3850,7 +3827,6 @@ namespace Microsoft.WSMan.Management
         /// Used By ItemExists, HasChildItem,IsValidPath, IsItemContainer.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         private bool CheckValidContainerOrPath(string path)
         {
             if (path.Length == 0)
@@ -4518,7 +4494,6 @@ namespace Microsoft.WSMan.Management
         /// <param name="PluginNames"></param>
         /// <param name="CurrentPluginName"></param>
         /// <param name="path"></param>
-        /// <returns></returns>
         private static int GetPluginNames(XmlDocument xmlPlugins, out PSObject PluginNames, out string CurrentPluginName, string path)
         {
             PluginNames = new PSObject();
@@ -4585,7 +4560,6 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Checks whether WsMan Service is running.
         /// </summary>
-        /// <returns></returns>
         private bool IsWSManServiceRunning()
         {
             if (winrmServiceController == null)
@@ -4626,7 +4600,6 @@ namespace Microsoft.WSMan.Management
         /// Checks whether localmachine or not. If this returns true only we start the service.
         /// </summary>
         /// <param name="host"></param>
-        /// <returns></returns>
         private static bool IsPathLocalMachine(string host)
         {
             bool hostfound = false;

@@ -277,7 +277,6 @@ namespace System.Management.Automation
         /// Called after a non null return from GetMethodData to return the overloads.
         /// </summary>
         /// <param name="method">The return of GetMethodData.</param>
-        /// <returns></returns>
         protected override Collection<string> MethodDefinitions(PSMethod method)
         {
             ComMethod commethod = (ComMethod)method.adapterData;

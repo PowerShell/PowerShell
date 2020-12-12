@@ -585,7 +585,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="db">Database to use.</param>
         /// <param name="appliesTo">Object to lookup.</param>
-        /// <returns></returns>
         internal static AppliesTo GetAllApplicableTypes(TypeInfoDataBase db, AppliesTo appliesTo)
         {
             var allTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

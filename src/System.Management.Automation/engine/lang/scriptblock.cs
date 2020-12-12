@@ -115,7 +115,6 @@ namespace System.Management.Automation
         /// Returns a new scriptblock bound to a module. Any local variables in the
         /// callers context will be copied into the module.
         /// </summary>
-        /// <returns></returns>
         public ScriptBlock GetNewClosure()
         {
             PSModuleInfo m = new PSModuleInfo(true);
@@ -408,7 +407,6 @@ namespace System.Management.Automation
         /// <param name="functionsToDefine">A dictionary of functions to define.</param>
         /// <param name="variablesToDefine">A list of variables to define.</param>
         /// <param name="args">The arguments to the actual scriptblock.</param>
-        /// <returns></returns>
         public Collection<PSObject> InvokeWithContext(
             IDictionary functionsToDefine,
             List<PSVariable> variablesToDefine,
@@ -450,7 +448,6 @@ namespace System.Management.Automation
         /// <param name="functionsToDefine">A dictionary of functions to define.</param>
         /// <param name="variablesToDefine">A list of variables to define.</param>
         /// <param name="args">The arguments to the actual scriptblock.</param>
-        /// <returns></returns>
         public Collection<PSObject> InvokeWithContext(
             Dictionary<string, ScriptBlock> functionsToDefine,
             List<PSVariable> variablesToDefine,
@@ -878,7 +875,6 @@ namespace System.Management.Automation
         /// in PSObjects.
         /// </summary>
         /// <param name="result"></param>
-        /// <returns></returns>
         private static Collection<PSObject> GetWrappedResult(List<object> result)
         {
             if (result == null || result.Count == 0)
@@ -1223,7 +1219,6 @@ namespace System.Management.Automation
         /// a .NET API call with argument type object.
         /// </summary>
         /// <param name="input">The input object to process.</param>
-        /// <returns></returns>
         public Array Process(PSObject input)
         {
             try

@@ -452,7 +452,6 @@ namespace Microsoft.PowerShell.Commands
         /// Add the member to the target object.
         /// </summary>
         /// <param name="member"></param>
-        /// <returns></returns>
         private bool AddMemberToTarget(PSMemberInfo member)
         {
             PSMemberInfo previousMember = _inputObject.Members[member.Name];

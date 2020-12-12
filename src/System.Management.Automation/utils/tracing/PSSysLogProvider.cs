@@ -64,7 +64,6 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="level"></param>
         /// <param name="keywords"></param>
-        /// <returns></returns>
         /// <remarks>
         /// Typically, a provider does not call this method to determine whether a session requested the specified event;
         /// the provider simply writes the event, and ETW determines whether the event is logged to a session. A provider
@@ -276,7 +275,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// The SysLog provider does not use logging variables.
         /// </summary>
-        /// <returns></returns>
         internal override bool UseLoggingVariables()
         {
             return false;

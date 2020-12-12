@@ -993,7 +993,6 @@ namespace System.Management.Automation.Runspaces
         /// under specified pipeline.
         /// </summary>
         /// <param name="pipeline"></param>
-        /// <returns></returns>
         internal void StopNestedPipelines(Pipeline pipeline)
         {
             List<Pipeline> nestedPipelines = null;
@@ -1222,7 +1221,6 @@ namespace System.Management.Automation.Runspaces
         /// It delegates to derived class worker method for actual operation.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         internal object GetVariable(string name)
         {
             DoConcurrentCheckAndMarkSessionStateProxyCallInProgress();
@@ -1244,7 +1242,6 @@ namespace System.Management.Automation.Runspaces
         /// that no pipeline or other SessionStateProxy calls are in progress.
         /// It delegates to derived class worker method for actual operation.
         /// </summary>
-        /// <returns></returns>
         internal List<string> Applications
         {
             get
@@ -1269,7 +1266,6 @@ namespace System.Management.Automation.Runspaces
         /// that no pipeline or other SessionStateProxy calls are in progress.
         /// It delegates to derived class worker method for actual operation.
         /// </summary>
-        /// <returns></returns>
         internal List<string> Scripts
         {
             get
@@ -1504,7 +1500,6 @@ namespace System.Management.Automation.Runspaces
         /// This does the actual work of getting variable.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
         protected abstract object DoGetVariable(string name);
 
         /// <summary>
@@ -1571,7 +1566,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Returns SessionState proxy object.
         /// </summary>
-        /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
             return _sessionStateProxy ??= new SessionStateProxy(this);

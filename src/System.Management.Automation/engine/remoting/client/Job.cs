@@ -287,7 +287,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Override for ToString()
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return State.ToString();
@@ -1494,7 +1493,6 @@ namespace System.Management.Automation
         /// Helper function to check if job is finished.
         /// </summary>
         /// <param name="state"></param>
-        /// <returns></returns>
         internal bool IsFinishedState(JobState state)
         {
             lock (syncObject)
@@ -4052,7 +4050,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns IEnumerable of CallStackFrame objects.
         /// </summary>
-        /// <returns></returns>
         public override IEnumerable<CallStackFrame> GetCallStack()
         {
             return _wrappedDebugger.GetCallStack();
@@ -4481,7 +4478,6 @@ namespace System.Management.Automation
         /// Returns a disconnected remoting job object that contains all
         /// remote pipelines/runspaces that are in the Disconnected state.
         /// </summary>
-        /// <returns></returns>
         internal PSRemotingJob CreateDisconnectedRemotingJob()
         {
             List<IThrottleOperation> disconnectedJobHelpers = new List<IThrottleOperation>();

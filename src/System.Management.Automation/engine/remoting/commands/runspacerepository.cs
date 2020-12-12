@@ -39,7 +39,6 @@ namespace System.Management.Automation
         /// Gets a key for the specified item.
         /// </summary>
         /// <param name="item"></param>
-        /// <returns></returns>
         protected override Guid GetKey(PSSession item)
         {
             if (item != null)

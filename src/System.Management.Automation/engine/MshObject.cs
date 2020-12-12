@@ -241,7 +241,6 @@ namespace System.Management.Automation
         /// <param name="viewType">
         /// A filter to select Extended/Adapted/Dotnet view of the object
         /// </param>
-        /// <returns></returns>
         internal static Collection<CollectionEntry<PSMemberInfo>> GetMemberCollection(PSMemberViewTypes viewType)
         {
             return GetMemberCollection(viewType, null);
@@ -257,7 +256,6 @@ namespace System.Management.Automation
         /// <param name="backupTypeTable">
         /// Backup type table to use if there is no execution context associated with the current thread
         /// </param>
-        /// <returns></returns>
         internal static Collection<CollectionEntry<PSMemberInfo>> GetMemberCollection(
             PSMemberViewTypes viewType,
             TypeTable backupTypeTable)
@@ -344,7 +342,6 @@ namespace System.Management.Automation
         /// <param name="viewType">
         /// A filter to select Extended/Adapted/Dotnet view of the object
         /// </param>
-        /// <returns></returns>
         internal static Collection<CollectionEntry<PSPropertyInfo>> GetPropertyCollection(
             PSMemberViewTypes viewType)
         {
@@ -361,7 +358,6 @@ namespace System.Management.Automation
         /// <param name="backupTypeTable">
         /// Backup type table to use if there is no execution context associated with the current thread
         /// </param>
-        /// <returns></returns>
         internal static Collection<CollectionEntry<PSPropertyInfo>> GetPropertyCollection(
             PSMemberViewTypes viewType,
             TypeTable backupTypeTable)
@@ -942,7 +938,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
-        /// <returns></returns>
         public static implicit operator PSObject(int valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
@@ -951,7 +946,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
-        /// <returns></returns>
         public static implicit operator PSObject(string valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
@@ -960,7 +954,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
-        /// <returns></returns>
         public static implicit operator PSObject(Hashtable valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
@@ -969,7 +962,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
-        /// <returns></returns>
         public static implicit operator PSObject(double valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
@@ -978,7 +970,6 @@ namespace System.Management.Automation
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
-        /// <returns></returns>
         public static implicit operator PSObject(bool valueToConvert)
         {
             return PSObject.AsPSObject(valueToConvert);
@@ -1048,7 +1039,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="storeTypeNameAndInstanceMembersLocally"></param>
-        /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "AsPSObject is shipped as part of V1. This is a new overload method.")]
         internal static PSObject AsPSObject(object obj, bool storeTypeNameAndInstanceMembersLocally)
         {
@@ -1072,7 +1062,6 @@ namespace System.Management.Automation
         /// - Otherwise the base object is returned
         /// This is a temporary fix for Win8 : 254345 - Job Failed By Throwing ExtendedTypeSystemException.
         /// </summary>
-        /// <returns></returns>
         internal static object GetKeyForResurrectionTables(object obj)
         {
             if (!(obj is PSObject pso))
@@ -1847,7 +1836,6 @@ namespace System.Management.Automation
         /// <param name="ownerObject">
         /// PSObject to be used while replicating the owner for PSMemberSet
         /// </param>
-        /// <returns></returns>
         internal static object GetNoteSettingValue(PSMemberSet settings, string noteName,
             object defaultValue, Type expectedType,
             bool shouldReplicateInstance, PSObject ownerObject)
@@ -1898,7 +1886,6 @@ namespace System.Management.Automation
         /// in the remoting scenario on the client/server side (where a LocalRunspace may not be
         /// present).
         /// </param>
-        /// <returns></returns>
         internal PSPropertyInfo GetStringSerializationSource(TypeTable backupTypeTable)
         {
             PSMemberInfo result = this.GetPSStandardMember(backupTypeTable, TypeTable.StringSerializationSource);
@@ -1912,7 +1899,6 @@ namespace System.Management.Automation
         /// in the remoting scenario on the client/server side (where a LocalRunspace may not be
         /// present).
         /// </param>
-        /// <returns></returns>
         internal SerializationMethod GetSerializationMethod(TypeTable backupTypeTable)
         {
             SerializationMethod result = TypeTable.DefaultSerializationMethod;

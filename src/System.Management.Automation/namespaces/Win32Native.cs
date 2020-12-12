@@ -104,7 +104,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="referencedDomainName"></param>
         /// <param name="cchReferencedDomainName"></param>
         /// <param name="peUse"></param>
-        /// <returns></returns>
         [DllImport(PinvokeDllNames.LookupAccountSidDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
@@ -166,7 +165,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="tokenInformation"></param>
         /// <param name="tokenInformationLength"></param>
         /// <param name="returnLength"></param>
-        /// <returns></returns>
         [DllImport(PinvokeDllNames.GetTokenInformationDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
         [ResourceExposure(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]

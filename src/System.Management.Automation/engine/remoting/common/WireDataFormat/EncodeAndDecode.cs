@@ -1567,7 +1567,6 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="errorId">ErrorId to use if exception is not of type IContainsErrorRecord.</param>
         /// <param name="category">ErrorCategory to use if exception is not of type IContainsErrorRecord.</param>
-        /// <returns></returns>
         private static PSNoteProperty GetExceptionProperty(Exception exception, string errorId, ErrorCategory category)
         {
             Dbg.Assert(exception != null, "Caller should validate the data");
@@ -2037,7 +2036,6 @@ namespace System.Management.Automation
         /// Gets the exception if any from the serialized state info object.
         /// </summary>
         /// <param name="stateInfo"></param>
-        /// <returns></returns>
         private static Exception GetExceptionFromStateInfoObject(PSObject stateInfo)
         {
             // Check if exception is encoded as errorrecord
@@ -2054,7 +2052,6 @@ namespace System.Management.Automation
         /// Get the exception from serialized error record.
         /// </summary>
         /// <param name="serializedErrorRecord"></param>
-        /// <returns></returns>
         internal static Exception GetExceptionFromSerializedErrorRecord(object serializedErrorRecord)
         {
             ErrorRecord er = ErrorRecord.FromPSObjectForRemoting(PSObject.AsPSObject(serializedErrorRecord));
@@ -2332,7 +2329,6 @@ namespace System.Management.Automation
         /// Gets the invocation settings information from the message.
         /// </summary>
         /// <param name="data"></param>
-        /// <returns></returns>
         internal static ApartmentState GetApartmentState(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2343,7 +2339,6 @@ namespace System.Management.Automation
         /// Gets the stream options from the message.
         /// </summary>
         /// <param name="data"></param>
-        /// <returns></returns>
         internal static RemoteStreamOptions GetRemoteStreamOptions(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);

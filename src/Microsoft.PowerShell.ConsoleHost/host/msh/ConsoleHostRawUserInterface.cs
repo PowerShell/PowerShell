@@ -547,7 +547,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Helper method to create and trace PipelineStoppedException.
         /// </summary>
-        /// <returns></returns>
         private static PipelineStoppedException NewPipelineStoppedException()
         {
             PipelineStoppedException e = new PipelineStoppedException();
@@ -580,7 +579,6 @@ namespace Microsoft.PowerShell
         ///    behavior is the same as that of System.Console.ReadKey.
         /// </summary>
         /// <param name="options"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException">
         /// If neither IncludeKeyDown or IncludeKeyUp is set in <paramref name="options"/>
         /// </exception>
@@ -731,7 +729,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
@@ -1188,7 +1185,6 @@ namespace Microsoft.PowerShell
         /// See base class.
         /// </summary>
         /// <param name="s"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
@@ -1203,7 +1199,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="s"></param>
         /// <param name="offset"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
@@ -1222,7 +1217,6 @@ namespace Microsoft.PowerShell
         /// See base class.
         /// </summary>
         /// <param name="c"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
@@ -1281,7 +1275,6 @@ namespace Microsoft.PowerShell
         /// Get output buffer info.
         /// </summary>
         /// <param name="bufferInfo"></param>
-        /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's CreateFile fails
         ///    OR
@@ -1664,7 +1657,6 @@ namespace Microsoft.PowerShell
         /// See base class.
         /// </summary>
         /// <param name="s"></param>
-        /// <returns></returns>
 
         public override
         int LengthInBufferCells(string s)
@@ -1677,7 +1669,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="s"></param>
         /// <param name="offset"></param>
-        /// <returns></returns>
 
         public override
         int LengthInBufferCells(string s, int offset)

@@ -1198,7 +1198,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns SessionState proxy object.
         /// </summary>
-        /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
             return _sessionStateProxy ??= new RemoteSessionStateProxy(this);
@@ -1486,7 +1485,6 @@ namespace System.Management.Automation
         /// <param name="command"></param>
         /// <param name="addToHistory"></param>
         /// <param name="isNested"></param>
-        /// <returns></returns>
         private Pipeline CoreCreatePipeline(string command, bool addToHistory, bool isNested)
         {
             return new RemotePipeline(this, command, addToHistory, isNested);
@@ -2394,7 +2392,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command"></param>
         /// <param name="output"></param>
-        /// <returns></returns>
         internal override DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {
             throw new PSNotImplementedException();
