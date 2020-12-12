@@ -259,8 +259,6 @@ namespace System.Management.Automation
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
-        /// <returns>
-        /// </returns>
         /// <exception cref="CommandNotFoundException">
         /// If the command, <paramref name="commandName"/>, could not be found.
         /// </exception>
@@ -527,8 +525,6 @@ namespace System.Management.Automation
         /// for the command discovered.
         /// </param>
         /// <param name="sessionState">The session state the commandInfo should be run in.</param>
-        /// <returns>
-        /// </returns>
         /// <exception cref="CommandNotFoundException">
         /// If the command, <paramref name="commandName"/>, could not be found.
         /// </exception>

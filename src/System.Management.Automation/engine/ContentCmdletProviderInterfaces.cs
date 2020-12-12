@@ -163,8 +163,6 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="context">
         /// </param>
-        /// <returns>
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
@@ -337,8 +335,6 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="context">
         /// </param>
-        /// <returns>
-        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>

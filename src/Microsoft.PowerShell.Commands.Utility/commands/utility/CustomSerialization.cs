@@ -672,8 +672,6 @@ namespace System.Management.Automation
         /// Returns true if PSObject has notes.
         /// </summary>
         /// <param name="source"></param>
-        /// <returns>
-        /// </returns>
         private static bool PSObjectHasNotes(PSObject source)
         {
             if (source.InstanceMembers != null && source.InstanceMembers.Count > 0)

@@ -1718,8 +1718,6 @@ namespace System.Management.Automation
         /// Returns true if PSObject has notes.
         /// </summary>
         /// <param name="source"></param>
-        /// <returns>
-        /// </returns>
         private static bool PSObjectHasNotes(PSObject source)
         {
             Dbg.Assert(source != null, "Caller should validate the parameter");

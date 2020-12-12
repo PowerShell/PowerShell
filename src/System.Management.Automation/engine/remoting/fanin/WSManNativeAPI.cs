@@ -1796,8 +1796,6 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="unmanagedData">
             /// Pointer to unmanaged data.
             /// </param>
-            /// <returns>
-            /// </returns>
             internal static WSManError UnMarshal(IntPtr unmanagedData)
             {
                 return Marshal.PtrToStructure<WSManError>(unmanagedData);
@@ -1916,8 +1914,6 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="unmanagedData">
             /// Pointer to unmanaged data.
             /// </param>
-            /// <returns>
-            /// </returns>
             internal static WSManReceiveDataResult UnMarshal(IntPtr unmanagedData)
             {
                 WSManReceiveDataResultInternal result1 =
@@ -2325,8 +2321,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         /// <param name="wsManAPIHandle">
         /// </param>
-        /// <returns>
-        /// </returns>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManInitialize(int flags,
           [In, Out] ref IntPtr wsManAPIHandle);

@@ -1975,8 +1975,6 @@ namespace System.Management.Automation
             /// </summary>
             /// <param name="enumType">Some enumeration.</param>
             /// <param name="enumValue">Supposed to be an integer.</param>
-            /// <returns>
-            /// </returns>
             private static bool IsDefinedEnum(object enumValue, Type enumType)
             {
                 bool isDefined;

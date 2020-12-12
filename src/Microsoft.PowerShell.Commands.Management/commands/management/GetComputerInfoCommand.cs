@@ -1007,8 +1007,6 @@ namespace Microsoft.PowerShell.Commands
         /// patterns and filter out any invalid property names.
         /// </summary>
         /// <param name="requestedProperties"></param>
-        /// <returns>
-        /// </returns>
         private static List<string> CollectPropertyNames(string[] requestedProperties)
         {
             // A quick scan through the requested properties to make sure
