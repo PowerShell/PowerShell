@@ -2,14 +2,6 @@
 # Licensed under the MIT License.
 
 Describe 'OutputRendering tests' {
-    BeforeAll {
-        $th = New-TestHost
-        $rs = [runspacefactory]::Createrunspace($th)
-        $rs.open()
-        $ps = [powershell]::Create()
-        $ps.Runspace = $rs
-    }
-
     BeforeEach {
         if ($null -ne $PSStyle) {
             $oldOutputRendering = $PSStyle.OutputRendering
@@ -20,8 +12,6 @@ Describe 'OutputRendering tests' {
         if ($null -ne $PSStyle) {
             $PSStyle.OutputRendering = $oldOutputRendering
         }
-
-        $ps.Commands.Clear()
     }
 
     It 'OutputRendering works for "<outputRendering>" to the host' -TestCases @(
