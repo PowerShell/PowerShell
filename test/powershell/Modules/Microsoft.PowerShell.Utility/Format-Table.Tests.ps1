@@ -1,6 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
         It "Should call format table on piped input without error" {
                 { Get-Date | Format-Table } | Should -Not -Throw
         }
@@ -833,3 +846,21 @@ A Name                                  B
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
     }
+
+Describe 'Table color tests' {
+    BeforeAll {
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
+    }
+
+    It 'Table header should use FormatAccent' {
+        ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
+$($PSStyle.Formatting.FormatAccent)foo$($PSStyle.Reset)
+$($PSStyle.Formatting.FormatAccent)---$($PSStyle.Reset)
+  1
+"@
+    }
+}

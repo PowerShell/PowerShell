@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
 
@@ -155,7 +156,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (string line in _header)
                 {
-                    lo.WriteLine(line);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + line + PSStyle.Instance.Reset);
+                    }
+                    else
+                    {
+                        lo.WriteLine(line);
+                    }
                 }
 
                 return _header.Count;
@@ -164,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _header = new List<string>();
 
             // generate the row with the header labels
-            GenerateRow(values, lo, true, null, lo.DisplayCells, _header);
+            GenerateRow(values, lo, true, null, lo.DisplayCells, _header, isHeader: true);
 
             // generate an array of "--" as header markers below
             // the column header labels
@@ -191,11 +199,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 breakLine[k] = StringUtil.DashPadding(count);
             }
 
-            GenerateRow(breakLine, lo, false, null, lo.DisplayCells, _header);
+            GenerateRow(breakLine, lo, false, null, lo.DisplayCells, _header, isHeader: true);
             return _header.Count;
         }
 
-        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows)
+        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows, bool isHeader = false)
         {
             if (_disabled)
                 return;
@@ -227,14 +235,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
                 {
                     generatedRows?.Add(line);
-                    lo.WriteLine(line);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && isHeader)
+                    {
+                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + line + PSStyle.Instance.Reset);
+                    }
+                    else
+                    {
+                        lo.WriteLine(line);
+                    }
                 }
             }
             else
             {
                 string line = GenerateRow(values, currentAlignment, dc);
                 generatedRows?.Add(line);
-                lo.WriteLine(line);
+                if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && isHeader)
+                {
+                    lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + line + PSStyle.Instance.Reset);
+                }
+                else
+                {
+                    lo.WriteLine(line);
+                }
             }
         }
 
@@ -441,7 +463,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (values[k].Contains(ESC))
                 {
                     // Reset the console output if the content of this column contains ESC
-                    sb.Append(ResetConsoleVt100Code);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        // Remove definition of `ResetConsoleVt10Code` when PSAnsiRendering is not experimental
+                        sb.Append(PSStyle.Instance.Reset);
+                    }
+                    else
+                    {
+                        sb.Append(ResetConsoleVt100Code);
+                    }
                 }
             }
 

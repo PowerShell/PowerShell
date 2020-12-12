@@ -1,7 +1,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-List" -Tags "CI" {
-    $nl = [Environment]::NewLine
+    BeforeAll {
+        $nl = [Environment]::NewLine
+
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     BeforeEach {
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
@@ -70,6 +84,19 @@ Describe "Format-List" -Tags "CI" {
 }
 
 Describe "Format-List DRT basic functionality" -Tags "CI" {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     It "Format-List with array should work" {
         $al = (0..255)
         $info = @{}
@@ -181,5 +208,19 @@ dbda : KM
         $actual = $obj | Format-List | Out-String
         $actual = $actual -replace "`r`n", "`n"
         $actual | Should -BeExactly $expected
+    }
+}
+
+Describe 'Format-List color tests' {
+    BeforeAll {
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
+    }
+
+    It 'Property names should use FormatAccent' {
+        ([pscustomobject]@{foo = 1} | Format-List | Out-String).Trim() | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)foo : $($PSStyle.Reset)1"
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -86,12 +87,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (propertyNameCellCounts[k] < _propertyLabelsDisplayLength)
                 {
                     // shorter than the max, add padding
-                    _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        _propertyLabels[k] = PSStyle.Instance.Formatting.FormatAccent + propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    }
+                    else
+                    {
+                        _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    }
                 }
                 else if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                 {
                     // longer than the max, clip
-                    _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        _propertyLabels[k] = PSStyle.Instance.Formatting.FormatAccent + propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
+                    }
+                    else
+                    {
+                        _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
+                    }
                 }
                 else
                 {
@@ -217,7 +232,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (k == 0)
                 {
-                    lo.WriteLine(prependString + sc[k]);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + prependString + PSStyle.Instance.Reset + sc[k]);
+                    }
+                    else
+                    {
+                        lo.WriteLine(prependString + sc[k]);
+                    }
                 }
                 else
                 {
