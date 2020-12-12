@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
                     new InvalidOperationException(),
                     "ListAndScopeSpecified",
                     ErrorCategory.InvalidOperation,
-                    null);
+                    targetObject: null);
 
                 errorRecord.ErrorDetails = new ErrorDetails(message);
                 ThrowTerminatingError(errorRecord);
@@ -86,8 +86,7 @@ namespace Microsoft.PowerShell.Commands
                     PSObject outputObject = new();
 
                     ExecutionPolicy policy = SecuritySupport.GetExecutionPolicy(shellId, scope);
-                    PSNoteProperty inputNote = new(
-                            "Scope", scope);
+                    PSNoteProperty inputNote = new("Scope", scope);
                     outputObject.Properties.Add(inputNote);
                     inputNote = new PSNoteProperty(
                             "ExecutionPolicy", policy);
@@ -180,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
                     new InvalidOperationException(),
                     "CantSetGroupPolicy",
                     ErrorCategory.InvalidOperation,
-                    null);
+                    targetObject: null);
 
                 errorRecord.ErrorDetails = new ErrorDetails(message);
                 ThrowTerminatingError(errorRecord);
@@ -225,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
                             new System.Security.SecurityException(),
                             "ExecutionPolicyOverride",
                             ErrorCategory.PermissionDenied,
-                            null);
+                            targetObject: null);
 
                         errorRecord.ErrorDetails = new ErrorDetails(message);
                         errorRecord.ErrorDetails.RecommendedAction = recommendedAction;
@@ -333,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
                 exception,
                 exception.GetType().FullName,
                 ErrorCategory.PermissionDenied,
-                null);
+                targetObject: null);
 
             errorRecord.ErrorDetails = new ErrorDetails(message);
             ThrowTerminatingError(errorRecord);

@@ -96,9 +96,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new(
                         new ArgumentException(
-                            string.Format(CultureInfo.InvariantCulture,
-                                CmsCommands.FilePathMustBeFileSystemPath, Path)),
-                        "FilePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, provider);
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                CmsCommands.FilePathMustBeFileSystemPath,
+                                Path)),
+                        "FilePathMustBeFileSystemPath",
+                        ErrorCategory.ObjectNotFound,
+                        provider);
                     ThrowTerminatingError(error);
                 }
 
@@ -247,9 +251,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new(
                         new ArgumentException(
-                            string.Format(CultureInfo.InvariantCulture,
-                                CmsCommands.FilePathMustBeFileSystemPath, Path)),
-                        "FilePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, provider);
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                CmsCommands.FilePathMustBeFileSystemPath,
+                                Path)),
+                        "FilePathMustBeFileSystemPath",
+                        ErrorCategory.ObjectNotFound,
+                        provider);
                     ThrowTerminatingError(error);
                 }
 
@@ -424,9 +432,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new(
                         new ArgumentException(
-                            string.Format(CultureInfo.InvariantCulture,
-                                CmsCommands.FilePathMustBeFileSystemPath, Path)),
-                        "FilePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, provider);
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                CmsCommands.FilePathMustBeFileSystemPath,
+                                Path)),
+                        "FilePathMustBeFileSystemPath",
+                        ErrorCategory.ObjectNotFound,
+                        provider);
                     ThrowTerminatingError(error);
                 }
 
@@ -514,9 +526,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord error = new(
                     new ArgumentException(
-                        string.Format(CultureInfo.InvariantCulture,
-                            CmsCommands.InputContainedNoEncryptedContentIncludeContext, "-IncludeContext")),
-                    "InputContainedNoEncryptedContentIncludeContext", ErrorCategory.ObjectNotFound, null);
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            CmsCommands.InputContainedNoEncryptedContentIncludeContext,
+                            "-IncludeContext")),
+                    "InputContainedNoEncryptedContentIncludeContext",
+                    ErrorCategory.ObjectNotFound,
+                    targetObject: null);
                 ThrowTerminatingError(error);
             }
 

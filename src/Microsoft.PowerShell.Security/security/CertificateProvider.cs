@@ -664,8 +664,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // create and cache CurrentUser store-location
                     //
-                    X509StoreLocation user =
-                        new(StoreLocation.CurrentUser);
+                    X509StoreLocation user = new(StoreLocation.CurrentUser);
                     s_storeLocations.Add(user);
                     AddItemToCache(nameof(StoreLocation.CurrentUser),
                                   user);
@@ -673,8 +672,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // create and cache LocalMachine store-location
                     //
-                    X509StoreLocation machine =
-                        new(StoreLocation.LocalMachine);
+                    X509StoreLocation machine = new(StoreLocation.LocalMachine);
                     s_storeLocations.Add(machine);
                     AddItemToCache(nameof(StoreLocation.LocalMachine),
                                    machine);
@@ -997,9 +995,7 @@ namespace Microsoft.PowerShell.Commands
                 fResult = Security.NativeMethods.CertCloseStore(hCertStore, 0);
             }
 
-            X509Store outStore = new(
-                                 pathElements[1],
-                                 StoreLocation.LocalMachine);
+            X509Store outStore = new(pathElements[1], StoreLocation.LocalMachine);
             WriteItemObject(outStore, path, true);
         }
 
@@ -1016,13 +1012,12 @@ namespace Microsoft.PowerShell.Commands
         {
             string providerDescription = CertificateProviderStrings.CertProvidername;
 
-            PSDriveInfo drive =
-                new(
-                    "Cert", // drive name
-                    ProviderInfo,// provider name
-                    @"\",     // root path
-                    providerDescription,
-                    null);
+            PSDriveInfo drive = new(
+                name: "Cert",
+                provider: ProviderInfo,
+                root: @"\",
+                providerDescription,
+                credential: null);
 
             Collection<PSDriveInfo> drives = new();
             drives.Add(drive);
@@ -1274,9 +1269,7 @@ namespace Microsoft.PowerShell.Commands
                         if (store != null)
                         {
                             // create X509Store
-                            X509Store outStore = new(
-                                                    store.StoreName,
-                                                    store.Location.Location);
+                            X509Store outStore = new(store.StoreName, store.Location.Location);
                             WriteItemObject(outStore, path, isContainer);
                         }
                     }
@@ -1506,11 +1499,11 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            ErrorRecord er =
-                new(e,
-                                "CertProviderItemNotFound",
-                                ErrorCategory.ObjectNotFound,
-                                null);
+            ErrorRecord er = new(
+                e,
+                "CertProviderItemNotFound",
+                ErrorCategory.ObjectNotFound,
+                targetObject: null);
 
             er.ErrorDetails = ed;
 
@@ -1543,10 +1536,10 @@ namespace Microsoft.PowerShell.Commands
         private void ThrowInvalidOperation(string errorId, string message)
         {
             ErrorRecord errorRecord = new(
-                            new InvalidOperationException(message),
-                            errorId,
-                            ErrorCategory.InvalidOperation,
-                            null);
+                new InvalidOperationException(message),
+                errorId,
+                ErrorCategory.InvalidOperation,
+                targetObject: null);
             errorRecord.ErrorDetails = new ErrorDetails(message);
             ThrowTerminatingError(errorRecord);
 
@@ -2595,9 +2588,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     X509NativeStore store = GetStore(storePath, name, location);
-                    X509Store ManagedStore = new(
-                                                    store.StoreName,
-                                                    store.Location.Location);
+                    X509Store ManagedStore = new(store.StoreName, store.Location.Location);
                     thingToReturn = ManagedStore;
                 }
 
@@ -3581,8 +3572,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            Security.NativeMethods.CertEnumSystemStoreCallBackProto callBack =
-                new(CertEnumSystemStoreCallBack);
+            Security.NativeMethods.CertEnumSystemStoreCallBackProto callBack = new(CertEnumSystemStoreCallBack);
 
             // Return a new list to avoid synchronization issues.
 

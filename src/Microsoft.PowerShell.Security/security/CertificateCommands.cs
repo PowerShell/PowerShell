@@ -160,11 +160,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (CryptographicException e)
                         {
-                            ErrorRecord er =
-                                new(e,
-                                                "GetPfxCertificateUnknownCryptoError",
-                                                ErrorCategory.NotSpecified,
-                                                null);
+                            ErrorRecord er = new(
+                                e,
+                                "GetPfxCertificateUnknownCryptoError",
+                                ErrorCategory.NotSpecified,
+                                targetObject: null);
                             WriteError(er);
                             continue;
                         }

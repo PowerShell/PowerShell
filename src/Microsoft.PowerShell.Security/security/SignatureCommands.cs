@@ -484,8 +484,7 @@ namespace Microsoft.PowerShell.Commands
                             e,
                             "ForceArgumentException",
                             ErrorCategory.WriteError,
-                            filePath
-                            );
+                            filePath);
                         WriteError(er);
                         return null;
                     }
@@ -495,8 +494,7 @@ namespace Microsoft.PowerShell.Commands
                             e,
                             "ForceIOException",
                             ErrorCategory.WriteError,
-                            filePath
-                            );
+                            filePath);
                         WriteError(er);
                         return null;
                     }
@@ -506,8 +504,7 @@ namespace Microsoft.PowerShell.Commands
                             e,
                             "ForceUnauthorizedAccessException",
                             ErrorCategory.PermissionDenied,
-                            filePath
-                            );
+                            filePath);
                         WriteError(er);
                         return null;
                     }
@@ -517,8 +514,7 @@ namespace Microsoft.PowerShell.Commands
                             e,
                             "ForceNotSupportedException",
                             ErrorCategory.WriteError,
-                            filePath
-                            );
+                            filePath);
                         WriteError(er);
                         return null;
                     }
@@ -528,8 +524,7 @@ namespace Microsoft.PowerShell.Commands
                             e,
                             "ForceSecurityException",
                             ErrorCategory.PermissionDenied,
-                            filePath
-                            );
+                            filePath);
                         WriteError(er);
                         return null;
                     }

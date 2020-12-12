@@ -87,8 +87,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext =
-                    new(this);
+                CmdletProviderContext coreCommandContext = new(this);
 
                 Collection<string> includeFilter =
                     SessionStateUtilities.ConvertArrayToCollection<string>(Include);
@@ -1427,8 +1426,7 @@ namespace Microsoft.PowerShell.Commands
                         pSacl = GetSaclWithCapId(CentralAccessPolicy);
                         if (pSacl == IntPtr.Zero)
                         {
-                            SystemException e = new(
-                                UtilsStrings.GetSaclWithCapIdFail);
+                            SystemException e = new(UtilsStrings.GetSaclWithCapIdFail);
                             WriteError(new ErrorRecord(e,
                                                         "SetAcl_CentralAccessPolicy",
                                                         ErrorCategory.InvalidResult,
@@ -1441,8 +1439,7 @@ namespace Microsoft.PowerShell.Commands
                         pSacl = GetEmptySacl();
                         if (pSacl == IntPtr.Zero)
                         {
-                            SystemException e = new(
-                                UtilsStrings.GetEmptySaclFail);
+                            SystemException e = new(UtilsStrings.GetEmptySaclFail);
                             WriteError(new ErrorRecord(e,
                                                         "SetAcl_ClearCentralAccessPolicy",
                                                         ErrorCategory.InvalidResult,
@@ -1496,8 +1493,7 @@ namespace Microsoft.PowerShell.Commands
                                         IntPtr pToken = GetTokenWithEnabledPrivilege("SeSecurityPrivilege", previousState);
                                         if (pToken == IntPtr.Zero)
                                         {
-                                            SystemException e = new(
-                                                UtilsStrings.GetTokenWithEnabledPrivilegeFail);
+                                            SystemException e = new(UtilsStrings.GetTokenWithEnabledPrivilegeFail);
                                             WriteError(new ErrorRecord(e,
                                                                         "SetAcl_AdjustTokenPrivileges",
                                                                         ErrorCategory.InvalidResult,
