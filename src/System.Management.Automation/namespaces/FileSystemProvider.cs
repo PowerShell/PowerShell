@@ -2058,11 +2058,51 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
-                    ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
-                    : fileInfo.Name
-                : string.Empty;
+            string[] archiveExtensions = {".zip", ".tar.gz", ".tgz", ".7z", ".tar", ".cab", ".nupkg"};
+            string[] executableExtensions = {".exe", ".bat", ".com", ".cmd"};
+            string[] powershellExtensions = {".ps1", ".psm1", ".psd1", ".ps1xml"};
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                if (instance?.BaseObject is FileSystemInfo fileInfo)
+                {
+                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
+                    }
+                    else if (archiveExtensions.Contains(fileInfo.Extension.ToLower()))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Archive}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Directory}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if (powershellExtensions.Contains(fileInfo.Extension.ToLower()))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.PowerShell}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if ((Platform.IsWindows && executableExtensions.Contains(fileInfo.Extension.ToLower())) ||
+                        (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Executable}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else
+                    {
+                        return fileInfo.Name;
+                    }
+                }
+
+                return string.Empty;
+            }
+            else
+            {
+                return instance?.BaseObject is FileSystemInfo fileInfo
+                    ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
+                        ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
+                        : fileInfo.Name
+                    : string.Empty;
+            }
         }
 
         /// <summary>

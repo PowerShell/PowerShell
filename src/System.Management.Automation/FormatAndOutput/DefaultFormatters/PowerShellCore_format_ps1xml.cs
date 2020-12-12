@@ -2060,6 +2060,11 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
                         .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
                         .AddItemScriptBlock(@"""$($_.Progress.UseOSCIndicator)""", label: "Progress.UseOSCIndicator")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.Directory)$($_.FileInfo.Directory.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Directory")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.SymbolicLink)$($_.FileInfo.SymbolicLink.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.SymbolicLink")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.Executable)$($_.FileInfo.Executable.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Executable")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.Archive)$($_.FileInfo.Archive.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Archive")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.PowerShell)$($_.FileInfo.PowerShell.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.PowerShell")
                         .AddItemScriptBlock(@"""$($_.Foreground.Black)$($_.Foreground.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Black")
                         .AddItemScriptBlock(@"""$($_.Foreground.White)$($_.Foreground.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.White")
                         .AddItemScriptBlock(@"""$($_.Foreground.DarkGray)$($_.Foreground.DarkGray.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.DarkGray")
@@ -2120,6 +2125,20 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"MaxWidth")
                         .AddItemProperty(@"View")
                         .AddItemProperty(@"UseOSCIndicator")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleFileInfoFormat()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+FileInfoFormatting",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Directory)$($_.Directory.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Directory")
+                        .AddItemScriptBlock(@"""$($_.SymbolicLink)$($_.SymbolicLink.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "SymbolicLink")
+                        .AddItemScriptBlock(@"""$($_.Executable)$($_.Executable.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Executable")
+                        .AddItemScriptBlock(@"""$($_.Archive)$($_.Archive.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Archive")
+                        .AddItemScriptBlock(@"""$($_.PowerShell)$($_.PowerShell.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.PowerShell")
                     .EndEntry()
                 .EndList());
         }

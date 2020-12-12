@@ -334,6 +334,39 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Contains formatting styles for FileInfo objects.
+        /// </summary>
+
+        public class FileInfoFormatting
+        {
+            /// <summary>
+            /// Gets or sets the style for directories.
+            /// </summary>
+            public string Directory { get; set; } = "\x1b[44;1m";
+
+            /// <summary>
+            /// Gets or sets the style for symbolic links.
+            /// </summary>
+            public string SymbolicLink { get; set; } = "\x1b[36;1m";
+
+            /// <summary>
+            /// Gets or sets the style for executables.
+            /// </summary>
+            public string Executable { get; set; } = "\x1b[32;1m";
+
+            /// <summary>
+            /// Gets or sets the style for archive.
+            /// </summary>
+            public string Archive { get; set; } = "\x1b[31;1m";
+
+            /// <summary>
+            /// Gets or sets the style for PowerShell files.
+            /// </summary>
+
+            public string PowerShell { get; set; } = "\x1b[33;1m";
+        }
+
+        /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
         public OutputRendering OutputRendering { get; set; } = OutputRendering.Automatic;
@@ -444,6 +477,11 @@ namespace System.Management.Automation
         /// </summary>
         public BackgroundColor Background { get; }
 
+        /// <summary>
+        /// Gets FileInfo colors.
+        /// </summary>
+        public FileInfoFormatting FileInfo { get; }
+
         private static readonly PSStyle s_psstyle = new PSStyle();
 
         private PSStyle()
@@ -452,6 +490,7 @@ namespace System.Management.Automation
             Progress   = new ProgressConfiguration();
             Foreground = new ForegroundColor();
             Background = new BackgroundColor();
+            FileInfo = new FileInfoFormatting();
         }
 
         /// <summary>
