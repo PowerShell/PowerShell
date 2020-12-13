@@ -516,7 +516,16 @@ namespace Microsoft.PowerShell
             Visit(ProgressNode node, ArrayList unused, int unusedToo)
             {
                 node.Age = Math.Min(node.Age + 1, Int32.MaxValue - 1);
-                node.Style = ProgressNode.RenderStyle.FullPlus;
+                
+                if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+                {
+                    node.Style = ProgressNode.RenderStyle.Ansi;
+                }
+                else
+                {
+                    node.Style = ProgressNode.RenderStyle.FullPlus;
+                }
+
                 return true;
             }
         }
@@ -582,6 +591,13 @@ namespace Microsoft.PowerShell
             }
 
             ArrayList result = new ArrayList();
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+            {
+                RenderHelper(result, _topLevelNodes, 0, maxWidth, rawUI);
+                return (string[])result.ToArray(typeof(string));
+            }
+
             string border = StringUtil.Padding(maxWidth);
 
             result.Add(border);

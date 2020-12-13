@@ -7,6 +7,8 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 
+using Microsoft.PowerShell.Commands.Internal.Format;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
@@ -40,6 +42,11 @@ namespace Microsoft.PowerShell
             /// The node will be displayed the same as Full, plus, the whole StatusDescription and CurrentOperation will be displayed (in multiple lines if needed).
             /// </summary>
             FullPlus = 4,
+
+            /// <summary>
+            /// The node will be displayed using ANSI escape sequences
+            /// </summary>
+            Ansi = 5,
         }
 
         /// <summary>
@@ -56,7 +63,16 @@ namespace Microsoft.PowerShell
             this.PercentComplete = Math.Min(record.PercentComplete, 100);
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
-            this.Style = RenderStyle.FullPlus;
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+            {
+                this.Style = RenderStyle.Ansi;
+            }
+            else
+            {
+                this.Style = RenderStyle.FullPlus;
+            }
+
             this.SourceId = sourceId;
         }
 
@@ -97,6 +113,9 @@ namespace Microsoft.PowerShell
                     break;
                 case RenderStyle.Minimal:
                     RenderMinimal(strCollection, indentation, maxWidth, rawUI);
+                    break;
+                case RenderStyle.Ansi:
+                    RenderAnsi(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Invisible:
                     // do nothing
@@ -337,6 +356,67 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
+        /// Renders a node in the "ANSI" style.
+        /// </summary>
+        /// <param name="strCollection">
+        /// List of strings to which the node's rendering will be appended.
+        /// </param>
+        /// <param name="indentation">
+        /// The indentation level (in BufferCells) at which the node should be rendered.
+        /// </param>
+        /// <param name="maxWidth">
+        /// The maximum number of BufferCells that the rendering is allowed to consume.
+        /// </param>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths in the rendering.
+        /// </param>
+        private
+        void
+        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
+        {
+            string indent = StringUtil.Padding(indentation);
+            string secRemain = string.Empty;
+            if (SecondsRemaining >= 0)
+            {
+                secRemain = SecondsRemaining.ToString() + "s";
+            }
+
+            // 5 is for the extra space and square brackets below
+            int barWidth = maxWidth - Activity.Length - secRemain.Length - indentation - 5;
+            if (barWidth > 80)
+            {
+                barWidth = 80;
+            }
+
+            string description;
+            if (StatusDescription.Length > barWidth)
+            {
+                description = StatusDescription.Substring(0, barWidth - 1) + PSObjectHelper.Ellipsis;
+            }
+            else
+            {
+                description = StatusDescription;
+            }
+
+            description = description.PadRight(barWidth);
+            int barLength = PercentComplete * barWidth / 100;
+            description = description.Insert(barLength, PSStyle.Instance.ReverseOff);
+
+            strCollection.Add(
+                StringUtil.TruncateToBufferCellWidth(
+                    rawUI,
+                    StringUtil.Format(
+                        " {0}{1}{2} [{3}{4}] {5}",
+                        indent,
+                        PSStyle.Instance.Formatting.Progress,
+                        Activity,
+                        PSStyle.Instance.Reverse,
+                        description,
+                        secRemain),
+                    maxWidth));
+        }
+
+        /// <summary>
         /// The nodes that have this node as their parent.
         /// </summary>
         internal
@@ -395,6 +475,9 @@ namespace Microsoft.PowerShell
 
                 case RenderStyle.Invisible:
                     return 0;
+
+                case RenderStyle.Ansi:
+                    return 1;
 
                 default:
                     Dbg.Assert(false, "Unknown RenderStyle value");

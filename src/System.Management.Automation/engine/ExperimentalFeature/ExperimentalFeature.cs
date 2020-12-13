@@ -129,6 +129,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSAnsiRendering",
                     description: "Enable $PSStyle variable to control ANSI rendering of strings"),
+                new ExperimentalFeature(
+                    name: "PSAnsiProgress",
+                    description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

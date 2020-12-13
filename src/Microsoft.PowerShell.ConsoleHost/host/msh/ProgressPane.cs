@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -127,8 +128,11 @@ namespace Microsoft.PowerShell
                         new Rectangle(_location.X, _location.Y, _location.X + cols - 1, _location.Y + rows - 1));
 #endif
 
-                // replace the saved region in the screen buffer with our progress display
-                _rawui.SetBufferContents(_location, tempProgressRegion);
+                if (!ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+                {
+                    // replace the saved region in the screen buffer with our progress display
+                    _rawui.SetBufferContents(_location, tempProgressRegion);
+                }
             }
         }
 
@@ -180,6 +184,29 @@ namespace Microsoft.PowerShell
 
                 Hide();
                 _progressRegion = null;
+                return;
+            }
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+            {
+                if (_location.X == 0 && _location.Y == 0)
+                {
+                    for (int i = 0; i < contents.Length; i++)
+                    {
+                        Console.Out.WriteLine("a");
+                    }
+
+                    _location.Y = _rawui.CursorPosition.Y - contents.Length;
+                    _location.X = 0;
+                }
+
+                _rawui.CursorPosition = _location;
+
+                foreach (string content in contents)
+                {
+                    Console.Out.WriteLine(content);
+                }
+
                 return;
             }
 
