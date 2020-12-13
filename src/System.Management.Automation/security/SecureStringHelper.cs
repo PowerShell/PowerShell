@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell
                 return new SecureString();
             }
 
-            fixed (char* charsPtr = &plainTextString.GetPinnableReference())
+            fixed (char* charsPtr = plainTextString)
             {
                 return new SecureString(charsPtr, plainTextString.Length);
             }
