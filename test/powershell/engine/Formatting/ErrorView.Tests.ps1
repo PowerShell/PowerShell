@@ -15,7 +15,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
     It 'Exceptions not thrown do not get formatted as ErrorRecord' {
         $exp = [System.Exception]::new('test') | Out-String
-        $exp | Should -BeLike "*Message        : test*"
+        $exp | Should -BeLike "*Message        : *test*"
     }
 
     Context 'ConciseView tests' {
