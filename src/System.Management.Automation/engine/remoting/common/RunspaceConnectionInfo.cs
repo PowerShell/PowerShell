@@ -1104,9 +1104,9 @@ namespace System.Management.Automation.Runspaces
                 resolvedShellUri = DefaultShellUri;
             }
 
-            if (!resolvedShellUri.Contains(System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase))
+            if (!resolvedShellUri.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase))
             {
-                resolvedShellUri = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
+                resolvedShellUri = WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
             }
 
             return resolvedShellUri;
@@ -1413,8 +1413,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default value for shell.
         /// </summary>
-        private const string DefaultShellUri =
-             System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
+        private const string DefaultShellUri = WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
 
         /// <summary>
         /// Default credentials - null indicates credentials of
