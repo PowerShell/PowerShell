@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         /// including any names resulting from the expansion of wild-card
         /// patterns given. This list will itself contain no wildcard patterns.
         /// </summary>
-        private List<string> _namedProperties = null;
+        private List<string> _namedProperties;
         #endregion Instance Data
 
         #region Parameters

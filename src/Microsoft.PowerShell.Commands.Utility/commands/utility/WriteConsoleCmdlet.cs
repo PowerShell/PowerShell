@@ -120,6 +120,6 @@ namespace Microsoft.PowerShell.Commands
             this.WriteInformation(informationMessage, new string[] { "PSHOST" });
         }
 
-        private bool _notAppendNewline = false;
+        private bool _notAppendNewline;
     }
 }

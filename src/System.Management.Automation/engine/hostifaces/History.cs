@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cleared status of an entry.
         /// </summary>
-        internal bool Cleared { get; set; } = false;
+        internal bool Cleared { get; set; }
 
         /// <summary>
         /// Sets Id.
@@ -1559,7 +1559,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Commandline parameter.
         /// </summary>
-        private string[] _commandline = null;
+        private string[] _commandline;
 
         ///<summary>
         /// Clears the specified number of history entries
@@ -1588,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A boolean variable to indicate if the count parameter specified.
         /// </summary>
-        private bool _countParameterSpecified = false;
+        private bool _countParameterSpecified;
 
         /// <summary>
         /// Specifies whether new entries to be cleared or the default old ones.

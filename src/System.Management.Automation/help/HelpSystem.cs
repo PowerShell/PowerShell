@@ -204,7 +204,7 @@ namespace System.Management.Automation
 
         #region Configuration
 
-        private bool _verboseHelpErrors = false;
+        private bool _verboseHelpErrors;
 
         /// <summary>
         /// VerboseHelpErrors is used in the case when end users are interested
@@ -234,7 +234,7 @@ namespace System.Management.Automation
 
         // Cache of search paths that are currently active.
         // This will save a lot time when help providers do their searching
-        private Collection<string> _searchPaths = null;
+        private Collection<string> _searchPaths;
 
         /// <summary>
         /// Gets the search paths for external snapins/modules that are currently loaded.

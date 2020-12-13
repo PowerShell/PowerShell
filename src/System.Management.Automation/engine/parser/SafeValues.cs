@@ -63,7 +63,7 @@ namespace System.Management.Automation.Language
         internal static readonly IsSafeValueVisitor Default = new IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext.Default);
 
         // This is a check of the number of visits
-        private uint _visitCount = 0;
+        private uint _visitCount;
 
         private const uint MaxVisitCount = 5000;
         private const int MaxHashtableKeyCount = 500;

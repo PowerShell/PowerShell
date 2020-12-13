@@ -48,11 +48,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed class DatabaseLoadingInfo
     {
-        internal string fileDirectory = null;
-        internal string filePath = null;
-        internal bool isFullyTrusted = false;
-        internal bool isProductCode = false;
-        internal string xPath = null;
+        internal string fileDirectory;
+        internal string filePath;
+        internal bool isFullyTrusted;
+        internal bool isProductCode;
+        internal string xPath;
         internal DateTime loadTime = DateTime.Now;
     }
     #endregion
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Optional expression for conditional binding.
         /// </summary>
-        internal ExpressionToken conditionToken = null;
+        internal ExpressionToken conditionToken;
     }
 
     internal sealed class TypeReference : TypeOrGroupReference
@@ -301,13 +301,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Left indentation for a frame is relative to the parent frame.
         /// it must be a value >=0.
         /// </summary>
-        internal int leftIndentation = 0;
+        internal int leftIndentation;
 
         /// <summary>
         /// Right indentation for a frame is relative to the parent frame.
         /// it must be a value >=0.
         /// </summary>
-        internal int rightIndentation = 0;
+        internal int rightIndentation;
 
         /// <summary>
         /// It can have the following values:
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// less than 0    : it represents the hanging of the first line WRT the following ones
         ///                  (i.e. "first line hanging").
         /// </summary>
-        internal int firstLine = 0;
+        internal int firstLine;
     }
 
     internal sealed class ExpressionToken
@@ -339,10 +339,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Optional expression for conditional binding.
         /// </summary>
-        internal ExpressionToken conditionToken = null;
+        internal ExpressionToken conditionToken;
 
         internal ExpressionToken expression = new ExpressionToken();
-        internal bool enumerateCollection = false;
+        internal bool enumerateCollection;
     }
 
     internal sealed class CompoundPropertyToken : PropertyTokenBase
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// An inline control or a reference to a control definition.
         /// </summary>
-        internal ControlBase control = null;
+        internal ControlBase control;
     }
 
     internal sealed class FieldPropertyToken : PropertyTokenBase
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed class FieldFormattingDirective
     {
-        internal string formatString = null; // optional
+        internal string formatString; // optional
     }
 
     #endregion Elementary Tokens
@@ -417,12 +417,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Name of the control we refer to, it cannot be null.
         /// </summary>
-        internal string name = null;
+        internal string name;
 
         /// <summary>
         /// Type of the control we refer to, it cannot be null.
         /// </summary>
-        internal Type controlType = null;
+        internal Type controlType;
     }
 
     /// <summary>
@@ -435,12 +435,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// RULE: valid only for table and wide only.
         /// </summary>
-        internal bool? autosize = null;
+        internal bool? autosize;
 
         /// <summary>
         /// RULE: only valid for table.
         /// </summary>
-        internal bool repeatHeader = false;
+        internal bool repeatHeader;
     }
 
     /// <summary>
@@ -451,12 +451,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Name of the control we define, it cannot be null.
         /// </summary>
-        internal string name = null;
+        internal string name;
 
         /// <summary>
         /// Body of the control we define, it cannot be null.
         /// </summary>
-        internal ControlBody controlBody = null;
+        internal ControlBody controlBody;
     }
 
     #endregion
@@ -489,18 +489,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Expression to be used to select the grouping.
         /// </summary>
-        internal ExpressionToken expression = null;
+        internal ExpressionToken expression;
 
         /// <summary>
         /// An inline control or a reference to a control definition.
         /// </summary>
-        internal ControlBase control = null;
+        internal ControlBase control;
 
         /// <summary>
         /// Alternative (and simplified) representation for the control
         /// RULE: if the control object is null, use this one.
         /// </summary>
-        internal TextToken labelTextToken = null;
+        internal TextToken labelTextToken;
     }
 
     /// <summary>
@@ -578,11 +578,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed class StringResourceReference
     {
-        internal DatabaseLoadingInfo loadingInfo = null;
-        internal string assemblyName = null;
-        internal string assemblyLocation = null;
-        internal string baseName = null;
-        internal string resourceId = null;
+        internal DatabaseLoadingInfo loadingInfo;
+        internal string assemblyName;
+        internal string assemblyLocation;
+        internal string baseName;
+        internal string resourceId;
     }
 
     #endregion

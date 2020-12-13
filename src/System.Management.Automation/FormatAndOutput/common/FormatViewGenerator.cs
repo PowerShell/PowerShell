@@ -319,27 +319,27 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return result;
         }
 
-        private GroupingInfoManager _groupingManager = null;
+        private GroupingInfoManager _groupingManager;
 
         protected bool AutoSize
         {
             get { return _autosize; }
         }
 
-        private bool _autosize = false;
+        private bool _autosize;
 
         protected bool RepeatHeader
         {
             get { return _repeatHeader; }
         }
 
-        private bool _repeatHeader = false;
+        private bool _repeatHeader;
 
         protected class DataBaseInfo
         {
-            internal TypeInfoDataBase db = null;
-            internal ViewDefinition view = null;
-            internal AppliesTo applicableTypes = null;
+            internal TypeInfoDataBase db;
+            internal ViewDefinition view;
+            internal AppliesTo applicableTypes;
         }
 
         protected TerminatingErrorContext errorContext;
@@ -350,8 +350,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
-        protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
-        protected FormattingCommandLineParameters inputParameters = null;
+        protected List<MshResolvedExpressionParameterAssociation> activeAssociationList;
+        protected FormattingCommandLineParameters inputParameters;
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
                     FieldFormattingDirective directive)

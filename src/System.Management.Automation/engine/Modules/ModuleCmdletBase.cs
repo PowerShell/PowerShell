@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Add module path to app domain level module path cache if name is not rooted.
         /// </summary>
-        protected bool AddToAppDomainLevelCache { get; set; } = false;
+        protected bool AddToAppDomainLevelCache { get; set; }
 
         /// <summary>
         /// A handy match all pattern used to initialize various import and export lists...
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A counter for modules that are loaded using WindowsPS compat session.
         /// </summary>
-        internal static int s_WindowsPowerShellCompatUsageCounter = 0;
+        internal static int s_WindowsPowerShellCompatUsageCounter;
 
         /// <summary>
         /// Session name for WindowsPS compat remoting session.

@@ -187,7 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// global operation counter
         /// </para>
         /// </summary>
-        private static long gOperationCounter = 0;
+        private static long gOperationCounter;
 
         /// <summary>
         /// Temporary CimSession cache lock.
@@ -1532,7 +1532,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// CancelOperation disposed flag.
         /// </summary>
-        private int _cancelOperationDisposed = 0;
+        private int _cancelOperationDisposed;
 
         /// <summary>
         /// Dispose the cancel operation.
@@ -2284,7 +2284,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Ture indicates need to output the modified result.
         /// </summary>
-        private readonly bool passThru = false;
+        private readonly bool passThru;
 
         #endregion
     }

@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Zero: all the objects
         /// a positive number N: use the first N.
         /// </summary>
-        private readonly int _objectCount = 0;
+        private readonly int _objectCount;
 
         /// <summary>
         /// Maximum amount of time for record processing to compute the best fit.
@@ -179,28 +179,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// A positive timespan: use all objects that have been processed within the timeframe.
         /// </summary>
         private readonly TimeSpan _groupingDuration = TimeSpan.MinValue;
-        private Stopwatch _groupingTimer = null;
+        private Stopwatch _groupingTimer;
 
         /// <summary>
         /// Notification callback to be called when we have accumulated enough
         /// data to compute a hint.
         /// </summary>
-        private readonly FormattedObjectsCache.ProcessCachedGroupNotification _notificationCallBack = null;
+        private readonly FormattedObjectsCache.ProcessCachedGroupNotification _notificationCallBack;
 
         /// <summary>
         /// Reference kept to be used during notification.
         /// </summary>
-        private FormatStartData _formatStartData = null;
+        private FormatStartData _formatStartData;
 
         /// <summary>
         /// State flag to signal we are queuing.
         /// </summary>
-        private bool _processingGroup = false;
+        private bool _processingGroup;
 
         /// <summary>
         /// Current object count.
         /// </summary>
-        private int _currentObjectCount = 0;
+        private int _currentObjectCount;
     }
 
     /// <summary>
@@ -332,6 +332,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Back end grouping queue.
         /// </summary>
-        private OutputGroupQueue _groupQueue = null;
+        private OutputGroupQueue _groupQueue;
     }
 }

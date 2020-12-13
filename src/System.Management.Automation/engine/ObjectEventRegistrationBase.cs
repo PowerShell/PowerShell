@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ScriptBlock _action = null;
+        private ScriptBlock _action;
 
         /// <summary>
         /// Parameter for additional data to be associated with this event subscription.
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _messageData = null;
+        private PSObject _messageData;
 
         /// <summary>
         /// Parameter for the flag that determines if this subscription is used to support
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private SwitchParameter _supportEvent = new SwitchParameter();
+        private SwitchParameter _supportEvent;
 
         /// <summary>
         /// Parameter for the flag that determines whether this
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private SwitchParameter _forward = new SwitchParameter();
+        private SwitchParameter _forward;
 
         /// <summary>
         /// Parameter to indicate that the subscriber should be auto-unregistered after being triggered for specified times.
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private int _maxTriggerCount = 0;
+        private int _maxTriggerCount;
 
         #endregion parameters
 

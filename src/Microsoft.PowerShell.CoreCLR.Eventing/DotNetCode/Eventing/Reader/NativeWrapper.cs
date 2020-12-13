@@ -27,26 +27,26 @@ namespace System.Diagnostics.Eventing.Reader
         public class SystemProperties
         {
             // indicates if the SystemProperties values were already computed (for this event Instance, surely).
-            public bool filled = false;
+            public bool filled;
 
-            public ushort? Id = null;
-            public byte? Version = null;
-            public ushort? Qualifiers = null;
-            public byte? Level = null;
-            public ushort? Task = null;
-            public byte? Opcode = null;
-            public ulong? Keywords = null;
-            public ulong? RecordId = null;
-            public string ProviderName = null;
-            public Guid? ProviderId = null;
-            public string ChannelName = null;
-            public uint? ProcessId = null;
-            public uint? ThreadId = null;
-            public string ComputerName = null;
-            public System.Security.Principal.SecurityIdentifier UserId = null;
-            public DateTime? TimeCreated = null;
-            public Guid? ActivityId = null;
-            public Guid? RelatedActivityId = null;
+            public ushort? Id;
+            public byte? Version;
+            public ushort? Qualifiers;
+            public byte? Level;
+            public ushort? Task;
+            public byte? Opcode;
+            public ulong? Keywords;
+            public ulong? RecordId;
+            public string ProviderName;
+            public Guid? ProviderId;
+            public string ChannelName;
+            public uint? ProcessId;
+            public uint? ThreadId;
+            public string ComputerName;
+            public System.Security.Principal.SecurityIdentifier UserId;
+            public DateTime? TimeCreated;
+            public Guid? ActivityId;
+            public Guid? RelatedActivityId;
 
             public SystemProperties()
             {

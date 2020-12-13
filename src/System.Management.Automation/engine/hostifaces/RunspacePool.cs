@@ -507,11 +507,11 @@ namespace System.Management.Automation.Runspaces
         private readonly RunspacePoolInternal _internalPool;
         private readonly object _syncObject = new object();
 
-        private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
+        private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged;
 
-        private event EventHandler<PSEventArgs> InternalForwardEvent = null;
+        private event EventHandler<PSEventArgs> InternalForwardEvent;
 
-        private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
+        private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated;
 
         #endregion
 
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Indicates whether the RunspacePool is a remote one.
         /// </summary>
-        internal bool IsRemote { get; } = false;
+        internal bool IsRemote { get; }
 
         /// <summary>
         /// RemoteRunspacePoolInternal associated with this

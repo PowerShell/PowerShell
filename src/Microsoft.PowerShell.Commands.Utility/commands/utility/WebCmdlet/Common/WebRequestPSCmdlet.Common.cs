@@ -920,22 +920,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cancellation token source.
         /// </summary>
-        internal CancellationTokenSource _cancelToken = null;
+        internal CancellationTokenSource _cancelToken;
 
         /// <summary>
         /// Parse Rel Links.
         /// </summary>
-        internal bool _parseRelLink = false;
+        internal bool _parseRelLink;
 
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal bool _followRelLink = false;
+        internal bool _followRelLink;
 
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal Dictionary<string, string> _relationLink = null;
+        internal Dictionary<string, string> _relationLink;
 
         /// <summary>
         /// Maximum number of Rel Links to follow.
@@ -945,12 +945,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The remote endpoint returned a 206 status code indicating successful resume.
         /// </summary>
-        private bool _resumeSuccess = false;
+        private bool _resumeSuccess;
 
         /// <summary>
         /// The current size of the local file being resumed.
         /// </summary>
-        private long _resumeFileSize = 0;
+        private long _resumeFileSize;
 
         private HttpMethod GetHttpMethod(WebRequestMethod method)
         {

@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// </summary>
         internal ExecutionContext Context { get; set; }
 
-        private SessionState _state = null;
+        private SessionState _state;
         internal InternalHost CBhost;
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
         internal IList OutVarList { get { return _outVarList; } set { _outVarList = value; } }
 
-        private IList _outVarList = null;
+        private IList _outVarList;
 
         internal PipelineProcessor PipelineProcessor { get; set; }
 
@@ -886,7 +886,7 @@ namespace System.Management.Automation
             this.PipelineProcessor.LogExecutionInfo(_thisCommand.MyInvocation, text);
         }
 
-        internal bool LogPipelineExecutionDetail { get; } = false;
+        internal bool LogPipelineExecutionDetail { get; }
 
         private bool InitShouldLogPipelineExecutionDetail()
         {
@@ -928,7 +928,7 @@ namespace System.Management.Automation
         /// </summary>
         internal string PipelineVariable { get; set; }
 
-        private PSVariable _pipelineVarReference = null;
+        private PSVariable _pipelineVarReference;
 
         internal void SetupOutVariable()
         {
@@ -2200,7 +2200,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Claims the unclaimed error output of all previous commands.
         /// </summary>
-        internal bool MergeUnclaimedPreviousErrorResults { get; set; } = false;
+        internal bool MergeUnclaimedPreviousErrorResults { get; set; }
 
         #endregion
 
@@ -2356,10 +2356,10 @@ namespace System.Management.Automation
             // There is no finalizer, by design.  This class relies on always
             // being disposed and always following stack semantics.
 
-            private readonly PipelineProcessor _pp = null;
-            private readonly InternalCommand _wasPermittedToWrite = null;
-            private readonly bool _wasPermittedToWriteToPipeline = false;
-            private readonly Thread _wasPermittedToWriteThread = null;
+            private readonly PipelineProcessor _pp;
+            private readonly InternalCommand _wasPermittedToWrite;
+            private readonly bool _wasPermittedToWriteToPipeline;
+            private readonly Thread _wasPermittedToWriteThread;
         }
 
         /// <summary>
@@ -2937,7 +2937,7 @@ namespace System.Management.Automation
         // workings of the command and when what information will get output.
         // See "User Feedback Mechanisms - Note.doc" for details.
 
-        private bool _isConfirmPreferenceCached = false;
+        private bool _isConfirmPreferenceCached;
         private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
@@ -2977,9 +2977,9 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isDebugPreferenceSet = false;
+        private bool _isDebugPreferenceSet;
         private ActionPreference _debugPreference = InitialSessionState.DefaultDebugPreference;
-        private bool _isDebugPreferenceCached = false;
+        private bool _isDebugPreferenceCached;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3031,7 +3031,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly bool _isVerbosePreferenceCached = false;
+        private readonly bool _isVerbosePreferenceCached;
         private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
@@ -3078,9 +3078,9 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsWarningActionSet { get; private set; } = false;
+        internal bool IsWarningActionSet { get; private set; }
 
-        private readonly bool _isWarningPreferenceCached = false;
+        private readonly bool _isWarningPreferenceCached;
         private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.
@@ -3126,7 +3126,7 @@ namespace System.Management.Automation
         // This is used so that people can tell whether the verbose switch
         // was specified.  This is useful in the Cmdlet-calling-Cmdlet case
         // where you'd like the underlying Cmdlet to have the same switches.
-        private bool _verboseFlag = false;
+        private bool _verboseFlag;
 
         /// <summary>
         /// Echo tells the command to articulate the actions it performs while executing.
@@ -3145,9 +3145,9 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsVerboseFlagSet { get; private set; } = false;
+        internal bool IsVerboseFlagSet { get; private set; }
 
-        private bool _confirmFlag = false;
+        private bool _confirmFlag;
 
         /// <summary>
         /// Confirm tells the command to ask the admin before performing an action.
@@ -3169,9 +3169,9 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsConfirmFlagSet { get; private set; } = false;
+        internal bool IsConfirmFlagSet { get; private set; }
 
-        private bool _useTransactionFlag = false;
+        private bool _useTransactionFlag;
 
         /// <summary>
         /// UseTransaction tells the command to activate the current PowerShell transaction.
@@ -3193,12 +3193,12 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool UseTransactionFlagSet { get; private set; } = false;
+        internal bool UseTransactionFlagSet { get; private set; }
 
         // This is used so that people can tell whether the debug switch was specified.  This
         // Is useful in the Cmdlet-calling-Cmdlet case where you'd like the underlying Cmdlet to
         // have the same switches.
-        private bool _debugFlag = false;
+        private bool _debugFlag;
 
         /// <summary>
         /// Debug tell the command system to provide Programmer/Support type messages to understand what is really occuring
@@ -3218,7 +3218,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsDebugFlagSet { get; private set; } = false;
+        internal bool IsDebugFlagSet { get; private set; }
 
         private bool _whatIfFlag = InitialSessionState.DefaultWhatIfPreference;
         private bool _isWhatIfPreferenceCached /* = false */;
@@ -3253,7 +3253,7 @@ namespace System.Management.Automation
         internal bool IsWhatIfFlagSet { get; private set; }
 
         private ActionPreference _errorAction = InitialSessionState.DefaultErrorActionPreference;
-        private bool _isErrorActionPreferenceCached = false;
+        private bool _isErrorActionPreferenceCached;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
         /// </summary>
@@ -3293,7 +3293,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsErrorActionSet { get; private set; } = false;
+        internal bool IsErrorActionSet { get; private set; }
 
         /// <summary>
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
@@ -3329,8 +3329,8 @@ namespace System.Management.Automation
         }
 
         private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
-        private bool _isProgressPreferenceSet = false;
-        private bool _isProgressPreferenceCached = false;
+        private bool _isProgressPreferenceSet;
+        private bool _isProgressPreferenceCached;
 
         /// <summary>
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
@@ -3367,9 +3367,9 @@ namespace System.Management.Automation
 
         private ActionPreference _informationPreference = InitialSessionState.DefaultInformationPreference;
 
-        internal bool IsInformationActionSet { get; private set; } = false;
+        internal bool IsInformationActionSet { get; private set; }
 
-        private bool _isInformationPreferenceCached = false;
+        private bool _isInformationPreferenceCached;
 
         internal PagingParameters PagingParameters { get; set; }
 

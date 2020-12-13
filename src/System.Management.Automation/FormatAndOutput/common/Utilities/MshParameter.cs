@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class MshParameter
     {
-        internal Hashtable hash = null;
+        internal Hashtable hash;
 
         internal object GetEntry(string key)
         {
@@ -524,6 +524,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion
 
-        private readonly CommandParameterDefinition _paramDef = null;
+        private readonly CommandParameterDefinition _paramDef;
     }
 }

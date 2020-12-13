@@ -14,7 +14,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is the unique id of a remote session object.
         /// </summary>
-        internal Guid InstanceId { get; } = new Guid();
+        internal Guid InstanceId { get; }
 
         /// <summary>
         /// This indicates the remote session object is Client, Server or Listener.

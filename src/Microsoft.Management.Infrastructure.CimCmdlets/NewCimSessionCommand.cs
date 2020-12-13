@@ -43,7 +43,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private PasswordAuthenticationMechanism authentication;
-        private bool authenticationSet = false;
+        private bool authenticationSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "Credential".
@@ -113,7 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private UInt32 operationTimeout;
-        internal bool operationTimeoutSet = false;
+        internal bool operationTimeoutSet;
 
         /// <summary>
         /// <para>
@@ -142,7 +142,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private UInt32 port;
-        private bool portSet = false;
+        private bool portSet;
 
         /// <summary>
         /// <para>

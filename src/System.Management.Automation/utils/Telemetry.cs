@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Telemetry
         private static string s_sessionId { get; }
 
         // private semaphore to determine whether we sent the startup telemetry event
-        private static int s_startupEventSent = 0;
+        private static int s_startupEventSent;
 
         /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.

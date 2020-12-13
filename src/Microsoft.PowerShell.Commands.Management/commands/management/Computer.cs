@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _timeout = -1;
-        private bool _timeoutSpecified = false;
+        private bool _timeoutSpecified;
 
         /// <summary>
         /// Specify the For parameter.
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private WaitForServiceTypes _waitFor = WaitForServiceTypes.PowerShell;
-        private bool _waitForSpecified = false;
+        private bool _waitForSpecified;
 
         /// <summary>
         /// Specify the Delay parameter.
@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _delay = 5;
-        private bool _delaySpecified = false;
+        private bool _delaySpecified;
 
         /// <summary>
         /// Script to test if the PowerShell is ready.
@@ -1273,8 +1273,8 @@ $result
     {
         #region Private Members
 
-        private bool _containsLocalHost = false;
-        private string _newNameForLocalHost = null;
+        private bool _containsLocalHost;
+        private string _newNameForLocalHost;
 
         private readonly string _shortLocalMachineName = Dns.GetHostName();
         private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;

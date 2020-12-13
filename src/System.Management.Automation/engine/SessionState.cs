@@ -178,7 +178,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The module info object associated with this session state.
         /// </summary>
-        internal PSModuleInfo Module { get; set; } = null;
+        internal PSModuleInfo Module { get; set; }
 
         // This is used to maintain the order in which modules were imported.
         // This is used by Get-Command -All to order by last imported

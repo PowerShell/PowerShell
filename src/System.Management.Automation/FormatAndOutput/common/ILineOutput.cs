@@ -259,13 +259,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Instance of the delegate previously defined
         /// for line that has EXACTLY this.ncols characters.
         /// </summary>
-        private readonly WriteCallback _writeCall = null;
+        private readonly WriteCallback _writeCall;
 
         /// <summary>
         /// Instance of the delegate previously defined
         /// for generic line, less that this.ncols characters.
         /// </summary>
-        private readonly WriteCallback _writeLineCall = null;
+        private readonly WriteCallback _writeLineCall;
 
         #endregion
 
@@ -451,11 +451,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _suppressNewline = suppressNewline;
         }
 
-        private readonly int _columns = 0;
+        private readonly int _columns;
 
-        private readonly TextWriter _writer = null;
+        private readonly TextWriter _writer;
 
-        private readonly bool _suppressNewline = false;
+        private readonly bool _suppressNewline;
     }
 
     /// <summary>
@@ -503,6 +503,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Instance of the delegate previously defined.
         /// </summary>
-        private readonly WriteLineCallback _writeCall = null;
+        private readonly WriteLineCallback _writeCall;
     }
 }

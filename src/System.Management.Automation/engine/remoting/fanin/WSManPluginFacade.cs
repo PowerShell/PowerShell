@@ -178,7 +178,7 @@ namespace System.Management.Automation.Remoting
         }
 
         // Flag: Has Dispose already been called?
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// GC handle which prevents garbage collector from collecting this delegate.
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         // Flag: Has Dispose already been called?
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Internal implementation of Dispose pattern callable by consumers.

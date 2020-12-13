@@ -48,7 +48,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Static variable which is incremented to generate id.
         /// </summary>
-        private static int s_seed = 0;
+        private static int s_seed;
 
         #endregion Private Members
 

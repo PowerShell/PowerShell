@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Hashtable _meta;
-        private bool _metaSpecified = false;
+        private bool _metaSpecified;
 
         /// <summary>
         /// Specifies the charset encoding for the HTML document.
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _charset;
-        private bool _charsetSpecified = false;
+        private bool _charsetSpecified;
 
         /// <summary>
         /// When this switch statement is specified,
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _transitional = false;
+        private bool _transitional;
 
         /// <summary>
         /// Definitions for hash table keys.
@@ -678,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // count of the objects
-        private int _numberObjects = 0;
+        private int _numberObjects;
 
         /// <summary>
         /// </summary>

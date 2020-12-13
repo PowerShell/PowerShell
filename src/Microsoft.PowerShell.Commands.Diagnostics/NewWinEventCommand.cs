@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _id;
-        private bool _idSpecified = false;
+        private bool _idSpecified;
 
         /// <summary>
         /// Version (event version)
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private byte _version;
-        private bool _versionSpecified = false;
+        private bool _versionSpecified;
 
         /// <summary>
         /// Event Payload.

@@ -14,7 +14,7 @@ namespace System.Management.Automation.Host
     {
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell compatibility with Windows PowerShell
 
-        private readonly string label = null;
+        private readonly string label;
         private string helpMessage = string.Empty;
 
         #endregion

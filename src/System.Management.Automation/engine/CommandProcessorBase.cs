@@ -106,7 +106,7 @@ namespace System.Management.Automation
         /// </remarks>
         public bool FromScriptFile { get { return _fromScriptFile; } }
 
-        protected bool _fromScriptFile = false;
+        protected bool _fromScriptFile;
 
         /// <summary>
         /// If this flag is true, the commands in this Pipeline will redirect
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         /// (See the comment in Pipeline.RedirectShellErrorOutputPipe for an
         /// explanation of why this flag is needed).
         /// </summary>
-        internal bool RedirectShellErrorOutputPipe { get; set; } = false;
+        internal bool RedirectShellErrorOutputPipe { get; set; }
 
         /// <summary>
         /// Gets or sets the command object.

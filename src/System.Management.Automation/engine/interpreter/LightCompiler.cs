@@ -36,7 +36,7 @@ namespace System.Management.Automation.Interpreter
         public readonly int HandlerStartIndex;
         public readonly int HandlerEndIndex;
 
-        internal TryCatchFinallyHandler Parent = null;
+        internal TryCatchFinallyHandler Parent;
 
         public bool IsFault { get { return ExceptionType == null; } }
 

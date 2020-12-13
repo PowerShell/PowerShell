@@ -5559,7 +5559,7 @@ namespace System.Management.Automation
                 }
             }
 
-            private int _genericArgumentCount = 0;
+            private int _genericArgumentCount;
 
             /// <summary>
             /// Construct the CompletionResult based on the information of this instance.

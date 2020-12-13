@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
             set { _width = value; }
         }
 
-        private int? _width = null;
+        private int? _width;
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
             set { _noNewLine = value; }
         }
 
-        private bool _noNewLine = false;
+        private bool _noNewLine;
 
         #endregion
 
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writer used by the LineOutput.
         /// </summary>
-        private StreamingTextWriter _writer = null;
+        private StreamingTextWriter _writer;
 
         /// <summary>
         /// Buffer used when buffering until the end.

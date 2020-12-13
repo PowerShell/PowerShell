@@ -47,7 +47,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string computername = null;
+        private string computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
@@ -97,7 +97,7 @@ namespace Microsoft.WSMan.Management
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private Int32 port;
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
@@ -129,7 +129,7 @@ namespace Microsoft.WSMan.Management
             set { applicationname = value; }
         }
 
-        private string applicationname = null;
+        private string applicationname;
 
         /// <summary>
         /// ProcessRecord method.

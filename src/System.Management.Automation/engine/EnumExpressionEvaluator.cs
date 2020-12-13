@@ -319,13 +319,13 @@ namespace System.Management.Automation
 
         #region private members
 
-        private readonly Type _underType = null;
+        private readonly Type _underType;
 
         #endregion
 
         #region properties
 
-        internal Node Root { get; set; } = null;
+        internal Node Root { get; set; }
 
         #endregion
 

@@ -384,7 +384,7 @@ namespace System.Management.Automation.Internal
         private bool _canEncrypt;
 
         // bool indicating if session key was generated before
-        private bool _sessionKeyGenerated = false;
+        private bool _sessionKeyGenerated;
 
         private static readonly object s_syncObject = new object();
 
@@ -657,7 +657,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         protected object syncObject = new object();
 
-        private bool _keyExchangeStarted = false;
+        private bool _keyExchangeStarted;
 
         /// <summary>
         /// </summary>

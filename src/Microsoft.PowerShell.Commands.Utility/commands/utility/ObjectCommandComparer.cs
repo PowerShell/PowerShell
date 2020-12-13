@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         internal static readonly ObjectCommandPropertyValue NonExistingProperty = new();
         internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new(null);
         private readonly bool _caseSensitive;
-        internal CultureInfo cultureInfo = null;
+        internal CultureInfo cultureInfo;
 
         /// <summary>
         /// Provides an Equals implementation.
@@ -225,11 +225,11 @@ namespace Microsoft.PowerShell.Commands
             return _ascendingOrder ? result : -result;
         }
 
-        private readonly CultureInfo _cultureInfo = null;
+        private readonly CultureInfo _cultureInfo;
 
         private readonly bool _ascendingOrder = true;
 
-        private readonly bool _caseSensitive = false;
+        private readonly bool _caseSensitive;
     }
     #endregion
 }

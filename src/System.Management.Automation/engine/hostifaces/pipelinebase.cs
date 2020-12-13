@@ -732,7 +732,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Event raised when Pipeline's state changes.
         /// </summary>
-        public override event EventHandler<PipelineStateEventArgs> StateChanged = null;
+        public override event EventHandler<PipelineStateEventArgs> StateChanged;
 
         /// <summary>
         /// Current state of the pipeline.

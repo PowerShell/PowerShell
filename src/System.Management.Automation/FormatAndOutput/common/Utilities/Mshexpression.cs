@@ -32,17 +32,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The value of the object property matched by this property expression.
         /// </summary>
-        public object Result { get; } = null;
+        public object Result { get; }
 
         /// <summary>
         /// The original property expression fully resolved.
         /// </summary>
-        public PSPropertyExpression ResolvedExpression { get; } = null;
+        public PSPropertyExpression ResolvedExpression { get; }
 
         /// <summary>
         /// Any exception thrown while evaluating the expression.
         /// </summary>
-        public Exception Exception { get; } = null;
+        public Exception Exception { get; }
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The ScriptBlock for this expression to use when matching.
         /// </summary>
-        public ScriptBlock Script { get; } = null;
+        public ScriptBlock Script { get; }
 
         /// <summary>
         /// ToString() implementation for the property expression.
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands
 
         // private members
         private readonly string _stringValue;
-        private bool _isResolved = false;
+        private bool _isResolved;
 
         #endregion Private Members
     }

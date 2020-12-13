@@ -56,7 +56,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Flag: Has Dispose already been called?
         /// </summary>
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Protected implementation of Dispose pattern.
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Internal
     {
         private static CabinetExtractor s_extractorInstance;
         private static CabinetExtractorLoader s_instance;
-        private static double s_created = 0;
+        private static double s_created;
 
         internal static CabinetExtractorLoader GetInstance()
         {

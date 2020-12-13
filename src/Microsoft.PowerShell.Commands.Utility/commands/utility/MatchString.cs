@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
             // Current match info we are tracking postcontext for.
             // At any given time, if set, this value will not be
             // in the emitQueue but will be the next to be added.
-            private MatchInfo _matchInfo = null;
+            private MatchInfo _matchInfo;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="DisplayContextTracker"/> class.
@@ -1401,9 +1401,9 @@ namespace Microsoft.PowerShell.Commands
 
         private int[] _context;
 
-        private int _preContext = 0;
+        private int _preContext;
 
-        private int _postContext = 0;
+        private int _postContext;
 
         // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
         private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0))

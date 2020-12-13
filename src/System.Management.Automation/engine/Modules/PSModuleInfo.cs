@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get/set whether to log Pipeline Execution Detail events.
         /// </summary>
-        public bool LogPipelineExecutionDetails { get; set; } = false;
+        public bool LogPipelineExecutionDetails { get; set; }
 
         /// <summary>
         /// The name of this module.
@@ -329,7 +329,7 @@ namespace System.Management.Automation
             }
         }
 
-        private object _privateData = null;
+        private object _privateData;
 
         private void SetPSDataPropertiesFromPrivateData()
         {
@@ -521,10 +521,10 @@ namespace System.Management.Automation
             internal set;
         }
 
-        internal Collection<string> DeclaredFunctionExports = null;
-        internal Collection<string> DeclaredCmdletExports = null;
-        internal Collection<string> DeclaredAliasExports = null;
-        internal Collection<string> DeclaredVariableExports = null;
+        internal Collection<string> DeclaredFunctionExports;
+        internal Collection<string> DeclaredCmdletExports;
+        internal Collection<string> DeclaredAliasExports;
+        internal Collection<string> DeclaredVariableExports;
 
         internal List<string> DetectedFunctionExports = new List<string>();
         internal List<string> DetectedCmdletExports = new List<string>();
@@ -1215,7 +1215,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal Collection<string> _declaredDscResourceExports = null;
+        internal Collection<string> _declaredDscResourceExports;
 
         /// <summary>
         /// The session state instance associated with this module.

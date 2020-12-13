@@ -578,7 +578,7 @@ namespace System.Management.Automation
         private readonly string[] _orderedPathExt;
         private readonly Collection<string>? _acceptableCommandNames;
 
-        private readonly bool _useFuzzyMatch = false;
+        private readonly bool _useFuzzyMatch;
 
         #endregion private members
     }

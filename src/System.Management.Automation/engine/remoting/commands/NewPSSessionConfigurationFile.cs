@@ -1311,7 +1311,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private object[] _visibleCmdlets = null;
+        private object[] _visibleCmdlets;
 
         /// <summary>
         /// A list of visible functions.
@@ -1331,7 +1331,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private object[] _visibleFunctions = null;
+        private object[] _visibleFunctions;
 
         /// <summary>
         /// A list of visible external commands (scripts and applications)

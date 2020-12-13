@@ -419,7 +419,7 @@ namespace Microsoft.WSMan.Management
             set { force = value; }
         }
 
-        private bool force = false;
+        private bool force;
 
         // helper variable
         private WSManHelper helper;
@@ -739,7 +739,7 @@ namespace Microsoft.WSMan.Management
     public class GetWSManCredSSPCommand : PSCmdlet, IDisposable
     {
         #region private
-        private WSManHelper helper = null;
+        private WSManHelper helper;
         /// <summary>
         /// Method to get the values.
         /// </summary>

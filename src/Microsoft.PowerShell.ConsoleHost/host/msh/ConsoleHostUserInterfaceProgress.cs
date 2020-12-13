@@ -185,13 +185,13 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private ProgressPane _progPane = null;
-        private PendingProgress _pendingProgress = null;
+        private ProgressPane _progPane;
+        private PendingProgress _pendingProgress;
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
-        private Timer _progPaneUpdateTimer = null;
+        private Timer _progPaneUpdateTimer;
 
         private const int UpdateTimerThreshold = 200;
 
-        private int progPaneUpdateFlag = 0;
+        private int progPaneUpdateFlag;
     }
 }   // namespace

@@ -229,7 +229,7 @@ namespace System.Management.Automation
         /// Variable which is set to true when prepare is called.
         /// Parameter Binder should only be created after Prepare method is called.
         /// </summary>
-        private bool _isPreparedCalled = false;
+        private bool _isPreparedCalled;
 
         /// <summary>
         /// Parameter binder used by this command processor.
@@ -341,7 +341,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used for writing input to the process.
         /// </summary>
-        private readonly ProcessInputWriter _inputWriter = null;
+        private readonly ProcessInputWriter _inputWriter;
 
         /// <summary>
         /// Is true if this command is to be run "standalone" - that is, with
@@ -368,7 +368,7 @@ namespace System.Management.Automation
         /// </summary>
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
-        private static bool? s_supportScreenScrape = null;
+        private static bool? s_supportScreenScrape;
         private readonly bool _isTranscribing;
         private Host.Coordinates _startPosition;
 
@@ -979,7 +979,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is set to true when StopProcessing is called.
         /// </summary>
-        private bool _stopped = false;
+        private bool _stopped;
         /// <summary>
         /// Routine used to stop this processing on this node...
         /// </summary>
@@ -1435,7 +1435,7 @@ namespace System.Management.Automation
 
         #region Minishell Interop
 
-        private bool _isMiniShell = false;
+        private bool _isMiniShell;
         /// <summary>
         /// Returns true if native command being invoked is mini-shell.
         /// </summary>
@@ -1841,7 +1841,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _stopping = false;
+        private bool _stopping;
 
         /// <summary>
         /// Stop writing input to process.

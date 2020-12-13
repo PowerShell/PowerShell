@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Default list entry definition
         /// It's mandatory.
         /// </summary>
-        internal ListControlEntryDefinition defaultEntryDefinition = null;
+        internal ListControlEntryDefinition defaultEntryDefinition;
 
         /// <summary>
         /// Optional list of list entry definition overrides. It can be empty if there are no overrides.
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Applicability clause
         /// Only valid if not the default definition.
         /// </summary>
-        internal AppliesTo appliesTo = null;
+        internal AppliesTo appliesTo;
 
         /// <summary>
         /// Mandatory list of list view items.
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// If not present, use the name of the property from the matching
         /// mandatory item description.
         /// </summary>
-        internal TextToken label = null;
+        internal TextToken label;
 
         /// <summary>
         /// Format directive body telling how to format the cell

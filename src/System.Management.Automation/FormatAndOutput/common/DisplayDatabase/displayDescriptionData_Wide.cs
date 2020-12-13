@@ -20,13 +20,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Number of columns to use for wide display.
         /// </summary>
-        internal int columns = 0;
+        internal int columns;
 
         /// <summary>
         /// Default wide entry definition
         /// It's mandatory.
         /// </summary>
-        internal WideControlEntryDefinition defaultEntryDefinition = null;
+        internal WideControlEntryDefinition defaultEntryDefinition;
 
         /// <summary>
         /// Optional list of list entry definition overrides. It can be empty if there are no overrides.
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Applicability clause
         /// Only valid if not the default definition.
         /// </summary>
-        internal AppliesTo appliesTo = null;
+        internal AppliesTo appliesTo;
 
         /// <summary>
         /// Format directive body telling how to format the cell

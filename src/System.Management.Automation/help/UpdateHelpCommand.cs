@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private bool _alreadyCheckedOncePerDayPerModule = false;
+        private bool _alreadyCheckedOncePerDayPerModule;
 
         #region Parameters
 
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Scans paths recursively.
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private bool _isInitialized = false;
+        private bool _isInitialized;
 
         #region Implementation
 

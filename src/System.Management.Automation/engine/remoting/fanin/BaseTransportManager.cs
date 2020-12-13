@@ -1115,7 +1115,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #endregion
 
-        internal bool startInDisconnectedMode = false;
+        internal bool startInDisconnectedMode;
 
         #region Constructors
 

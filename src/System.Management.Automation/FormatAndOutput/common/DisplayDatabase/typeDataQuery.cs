@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly PSTraceSource s_classTracer =
             PSTraceSource.GetTracer("TypeMatch", "F&O TypeMatch");
 
-        private static PSTraceSource s_activeTracer = null;
+        private static PSTraceSource s_activeTracer;
 
         private static PSTraceSource ActiveTracer
         {
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly PSTraceSource s_classTracer =
             PSTraceSource.GetTracer("DisplayDataQuery", "DisplayDataQuery");
 
-        private static PSTraceSource s_activeTracer = null;
+        private static PSTraceSource s_activeTracer;
 
         private static PSTraceSource ActiveTracer
         {

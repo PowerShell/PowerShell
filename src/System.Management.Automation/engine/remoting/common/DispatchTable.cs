@@ -38,7 +38,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Next call id.
         /// </summary>
-        private long _nextCallId = 0;
+        private long _nextCallId;
 
         /// <summary>
         /// Void call id.

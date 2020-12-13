@@ -22,7 +22,7 @@ namespace System.Management.Automation
         // See https://msdn.microsoft.com/library/windows/desktop/ms221242(v=vs.85).aspx for details.
         private const int DISPID_PROPERTYPUT = -3;
         // Alias of GUID_NULL. It's a GUID set to all zero
-        private static readonly Guid s_IID_NULL = new Guid();
+        private static readonly Guid s_IID_NULL;
         // Size of the Variant struct
         private static readonly int s_variantSize = Marshal.SizeOf<Variant>();
 

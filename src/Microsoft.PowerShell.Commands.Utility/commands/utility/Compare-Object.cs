@@ -106,8 +106,8 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<OrderByPropertyEntry> _differenceEntryBacklog
             = new();
 
-        private OrderByProperty _orderByProperty = null;
-        private OrderByPropertyComparer _comparer = null;
+        private OrderByProperty _orderByProperty;
+        private OrderByPropertyComparer _comparer;
 
         private int _referenceObjectIndex /* = 0 */;
 

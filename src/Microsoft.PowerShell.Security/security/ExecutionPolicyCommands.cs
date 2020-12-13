@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ExecutionPolicyScope _executionPolicyScope = ExecutionPolicyScope.LocalMachine;
-        private bool _scopeSpecified = false;
+        private bool _scopeSpecified;
 
         /// <summary>
         /// Gets or sets the List parameter, which lists all scopes and their execution

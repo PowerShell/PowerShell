@@ -1731,7 +1731,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Specifies the directory to be used for collection session transcripts.
         /// </summary>
-        public string TranscriptDirectory { get; set; } = null;
+        public string TranscriptDirectory { get; set; }
 
         /// <summary>
         /// True when session opted for a User PSDrive.
@@ -1787,12 +1787,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         private Microsoft.PowerShell.ExecutionPolicy _executionPolicy = Microsoft.PowerShell.ExecutionPolicy.Default;
-        private bool _wasExecutionPolicySet = false;
+        private bool _wasExecutionPolicySet;
 
         /// <summary>
         /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
-        public bool UseFullLanguageModeInDebugger { get; set; } = false;
+        public bool UseFullLanguageModeInDebugger { get; set; }
 
         /// <summary>
         /// ApartmentState of the thread used to execute commands.
@@ -1809,14 +1809,14 @@ namespace System.Management.Automation.Runspaces
         /// throw an exception, otherwise just continue creating the runspace even though it may
         /// be in an inconsistent state.
         /// </summary>
-        public bool ThrowOnRunspaceOpenError { get; set; } = false;
+        public bool ThrowOnRunspaceOpenError { get; set; }
 
         /// <summary>
         /// This property will be set only if we are refreshing the Type/Format settings by calling UpdateTypes/UpdateFormats directly.
         /// In this case, we should wait until all type/format entries get processed. After that, if there were errors
         /// generated, we throw them as an exception.
         /// </summary>
-        internal bool RefreshTypeAndFormatSetting = false;
+        internal bool RefreshTypeAndFormatSetting;
 
         /// <summary>
         /// Specifies the authorization manager to be used for this session state instance.
@@ -1825,7 +1825,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public virtual AuthorizationManager AuthorizationManager { get; set; } = new Microsoft.PowerShell.PSAuthorizationManager(Utils.DefaultPowerShellShellID);
 
-        internal PSHost Host = null;
+        internal PSHost Host;
 
         /// <summary>
         /// Add a list of modules to import when the runspace is created.

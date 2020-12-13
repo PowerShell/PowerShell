@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _asjob = false;
+        private bool _asjob;
 
         /// <summary>
         /// Specifies that after the command is invoked on a remote computer the
@@ -1996,20 +1996,20 @@ namespace Microsoft.PowerShell.Commands
         // used for streaming behavior for local invocations
         private SteppablePipeline _steppablePipeline;
 
-        private bool _pipelineinvoked = false;    // if pipeline has been invoked
-        private bool _inputStreamClosed = false;
+        private bool _pipelineinvoked;    // if pipeline has been invoked
+        private bool _inputStreamClosed;
 
         private const string InProcParameterSet = "InProcess";
 
         private readonly PSDataCollection<object> _input = new PSDataCollection<object>();
-        private bool _needToCollect = false;
-        private bool _needToStartSteppablePipelineOnServer = false;
-        private bool _clearInvokeCommandOnRunspace = false;
+        private bool _needToCollect;
+        private bool _needToStartSteppablePipelineOnServer;
+        private bool _clearInvokeCommandOnRunspace;
         private readonly List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
         private readonly object _jobSyncObject = new object();
-        private bool _nojob = false;
+        private bool _nojob;
         private readonly Guid _instanceId = Guid.NewGuid();
-        private bool _propagateErrors = false;
+        private bool _propagateErrors;
 
         private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 

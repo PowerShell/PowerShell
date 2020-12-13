@@ -232,7 +232,7 @@ namespace System.Management.Automation
 
         #region Stopping
 
-        private bool _isStopping = false;
+        private bool _isStopping;
 
         /// <summary>
         /// Called from a separate thread will stop the serialization process.

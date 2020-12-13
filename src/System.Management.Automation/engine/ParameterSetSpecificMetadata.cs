@@ -126,7 +126,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The Id of the resource for a help message.
         /// </summary>
-        internal string HelpMessageResourceId { get; } = null;
+        internal string HelpMessageResourceId { get; }
 
         /// <summary>
         /// Gets or sets the value that tells whether this parameter set

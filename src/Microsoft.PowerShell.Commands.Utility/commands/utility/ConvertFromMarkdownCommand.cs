@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         private const string InputObjParamSet = "InputObjParamSet";
 
         private MarkdownConversionType _conversionType = MarkdownConversionType.HTML;
-        private PSMarkdownOptionInfo _mdOption = null;
+        private PSMarkdownOptionInfo _mdOption;
 
         /// <summary>
         /// Read the PSMarkdownOptionInfo set in SessionState.

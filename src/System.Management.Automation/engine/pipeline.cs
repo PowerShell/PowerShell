@@ -34,14 +34,14 @@ namespace System.Management.Automation.Internal
         private PipelineReader<object> _externalInputPipe;
         private PipelineWriter _externalSuccessOutput;
         private PipelineWriter _externalErrorOutput;
-        private bool _executionStarted = false;
-        private bool _stopping = false;
+        private bool _executionStarted;
+        private bool _stopping;
         private SessionStateScope _executionScope;
 
-        private ExceptionDispatchInfo _firstTerminatingError = null;
+        private ExceptionDispatchInfo _firstTerminatingError;
 
-        private bool _linkedSuccessOutput = false;
-        private bool _linkedErrorOutput = false;
+        private bool _linkedSuccessOutput;
+        private bool _linkedErrorOutput;
 
 #if !CORECLR // Impersonation Not Supported On CSS
         // This is the security context when the pipeline was allocated
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Internal
 
         #region IDispose
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// When the command is complete, PipelineProcessor will be
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Internal
 
         #region Execution Logging
 
-        private bool _executionFailed = false;
+        private bool _executionFailed;
 
         internal List<CommandProcessorBase> Commands
         {
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Internal
             Log(message, invocationInfo, PipelineExecutionStatus.Error);
         }
 
-        private bool _terminatingErrorLogged = false;
+        private bool _terminatingErrorLogged;
 
         internal void LogExecutionException(Exception exception)
         {
@@ -1444,9 +1444,9 @@ namespace System.Management.Automation.Internal
         // NOTICE-2004/06/08-JonN 959638
         // Only this InternalCommand from this Thread is allowed to call
         // WriteObject/WriteError
-        internal InternalCommand _permittedToWrite = null;
-        internal bool _permittedToWriteToPipeline = false;
-        internal System.Threading.Thread _permittedToWriteThread = null;
+        internal InternalCommand _permittedToWrite;
+        internal bool _permittedToWriteToPipeline;
+        internal System.Threading.Thread _permittedToWriteThread;
 
         #endregion private_methods
 
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation.Internal
             set { _localPipeline = value; }
         }
 
-        internal bool TopLevel { get; set; } = false;
+        internal bool TopLevel { get; set; }
 
         /// <summary>
         /// The scope the pipeline should execute in.

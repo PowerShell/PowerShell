@@ -137,7 +137,7 @@ namespace System.Management.Automation.Runspaces
             get { return _isOpen; }
         }
 
-        private int _count = 0;
+        private int _count;
 
         public override int Count
         {

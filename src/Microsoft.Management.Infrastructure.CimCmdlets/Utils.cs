@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Empty computername, which will create DCOM session
         /// </para>
         /// </summary>
-        internal static readonly string NullComputerName = null;
+        internal static readonly string NullComputerName;
 
         /// <summary>
         /// <para>
@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Whether the log been initialized.
         /// </summary>
-        private static bool logInitialized = false;
+        private static bool logInitialized;
 
         internal static bool GenerateVerboseMessage { get; set; } = true;
 

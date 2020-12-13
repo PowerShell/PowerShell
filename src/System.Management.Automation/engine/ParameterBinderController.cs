@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set true if the default parameter binding is in use.
         /// </summary>
-        protected bool DefaultParameterBindingInUse { get; set; } = false;
+        protected bool DefaultParameterBindingInUse { get; set; }
 
         // Set true if the default parameter values are applied
 

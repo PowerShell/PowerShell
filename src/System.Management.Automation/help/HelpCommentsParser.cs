@@ -59,7 +59,7 @@ namespace System.Management.Automation
         private readonly List<string> _inputs = new List<string>();
         private readonly List<string> _outputs = new List<string>();
         private readonly List<string> _links = new List<string>();
-        internal bool isExternalHelpSet = false;
+        internal bool isExternalHelpSet;
 
         private readonly ScriptBlock _scriptBlock;
         private readonly CommandMetadata _commandMetadata;

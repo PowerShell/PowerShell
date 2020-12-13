@@ -57,12 +57,12 @@ namespace System.Management.Automation.Provider
         /// The context under which the provider is running. This will change between each
         /// invocation of a method in this class or derived classes.
         /// </summary>
-        private CmdletProviderContext _contextBase = null;
+        private CmdletProviderContext _contextBase;
 
         /// <summary>
         /// The information that the Monad engine stores on behalf of the provider.
         /// </summary>
-        private ProviderInfo _providerInformation = null;
+        private ProviderInfo _providerInformation;
 
         #endregion private data
 

@@ -398,18 +398,18 @@ namespace System.Management.Automation.Host
 
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        private readonly string name = null;
+        private readonly string name;
         private string label = string.Empty;
-        private string parameterTypeName = null;
-        private string parameterTypeFullName = null;
-        private string parameterAssemblyFullName = null;
+        private string parameterTypeName;
+        private string parameterTypeFullName;
+        private string parameterAssemblyFullName;
         private string helpMessage = string.Empty;
         private bool isMandatory = true;
 
-        private PSObject defaultValue = null;
+        private PSObject defaultValue;
         private Collection<Attribute> metadata = new Collection<Attribute>();
-        private bool modifiedByRemotingProtocol = false;
-        private bool isFromRemoteHost = false;
+        private bool modifiedByRemotingProtocol;
+        private bool isFromRemoteHost;
 
         #endregion
     }

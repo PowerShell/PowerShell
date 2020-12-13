@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSMemberTypes _memberType;
-        private bool _isMemberTypeSet = false;
+        private bool _isMemberTypeSet;
         /// <summary>
         /// The member type of to be added.
         /// </summary>
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
             set { _typeName = value; }
         }
 
-        private bool _force = false;
+        private bool _force;
         /// <summary>
         /// True if we should overwrite a possibly existing member.
         /// </summary>

@@ -315,7 +315,7 @@ namespace System.Management.Automation.Remoting
 
         // this indicates if any off sync fragments can be ignored
         // this gets reset (to false) upon receiving the next "start" fragment along the stream
-        private bool _canIgnoreOffSyncFragments = false;
+        private bool _canIgnoreOffSyncFragments;
 
         // objects need to cleanly release resources without
         // locking entire processing logic.

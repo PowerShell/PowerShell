@@ -1364,7 +1364,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Private data
 
-        internal static Type ExecutionPolicyType = null;
+        internal static Type ExecutionPolicyType;
 
         /// <summary>
         /// !! NOTE that this list MUST be updated when new capability session configuration properties are added.

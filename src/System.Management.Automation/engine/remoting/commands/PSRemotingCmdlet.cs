@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Skip checking for WinRM.
         /// </summary>
-        internal bool SkipWinRMCheck { get; set; } = false;
+        internal bool SkipWinRMCheck { get; set; }
 
         #endregion Internal Members
 
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
             set { _allowRedirection = value; }
         }
 
-        private bool _allowRedirection = false;
+        private bool _allowRedirection;
 
         /// <summary>
         /// Extended Session Options for controlling the session creation. Use
@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _thumbPrint = null;
+        private string _thumbPrint;
 
         #region SSHHostParameters
 
@@ -1271,7 +1271,7 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates that if a job/command is invoked remotely the connection should be severed
         /// right have invocation of job/command.
         /// </summary>
-        protected bool InvokeAndDisconnect { get; set; } = false;
+        protected bool InvokeAndDisconnect { get; set; }
 
         /// <summary>
         /// Session names optionally provided for Disconnected parameter.
@@ -4325,14 +4325,14 @@ namespace System.Management.Automation.Remoting
         /// set this property to "true".
         /// By default the value of this property is "false".
         /// </summary>
-        public bool NoCompression { get; set; } = false;
+        public bool NoCompression { get; set; }
 
         /// <summary>
         /// If <see langword="true"/> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session).
         /// </summary>
-        public bool NoMachineProfile { get; set; } = false;
+        public bool NoMachineProfile { get; set; }
 
         /// <summary>
         /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,

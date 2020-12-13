@@ -19,7 +19,7 @@ namespace System.Management.Automation.Language
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
         internal const string DynamicClassAssemblyFullNamePrefix = "PowerShell Class Assembly,";
 
-        private static int s_globalCounter = 0;
+        private static int s_globalCounter;
 
         private static readonly CustomAttributeBuilder s_hiddenCustomAttributeBuilder =
             new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>());
@@ -1298,7 +1298,7 @@ namespace System.Management.Automation.Language
                 propertyInfo, propertyArgs, Array.Empty<FieldInfo>(), emptyArgs);
         }
 
-        private static int counter = 0;
+        private static int counter;
 
         internal static Assembly DefineTypes(Parser parser, Ast rootAst, TypeDefinitionAst[] typeDefinitions)
         {

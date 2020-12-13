@@ -387,13 +387,13 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhLookupPerfNameByIndex(string szMachineName, UInt32 dwNameIndex, IntPtr szNameBuffer, ref int pcchNameBufferSize);
 
-        private PdhSafeDataSourceHandle _hDataSource = null;
+        private PdhSafeDataSourceHandle _hDataSource;
 
-        private PdhSafeQueryHandle _hQuery = null;
+        private PdhSafeQueryHandle _hQuery;
 
         private bool _firstReading = true;
 
-        private PdhSafeLogHandle _hOutputLog = null;
+        private PdhSafeLogHandle _hOutputLog;
 
         //
         // Implement IDisposable::Dispose() to close native safe handles

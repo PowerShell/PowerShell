@@ -29,7 +29,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Flag: Has Dispose already been called?
         /// </summary>
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Disposes the instance, callable by consumers.

@@ -502,29 +502,29 @@ namespace System.Management.Automation
 
         private bool _moreData = true;
         private readonly object _syncObject = new object();
-        private int _isDisposed = 0;
+        private int _isDisposed;
 
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
         // This variable is set to true if atleast one child job failed.
 
         // count of number of child jobs which have finished
-        private int _finishedChildJobsCount = 0;
+        private int _finishedChildJobsCount;
 
         // count of number of child jobs which are blocked
-        private int _blockedChildJobsCount = 0;
+        private int _blockedChildJobsCount;
 
         // count of number of child jobs which are suspended
-        private int _suspendedChildJobsCount = 0;
+        private int _suspendedChildJobsCount;
 
         // count of number of child jobs which are suspending
-        private int _suspendingChildJobsCount = 0;
+        private int _suspendingChildJobsCount;
 
         // count of number of child jobs which failed
-        private int _failedChildJobsCount = 0;
+        private int _failedChildJobsCount;
 
         // count of number of child jobs which stopped
-        private int _stoppedChildJobsCount = 0;
+        private int _stoppedChildJobsCount;
 
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
         private readonly PSDataCollection<ErrorRecord> _executionError = new PSDataCollection<ErrorRecord>();

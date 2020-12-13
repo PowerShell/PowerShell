@@ -35,17 +35,17 @@ namespace System.Management.Automation
         private readonly List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
         private readonly object _syncRoot = new object();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
-        private readonly bool _bSessionStateProxyCallInProgress = false;
+        private readonly bool _bSessionStateProxyCallInProgress;
         private readonly RunspaceConnectionInfo _connectionInfo;
         private RemoteDebugger _remoteDebugger;
         private PSPrimitiveDictionary _applicationPrivateData;
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         // the following two variables have been added for supporting
         // the Invoke-Command | Invoke-Command scenario
-        private InvokeCommandCommand _currentInvokeCommand = null;
-        private long _currentLocalPipelineId = 0;
+        private InvokeCommandCommand _currentInvokeCommand;
+        private long _currentLocalPipelineId;
 
         /// <summary>
         /// This is queue of all the state change event which have occured for
@@ -102,7 +102,7 @@ namespace System.Management.Automation
         /// Temporary place to remember whether to close this runspace on pop or not.
         /// Used by Start-PSSession.
         /// </summary>
-        internal bool ShouldCloseOnPop { get; set; } = false;
+        internal bool ShouldCloseOnPop { get; set; }
 
         #endregion Private Members
 
@@ -1204,7 +1204,7 @@ namespace System.Management.Automation
             return _sessionStateProxy ??= new RemoteSessionStateProxy(this);
         }
 
-        private RemoteSessionStateProxy _sessionStateProxy = null;
+        private RemoteSessionStateProxy _sessionStateProxy;
 
         #endregion SessionState Proxy
 
@@ -2941,9 +2941,9 @@ namespace System.Management.Automation
             _runspace = runspace;
         }
 
-        private Exception _isInNoLanguageModeException = null;
-        private Exception _getVariableCommandNotFoundException = null;
-        private Exception _setVariableCommandNotFoundException = null;
+        private Exception _isInNoLanguageModeException;
+        private Exception _getVariableCommandNotFoundException;
+        private Exception _setVariableCommandNotFoundException;
 
         /// <summary>
         /// Set a variable in session state.

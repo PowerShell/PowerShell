@@ -54,22 +54,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Path of the file the info refers to.
         /// </summary>
-        internal string filePath = null;
+        internal string filePath;
 
         /// <summary>
         /// XPath location inside the file.
         /// </summary>
-        internal string xPath = null;
+        internal string xPath;
 
         /// <summary>
         /// Message to be displayed to the user.
         /// </summary>
-        internal string message = null;
+        internal string message;
 
         /// <summary>
         /// Indicate whether we fail to load the file due to the security reason.
         /// </summary>
-        internal bool failToLoadFile = false;
+        internal bool failToLoadFile;
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// True if we ever logged an error.
         /// </summary>
-        private bool _hasErrors = false;
+        private bool _hasErrors;
     }
 
     /// <summary>
@@ -713,9 +713,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private readonly int _maxNumberOfErrors = 30;
 
-        private int _currentErrorCount = 0;
+        private int _currentErrorCount;
 
-        private readonly bool _logStackActivity = false;
+        private readonly bool _logStackActivity;
 
         private readonly Stack<XmlLoaderStackFrame> _executionStack = new Stack<XmlLoaderStackFrame>();
 

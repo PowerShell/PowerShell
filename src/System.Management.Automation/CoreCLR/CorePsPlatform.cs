@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// </summary>
     public static class Platform
     {
-        private static string _tempDirectory = null;
+        private static string _tempDirectory;
 
         /// <summary>
         /// True if the current platform is Linux.
@@ -239,7 +239,7 @@ namespace System.Management.Automation
             DEFAULT
         }
 
-        private static string s_tempHomeDir = null;
+        private static string s_tempHomeDir;
 
         /// <summary>
         /// Function for choosing directory location of PowerShell for profile loading.

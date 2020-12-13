@@ -20,52 +20,52 @@ namespace Microsoft.PowerShell.Commands
         internal const string AttribOutputBufferingMode = "OutputBufferingMode";
 
         internal static readonly System.Management.Automation.Runspaces.OutputBufferingMode? DefaultOutputBufferingMode = System.Management.Automation.Runspaces.OutputBufferingMode.Block;
-        private System.Management.Automation.Runspaces.OutputBufferingMode? _outputBufferingMode = null;
+        private System.Management.Automation.Runspaces.OutputBufferingMode? _outputBufferingMode;
 
         private const string AttribProcessIdleTimeout = "ProcessIdleTimeoutSec";
 
         internal static readonly int? DefaultProcessIdleTimeout_ForPSRemoting = 0; // in seconds
-        private int? _processIdleTimeoutSec = null;
+        private int? _processIdleTimeoutSec;
 
         internal const string AttribMaxIdleTimeout = "MaxIdleTimeoutms";
 
         internal static readonly int? DefaultMaxIdleTimeout = int.MaxValue;
-        private int? _maxIdleTimeoutSec = null;
+        private int? _maxIdleTimeoutSec;
 
         internal const string AttribIdleTimeout = "IdleTimeoutms";
 
         internal static readonly int? DefaultIdleTimeout = 7200; // 2 hours in seconds
-        private int? _idleTimeoutSec = null;
+        private int? _idleTimeoutSec;
 
         private const string AttribMaxConcurrentUsers = "MaxConcurrentUsers";
 
         internal static readonly int? DefaultMaxConcurrentUsers = int.MaxValue;
-        private int? _maxConcurrentUsers = null;
+        private int? _maxConcurrentUsers;
 
         private const string AttribMaxProcessesPerSession = "MaxProcessesPerShell";
 
         internal static readonly int? DefaultMaxProcessesPerSession = int.MaxValue;
-        private int? _maxProcessesPerSession = null;
+        private int? _maxProcessesPerSession;
 
         private const string AttribMaxMemoryPerSessionMB = "MaxMemoryPerShellMB";
 
         internal static readonly int? DefaultMaxMemoryPerSessionMB = int.MaxValue;
-        private int? _maxMemoryPerSessionMB = null;
+        private int? _maxMemoryPerSessionMB;
 
         private const string AttribMaxSessions = "MaxShells";
 
         internal static readonly int? DefaultMaxSessions = int.MaxValue;
-        private int? _maxSessions = null;
+        private int? _maxSessions;
 
         private const string AttribMaxSessionsPerUser = "MaxShellsPerUser";
 
         internal static readonly int? DefaultMaxSessionsPerUser = int.MaxValue;
-        private int? _maxSessionsPerUser = null;
+        private int? _maxSessionsPerUser;
 
         private const string AttribMaxConcurrentCommandsPerSession = "MaxConcurrentCommandsPerShell";
 
         internal static readonly int? DefaultMaxConcurrentCommandsPerSession = int.MaxValue;
-        private int? _maxConcurrentCommandsPerSession = null;
+        private int? _maxConcurrentCommandsPerSession;
 
         /// <summary>
         /// Constructor that instantiates with default values.

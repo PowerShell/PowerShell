@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
             set { BaseForce = value; }
         }
 
-        private int _numberRemoved = 0;  // Maintains a count of the number of modules removed...
+        private int _numberRemoved;  // Maintains a count of the number of modules removed...
 
         /// <summary>
         /// Remove the specified modules. Modules can be specified either through a ModuleInfo or a name.

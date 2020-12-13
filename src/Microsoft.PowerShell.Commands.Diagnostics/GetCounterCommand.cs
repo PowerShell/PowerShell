@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Int64 _maxSamples = 1;
-        private bool _maxSamplesSpecified = false;
+        private bool _maxSamplesSpecified;
 
         //
         // Continuous switch
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
             set { _continuous = value; }
         }
 
-        private bool _continuous = false;
+        private bool _continuous;
 
         //
         // ComputerName parameter
@@ -164,9 +164,9 @@ namespace Microsoft.PowerShell.Commands
 
         private string[] _computerName = Array.Empty<string>();
 
-        private ResourceManager _resourceMgr = null;
+        private ResourceManager _resourceMgr;
 
-        private PdhHelper _pdhHelper = null;
+        private PdhHelper _pdhHelper;
 
         private readonly EventWaitHandle _cancelEventArrived = new(false, EventResetMode.ManualReset);
 

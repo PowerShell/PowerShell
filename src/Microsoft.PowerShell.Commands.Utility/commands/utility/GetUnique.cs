@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
             set { _onType = value; }
         }
 
-        private bool _onType = false;
+        private bool _onType;
         #endregion Parameters
 
         #region Overrides
@@ -111,9 +111,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         #region Internal
-        private PSObject _lastObject = null;
-        private string _lastObjectAsString = null;
-        private ObjectCommandComparer _comparer = null;
+        private PSObject _lastObject;
+        private string _lastObjectAsString;
+        private ObjectCommandComparer _comparer;
         #endregion Internal
     }
 }

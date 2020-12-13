@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         private readonly List<ExtendedTypeDefinition> _typeDefinitions = new();
 

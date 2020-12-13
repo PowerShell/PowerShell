@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _PSSnapins = Array.Empty<string>();
-        internal bool IsModuleSpecified = false;
+        internal bool IsModuleSpecified;
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ModuleSpecification[] _moduleSpecifications = Array.Empty<ModuleSpecification>();
-        internal bool IsFullyQualifiedModuleSpecified = false;
+        internal bool IsFullyQualifiedModuleSpecified;
 
         private bool _commandParameterSpecified; // initialized to default value in the constructor
 

@@ -636,7 +636,7 @@ namespace System.Management.Automation
         /// Specifies whether this command was imported from a module or not.
         /// This is used in Get-Command to figure out which of the commands in module session state were imported.
         /// </summary>
-        internal bool IsImported { get; set; } = false;
+        internal bool IsImported { get; set; }
 
         /// <summary>
         /// The prefix that was used when importing this command.

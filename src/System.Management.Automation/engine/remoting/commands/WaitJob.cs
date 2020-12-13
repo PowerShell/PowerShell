@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isDisposed;
         private readonly object _disposableLock = new object();
-        private bool _warnNotTerminal = false;
+        private bool _warnNotTerminal;
 
         #endregion IDisposable Members
     }

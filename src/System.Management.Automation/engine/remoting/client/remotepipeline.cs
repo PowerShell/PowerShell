@@ -25,13 +25,13 @@ namespace System.Management.Automation
         private bool _isSteppable;
         private readonly Runspace _runspace;
         private readonly object _syncRoot = new object();
-        private bool _disposed = false;
+        private bool _disposed;
         private string _historyString;
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
         private readonly CommandCollection _commands = new CommandCollection();
         private readonly string _computerName;
         private readonly Guid _runspaceId;
-        private readonly ConnectCommandInfo _connectCmdInfo = null;
+        private readonly ConnectCommandInfo _connectCmdInfo;
 
         /// <summary>
         /// This is queue of all the state change event which have occured for
@@ -627,7 +627,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Event raised when Pipeline's state changes.
         /// </summary>
-        public override event EventHandler<PipelineStateEventArgs> StateChanged = null;
+        public override event EventHandler<PipelineStateEventArgs> StateChanged;
 
         #endregion Events
 

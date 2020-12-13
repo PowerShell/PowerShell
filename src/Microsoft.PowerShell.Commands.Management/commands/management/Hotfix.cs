@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ManagementObjectSearcher _searchProcess;
 
-        private bool _inputContainsWildcard = false;
+        private bool _inputContainsWildcard;
         private readonly ConnectionOptions _connectionOptions = new();
 
         /// <summary>

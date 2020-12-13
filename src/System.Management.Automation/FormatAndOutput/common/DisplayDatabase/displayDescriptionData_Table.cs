@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// If not present, use the name of the property from the matching
         /// mandatory row description.
         /// </summary>
-        internal TextToken label = null;
+        internal TextToken label;
 
         /// <summary>
         /// General alignment for the column
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Width of the column.
         /// </summary>
-        internal int width = 0; // undefined
+        internal int width; // undefined
     }
 
     /// <summary>

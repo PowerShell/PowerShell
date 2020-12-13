@@ -16,8 +16,8 @@ namespace System.Management.Automation
     /// </summary>
     internal class ComProperty
     {
-        private bool _hasSetter = false;
-        private bool _hasSetterByRef = false;
+        private bool _hasSetter;
+        private bool _hasSetterByRef;
         private int _dispId;
         private int _setterIndex;
         private int _setterByRefIndex;
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Defines whether the property has parameters or not.
         /// </summary>
-        internal bool IsParameterized { get; private set; } = false;
+        internal bool IsParameterized { get; private set; }
 
         /// <summary>
         /// Returns the number of parameters in this property.
@@ -137,7 +137,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Defines whether this property is gettable.
         /// </summary>
-        internal bool IsGettable { get; private set; } = false;
+        internal bool IsGettable { get; private set; }
 
         /// <summary>
         /// Get value of this property.

@@ -50,7 +50,7 @@ namespace System.Management.Automation.Remoting
         internal event EventHandler<EventArgs> SessionClosed;
 
         // Track whether Dispose has been called.
-        private bool _disposed = false;
+        private bool _disposed;
 
         protected WSManPluginServerSession(
             WSManNativeApi.WSManPluginRequest creationRequestDetails,

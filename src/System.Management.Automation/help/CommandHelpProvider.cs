@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
 
         internal Dictionary<string, string> Properties { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        private string _name = null;
+        private string _name;
 
         internal string Name
         {

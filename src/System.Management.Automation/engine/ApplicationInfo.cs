@@ -134,6 +134,6 @@ namespace System.Management.Automation
             }
         }
 
-        private ReadOnlyCollection<PSTypeName> _outputType = null;
+        private ReadOnlyCollection<PSTypeName> _outputType;
     }
 }

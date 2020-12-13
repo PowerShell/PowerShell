@@ -430,7 +430,7 @@ namespace System.Management.Automation.Remoting
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
         #region Global Constants
 
-        private static long s_objectIdSequenceNumber = 0;
+        private static long s_objectIdSequenceNumber;
 
         #endregion
 
@@ -934,7 +934,7 @@ namespace System.Management.Automation.Remoting
 
         #region IDisposable Members
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         public new void Dispose()
         {

@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
             set { _allowRedirection = value; }
         }
 
-        private bool _allowRedirection = false;
+        private bool _allowRedirection;
 
         /// <summary>
         /// Session names to filter on.

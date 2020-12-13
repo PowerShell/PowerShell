@@ -100,8 +100,8 @@ namespace Microsoft.PowerShell.Commands
         private ConsoleColor _fgColor;
         private ConsoleColor _bgColor;
 
-        private bool _isFgColorSet = false;
-        private bool _isBgColorSet = false;
+        private bool _isFgColorSet;
+        private bool _isBgColorSet;
 
         private readonly Type _consoleColorEnumType;
     }

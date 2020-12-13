@@ -37,7 +37,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <summary>
         /// Count of commands in progress.
         /// </summary>
-        protected int _inProgressCommandsCount = 0;
+        protected int _inProgressCommandsCount;
 
         protected PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
 

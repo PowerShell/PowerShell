@@ -394,7 +394,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _description = null;
+        private string _description;
 
         /// <summary>
         /// Gets the verb of the function.

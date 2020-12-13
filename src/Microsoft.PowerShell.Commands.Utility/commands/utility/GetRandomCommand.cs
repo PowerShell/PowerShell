@@ -597,8 +597,8 @@ namespace Microsoft.PowerShell.Commands
             _pseudoGenerator = new Random(seed);
         }
 
-        private readonly Random _pseudoGenerator = null;
-        private readonly RandomNumberGenerator _cryptographicGenerator = null;
+        private readonly Random _pseudoGenerator;
+        private readonly RandomNumberGenerator _cryptographicGenerator;
 
         /// <summary>
         /// Generates a random floating-point number that is greater than or equal to 0.0, and less than 1.0.

@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _modules = Array.Empty<string>();
-        private bool _isModuleSpecified = false;
+        private bool _isModuleSpecified;
 
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ModuleSpecification[] _moduleSpecifications = Array.Empty<ModuleSpecification>();
-        private bool _isFullyQualifiedModuleSpecified = false;
+        private bool _isFullyQualifiedModuleSpecified;
 
         /// <summary>
         /// Gets or sets the type of the command to get.
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private CommandTypes _commandType = CommandTypes.All;
-        private bool _isCommandTypeSpecified = false;
+        private bool _isCommandTypeSpecified;
 
         /// <summary>
         /// The parameter representing the total number of commands that will

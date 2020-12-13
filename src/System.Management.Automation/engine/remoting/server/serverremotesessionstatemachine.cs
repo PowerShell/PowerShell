@@ -46,7 +46,7 @@ namespace System.Management.Automation.Remoting
         // at processing the events in the queue. This will
         // guarantee that events will always be serialized
         // and processed
-        private bool _eventsInProcess = false;
+        private bool _eventsInProcess;
 
         private readonly EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
         private RemoteSessionState _state;

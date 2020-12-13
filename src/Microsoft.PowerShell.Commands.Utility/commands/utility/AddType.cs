@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateTrustedData]
         public string[] AssemblyName { get; set; }
 
-        private bool _loadAssembly = false;
+        private bool _loadAssembly;
 
         /// <summary>
         /// The language used to compile the source code.
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _outputAssembly = null;
+        private string _outputAssembly;
 
         /// <summary>
         /// The output type of the assembly.

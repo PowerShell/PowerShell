@@ -164,7 +164,7 @@ namespace System.Management.Automation
         //       criteria before returning help results.
         //
 
-        private string _component = null;
+        private string _component;
         /// <summary>
         /// Component for this command.
         /// </summary>
@@ -177,7 +177,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _role = null;
+        private string _role;
         /// <summary>
         /// Role for this command.
         /// </summary>
@@ -190,7 +190,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _functionality = null;
+        private string _functionality;
         /// <summary>
         /// Functionality for this command.
         /// </summary>

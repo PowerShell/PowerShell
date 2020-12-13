@@ -27,8 +27,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.psSnapinName = psSnapinName;
         }
 
-        internal string fileDirectory = null;
-        internal string filePath = null;
+        internal string fileDirectory;
+        internal string filePath;
         internal ConcurrentBag<string> errors;
         internal string psSnapinName;
     }
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         // Flag that determines whether validation should be suppressed while
         // processing pre-validated type / formatting information.
-        private bool _suppressValidation = false;
+        private bool _suppressValidation;
 
         /// <summary>
         /// Entry point for the loader algorithm.
@@ -2037,7 +2037,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             private readonly TypeInfoDataBaseLoader _loader;
             private ExpressionToken _token;
-            private bool _fatalError = false;
+            private bool _fatalError;
         }
 
         /// <summary>

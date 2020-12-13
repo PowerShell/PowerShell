@@ -247,7 +247,7 @@ dotnet_diagnostic.CA1801.severity = none
 dotnet_diagnostic.CA1802.severity = none
 
 # CA1805: Do not initialize unnecessarily
-dotnet_diagnostic.CA1805.severity = suggestion
+dotnet_diagnostic.CA1805.severity = warning
 
 # CA1806: Do not ignore method results
 dotnet_diagnostic.CA1806.severity = suggestion

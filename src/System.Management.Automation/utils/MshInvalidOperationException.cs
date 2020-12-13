@@ -137,6 +137,6 @@ namespace System.Management.Automation
         }
 
         private readonly ErrorCategory _errorCategory = ErrorCategory.InvalidOperation;
-        private readonly object _target = null;
+        private readonly object _target;
     }
 }

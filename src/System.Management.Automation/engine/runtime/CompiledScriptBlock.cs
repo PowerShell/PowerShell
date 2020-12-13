@@ -1729,8 +1729,8 @@ namespace System.Management.Automation
 
         private static readonly object s_syncObject = new object();
         private static string s_lastSeenCertificate = string.Empty;
-        private static bool s_hasProcessedCertificate = false;
-        private static CmsMessageRecipient[] s_encryptionRecipients = null;
+        private static bool s_hasProcessedCertificate;
+        private static CmsMessageRecipient[] s_encryptionRecipients;
 
         private static readonly Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),

@@ -76,7 +76,7 @@ namespace Microsoft.WSMan.Management
         internal string URI_ASSOCIATION_DIALECT = @" http://schemas.dmtf.org/wbem/wsman/1/cimbinding/associationFilter";
 
         // string for operation
-        internal string WSManOp = null;
+        internal string WSManOp;
 
         private readonly PSCmdlet cmdletname;
         private readonly NavigationCmdletProvider _provider;

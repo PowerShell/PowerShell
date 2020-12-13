@@ -45,19 +45,19 @@ namespace System.Management.Automation
         /// It can also include a path, in that case,
         ///     1. the path will be searched first for the existence of the files.
         /// </summary>
-        internal string Target { get; } = null;
+        internal string Target { get; }
 
         /// <summary>
         /// Search path as provided by user.
         /// </summary>
-        internal Collection<string> SearchPaths { get; } = null;
+        internal Collection<string> SearchPaths { get; }
 
         /// <summary>
         /// Search mode for this file search.
         /// </summary>
         internal SearchMode SearchMode { get; } = SearchMode.Unique;
 
-        private Collection<string> _result = null;
+        private Collection<string> _result;
 
         /// <summary>
         /// Result of the search.

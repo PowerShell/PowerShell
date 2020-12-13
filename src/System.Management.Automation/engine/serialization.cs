@@ -514,7 +514,7 @@ namespace System.Management.Automation
                 exception.LineNumber, exception.LinePosition, exception.ToString());
         }
 
-        private bool _done = false;
+        private bool _done;
 
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
@@ -886,7 +886,7 @@ namespace System.Management.Automation
             _writer.Flush();
         }
 
-        private bool _isStopping = false;
+        private bool _isStopping;
 
         /// <summary>
         /// Called from a separate thread will stop the serialization process.
@@ -3171,7 +3171,7 @@ namespace System.Management.Automation
             throw NewXmlException(Serialization.InvalidElementTag, null, _reader.LocalName);
         }
 
-        private bool _isStopping = false;
+        private bool _isStopping;
 
         /// <summary>
         /// Called from a separate thread will stop the serialization process.

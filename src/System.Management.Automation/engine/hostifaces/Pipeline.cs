@@ -447,7 +447,7 @@ namespace System.Management.Automation.Runspaces
         /// V1, but the V2 hosting interface (PowerShell class) sets this flag to true to ensure the global
         /// error output pipe is always set and $ErrorActionPreference when invoking the Pipeline.
         /// </summary>
-        internal bool RedirectShellErrorOutputPipe { get; set; } = false;
+        internal bool RedirectShellErrorOutputPipe { get; set; }
 
         #endregion properties
 

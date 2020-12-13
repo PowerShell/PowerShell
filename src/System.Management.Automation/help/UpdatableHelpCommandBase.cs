@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal bool _useDefaultCredentials = false;
+        internal bool _useDefaultCredentials;
 
         /// <summary>
         /// Forces the operation to complete.

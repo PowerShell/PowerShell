@@ -18,8 +18,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private class ColumnInfo
         {
-            internal int startCol = 0;
-            internal int width = 0;
+            internal int startCol;
+            internal int width;
             internal int alignment = TextAlignment.Left;
         }
         /// <summary>
@@ -27,8 +27,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private class ScreenInfo
         {
-            internal int screenColumns = 0;
-            internal int screenRows = 0;
+            internal int screenColumns;
+            internal int screenRows;
 
             internal const int separatorCharacterCount = 1;
 
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             internal const int minimumColumnWidth = 1;
 
-            internal ColumnInfo[] columnInfo = null;
+            internal ColumnInfo[] columnInfo;
         }
 
         private ScreenInfo _si;
@@ -619,10 +619,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private const int EllipsisSize = 1;
 
-        private bool _disabled = false;
+        private bool _disabled;
 
-        private bool _hideHeader = false;
+        private bool _hideHeader;
 
-        private int _startColumn = 0;
+        private int _startColumn;
     }
 }

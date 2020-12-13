@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
             set { _autosize = value; }
         }
 
-        private bool? _autosize = null;
+        private bool? _autosize;
 
         /// <summary>
         /// Optional, non positional parameter.
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             set { _column = value; }
         }
 
-        private int? _column = null;
+        private int? _column;
 
         #endregion
 

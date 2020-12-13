@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Encoding optional flag.
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
             set { _width = value; }
         }
 
-        private int? _width = null;
+        private int? _width;
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _suppressNewline = false;
+        private bool _suppressNewline;
 
         #endregion
 
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Stream writer used to write to file.
         /// </summary>
-        private StreamWriter _sw = null;
+        private StreamWriter _sw;
 
         /// <summary>
         /// Indicate whether the ProcessRecord method was executed.
@@ -325,11 +325,11 @@ namespace Microsoft.PowerShell.Commands
         /// In this case, the EndProcess method should return immediately as if it's
         /// never been called.
         /// </summary>
-        private bool _processRecordExecuted = false;
+        private bool _processRecordExecuted;
 
         /// <summary>
         /// FileInfo of file to clear read-only flag when operation is complete.
         /// </summary>
-        private FileInfo _readOnlyFileInfo = null;
+        private FileInfo _readOnlyFileInfo;
     }
 }

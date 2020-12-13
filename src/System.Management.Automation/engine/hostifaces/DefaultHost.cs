@@ -52,12 +52,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        public override CultureInfo CurrentCulture { get; } = null;
+        public override CultureInfo CurrentCulture { get; }
 
         /// <summary>
         /// See base class.
         /// </summary>
-        public override CultureInfo CurrentUICulture { get; } = null;
+        public override CultureInfo CurrentUICulture { get; }
 
         #endregion properties
 

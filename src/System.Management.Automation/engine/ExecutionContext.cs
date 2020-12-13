@@ -162,7 +162,7 @@ namespace System.Management.Automation
         /// If true, then a script command processor should rethrow the exit exception instead of
         /// simply capturing it. This is used by the -file option on the console host.
         /// </summary>
-        internal bool ScriptCommandProcessorShouldRethrowExit { get; set; } = false;
+        internal bool ScriptCommandProcessorShouldRethrowExit { get; set; }
 
         /// <summary>
         /// If this flag is set to true, script trace output

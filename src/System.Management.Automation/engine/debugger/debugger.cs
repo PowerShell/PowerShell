@@ -950,7 +950,7 @@ namespace System.Management.Automation
 
         internal const string CannotEnableDebuggerSteppingInvalidMode = "Debugger:CannotEnableDebuggerSteppingInvalidMode";
 
-        private static readonly Guid s_instanceId = new Guid();
+        private static readonly Guid s_instanceId;
 
         #endregion
     }
@@ -4071,7 +4071,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _savedIgnoreScriptDebug = false;
+        private bool _savedIgnoreScriptDebug;
 
         internal void Trace(string messageId, string resourceString, params object[] args)
         {

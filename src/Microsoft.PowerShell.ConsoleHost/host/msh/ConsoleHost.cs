@@ -705,7 +705,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private bool _isRunspacePushed = false;
+        private bool _isRunspacePushed;
 
         /// <summary>
         /// Returns the current runspace associated with this host.
@@ -2238,7 +2238,7 @@ namespace Microsoft.PowerShell
             set;
         }
 
-        private Exception _lastRunspaceInitializationException = null;
+        private Exception _lastRunspaceInitializationException;
         internal uint ExitCode;
 
         /// <summary>
@@ -2852,8 +2852,8 @@ namespace Microsoft.PowerShell
             private readonly Executor _exec;
             private readonly Executor _promptExec;
             private readonly object _syncObject = new object();
-            private bool _isRunspacePushed = false;
-            private bool _runspacePopped = false;
+            private bool _isRunspacePushed;
+            private bool _runspacePopped;
 
             // The instance stack is used to keep track of which InputLoop instance should be told to exit
             // when PSHost.ExitNestedPrompt is called.

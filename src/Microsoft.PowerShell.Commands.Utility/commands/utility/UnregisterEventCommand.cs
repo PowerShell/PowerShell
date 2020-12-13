@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _sourceIdentifier = null;
+        private string _sourceIdentifier;
 
         /// <summary>
         /// An identifier for this event subscription.
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         private WildcardPattern _matchPattern;
-        private bool _foundMatch = false;
+        private bool _foundMatch;
 
         /// <summary>
         /// Unsubscribe from the event.

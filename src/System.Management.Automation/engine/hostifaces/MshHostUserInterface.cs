@@ -392,14 +392,14 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
 
-        private int _transcribeOnlyCount = 0;
+        private int _transcribeOnlyCount;
 
         internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
 
         private sealed class TranscribeOnlyCookie : IDisposable
         {
             private readonly PSHostUserInterface _ui;
-            private bool _disposed = false;
+            private bool _disposed;
 
             public TranscribeOnlyCookie(PSHostUserInterface ui)
             {
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Host
             return systemTranscript;
         }
 
-        internal static TranscriptionOption systemTranscript = null;
+        internal static TranscriptionOption systemTranscript;
         private static readonly object s_systemTranscriptLock = new object();
 
         private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation.Host
             }
         }
 
-        private StreamWriter _contentWriter = null;
+        private StreamWriter _contentWriter;
 
         /// <summary>
         /// Disposes this runspace instance. Dispose will close the runspace if not closed already.
@@ -1194,7 +1194,7 @@ namespace System.Management.Automation.Host
             _disposed = true;
         }
 
-        private bool _disposed = false;
+        private bool _disposed;
     }
 
     /// <summary>

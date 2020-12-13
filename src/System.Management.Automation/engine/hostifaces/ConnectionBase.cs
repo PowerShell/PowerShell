@@ -986,7 +986,7 @@ namespace System.Management.Automation.Runspaces
             return _currentlyRunningPipeline;
         }
 
-        private Pipeline _currentlyRunningPipeline = null;
+        private Pipeline _currentlyRunningPipeline;
 
         /// <summary>
         /// This method stops all the pipelines which are nested

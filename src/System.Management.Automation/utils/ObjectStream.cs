@@ -24,7 +24,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Event fired when data is added to the buffer.
         /// </summary>
-        internal event EventHandler DataReady = null;
+        internal event EventHandler DataReady;
 
         /// <summary>
         /// Raises DataReadyEvent.
@@ -468,7 +468,7 @@ namespace System.Management.Automation.Internal
         /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
-        private PipelineReader<object> _reader = null;
+        private PipelineReader<object> _reader;
 
         /// <summary>
         /// The PSObject reader for this stream.
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Internal
         /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
-        private PipelineReader<PSObject> _mshreader = null;
+        private PipelineReader<PSObject> _mshreader;
 
         /// <summary>
         /// The object writer for this stream.
@@ -486,7 +486,7 @@ namespace System.Management.Automation.Internal
         /// This field is allocated on first demand and
         /// returned on subsequent calls.
         /// </remarks>
-        private PipelineWriter _writer = null;
+        private PipelineWriter _writer;
 
         /// <summary>
         /// Maximum number of objects allowed in the stream
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Indicates if this stream has already been disposed.
         /// </summary>
-        private bool _disposed = false;
+        private bool _disposed;
 
         #endregion Private Fields
 
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation.Internal
         private PipelineReader<object> _objectReaderForPipeline;
         private PipelineReader<PSObject> _psobjectReaderForPipeline;
         private readonly object _syncObject = new object();
-        private bool _disposed = false;
+        private bool _disposed;
 
         #endregion
 

@@ -161,8 +161,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private List<PSObject> _outVarResults = null;
-        private IDisposable _transcribeOnlyCookie = null;
+        private List<PSObject> _outVarResults;
+        private IDisposable _transcribeOnlyCookie;
     }
 
     /// <summary>

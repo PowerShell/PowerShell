@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public PSMemberViewTypes View { get; set; } = PSMemberViewTypes.Adapted | PSMemberViewTypes.Extended;
 
-        private bool _staticParameter = false;
+        private bool _staticParameter;
         /// <summary>
         /// True if we should return static members.
         /// </summary>

@@ -1144,7 +1144,7 @@ namespace Microsoft.PowerShell.Commands
             set => _persist = value;
         }
 
-        private bool _persist = false;
+        private bool _persist;
 #endif
         /// <summary>
         /// Gets the dynamic parameters for the new-psdrive cmdlet.

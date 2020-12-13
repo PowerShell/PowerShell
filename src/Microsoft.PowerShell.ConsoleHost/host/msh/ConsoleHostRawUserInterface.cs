@@ -1302,7 +1302,7 @@ namespace Microsoft.PowerShell
 
         private readonly ConsoleColor defaultBackground = ConsoleColor.Black;
 
-        private readonly ConsoleHostUserInterface parent = null;
+        private readonly ConsoleHostUserInterface parent;
 
         private ConsoleControl.KEY_EVENT_RECORD cachedKeyEvent;
 
@@ -1334,7 +1334,7 @@ namespace Microsoft.PowerShell
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
 
-        private readonly ConsoleHostUserInterface _parent = null;
+        private readonly ConsoleHostUserInterface _parent;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {

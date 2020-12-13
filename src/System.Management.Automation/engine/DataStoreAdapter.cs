@@ -190,19 +190,19 @@ namespace System.Management.Automation
         /// If this switch parameter is set then the created PSDrive
         /// would be persisted across PowerShell sessions.
         /// </summary>
-        internal bool Persist { get; } = false;
+        internal bool Persist { get; }
 
         /// <summary>
         /// Get or sets the value indicating if the created drive is a network drive.
         /// </summary>
-        internal bool IsNetworkDrive { get; set; } = false;
+        internal bool IsNetworkDrive { get; set; }
 
         /// <summary>
         /// Gets or sets the UNC path of the drive. This property would be populated only
         /// if the created PSDrive is targeting a network drive or else this property
         /// would be null.
         /// </summary>
-        public string DisplayRoot { get; internal set; } = null;
+        public string DisplayRoot { get; internal set; }
 
         /// <summary>
         /// Gets or sets if the drive-root relative paths on this drive are separated by a

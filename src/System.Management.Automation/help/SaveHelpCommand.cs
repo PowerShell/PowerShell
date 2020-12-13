@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private bool _alreadyCheckedOncePerDayPerModule = false;
+        private bool _alreadyCheckedOncePerDayPerModule;
 
         #region Parameters
 
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Specifies the modules to update.

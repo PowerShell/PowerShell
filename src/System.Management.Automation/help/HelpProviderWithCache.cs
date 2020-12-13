@@ -72,7 +72,7 @@ namespace System.Management.Automation
         /// a custom way of match.
         /// </summary>
         /// <value></value>
-        protected bool HasCustomMatch { get; set; } = false;
+        protected bool HasCustomMatch { get; set; }
 
         /// <summary>
         /// This is for implementing custom match algorithm.
@@ -212,7 +212,7 @@ namespace System.Management.Automation
         /// This indicator is usually set by help providers derived from this class.
         /// </summary>
         /// <value></value>
-        protected internal bool CacheFullyLoaded { get; set; } = false;
+        protected internal bool CacheFullyLoaded { get; set; }
 
         /// <summary>
         /// This will reset the help cache. Normally this corresponds to a

@@ -1019,9 +1019,9 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-        private readonly PSHostUserInterface _externalUI = null;
-        private readonly InternalHostRawUserInterface _internalRawUI = null;
-        private readonly InternalHost _parent = null;
-        private PSInformationalBuffers _informationalBuffers = null;
+        private readonly PSHostUserInterface _externalUI;
+        private readonly InternalHostRawUserInterface _internalRawUI;
+        private readonly InternalHost _parent;
+        private PSInformationalBuffers _informationalBuffers;
     }
 }

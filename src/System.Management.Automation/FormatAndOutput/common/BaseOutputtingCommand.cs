@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// The screen host associated with this outputter.
         /// </summary>
-        private LineOutput _lo = null;
+        private LineOutput _lo;
 
         internal LineOutput LineOutput
         {
@@ -639,7 +639,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private readonly FormatMessagesContextManager _ctxManager = new FormatMessagesContextManager();
 
-        private FormattedObjectsCache _cache = null;
+        private FormattedObjectsCache _cache;
 
         /// <summary>
         /// Handler for processing the caching notification and responsible for
@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private sealed class TableFormattingHint : FormattingHint
         {
-            internal int[] columnWidths = null;
+            internal int[] columnWidths;
         }
 
         /// <summary>
@@ -824,13 +824,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private sealed class WideFormattingHint : FormattingHint
         {
-            internal int maxWidth = 0;
+            internal int maxWidth;
         }
 
         /// <summary>
         /// Variable holding the autosize hint (set by the caching code and reset by the hint consumer.
         /// </summary>
-        private FormattingHint _formattingHint = null;
+        private FormattingHint _formattingHint;
 
         /// <summary>
         /// Helper for consuming the formatting hint.
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Retrieve the format data in the context.
             /// </summary>
-            internal FormatStartData Data { get; } = null;
+            internal FormatStartData Data { get; }
         }
 
         /// <summary>
@@ -912,7 +912,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Retrieve the format data in the context.
             /// </summary>
-            internal GroupStartData Data { get; } = null;
+            internal GroupStartData Data { get; }
 
             protected OutCommandInner InnerCommand { get; }
         }
@@ -945,13 +945,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private sealed class TableOutputContext : TableOutputContextBase
         {
-            private int _rowCount = 0;
+            private int _rowCount;
             private int _consoleHeight = -1;
             private int _consoleWidth = -1;
 
             private const int WhitespaceAndPagerLineCount = 2;
 
-            private readonly bool _repeatHeader = false;
+            private readonly bool _repeatHeader;
 
             /// <summary>
             /// Construct a context to push on the stack.
@@ -1169,7 +1169,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Property list currently active.
             /// </summary>
-            private string[] _properties = null;
+            private string[] _properties;
 
             /// <summary>
             /// Writer to do the actual formatting.
@@ -1192,7 +1192,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
             }
 
-            private StringValuesBuffer _buffer = null;
+            private StringValuesBuffer _buffer;
 
             /// <summary>
             /// Initialize column widths.

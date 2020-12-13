@@ -27,49 +27,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Name of the group by property, it can be null.
         /// </summary>
-        internal MshParameter groupByParameter = null;
+        internal MshParameter groupByParameter;
 
         /// <summary>
         /// Name of a view from format.ps1xml, it can be null.
         /// </summary>
-        internal string viewName = null;
+        internal string viewName;
 
         /// <summary>
         /// Flag to force a shape even on out of band objects.
         /// </summary>
-        internal bool forceFormattingAlsoOnOutOfBand = false;
+        internal bool forceFormattingAlsoOnOutOfBand;
 
         /// <summary>
         /// Autosize formatting flag. If true, the output command is instructed
         /// to get the "best fit" for the device screen.
         /// </summary>
-        internal bool? autosize = null;
+        internal bool? autosize;
 
         /// <summary>
         /// If true, the header for a table is repeated after each screen full
         /// of content.
         /// </summary>
-        internal bool repeatHeader = false;
+        internal bool repeatHeader;
 
         /// <summary>
         /// Errors are shown as out of band messages.
         /// </summary>
-        internal bool? showErrorsAsMessages = null;
+        internal bool? showErrorsAsMessages;
 
         /// <summary>
         /// Errors are shown in the formatted output.
         /// </summary>
-        internal bool? showErrorsInFormattedOutput = null;
+        internal bool? showErrorsInFormattedOutput;
 
         /// <summary>
         /// Expand IEnumerable flag.
         /// </summary>
-        internal EnumerableExpansion? expansion = null;
+        internal EnumerableExpansion? expansion;
 
         /// <summary>
         /// Extension mechanism for shape specific parameters.
         /// </summary>
-        internal ShapeSpecificParameters shapeParameters = null;
+        internal ShapeSpecificParameters shapeParameters;
     }
 
     /// <summary>
@@ -81,13 +81,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed class TableSpecificParameters : ShapeSpecificParameters
     {
-        internal bool? hideHeaders = null;
-        internal bool? multiLine = null;
+        internal bool? hideHeaders;
+        internal bool? multiLine;
     }
 
     internal sealed class WideSpecificParameters : ShapeSpecificParameters
     {
-        internal int? columns = null;
+        internal int? columns;
     }
 
     internal sealed class ComplexSpecificParameters : ShapeSpecificParameters

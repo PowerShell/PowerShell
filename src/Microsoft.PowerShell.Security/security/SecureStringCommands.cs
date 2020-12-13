@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected ConvertFromToSecureStringCommandBase(string name) : base(name) { }
 
-        private SecureString _secureKey = null;
+        private SecureString _secureKey;
         private byte[] _key;
 
         /// <summary>

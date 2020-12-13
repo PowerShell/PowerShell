@@ -548,7 +548,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Static variable which is incremented to generate id.
         /// </summary>
-        private static int s_jobIdSeed = 0;
+        private static int s_jobIdSeed;
 
         private string _jobTypeName = string.Empty;
 
@@ -658,12 +658,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Time job was started.
         /// </summary>
-        public DateTime? PSBeginTime { get; protected set; } = null;
+        public DateTime? PSBeginTime { get; protected set; }
 
         /// <summary>
         /// Time job stopped.
         /// </summary>
-        public DateTime? PSEndTime { get; protected set; } = null;
+        public DateTime? PSEndTime { get; protected set; }
 
         /// <summary>
         /// Job type name.
@@ -2223,7 +2223,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _stopIsCalled = false;
+        private bool _stopIsCalled;
         /// <summary>
         /// Stop Job.
         /// </summary>
@@ -2357,19 +2357,19 @@ namespace System.Management.Automation
         #region finish logic
 
         // This variable is set to true if atleast one child job failed.
-        private bool _atleastOneChildJobFailed = false;
+        private bool _atleastOneChildJobFailed;
 
         // count of number of child jobs which have finished
-        private int _finishedChildJobsCount = 0;
+        private int _finishedChildJobsCount;
 
         // count of number of child jobs which are blocked
-        private int _blockedChildJobsCount = 0;
+        private int _blockedChildJobsCount;
 
         // count of child jobs that are in disconnected state.
-        private int _disconnectedChildJobsCount = 0;
+        private int _disconnectedChildJobsCount;
 
         // count of child jobs that are in Debug halted state.
-        private int _debugChildJobsCount = 0;
+        private int _debugChildJobsCount;
 
         /// <summary>
         /// Handles the StateChanged event from each of the child job objects.
@@ -2568,7 +2568,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isDisposed = false;
+        private bool _isDisposed;
 
         private string ConstructLocation()
         {
@@ -2926,7 +2926,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper associated with this entity.
         /// </summary>
-        internal ExecutionCmdletHelper Helper { get; } = null;
+        internal ExecutionCmdletHelper Helper { get; }
 
         /// <summary>
         /// Used by Invoke-Command cmdlet to show/hide computername property value.
@@ -2958,7 +2958,7 @@ namespace System.Management.Automation
         /// Property that indicates this disconnected child job was
         /// previously in the Blocked state.
         /// </summary>
-        internal bool DisconnectedAndBlocked { get; private set; } = false;
+        internal bool DisconnectedAndBlocked { get; private set; }
 
         /// <summary>
         /// Returns boolean indicating whether the underlying
@@ -3226,7 +3226,7 @@ namespace System.Management.Automation
             DeterminedAndSetJobState(helper);
         }
 
-        private bool _doFinishCalled = false;
+        private bool _doFinishCalled;
 
         /// <summary>
         /// This method marks the completion state for Job. Also if job failed, it processes the
@@ -3461,9 +3461,9 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _isDisposed = false;
+        private bool _isDisposed;
 
-        private bool _cleanupDone = false;
+        private bool _cleanupDone;
 
         /// <summary>
         /// Cleanup after state changes to finished.
@@ -3819,13 +3819,13 @@ namespace System.Management.Automation
         #region Private Members
 
         // helper associated with this job object
-        private readonly RemotePipeline _remotePipeline = null;
+        private readonly RemotePipeline _remotePipeline;
 
         // object used for synchronization
         protected object SyncObject = new object();
 
         private ThrottleManager _throttleManager;
-        private bool _stopIsCalled = false;
+        private bool _stopIsCalled;
 
         private volatile Debugger _jobDebugger;
 
@@ -4219,7 +4219,7 @@ namespace System.Management.Automation
 
         #region Protected Methods
 
-        private bool _cleanupDone = false;
+        private bool _cleanupDone;
 
         /// <summary>
         /// Clean up once job is finished.
@@ -4363,7 +4363,7 @@ namespace System.Management.Automation
             _throttleManager.StopAllOperations();
         }
 
-        private bool _doFinishCalled = false;
+        private bool _doFinishCalled;
 
         /// <summary>
         /// This method marks the completion state for Job. Also if job failed, it processes the

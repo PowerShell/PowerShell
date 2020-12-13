@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// The view generator that produced data for a selected shape.
         /// </summary>
-        private ViewGenerator _viewGenerator = null;
+        private ViewGenerator _viewGenerator;
     }
 
     /// <summary>

@@ -27,11 +27,11 @@ namespace System.Management.Automation
 
         #region private properties
 
-        private readonly string _resourceName = null;
-        private readonly ExecutionContext _context = null;
-        private DscResourceInfo _currentMatch = null;
-        private IEnumerator<DscResourceInfo> _matchingResource = null;
-        private Collection<DscResourceInfo> _matchingResourceList = null;
+        private readonly string _resourceName;
+        private readonly ExecutionContext _context;
+        private DscResourceInfo _currentMatch;
+        private IEnumerator<DscResourceInfo> _matchingResource;
+        private Collection<DscResourceInfo> _matchingResourceList;
 
         #endregion
 

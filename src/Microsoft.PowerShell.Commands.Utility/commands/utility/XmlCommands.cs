@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Input object to be exported.
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// FileInfo of file to clear read-only flag when operation is complete.
         /// </summary>
-        private FileInfo _readOnlyFileInfo = null;
+        private FileInfo _readOnlyFileInfo;
 
         private void CreateFileStream()
         {
@@ -319,13 +319,13 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         #endregion Command Line Parameters
 
         #region IDisposable Members
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Public dispose method.
@@ -845,7 +845,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// The following is the definition of the input parameter "XML".

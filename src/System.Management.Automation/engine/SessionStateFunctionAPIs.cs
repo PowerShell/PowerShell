@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         internal List<FunctionInfo> ExportedFunctions { get; } = new List<FunctionInfo>();
 
-        internal bool UseExportList { get; set; } = false;
+        internal bool UseExportList { get; set; }
 
         /// <summary>
         /// Set to true when module functions are being explicitly exported using Export-ModuleMember.

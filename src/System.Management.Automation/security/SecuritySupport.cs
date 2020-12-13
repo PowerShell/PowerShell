@@ -996,7 +996,7 @@ namespace System.Management.Automation
             this.Certificates = new X509Certificate2Collection();
         }
 
-        private string _identifier = null;
+        private string _identifier;
 
         /// <summary>
         /// Creates an instance of the CmsMessageRecipient class.
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation
             this.Certificates = new X509Certificate2Collection();
         }
 
-        private X509Certificate2 _pendingCertificate = null;
+        private X509Certificate2 _pendingCertificate;
 
         /// <summary>
         /// Gets the certificate associated with this recipient.
@@ -1512,7 +1512,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
-        private static bool s_amsiInitFailed = false;
+        private static bool s_amsiInitFailed;
         private static object s_amsiLockObject = new object();
 
         /// <summary>
@@ -1577,9 +1577,9 @@ namespace System.Management.Automation
             }
         }
 
-        public static bool AmsiUninitializeCalled = false;
-        public static bool AmsiInitialized = false;
-        public static bool AmsiCleanedUp = false;
+        public static bool AmsiUninitializeCalled;
+        public static bool AmsiInitialized;
+        public static bool AmsiCleanedUp;
 
         internal class AmsiNativeMethods
         {

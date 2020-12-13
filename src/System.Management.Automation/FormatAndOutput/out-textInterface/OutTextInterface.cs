@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
             set { _lineOutput = value; }
         }
 
-        private object _lineOutput = null;
+        private object _lineOutput;
 
         /// <summary>
         /// Set inner command.

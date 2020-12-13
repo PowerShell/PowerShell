@@ -95,7 +95,7 @@ namespace System.Management.Automation.Interpreter
         private List<BranchLabel> _labels;
 
         // list of (instruction index, cookie) sorted by instruction index:
-        private List<KeyValuePair<int, object>> _debugCookies = null;
+        private List<KeyValuePair<int, object>> _debugCookies;
 
         #region Debug View
 

@@ -914,7 +914,7 @@ namespace System.Management.Automation.Runspaces.Internal
         protected ObjectStreamBase outputstream;
         protected string computerName;
         protected ClientPowerShellDataStructureHandler dataStructureHandler;
-        protected bool stopCalled = false;
+        protected bool stopCalled;
         protected PSHost hostToUse;
         protected RemoteRunspacePoolInternal runspacePool;
 
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Runspaces.Internal
         protected const string WRITE_WARNING_LINE = "WriteWarningLine";
         protected const string WRITE_PROGRESS = "WriteProgress";
 
-        protected bool initialized = false;
+        protected bool initialized;
         /// <summary>
         /// This queue is for the state change events that resulted in closing the underlying
         /// datastructure handler. We cannot send the state back to the upper layers until

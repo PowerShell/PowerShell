@@ -3903,7 +3903,7 @@ namespace System.Management.Automation
 
         #endregion DefaultParameterBindingStructures
 
-        private uint _parameterSetToBePrioritizedInPipelineBinding = 0;
+        private uint _parameterSetToBePrioritizedInPipelineBinding;
 
         /// <summary>
         /// The cmdlet metadata.

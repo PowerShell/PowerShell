@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097041")]
     public sealed class StartSleepCommand : PSCmdlet, IDisposable
     {
-        private bool _disposed = false;
+        private bool _disposed;
 
         #region IDisposable
         /// <summary>
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly object _syncObject = new();
 
         // this is set to true by stopProcessing
-        private bool _stopping = false;
+        private bool _stopping;
 
         /// <summary>
         /// This method causes calling thread to sleep for specified milliseconds.

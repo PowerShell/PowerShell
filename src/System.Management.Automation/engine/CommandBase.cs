@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
         /// <value></value>
         internal IScriptExtent InvocationExtent { get; set; }
 
-        private InvocationInfo _myInvocation = null;
+        private InvocationInfo _myInvocation;
         /// <summary>
         /// Return the invocation data object for this command.
         /// </summary>
@@ -374,7 +374,7 @@ namespace System.Management.Automation
     {
         #region private_members
 
-        private ProviderIntrinsics _invokeProvider = null;
+        private ProviderIntrinsics _invokeProvider;
 
         #endregion private_members
 

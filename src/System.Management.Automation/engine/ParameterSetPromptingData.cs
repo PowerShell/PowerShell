@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The parameter set this data represents.
         /// </summary>
-        internal uint ParameterSet { get; } = 0;
+        internal uint ParameterSet { get; }
 
         /// <summary>
         /// True if the parameter set represents parameters in all the parameter sets.

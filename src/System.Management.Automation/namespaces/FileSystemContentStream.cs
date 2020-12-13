@@ -72,10 +72,10 @@ namespace Microsoft.PowerShell.Commands
 
         // The reader to read file content backward
         private FileStreamBackReader _backReader;
-        private bool _alreadyDetectEncoding = false;
+        private bool _alreadyDetectEncoding;
 
         // False to add a newline to the end of the output string, true if not.
-        private readonly bool _suppressNewline = false;
+        private readonly bool _suppressNewline;
 
         /// <summary>
         /// Constructor for the content stream.
@@ -1161,10 +1161,10 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly byte[] _byteBuff = new byte[BuffSize];
         private readonly char[] _charBuff = new char[BuffSize];
-        private int _byteCount = 0;
-        private int _charCount = 0;
-        private long _currentPosition = 0;
-        private bool? _singleByteCharSet = null;
+        private int _byteCount;
+        private int _charCount;
+        private long _currentPosition;
+        private bool? _singleByteCharSet;
 
         private const byte BothTopBitsSet = 0xC0;
         private const byte TopBitUnset = 0x80;

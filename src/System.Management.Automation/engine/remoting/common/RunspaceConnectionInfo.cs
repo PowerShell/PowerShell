@@ -3033,7 +3033,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets or sets whether the process in container should be launched as high privileged account
         /// (RunAsAdmin being true) or low privileged account (RunAsAdmin being false).
         /// </summary>
-        internal bool RunAsAdmin { get; set; } = false;
+        internal bool RunAsAdmin { get; set; }
 
         /// <summary>
         /// Gets or sets the configuration name of the container session.
@@ -3043,12 +3043,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets or sets whether the process in container has terminated.
         /// </summary>
-        internal bool ProcessTerminated { get; set; } = false;
+        internal bool ProcessTerminated { get; set; }
 
         /// <summary>
         /// Gets or sets the error code.
         /// </summary>
-        internal uint ErrorCode { get; set; } = 0;
+        internal uint ErrorCode { get; set; }
 
         /// <summary>
         /// Gets or sets the error message for other errors.

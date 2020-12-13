@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Known_HTTP_Header_Names
 
-        private static HashSet<string> s_contentHeaderSet = null;
+        private static HashSet<string> s_contentHeaderSet;
 
         internal static HashSet<string> ContentHeaders
         {

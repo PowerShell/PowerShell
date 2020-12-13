@@ -1312,7 +1312,7 @@ namespace System.Management.Automation
 
         // used to find and blocks cyclic-loops in tracing.
 
-        private bool _alreadyTracing = false;
+        private bool _alreadyTracing;
         /// <summary>
         /// Composes a line of trace output and then writes it.
         /// </summary>

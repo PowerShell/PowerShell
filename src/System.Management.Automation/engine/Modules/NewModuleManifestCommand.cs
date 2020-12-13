@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
             set { _rootModule = value; }
         }
 
-        private string _rootModule = null;
+        private string _rootModule;
 
         /// <summary>
         /// Gets or sets the module version.
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
             set { _processorArchitecture = value; }
         }
 
-        private ProcessorArchitecture? _processorArchitecture = null;
+        private ProcessorArchitecture? _processorArchitecture;
 
         /// <summary>
         /// Gets or sets the PowerShell version required by this module.
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
             set { _powerShellVersion = value; }
         }
 
-        private Version _powerShellVersion = null;
+        private Version _powerShellVersion;
 
         /// <summary>
         /// Gets or sets the CLR version required by the module.
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
             set { _ClrVersion = value; }
         }
 
-        private Version _ClrVersion = null;
+        private Version _ClrVersion;
 
         /// <summary>
         /// Gets or sets the version of .NET Framework required by the module.
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
             set { _DotNetFrameworkVersion = value; }
         }
 
-        private Version _DotNetFrameworkVersion = null;
+        private Version _DotNetFrameworkVersion;
 
         /// <summary>
         /// Gets or sets the name of PowerShell host required by the module.
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
             set { _PowerShellHostName = value; }
         }
 
-        private string _PowerShellHostName = null;
+        private string _PowerShellHostName;
 
         /// <summary>
         /// Gets or sets the version of PowerShell host required by the module.
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
             set { _PowerShellHostVersion = value; }
         }
 
-        private Version _PowerShellHostVersion = null;
+        private Version _PowerShellHostVersion;
 
         /// <summary>
         /// Gets or sets the list of Dependencies for the module.

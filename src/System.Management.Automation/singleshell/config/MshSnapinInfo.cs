@@ -303,7 +303,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get/set whether to log Pipeline Execution Detail events.
         /// </summary>
-        public bool LogPipelineExecutionDetails { get; set; } = false;
+        public bool LogPipelineExecutionDetails { get; set; }
 
         /// <summary>
         /// Overrides ToString.
@@ -1334,7 +1334,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static IList<DefaultPSSnapInInformation> s_defaultMshSnapins = null;
+        private static IList<DefaultPSSnapInInformation> s_defaultMshSnapins;
         private static object s_syncObject = new object();
 
         #endregion

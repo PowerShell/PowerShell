@@ -64,11 +64,11 @@ namespace Microsoft.PowerShell.Commands
         /// The Name parameter is declared in subclasses,
         /// since it is optional for GetProcess and mandatory for StopProcess.
         /// </remarks>
-        internal string[] processNames = null;
+        internal string[] processNames;
 
         // The Id parameter is declared in subclasses,
         // since it is positional for StopProcess but not for GetProcess.
-        internal int[] processIds = null;
+        internal int[] processIds;
 
         /// <summary>
         /// If the input is a stream of [collections of]
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Process[] _input = null;
+        private Process[] _input;
         #endregion Parameters
 
         #region Internal
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Process[] _allProcesses = null;
+        private Process[] _allProcesses;
 
         /// <summary>
         /// Add <paramref name="process"/> to <see cref="_matchingProcesses"/>,
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
             set { _includeUserName = value; }
         }
 
-        private bool _includeUserName = false;
+        private bool _includeUserName;
 
         ///<summary>
         /// To display the modules of a process.
@@ -908,12 +908,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private int _timeout = 0;
+        private int _timeout;
         private bool _timeOutSpecified;
 
         #endregion Parameters
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         #region IDisposable
         /// <summary>
@@ -1605,8 +1605,8 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(Process))]
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
-        private ManualResetEvent _waithandle = null;
-        private bool _isDefaultSetParameterSpecified = false;
+        private ManualResetEvent _waithandle;
+        private bool _isDefaultSetParameterSpecified;
 
         #region Parameters
 
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ProcessWindowStyle _windowstyle = ProcessWindowStyle.Normal;
-        private bool _windowstyleSpecified = false;
+        private bool _windowstyleSpecified;
 
         /// <summary>
         /// Wait for the process to terminate.

@@ -131,7 +131,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        private bool _ignoreStop = false;
+        private bool _ignoreStop;
 
         #region Runspace Debug
 
@@ -628,8 +628,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private readonly object _syncObject;
 
-        private bool _submitComplete = false;                    // to check if operations have been submitComplete
-        private bool _stopping = false;                      // if stop is in process
+        private bool _submitComplete;                    // to check if operations have been submitComplete
+        private bool _stopping;                      // if stop is in process
 
         #endregion Private Members
 

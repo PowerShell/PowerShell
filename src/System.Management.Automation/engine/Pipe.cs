@@ -101,7 +101,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// OutBufferCount configures the number of objects to buffer before calling the downstream Cmdlet.
         /// </summary>
-        internal int OutBufferCount { get; set; } = 0;
+        internal int OutBufferCount { get; set; }
 
         /// <summary>
         /// If true, then all input added to this pipe will simply be discarded...

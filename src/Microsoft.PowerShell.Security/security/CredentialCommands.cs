@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             set { _userName = value; }
         }
 
-        private string _userName = null;
+        private string _userName;
 
         /// <summary>
         /// Gets and sets the title on the window prompt.

@@ -56,6 +56,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the stack.
         /// </summary>
-        public string Name { get; } = null;
+        public string Name { get; }
     }
 }

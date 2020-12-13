@@ -104,7 +104,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static GetSymmetricEncryptionKey s_delegate = null;
+        private static GetSymmetricEncryptionKey s_delegate;
 
         /// <summary>
         /// GetObjectData.

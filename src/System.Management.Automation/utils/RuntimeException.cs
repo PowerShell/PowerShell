@@ -167,7 +167,7 @@ namespace System.Management.Automation
         private ErrorRecord _errorRecord;
         private string _errorId = "RuntimeException";
         private ErrorCategory _errorCategory = ErrorCategory.NotSpecified;
-        private object _targetObject = null;
+        private object _targetObject;
 
         /// <summary>
         /// Subclasses can use this method to set the ErrorId.

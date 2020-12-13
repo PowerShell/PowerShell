@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Applicability clause
         /// Only valid if not the default definition.
         /// </summary>
-        internal AppliesTo appliesTo = null;
+        internal AppliesTo appliesTo;
 
         /// <summary>
         /// Item associated with this entry definition.

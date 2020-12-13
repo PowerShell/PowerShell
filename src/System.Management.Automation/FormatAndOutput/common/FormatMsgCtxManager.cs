@@ -31,12 +31,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal delegate void PayloadCallback(FormatEntryData formatEntryData, OutputContext c);
 
         // callback instances
-        internal FormatContextCreationCallback contextCreation = null;
-        internal FormatStartCallback fs = null;
-        internal FormatEndCallback fe = null;
-        internal GroupStartCallback gs = null;
-        internal GroupEndCallback ge = null;
-        internal PayloadCallback payload = null;
+        internal FormatContextCreationCallback contextCreation;
+        internal FormatStartCallback fs;
+        internal FormatEndCallback fe;
+        internal GroupStartCallback gs;
+        internal GroupEndCallback ge;
+        internal PayloadCallback payload;
 
         /// <summary>
         /// The current output context, as determined by the

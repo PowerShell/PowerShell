@@ -1341,7 +1341,7 @@ namespace Microsoft.PowerShell
         private bool _abortStartup;
         private bool _skipUserInit;
         private string? _customPipeName;
-        private bool? _staMode = null;
+        private bool? _staMode;
         private bool _noExit = true;
         private bool _explicitReadCommandsFromStdin;
         private bool _noPrompt;
@@ -1350,7 +1350,7 @@ namespace Microsoft.PowerShell
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
-        private bool _outputFormatSpecified = false;
+        private bool _outputFormatSpecified;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
         private readonly Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string? _file;
@@ -1360,7 +1360,7 @@ namespace Microsoft.PowerShell
 
 #if !UNIX
         private ProcessWindowStyle? _windowStyle;
-        private bool _removeWorkingDirectoryTrailingCharacter = false;
+        private bool _removeWorkingDirectoryTrailingCharacter;
 #endif
     }
 }   // namespace

@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _scope = string.Empty;
-        private bool _isScopeSpecified = false;
+        private bool _isScopeSpecified;
 
         /// <summary>
         /// If specified, then Import-Module will attempt to import PowerShell modules from a remote computer using the specified session.

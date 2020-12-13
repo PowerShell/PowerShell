@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _sourceIdentifier = null;
+        private string _sourceIdentifier;
 
         /// <summary>
         /// Data relating to this event.
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _sender = null;
+        private PSObject _sender;
 
         /// <summary>
         /// Data relating to this event.
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _messageData = null;
+        private PSObject _messageData;
 
         #endregion parameters
 

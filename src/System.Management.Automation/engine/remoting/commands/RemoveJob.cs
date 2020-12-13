@@ -822,7 +822,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _force = false;
+        private bool _force;
 
         #endregion Parameters
 

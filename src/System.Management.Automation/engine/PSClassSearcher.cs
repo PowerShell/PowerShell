@@ -33,13 +33,13 @@ namespace System.Management.Automation
 
         #region private properties
 
-        private readonly string _className = null;
-        private readonly ExecutionContext _context = null;
-        private PSClassInfo _currentMatch = null;
-        private IEnumerator<PSClassInfo> _matchingClass = null;
-        private Collection<PSClassInfo> _matchingClassList = null;
-        private readonly bool _useWildCards = false;
-        private readonly Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
+        private readonly string _className;
+        private readonly ExecutionContext _context;
+        private PSClassInfo _currentMatch;
+        private IEnumerator<PSClassInfo> _matchingClass;
+        private Collection<PSClassInfo> _matchingClassList;
+        private readonly bool _useWildCards;
+        private readonly Dictionary<string, PSModuleInfo> _moduleInfoCache;
         private readonly object _lockObject = new object();
 
         #endregion

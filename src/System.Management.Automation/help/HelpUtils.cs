@@ -11,7 +11,7 @@ namespace System.Management.Automation
 {
     internal class HelpUtils
     {
-        private static string userHomeHelpPath = null;
+        private static string userHomeHelpPath;
 
         /// <summary>
         /// Get the path to $HOME.

@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
             set { detailed = value; }
         }
 
-        private bool detailed = false;
+        private bool detailed;
 
         /// <summary>
         /// Patterns used to exclude files from DiskPaths and Catalog.
@@ -255,8 +255,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] filesToSkip = null;
-        internal WildcardPattern[] excludedPatterns = null;
+        private string[] filesToSkip;
+        internal WildcardPattern[] excludedPatterns;
 
         /// <summary>
         /// Validate the Integrity of given Catalog.

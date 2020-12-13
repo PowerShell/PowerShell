@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Null by default, present only if grouping specified.
         /// </summary>
-        public GroupingEntry groupingEntry = null;
+        public GroupingEntry groupingEntry;
     }
 
     internal abstract partial class StartData : ControlInfoData
@@ -145,11 +145,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Mandatory, but depending on the shape we send in
         /// it must match what got sent in the format start message.
         /// </summary>
-        public FormatEntryInfo formatEntryInfo = null;
+        public FormatEntryInfo formatEntryInfo;
 
-        public bool outOfBand = false;
+        public bool outOfBand;
         public WriteStreamType writeStream = WriteStreamType.None;
-        internal bool isHelpObject = false;
+        internal bool isHelpObject;
     }
     #endregion
 
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// A zero value signifies let the outputter get the
         /// best fit on the screen (possibly blocking until the end)
         /// </summary>
-        public int columns = 0;
+        public int columns;
     }
 
     internal sealed partial class TableHeaderInfo : ShapeInfo
@@ -202,11 +202,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// == 0 -> let the outputter decide
         /// > 0 -> user provided value.
         /// </summary>
-        public int width = 0;
+        public int width;
 
         public int alignment = TextAlignment.Left;
-        public string label = null;
-        public string propertyName = null;
+        public string label;
+        public string propertyName;
     }
 
     internal sealed class ListViewHeaderInfo : ShapeInfo
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
-        public string text = null;
+        public string text;
     }
 
     internal abstract partial class FreeFormatEntry : FormatEntryInfo
@@ -260,8 +260,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
-        public string label = null;
-        public string propertyName = null;
+        public string label;
+        public string propertyName;
         public FormatPropertyField formatPropertyField = new FormatPropertyField();
     }
 
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public List<FormatPropertyField> formatPropertyFieldList = new List<FormatPropertyField>();
-        public bool multiLine = false;
+        public bool multiLine;
     }
 
     internal sealed partial class WideViewEntry : FormatEntryInfo
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Zero: all the objects
         /// a positive number N: use the first N.
         /// </summary>
-        public int objectCount = 0;
+        public int objectCount;
     }
 
     #endregion
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
-        public string propertyValue = null;
+        public string propertyValue;
         public int alignment = TextAlignment.Undefined;
     }
 
@@ -385,9 +385,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
-        public int leftIndentation = 0;
-        public int rightIndentation = 0;
-        public int firstLine = 0;
+        public int leftIndentation;
+        public int rightIndentation;
+        public int firstLine;
     }
 
     #endregion

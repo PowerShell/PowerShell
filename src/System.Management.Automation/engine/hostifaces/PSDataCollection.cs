@@ -130,21 +130,21 @@ namespace System.Management.Automation
         // using this buffer.
         private int _refCount;
 
-        private bool _isDisposed = false;
+        private bool _isDisposed;
 
         /// <summary>
         /// Whether the enumerator needs to be blocking
         /// by default.
         /// </summary>
-        private bool _blockingEnumerator = false;
+        private bool _blockingEnumerator;
 
         /// <summary>
         /// Whether the ref count was incremented when
         /// BlockingEnumerator was updated.
         /// </summary>
-        private bool _refCountIncrementedForBlockingEnumerator = false;
+        private bool _refCountIncrementedForBlockingEnumerator;
 
-        private int _countNewData = 0;
+        private int _countNewData;
         private int _dataAddedFrequency = 1;
         private Guid _sourceGuid = Guid.Empty;
 
@@ -437,7 +437,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _serializeInput = false;
+        private bool _serializeInput;
 
         /// <summary>
         /// Determines whether this PSDataCollection was created implicitly in support of

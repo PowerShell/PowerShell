@@ -1095,7 +1095,7 @@ namespace System.Management.Automation
         /// <summary>
         /// IsSerialized is set to true if this error record is serialized.
         /// </summary>
-        private bool _isSerialized = false;
+        private bool _isSerialized;
 
         /// <summary>
         /// Is this instance serialized.
@@ -1105,12 +1105,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Value for FullyQualifiedErrorId in case of serialized error record.
         /// </summary>
-        private string _serializedFullyQualifiedErrorId = null;
+        private string _serializedFullyQualifiedErrorId;
 
         /// <summary>
         /// Message overridee for CategoryInfo.GetMessage method.
         /// </summary>
-        internal string _serializedErrorCategoryMessageOverride = null;
+        internal string _serializedErrorCategoryMessageOverride;
 
         /// <summary>
         /// This constructor is used by remoting code to create ErrorRecord.
@@ -1629,7 +1629,7 @@ namespace System.Management.Automation
             set => _serializeExtendedInfo = value;
         }
 
-        private bool _serializeExtendedInfo = false;
+        private bool _serializeExtendedInfo;
 
         #endregion Public Properties
 

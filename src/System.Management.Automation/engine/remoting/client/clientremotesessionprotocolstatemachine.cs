@@ -55,7 +55,7 @@ namespace System.Management.Automation.Remoting
         // object for synchronizing access to the above
         // queue
 
-        private bool _eventsInProcess = false;
+        private bool _eventsInProcess;
         // whether some thread is actively processing events
         // in a loop. If this is set then other threads
         // should simply add to the queue and not attempt
@@ -71,14 +71,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Indicates that the client has previously completed the session key exchange.
         /// </summary>
-        private bool _keyExchanged = false;
+        private bool _keyExchanged;
 
         /// <summary>
         /// This is to queue up a disconnect request when a key exchange is in process
         /// the session will be disconnect once the exchange is complete
         /// intermediate disconnect requests are tracked by this flag.
         /// </summary>
-        private bool _pendingDisconnect = false;
+        private bool _pendingDisconnect;
 
         /// <summary>
         /// Processes events in the queue. If there are no

@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private string _resolvedPath = null;
+        private string _resolvedPath;
 
         /// <summary>
         /// Emits the protected message to a file path.
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private string _resolvedOutFile = null;
+        private string _resolvedOutFile;
 
         /// <summary>
         /// Validate / convert arguments.
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private string _resolvedPath = null;
+        private string _resolvedPath;
 
         /// <summary>
         /// Validate / convert arguments.
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-        private string _resolvedPath = null;
+        private string _resolvedPath;
 
         /// <summary>
         /// Determines whether to include the decrypted content in its original context,

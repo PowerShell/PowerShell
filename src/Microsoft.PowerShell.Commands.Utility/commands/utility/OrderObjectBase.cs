@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal CultureInfo _cultureInfo = null;
+        internal CultureInfo _cultureInfo;
 
         /// <summary>
         /// </summary>
@@ -527,13 +527,13 @@ namespace Microsoft.PowerShell.Commands
         #endregion Utils
 
         // list of processed parameters obtained from the Expression array
-        private readonly List<MshParameter> _mshParameterList = null;
+        private readonly List<MshParameter> _mshParameterList;
 
         // list of unprocessed parameters obtained from the Expression array.
-        private List<MshParameter> _unexpandedParameterList = null;
+        private List<MshParameter> _unexpandedParameterList;
 
         // list of unprocessed parameters with wild card patterns.
-        private List<MshParameter> _unExpandedParametersWithWildCardPattern = null;
+        private List<MshParameter> _unExpandedParametersWithWildCardPattern;
     }
 
     internal static class OrderByPropertyEntryEvaluationHelper
@@ -621,13 +621,13 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class OrderByPropertyEntry
     {
-        internal PSObject inputObject = null;
+        internal PSObject inputObject;
         internal List<ObjectCommandPropertyValue> orderValues = new();
         // The originalIndex field was added to enable stable heap-sorts (Top N/Bottom N)
         internal int originalIndex = -1;
 
         // The comparable field enables faster identification of uncomparable data
-        internal bool comparable = false;
+        internal bool comparable;
     }
 
     internal class OrderByPropertyComparer : IComparer<OrderByPropertyEntry>
@@ -696,7 +696,7 @@ namespace Microsoft.PowerShell.Commands
             return new OrderByPropertyComparer(ascending, cultureInfo, caseSensitive);
         }
 
-        private readonly ObjectCommandComparer[] _propertyComparers = null;
+        private readonly ObjectCommandComparer[] _propertyComparers;
     }
 
     internal class IndexedOrderByPropertyComparer : IComparer<OrderByPropertyEntry>
@@ -725,6 +725,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private readonly OrderByPropertyComparer _orderByPropertyComparer = null;
+        private readonly OrderByPropertyComparer _orderByPropertyComparer;
     }
 }

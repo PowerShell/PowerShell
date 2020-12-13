@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly Type _implementingType = null;
+        private readonly Type _implementingType;
 
         /// <summary>
         /// Gets the synopsis of the cmdlet.
@@ -398,7 +398,7 @@ namespace System.Management.Automation
             }
         }
 
-        private List<PSTypeName> _outputType = null;
+        private List<PSTypeName> _outputType;
 
         /// <summary>
         /// Gets or sets the scope options for the alias.

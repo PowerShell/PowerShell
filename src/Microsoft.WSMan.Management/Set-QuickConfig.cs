@@ -63,7 +63,7 @@ namespace Microsoft.WSMan.Management
             set { force = value; }
         }
 
-        private bool force = false;
+        private bool force;
 
         /// <summary>
         /// Property that will allow configuring WinRM with Public profile exception enabled.
@@ -76,7 +76,7 @@ namespace Microsoft.WSMan.Management
             set { skipNetworkProfileCheck = value; }
         }
 
-        private bool skipNetworkProfileCheck = false;
+        private bool skipNetworkProfileCheck;
 
         /// <summary>
         /// BeginProcessing method.

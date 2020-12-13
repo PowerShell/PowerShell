@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
             set { _host = value; }
         }
 
-        private bool _host = false;
+        private bool _host;
 
         #endregion Parameters
 

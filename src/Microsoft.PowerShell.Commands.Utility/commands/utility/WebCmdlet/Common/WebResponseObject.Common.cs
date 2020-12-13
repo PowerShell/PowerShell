@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Dictionary<string, IEnumerable<string>> _headers = null;
+        private Dictionary<string, IEnumerable<string>> _headers;
 
         /// <summary>
         /// Gets the RelationLink property.

@@ -75,7 +75,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter noEncryption;
-        private bool noEncryptionSet = false;
+        private bool noEncryptionSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "CertificateCACheck".
@@ -96,7 +96,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter skipCACheck;
-        private bool skipCACheckSet = false;
+        private bool skipCACheckSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "CertificateCNCheck".
@@ -117,7 +117,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter skipCNCheck;
-        private bool skipCNCheckSet = false;
+        private bool skipCNCheckSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "CertRevocationCheck".
@@ -138,7 +138,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter skipRevocationCheck;
-        private bool skipRevocationCheckSet = false;
+        private bool skipRevocationCheckSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "EncodePortInServicePrincipalName".
@@ -159,7 +159,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter encodeportinserviceprincipalname;
-        private bool encodeportinserviceprincipalnameSet = false;
+        private bool encodeportinserviceprincipalnameSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "Encoding".
@@ -182,7 +182,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private PacketEncoding encoding;
-        private bool encodingSet = false;
+        private bool encodingSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "HttpPrefix".
@@ -223,7 +223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private UInt32 maxenvelopesizekb;
-        private bool maxenvelopesizekbSet = false;
+        private bool maxenvelopesizekbSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -244,7 +244,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private PasswordAuthenticationMechanism proxyAuthentication;
-        private bool proxyauthenticationSet = false;
+        private bool proxyauthenticationSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCertificateThumbprint".
@@ -303,7 +303,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private ProxyType proxytype;
-        private bool proxytypeSet = false;
+        private bool proxytypeSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
@@ -324,7 +324,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter usessl;
-        private bool usesslSet = false;
+        private bool usesslSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "Impersonation".
@@ -345,7 +345,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private ImpersonationType impersonation;
-        private bool impersonationSet = false;
+        private bool impersonationSet;
 
         /// <summary>
         /// The following is the definition of the input parameter "PacketIntegrity".
@@ -366,7 +366,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter packetintegrity;
-        private bool packetintegritySet = false;
+        private bool packetintegritySet;
 
         /// <summary>
         /// The following is the definition of the input parameter "PacketPrivacy".
@@ -387,7 +387,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter packetprivacy;
-        private bool packetprivacySet = false;
+        private bool packetprivacySet;
 
         /// <summary>
         /// The following is the definition of the input parameter "Protocol".

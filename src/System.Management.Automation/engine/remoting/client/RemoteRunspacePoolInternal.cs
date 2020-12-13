@@ -212,7 +212,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// List of CommandConnectInfo objects for each remote running command
         /// associated with this remote runspace pool.
         /// </summary>
-        internal ConnectCommandInfo[] ConnectCommands { get; set; } = null;
+        internal ConnectCommandInfo[] ConnectCommands { get; set; }
 
         /// <summary>
         /// Gets and sets the name string for this runspace pool object.

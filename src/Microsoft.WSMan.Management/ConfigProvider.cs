@@ -27,7 +27,7 @@ namespace Microsoft.WSMan.Management
     public sealed class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
     {
         // Plugin Name Storage
-        private PSObject objPluginNames = null;
+        private PSObject objPluginNames;
 
         private ServiceController winrmServiceController;
 
@@ -36,7 +36,7 @@ namespace Microsoft.WSMan.Management
         /// It is True by default, Clear-Item will set it to false so that it can
         /// pass Empty string as value for Set-Item.
         /// </summary>
-        private bool clearItemIsCalled = false;
+        private bool clearItemIsCalled;
 
         private WSManHelper helper = new WSManHelper();
 
@@ -5565,7 +5565,7 @@ namespace Microsoft.WSMan.Management
             set { thumbPrint = value; }
         }
 
-        private string thumbPrint = null;
+        private string thumbPrint;
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
@@ -5615,7 +5615,7 @@ namespace Microsoft.WSMan.Management
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private Int32 port;
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
@@ -6073,7 +6073,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private int _port = 0;
+        private int _port;
 
         /// <summary>
         /// Parameter HostName.
@@ -6173,7 +6173,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private bool _IsPortSpecified = false;
+        private bool _IsPortSpecified;
     }
 
     #endregion

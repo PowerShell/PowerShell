@@ -203,19 +203,19 @@ namespace Microsoft.PowerShell.Commands
         private class Statistics
         {
             // Common properties
-            internal int count = 0;
+            internal int count;
 
             // Generic/Numeric statistics
-            internal double sum = 0.0;
-            internal double sumPrevious = 0.0;
-            internal double variance = 0.0;
-            internal object max = null;
-            internal object min = null;
+            internal double sum;
+            internal double sumPrevious;
+            internal double variance;
+            internal object max;
+            internal object min;
 
             // Text statistics
-            internal int characters = 0;
-            internal int words = 0;
-            internal int lines = 0;
+            internal int characters;
+            internal int words;
+            internal int lines;
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _measureLines = false;
+        private bool _measureLines;
 
         /// <summary>
         /// </summary>
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _measureWords = false;
+        private bool _measureWords;
 
         /// <summary>
         /// </summary>
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _measureCharacters = false;
+        private bool _measureCharacters;
 
         /// <summary>
         /// </summary>
@@ -968,12 +968,12 @@ namespace Microsoft.PowerShell.Commands
         /// Whether or not a numeric conversion error occurred.
         /// If true, then average/sum/standard deviation will not be output.
         /// </summary>
-        private bool _nonNumericError = false;
+        private bool _nonNumericError;
 
         /// <summary>
         /// The total number of records encountered.
         /// </summary>
-        private int _totalRecordCount = 0;
+        private int _totalRecordCount;
 
         /// <summary>
         /// Parameter set name for measuring objects.

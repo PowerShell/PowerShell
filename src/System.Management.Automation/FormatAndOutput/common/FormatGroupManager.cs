@@ -103,17 +103,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Value of the display label passed in.
         /// </summary>
-        private string _label = null;
+        private string _label;
 
         /// <summary>
         /// Value of the current active grouping key.
         /// </summary>
-        private string _groupingKeyDisplayName = null;
+        private string _groupingKeyDisplayName;
 
         /// <summary>
         /// Name of the current grouping key.
         /// </summary>
-        private PSPropertyExpression _groupingKeyExpression = null;
+        private PSPropertyExpression _groupingKeyExpression;
 
         /// <summary>
         /// The current value of the grouping key.

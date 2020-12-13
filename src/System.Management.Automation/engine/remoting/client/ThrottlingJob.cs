@@ -199,7 +199,7 @@ namespace System.Management.Automation
             CreatesChildJobs = 0x1,
         }
 
-        private bool _ownerWontSubmitNewChildJobs = false;
+        private bool _ownerWontSubmitNewChildJobs;
         private readonly HashSet<Guid> _setOfChildJobsThatCanAddMoreChildJobs = new HashSet<Guid>();
 
         private bool IsEndOfChildJobs
@@ -319,7 +319,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _alreadyDisabledFlowControlForPendingJobsQueue = false;
+        private bool _alreadyDisabledFlowControlForPendingJobsQueue;
 
         internal void DisableFlowControlForPendingJobsQueue()
         {
@@ -342,7 +342,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _alreadyDisabledFlowControlForPendingCmdletActionsQueue = false;
+        private bool _alreadyDisabledFlowControlForPendingCmdletActionsQueue;
 
         internal void DisableFlowControlForPendingCmdletActionsQueue()
         {

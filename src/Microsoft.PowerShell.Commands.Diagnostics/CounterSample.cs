@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _cookedValue = value; }
         }
 
-        private double _cookedValue = 0;
+        private double _cookedValue;
 
         public UInt64 RawValue
         {
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _rawValue = value; }
         }
 
-        private UInt64 _rawValue = 0;
+        private UInt64 _rawValue;
 
         public UInt64 SecondValue
         {
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _secondValue = value; }
         }
 
-        private UInt64 _secondValue = 0;
+        private UInt64 _secondValue;
 
         public uint MultipleCount
         {
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _multiCount = value; }
         }
 
-        private uint _multiCount = 0;
+        private uint _multiCount;
 
         public PerformanceCounterType CounterType
         {
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _counterType = value; }
         }
 
-        private PerformanceCounterType _counterType = 0;
+        private PerformanceCounterType _counterType;
 
         public DateTime Timestamp
         {
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _timeStamp100nSec = value; }
         }
 
-        private UInt64 _timeStamp100nSec = 0;
+        private UInt64 _timeStamp100nSec;
 
         public UInt32 Status
         {
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _status = value; }
         }
 
-        private UInt32 _status = 0;
+        private UInt32 _status;
 
         public UInt32 DefaultScale
         {
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _defaultScale = value; }
         }
 
-        private UInt32 _defaultScale = 0;
+        private UInt32 _defaultScale;
 
         public UInt64 TimeBase
         {
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _timeBase = value; }
         }
 
-        private UInt64 _timeBase = 0;
+        private UInt64 _timeBase;
     }
 
     public class PerformanceCounterSampleSet
@@ -185,8 +185,8 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _counterSamples = value; }
         }
 
-        private PerformanceCounterSample[] _counterSamples = null;
+        private PerformanceCounterSample[] _counterSamples;
 
-        private readonly ResourceManager _resourceMgr = null;
+        private readonly ResourceManager _resourceMgr;
     }
 }

@@ -22,12 +22,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Display length of the property labels in the array (all the same length)
         /// </summary>
-        private int _propertyLabelsDisplayLength = 0;
+        private int _propertyLabelsDisplayLength;
 
         /// <summary>
         /// Column width of the screen.
         /// </summary>
-        private int _columnWidth = 0;
+        private int _columnWidth;
 
         /// <summary>
         /// </summary>
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Set to true when the width of the screen is too small to do anything useful.
         /// </summary>
-        private bool _disabled = false;
+        private bool _disabled;
 
         private const string Separator = " : ";
 

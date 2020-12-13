@@ -44,12 +44,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicate if the parameter is specified.
         /// </summary>
-        public bool ParameterSpecified { get; protected set; } = false;
+        public bool ParameterSpecified { get; protected set; }
 
         /// <summary>
         /// Indicate if the parameter is specified.
         /// </summary>
-        public bool ArgumentSpecified { get; protected set; } = false;
+        public bool ArgumentSpecified { get; protected set; }
 
         /// <summary>
         /// The parameter name.
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Get the argument.
         /// </summary>
-        public ExpressionAst[] Argument { get; } = null;
+        public ExpressionAst[] Argument { get; }
     }
 
     /// <summary>
@@ -233,17 +233,17 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicate if the argument is contained in the CommandParameterAst.
         /// </summary>
-        public bool ParameterContainsArgument { get; } = false;
+        public bool ParameterContainsArgument { get; }
 
         /// <summary>
         /// Indicate if the argument is of type CommandParameterAst.
         /// </summary>
-        public bool ArgumentIsCommandParameterAst { get; } = false;
+        public bool ArgumentIsCommandParameterAst { get; }
 
         /// <summary>
         /// Get the argument.
         /// </summary>
-        public CommandElementAst Argument { get; } = null;
+        public CommandElementAst Argument { get; }
     }
 
     #endregion "AstArgumentPair"
@@ -595,7 +595,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private PseudoBindingInfo _bindingInfo = null;
+        private PseudoBindingInfo _bindingInfo;
 
         private void CreateBindingResultForSyntacticBind(CommandAst commandAst)
         {
@@ -1116,12 +1116,12 @@ namespace System.Management.Automation.Language
         private ReadOnlyCollection<CommandElementAst> _commandElements;
 
         // binding related states
-        private bool _function = false;
-        private string _commandName = null;
-        private CommandInfo _commandInfo = null;
+        private bool _function;
+        private string _commandName;
+        private CommandInfo _commandInfo;
         private uint _currentParameterSetFlag = uint.MaxValue;
-        private uint _defaultParameterSetFlag = 0;
-        private MergedCommandParameterMetadata _bindableParameters = null;
+        private uint _defaultParameterSetFlag;
+        private MergedCommandParameterMetadata _bindableParameters;
         private Dictionary<string, MergedCompiledCommandParameter> _boundParameters;
         private Dictionary<string, AstParameterArgumentPair> _boundArguments;
         private Collection<AstParameterArgumentPair> _arguments;
@@ -1129,9 +1129,9 @@ namespace System.Management.Automation.Language
         private List<MergedCompiledCommandParameter> _unboundParameters;
 
         // tab expansion related states
-        private Type _pipelineInputType = null;
+        private Type _pipelineInputType;
         private bool _bindingEffective = true;
-        private bool _isPipelineInputExpected = false;
+        private bool _isPipelineInputExpected;
         private Collection<CommandParameterAst> _parametersNotFound;
         private Collection<CommandParameterAst> _ambiguousParameters;
         private Collection<AstParameterArgumentPair> _duplicateParameters;

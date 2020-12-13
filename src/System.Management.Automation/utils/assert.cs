@@ -74,7 +74,7 @@ namespace System.Management.Automation
 
         private static readonly object s_throwInsteadOfAssertLock = 1;
 
-        private static bool s_throwInsteadOfAssert = false;
+        private static bool s_throwInsteadOfAssert;
         /// <summary>
         /// If set to true will prevent the assertion dialog from showing up
         /// by throwing an exception instead of calling Debug.Assert.

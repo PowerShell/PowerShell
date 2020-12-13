@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal class IndexColumnInfo : ColumnInfo
     {
-        private int _index = 0;
+        private int _index;
 
         internal IndexColumnInfo(string staleObjectPropertyName, string displayName, int index)
             : base(staleObjectPropertyName, displayName)

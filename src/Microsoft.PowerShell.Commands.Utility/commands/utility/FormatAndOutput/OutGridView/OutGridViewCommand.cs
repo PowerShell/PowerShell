@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal class NonscalarTypeHeader : GridHeader
         {
-            private readonly AppliesTo _appliesTo = null;
+            private readonly AppliesTo _appliesTo;
 
             internal NonscalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {

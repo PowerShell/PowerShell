@@ -104,7 +104,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>MandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 MandatoryParameterCount { get; } = 0;
+        internal UInt32 MandatoryParameterCount { get; }
 
         /// <summary>
         /// Property <c>IsValueSet</c>
@@ -119,12 +119,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>SetMandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCount { get; set; } = 0;
+        internal UInt32 SetMandatoryParameterCount { get; set; }
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCountAtBeginProcess { get; set; } = 0;
+        internal UInt32 SetMandatoryParameterCountAtBeginProcess { get; set; }
     }
 
     /// <summary>

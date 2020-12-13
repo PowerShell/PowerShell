@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// The cmdlet that uses this prompt helper.
             /// </summary>
-            private readonly ConsoleLineOutput _callingCmdlet = null;
+            private readonly ConsoleLineOutput _callingCmdlet;
         }
 
         /// <summary>
@@ -588,22 +588,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Handler to prompt the user for page breaks
         /// if this handler is not null, we have prompting.
         /// </summary>
-        private readonly PromptHandler _prompt = null;
+        private readonly PromptHandler _prompt;
 
         /// <summary>
         /// Conter for the # of lines written when prompting is on.
         /// </summary>
-        private long _linesWritten = 0;
+        private long _linesWritten;
 
         /// <summary>
         /// Flag to avoid reentrancy on prompting.
         /// </summary>
-        private bool _disableLineWrittenEvent = false;
+        private bool _disableLineWrittenEvent;
 
         /// <summary>
         /// Refecence to the PSHostUserInterface interface we use.
         /// </summary>
-        private readonly PSHostUserInterface _console = null;
+        private readonly PSHostUserInterface _console;
 
         /// <summary>
         /// Msh host specific string manipulation helper.
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Reference to error context to throw Msh exceptions.
         /// </summary>
-        private readonly TerminatingErrorContext _errorContext = null;
+        private readonly TerminatingErrorContext _errorContext;
 
         #endregion
     }

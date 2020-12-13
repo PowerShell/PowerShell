@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The flag that specifies whether to retrieve the child names or the child items.
         /// </summary>
-        private bool _childNames = false;
+        private bool _childNames;
 
         #endregion command data
 

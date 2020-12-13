@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Gets or sets the digital signature to be written to
@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _hashAlgorithm = null;
+        private string _hashAlgorithm;
 
         /// <summary>
         /// Property that sets force parameter.

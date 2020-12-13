@@ -129,13 +129,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _pp = null;
         }
 
-        private PipelineProcessor _pp = null;
+        private PipelineProcessor _pp;
 
-        private string _commandName = null;
+        private string _commandName;
         private Type _commandType;
         private readonly List<CommandParameterInternal> _commandParameterList = new List<CommandParameterInternal>();
 
-        private ExecutionContext _context = null;
+        private ExecutionContext _context;
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Reference to the implementation command that this class
         /// is wrapping.
         /// </summary>
-        internal ImplementationCommandBase implementation = null;
+        internal ImplementationCommandBase implementation;
 
         #region IDisposable Implementation
 

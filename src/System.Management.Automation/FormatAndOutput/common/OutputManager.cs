@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private LineOutput _lo = null;
+        private LineOutput _lo;
         #endregion
 
         /// <summary>
@@ -125,12 +125,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Instance of the pipeline manager object.
         /// </summary>
-        private SubPipelineManager _mgr = null;
+        private SubPipelineManager _mgr;
 
         /// <summary>
         /// True if the cmdlet has been stopped.
         /// </summary>
-        private bool _isStopped = false;
+        private bool _isStopped;
 
         /// <summary>
         /// Lock object.
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return _defaultCommandEntry;
         }
 
-        private LineOutput _lo = null;
+        private LineOutput _lo;
 
         /// <summary>
         /// List of command entries, each with a set of applicable types.

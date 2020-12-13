@@ -48,7 +48,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string applicationname = null;
+        private string applicationname;
 
         /// <summary>
         /// The following is the definition of the input parameter "BasePropertiesOnly".
@@ -93,7 +93,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string computername = null;
+        private string computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -230,7 +230,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private Int32 port = 0;
+        private Int32 port;
 
         /// <summary>
         /// The following is the definition of the input parameter "Associations".
@@ -650,7 +650,7 @@ namespace Microsoft.WSMan.Management
             set { applicationname = value; }
         }
 
-        private string applicationname = null;
+        private string applicationname;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -674,7 +674,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string computername = null;
+        private string computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -776,7 +776,7 @@ namespace Microsoft.WSMan.Management
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private Int32 port;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
@@ -1020,7 +1020,7 @@ namespace Microsoft.WSMan.Management
             set { applicationname = value; }
         }
 
-        private string applicationname = null;
+        private string applicationname;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1044,7 +1044,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string computername = null;
+        private string computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -1097,7 +1097,7 @@ namespace Microsoft.WSMan.Management
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private Int32 port;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
@@ -1282,7 +1282,7 @@ namespace Microsoft.WSMan.Management
             set { applicationname = value; }
         }
 
-        private string applicationname = null;
+        private string applicationname;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1306,7 +1306,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private string computername = null;
+        private string computername;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
@@ -1376,7 +1376,7 @@ namespace Microsoft.WSMan.Management
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private Int32 port;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
@@ -1466,7 +1466,7 @@ namespace Microsoft.WSMan.Management
 
         private WSManHelper helper;
         private readonly IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-        private IWSManSession m_session = null;
+        private IWSManSession m_session;
         private string connectionStr = string.Empty;
 
         /// <summary>

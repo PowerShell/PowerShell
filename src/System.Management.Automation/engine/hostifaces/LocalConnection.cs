@@ -308,7 +308,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private TranscriptionData _transcriptionData = null;
+        private TranscriptionData _transcriptionData;
 
         private JobRepository _jobRepository;
         /// <summary>
@@ -776,7 +776,7 @@ namespace System.Management.Automation.Runspaces
             return _pipelineThread;
         }
 
-        private PipelineThread _pipelineThread = null;
+        private PipelineThread _pipelineThread;
 
         protected override void CloseHelper(bool syncCall)
         {

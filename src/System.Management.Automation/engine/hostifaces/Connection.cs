@@ -709,7 +709,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Skip user profile on engine initialization.
         /// </summary>
-        internal bool SkipUserProfile { get; set; } = false;
+        internal bool SkipUserProfile { get; set; }
 
         /// <summary>
         /// Connection information for remote Runspaces, null for local Runspaces.

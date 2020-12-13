@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool _warning = false;
+        private bool _warning;
 
         private ErrorRecord _errorRecord;
         private bool _isErrorRecordOriginallyNull;

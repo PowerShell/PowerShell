@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
             set { _xmlQuery = value; }
         }
 
-        private XmlDocument _xmlQuery = null;
+        private XmlDocument _xmlQuery;
 
         /// <summary>
         /// FilterHashtable parameter.
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands
             set { _oldest = value; }
         }
 
-        private bool _oldest = false;
+        private bool _oldest;
 
         //
         // Query builder constant strings
@@ -394,10 +394,10 @@ namespace Microsoft.PowerShell.Commands
         //
         // Other private members and constants
         //
-        private ResourceManager _resourceMgr = null;
+        private ResourceManager _resourceMgr;
         private readonly Dictionary<string, StringCollection> _providersByLogMap = new();
 
-        private StringCollection _logNamesMatchingWildcard = null;
+        private StringCollection _logNamesMatchingWildcard;
         private readonly StringCollection _resolvedPaths = new();
 
         private readonly List<string> _accumulatedLogNames = new();

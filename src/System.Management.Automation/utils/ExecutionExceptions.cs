@@ -174,7 +174,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ErrorRecord _errorRecord = null;
+        private ErrorRecord _errorRecord;
 
         #endregion Properties
     }
@@ -611,7 +611,7 @@ namespace System.Management.Automation
             get { return _errorRecord ?? base.ErrorRecord; }
         }
 
-        private readonly ErrorRecord _errorRecord = null;
+        private readonly ErrorRecord _errorRecord;
         #endregion Properties
     }
     #endregion ActionPreferenceStopException
@@ -904,7 +904,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ErrorRecord _errorRecord = null;
+        private ErrorRecord _errorRecord;
 
         /// <summary>
         /// Always 0 - depth is not tracked as there is no hard coded maximum.
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ErrorRecord _errorRecord = null;
+        private ErrorRecord _errorRecord;
 
         /// <summary>
         /// Always 0 - depth is not tracked as there is no hard coded maximum.

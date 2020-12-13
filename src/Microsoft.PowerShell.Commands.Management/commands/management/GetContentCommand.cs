@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _totalCountSpecified = false;
+        private bool _totalCountSpecified;
 
         /// <summary>
         /// The number of content items to retrieve from the back of the file.
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _backCount = -1;
-        private bool _tailSpecified = false;
+        private bool _tailSpecified;
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets

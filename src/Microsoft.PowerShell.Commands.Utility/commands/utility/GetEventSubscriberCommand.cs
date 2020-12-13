@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _sourceIdentifier = null;
+        private string _sourceIdentifier;
 
         /// <summary>
         /// An identifier for this event subscription.

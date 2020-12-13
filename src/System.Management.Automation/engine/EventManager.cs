@@ -337,12 +337,12 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
         private int _nextSubscriptionId = 1;
         private readonly double _throttleLimit = 1;
-        private int _throttleChecks = 0;
+        private int _throttleChecks;
 
         // The assembly and module to hold our event registrations
-        private AssemblyBuilder _eventAssembly = null;
-        private ModuleBuilder _eventModule = null;
-        private int _typeId = 0;
+        private AssemblyBuilder _eventAssembly;
+        private ModuleBuilder _eventModule;
+        private int _typeId;
 
         /// <summary>
         /// Gets the list of event subscribers.
@@ -553,15 +553,15 @@ namespace System.Management.Automation
 
         #region OnIdleProcessing
 
-        private Timer _timer = null;
-        private bool _timerInitialized = false;
-        private bool _isTimerActive = false;
+        private Timer _timer;
+        private bool _timerInitialized;
+        private bool _isTimerActive;
         /// <summary>
         /// We sample every 100ms to check if the engine is idle (currentlyRunningPipeline == null). If it's "idle"
         /// in four consecutive samples, then we believe it's actually idle. In this way we can avoid capturing possible
         /// pipeline transitions.
         /// </summary>
-        private int _consecutiveIdleSamples = 0;
+        private int _consecutiveIdleSamples;
 
         /// <summary>
         /// Send on-idle event if the engine is idle. The property "AutoReset" of the timer is always false,
@@ -1165,7 +1165,7 @@ namespace System.Management.Automation
         }
 
         private readonly object _actionProcessingLock = new object();
-        private EventAction _processingAction = null;
+        private EventAction _processingAction;
 
         /// <summary>
         /// Drain any pending actions for a given subscriber.
@@ -1977,7 +1977,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The delegate invoked when this event arrives.
         /// </summary>
-        public PSEventReceivedEventHandler HandlerDelegate { get; } = null;
+        public PSEventReceivedEventHandler HandlerDelegate { get; }
 
         /// <summary>
         /// Get the flag that marks this event as a supporting event.
@@ -2470,9 +2470,9 @@ namespace System.Management.Automation
             _subscriber = subscriber;
         }
 
-        private readonly PSEventManager _eventManager = null;
-        private readonly PSEventSubscriber _subscriber = null;
-        private int _highestErrorIndex = 0;
+        private readonly PSEventManager _eventManager;
+        private readonly PSEventSubscriber _subscriber;
+        private int _highestErrorIndex;
 
         /// <summary>
         /// Gets dynamic module where the action is invoked.
@@ -2493,7 +2493,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Message indicating status of the job.
         /// </summary>
-        public override string StatusMessage { get; } = null;
+        public override string StatusMessage { get; }
 
         /// <summary>
         /// Indicates if more data is available.
@@ -2509,7 +2509,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _moreData = false;
+        private bool _moreData;
 
         /// <summary>
         /// Location in which this job is running.

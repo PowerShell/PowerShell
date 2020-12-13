@@ -30,7 +30,7 @@ namespace System.Management.Automation
         #region Private data
 
         private readonly object _syncObject = new object();
-        private bool _initialized = false;
+        private bool _initialized;
         private PSLocalEventManager _eventManager;
         private PSEventSubscriber _startSubscriber;
         private PSEventSubscriber _processSubscriber;

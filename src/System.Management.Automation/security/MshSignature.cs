@@ -114,7 +114,7 @@ namespace System.Management.Automation
         //            or it's not working properly (OneCore SKUs or dev environment where powershell might
         //            be updated/refreshed).
         //   - Null: it's not determined yet whether catalog API can be relied on or not.
-        internal static bool? CatalogApiAvailable = null;
+        internal static bool? CatalogApiAvailable;
 
         /// <summary>
         /// Gets the X509 certificate of the publisher that

@@ -595,9 +595,9 @@ namespace System.Management.Automation
         // is executed with a remote runspace pool
 
         private ConnectCommandInfo _connectCmdInfo;
-        private bool _commandInvokedSynchronously = false;
-        private bool _isBatching = false;
-        private bool _stopBatchExecution = false;
+        private bool _commandInvokedSynchronously;
+        private bool _isBatching;
+        private bool _stopBatchExecution;
 
         // Delegates for asynchronous invocation/termination of PowerShell commands
         private readonly Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
@@ -1753,7 +1753,7 @@ namespace System.Management.Automation
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
         /// </summary>
-        internal bool IsChild { get; private set; } = false;
+        internal bool IsChild { get; private set; }
 
         /// <summary>
         /// If an error occurred while executing the pipeline, this will be set to true.
@@ -1873,7 +1873,7 @@ namespace System.Management.Automation
             _runspacePool = null;
         }
 
-        private Runspace _runspace = null;
+        private Runspace _runspace;
 
         /// <summary>
         /// Sets an associated RunspacePool for this PowerShell instance.
@@ -1937,7 +1937,7 @@ namespace System.Management.Automation
             }
         }
 
-        private RunspacePool _runspacePool = null;
+        private RunspacePool _runspacePool;
 
         /// <summary>
         /// Gets the associated Runspace or RunspacePool for this PowerShell
@@ -3859,7 +3859,7 @@ namespace System.Management.Automation
         /// Indicates if this PowerShell object is the owner of the
         /// runspace or RunspacePool assigned to this object.
         /// </summary>
-        public bool IsRunspaceOwner { get; internal set; } = false;
+        public bool IsRunspaceOwner { get; internal set; }
 
         internal bool ErrorBufferOwner { get; set; } = true;
 

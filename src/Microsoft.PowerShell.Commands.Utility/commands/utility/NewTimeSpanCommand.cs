@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private DateTime _end;
-        private bool _endSpecified = false;
+        private bool _endSpecified;
 
         /// <summary>
         /// Allows the user to override the day.
