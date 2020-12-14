@@ -42,7 +42,7 @@ Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
 
     BeforeEach {
         if ($IsNotSkipped) {
-            Set-Content -Path $userPropertiesFile -Value '{"Microsoft.PowerShell:ExecutionPolicy":"RemoteSigned"}'
+            Set-Content -Path $userPropertiesFile -Value '{  "Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}'
         }
     }
 
@@ -83,15 +83,15 @@ Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
     }
 
     It "Verify Writes Update Properties" {
-        Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"RemoteSigned"}'
+        Get-Content -Path $userPropertiesFile | Should -Be '{  "Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}'
         Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
-        Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
+        (Get-Content -Path $userPropertiesFile -Raw) -replace "`r`n?|`n","" | Should -Be '{  "Microsoft.PowerShell:ExecutionPolicy": "Bypass"}'
     }
 
     It "Verify Writes Create the File if Not Present" {
         Remove-Item $userPropertiesFile -Force
         Test-Path $userPropertiesFile | Should -BeFalse
         Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
-        Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
+        (Get-Content -Path $userPropertiesFile -Raw) -replace "`r`n?|`n","" | Should -Be '{  "Microsoft.PowerShell:ExecutionPolicy": "Bypass"}'
     }
 }

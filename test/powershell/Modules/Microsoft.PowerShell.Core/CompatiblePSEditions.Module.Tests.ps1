@@ -508,7 +508,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         It "Fails to import incompatible module if implicit WinCompat is disabled in config" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"DisableImplicitWinCompat" : "True"}' | Out-File -Force $ConfigPath
+            '{"DisableImplicitWinCompat" : true}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'cannot be loaded implicitly using the Windows Compatibility'
         }
@@ -516,7 +516,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         It "Fails to auto-import incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Disabled in config" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"DisableImplicitWinCompat" : "True","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            '{"DisableImplicitWinCompat" : true,"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'not recognized as a name of a cmdlet'
         }
@@ -524,7 +524,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"DisableImplicitWinCompat" : "False","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            '{"DisableImplicitWinCompat" : false,"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'True'
         }

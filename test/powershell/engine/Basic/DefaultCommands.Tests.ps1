@@ -548,7 +548,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             # On Preview releases, Experimental Features may add new cmdlets/aliases, so we get cmdlets/aliases with features disabled
             if ($isPreview) {
                 $emptyConfigPath = Join-Path -Path $TestDrive -ChildPath "test.config.json"
-                Set-Content -Path $emptyConfigPath -Value "" -Force -ErrorAction Stop
+                New-Item -Path $emptyConfigPath -ItemType file -Force -ErrorAction Stop | Out-Null
                 $currentAliasList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getAliases -args ($moduleList | ConvertTo-Json)
                 $currentCmdletList = & "$PSHOME/pwsh" -NoProfile -OutputFormat XML -SettingsFile $emptyConfigPath -Command $getCommands -args ($moduleList | ConvertTo-Json)
             }

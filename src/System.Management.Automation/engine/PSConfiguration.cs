@@ -1,15 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
+#if UNIX
 using System.Management.Automation.Internal;
-using System.Text;
+#endif
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace System.Management.Automation.Configuration
 {
@@ -65,12 +64,10 @@ namespace System.Management.Automation.Configuration
         private readonly string perUserConfigFile;
         private readonly string perUserConfigDirectory;
 
-        // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
-        private readonly JObject[] configRoots;
-        private readonly JObject emptyConfig;
-        private readonly JsonSerializer serializer;
+        private readonly JsonObject[] configScopeRoots;
+        private readonly JsonObject emptyConfig;
 
         /// <summary>
         /// Lock used to enable multiple concurrent readers and singular write locks within a single process.
@@ -91,9 +88,8 @@ namespace System.Management.Automation.Configuration
             perUserConfigDirectory = Platform.ConfigDirectory;
             perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
 
-            emptyConfig = new JObject();
-            configRoots = new JObject[2];
-            serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
+            emptyConfig = new JsonObject();
+            configScopeRoots = new JsonObject[2];
 
             fileLock = new ReaderWriterLockSlim();
         }
@@ -386,9 +382,9 @@ namespace System.Management.Automation.Configuration
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
             string fileName = GetConfigFilePath(scope);
-            JObject configData = configRoots[(int)scope];
+            var configScopeData = configScopeRoots[(int)scope];
 
-            if (configData == null)
+            if (configScopeData is null)
             {
                 if (File.Exists(fileName))
                 {
@@ -398,9 +394,17 @@ namespace System.Management.Automation.Configuration
                         fileLock.EnterReadLock();
 
                         using var stream = OpenFileStreamWithRetry(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                        using var jsonReader = new JsonTextReader(new StreamReader(stream));
+                        using var reader = new StreamReader(stream);
+                        string jsonString = reader.ReadToEnd();
 
-                        configData = serializer.Deserialize<JObject>(jsonReader) ?? emptyConfig;
+                        if (!string.IsNullOrEmpty(jsonString))
+                        {
+                            configScopeData = JsonNode.Parse(jsonString) as JsonObject;
+                        }
+                        else
+                        {
+                            configScopeData = emptyConfig;
+                        }
                     }
                     catch (Exception exc)
                     {
@@ -413,20 +417,33 @@ namespace System.Management.Automation.Configuration
                 }
                 else
                 {
-                    configData = emptyConfig;
+                    configScopeData = emptyConfig;
                 }
 
-                // Set the configuration cache.
-                JObject originalValue = Interlocked.CompareExchange(ref configRoots[(int)scope], configData, null);
+                // Set the configuration cache only if another thread has not updated it.
+                var originalValue = Interlocked.CompareExchange(ref configScopeRoots[(int)scope], configScopeData, null);
                 if (originalValue != null)
                 {
-                    configData = originalValue;
+                    configScopeData = originalValue;
                 }
             }
 
-            if (configData != emptyConfig && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
+            if (!ReferenceEquals(configScopeData, emptyConfig))
             {
-                return jToken.ToObject<T>(serializer) ?? defaultValue;
+                var value = configScopeData[key];
+                if (value is null)
+                {
+                    return defaultValue;
+                }
+
+                try
+                {
+                    return JsonSerializer.Deserialize<T>(value) ?? defaultValue;
+                }
+                catch (Exception exc)
+                {
+                    throw PSTraceSource.NewInvalidOperationException(exc, PSConfigurationStrings.CanNotConfigurationFile, args: fileName);
+                }
             }
 
             return defaultValue;
@@ -473,83 +490,41 @@ namespace System.Management.Automation.Configuration
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
                 // Handling the read and write operations within a single FileStream prevents other processes from reading or writing the file while
                 // the update is in progress. It also locks out readers during write operations.
+                //
+                using var stream = OpenFileStreamWithRetry(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                using var reader = new StreamReader(stream);
+                string jsonString = reader.ReadToEnd();
 
-                JObject jsonObject = null;
-                using FileStream fs = OpenFileStreamWithRetry(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-
-                // UTF8, BOM detection, and bufferSize are the same as the basic stream constructor.
-                // The most important parameter here is the last one, which keeps underlying stream open after StreamReader is disposed
-                // so that it can be reused for the subsequent write operation.
-                using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
-                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                JsonObject configScopeData = null;
+                if (!string.IsNullOrEmpty(jsonString))
                 {
-                    // Safely determines whether there is content to read from the file
-                    bool isReadSuccess = jsonReader.Read();
-                    if (isReadSuccess)
-                    {
-                        // Read the stream into a root JObject for manipulation
-                        jsonObject = serializer.Deserialize<JObject>(jsonReader);
-                        JProperty propertyToModify = jsonObject.Property(key);
-
-                        if (propertyToModify == null)
-                        {
-                            // The property doesn't exist, so add it
-                            if (addValue)
-                            {
-                                jsonObject.Add(new JProperty(key, value));
-                            }
-                            // else the property doesn't exist so there is nothing to remove
-                        }
-                        else
-                        {
-                            // The property exists
-                            if (addValue)
-                            {
-                                propertyToModify.Replace(new JProperty(key, value));
-                            }
-                            else
-                            {
-                                propertyToModify.Remove();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // The file doesn't already exist and we want to write to it or it exists with no content.
-                        // A new file will be created that contains only this value.
-                        // If the file doesn't exist and a we don't want to write to it, no action is needed.
-                        if (addValue)
-                        {
-                            jsonObject = new JObject(new JProperty(key, value));
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
+                    configScopeData = configScopeData = JsonNode.Parse(jsonString) as JsonObject;
                 }
+
+                if (configScopeData is null)
+                {
+                    configScopeData = new JsonObject();
+                }
+
+                configScopeData[key] = JsonValue.Create<T>(value);
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+
+                var jsonOutput = configScopeData.ToJsonString(options);
 
                 // Reset the stream position to the beginning so that the
                 // changes to the file can be written to disk
-                fs.Seek(0, SeekOrigin.Begin);
+                stream.SetLength(0);
 
                 // Update the file with new content
-                using (StreamWriter streamWriter = new StreamWriter(fs))
-                using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
-                {
-                    // The entire document exists within the root JObject.
-                    // I just need to write that object to produce the document.
-                    jsonObject.WriteTo(jsonWriter);
-
-                    // This trims the file if the file shrank. If the file grew,
-                    // it is a no-op. The purpose is to trim extraneous characters
-                    // from the file stream when the resultant JObject is smaller
-                    // than the input JObject.
-                    fs.SetLength(fs.Position);
-                }
+                using var streamWriter = new StreamWriter(stream);
+                streamWriter.Write(jsonOutput);
 
                 // Refresh the configuration cache.
-                Interlocked.Exchange(ref configRoots[(int)scope], jsonObject);
+                Interlocked.Exchange(ref configScopeRoots[(int)scope], configScopeData);
             }
             finally
             {
@@ -591,7 +566,7 @@ namespace System.Management.Automation.Configuration
         }
     }
 
-    #region GroupPolicy Configs
+#region GroupPolicy Configs
 
     /// <summary>
     /// The GroupPolicy related settings used in PowerShell are as follows in Registry:
@@ -728,5 +703,5 @@ namespace System.Management.Automation.Configuration
         public string[] EncryptionCertificate { get; set; }
     }
 
-    #endregion
+#endregion
 }
