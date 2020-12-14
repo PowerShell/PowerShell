@@ -1,11 +1,25 @@
-steps:
-- powershell: |
-      Import-Module $env:REPOROOT/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $env:REPOROOT/src/Modules
+parameters:
+  - name: "repoRoot"
+    default: $(REPOROOT)
 
-      if(-not (Test-Path "$env:REPOROOT/src/Modules/nuget.config"))
+steps:
+- pwsh: |
+      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}/src/Modules'
+
+      if(-not (Test-Path "${{ parameters.repoRoot }}/src/Modules/nuget.config"))
       {
           throw "nuget.config is not created"
       }
   displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
   condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
+- pwsh: |
+      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsPackageFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}'
+
+      if(-not (Test-Path "${{ parameters.repoRoot }}/nuget.config"))
+      {
+          throw "nuget.config is not created"
+      }
+  displayName: 'Add nuget.config for Azure DevOps feed for packages'
+  condition: and(succeededOrFailed(), ne(variables['AzDevOpsPackageFeed'], ''))
