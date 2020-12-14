@@ -35,7 +35,9 @@ namespace System.Management.Automation
         private readonly List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
         private readonly object _syncRoot = new object();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
-        private readonly bool _bSessionStateProxyCallInProgress;
+#pragma warning disable CA1805
+        private readonly bool _bSessionStateProxyCallInProgress = false;
+#pragma warning restore CA1805
         private readonly RunspaceConnectionInfo _connectionInfo;
         private RemoteDebugger _remoteDebugger;
         private PSPrimitiveDictionary _applicationPrivateData;

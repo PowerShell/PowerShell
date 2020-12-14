@@ -715,7 +715,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private int _currentErrorCount;
 
-        private readonly bool _logStackActivity;
+#pragma warning disable CA1805
+        private readonly bool _logStackActivity = false;
+#pragma warning restore CA1805
 
         private readonly Stack<XmlLoaderStackFrame> _executionStack = new Stack<XmlLoaderStackFrame>();
 

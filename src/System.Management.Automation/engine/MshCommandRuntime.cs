@@ -3031,7 +3031,9 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly bool _isVerbosePreferenceCached;
+#pragma warning disable CA1805
+        private readonly bool _isVerbosePreferenceCached = false;
+#pragma warning restore CA1805
         private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
@@ -3080,7 +3082,9 @@ namespace System.Management.Automation
 
         internal bool IsWarningActionSet { get; private set; }
 
-        private readonly bool _isWarningPreferenceCached;
+#pragma warning disable CA1805
+        private readonly bool _isWarningPreferenceCached = false;
+#pragma warning restore CA1805
         private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.

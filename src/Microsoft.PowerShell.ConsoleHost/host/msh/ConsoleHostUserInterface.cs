@@ -42,7 +42,9 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// This is a test hook for programmatically reading and writing ConsoleHost I/O.
         /// </summary>
-        private static readonly PSHostUserInterface s_h;
+#pragma warning disable CA1805
+        private static readonly PSHostUserInterface s_h = null;
+#pragma warning restore CA1805
 
         /// <summary>
         /// Return true if the console supports a VT100 like virtual terminal.

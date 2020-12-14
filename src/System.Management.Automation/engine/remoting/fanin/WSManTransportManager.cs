@@ -500,8 +500,10 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegates for test purposes
 
-        private static readonly Delegate s_sessionSendRedirect;
-        private static readonly Delegate s_protocolVersionRedirect;
+#pragma warning disable CA1805
+        private static readonly Delegate s_sessionSendRedirect = null;
+        private static readonly Delegate s_protocolVersionRedirect = null;
+#pragma warning restore CA1805
 
         #endregion
 
@@ -2942,7 +2944,9 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegate for command code send.
 
-        private static readonly Delegate s_commandCodeSendRedirect;
+#pragma warning disable CA1805
+        private static readonly Delegate s_commandCodeSendRedirect = null;
+#pragma warning restore CA1805        
 
         #endregion
 
@@ -3988,7 +3992,9 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegate for command data send.
 
-        private static readonly Delegate s_commandSendRedirect;
+#pragma warning disable CA1805
+        private static readonly Delegate s_commandSendRedirect = null;
+#pragma warning restore CA1805
 
         #endregion
 

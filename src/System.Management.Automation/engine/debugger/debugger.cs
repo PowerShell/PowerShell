@@ -950,7 +950,9 @@ namespace System.Management.Automation
 
         internal const string CannotEnableDebuggerSteppingInvalidMode = "Debugger:CannotEnableDebuggerSteppingInvalidMode";
 
-        private static readonly Guid s_instanceId;
+#pragma warning disable CA1805
+        private static readonly Guid s_instanceId = new Guid();
+#pragma warning restore CA1805
 
         #endregion
     }

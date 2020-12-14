@@ -21,8 +21,10 @@ namespace System.Management.Automation
         // The dispatch identifier for a parameter that receives the value of an assignment in a PROPERTYPUT.
         // See https://msdn.microsoft.com/library/windows/desktop/ms221242(v=vs.85).aspx for details.
         private const int DISPID_PROPERTYPUT = -3;
+#pragma warning disable CA1805        
         // Alias of GUID_NULL. It's a GUID set to all zero
-        private static readonly Guid s_IID_NULL;
+        private static readonly Guid s_IID_NULL = new Guid();
+#pragma warning restore CA1805
         // Size of the Variant struct
         private static readonly int s_variantSize = Marshal.SizeOf<Variant>();
 

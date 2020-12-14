@@ -94,8 +94,10 @@ namespace System.Management.Automation.Interpreter
         private int _runtimeLabelCount;
         private List<BranchLabel> _labels;
 
+#pragma warning disable CA1805
         // list of (instruction index, cookie) sorted by instruction index:
-        private List<KeyValuePair<int, object>> _debugCookies;
+        private List<KeyValuePair<int, object>> _debugCookies = null;
+#pragma warning restore CA1805
 
         #region Debug View
 
