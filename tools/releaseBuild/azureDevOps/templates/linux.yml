@@ -151,7 +151,7 @@ jobs:
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - RPM - Signed'
     inputs:
-      SourcePath: '$(Build.StagingDirectory)\signedPackages\*'
+      SourcePath: '$(Build.StagingDirectory)\signedPackages\release\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -165,7 +165,7 @@ jobs:
 
   - template: upload-final-results.yml
     parameters:
-      artifactPath: '$(Build.StagingDirectory)\signedPackages'
+      artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
       condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
