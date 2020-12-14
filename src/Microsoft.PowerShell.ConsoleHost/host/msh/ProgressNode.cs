@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell
                     barLength = barWidth - 1;
                 }
 
-                sb.Insert(barLength, PSStyle.Instance.ReverseOff);
+                sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
             }
             else
             {
