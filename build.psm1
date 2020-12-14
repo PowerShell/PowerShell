@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # On Unix paths is separated by colon
@@ -325,7 +325,8 @@ function Start-PSBuild {
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
             # Excluded src/Modules/nuget.config as this is required for release build.
-            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config
+            # Excluded nuget.config as this is required for release build.
+            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
         } finally {
             Pop-Location
         }
@@ -598,7 +599,11 @@ function Restore-PSPackage
         [Parameter()]
         $Options = (Get-PSOptions -DefaultToNew),
 
-        [switch] $Force
+        [switch] $Force,
+
+        [switch] $InteractiveAuth,
+
+        [switch] $PSModule
     )
 
     if (-not $ProjectDirs)
@@ -622,21 +627,28 @@ function Restore-PSPackage
             'Microsoft.NET.Sdk'
         }
 
-        if ($Options.Runtime -notlike 'fxdependent*') {
+        if ($PSModule.IsPresent) {
+            $RestoreArguments = @("--verbosity")
+        }
+        elseif ($Options.Runtime -notlike 'fxdependent*') {
             $RestoreArguments = @("--runtime", $Options.Runtime, "/property:SDKToUse=$sdkToUse", "--verbosity")
         } else {
             $RestoreArguments = @("/property:SDKToUse=$sdkToUse", "--verbosity")
         }
 
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+        if ($VerbosePreference -eq 'Continue') {
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
         }
 
+        if ($InteractiveAuth) {
+            $RestoreArguments += "--interactive"
+        }
+
         $ProjectDirs | ForEach-Object {
             $project = $_
-            Write-Log "Run dotnet restore $project $RestoreArguments"
+            Write-Log -message "Run dotnet restore $project $RestoreArguments"
             $retryCount = 0
             $maxTries = 5
             while($retryCount -lt $maxTries)
@@ -647,7 +659,7 @@ function Restore-PSPackage
                 }
                 catch
                 {
-                    Write-Log "Failed to restore $project, retrying..."
+                    Write-Log -message "Failed to restore $project, retrying..."
                     $retryCount++
                     if($retryCount -ge $maxTries)
                     {
@@ -656,7 +668,7 @@ function Restore-PSPackage
                     continue
                 }
 
-                Write-Log "Done restoring $project"
+                Write-Log -message "Done restoring $project"
                 break
             }
         }
@@ -2390,7 +2402,7 @@ function Copy-PSGalleryModules
 
     Find-DotNet
 
-    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
+    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent -PSModule
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {
@@ -3172,8 +3184,10 @@ function New-NugetConfigFile
   <packageSources>
     <clear />
     <add key="[FEEDNAME]" value="[FEED]" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
   <packageSourceCredentials>
     <[FEEDNAME]>
       <add key="Username" value="[USERNAME]" />
