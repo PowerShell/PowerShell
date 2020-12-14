@@ -217,6 +217,8 @@ namespace Microsoft.PowerShell
                     Console.Out.WriteLine(contents[i]);
                 }
 
+                Console.CursorVisible = true;
+
                 return;
             }
 
