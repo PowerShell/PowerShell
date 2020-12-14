@@ -798,6 +798,7 @@ namespace System.Management.Automation.Internal
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 try
                 {
                     commandProcessor.Command.DoStopProcessing();

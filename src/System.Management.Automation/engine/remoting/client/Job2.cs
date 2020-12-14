@@ -339,6 +339,7 @@ namespace System.Management.Automation
 
                     break;
             }
+
             try
             {
                 handler?.Invoke(this, eventArgs);
@@ -811,6 +812,7 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
+
                 return;
             }
 
@@ -994,6 +996,7 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
+
                 return;
             }
 
@@ -1231,6 +1234,7 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
+
                 return;
             }
 
@@ -1401,6 +1405,7 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0} force: {1}", child.InstanceId.ToString(), force.ToString());
                     _tracer.TraceException(e);
                 }
+
                 return;
             }
 
@@ -1575,6 +1580,7 @@ namespace System.Management.Automation
                                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
+
                 return;
             }
 
