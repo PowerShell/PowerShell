@@ -337,7 +337,8 @@ function Start-PSBuild {
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
             # Excluded src/Modules/nuget.config as this is required for release build.
-            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config
+            # Excluded nuget.config as this is required for release build.
+            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
         } finally {
             Pop-Location
         }
@@ -628,7 +629,9 @@ function Restore-PSPackage
 
         [switch] $Force,
 
-        [switch] $InteractiveAuth
+        [switch] $InteractiveAuth,
+
+        [switch] $PSModule
     )
 
     if (-not $ProjectDirs)
@@ -652,7 +655,10 @@ function Restore-PSPackage
             'Microsoft.NET.Sdk'
         }
 
-        if ($Options.Runtime -notlike 'fxdependent*') {
+        if ($PSModule.IsPresent) {
+            $RestoreArguments = @("--verbosity")
+        }
+        elseif ($Options.Runtime -notlike 'fxdependent*') {
             $RestoreArguments = @("--runtime", $Options.Runtime, "/property:SDKToUse=$sdkToUse", "--verbosity")
         } else {
             $RestoreArguments = @("/property:SDKToUse=$sdkToUse", "--verbosity")
@@ -2500,7 +2506,7 @@ function Copy-PSGalleryModules
 
     Find-DotNet
 
-    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
+    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent -PSModule
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "global-packages: (.*)") {
@@ -3282,8 +3288,10 @@ function New-NugetConfigFile
   <packageSources>
     <clear />
     <add key="[FEEDNAME]" value="[FEED]" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
   <packageSourceCredentials>
     <[FEEDNAME]>
       <add key="Username" value="[USERNAME]" />

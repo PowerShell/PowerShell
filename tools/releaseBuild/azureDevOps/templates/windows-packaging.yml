@@ -60,7 +60,7 @@ jobs:
 
   - template: cloneToOfficialPath.yml
 
-  - powershell: |
+  - pwsh: |
       # cleanup previous install
       if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
         Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
@@ -68,7 +68,7 @@ jobs:
 
       $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
       $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip'
-      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
+      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
 
       Import-Module '$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/wix.psm1'
       Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
