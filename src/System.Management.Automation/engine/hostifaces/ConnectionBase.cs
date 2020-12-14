@@ -774,7 +774,6 @@ namespace System.Management.Automation.Runspaces
                         this.OnAvailabilityChanged(new RunspaceAvailabilityEventArgs(queueItem.NewRunspaceAvailability));
                     }
 
-#pragma warning disable 56500
                     // Exception raised by events are not error condition for runspace
                     // object.
                     if (stateChanged != null)
@@ -787,7 +786,6 @@ namespace System.Management.Automation.Runspaces
                         {
                         }
                     }
-#pragma warning restore 56500
                 }
             }
         }

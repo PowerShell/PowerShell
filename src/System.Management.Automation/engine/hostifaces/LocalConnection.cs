@@ -612,7 +612,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void OpenThreadProc()
         {
-#pragma warning disable 56500
             try
             {
                 DoOpenHelper();
@@ -622,7 +621,6 @@ namespace System.Management.Automation.Runspaces
                 // This exception is reported by raising RunspaceState
                 // change event.
             }
-#pragma warning restore 56500
         }
 
         /// <summary>
@@ -799,7 +797,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void CloseThreadProc()
         {
-#pragma warning disable 56500
             try
             {
                 DoCloseHelper();
@@ -807,7 +804,6 @@ namespace System.Management.Automation.Runspaces
             catch (Exception)
             {
             }
-#pragma warning restore 56500
         }
 
         /// <summary>

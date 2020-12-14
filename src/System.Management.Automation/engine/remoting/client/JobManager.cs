@@ -184,7 +184,6 @@ namespace System.Management.Automation
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
             Job2 newJob;
 
-#pragma warning disable 56500
             try
             {
                 newJob = sourceAdapter.NewJob(definition);
@@ -200,7 +199,6 @@ namespace System.Management.Automation
                 _tracer.TraceException(exception);
                 throw;
             }
-#pragma warning restore 56500
 
             return newJob;
         }
@@ -229,7 +227,6 @@ namespace System.Management.Automation
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(specification.Definition);
             Job2 newJob = null;
 
-#pragma warning disable 56500
             try
             {
                 newJob = sourceAdapter.NewJob(specification);
@@ -245,7 +242,6 @@ namespace System.Management.Automation
                 _tracer.TraceException(exception);
                 throw;
             }
-#pragma warning restore 56500
 
             return newJob;
         }
@@ -575,7 +571,6 @@ namespace System.Management.Automation
                         continue;
                     }
 
-#pragma warning disable 56500
                     try
                     {
                         jobs = CallJobFilter(sourceAdapter, filter, filterType, recurse);
@@ -591,7 +586,6 @@ namespace System.Management.Automation
                         _tracer.TraceException(exception);
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobsError", sourceAdapter);
                     }
-#pragma warning restore 56500
 
                     if (jobs == null) continue;
                     allJobs.AddRange(jobs);
@@ -920,7 +914,6 @@ namespace System.Management.Automation
                 foreach (JobSourceAdapter sourceAdapter in _sourceAdapters.Values)
                 {
                     Job2 foundJob = null;
-#pragma warning disable 56500
                     try
                     {
                         foundJob = sourceAdapter.GetJobByInstanceId(job.InstanceId, true);
@@ -937,13 +930,11 @@ namespace System.Management.Automation
                         if (throwExceptions) throw;
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobError", sourceAdapter);
                     }
-#pragma warning restore 56500
 
                     if (foundJob == null) continue;
                     jobFound = true;
                     RemoveJobIdForReuse(foundJob);
 
-#pragma warning disable 56500
                     try
                     {
                         sourceAdapter.RemoveJob(job);
@@ -960,7 +951,6 @@ namespace System.Management.Automation
                         if (throwExceptions) throw;
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterRemoveJobError", sourceAdapter);
                     }
-#pragma warning restore 56500
                 }
             }
 

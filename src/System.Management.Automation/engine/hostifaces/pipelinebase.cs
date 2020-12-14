@@ -870,8 +870,6 @@ namespace System.Management.Automation.Runspaces
                         _runspace.RaiseAvailabilityChangedEvent(queueItem.NewRunspaceAvailability);
                     }
 
-                    // this is shipped as part of V1. So disabling the warning here.
-#pragma warning disable 56500
                     // Exception raised in the eventhandler are not error in pipeline.
                     // silently ignore them.
                     if (stateChanged != null)
@@ -884,7 +882,6 @@ namespace System.Management.Automation.Runspaces
                         {
                         }
                     }
-#pragma warning restore 56500
                 }
             }
         }

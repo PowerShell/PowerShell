@@ -3253,7 +3253,6 @@ namespace System.Management.Automation.Runspaces
 
             Exception instanceException = null;
 
-#pragma warning disable 56500
             try
             {
                 instance = Activator.CreateInstance(type);
@@ -3266,7 +3265,6 @@ namespace System.Management.Automation.Runspaces
             {
                 instanceException = e;
             }
-#pragma warning restore 56500
 
             if (instanceException != null)
             {

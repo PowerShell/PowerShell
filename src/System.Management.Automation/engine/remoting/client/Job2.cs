@@ -339,7 +339,6 @@ namespace System.Management.Automation
 
                     break;
             }
-#pragma warning disable 56500
             try
             {
                 handler?.Invoke(this, eventArgs);
@@ -350,7 +349,6 @@ namespace System.Management.Automation
                 // silently ignore them
                 _tracer.TraceException(exception);
             }
-#pragma warning restore 56500
         }
 
         /// <summary>
@@ -795,7 +793,6 @@ namespace System.Management.Automation
             {
                 Job2 child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
-#pragma warning disable 56500
                 try
                 {
                     _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this,
@@ -814,7 +811,6 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
-#pragma warning restore 56500
                 return;
             }
 
@@ -980,7 +976,6 @@ namespace System.Management.Automation
             {
                 Job2 child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
-#pragma warning disable 56500
                 try
                 {
                     _tracer.WriteMessage(TraceClassName, "ResumeJob", Guid.Empty, this,
@@ -999,7 +994,6 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
-#pragma warning restore 56500
                 return;
             }
 
@@ -1220,7 +1214,6 @@ namespace System.Management.Automation
             {
                 Job2 child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
-#pragma warning disable 56500
                 try
                 {
                     _tracer.WriteMessage(TraceClassName, "UnblockJob", Guid.Empty, this,
@@ -1238,7 +1231,6 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
-#pragma warning restore 56500
                 return;
             }
 
@@ -1388,7 +1380,6 @@ namespace System.Management.Automation
             {
                 Job2 child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
-#pragma warning disable 56500
                 try
                 {
                     _tracer.WriteMessage(TraceClassName, "SuspendJob", Guid.Empty, this,
@@ -1410,7 +1401,6 @@ namespace System.Management.Automation
                         "Single child job threw exception, child InstanceId: {0} force: {1}", child.InstanceId.ToString(), force.ToString());
                     _tracer.TraceException(e);
                 }
-#pragma warning restore 56500
                 return;
             }
 
@@ -1564,7 +1554,6 @@ namespace System.Management.Automation
             {
                 Job2 child = ChildJobs[0] as Job2;
                 Dbg.Assert(child != null, "Job is null after initial null check");
-#pragma warning disable 56500
                 try
                 {
                     _tracer.WriteMessage(TraceClassName, "StopJob", Guid.Empty, this,
@@ -1586,7 +1575,6 @@ namespace System.Management.Automation
                                         "Single child job threw exception, child InstanceId: {0}", child.InstanceId.ToString());
                     _tracer.TraceException(e);
                 }
-#pragma warning restore 56500
                 return;
             }
 

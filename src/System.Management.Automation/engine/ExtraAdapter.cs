@@ -52,7 +52,6 @@ namespace System.Management.Automation
             PropertyValueCollection collection = entry.Properties[memberName];
             object valueToTake = collection;
 
-#pragma warning disable 56500
             // Even for the cases where propertyName does not exist
             // entry.Properties[propertyName] still returns a PropertyValueCollection.
             // The non schema way to check for a non existing property is to call entry.InvokeGet
@@ -77,7 +76,6 @@ namespace System.Management.Automation
             {
                 property = null;
             }
-#pragma warning restore 56500
 
             if (valueToTake == null)
             {
@@ -148,7 +146,6 @@ namespace System.Management.Automation
 
             int countOfProperties = 0;
 
-#pragma warning disable 56500
             try
             {
                 countOfProperties = entry.Properties.PropertyNames.Count;
@@ -156,7 +153,6 @@ namespace System.Management.Automation
             catch (Exception) // swallow all non-severe exceptions
             {
             }
-#pragma warning restore 56500
 
             if (countOfProperties > 0)
             {

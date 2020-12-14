@@ -1409,7 +1409,6 @@ namespace Microsoft.PowerShell.Commands
             Job2 job2 = job as Job2;
             if (job2 != null)
             {
-#pragma warning disable 56500
                 try
                 {
                     JobManager.RemoveJob(job2, this, false, true);
@@ -1422,7 +1421,6 @@ namespace Microsoft.PowerShell.Commands
                     // so that it's written to the user.
                     AddRemoveErrorToResults(job2, ex);
                 }
-#pragma warning restore 56500
             }
             else
             {

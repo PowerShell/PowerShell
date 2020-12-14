@@ -5394,7 +5394,6 @@ namespace System.Management.Automation
             /// </remarks>
             internal void CreateRunspaceIfNeededAndDoWork(Runspace rsToUse, bool isSync)
             {
-#pragma warning disable 56500
                 try
                 {
                     // Set the host for this local runspace if user specified one.
@@ -5452,7 +5451,6 @@ namespace System.Management.Automation
                         throw;
                     }
                 }
-#pragma warning restore 56500
             }
 
             /// <summary>
@@ -5469,7 +5467,6 @@ namespace System.Management.Automation
             /// </remarks>
             internal void RunspaceAvailableCallback(IAsyncResult asyncResult)
             {
-#pragma warning disable 56500
                 try
                 {
                     RunspacePool pool = _shell._rsConnection as RunspacePool;
@@ -5502,7 +5499,6 @@ namespace System.Management.Automation
                                 new PipelineStateInfo(PipelineState.Failed,
                                     e)));
                 }
-#pragma warning restore 56500
             }
 
             /// <summary>

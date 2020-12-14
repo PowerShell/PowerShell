@@ -1427,7 +1427,6 @@ namespace System.Management.Automation
                     }
                 }
 
-#pragma warning disable 56500
                 // Exception raised in the eventhandler are not error in job.
                 // silently ignore them.
                 try
@@ -1454,7 +1453,6 @@ namespace System.Management.Automation
                         }
                     }
                 }
-#pragma warning restore 56500
             }
         }
 

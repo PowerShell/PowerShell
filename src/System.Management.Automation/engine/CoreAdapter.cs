@@ -4177,7 +4177,6 @@ namespace System.Management.Automation
         internal static object AuxiliaryConstructorInvoke(MethodInformation methodInformation, object[] arguments, object[] originalArguments)
         {
             object returnValue;
-#pragma warning disable 56500
             try
             {
                 returnValue = methodInformation.Invoke(target: null, arguments);
@@ -4202,7 +4201,6 @@ namespace System.Management.Automation
 
             SetReferences(arguments, methodInformation, originalArguments);
             return returnValue;
-#pragma warning restore 56500
         }
 
         /// <summary>
@@ -4218,7 +4216,6 @@ namespace System.Management.Automation
         {
             object result;
 
-#pragma warning disable 56500
             try
             {
                 // call the method and return the result unless the return type is void in which
@@ -4270,7 +4267,6 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.MethodInvocationException,
                     methodInformation.method.Name, arguments.Length, e.Message);
             }
-#pragma warning restore 56500
 
             SetReferences(arguments, methodInformation, originalArguments);
             MethodInfo methodInfo = methodInformation.method as MethodInfo;

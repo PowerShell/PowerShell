@@ -798,7 +798,6 @@ namespace System.Management.Automation.Internal
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
-#pragma warning disable 56500
                 try
                 {
                     commandProcessor.Command.DoStopProcessing();
@@ -809,7 +808,6 @@ namespace System.Management.Automation.Internal
                     // which occur during StopProcessing.
                     continue;
                 }
-#pragma warning restore 56500
             }
         }
 
@@ -1301,7 +1299,6 @@ namespace System.Management.Automation.Internal
                     CommandProcessorBase commandProcessor = _commands[i];
                     if (commandProcessor != null)
                     {
-#pragma warning disable 56500
                         // If Dispose throws an exception, record it as a
                         // pipeline failure and continue disposing cmdlets.
                         try
@@ -1343,7 +1340,6 @@ namespace System.Management.Automation.Internal
 
                             RecordFailure(e, commandProcessor.Command);
                         }
-#pragma warning restore 56500
                     }
                 }
             }
@@ -1355,7 +1351,6 @@ namespace System.Management.Automation.Internal
             {
                 foreach (PipelineProcessor redirPipe in _redirectionPipes)
                 {
-#pragma warning disable 56500
                     // The complicated logic of disposing the commands is taken care
                     // of through recursion, this routine should not be getting any
                     // exceptions...
@@ -1369,7 +1364,6 @@ namespace System.Management.Automation.Internal
                     catch (Exception)
                     {
                     }
-#pragma warning restore 56500
                 }
             }
 

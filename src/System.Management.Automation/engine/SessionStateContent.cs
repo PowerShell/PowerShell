@@ -7,7 +7,6 @@ using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
-#pragma warning disable 56500
 
 namespace System.Management.Automation
 {
@@ -1031,5 +1030,3 @@ namespace System.Management.Automation
         #endregion IContentCmdletProvider accessors
     }
 }
-
-#pragma warning restore 56500
