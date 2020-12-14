@@ -31,9 +31,11 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - template: insert-nuget-config-azfeed.yml
-
   - template: cloneToOfficialPath.yml
+
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
   - powershell: |
 
