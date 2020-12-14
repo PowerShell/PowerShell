@@ -381,6 +381,12 @@ namespace Microsoft.PowerShell
 
             int secRemainLength = secRemain.Length + 1;
 
+            // limit progress bar to 120 chars as no need to render full width
+            if (maxWidth > 120)
+            {
+                maxWidth = 120;
+            }
+
             // 4 is for the extra space and square brackets below and one extra space
             int barWidth = maxWidth - Activity.Length - indentation - 4;
 

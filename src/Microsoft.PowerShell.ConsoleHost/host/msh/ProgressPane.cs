@@ -144,21 +144,6 @@ namespace Microsoft.PowerShell
         void
         Hide()
         {
-/*
-            if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
-            {
-                // erase what was written previously
-                _rawui.CursorPosition = _location;
-                for (int i = 0; i < _rows; i++)
-                {
-                    Console.Out.Write(" ".PadRight(Console.WindowWidth));
-                }
-
-                _rawui.CursorPosition = _location;
-                Console.CursorVisible = true;
-            }
-            else
-*/
             if (IsShowing)
             {
                 // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
@@ -229,7 +214,7 @@ namespace Microsoft.PowerShell
 
                 for (int i = 0; i < contents.Length; i++)
                 {
-                    Console.Out.Write(contents[i]);
+                    Console.Out.WriteLine(contents[i]);
                 }
 
                 return;
