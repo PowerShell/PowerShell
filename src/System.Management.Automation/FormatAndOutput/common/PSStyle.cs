@@ -297,7 +297,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for progress bar.
             /// </summary>
-            public string Progress { get; set; } = "\x1b[36;1m";
+            public string Progress { get; set; } = "\x1b[33;1m";
         }
 
         /// <summary>

@@ -144,6 +144,21 @@ namespace Microsoft.PowerShell
         void
         Hide()
         {
+/*
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+            {
+                // erase what was written previously
+                _rawui.CursorPosition = _location;
+                for (int i = 0; i < _rows; i++)
+                {
+                    Console.Out.Write(" ".PadRight(Console.WindowWidth));
+                }
+
+                _rawui.CursorPosition = _location;
+                Console.CursorVisible = true;
+            }
+            else
+*/
             if (IsShowing)
             {
                 // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
@@ -189,22 +204,32 @@ namespace Microsoft.PowerShell
 
             if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
             {
-                if (_location.X == 0 && _location.Y == 0)
+                Console.CursorVisible = false;
+
+                if (contents.Length > _rows)
                 {
-                    for (int i = 0; i < contents.Length; i++)
+                    int scrollRows = contents.Length - _rows;
+
+                    if (_rawui.CursorPosition.X != 0 || _rows == 0)
                     {
-                        Console.Out.WriteLine("a");
+                        scrollRows++;
                     }
 
-                    _location.Y = _rawui.CursorPosition.Y - contents.Length;
-                    _location.X = 0;
+                    _rows = contents.Length;
+
+                    for (int i = 0; i < scrollRows; i++)
+                    {
+                        Console.Out.WriteLine();
+                    }
+
+                    _location.Y = _rawui.CursorPosition.Y - _rows;
                 }
 
                 _rawui.CursorPosition = _location;
 
-                foreach (string content in contents)
+                for (int i = 0; i < contents.Length; i++)
                 {
-                    Console.Out.WriteLine(content);
+                    Console.Out.Write(contents[i]);
                 }
 
                 return;
@@ -257,6 +282,7 @@ namespace Microsoft.PowerShell
 
         private Coordinates _location = new Coordinates(0, 0);
         private Coordinates _savedCursor;
+        private int _rows;
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;

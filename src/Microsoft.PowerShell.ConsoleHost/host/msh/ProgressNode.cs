@@ -6,6 +6,7 @@ using System.Collections;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Text;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -115,7 +116,7 @@ namespace Microsoft.PowerShell
                     RenderMinimal(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Ansi:
-                    RenderAnsi(strCollection, indentation, maxWidth, rawUI);
+                    RenderAnsi(strCollection, indentation, maxWidth);
                     break;
                 case RenderStyle.Invisible:
                     // do nothing
@@ -362,17 +363,14 @@ namespace Microsoft.PowerShell
         /// List of strings to which the node's rendering will be appended.
         /// </param>
         /// <param name="indentation">
-        /// The indentation level (in BufferCells) at which the node should be rendered.
+        /// The indentation level in chars at which the node should be rendered.
         /// </param>
         /// <param name="maxWidth">
-        /// The maximum number of BufferCells that the rendering is allowed to consume.
-        /// </param>
-        /// <param name="rawUI">
-        /// The PSHostRawUserInterface used to gauge string widths in the rendering.
+        /// The maximum number of chars that the rendering is allowed to consume.
         /// </param>
         private
         void
-        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
+        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth)
         {
             string indent = StringUtil.Padding(indentation);
             string secRemain = string.Empty;
@@ -381,39 +379,53 @@ namespace Microsoft.PowerShell
                 secRemain = SecondsRemaining.ToString() + "s";
             }
 
-            // 5 is for the extra space and square brackets below
-            int barWidth = maxWidth - Activity.Length - secRemain.Length - indentation - 5;
-            if (barWidth > 80)
-            {
-                barWidth = 80;
-            }
+            int secRemainLength = secRemain.Length + 1;
 
-            string description;
-            if (StatusDescription.Length > barWidth)
+            // 4 is for the extra space and square brackets below and one extra space
+            int barWidth = maxWidth - Activity.Length - indentation - 4;
+
+            var sb = new StringBuilder();
+            int padding = maxWidth + PSStyle.Instance.Formatting.Progress.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
+            sb.Append(PSStyle.Instance.Reverse);
+
+            if (StatusDescription.Length > barWidth - secRemainLength)
             {
-                description = StatusDescription.Substring(0, barWidth - 1) + PSObjectHelper.Ellipsis;
+                sb.Append(StatusDescription.Substring(0, barWidth - secRemainLength - 1));
+                sb.Append(PSObjectHelper.Ellipsis);
             }
             else
             {
-                description = StatusDescription;
+                sb.Append(StatusDescription);
             }
 
-            description = description.PadRight(barWidth);
-            int barLength = PercentComplete * barWidth / 100;
-            description = description.Insert(barLength, PSStyle.Instance.ReverseOff);
+            sb.Append(string.Empty.PadRight(barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength));
+            sb.Append(secRemain);
+
+            if (PercentComplete > 0 && PercentComplete < 100)
+            {
+                int barLength = PercentComplete * barWidth / 100;
+                if (barLength >= barWidth)
+                {
+                    barLength = barWidth - 1;
+                }
+
+                sb.Insert(barLength, PSStyle.Instance.ReverseOff);
+            }
+            else
+            {
+                sb.Append(PSStyle.Instance.ReverseOff);
+            }
 
             strCollection.Add(
-                StringUtil.TruncateToBufferCellWidth(
-                    rawUI,
-                    StringUtil.Format(
-                        " {0}{1}{2} [{3}{4}] {5}",
-                        indent,
-                        PSStyle.Instance.Formatting.Progress,
-                        Activity,
-                        PSStyle.Instance.Reverse,
-                        description,
-                        secRemain),
-                    maxWidth));
+                StringUtil.Format(
+                    "{0}{1}{2} [{3}]",
+                    indent,
+                    PSStyle.Instance.Formatting.Progress,
+                    Activity,
+                    sb.ToString()
+                )
+                .PadRight(padding)
+            );
         }
 
         /// <summary>
