@@ -5,7 +5,7 @@ parameters:
 steps:
 - pwsh: |
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}/src/Modules'
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}/src/Modules'
 
       if(-not (Test-Path "${{ parameters.repoRoot }}/src/Modules/nuget.config"))
       {
@@ -15,7 +15,7 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
 - pwsh: |
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsPackageFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}'
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsPackageFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}'
 
       if(-not (Test-Path "${{ parameters.repoRoot }}/nuget.config"))
       {

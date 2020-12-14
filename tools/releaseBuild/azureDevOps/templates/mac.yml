@@ -40,9 +40,9 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - pwsh: |
-      $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults
-      $env:AZDEVOPSFEEDPAT = $null
+      $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0

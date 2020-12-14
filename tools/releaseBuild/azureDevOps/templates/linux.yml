@@ -42,7 +42,8 @@ jobs:
     displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
 
   - template: insert-nuget-config-azfeed.yml
-
+    parameters:
+      repoRoot: $(REPOROOT)
 
   - powershell: |
       import-module "$env:REPOROOT/build.psm1"
@@ -51,9 +52,9 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
   - powershell: |
-      $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       & "$env:REPOROOT/tools/releaseBuild/vstsbuild.ps1" -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
-      $env:AZDEVOPSFEEDPAT = $null
+      $env:AzDevOpsFeedPAT2 = $null
 
     displayName: 'Build and package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
