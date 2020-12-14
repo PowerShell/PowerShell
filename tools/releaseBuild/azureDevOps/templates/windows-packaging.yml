@@ -60,7 +60,7 @@ jobs:
 
   - template: cloneToOfficialPath.yml
 
-  - powershell: |
+  - pwsh: |
       # cleanup previous install
       if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
         Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
