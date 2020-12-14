@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell
             FullPlus = 4,
 
             /// <summary>
-            /// The node will be displayed using ANSI escape sequences
+            /// The node will be displayed using ANSI escape sequences.
             /// </summary>
             Ansi = 5,
         }
@@ -428,10 +428,8 @@ namespace Microsoft.PowerShell
                     indent,
                     PSStyle.Instance.Formatting.Progress,
                     Activity,
-                    sb.ToString()
-                )
-                .PadRight(padding)
-            );
+                    sb.ToString())
+                .PadRight(padding));
         }
 
         /// <summary>
