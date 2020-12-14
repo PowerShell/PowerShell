@@ -2430,6 +2430,14 @@ namespace Microsoft.PowerShell
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
+#if !UNIX
+                    if (ui.SupportsVirtualTerminal)
+                    {
+                        // need to re-enable VT mode if it was previously enabled as native commands may have turned it off
+                        ui.TryTurnOnVtMode();
+                    }
+#endif
+
                     try
                     {
                         _parent._isRunningPromptLoop = true;
