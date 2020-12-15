@@ -98,7 +98,6 @@ Describe "Verify Markdown Links" {
                         # there could be multiple reasons why a failure is ok
                         # check against the allowed failures
                         $allowedFailures = [System.Net.HttpStatusCode[]](
-                            429, # Rate limited
                             503, # Service Unavailable
                             504  # Gateway Timeout
                         )
