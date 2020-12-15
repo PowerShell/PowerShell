@@ -100,8 +100,8 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview_7.2.0-preview.2-1.debian.9_amd64.deb
 [pv-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview_7.2.0-preview.2-1.debian.10_amd64.deb
 [pv-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview_7.2.0-preview.2-1.debian.11_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview-7.2.0_preview.1-1.rhel.7.x86_64.rpm
-[pv-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview-7.2.0_preview.1-1.centos.8.x86_64.rpm
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview-7.2.0_preview.2-1.rhel.7.x86_64.rpm
+[pv-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-preview-7.2.0_preview.2-1.centos.8.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/powershell-7.2.0-preview.2-osx-x64.pkg
 [pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/PowerShell-7.2.0-preview.2-win-arm64.zip
 [pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.2/PowerShell-7.2.0-preview.2-win-x86.zip
