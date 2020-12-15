@@ -57,13 +57,9 @@ namespace System.Management.Automation
 
             for (int i = 0; i < funcdesc.cParams; i++)
             {
-                COM.ELEMDESC ElementDescription;
-                int ElementDescriptionArrayByteOffset;
-                IntPtr ElementDescriptionPointer;
-
-                ElementDescription = new COM.ELEMDESC();
-                ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
+                COM.ELEMDESC ElementDescription = new COM.ELEMDESC();
+                int ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
+                IntPtr ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
@@ -287,21 +283,17 @@ namespace System.Management.Automation
 
             for (int i = 0; i < cParams; i++)
             {
-                COM.ELEMDESC ElementDescription;
-                int ElementDescriptionArrayByteOffset;
-                IntPtr ElementDescriptionPointer;
-                bool fOptional = false;
-
-                ElementDescription = new COM.ELEMDESC();
-                ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
+                COM.ELEMDESC ElementDescription = new COM.ELEMDESC();
+                int ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
+                IntPtr ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 // get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
-                object defaultvalue = null;
-
+                
                 // check is this parameter is optional.
+                bool fOptional = false;
+                object defaultvalue = null;
                 if ((ElementDescription.desc.paramdesc.wParamFlags & COM.PARAMFLAG.PARAMFLAG_FOPT) != 0)
                 {
                     fOptional = true;
