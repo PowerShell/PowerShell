@@ -47,13 +47,13 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         }
         ## function ends here
 
-        $defaultEncoding = New-Object -TypeName System.Text.UTF8Encoding -ArgumentList $true
+        $defaultEncoding = [System.Text.UTF8Encoding]::new($true)
         function GetFileEncoding {
             param (
                 [string] $filePath
             )
 
-            $reader = New-Object -TypeName System.IO.StreamReader -ArgumentList $filePath,$defaultEncoding,$true
+            $reader = [System.IO.StreamReader]::new($filePath, $defaultEncoding, $true)
             $reader.Read() | Out-Null
             return $reader.CurrentEncoding.BodyName
         }
