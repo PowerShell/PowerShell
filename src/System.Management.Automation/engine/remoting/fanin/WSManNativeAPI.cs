@@ -1121,7 +1121,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Look at the structure of native WSManOptionSet.. Options is a pointer..
                     // In C-Style array individual elements are continuous..so I am building
                     // continuous array elements here.
-                    Marshal.StructureToPtr(options[index], (IntPtr)(_optionSet.options.ToInt64() + (sizeOfOption * index)), false);
+                    Marshal.StructureToPtr(options[index], _optionSet.options + (sizeOfOption * index), false);
                 }
 
                 _data = MarshalledObject.Create<WSManOptionSetStruct>(_optionSet);
