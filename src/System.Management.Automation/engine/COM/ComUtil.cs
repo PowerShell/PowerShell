@@ -57,10 +57,9 @@ namespace System.Management.Automation
 
             for (int i = 0; i < funcdesc.cParams; i++)
             {
-                COM.ELEMDESC ElementDescription = new COM.ELEMDESC();
                 int ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
                 IntPtr ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
-                ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
+                COM.ELEMDESC ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
 
@@ -283,10 +282,9 @@ namespace System.Management.Automation
 
             for (int i = 0; i < cParams; i++)
             {
-                COM.ELEMDESC ElementDescription = new COM.ELEMDESC();
                 int ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
                 IntPtr ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
-                ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
+                COM.ELEMDESC ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 // get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
