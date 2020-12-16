@@ -81,10 +81,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             protected override TResult TransformEntry(ref FileSystemEntry entry) => _enumerable._transform(ref entry);
+
             protected override bool ShouldRecurseIntoEntry(ref FileSystemEntry entry)
                 => _enumerable.ShouldRecursePredicate?.Invoke(ref entry) ?? true;
+
             protected override bool ShouldIncludeEntry(ref FileSystemEntry entry)
                 => _enumerable.ShouldIncludePredicate?.Invoke(ref entry) ?? true;
+
             protected override bool ContinueOnError(int error)
                 // Here _enumerable can be still null because base constructor can throw 'access denied' before we assign _enumerable.
                 => _enumerable?.ShouldContinueOnErrorPredicate?.Invoke(error) ?? false;
