@@ -14,16 +14,20 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Enumerable that allows utilizing custom filter predicates and tranform delegates.
     /// </summary>
+    /// <typeparam name="TResult">The type of a result.</typeparam>
     internal class FileSystemProviderEnumerable<TResult> : IEnumerable<TResult>
     {
-        private DelegateEnumerator? _enumerator;
         private readonly FindTransform _transform;
         private readonly EnumerationOptions _options;
         private readonly string _directory;
+        private DelegateEnumerator? _enumerator;
 
         /// <summary>
         /// Enumerable that allows utilizing custom filter predicates and tranform delegates.
         /// </summary>
+        /// <param name="directory">The path of the starting directory.</param>
+        /// <param name="transform">The delegate to transform internal data to a result.</param>
+        /// <param name="options">The enumeration options.</param>
         internal FileSystemProviderEnumerable(string directory, FindTransform transform, EnumerationOptions? options = null)
         {
             _directory = directory ?? throw new ArgumentNullException(nameof(directory));
@@ -51,6 +55,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Delegate for filtering out find results.
         /// </summary>
+        /// <param name="entry">A lower level view of System.IO.FileSystemInfo for fitering.</param>
+        /// <return>If true include the entry to result.</return>
         internal delegate bool FindPredicate(ref FileSystemEntry entry);
 
         /// <summary>
@@ -63,11 +69,14 @@ namespace Microsoft.PowerShell.Commands
         /// Delegate for calling whenever on I/O error.
         /// </summary>
         /// <param name="error">I/O error code.</param>
+        /// <return>If true continue the enumeration. If false throw.</return>
         internal delegate bool ContinueOnErrorPredicate(int error);
 
         /// <summary>
         /// Delegate for transforming raw find data into a result.
         /// </summary>
+        /// <param name="entry">A lower level view of System.IO.FileSystemInfo for transforming to TResult.</param>
+        /// <return>Result of the transformation of TResult type.</return>
         internal delegate TResult FindTransform(ref FileSystemEntry entry);
 
         private sealed class DelegateEnumerator : FileSystemEnumerator<TResult>
