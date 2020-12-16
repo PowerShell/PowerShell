@@ -234,6 +234,15 @@ stages:
     pool: server
     environment: PSReleaseUpdateWinGet
 
+- stage: PublishMsix
+  dependsOn: GitHubManualTasks
+  displayName: Publish MSIX to store
+  jobs:
+  - deployment: PublishMsix
+    displayName: Publish MSIX to store
+    pool: server
+    environment: PSReleasePublishMsix
+
 - stage: BuildInfoJson
   dependsOn: GitHubManualTasks
   displayName: Upload BuildInfoJson
