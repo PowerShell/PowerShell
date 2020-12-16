@@ -41,8 +41,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It "Should accept minimum depth as 0." {
-        { $script:output = 1 | ConvertTo-Json -Depth 0 } | Should -Not -Throw
-        $script:output | Should -Be 1
+        $output = 1 | ConvertTo-Json -Depth 0
+        $output | Should -Be 1
     }
 
     It "The result string is packed in an array symbols when AsArray parameter is used." {
