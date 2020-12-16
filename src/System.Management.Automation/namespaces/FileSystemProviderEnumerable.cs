@@ -23,7 +23,8 @@ namespace Microsoft.PowerShell.Commands
         private DelegateEnumerator? _enumerator;
 
         /// <summary>
-        /// Enumerable that allows utilizing custom filter predicates and tranform delegates.
+        /// Initializes a new instance of the FileSystemProviderEnumerable
+        /// that allows utilizing custom filter predicates and tranform delegates.
         /// </summary>
         /// <param name="directory">The path of the starting directory.</param>
         /// <param name="transform">The delegate to transform internal data to a result.</param>
