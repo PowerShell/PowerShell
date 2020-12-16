@@ -45,25 +45,25 @@ namespace Microsoft.PowerShell.Commands.GetCounter
 
         public string InstanceName { get; set; } = string.Empty;
 
-        public double CookedValue { get; set; } = 0;
+        public double CookedValue { get; set; }
 
-        public UInt64 RawValue { get; set; } = 0;
+        public UInt64 RawValue { get; set; }
 
-        public UInt64 SecondValue { get; set; } = 0;
+        public UInt64 SecondValue { get; set; }
 
-        public uint MultipleCount { get; set; } = 0;
+        public uint MultipleCount { get; set; }
 
-        public PerformanceCounterType CounterType { get; set; } = 0;
+        public PerformanceCounterType CounterType { get; set; }
 
         public DateTime Timestamp { get; set; } = DateTime.MinValue;
 
-        public UInt64 Timestamp100NSec { get; set; } = 0;
+        public UInt64 Timestamp100NSec { get; set; }
 
-        public UInt32 Status { get; set; } = 0;
+        public UInt32 Status { get; set; }
 
-        public UInt32 DefaultScale { get; set; } = 0;
+        public UInt32 DefaultScale { get; set; }
 
-        public UInt64 TimeBase { get; set; } = 0;
+        public UInt64 TimeBase { get; set; }
     }
 
     public class PerformanceCounterSampleSet
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                     Scope = "member",
                     Target = "Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSample.CounterSamples",
                     Justification = "A string[] is required here because that is the type Powershell supports")]
-        public PerformanceCounterSample[] CounterSamples { get; set; } = null;
+        public PerformanceCounterSample[] CounterSamples { get; set; }
 
         private readonly ResourceManager _resourceMgr = null;
     }

@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.FilterXml",
                             Justification = "An XmlDocument is required here because that is the type Powershell supports")]
-        public XmlDocument FilterXml { get; set; } = null;
+        public XmlDocument FilterXml { get; set; }
 
         /// <summary>
         /// FilterHashtable parameter.
