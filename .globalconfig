@@ -1232,7 +1232,7 @@ dotnet_diagnostic.SA1203.severity = none
 dotnet_diagnostic.SA1204.severity = none
 
 # SA1205: Partial elements should declare access
-dotnet_diagnostic.SA1205.severity = none
+dotnet_diagnostic.SA1205.severity = warning
 
 # SA1206: Declaration keywords should follow order
 dotnet_diagnostic.SA1206.severity = none
