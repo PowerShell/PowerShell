@@ -3,6 +3,11 @@
 
 Import-Module HelpersCommon
 
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
+
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         $platformInfo = Get-PlatformInfo
@@ -15,7 +20,7 @@ Describe "New-PSSession basic test" -Tag @("CI") {
             return
         }
 
-        { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
+        { New-PSSession -ComputerName (GetRandomString) -Authentication Basic } |
            Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }
@@ -33,7 +38,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
             return
         }
 
-        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $password = ConvertTo-SecureString -String (GetRandomString) -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
         $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
@@ -55,7 +60,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
             return
         }
 
-        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $password = ConvertTo-SecureString -String (GetRandomString) -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
         # use a Uri that specifies HTTPS to test Basic Auth logic.

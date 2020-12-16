@@ -5,6 +5,11 @@
 # PSSession tests for non-Windows platforms
 #
 
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
+
 Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
 
     BeforeAll {
@@ -42,7 +47,7 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
         }
         else {
             $userName = "User_$(Get-Random -Maximum 99999)"
-            $userPassword = "Password_$(Get-Random -Maximum 99999)"
+            $userPassword = GetRandomString
             $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
             $soSkipCA = New-PSSessionOption -SkipCACheck
             $soSkipCN = New-PSSessionOption -SkipCNCheck
