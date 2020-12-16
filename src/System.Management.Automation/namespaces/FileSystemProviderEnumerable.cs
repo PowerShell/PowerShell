@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// Delegate for filtering out find results.
         /// </summary>
         /// <param name="entry">A lower level view of System.IO.FileSystemInfo for fitering.</param>
-        /// <return>If true include the entry to result.</return>
+        /// <returns>If true include the entry to result.</returns>
         internal delegate bool FindPredicate(ref FileSystemEntry entry);
 
         /// <summary>
@@ -69,14 +69,14 @@ namespace Microsoft.PowerShell.Commands
         /// Delegate for calling whenever on I/O error.
         /// </summary>
         /// <param name="error">I/O error code.</param>
-        /// <return>If true continue the enumeration. If false throw.</return>
+        /// <returns>If true continue the enumeration. If false throw.</returns>
         internal delegate bool ContinueOnErrorPredicate(int error);
 
         /// <summary>
         /// Delegate for transforming raw find data into a result.
         /// </summary>
         /// <param name="entry">A lower level view of System.IO.FileSystemInfo for transforming to TResult.</param>
-        /// <return>Result of the transformation of TResult type.</return>
+        /// <returns>Result of the transformation of TResult type.</returns>
         internal delegate TResult FindTransform(ref FileSystemEntry entry);
 
         private sealed class DelegateEnumerator : FileSystemEnumerator<TResult>
