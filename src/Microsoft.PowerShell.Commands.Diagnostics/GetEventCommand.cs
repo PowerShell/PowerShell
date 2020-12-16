@@ -42,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ListLog",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
         public string[] ListLog { get; set; } = { "*" };
 
         /// <summary>
@@ -73,12 +72,10 @@ namespace Microsoft.PowerShell.Commands
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "ListProviderParamHelp")]
         [AllowEmptyCollection]
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ListProvider",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
         public string[] ListProvider { get; set; } = { "*" };
 
         /// <summary>
@@ -91,12 +88,10 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "GetProviderParamHelp")]
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ProviderName",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
         public string[] ProviderName { get; set; }
 
         /// <summary>
@@ -109,7 +104,6 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "PathParamHelp")]
-
         [Alias("PSPath")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
@@ -180,7 +174,6 @@ namespace Microsoft.PowerShell.Commands
                 ParameterSetName = "XmlQuerySet",
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "ComputerNameParamHelp")]
-
         [ValidateNotNull]
         [Alias("Cn")]
         public string ComputerName { get; set; } = string.Empty;
@@ -229,12 +222,10 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 ParameterSetName = "XmlQuerySet",
                 HelpMessageBaseName = "GetEventResources")]
-
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.FilterXml",
                             Justification = "An XmlDocument is required here because that is the type Powershell supports")]
-
         public XmlDocument FilterXml { get; set; } = null;
 
         /// <summary>
@@ -247,12 +238,10 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 ParameterSetName = "HashQuerySet",
                 HelpMessageBaseName = "GetEventResources")]
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.FilterHashtable",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
         public Hashtable[] FilterHashtable { get; set; }
 
         /// <summary>
@@ -261,7 +250,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "ListLogSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
         [Parameter(ParameterSetName = "GetLogSet")]
-
         [Parameter(ParameterSetName = "HashQuerySet")]
         public SwitchParameter Force { get; set; }
 
@@ -271,7 +259,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "FileSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
         [Parameter(ParameterSetName = "GetLogSet")]
-
         [Parameter(ParameterSetName = "HashQuerySet")]
         [Parameter(ParameterSetName = "XmlQuerySet")]
         public SwitchParameter Oldest

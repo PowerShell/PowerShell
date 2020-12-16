@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetCounterCommand.ListSet",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
         public string[] ListSet { get; set; } = { "*" };
 
         //
