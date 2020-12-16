@@ -32,7 +32,8 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         if (
             ($platformInfo.Platform -match "alpine|raspbian") -or
             ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8') -or
+            ($IsMacOS)
         ) {
             $MissingLibmi = $true
         }
