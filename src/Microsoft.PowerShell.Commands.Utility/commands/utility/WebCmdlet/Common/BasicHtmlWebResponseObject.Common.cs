@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for BasicHtmlWebResponseObject.
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
         public BasicHtmlWebResponseObject(HttpResponseMessage response)
@@ -38,7 +38,8 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Constructor for HtmlWebResponseObject with memory stream.
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
@@ -60,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// Content of the response body, decoded using <see cref="Encoding"/>,
         /// if the <c>Content-Type</c> response header is a recognized text
-        /// type.  Otherwise <c>null</c>.
+        /// type.  Otherwise <see langword="null"/>.
         /// </value>
         public new string Content { get; private set; }
 
@@ -69,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value>
         /// Encoding of the response body from the <c>Content-Type</c> header,
-        /// or <c>null</c> if the encoding could not be determined.
+        /// or <see langword="null"/> if the encoding could not be determined.
         /// </value>
         public Encoding Encoding { get; private set; }
 
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     EnsureHtmlParser();
 
-                    List<PSObject> parsedFields = new List<PSObject>();
+                    List<PSObject> parsedFields = new();
                     MatchCollection fieldMatch = s_inputFieldRegex.Matches(Content);
                     foreach (Match field in fieldMatch)
                     {
@@ -113,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     EnsureHtmlParser();
 
-                    List<PSObject> parsedLinks = new List<PSObject>();
+                    List<PSObject> parsedLinks = new();
                     MatchCollection linkMatch = s_linkRegex.Matches(Content);
                     foreach (Match link in linkMatch)
                     {
@@ -140,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     EnsureHtmlParser();
 
-                    List<PSObject> parsedImages = new List<PSObject>();
+                    List<PSObject> parsedImages = new();
                     MatchCollection imageMatch = s_imageRegex.Matches(Content);
                     foreach (Match image in imageMatch)
                     {
@@ -184,9 +185,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject CreateHtmlObject(string html, string tagName)
+        private static PSObject CreateHtmlObject(string html, string tagName)
         {
-            PSObject elementObject = new PSObject();
+            PSObject elementObject = new();
 
             elementObject.Properties.Add(new PSNoteProperty("outerHTML", html));
             elementObject.Properties.Add(new PSNoteProperty("tagName", tagName));
@@ -196,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
             return elementObject;
         }
 
-        private void EnsureHtmlParser()
+        private static void EnsureHtmlParser()
         {
             if (s_tagRegex == null)
             {
@@ -242,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
             this.RawContent = raw.ToString();
         }
 
-        private void ParseAttributes(string outerHtml, PSObject elementObject)
+        private static void ParseAttributes(string outerHtml, PSObject elementObject)
         {
             // We might get an empty input for a directive from the HTML file
             if (!string.IsNullOrEmpty(outerHtml))

@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         {
             wasFiltered = false;
 
-            List<PSVariable> result = new List<PSVariable>();
+            List<PSVariable> result = new();
 
             if (string.IsNullOrEmpty(name))
             {
@@ -355,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!matchFound && !wasFiltered)
                 {
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             varName,
                             "VariableNotFound",
                             SessionStateStrings.VariableNotFound);
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
                 if (varFound != null)
                 {
                     SessionStateException sessionStateException =
-                        new SessionStateException(
+                        new(
                             Name,
                             SessionStateCategory.Variable,
                             "VariableAlreadyExists",
@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(target, action))
             {
-                PSVariable newVariable = new PSVariable(Name, Value, Option);
+                PSVariable newVariable = new(Name, Value, Option);
 
                 if (_visibility != null)
                 {
@@ -810,7 +810,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // First look for existing variables to set.
 
-                List<PSVariable> matchingVariables = new List<PSVariable>();
+                List<PSVariable> matchingVariables = new();
 
                 bool wasFiltered = false;
 
@@ -865,7 +865,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         PSVariable varToSet =
-                            new PSVariable(
+                            new(
                                 varName,
                                 newVarValue,
                                 newOptions);
@@ -1121,7 +1121,7 @@ namespace Microsoft.PowerShell.Commands
                     // characters were specified, write an error.
 
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             varName,
                             "VariableNotFound",
                             SessionStateStrings.VariableNotFound);
@@ -1283,7 +1283,7 @@ namespace Microsoft.PowerShell.Commands
                     // characters were specified, write an error.
 
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             varName,
                             "VariableNotFound",
                             SessionStateStrings.VariableNotFound);

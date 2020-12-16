@@ -174,7 +174,7 @@ namespace System.Management.Automation.Configuration
             WriteValueToFile<string>(scope, key, executionPolicy);
         }
 
-        private string GetExecutionPolicySettingKey(string shellId)
+        private static string GetExecutionPolicySettingKey(string shellId)
         {
             return string.Equals(shellId, Utils.DefaultPowerShellShellID, StringComparison.Ordinal)
                 ? ExecutionPolicyDefaultShellKey
@@ -566,7 +566,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="value">The value to write.</param>
         private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
         {
-            if (ConfigScope.CurrentUser == scope && !Directory.Exists(perUserConfigDirectory))
+            if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }
@@ -640,11 +640,17 @@ namespace System.Management.Automation.Configuration
     internal sealed class PowerShellPolicies
     {
         public ScriptExecution ScriptExecution { get; set; }
+
         public ScriptBlockLogging ScriptBlockLogging { get; set; }
+
         public ModuleLogging ModuleLogging { get; set; }
+
         public ProtectedEventLogging ProtectedEventLogging { get; set; }
+
         public Transcription Transcription { get; set; }
+
         public UpdatableHelp UpdatableHelp { get; set; }
+
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
@@ -656,6 +662,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ScriptExecution : PolicyBase
     {
         public string ExecutionPolicy { get; set; }
+
         public bool? EnableScripts { get; set; }
     }
 
@@ -665,6 +672,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ScriptBlockLogging : PolicyBase
     {
         public bool? EnableScriptBlockInvocationLogging { get; set; }
+
         public bool? EnableScriptBlockLogging { get; set; }
     }
 
@@ -674,6 +682,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ModuleLogging : PolicyBase
     {
         public bool? EnableModuleLogging { get; set; }
+
         public string[] ModuleNames { get; set; }
     }
 
@@ -683,7 +692,9 @@ namespace System.Management.Automation.Configuration
     internal sealed class Transcription : PolicyBase
     {
         public bool? EnableTranscripting { get; set; }
+
         public bool? EnableInvocationHeader { get; set; }
+
         public string OutputDirectory { get; set; }
     }
 
@@ -693,6 +704,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class UpdatableHelp : PolicyBase
     {
         public bool? EnableUpdateHelpDefaultSourcePath { get; set; }
+
         public string DefaultSourcePath { get; set; }
     }
 
@@ -702,6 +714,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
         public bool? EnableConsoleSessionConfiguration { get; set; }
+
         public string ConsoleSessionConfigurationName { get; set; }
     }
 
@@ -711,6 +724,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ProtectedEventLogging : PolicyBase
     {
         public bool? EnableProtectedEventLogging { get; set; }
+
         public string[] EncryptionCertificate { get; set; }
     }
 

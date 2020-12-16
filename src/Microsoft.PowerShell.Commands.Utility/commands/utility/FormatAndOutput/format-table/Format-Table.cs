@@ -14,7 +14,8 @@ namespace Microsoft.PowerShell.Commands
     public class FormatTableCommand : OuterFormatTableBase
     {
         /// <summary>
-        /// Constructor to set the inner command.
+        /// Initializes a new instance of the <see cref="FormatTableCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public FormatTableCommand()
         {

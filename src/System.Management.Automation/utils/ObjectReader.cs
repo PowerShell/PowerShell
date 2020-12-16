@@ -21,7 +21,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public ObjectReaderBase([In, Out] ObjectStreamBase stream)
+        protected ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {
@@ -617,7 +617,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        private ReturnType ConvertToReturnType(object inputObject)
+        private static ReturnType ConvertToReturnType(object inputObject)
         {
             Type resultType = typeof(ReturnType);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)
@@ -793,7 +793,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="inputObject">Input object to convert.</param>
         /// <returns>Input object converted to the specified return type.</returns>
-        private ReturnType ConvertToReturnType(object inputObject)
+        private static ReturnType ConvertToReturnType(object inputObject)
         {
             Type resultType = typeof(ReturnType);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)

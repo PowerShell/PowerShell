@@ -921,7 +921,7 @@ namespace System.Management.Automation.Language
                     (i, n) => ctor.DefineParameter(i, ParameterAttributes.None, n));
             }
 
-            private string GetMetaDataName(string name, int numberOfParameters)
+            private static string GetMetaDataName(string name, int numberOfParameters)
             {
                 int currentId = Interlocked.Increment(ref s_globalCounter);
                 string metaDataName = name + "_" + numberOfParameters + "_" + currentId;

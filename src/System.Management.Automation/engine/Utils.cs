@@ -49,7 +49,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out byte b)
         {
-            if (value < byte.MinValue || byte.MaxValue < value)
+            if (value < byte.MinValue || value > byte.MaxValue)
             {
                 b = 0;
                 return false;
@@ -61,7 +61,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out sbyte sb)
         {
-            if (value < sbyte.MinValue || sbyte.MaxValue < value)
+            if (value < sbyte.MinValue || value > sbyte.MaxValue)
             {
                 sb = 0;
                 return false;
@@ -73,7 +73,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out short s)
         {
-            if (value < short.MinValue || short.MaxValue < value)
+            if (value < short.MinValue || value > short.MaxValue)
             {
                 s = 0;
                 return false;
@@ -85,7 +85,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out ushort us)
         {
-            if (value < ushort.MinValue || ushort.MaxValue < value)
+            if (value < ushort.MinValue || value > ushort.MaxValue)
             {
                 us = 0;
                 return false;
@@ -97,7 +97,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out int i)
         {
-            if (value < int.MinValue || int.MaxValue < value)
+            if (value < int.MinValue || value > int.MaxValue)
             {
                 i = 0;
                 return false;
@@ -109,7 +109,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out uint u)
         {
-            if (value < uint.MinValue || uint.MaxValue < value)
+            if (value < uint.MinValue || value > uint.MaxValue)
             {
                 u = 0;
                 return false;
@@ -121,7 +121,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out long l)
         {
-            if (value < long.MinValue || long.MaxValue < value)
+            if (value < long.MinValue || value > long.MaxValue)
             {
                 l = 0;
                 return false;
@@ -133,7 +133,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out ulong ul)
         {
-            if (value < ulong.MinValue || ulong.MaxValue < value)
+            if (value < ulong.MinValue || value > ulong.MaxValue)
             {
                 ul = 0;
                 return false;
@@ -1391,96 +1391,11 @@ namespace System.Management.Automation
             return hresult >= 0;
         }
 
-        // Attempt to determine the existing encoding
-        internal static Encoding GetEncoding(string path)
-        {
-            if (!File.Exists(path))
-            {
-                return ClrFacade.GetDefaultEncoding();
-            }
-
-            byte[] initialBytes = new byte[100];
-            int bytesRead = 0;
-
-            try
-            {
-                using (FileStream stream = System.IO.File.OpenRead(path))
-                {
-                    using (BinaryReader reader = new BinaryReader(stream))
-                    {
-                        bytesRead = reader.Read(initialBytes, 0, 100);
-                    }
-                }
-            }
-            catch (IOException)
-            {
-                return ClrFacade.GetDefaultEncoding();
-            }
-
-            // Test for four-byte preambles
-            string preamble = null;
-            Encoding foundEncoding = ClrFacade.GetDefaultEncoding();
-
-            if (bytesRead > 3)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
-
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Test for three-byte preambles
-            if (bytesRead > 2)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Test for two-byte preambles
-            if (bytesRead > 1)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1]);
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Check for binary
-            string initialBytesAsAscii = System.Text.Encoding.ASCII.GetString(initialBytes, 0, bytesRead);
-            if (initialBytesAsAscii.IndexOfAny(nonPrintableCharacters) >= 0)
-            {
-                return Encoding.Unicode;
-            }
-
-            return utf8NoBom;
-        }
-
         // BigEndianUTF32 encoding is possible, but requires creation
         internal static readonly Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static readonly Dictionary<string, Encoding> encodingMap =
-            new Dictionary<string, Encoding>()
-            {
-                { "255-254", Encoding.Unicode },
-                { "254-255", Encoding.BigEndianUnicode },
-                { "255-254-0-0", Encoding.UTF32 },
-                { "0-0-254-255", BigEndianUTF32Encoding },
-                { "239-187-191", Encoding.UTF8 },
-            };
-
-        internal static readonly char[] nonPrintableCharacters = {
-            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
-            (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
-            (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
-            (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
 
         internal static readonly UTF8Encoding utf8NoBom =
             new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
@@ -1872,6 +1787,107 @@ namespace System.Management.Automation
             return true;
         }
 
+        internal static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
+        {
+            var outputRendering = OutputRendering.Ansi;
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                if (supportsVirtualTerminal != false)
+                {
+                    switch (PSStyle.Instance.OutputRendering)
+                    {
+                        case OutputRendering.Automatic:
+                            outputRendering = OutputRendering.Ansi;
+                            break;
+                        case OutputRendering.Host:
+                            outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                            break;
+                        default:
+                            outputRendering = PSStyle.Instance.OutputRendering;
+                            break;
+                    }
+                }
+            }
+
+            return outputRendering == OutputRendering.PlainText;
+        }
+
+        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        {
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                var sd = new ValueStringDecorated(s);
+
+                if (sd.IsDecorated)
+                {
+                    var outputRendering = OutputRendering.Ansi;
+                    if (InternalTestHooks.BypassOutputRedirectionCheck)
+                    {
+                        isOutputRedirected = false;
+                    }
+
+                    if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                    {
+                        outputRendering = OutputRendering.PlainText;
+                    }
+
+                    s = sd.ToString(outputRendering);
+                }
+            }
+
+            return s;
+        }
+
+        internal enum FormatStyle
+        {
+            Reset,
+            FormatAccent,
+            ErrorAccent,
+            Error,
+            Warning,
+            Verbose,
+            Debug,
+        }
+
+        internal static string GetFormatStyleString(FormatStyle formatStyle)
+        {
+            // redirected console gets plaintext output to preserve existing behavior
+            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
+                ((PSStyle.Instance.OutputRendering == OutputRendering.PlainText) ||
+                (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
+                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected)))
+            {
+                return string.Empty;
+            }
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                PSStyle psstyle = PSStyle.Instance;                
+                switch (formatStyle)
+                {
+                    case FormatStyle.Reset:
+                        return psstyle.Reset;
+                    case FormatStyle.FormatAccent:
+                        return psstyle.Formatting.FormatAccent;
+                    case FormatStyle.ErrorAccent:
+                        return psstyle.Formatting.ErrorAccent;
+                    case FormatStyle.Error:
+                        return psstyle.Formatting.Error;
+                    case FormatStyle.Warning:
+                        return psstyle.Formatting.Warning;
+                    case FormatStyle.Verbose:
+                        return psstyle.Formatting.Verbose;
+                    case FormatStyle.Debug:
+                        return psstyle.Formatting.Debug;
+                    default:
+                        return string.Empty;
+                }
+            }
+
+            return string.Empty;
+        }
+
         #endregion
     }
 
@@ -2055,6 +2071,7 @@ namespace System.Management.Automation.Internal
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
         internal static bool ForcePromptForChoiceDefaultOption;
+        internal static bool BypassOutputRedirectionCheck;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;

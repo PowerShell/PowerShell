@@ -16,7 +16,7 @@ namespace System.Management.Automation.Internal
         Error,
         Warning,
         Information
-    };
+    }
 
     /// <summary>
     /// Pipe provides a way to stitch two commands.
@@ -299,7 +299,7 @@ namespace System.Management.Automation.Internal
             CopyVariableToTempPipe(VariableStreamKind.Information, _informationVariableList, tempPipe);
         }
 
-        private void CopyVariableToTempPipe(VariableStreamKind streamKind, List<IList> variableList, Pipe tempPipe)
+        private static void CopyVariableToTempPipe(VariableStreamKind streamKind, List<IList> variableList, Pipe tempPipe)
         {
             if (variableList != null && variableList.Count > 0)
             {

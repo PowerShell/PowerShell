@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region private members
 
-        private readonly System.Diagnostics.Stopwatch _stopWatch = new System.Diagnostics.Stopwatch();
+        private readonly System.Diagnostics.Stopwatch _stopWatch = new();
 
         #endregion
 

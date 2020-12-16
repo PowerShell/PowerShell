@@ -508,7 +508,9 @@ namespace System.Management.Automation.Runspaces
         private readonly object _syncObject = new object();
 
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
+
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
+
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
 
         #endregion

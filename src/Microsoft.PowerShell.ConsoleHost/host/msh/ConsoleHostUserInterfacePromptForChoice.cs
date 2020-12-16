@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell
             int lineLenMax = RawUI.WindowSize.Width - 1;
             int lineLen = 0;
 
-            string choiceTemplate = "[{0}] {1}  ";
+            const string choiceTemplate = "[{0}] {1}  ";
 
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {

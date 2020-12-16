@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SetCimInstanceCommand"/> class.
         /// </summary>
         public SetCimInstanceCommand()
             : base(parameters, parameterSets)
@@ -139,14 +139,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -165,11 +158,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return cimInstance; }
+            get { return CimInstance; }
 
             set
             {
-                cimInstance = value;
+                CimInstance = value;
                 base.SetParameter(value, nameCimInstance);
             }
         }
@@ -177,12 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property for internal usage purpose.
         /// </summary>
-        internal CimInstance CimInstance
-        {
-            get { return cimInstance; }
-        }
-
-        private CimInstance cimInstance;
+        internal CimInstance CimInstance { get; private set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Query".
@@ -268,8 +256,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IDictionary property;
 
         /// <summary>
+        /// <para>
         /// The following is the definition of the input parameter "PassThru",
         /// indicate whether Set-CimInstance should output modified result instance or not.
+        /// </para>
         /// <para>
         /// True indicates output the result instance, otherwise output nothing as by default
         /// behavior.
@@ -277,20 +267,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public SwitchParameter PassThru
-        {
-            get
-            {
-                return this.passThru;
-            }
-
-            set
-            {
-                this.passThru = value;
-            }
-        }
-
-        private SwitchParameter passThru;
+        public SwitchParameter PassThru { get; set; }
 
         #endregion
 
@@ -354,7 +331,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimSetCimInstance CreateOperationAgent()
         {
-            CimSetCimInstance cimSetCimInstance = new CimSetCimInstance();
+            CimSetCimInstance cimSetCimInstance = new();
             this.AsyncOperation = cimSetCimInstance;
             return cimSetCimInstance;
         }
@@ -377,7 +354,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
@@ -434,7 +411,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.QuerySessionSet, new ParameterSetEntry(3)     },
             {   CimBaseCommand.QueryComputerSet, new ParameterSetEntry(2)     },

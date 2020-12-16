@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSModuleInfo GetModuleInfoForRemoteModuleWithoutManifest(RemoteDiscoveryHelper.CimModule cimModule)
+        private static PSModuleInfo GetModuleInfoForRemoteModuleWithoutManifest(RemoteDiscoveryHelper.CimModule cimModule)
         {
             return new PSModuleInfo(cimModule.ModuleName, null, null);
         }

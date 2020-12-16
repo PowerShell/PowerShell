@@ -358,9 +358,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                return _commandMetadata ??=
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 
@@ -403,7 +402,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredApplicationId;
+                return data?.RequiredApplicationId;
             }
         }
 
@@ -417,7 +416,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSVersion;
+                return data?.RequiredPSVersion;
             }
         }
 
@@ -426,7 +425,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSEditions;
+                return data?.RequiredPSEditions;
             }
         }
 
@@ -435,7 +434,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredModules;
+                return data?.RequiredModules;
             }
         }
 
@@ -444,7 +443,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data != null && data.IsElevationRequired;
             }
         }
 
@@ -458,7 +457,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiresPSSnapIns;
+                return data?.RequiresPSSnapIns;
             }
         }
 

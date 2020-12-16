@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         public int RetryIntervalInSeconds { get; set; }
 
         /// <summary>
-        /// Construct a new instance of a WebRequestSession object.
+        /// Initializes a new instance of the <see cref="WebRequestSession"/> class.
         /// </summary>
         public WebRequestSession()
         {

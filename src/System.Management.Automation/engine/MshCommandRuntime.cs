@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get { return _myInvocation ?? (_myInvocation = _thisCommand.MyInvocation); }
+            get { return _myInvocation ??= _thisCommand.MyInvocation; }
         }
 
         /// <summary>
@@ -1735,8 +1735,13 @@ namespace System.Management.Automation
         {
             bool yesToAll = false;
             bool noToAll = false;
-            bool hasSecurityImpact = false;
-            return DoShouldContinue(query, caption, hasSecurityImpact, false, ref yesToAll, ref noToAll);
+            return DoShouldContinue(
+                query,
+                caption,
+                hasSecurityImpact: false,
+                supportsToAllOptions: false,
+                ref yesToAll,
+                ref noToAll);
         }
 
         /// <summary>
@@ -2206,7 +2211,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe InputPipe
         {
-            get { return _inputPipe ?? (_inputPipe = new Pipe()); }
+            get { return _inputPipe ??= new Pipe(); }
 
             set { _inputPipe = value; }
         }
@@ -2216,7 +2221,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe OutputPipe
         {
-            get { return _outputPipe ?? (_outputPipe = new Pipe()); }
+            get { return _outputPipe ??= new Pipe(); }
 
             set { _outputPipe = value; }
         }
@@ -2239,7 +2244,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe ErrorOutputPipe
         {
-            get { return _errorOutputPipe ?? (_errorOutputPipe = new Pipe()); }
+            get { return _errorOutputPipe ??= new Pipe(); }
 
             set { _errorOutputPipe = value; }
         }
@@ -2844,20 +2849,20 @@ namespace System.Management.Automation
                 }
 
                 // No trace of the error in the 'Ignore' case
-                if (ActionPreference.Ignore == preference)
+                if (preference == ActionPreference.Ignore)
                 {
                     return; // do not write or record to output pipe
                 }
 
                 // 2004/05/26-JonN
                 // The object is not written in the SilentlyContinue case
-                if (ActionPreference.SilentlyContinue == preference)
+                if (preference == ActionPreference.SilentlyContinue)
                 {
                     AppendErrorToVariables(errorRecord);
                     return; // do not write to output pipe
                 }
 
-                if (ContinueStatus.YesToAll == lastErrorContinueStatus)
+                if (lastErrorContinueStatus == ContinueStatus.YesToAll)
                 {
                     preference = ActionPreference.Continue;
                 }
@@ -3384,7 +3389,7 @@ namespace System.Management.Automation
             No,
             YesToAll,
             NoToAll
-        };
+        }
 
         internal ContinueStatus lastShouldProcessContinueStatus = ContinueStatus.Yes;
         internal ContinueStatus lastErrorContinueStatus = ContinueStatus.Yes;
@@ -3684,7 +3689,7 @@ namespace System.Management.Automation
                     CBhost.EnterNestedPrompt(_thisCommand);
                     // continue loop
                 }
-                else if (-1 == response)
+                else if (response == -1)
                 {
                     ActionPreferenceStopException e =
                         new ActionPreferenceStopException(
@@ -3746,6 +3751,17 @@ namespace System.Management.Automation
 
             if (this.PipelineVariable != null)
             {
+                // _state can be null if the current script block is dynamicparam, etc.
+                if (_state != null)
+                {
+                    // Create the pipeline variable
+                    _state.PSVariable.Set(_pipelineVarReference);
+
+                    // Get the reference again in case we re-used one from the
+                    // same scope.
+                    _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
+                }
+
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
         }

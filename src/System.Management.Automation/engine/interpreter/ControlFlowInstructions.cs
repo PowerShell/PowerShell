@@ -69,7 +69,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal BranchFalseInstruction()
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal BranchTrueInstruction()
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal CoalescingBranchInstruction()
@@ -204,7 +204,7 @@ namespace System.Management.Automation.Interpreter
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex)
+        protected IndexedBranchInstruction(int labelIndex)
         {
             _labelIndex = labelIndex;
         }

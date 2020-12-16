@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
             return Definition;
         }
         /// <summary>
-        /// Initializes a new instance of this class.
+        /// Initializes a new instance of the <see cref="MemberDefinition"/> class.
         /// </summary>
         public MemberDefinition(string typeName, string name, PSMemberTypes memberType, string definition)
         {
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
 
         private MshMemberMatchOptions _matchOptions = MshMemberMatchOptions.None;
 
-        private readonly HybridDictionary _typesAlreadyDisplayed = new HybridDictionary();
+        private readonly HybridDictionary _typesAlreadyDisplayed = new();
 
         /// <summary>
         /// This method implements the ProcessRecord method for get-member command.
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_typesAlreadyDisplayed.Count == 0)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new InvalidOperationException(GetMember.NoObjectSpecified),
                     "NoObjectInGetMember",
                     ErrorCategory.CloseError,

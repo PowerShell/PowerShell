@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Language
         {
             PSInvokeDynamicMemberBinder result;
 
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst?.Type;
             lock (s_binderCache)
             {
                 var key = Tuple.Create(callInfo, constraints, propertySetter, @static, classScope);
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation.Language
             PSGetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope?.Type;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -1406,7 +1406,7 @@ namespace System.Management.Automation.Language
             PSSetDynamicMemberBinder binder;
             lock (s_binderCache)
             {
-                var type = classScope != null ? classScope.Type : null;
+                var type = classScope?.Type;
                 var tuple = Tuple.Create(type, @static);
                 if (!s_binderCache.TryGetValue(tuple, out binder))
                 {
@@ -2035,36 +2035,39 @@ namespace System.Management.Automation.Language
 
         internal static bool IsValueTypeMutable(Type type)
         {
-            if (type.IsPrimitive || type.IsEnum)
+            // First, check for enums/primitives and compiler-defined attributes.
+            if (type.IsPrimitive
+                || type.IsEnum
+                || type.IsDefined(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), inherit: false))
             {
                 return false;
             }
 
-            // If there are any fields, the type is mutable.
-            if (type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length > 0)
+            // If the builtin attribute is not present, check for a custom attribute from by the compiler. If the
+            // library targets netstandard2.0, the compiler can't be sure the attribute will be provided by the runtime,
+            // and defines its own attribute of the same name during compilation. To account for this, we must check the
+            // type by name, not by reference.
+            foreach (object attribute in type.GetCustomAttributes(inherit: false))
             {
-                return true;
+                if (attribute.GetType().FullName.Equals(
+                    "System.Runtime.CompilerServices.IsReadOnlyAttribute",
+                    StringComparison.Ordinal))
+                {
+                    return false;
+                }
             }
 
-            // If there are any properties with setters, the type is mutable.
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            for (int index = 0; index < properties.Length; index++)
+            // Fallback: check all fields (public + private) to verify whether they're all readonly.
+            // If any field is not readonly, the value type is potentially mutable.
+            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
             {
-                var property = properties[index];
-                if (property.CanWrite)
+                if (!field.IsInitOnly)
                 {
                     return true;
                 }
             }
 
-            // If there are any methods other than the property getters, the type might
-            // be mutable, so assume the type is mutable.
-            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            if (methods.Length != properties.Length)
-            {
-                return true;
-            }
-
+            // If all fields are init-only (read-only), then the value type is immutable.
             return false;
         }
 
@@ -5071,7 +5074,7 @@ namespace System.Management.Automation.Language
 
         public static PSGetMemberBinder Get(string memberName, TypeDefinitionAst classScope, bool @static)
         {
-            return Get(memberName, classScope != null ? classScope.Type : null, @static, false);
+            return Get(memberName, classScope?.Type, @static, false);
         }
 
         public static PSGetMemberBinder Get(string memberName, Type classScope, bool @static)
@@ -5629,7 +5632,7 @@ namespace System.Management.Automation.Language
             PSMemberInfo memberInfo = null;
             ConsolidatedString typenames = null;
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var typeTable = context != null ? context.TypeTable : null;
+            var typeTable = context?.TypeTable;
 
             if (hasTypeTableMember)
             {
@@ -5842,7 +5845,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             if (memberInfo == null)
             {
                 memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
@@ -5881,7 +5884,7 @@ namespace System.Management.Automation.Language
         internal static TypeTable GetTypeTableFromTLS()
         {
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            return executionContext != null ? executionContext.TypeTable : null;
+            return executionContext?.TypeTable;
         }
 
         internal static bool TryGetInstanceMember(object value, string memberName, out PSMemberInfo memberInfo)
@@ -5964,7 +5967,7 @@ namespace System.Management.Automation.Language
 
         public static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
         {
-            var classScope = classScopeAst != null ? classScopeAst.Type : null;
+            var classScope = classScopeAst?.Type;
             return Get(memberName, classScope, @static);
         }
 
@@ -5998,7 +6001,7 @@ namespace System.Management.Automation.Language
             return string.Format(CultureInfo.InvariantCulture, "SetMember: {0}{1} ver:{2}", _static ? "static " : string.Empty, Name, _getMemberBinder._version);
         }
 
-        private Expression GetTransformedExpression(IEnumerable<ArgumentTransformationAttribute> transformationAttributes, Expression originalExpression)
+        private static Expression GetTransformedExpression(IEnumerable<ArgumentTransformationAttribute> transformationAttributes, Expression originalExpression)
         {
             if (transformationAttributes == null)
             {
@@ -6286,7 +6289,7 @@ namespace System.Management.Automation.Language
                             if (value.Value == null)
                             {
                                 expr = Expression.Block(
-                                    Expression.Assign(lhs, this.GetTransformedExpression(argumentTransformationAttributes, Expression.Constant(null, lhsType))),
+                                    Expression.Assign(lhs, GetTransformedExpression(argumentTransformationAttributes, Expression.Constant(null, lhsType))),
                                     ExpressionCache.NullConstant);
                             }
                             else
@@ -6295,7 +6298,7 @@ namespace System.Management.Automation.Language
                                 Expression assignmentExpression;
                                 if (transformationNeeded)
                                 {
-                                    var transformedExpr = this.GetTransformedExpression(argumentTransformationAttributes, value.Expression);
+                                    var transformedExpr = GetTransformedExpression(argumentTransformationAttributes, value.Expression);
                                     assignmentExpression = DynamicExpression.Dynamic(PSConvertBinder.Get(nullableUnderlyingType), nullableUnderlyingType, transformedExpr);
                                 }
                                 else
@@ -6317,7 +6320,7 @@ namespace System.Management.Automation.Language
                             if (transformationNeeded)
                             {
                                 assignedValue = DynamicExpression.Dynamic(PSConvertBinder.Get(lhsType), lhsType,
-                                   this.GetTransformedExpression(argumentTransformationAttributes, value.Expression));
+                                   GetTransformedExpression(argumentTransformationAttributes, value.Expression));
                             }
                             else
                             {
@@ -6446,7 +6449,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+                var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
                 if (memberInfo == null)
                 {
                     memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
@@ -7401,7 +7404,7 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, methodName) as PSMethodInfo;
             if (methodInfo == null && adapterSet.DotNetAdapter != null)
             {
@@ -7446,7 +7449,7 @@ namespace System.Management.Automation.Language
         internal static object InvokeAdaptedSetMember(object obj, string methodName, object[] args, object valueToSet)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            var adapterSet = PSObject.GetMappedAdapter(obj, context != null ? context.TypeTable : null);
+            var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
             var methodInfo = adapterSet.OriginalAdapter.BaseGetMember<PSParameterizedProperty>(obj, methodName);
             if (methodInfo == null && adapterSet.DotNetAdapter != null)
             {

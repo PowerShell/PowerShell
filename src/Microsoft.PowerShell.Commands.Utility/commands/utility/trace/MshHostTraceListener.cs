@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         #region TraceListener constructors and disposer
 
         /// <summary>
-        /// Default constructor used if no.
+        /// Initializes a new instance of the <see cref="PSHostTraceListener"/> class.
         /// </summary>
         internal PSHostTraceListener(PSCmdlet cmdlet)
             : base(string.Empty)
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private readonly StringBuilder _cachedWrite = new StringBuilder();
+        private readonly StringBuilder _cachedWrite = new();
 
         /// <summary>
         /// Sends the given output string to the host for processing.

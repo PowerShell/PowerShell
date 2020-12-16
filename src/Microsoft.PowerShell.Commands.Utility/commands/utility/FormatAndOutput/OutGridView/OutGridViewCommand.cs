@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for OutGridView.
+        /// Initializes a new instance of the <see cref="OutGridViewCommand"/> class.
         /// </summary>
         public OutGridViewCommand()
         {
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="liveObject">PSObject to be converted to a string.</param>
         internal string ConvertToString(PSObject liveObject)
         {
-            StringFormatError formatErrorObject = new StringFormatError();
+            StringFormatError formatErrorObject = new();
             string smartToString = PSObjectHelper.SmartToString(liveObject,
                                                                 _expressionFactory,
                                                                 InnerFormatShapeCommand.FormatEnumerationLimit(),
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
                 baseObject is FormatInfoData ||
                 baseObject is PSObject)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                     new FormatException(StringUtil.Format(FormatAndOut_out_gridview.DataNotQualifiedForGridView)),
                     DataNotQualifiedForGridView,
                     ErrorCategory.InvalidType,
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
             Exception exception = _windowProxy.GetLastException();
             if (exception != null)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                     exception,
                     "ManagementListInvocationException",
                     ErrorCategory.OperationStopped,
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
             internal NonscalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
                 // Prepare a table view.
-                TableView tableView = new TableView();
+                TableView tableView = new();
                 tableView.Initialize(parentCmd._expressionFactory, parentCmd._typeInfoDataBase);
 
                 // Request a view definition from the type database.
@@ -491,14 +491,6 @@ namespace Microsoft.PowerShell.Commands
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~OutGridViewCommand()
-        {
-            Dispose(false);
         }
     }
 }

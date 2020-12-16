@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="InvokeCimMethodCommand"/> class.
         /// </summary>
         public InvokeCimMethodCommand()
             : base(parameters, parameterSets)
@@ -182,11 +182,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return cimInstance; }
+            get { return CimInstance; }
 
             set
             {
-                cimInstance = value;
+                CimInstance = value;
                 base.SetParameter(value, nameCimInstance);
             }
         }
@@ -194,12 +194,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property for internal usage purpose.
         /// </summary>
-        internal CimInstance CimInstance
-        {
-            get { return cimInstance; }
-        }
-
-        private CimInstance cimInstance;
+        internal CimInstance CimInstance { get; private set; }
 
         /// <summary>
         /// <para>The following is the definition of the input parameter "ComputerName".
@@ -287,14 +282,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public IDictionary Arguments
-        {
-            get { return arguments; }
-
-            set { arguments = value; }
-        }
-
-        private IDictionary arguments;
+        public IDictionary Arguments { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "MethodName".
@@ -355,14 +343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         #endregion
 
@@ -427,7 +408,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimInvokeCimMethod CreateOperationAgent()
         {
-            CimInvokeCimMethod cimInvokeMethod = new CimInvokeCimMethod();
+            CimInvokeCimMethod cimInvokeMethod = new();
             this.AsyncOperation = cimInvokeMethod;
             return cimInvokeMethod;
         }
@@ -469,7 +450,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameClassName, new HashSet<ParameterDefinitionEntry> {
@@ -556,7 +537,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.ClassNameComputerSet, new ParameterSetEntry(2, true)     },
             {   CimBaseCommand.ResourceUriSessionSet, new ParameterSetEntry(3)     },

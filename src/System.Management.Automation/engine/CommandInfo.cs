@@ -583,7 +583,7 @@ namespace System.Management.Automation
 
         internal CommandMetadata ExternalCommandMetadata
         {
-            get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+            get { return _externalCommandMetadata ??= new CommandMetadata(this, true); }
 
             set { _externalCommandMetadata = value; }
         }
@@ -904,7 +904,7 @@ namespace System.Management.Automation
     }
 
     [DebuggerDisplay("{PSTypeName} {Name}")]
-    internal struct PSMemberNameAndType
+    internal readonly struct PSMemberNameAndType
     {
         public readonly string Name;
 
@@ -960,7 +960,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
+        private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
@@ -992,6 +992,7 @@ namespace System.Management.Automation
         public IList<PSMemberNameAndType> Members { get; }
     }
 
+#nullable enable
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }

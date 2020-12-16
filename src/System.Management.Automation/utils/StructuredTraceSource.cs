@@ -1443,7 +1443,7 @@ namespace System.Management.Automation
         /// </summary>
         internal TraceSource TraceSource
         {
-            get { return _traceSource ?? (_traceSource = new MonadTraceSource(_name)); }
+            get { return _traceSource ??= new MonadTraceSource(_name); }
         }
 
         private TraceSource _traceSource;

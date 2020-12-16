@@ -20,18 +20,29 @@ namespace System.Management.Automation
         // This is how we can tell if we're trying to complete part of something (like a member)
         // or complete an argument, where TokenBeforeCursor could be a parameter name.
         internal Token TokenAtCursor { get; set; }
+
         internal Token TokenBeforeCursor { get; set; }
+
         internal IScriptPosition CursorPosition { get; set; }
 
         internal PowerShellExecutionHelper Helper { get; set; }
+
         internal Hashtable Options { get; set; }
+
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
+
         internal string WordToComplete { get; set; }
+
         internal int ReplacementIndex { get; set; }
+
         internal int ReplacementLength { get; set; }
+
         internal ExecutionContext ExecutionContext { get; set; }
+
         internal PseudoBindingInfo PseudoBindingInfo { get; set; }
+
         internal TypeInferenceContext TypeInferenceContext { get; set; }
 
         internal bool GetOption(string option, bool @default)
@@ -925,7 +936,7 @@ namespace System.Management.Automation
         }
 
         // Helper method to auto complete hashtable key
-        private List<CompletionResult> GetResultForHashtable(CompletionContext completionContext)
+        private static List<CompletionResult> GetResultForHashtable(CompletionContext completionContext)
         {
             var lastAst = completionContext.RelatedAsts.Last();
             HashtableAst tempHashtableAst = null;
@@ -986,7 +997,7 @@ namespace System.Management.Automation
         }
 
         // Helper method to look for an incomplete assignment pair in hash table.
-        private bool CheckForPendingAssignment(HashtableAst hashTableAst)
+        private static bool CheckForPendingAssignment(HashtableAst hashTableAst)
         {
             foreach (var keyValue in hashTableAst.KeyValuePairs)
             {
@@ -1054,7 +1065,7 @@ namespace System.Management.Automation
             return stringToComplete;
         }
 
-        private Tuple<ExpressionAst, StatementAst> GetHashEntryContainsCursor(
+        private static Tuple<ExpressionAst, StatementAst> GetHashEntryContainsCursor(
             IScriptPosition cursor,
             HashtableAst hashTableAst,
             bool isCursorInString)
@@ -1345,7 +1356,7 @@ namespace System.Management.Automation
             return GetMatchedResults(allNames, completionContext);
         }
 
-        private List<CompletionResult> GetResultForEnumPropertyValueOfDSCResource(
+        private static List<CompletionResult> GetResultForEnumPropertyValueOfDSCResource(
             CompletionContext completionContext,
             string stringToComplete,
             ref int replacementIndex,
@@ -1632,7 +1643,7 @@ namespace System.Management.Automation
         /// <param name="ast"></param>
         /// <param name="keywordAst"></param>
         /// <returns></returns>
-        private ConfigurationDefinitionAst GetAncestorConfigurationAstAndKeywordAst(
+        private static ConfigurationDefinitionAst GetAncestorConfigurationAstAndKeywordAst(
             IScriptPosition cursorPosition,
             Ast ast,
             out DynamicKeywordStatementAst keywordAst)
@@ -1668,7 +1679,7 @@ namespace System.Management.Automation
         /// <param name="keywordAst"></param>
         /// <param name="matched"></param>
         /// <returns></returns>
-        private List<CompletionResult> GetResultForIdentifierInConfiguration(
+        private static List<CompletionResult> GetResultForIdentifierInConfiguration(
             CompletionContext completionContext,
             ConfigurationDefinitionAst configureAst,
             DynamicKeywordStatementAst keywordAst,
@@ -2082,7 +2093,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private List<CompletionResult> GetResultForAttributeArgument(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength)
+        private static List<CompletionResult> GetResultForAttributeArgument(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength)
         {
             // Attribute member arguments
             Type attributeType = null;

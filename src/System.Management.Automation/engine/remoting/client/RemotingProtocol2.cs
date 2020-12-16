@@ -233,7 +233,7 @@ namespace System.Management.Automation.Internal
 
             // Find out if this is an invoke and disconnect operation and if so whether the endpoint
             // supports disconnect.  Throw exception if disconnect is not supported.
-            bool invokeAndDisconnect = (shell.Settings != null) ? shell.Settings.InvokeAndDisconnect : false;
+            bool invokeAndDisconnect = shell.Settings != null && shell.Settings.InvokeAndDisconnect;
             if (invokeAndDisconnect && !EndpointSupportsDisconnect)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.EndpointDoesNotSupportDisconnect);
@@ -873,6 +873,7 @@ namespace System.Management.Automation.Internal
 
         private readonly Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
             = new Dictionary<Guid, ClientPowerShellDataStructureHandler>();
+
         // data structure handlers of all ClientRemotePowerShell which are
         // associated with this runspace pool
         private readonly object _associationSyncObject = new object();
@@ -937,7 +938,7 @@ namespace System.Management.Automation.Internal
             get
             {
                 WSManClientSessionTransportManager wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
-                return (wsmanTransportManager != null) ? wsmanTransportManager.SupportsDisconnect : false;
+                return wsmanTransportManager != null && wsmanTransportManager.SupportsDisconnect;
             }
         }
 
@@ -1412,7 +1413,7 @@ namespace System.Management.Automation.Internal
             // disconnect may be called on a pipeline that is already disconnected.
             PSInvocationStateInfo stateInfo =
                             new PSInvocationStateInfo(PSInvocationState.Disconnected,
-                                (rsStateInfo != null) ? rsStateInfo.Reason : null);
+                                rsStateInfo?.Reason);
 
             Dbg.Assert(InvocationStateInfoReceived != null,
                 "ClientRemotePowerShell should subscribe to all data structure handler events");

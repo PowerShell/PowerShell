@@ -352,7 +352,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements' -Compress
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
-    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {

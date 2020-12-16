@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="tableBody"></param>
         /// <param name="headers"></param>
-        private void LoadHeadersSectionFromObjectModel(TableControlBody tableBody, List<TableControlColumnHeader> headers)
+        private static void LoadHeadersSectionFromObjectModel(TableControlBody tableBody, List<TableControlColumnHeader> headers)
         {
             foreach (TableControlColumnHeader header in headers)
             {
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Load EntrySelectedBy (TypeName) into AppliesTo.
         /// </summary>
         /// <returns></returns>
-        private AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
+        private static AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
         {
             AppliesTo appliesTo = new AppliesTo();
 

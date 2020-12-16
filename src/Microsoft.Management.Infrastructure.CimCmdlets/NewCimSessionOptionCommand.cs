@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Wsman
-    };
+    }
 
     /// <summary>
     /// The Cmdlet allows the IT Pro to create a CimSessionOptions object that she/he
@@ -45,7 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NewCimSessionOptionCommand"/> class.
         /// </summary>
         public NewCimSessionOptionCommand()
             : base(parameters, parameterSets)
@@ -416,28 +416,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Specifies the UI Culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public CultureInfo UICulture
-        {
-            get { return uiculture; }
-
-            set { uiculture = value; }
-        }
-
-        private CultureInfo uiculture;
+        public CultureInfo UICulture { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Culture".
         /// Specifies the culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public CultureInfo Culture
-        {
-            get { return culture; }
-
-            set { culture = value; }
-        }
-
-        private CultureInfo culture;
+        public CultureInfo Culture { get; set; }
 
         #endregion
 
@@ -522,7 +508,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal DComSessionOptions CreateDComSessionOptions()
         {
-            DComSessionOptions dcomoptions = new DComSessionOptions();
+            DComSessionOptions dcomoptions = new();
             if (this.impersonationSet)
             {
                 dcomoptions.Impersonation = this.Impersonation;
@@ -562,7 +548,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal WSManSessionOptions CreateWSMANSessionOptions()
         {
-            WSManSessionOptions wsmanoptions = new WSManSessionOptions();
+            WSManSessionOptions wsmanoptions = new();
             if (this.noEncryptionSet)
             {
                 wsmanoptions.NoEncryption = true;
@@ -638,7 +624,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (!string.IsNullOrWhiteSpace(this.ProxyCertificateThumbprint))
             {
-                CimCredential credentials = new CimCredential(CertificateAuthenticationMechanism.Default, this.ProxyCertificateThumbprint);
+                CimCredential credentials = new(CertificateAuthenticationMechanism.Default, this.ProxyCertificateThumbprint);
                 wsmanoptions.AddProxyCredentials(credentials);
             }
 
@@ -712,7 +698,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameNoEncryption, new HashSet<ParameterDefinitionEntry> {
@@ -813,7 +799,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.ProtocolNameParameterSet, new ParameterSetEntry(1, true)     },
             {   CimBaseCommand.DcomParameterSet, new ParameterSetEntry(0)     },

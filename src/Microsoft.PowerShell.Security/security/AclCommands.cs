@@ -5,18 +5,18 @@
 #pragma warning disable 56506
 
 using System;
-using System.Management.Automation;
-using Dbg = System.Management.Automation;
-using System.Management.Automation.Security;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using System.Globalization;
 using System.ComponentModel;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Management.Automation;
+using System.Management.Automation.Security;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -292,20 +292,17 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Get DACL
-            AuthorizationRuleCollection dacl;
             CommonObjectSecurity cos = sd as CommonObjectSecurity;
             if (cos != null)
             {
-                dacl = cos.GetAccessRules(true, true, typeof(NTAccount));
+                return cos.GetAccessRules(true, true, typeof(NTAccount));
             }
             else
             {
                 DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
-                dacl = dos.GetAccessRules(true, true, typeof(NTAccount));
+                return dos.GetAccessRules(true, true, typeof(NTAccount));
             }
-
-            return dacl;
         }
 
         /// <summary>
@@ -330,20 +327,17 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource.NewArgumentException(nameof(instance));
             }
 
-            AuthorizationRuleCollection sacl;
             CommonObjectSecurity cos = sd as CommonObjectSecurity;
             if (cos != null)
             {
-                sacl = cos.GetAuditRules(true, true, typeof(NTAccount));
+                return cos.GetAuditRules(true, true, typeof(NTAccount));
             }
             else
             {
                 DirectoryObjectSecurity dos = sd as DirectoryObjectSecurity;
                 Dbg.Diagnostics.Assert(dos != null, "Acl should be of type CommonObjectSecurity or DirectoryObjectSecurity");
-                sacl = dos.GetAuditRules(true, true, typeof(NTAccount));
+                return dos.GetAuditRules(true, true, typeof(NTAccount));
             }
-
-            return sacl;
         }
 
         /// <summary>
@@ -360,8 +354,7 @@ namespace Microsoft.PowerShell.Commands
             SessionState sessionState = new SessionState();
             string path = sessionState.Path.GetUnresolvedProviderPathFromPSPath(
                 GetPath(instance));
-            IntPtr pOwner = IntPtr.Zero, pGroup = IntPtr.Zero;
-            IntPtr pDacl = IntPtr.Zero, pSacl = IntPtr.Zero, pSd = IntPtr.Zero;
+            IntPtr pSd = IntPtr.Zero;
 
             try
             {
@@ -370,10 +363,10 @@ namespace Microsoft.PowerShell.Commands
                     path,
                     NativeMethods.SeObjectType.SE_FILE_OBJECT,
                     NativeMethods.SecurityInformation.SCOPE_SECURITY_INFORMATION,
-                    out pOwner,
-                    out pGroup,
-                    out pDacl,
-                    out pSacl,
+                    out IntPtr pOwner,
+                    out IntPtr pGroup,
+                    out IntPtr pDacl,
+                    out IntPtr pSacl,
                     out pSd);
                 if (rs != NativeMethods.ERROR_SUCCESS)
                 {
@@ -385,8 +378,7 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
-                NativeMethods.ACL sacl = new NativeMethods.ACL();
-                sacl = Marshal.PtrToStructure<NativeMethods.ACL>(pSacl);
+                NativeMethods.ACL sacl = Marshal.PtrToStructure<NativeMethods.ACL>(pSacl);
                 if (sacl.AceCount == 0)
                 {
                     return null;
@@ -396,8 +388,7 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr pAce = pSacl + Marshal.SizeOf(new NativeMethods.ACL());
                 for (ushort aceIdx = 0; aceIdx < sacl.AceCount; aceIdx++)
                 {
-                    NativeMethods.ACE_HEADER ace = new NativeMethods.ACE_HEADER();
-                    ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
+                    NativeMethods.ACE_HEADER ace = Marshal.PtrToStructure<NativeMethods.ACE_HEADER>(pAce);
                     Dbg.Diagnostics.Assert(ace.AceType ==
                         NativeMethods.SYSTEM_SCOPED_POLICY_ID_ACE_TYPE,
                         "Unexpected ACE type: " + ace.AceType.ToString(CultureInfo.CurrentCulture));
@@ -458,12 +449,11 @@ namespace Microsoft.PowerShell.Commands
                 Marshal.Copy(capIdArray, 0, pCapId, capIdSize);
                 IntPtr[] ppCapId = new IntPtr[1];
                 ppCapId[0] = pCapId;
-                uint capCount = 0;
                 uint rs = NativeMethods.LsaQueryCAPs(
                     ppCapId,
                     1,
                     out caps,
-                    out capCount);
+                    out uint capCount);
                 if (rs != NativeMethods.STATUS_SUCCESS)
                 {
                     throw new Win32Exception((int)rs);
@@ -475,8 +465,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Get the CAP name.
-                NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
-                cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(caps);
+                NativeMethods.CENTRAL_ACCESS_POLICY cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(caps);
                 // LSA_UNICODE_STRING is composed of WCHARs, but its length is given in bytes.
                 return Marshal.PtrToStringUni(cap.Name.Buffer, cap.Name.Length / 2);
             }
@@ -508,12 +497,11 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // Retrieve all CAPs.
-                uint capCount = 0;
                 uint rs = NativeMethods.LsaQueryCAPs(
                     null,
                     0,
                     out caps,
-                    out capCount);
+                    out uint capCount);
                 if (rs != NativeMethods.STATUS_SUCCESS)
                 {
                     throw new Win32Exception((int)rs);
@@ -528,14 +516,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // Add CAP names and IDs to a string array.
                 string[] policies = new string[capCount];
-                NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
                 IntPtr capPtr = caps;
                 for (uint capIdx = 0; capIdx < capCount; capIdx++)
                 {
                     // Retrieve CAP name.
                     Dbg.Diagnostics.Assert(capPtr != IntPtr.Zero,
                         "Invalid central access policies array");
-                    cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
+                    NativeMethods.CENTRAL_ACCESS_POLICY cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
                     // LSA_UNICODE_STRING is composed of WCHARs, but its length is given in bytes.
                     policies[capIdx] = "\"" + Marshal.PtrToStringUni(
                         cap.Name.Buffer,
@@ -653,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _inputObject = null;
+        private PSObject _inputObject;
 
         /// <summary>
         /// InputObject Parameter
@@ -695,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Gets or sets the audit flag of the command.  This flag
@@ -758,7 +745,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Collection<PSObject> sd = null;
             AccessControlSections sections =
                 AccessControlSections.Owner |
                 AccessControlSections.Group |
@@ -855,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
 
                             InvokeProvider.SecurityDescriptor.Get(rp, sections, context);
 
-                            sd = context.GetAccumulatedObjects();
+                            Collection<PSObject> sd = context.GetAccumulatedObjects();
                             if (sd != null)
                             {
                                 AddBrokeredProperties(
@@ -921,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSObject _inputObject = null;
+        private PSObject _inputObject;
 
         /// <summary>
         /// InputObject Parameter
@@ -962,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _isLiteralPath = false;
+        private bool _isLiteralPath;
 
         private object _securityDescriptor;
 
@@ -1060,7 +1046,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a newly allocated SACL with no ACEs in it.
         /// Free the returned SACL by calling Marshal.FreeHGlobal.
         /// </summary>
-        private IntPtr GetEmptySacl()
+        private static IntPtr GetEmptySacl()
         {
             IntPtr pSacl = IntPtr.Zero;
             bool ret = true;
@@ -1125,12 +1111,11 @@ namespace Microsoft.PowerShell.Commands
                     // be deallocated separately (but with the entire buffer
                     // returned by LsaQueryCAPs).
                     freeCapId = false;
-                    uint capCount = 0;
                     rs = NativeMethods.LsaQueryCAPs(
                         null,
                         0,
                         out caps,
-                        out capCount);
+                        out uint capCount);
                     if (rs != NativeMethods.STATUS_SUCCESS)
                     {
                         throw new Win32Exception((int)rs);
@@ -1144,13 +1129,12 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Find the supplied string among available CAP names, use the corresponding CAPID.
-                    NativeMethods.CENTRAL_ACCESS_POLICY cap = new NativeMethods.CENTRAL_ACCESS_POLICY();
                     IntPtr capPtr = caps;
                     for (uint capIdx = 0; capIdx < capCount; capIdx++)
                     {
                         Dbg.Diagnostics.Assert(capPtr != IntPtr.Zero,
                             "Invalid central access policies array");
-                        cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
+                        NativeMethods.CENTRAL_ACCESS_POLICY cap = Marshal.PtrToStructure<NativeMethods.CENTRAL_ACCESS_POLICY>(capPtr);
                         // LSA_UNICODE_STRING is composed of WCHARs, but its length is given in bytes.
                         string capName = Marshal.PtrToStringUni(
                             cap.Name.Buffer,
@@ -1246,7 +1230,7 @@ namespace Microsoft.PowerShell.Commands
         /// and the previous state of this privilege. Free the returned token
         /// by calling NativeMethods.CloseHandle.
         /// </summary>
-        private IntPtr GetTokenWithEnabledPrivilege(
+        private static IntPtr GetTokenWithEnabledPrivilege(
             string privilege,
             NativeMethods.TOKEN_PRIVILEGE previousState)
         {
@@ -1334,14 +1318,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (methodInfo != null)
                 {
-                    CommonSecurityDescriptor aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
                     string sddl;
 
                     if (aclObjectSecurity != null)
                     {
                         sddl = aclObjectSecurity.GetSecurityDescriptorSddlForm(AccessControlSections.All);
                     }
-                    else if (aclCommonSD != null)
+                    else if (_securityDescriptor is CommonSecurityDescriptor aclCommonSD)
                     {
                         sddl = aclCommonSD.GetSddlForm(AccessControlSections.All);
                     }
@@ -1476,9 +1459,8 @@ namespace Microsoft.PowerShell.Commands
                         context.PassThru = Passthru;
                         if (_isLiteralPath)
                         {
-                            ProviderInfo Provider = null;
-                            PSDriveInfo Drive = null;
-                            string pathStr = SessionState.Path.GetUnresolvedProviderPathFromPSPath(p, out Provider, out Drive);
+                            string pathStr = SessionState.Path.GetUnresolvedProviderPathFromPSPath(
+                                p, out ProviderInfo Provider, out PSDriveInfo Drive);
                             pathsToProcess.Add(new PathInfo(Drive, Provider, pathStr, SessionState));
                             context.SuppressWildcardExpansion = true;
                         }
@@ -1588,4 +1570,3 @@ namespace Microsoft.PowerShell.Commands
 }
 
 #pragma warning restore 56506
-

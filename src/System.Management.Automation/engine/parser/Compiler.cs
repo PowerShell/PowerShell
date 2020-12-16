@@ -1166,7 +1166,7 @@ namespace System.Management.Automation.Language
                 expr = ((AttributedExpressionAst)expr).Child;
             }
 
-            return firstConvert == null ? null : firstConvert.Type.TypeName.GetReflectionType();
+            return firstConvert?.Type.TypeName.GetReflectionType();
         }
 
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type argType)
@@ -2045,7 +2045,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
+        private static Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
         {
             if (lambda == null)
             {
@@ -2589,7 +2589,7 @@ namespace System.Management.Automation.Language
             return Expression.Lambda<Action<FunctionContext>>(body, funcName, new[] { s_functionContext });
         }
 
-        private void GenerateTypesAndUsings(ScriptBlockAst rootForDefiningTypesAndUsings, List<Expression> exprs)
+        private static void GenerateTypesAndUsings(ScriptBlockAst rootForDefiningTypesAndUsings, List<Expression> exprs)
         {
             // We don't postpone load assemblies, import modules from 'using' to the moment, when enclosed scriptblock is executed.
             // We do loading, when root of the script is compiled.
@@ -6311,7 +6311,7 @@ namespace System.Management.Automation.Language
             var targetTypeConstraint = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Expression);
             return CombineTypeConstraintForMethodResolution(
                     targetTypeConstraint,
-                    arguments != null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
+                    arguments?.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray());
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(BaseCtorInvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6330,7 +6330,7 @@ namespace System.Management.Automation.Language
 
             return CombineTypeConstraintForMethodResolution(
                     targetTypeConstraint,
-                    arguments != null ? arguments.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray() : null);
+                    arguments?.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray());
         }
 
         internal Expression InvokeMember(
@@ -6343,7 +6343,7 @@ namespace System.Management.Automation.Language
             bool nullConditional = false)
         {
             var callInfo = new CallInfo(args.Count());
-            var classScope = _memberFunctionType != null ? _memberFunctionType.Type : null;
+            var classScope = _memberFunctionType?.Type;
             var binder = name.Equals("new", StringComparison.OrdinalIgnoreCase) && @static
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
                 : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope);
@@ -6353,7 +6353,7 @@ namespace System.Management.Automation.Language
             return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
-        private Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
+        private static Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
         {
             var callInfo = new CallInfo(args.Count());
             var binder = PSInvokeBaseCtorBinder.Get(callInfo, constraints);

@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void UpdateProgress(string status)
         {
-            ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
+            ProgressRecord progress = new(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
             progress.RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
 
             WriteProgress(progress);
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static HyperVInfo GetHyperVisorInfo(CimSession session)
         {
-            HyperVInfo info = new HyperVInfo();
+            HyperVInfo info = new();
             bool ok = false;
             CimInstance instance = null;
 
@@ -1142,7 +1142,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return culture == null ? null : culture.Name;
+            return culture?.Name;
         }
 
         /// <summary>
@@ -1335,6 +1335,7 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
     }
+
 #pragma warning disable 649 // fields and properties in these class are assigned dynamically
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiBaseBoard
@@ -1884,7 +1885,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Public Methods
 
         #region Private Methods
-        private OSProductSuite[] MakeProductSuites(uint? suiteMask)
+        private static OSProductSuite[] MakeProductSuites(uint? suiteMask)
         {
             if (suiteMask == null)
                 return null;

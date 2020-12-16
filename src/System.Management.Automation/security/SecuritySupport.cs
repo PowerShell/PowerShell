@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
         /// Default - The most restrictive policy available.
         /// </summary>
         Default = Restricted
-    };
+    }
 
     /// <summary>
     /// Defines the available configuration scopes for an execution

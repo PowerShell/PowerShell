@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NewCimInstanceCommand"/> class.
         /// </summary>
         public NewCimInstanceCommand()
             : base(parameters, parameterSets)
@@ -169,14 +169,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true)]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("Arguments")]
-        public IDictionary Property
-        {
-            get { return property; }
-
-            set { property = value; }
-        }
-
-        private IDictionary property;
+        public IDictionary Property { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
@@ -215,14 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec
-        {
-            get { return operationTimeout; }
-
-            set { operationTimeout = value; }
-        }
-
-        private UInt32 operationTimeout;
+        public UInt32 OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// <para>
@@ -397,7 +383,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimNewCimInstance CreateOperationAgent()
         {
-            CimNewCimInstance cimNewCimInstance = new CimNewCimInstance();
+            CimNewCimInstance cimNewCimInstance = new();
             this.AsyncOperation = cimNewCimInstance;
             return cimNewCimInstance;
         }
@@ -437,7 +423,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameClassName, new HashSet<ParameterDefinitionEntry> {
@@ -500,7 +486,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.ClassNameSessionSet, new ParameterSetEntry(2)     },
             {   CimBaseCommand.ClassNameComputerSet, new ParameterSetEntry(1, true)     },

@@ -1148,3 +1148,23 @@ PkgES
 Microsoft.PowerShell.Native
 rtm.20526.5
 jcotton42
+ - CHANGELOG/preview.md
+Gimly
+jborean93
+mkswd
+PatLeong
+paul-cheung
+georgettica
+ProcessId
+CurrentManagedThreadId
+System.Environment
+LongCount
+nullable
+Guid
+accessor
+CancellationToken
+struct
+IsEmpty
+StringBuilder.Append
+String.Concat
+String.Substring

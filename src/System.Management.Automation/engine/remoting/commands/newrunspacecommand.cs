@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
                             transErrorCode,
                             _defaultFQEID);
 
-                        if (WSManNativeApi.ERROR_WSMAN_NO_LOGON_SESSION_EXIST == transErrorCode)
+                        if (transErrorCode == WSManNativeApi.ERROR_WSMAN_NO_LOGON_SESSION_EXIST)
                         {
                             errorDetails += System.Environment.NewLine + string.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
                         }
@@ -661,7 +661,7 @@ namespace Microsoft.PowerShell.Commands
                             if (originalWSManConnectionInfo != null)
                             {
                                 newWSManConnectionInfo = originalWSManConnectionInfo.Copy();
-                                newWSManConnectionInfo.EnableNetworkAccess = (newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess) ? true : false;
+                                newWSManConnectionInfo.EnableNetworkAccess = newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess;
                                 newConnectionInfo = newWSManConnectionInfo;
                             }
                             else

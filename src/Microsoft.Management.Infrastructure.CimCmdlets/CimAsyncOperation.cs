@@ -26,9 +26,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Constructor
 
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimAsyncOperation"/> class.
         /// </summary>
-        public CimAsyncOperation()
+        protected CimAsyncOperation()
         {
             this.moreActionEvent = new ManualResetEventSlim(false);
             this.actionQueue = new ConcurrentQueue<CimBaseAction>();
@@ -237,7 +237,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         protected CimSessionProxy CreateCimSessionProxy(CimSessionProxy originalProxy)
         {
-            CimSessionProxy proxy = new CimSessionProxy(originalProxy);
+            CimSessionProxy proxy = new(originalProxy);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -259,7 +259,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         protected CimSessionProxy CreateCimSessionProxy(CimSession session)
         {
-            CimSessionProxy proxy = new CimSessionProxy(session);
+            CimSessionProxy proxy = new(session);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -282,7 +282,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         protected CimSessionProxy CreateCimSessionProxy(string computerName)
         {
-            CimSessionProxy proxy = new CimSessionProxy(computerName);
+            CimSessionProxy proxy = new(computerName);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -296,7 +296,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected CimSessionProxy CreateCimSessionProxy(string computerName, CimInstance cimInstance)
         {
-            CimSessionProxy proxy = new CimSessionProxy(computerName, cimInstance);
+            CimSessionProxy proxy = new(computerName, cimInstance);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -546,7 +546,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object a_lock = new object();
+        private readonly object a_lock = new();
 
         /// <summary>
         /// Number of active operations.
@@ -568,7 +568,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object cimSessionProxyCacheLock = new object();
+        private readonly object cimSessionProxyCacheLock = new();
 
         /// <summary>
         /// Cache all <see cref="CimSessionProxy"/> objects related to

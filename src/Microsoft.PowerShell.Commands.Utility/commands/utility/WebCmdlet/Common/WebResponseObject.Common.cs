@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             this.Content = this.RawContentStream.ToArray();
         }
 
-        private bool IsPrintable(char c)
+        private static bool IsPrintable(char c)
         {
             return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
         }
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for WebResponseObject.
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
         public WebResponseObject(HttpResponseMessage response)
@@ -152,7 +152,8 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Constructor for WebResponseObject with contentStream.
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
@@ -200,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 long contentLength = response.Content.Headers.ContentLength.Value;
-                if (0 >= contentLength)
+                if (contentLength <= 0)
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
                 }

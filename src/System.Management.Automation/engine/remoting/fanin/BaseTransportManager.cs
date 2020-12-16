@@ -97,7 +97,7 @@ namespace System.Management.Automation.Remoting
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// ConnectionStatusEventArgs.
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="remoteObject">Remote data object.</param>
         /// <returns>True if remote data object requires a user response.</returns>
-        private bool CheckForInteractiveHostCall(RemoteDataObject<PSObject> remoteObject)
+        private static bool CheckForInteractiveHostCall(RemoteDataObject<PSObject> remoteObject)
         {
             bool interactiveHostCall = false;
 
@@ -972,7 +972,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Clean up
 
         /// <summary>
-        /// Finalizer.
+        /// Finalizes an instance of the <see cref="BaseClientTransportManager"/> class.
         /// </summary>
         ~BaseClientTransportManager()
         {
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation.Remoting.Server
             XmlReader reader = XmlReader.Create(new StringReader(xmlBuffer), readerSettings);
 
             string additionalData;
-            if (XmlNodeType.Element == reader.MoveToContent())
+            if (reader.MoveToContent() == XmlNodeType.Element)
             {
                 additionalData = reader.ReadElementContentAsString(xmlTag, reader.NamespaceURI);
             }

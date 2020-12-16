@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// The instance of session state on which this location globber acts.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="sessionState" /> is null.
+        /// If <paramref name="sessionState"/> is null.
         /// </exception>
         internal LocationGlobber(SessionState sessionState)
         {
@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
         /// The path with the glob characters unescaped.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="path" /> is null.
+        /// If <paramref name="path"/> is null.
         /// </exception>
         private static string RemoveGlobEscaping(string path)
         {
@@ -1699,7 +1699,7 @@ namespace System.Management.Automation
         /// false otherwise.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="driveName" /> is null.
+        /// If <paramref name="driveName"/> is null.
         /// </exception>
         /// <remarks>
         /// The comparison is done using a case-insensitive comparison using the
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="workingDriveForPath">
         /// This out parameter returns the drive that was specified
-        /// by the <paramref name="path" />. If <paramref name="path"/> is
+        /// by the <paramref name="path"/>. If <paramref name="path"/> is
         /// an absolute path this value may be something other than
         /// the current working drive.
         ///
@@ -1789,7 +1789,7 @@ namespace System.Management.Automation
         /// This is internal so that it can be called from SessionState
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="path" /> is null.
+        /// If <paramref name="path"/> is null.
         /// </exception>
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
@@ -2272,7 +2272,7 @@ namespace System.Management.Automation
             return driveRootRelativeWorkingPath;
         }
 
-        private bool HasRelativePathTokens(string path)
+        private static bool HasRelativePathTokens(string path)
         {
             string comparePath = path.Replace('/', '\\');
 
@@ -2417,7 +2417,7 @@ namespace System.Management.Automation
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
         /// <param name="containerProvider">
-        /// The provider that will be used to glob the <paramref name="path" />.
+        /// The provider that will be used to glob the <paramref name="path"/>.
         /// </param>
         /// <param name="context">
         /// The context under which the command is occurring.
@@ -3273,27 +3273,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
-        /// <paramref name="leafElement" /> parameter.
+        /// <paramref name="leafElement"/> parameter.
         /// </summary>
         /// <param name="currentDirs">
         /// A collection of paths that should be searched for leaves that match the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </param>
         /// <param name="drive">
         /// The drive the Msh path is relative to.
         /// </param>
         /// <param name="leafElement">
         /// A single element of a path that may or may not contain a glob expression. This parameter
-        /// is used to search the containers in <paramref name="currentDirs" /> for children that
+        /// is used to search the containers in <paramref name="currentDirs"/> for children that
         /// match the glob expression.
         /// </param>
         /// <param name="isLastLeaf">
-        /// True if the <paramref name="leafElement" /> is the last element to glob over. If false, we
+        /// True if the <paramref name="leafElement"/> is the last element to glob over. If false, we
         /// need to get all container names from the provider even if they don't match the filter.
         /// </param>
         /// <param name="provider">
         /// The provider associated with the paths that are being passed in the
-        /// <paramref name="currentDirs" /> and <paramref name="leafElement" /> parameters.
+        /// <paramref name="currentDirs"/> and <paramref name="leafElement"/> parameters.
         /// The provider must derive from ContainerCmdletProvider or NavigationCmdletProvider
         /// in order to get globbing.
         /// </param>
@@ -3302,10 +3302,10 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// A collection of fully qualified namespace paths whose leaf element matches the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="currentDirs" /> or <paramref name="provider" />
+        /// If <paramref name="currentDirs"/> or <paramref name="provider"/>
         /// is null.
         /// </exception>
         /// <exception cref="ProviderInvocationException">
@@ -3892,24 +3892,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
-        /// <paramref name="leafElement" /> parameter.
+        /// <paramref name="leafElement"/> parameter.
         /// </summary>
         /// <param name="currentDirs">
         /// A collection of paths that should be searched for leaves that match the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </param>
         /// <param name="leafElement">
         /// A single element of a path that may or may not contain a glob expression. This parameter
-        /// is used to search the containers in <paramref name="currentDirs" /> for children that
+        /// is used to search the containers in <paramref name="currentDirs"/> for children that
         /// match the glob expression.
         /// </param>
         /// <param name="isLastLeaf">
-        /// True if the <paramref name="leafElement" /> is the last element to glob over. If false, we
+        /// True if the <paramref name="leafElement"/> is the last element to glob over. If false, we
         /// need to get all container names from the provider even if they don't match the filter.
         /// </param>
         /// <param name="provider">
         /// The provider associated with the paths that are being passed in the
-        /// <paramref name="currentDirs" /> and <paramref name="leafElement" /> parameters.
+        /// <paramref name="currentDirs"/> and <paramref name="leafElement"/> parameters.
         /// The provider must derive from ContainerCmdletProvider or NavigationCmdletProvider
         /// in order to get globbing.
         /// </param>
@@ -3918,10 +3918,10 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// A collection of fully qualified namespace paths whose leaf element matches the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="currentDirs" /> or <paramref name="provider" />
+        /// If <paramref name="currentDirs"/> or <paramref name="provider"/>
         /// is null.
         /// </exception>
         /// <exception cref="ProviderInvocationException">

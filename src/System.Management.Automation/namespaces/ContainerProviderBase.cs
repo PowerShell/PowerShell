@@ -999,7 +999,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="path">
         /// The path of the item to copy.

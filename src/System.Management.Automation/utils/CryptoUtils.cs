@@ -627,18 +627,6 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~PSRSACryptoServiceProvider()
-        {
-            // When Dispose() is called, GC.SuppressFinalize()
-            // is called and therefore this finalizer will not
-            // be invoked. Hence this is run only on process
-            // shutdown
-            Dispose(true);
-        }
-
         #endregion IDisposable
     }
 

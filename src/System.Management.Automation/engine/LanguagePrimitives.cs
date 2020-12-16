@@ -4349,19 +4349,21 @@ namespace System.Management.Automation
 
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
+#nullable enable
         internal interface IConversionData
         {
             object Converter { get; }
 
             ConversionRank Rank { get; }
 
-            object Invoke(object valueToConvert,
+            object? Invoke(object? valueToConvert,
                           Type resultType,
                           bool recurse,
-                          PSObject originalValueToConvert,
-                          IFormatProvider formatProvider,
-                          TypeTable backupTable);
+                          PSObject? originalValueToConvert,
+                          IFormatProvider? formatProvider,
+                          TypeTable? backupTable);
         }
+#nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : IConversionData
@@ -5104,7 +5106,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private struct SignatureComparator
+        private readonly struct SignatureComparator
         {
             private enum TypeMatchingContext
             {
@@ -5779,7 +5781,7 @@ namespace System.Management.Automation
             return CacheConversion(fromType, toType, converter, rank);
         }
 
-        internal class Null { };
+        internal class Null { }
 
         private static IConversionData FigureConversionFromNull(Type toType)
         {

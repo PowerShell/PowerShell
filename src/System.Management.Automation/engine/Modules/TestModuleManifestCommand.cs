@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        private bool IsValidGacAssembly(string assemblyName)
+        private static bool IsValidGacAssembly(string assemblyName)
         {
 #if UNIX
             return false;
@@ -420,23 +420,13 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var allFiles = Directory.GetFiles(gacPath, assemblyFile, SearchOption.AllDirectories);
-
-                if (allFiles.Length == 0)
-                {
-                    var allNgenFiles = Directory.GetFiles(gacPath, ngenAssemblyFile, SearchOption.AllDirectories);
-                    if (allNgenFiles.Length == 0)
-                    {
-                        return false;
-                    }
-                }
+                return Directory.EnumerateFiles(gacPath, assemblyFile, SearchOption.AllDirectories).Any()
+                    || Directory.EnumerateFiles(gacPath, ngenAssemblyFile, SearchOption.AllDirectories).Any();
             }
             catch
             {
                 return false;
             }
-
-            return true;
 #endif
         }
     }

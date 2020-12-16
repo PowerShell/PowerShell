@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class XmlLoaderLoggerEntry
     {
-        internal enum EntryType { Error, Trace };
+        internal enum EntryType { Error, Trace }
 
         /// <summary>
         /// Type of information being logged.
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 WriteToTracer(entry);
         }
 
-        private void WriteToTracer(XmlLoaderLoggerEntry entry)
+        private static void WriteToTracer(XmlLoaderLoggerEntry entry)
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
             {
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we differ only in case: flag this as an ERROR for the time being
                 // and accept the comparison
 
-                string fmtString = "XML tag differ in case only {0} {1}";
+                const string fmtString = "XML tag differ in case only {0} {1}";
                 ReportTrace(string.Format(CultureInfo.InvariantCulture, fmtString, n.Name, s));
 
                 match = true;
@@ -420,7 +420,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we differ only in case: flag this as an ERROR for the time being
                 // and accept the comparison
 
-                string fmtString = "XML attribute differ in case only {0} {1}";
+                const string fmtString = "XML attribute differ in case only {0} {1}";
                 ReportTrace(string.Format(CultureInfo.InvariantCulture, fmtString, a.Name, s));
                 return true;
             }

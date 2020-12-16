@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizer.
+        /// Finalizes an instance of the <see cref="PropVariant"/> class.
         /// </summary>
         ~PropVariant()
         {

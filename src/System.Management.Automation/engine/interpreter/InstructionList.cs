@@ -24,7 +24,7 @@ namespace System.Management.Automation.Interpreter
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
     [DebuggerTypeProxy(typeof(InstructionArray.DebugView))]
-    internal struct InstructionArray
+    internal readonly struct InstructionArray
     {
         internal readonly int MaxStackDepth;
         internal readonly int MaxContinuationDepth;
@@ -156,7 +156,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerDisplay("{GetValue(),nq}", Name = "{GetName(),nq}", Type = "{GetDisplayType(), nq}")]
-            internal struct InstructionView
+            internal readonly struct InstructionView
             {
                 private readonly int _index;
                 private readonly int _stackDepth;
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Interpreter
                 _maxStackDepth,
                 _maxContinuationDepth,
                 _instructions.ToArray(),
-                (_objects != null) ? _objects.ToArray() : null,
+                _objects?.ToArray(),
                 BuildRuntimeLabels(),
                 _debugCookies
             );
@@ -341,11 +341,11 @@ namespace System.Management.Automation.Interpreter
         {
             if ((bool)value)
             {
-                Emit(s_true ?? (s_true = new LoadObjectInstruction(value)));
+                Emit(s_true ??= new LoadObjectInstruction(value));
             }
             else
             {
-                Emit(s_false ?? (s_false = new LoadObjectInstruction(value)));
+                Emit(s_false ??= new LoadObjectInstruction(value));
             }
         }
 
@@ -353,7 +353,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (value == null)
             {
-                Emit(s_null ?? (s_null = new LoadObjectInstruction(null)));
+                Emit(s_null ??= new LoadObjectInstruction(null));
                 return;
             }
 
@@ -925,7 +925,7 @@ namespace System.Management.Automation.Interpreter
             Emit(GetLoadField(field));
         }
 
-        private Instruction GetLoadField(FieldInfo field)
+        private static Instruction GetLoadField(FieldInfo field)
         {
             lock (s_loadFields)
             {

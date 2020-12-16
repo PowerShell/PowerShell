@@ -111,11 +111,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Use C# destructor syntax for finalization code.
-        /// This destructor will run only if the Dispose method
-        /// does not get called.
-        /// It gives your base class the opportunity to finalize.
-        /// Do not provide destructors in types derived from this class.
+        /// Finalizes an instance of the <see cref="WSManPluginServerSession"/> class.
         /// </summary>
         ~WSManPluginServerSession()
         {
@@ -152,7 +148,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_BINARY != inboundData.Type)
+            if (inboundData.Type != (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_BINARY)
             {
                 // only binary data is supported
                 WSManPluginInstance.ReportOperationComplete(
@@ -256,7 +252,7 @@ namespace System.Management.Automation.Remoting
                     // TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
                     // If Signal comes and executes before registering the notification handle, cleanup will be messed
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
-                    if (Platform.IsWindows && (WSManPluginConstants.ExitCodeSuccess == result))
+                    if (Platform.IsWindows && (result == WSManPluginConstants.ExitCodeSuccess))
                     {
                         registeredShutdownNotification = 1;
 
@@ -281,7 +277,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if ((WSManPluginConstants.ExitCodeSuccess != result) || (isRegisterWaitForSingleObjectFailed))
+            if ((result != WSManPluginConstants.ExitCodeSuccess) || (isRegisterWaitForSingleObjectFailed))
             {
                 string errorMessage;
                 if (isRegisterWaitForSingleObjectFailed)
@@ -591,7 +587,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 IntPtr key = newCmdSession.creationRequestDetails.unmanagedHandle;
-                Dbg.Assert(IntPtr.Zero != key, "NULL handles should not be provided");
+                Dbg.Assert(key != IntPtr.Zero, "NULL handles should not be provided");
 
                 if (!_activeCommandSessions.ContainsKey(key))
                 {

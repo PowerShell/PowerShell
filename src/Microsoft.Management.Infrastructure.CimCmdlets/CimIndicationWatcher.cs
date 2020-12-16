@@ -45,26 +45,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Returns an exception
         /// </para>
         /// </summary>
-        public Exception Exception
-        {
-            get
-            {
-                return exception;
-            }
-        }
-
-        private readonly Exception exception;
+        public Exception Exception { get; }
 
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationEventExceptionEventArgs"/> class.
         /// </summary>
         /// <param name="result"></param>
         public CimIndicationEventExceptionEventArgs(Exception theException)
         {
             context = null;
-            this.exception = theException;
+            this.Exception = theException;
         }
     }
 
@@ -81,7 +71,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Instance;
+                return result?.Instance;
             }
         }
 
@@ -92,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.MachineId;
+                return result?.MachineId;
             }
         }
 
@@ -103,14 +93,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (result == null) ? null : result.Bookmark;
+                return result?.Bookmark;
             }
         }
 
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationEventInstanceEventArgs"/> class.
         /// </summary>
         /// <param name="result"></param>
         public CimIndicationEventInstanceEventArgs(CimSubscriptionResult result)
@@ -154,9 +142,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public event EventHandler<CimIndicationEventArgs> CimIndicationArrived;
 
         /// <summary>
-        /// <para>
-        /// Constructor with given computerName, namespace, queryExpression and timeout
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationWatcher"/> class.
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="nameSpace"></param>
@@ -176,9 +162,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
-        /// Constructor with given cimsession, namespace, queryExpression and timeout
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationWatcher"/> class.
         /// </summary>
         /// <param name="cimSession"></param>
         /// <param name="nameSpace"></param>

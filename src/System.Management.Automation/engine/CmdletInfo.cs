@@ -535,8 +535,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _cmdletMetadata ??
-                       (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
+                return _cmdletMetadata ??= CommandMetadata.Get(this.Name, this.ImplementingType, Context);
             }
         }
 

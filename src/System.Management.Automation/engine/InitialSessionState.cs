@@ -949,7 +949,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Collection<Attribute> Attributes
         {
-            get { return _attributes ?? (_attributes = new Collection<Attribute>()); }
+            get { return _attributes ??= new Collection<Attribute>(); }
         }
 
         private Collection<Attribute> _attributes;
@@ -1346,7 +1346,7 @@ namespace System.Management.Automation.Runspaces
         public static InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
         {
             // only remote server has been requested
-            if (SessionCapabilities.RemoteServer == sessionCapabilities)
+            if (sessionCapabilities == SessionCapabilities.RemoteServer)
             {
                 return CreateRestrictedForRemoteServer();
             }
@@ -2584,7 +2584,7 @@ namespace System.Management.Automation.Runspaces
             return null;
         }
 
-        private string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
+        private static string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
         {
             Collection<string> modulesToImport = new Collection<string>();
             HashSet<string> commandsToResolve = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -3072,7 +3072,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="moduleName"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private IEnumerable<CommandInfo> LookupCommands(
+        private static IEnumerable<CommandInfo> LookupCommands(
             string commandPattern,
             string moduleName,
             ExecutionContext context)
@@ -4441,6 +4441,13 @@ end {
             new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
             new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
             new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
+
+            // Variable which controls the output rendering
+            new SessionStateVariableEntry(
+                SpecialVariables.PSStyle,
+                PSStyle.Instance,
+                RunspaceInit.PSStyleDescription,
+                ScopedItemOptions.None),
 
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(

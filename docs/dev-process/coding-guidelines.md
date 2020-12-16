@@ -86,7 +86,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Make sure the added/updated comments are meaningful, accurate and easy to understand.
 
-* Public members must use [doc comments](https://docs.microsoft.com/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments).
+* Public members must use [doc comments](https://docs.microsoft.com/dotnet/csharp/programming-guide/xmldoc/).
   Internal and private members may use doc comments but it is not required.
 
 ## Performance Considerations

@@ -149,6 +149,7 @@ namespace System.Management.Automation
         }
 
         protected abstract object GetValueImpl(int index);
+
         protected abstract void SetValueImpl(int index, object value);
 
         /// <summary>
