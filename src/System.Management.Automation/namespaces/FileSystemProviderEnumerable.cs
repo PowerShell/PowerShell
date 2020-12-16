@@ -39,8 +39,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal FindPredicate? ShouldRecursePredicate { get; set; }
 
-        internal OnDirectoryFinishedDelegate? OnDirectoryFinishedAction { get; set; }
-
         internal ContinueOnErrorPredicate? ShouldContinueOnErrorPredicate { get; set; }
 
         public IEnumerator<TResult> GetEnumerator()
@@ -87,8 +85,6 @@ namespace Microsoft.PowerShell.Commands
                 => _enumerable.ShouldRecursePredicate?.Invoke(ref entry) ?? true;
             protected override bool ShouldIncludeEntry(ref FileSystemEntry entry)
                 => _enumerable.ShouldIncludePredicate?.Invoke(ref entry) ?? true;
-            protected override void OnDirectoryFinished(ReadOnlySpan<char> directory)
-                => _enumerable.OnDirectoryFinishedAction?.Invoke(directory);
             protected override bool ContinueOnError(int error)
                 // Here _enumerable can be still null because base constructor can throw 'access denied' before we assign _enumerable.
                 => _enumerable?.ShouldContinueOnErrorPredicate?.Invoke(error) ?? false;

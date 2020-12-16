@@ -2380,7 +2380,9 @@ namespace System.Management.Automation
                         // Since the path contained glob characters or we are recursing and the
                         // path is a container, do the name enumeration manually
 
-                        if (providerInstance is Microsoft.PowerShell.Commands.FileSystemProvider fileSystemProvider)
+                        // TODO: after we get support the depth in .Net API we will be able use DoGetChildNamesFast()
+                        if (depth == uint.MaxValue &&
+                            providerInstance is Microsoft.PowerShell.Commands.FileSystemProvider fileSystemProvider)
                         {
                             string newProviderPath =
                                 MakePath(
@@ -2488,7 +2490,9 @@ namespace System.Management.Automation
                     // The path did not contain glob characters but recurse was specified
                     // so do the enumeration manually
 
-                    if (providerInstance is Microsoft.PowerShell.Commands.FileSystemProvider fileSystemProvider)
+                    // TODO: after we get support the depth in .Net API we will be able use DoGetChildNamesFast()
+                    if (depth == uint.MaxValue &&
+                        providerInstance is Microsoft.PowerShell.Commands.FileSystemProvider fileSystemProvider)
                     {
                         string newProviderPath =
                             MakePath(

@@ -52,7 +52,6 @@ namespace Microsoft.PowerShell.Commands
             FlagsExpression<FileAttributes>? switchEvaluator,
             bool filterHidden,
             InodeTracker? tracker,  // tracker will be non-null only if the user invoked the -FollowSymLinks and -Recurse switch parameters.
-            uint depth,
             CmdletProviderContext context,
             EnumerationOptions options)
         {
@@ -134,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
                 ShouldRecursePredicate = (ref FileSystemEntry entry) =>
                     {
                         // Making sure to obey the StopProcessing.
-                        if (context.Stopping || depth <= 0)
+                        if (context.Stopping)
                         {
                             return false;
                         }
@@ -182,14 +181,6 @@ namespace Microsoft.PowerShell.Commands
                         // So we save the error code to process it later (in FileSystemEntryFilter() method) and suppress throw.
                         errorCode = error;
                         return true;
-                    },
-
-                OnDirectoryFinishedAction = (ReadOnlySpan<char> directory) =>
-                    {
-                        if (depth > 0)
-                        {
-                            depth--;
-                        }
                     }
             };
         }
@@ -290,7 +281,6 @@ namespace Microsoft.PowerShell.Commands
                         switchEvaluator,
                         filterHidden,
                         tracker,
-                        depth,
                         context,
                         new System.IO.EnumerationOptions { RecurseSubdirectories = recurse, MatchType = MatchType.Win32, AttributesToSkip = 0, IgnoreInaccessible = false }))
                 {
