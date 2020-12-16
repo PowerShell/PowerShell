@@ -104,7 +104,9 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                bool isIncludeMatch = includeMatcher == null || includeMatcher.Count == 0 ? true :
+                bool isIncludeMatch =
+                    includeMatcher == null ||
+                    includeMatcher.Count == 0 ||
                     SessionStateUtilities.MatchesAnyWildcardPattern(
                         entry.FileName.ToString(),
                         includeMatcher,
@@ -112,7 +114,9 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isIncludeMatch)
                 {
-                    return excludeMatcher == null || excludeMatcher.Count == 0 ? true :
+                    return
+                        excludeMatcher == null ||
+                        excludeMatcher.Count == 0 ||
                         !SessionStateUtilities.MatchesAnyWildcardPattern(
                             entry.FileName.ToString(),
                             excludeMatcher,
