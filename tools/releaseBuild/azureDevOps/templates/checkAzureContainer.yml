@@ -1,9 +1,14 @@
 jobs:
 - job: DeleteBlob
+  variables:
+    runCodesignValidationInjection: false
   displayName: Delete blob is exists
   pool:
     vmImage: windows-latest
   steps:
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

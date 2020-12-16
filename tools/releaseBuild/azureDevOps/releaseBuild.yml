@@ -10,14 +10,18 @@ pr:
     - master
     - release*
 
-variables:
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  POWERSHELL_TELEMETRY_OPTOUT: 1
-
-# Set AzDevOps Agent to clean the machine after the end of the build
 resources:
-- repo: self
-  clean: true
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
 
 stages:
   - stage: prep
@@ -151,6 +155,10 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
+        - checkout: self
+          clean: true
+          fetchDepth: 1
+
         - template: templates/SetVersionVariables.yml
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)

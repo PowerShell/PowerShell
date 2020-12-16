@@ -7,6 +7,9 @@ jobs:
   condition: succeeded()
   pool: Package ES Standard Build
   steps:
+  - checkout: self
+    clean: true
+    fetchDepth: 1
 
   - template: ./SetVersionVariables.yml
     parameters:
