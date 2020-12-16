@@ -38,14 +38,7 @@ namespace Microsoft.PowerShell.Commands
                             Target = "Microsoft.PowerShell.Commands.GetCounterCommand.ListSet",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
 
-        public string[] ListSet
-        {
-            get { return _listSet; }
-
-            set { _listSet = value; }
-        }
-
-        private string[] _listSet = { "*" };
+        public string[] ListSet { get; set; } = { "*" };
 
         //
         // Counter parameter
@@ -93,14 +86,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 HelpMessageBaseName = "GetEventResources")]
         [ValidateRange((int)1, int.MaxValue)]
-        public int SampleInterval
-        {
-            get { return _sampleInterval; }
-
-            set { _sampleInterval = value; }
-        }
-
-        private int _sampleInterval = 1;
+        public int SampleInterval { get; set; } = 1;
 
         //
         // MaxSamples parameter
@@ -155,14 +141,7 @@ namespace Microsoft.PowerShell.Commands
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetCounterCommand.ComputerName",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-        public string[] ComputerName
-        {
-            get { return _computerName; }
-
-            set { _computerName = value; }
-        }
-
-        private string[] _computerName = Array.Empty<string>();
+        public string[] ComputerName { get; set; } = Array.Empty<string>();
 
         private ResourceManager _resourceMgr = null;
 
@@ -288,12 +267,12 @@ namespace Microsoft.PowerShell.Commands
         //
         private void ProcessListSet()
         {
-            if (_computerName.Length == 0)
+            if (ComputerName.Length == 0)
             {
                 ProcessListSetPerMachine(null);
             }
             else
-                foreach (string machine in _computerName)
+                foreach (string machine in ComputerName)
                 {
                     ProcessListSetPerMachine(machine);
                 }
@@ -322,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
 
             _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
 
-            foreach (string pattern in _listSet)
+            foreach (string pattern in ListSet)
             {
                 bool bMatched = false;
                 string normalizedPattern = pattern;
@@ -550,7 +529,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000, true);
+                bool cancelled = _cancelEventArrived.WaitOne((int)SampleInterval * 1000, true);
                 if (cancelled)
                 {
                     break;
@@ -587,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<string> retColl = new();
 
-            if (_computerName.Length == 0)
+            if (ComputerName.Length == 0)
             {
                 retColl.AddRange(_accumulatedCounters);
                 return retColl;
@@ -601,7 +580,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    foreach (string machine in _computerName)
+                    foreach (string machine in ComputerName)
                     {
                         if (machine.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase))
                         {
