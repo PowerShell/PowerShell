@@ -141,7 +141,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Receive-Job $job | Should -Be $null
     }
     It "Should keep the existing file's encoding if the 'Append' parameter is used"{
-        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
         "Text" | Out-File -Encoding unicode $transcriptFilePath
 
         Start-Transcript -Append -Path $transcriptFilePath
@@ -151,8 +150,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         GetFileEncoding $transcriptFilePath | Should -BeExactly 'utf-16'
     }
     It "Should default to utf8 with 'Append' parameter and file doesn't exist"{
-        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
-
         Start-Transcript -Append -Path $transcriptFilePath
         Get-Date | Out-Null
         Stop-Transcript
@@ -160,7 +157,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         GetFileEncoding $transcriptFilePath | Should -BeExactly 'utf-8'
     }
     It "Should create a new utf8 encoded file if no 'Append' parameter is set regardless of existing file's encoding"{
-        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
         "Text" | Out-File -Encoding unicode $transcriptFilePath
 
         Start-Transcript -Path $transcriptFilePath
