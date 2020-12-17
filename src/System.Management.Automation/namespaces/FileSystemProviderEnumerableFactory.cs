@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -62,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 if (errorCode != 0)
                 {
                     // While enumerating we can get an error.
-                    // In the case ShouldContinueOnErrorPredicate set the error code.
+                    // In the case ShouldContinueOnErrorPredicate sets the error code.
                     // The error can be either 'access denied' or 'path not found'.
                     Exception? exc = System.Runtime.InteropServices.Marshal.GetExceptionForHR(GetHRForWin32Error(errorCode));
                     errorCode = 0;
