@@ -266,6 +266,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/12 and https://github.com/PowerShell/PowerShellGet/pull/529"
             }
 
+            if ($IsMacOS) {
+                Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+            }
+
             if ($PendingBecause) {
                 Set-ItResult -Pending -Because $PendingBecause
             }
@@ -570,6 +574,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             It "Get method should work"  -Skip:(!(Test-IsInvokeDscResourceEnable)) {
                 if ($IsLinux) {
                     Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/12 and https://github.com/PowerShell/PowerShellGet/pull/529"
+                }
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
                 }
 
                 $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method Get -Property @{ Name = 'PsDscResources' }
