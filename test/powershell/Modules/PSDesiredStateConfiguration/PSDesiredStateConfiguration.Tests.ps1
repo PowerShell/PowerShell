@@ -32,8 +32,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
         if (
             ($platformInfo.Platform -match "alpine|raspbian") -or
             ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8') -or
-            ($IsMacOS)
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
         ) {
             $MissingLibmi = $true
         }
@@ -130,6 +129,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/26"
             }
 
+            if ($IsMacOS) {
+                Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+            }
+
             $resource = Get-DscResource -Name $name
             $resource | Should -Not -BeNullOrEmpty
             $resource.Name | Should -Be $Name
@@ -147,6 +150,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             if ($IsLinux) {
                 Set-ItResult -Pending -Because "https://github.com/PowerShell/PSDesiredStateConfiguration/issues/26"
+            }
+
+            if ($IsMacOS) {
+                Set-ItResult -Pending -Because "macOS is incompatible with libmi"
             }
 
             if ($PendingBecause) {
@@ -224,6 +231,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             if ($IsWindows) {
                 Set-ItResult -Pending -Because "Will only find script from PSDesiredStateConfiguration without modulename"
+            }
+
+            if ($IsMacOS) {
+                Set-ItResult -Pending -Because "macOS is incompatible with libmi"
             }
 
             if ($MissingLibmi) {
@@ -316,6 +327,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 Set-ItResult -Pending -Because "Libmi not available for this platform"
             }
 
+            if ($IsMacOS) {
+                Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+            }
+
             if ($PendingBecause) {
                 Set-ItResult -Pending -Because $PendingBecause
             }
@@ -339,6 +354,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
             if ($MissingLibmi) {
                 Set-ItResult -Pending -Because "Libmi not available for this platform"
+            }
+
+            if ($IsMacOS) {
+                Set-ItResult -Pending -Because "macOS is incompatible with libmi"
             }
 
             if ($PendingBecause) {
@@ -403,6 +422,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+                }
+
                 if (!$IsLinux) {
                     $result = Invoke-DscResource -Name PSModule -ModuleName $psGetModuleSpecification -Method set -Property @{
                         Name               = 'PsDscResources'
@@ -428,6 +451,10 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
 
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+                }
+
                 # using create scriptBlock because $using:<variable> doesn't work with existing Invoke-DscResource
                 # Verified in Windows PowerShell on 20190814
                 $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Set -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = [scriptblock]::Create("`$global:DSCMachineStatus = $value;return") }
@@ -439,6 +466,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 if ($MissingLibmi) {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+                }
 
                 $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Test -Property @{TestScript = { Write-Output 'test'; return $false }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -Not -BeNullOrEmpty
@@ -449,6 +479,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 if ($MissingLibmi) {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+                }
 
                 $result = Invoke-DscResource -Name Script -ModuleName PSDscResources -Method Test -Property @{TestScript = { Write-Verbose 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } }
                 $result | Should -BeTrue -Because "Test method return true"
@@ -457,6 +490,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
             It "Test method should return true with moduleSpecification"  -Skip:(!(Test-IsInvokeDscResourceEnable)) {
                 if ($MissingLibmi) {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
                 }
 
                 $module = Get-Module PsDscResources -ListAvailable
@@ -521,6 +557,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 if ($MissingLibmi) {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
                 }
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+                }
 
                 {
                     Invoke-DscResource -Name santoheusnaasonteuhsantoheu -Method Test -Property @{TestScript = { Write-Host 'test'; return $true }; GetScript = { return @{ } }; SetScript = { return } } -ErrorAction Stop
@@ -577,6 +616,9 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
 
                 if ($MissingLibmi) {
                     Set-ItResult -Pending -Because "Libmi not available for this platform"
+                }
+                if ($IsMacOS) {
+                    Set-ItResult -Pending -Because "macOS is incompatible with libmi"
                 }
 
                 $testString = '890574209347509120348'
