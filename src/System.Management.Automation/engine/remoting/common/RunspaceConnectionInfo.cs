@@ -2050,9 +2050,9 @@ namespace System.Management.Automation.Runspaces
         {
             string filePath = string.Empty;
 #if UNIX
-            const string sshCommand = "ssh";
+            string sshCommand = "ssh";
 #else
-            const string sshCommand = "ssh.exe";
+            string sshCommand = "ssh.exe";
 #endif
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
