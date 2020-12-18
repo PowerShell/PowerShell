@@ -754,6 +754,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// This parameter allows you to specify a custom executable name to use for the SSH transport. The executable must be on the path.
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateSet("true")]
+        public override string SSHTransportName
+        {
+            get { return base.SSHTransportName; }
+
+            set { base.SSHTransportName = value; }
+        }
+
+        /// <summary>
         /// Hashtable array containing SSH connection parameters for each remote target
         ///   ComputerName  (Alias: HostName)           (required)
         ///   UserName                                  (optional)
