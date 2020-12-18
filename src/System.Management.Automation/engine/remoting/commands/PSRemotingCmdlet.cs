@@ -770,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter allows you to specify a custom executable name to use for the SSH transport. The executable must be on the path.
+        /// Gets or sets a custom executable name to use for the SSH transport. The executable must be on the path.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         public virtual string SSHTransportPath
