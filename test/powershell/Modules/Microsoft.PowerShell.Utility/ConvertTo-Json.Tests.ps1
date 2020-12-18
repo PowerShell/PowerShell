@@ -41,8 +41,25 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It "Should accept minimum depth as 0." {
-        $output = 1 | ConvertTo-Json -Depth 0
-        $output | Should -Be 1
+        $ComplexObject = [PSCustomObject] @{
+            FirstLevel1  = @{
+                Child1_1 = 0
+            }
+            FirstLevel2 = @{
+                Child2_1 = 'Child_2_1_Value'
+                Child2_2 = @{
+                     ChildOfChild2_2= @(1,2,3)
+                    }
+                }
+            }
+                
+        $ExpectedOutput = '{
+  "FirstLevel1": "System.Collections.Hashtable",
+  "FirstLevel2": "System.Collections.Hashtable"
+}'
+            
+        $output = $ComplexObject | ConvertTo-Json -Depth 0
+        $output | Should -Be $ExpectedOutput
     }
 
     It "The result string is packed in an array symbols when AsArray parameter is used." {
