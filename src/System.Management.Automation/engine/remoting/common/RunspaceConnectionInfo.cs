@@ -1893,7 +1893,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets or sets theName of the ssh executable to use
+        /// Gets or sets the name of the ssh executable to use.
         /// </summary>
         private string SshPath
         {
@@ -1978,16 +1978,16 @@ namespace System.Management.Automation.Runspaces
         /// <param name="keyFilePath">Key File Path.</param>
         /// <param name="port">Port number for connection (default 22).</param>
         /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
-        /// <param name="SshPath">Name or path to ssh executable (default 'ssh' or 'ssh.exe')'.</param>
+        /// <param name="sshPath">Name or path to ssh executable (default 'ssh' or 'ssh.exe')'.</param>
         public SSHConnectionInfo(
             string userName,
             string computerName,
             string keyFilePath,
             int port,
             string subsystem,
-            string SshPath) : this(userName, computerName, keyFilePath, port, subsystem)
+            string sshPath) : this(userName, computerName, keyFilePath, port, subsystem)
         {
-            this.SshPath = SshPath;
+            this.SshPath = sshPath;
         }
 
         #endregion
