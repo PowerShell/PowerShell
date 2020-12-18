@@ -378,7 +378,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets ANSI representation of a hyperlink.
         /// </summary>
-        public string ToHyperlink(string text, Uri link)
+        public string FormatHyperlink(string text, Uri link)
         {
             return $"\x1b]8;;{link}\x1b\\{text}\x1b]8;;\x1b\\";
         }

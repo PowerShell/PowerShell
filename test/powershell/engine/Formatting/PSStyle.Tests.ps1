@@ -134,8 +134,8 @@ Describe 'Tests for $PSStyle automatic variable' {
         $o | Should -BeExactly "`e[48;2;68;85;102m" -Because ($o | Format-Hex | Out-String)
     }
 
-    It '$PSStyle.ToHyperlink() works' {
-        $o = $PSStyle.ToHyperlink('PSBlog','https://aka.ms/psblog')
+    It '$PSStyle.FormatHyperlink() works' {
+        $o = $PSStyle.FormatHyperlink('PSBlog','https://aka.ms/psblog')
         $o | Should -BeExactly "`e]8;;https://aka.ms/psblog`e\PSBlog`e]8;;`e\" -Because ($o | Format-Hex | Out-String)
     }
 }
