@@ -758,12 +758,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateSet("true")]
-        public override string SSHTransportName
+        public override string SSHTransportPath
         {
-            get { return base.SSHTransportName; }
+            get { return base.SSHTransportPath; }
 
-            set { base.SSHTransportName = value; }
+            set { base.SSHTransportPath = value; }
         }
 
         /// <summary>

@@ -1892,6 +1892,15 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
+        /// Name of the ssh executable to use
+        /// </summary>
+        private string sshPath
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -1961,6 +1970,27 @@ namespace System.Management.Automation.Runspaces
             this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
+        
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="userName">User Name.</param>
+        /// <param name="computerName">Computer Name.</param>
+        /// <param name="keyFilePath">Key File Path.</param>
+        /// <param name="port">Port number for connection (default 22).</param>
+        /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
+        /// <param name="sshPath">Name or path to ssh executable (default 'ssh' or 'ssh.exe')</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port,
+            string subsystem,
+            string sshPath) : this(userName, computerName, keyFilePath, port, subsystem)
+        {
+            this.sshPath = sshPath;
+        }
+
         #endregion
 
         #region Overrides
@@ -2016,6 +2046,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.KeyFilePath = this.KeyFilePath;
             newCopy.Port = this.Port;
             newCopy.Subsystem = this.Subsystem;
+            newCopy.sshPath = this.sshPath;
 
             return newCopy;
         }
@@ -2049,15 +2080,18 @@ namespace System.Management.Automation.Runspaces
             out StreamReader stdErrReaderVar)
         {
             string filePath = string.Empty;
-#if UNIX
-            string sshCommand = "ssh";
-#else
-            string sshCommand = "ssh.exe";
-#endif
+            if (sshPath == null) {
+                #if UNIX
+                    sshPath = "ssh";
+                #else
+                    sshPath = "ssh.exe";
+                #endif
+            }
+
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshPath, CommandOrigin.Internal) as ApplicationInfo;
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
