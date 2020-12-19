@@ -6,8 +6,8 @@ Describe 'Tests for $PSStyle automatic variable' {
         $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
         $styleDefaults = @{
             Reset = "`e[0m"
-            BlinkOff = "`e[5m"
-            Blink = "`e[25m"
+            BlinkOff = "`e[25m"
+            Blink = "`e[5m"
             BoldOff = "`e[22m"
             Bold = "`e[1m"
             HiddenOff = "`e[28m"

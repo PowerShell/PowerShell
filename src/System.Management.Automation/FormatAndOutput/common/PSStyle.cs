@@ -308,12 +308,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets value to turn off blink.
         /// </summary>
-        public string BlinkOff { get; } = "\x1b[5m";
+        public string BlinkOff { get; } = "\x1b[25m";
 
         /// <summary>
         /// Gets value to turn on blink.
         /// </summary>
-        public string Blink { get; } = "\x1b[25m";
+        public string Blink { get; } = "\x1b[5m";
 
         /// <summary>
         /// Gets value to turn off bold.
