@@ -366,6 +366,27 @@ namespace System.Management.Automation
         public string Underline { get; } = "\x1b[4m";
 
         /// <summary>
+        /// Gets value to turn off strikethrough.
+        /// </summary>
+        public string StrikethroughOff { get; } = "\x1b[29m";
+
+        /// <summary>
+        /// Gets value to turn on strikethrough.
+        /// </summary>
+        public string Strikethrough { get; } = "\x1b[9m";
+
+        /// <summary>
+        /// Gets ANSI representation of a hyperlink.
+        /// </summary>
+        /// <param name="text">Text describing the link.</param>
+        /// <param name="link">A valid hyperlink.</param>
+        /// <returns>String representing ANSI code for the hyperlink.</returns>
+        public string FormatHyperlink(string text, Uri link)
+        {
+            return $"\x1b]8;;{link}\x1b\\{text}\x1b]8;;\x1b\\";
+        }
+
+        /// <summary>
         /// Gets the formatting rendering settings.
         /// </summary>
         public FormattingData Formatting { get; }
