@@ -8,9 +8,6 @@ using System.Text;
 
 using COM = System.Runtime.InteropServices.ComTypes;
 
-// Stops compiler from warning about unknown warnings. Prefast warning numbers are not recognized by C# compiler
-#pragma warning disable 1634, 1691
-
 namespace System.Management.Automation
 {
     /// <summary>
