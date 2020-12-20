@@ -159,12 +159,12 @@ namespace Microsoft.PowerShell.Commands
         /// Dictionary to be used by Measure-Object implementation.
         /// Keys are strings. Keys are compared with OrdinalIgnoreCase.
         /// </summary>
-        /// <typeparam name="V">Value type.</typeparam>
-        private class MeasureObjectDictionary<V> : Dictionary<string, V>
-            where V : new()
+        /// <typeparam name="TValue">Value type.</typeparam>
+        private class MeasureObjectDictionary<TValue> : Dictionary<string, TValue>
+            where TValue : new()
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="MeasureObjectDictionary{V}"/> class.
+            /// Initializes a new instance of the <see cref="MeasureObjectDictionary{TValue}"/> class.
             /// Default ctor.
             /// </summary>
             internal MeasureObjectDictionary() : base(StringComparer.OrdinalIgnoreCase)
@@ -181,12 +181,12 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>
             /// The existing value, or a newly-created value.
             /// </returns>
-            public V EnsureEntry(string key)
+            public TValue EnsureEntry(string key)
             {
-                V val;
+                TValue val;
                 if (!TryGetValue(key, out val))
                 {
-                    val = new V();
+                    val = new TValue();
                     this[key] = val;
                 }
 
