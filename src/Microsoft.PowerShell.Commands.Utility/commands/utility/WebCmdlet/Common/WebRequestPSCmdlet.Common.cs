@@ -1837,7 +1837,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string linkHeader in links)
                 {
-                    foreach (string link in linkHeader.Split(","))
+                    foreach (string link in linkHeader.Split(','))
                     {
                         Match match = Regex.Match(link, pattern);
                         if (match.Success)
