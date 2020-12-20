@@ -108,12 +108,11 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static string NormalizePath(string path)
         {
-            return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
+            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
         }
 
         /// <summary>
-        /// Get the correct casing for a path.  This method assumes it's being called by NormalizePath()
-        /// so that the path is already normalized.
+        /// Normalize and get the correct casing for a path.
         /// </summary>
         /// <param name="path">
         /// The path to retrieve.
@@ -123,6 +122,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static string GetCorrectCasedPath(string path)
         {
+            path = NormalizePath(path);
+
+            if (Platform.IsLinux)
+            {
+                return path;
+            }
+
             // Only apply to directories where there are issues with some tools if the casing
             // doesn't match the source like git
             if (Directory.Exists(path))
@@ -167,13 +173,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // Use GetFileSystemEntries to get the correct casing of this element
+                        // Use enumeration to get the correct casing of this element
                         try
                         {
-                            var entries = Directory.GetFileSystemEntries(exactPath, item);
-                            if (entries.Length > 0)
+                            var entry = Directory.EnumerateFileSystemEntries(exactPath, item).FirstOrDefault();
+                            if (entry is not null)
                             {
-                                exactPath = entries[0];
+                                exactPath = entry;
                             }
                             else
                             {
@@ -1376,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
 
         private FileSystemInfo GetFileSystemItem(string path, ref bool isContainer, bool showHidden)
         {
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
             FileInfo result = new FileInfo(path);
 
             // FileInfo.Exists is always false for a directory path, so we check the attribute for existence.
@@ -1639,7 +1645,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
 
@@ -2125,7 +2131,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             if (string.IsNullOrEmpty(newName))
             {
@@ -2271,7 +2277,7 @@ namespace Microsoft.PowerShell.Commands
                 type = "file";
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             if (Force)
             {
@@ -3616,8 +3622,8 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(destinationPath));
             }
 
-            path = NormalizePath(path);
-            destinationPath = NormalizePath(destinationPath);
+            path = GetCorrectCasedPath(path);
+            destinationPath = GetCorrectCasedPath(destinationPath);
 
             PSSession fromSession = null;
             PSSession toSession = null;
@@ -5224,7 +5230,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             } while (false);
 
-            return result;
+            return GetCorrectCasedPath(result);
         }
 
         /// <summary>
@@ -5785,8 +5791,8 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
-            path = NormalizePath(path);
-            destination = NormalizePath(destination);
+            path = GetCorrectCasedPath(path);
+            destination = GetCorrectCasedPath(destination);
 
             // Verify that the target doesn't represent a device name
             if (PathIsReservedDeviceName(destination, "MoveError"))
@@ -6170,7 +6176,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             PSObject result = null;
 
@@ -6308,7 +6314,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(propertyToSet));
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             PSObject results = new PSObject();
 
@@ -6474,7 +6480,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             if (propertiesToClear == null ||
                 propertiesToClear.Count == 0)

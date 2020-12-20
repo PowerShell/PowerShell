@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
                                           AccessControlSections sections)
         {
             ObjectSecurity sd = null;
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             if (string.IsNullOrEmpty(path))
             {
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = GetCorrectCasedPath(path);
 
             if (securityDescriptor == null)
             {
