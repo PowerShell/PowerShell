@@ -8,7 +8,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
-    internal class PlatformInvokes
+    internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
         internal class FILETIME

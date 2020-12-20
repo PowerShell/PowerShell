@@ -519,11 +519,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Native methods for dealing with COM objects.
     /// </summary>
-    internal class NewObjectNativeMethods
+    internal static class NewObjectNativeMethods
     {
-        private NewObjectNativeMethods()
-        {
-        }
 
         /// Return Type: HRESULT->LONG->int
         [DllImport(PinvokeDllNames.CLSIDFromProgIDDllName)]

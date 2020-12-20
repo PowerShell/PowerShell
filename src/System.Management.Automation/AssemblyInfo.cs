@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Management.Automation
 {
-    internal class NTVerpVars
+    internal static class NTVerpVars
     {
         internal const int PRODUCTMAJORVERSION = 10;
         internal const int PRODUCTMINORVERSION = 0;

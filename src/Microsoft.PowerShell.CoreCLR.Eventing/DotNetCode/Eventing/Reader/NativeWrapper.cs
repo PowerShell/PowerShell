@@ -22,7 +22,7 @@ using System.Text;
 
 namespace System.Diagnostics.Eventing.Reader
 {
-    internal class NativeWrapper
+    internal static class NativeWrapper
     {
         public class SystemProperties
         {

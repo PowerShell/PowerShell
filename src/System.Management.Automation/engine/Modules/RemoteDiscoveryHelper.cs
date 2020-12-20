@@ -25,7 +25,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class RemoteDiscoveryHelper
+    internal static class RemoteDiscoveryHelper
     {
         #region PSRP
 

@@ -428,14 +428,8 @@ namespace Microsoft.PowerShell.Commands
 
         #region Win32 interop helper
 
-        internal class NativeMethods
+        internal static class NativeMethods
         {
-            /// <summary>
-            /// Private constructor to prevent instantiation.
-            /// </summary>
-            private NativeMethods()
-            {
-            }
 
             #region Native DLL locations
 
