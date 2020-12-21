@@ -5095,7 +5095,7 @@ namespace Microsoft.PowerShell.Commands
                 // If it's not fully normalized, normalize it.
                 path = NormalizeRelativePathHelper(path, basePath);
 
-                basePath = NormalizePath(basePath);
+                basePath = GetCorrectCasedPath(basePath);
                 basePath = EnsureDriveIsRooted(basePath);
 
                 result = path;
@@ -5230,7 +5230,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             } while (false);
 
-            return GetCorrectCasedPath(result);
+            return result;
         }
 
         /// <summary>
