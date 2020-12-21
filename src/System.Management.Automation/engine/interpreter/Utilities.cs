@@ -1084,14 +1084,14 @@ namespace System.Management.Automation.Interpreter
             return true;
         }
 
-        internal static U[] Map<T, U>(this ICollection<T> collection, Func<T, U> select)
+        internal static TResult[] Map<TSource, TResult>(this ICollection<TSource> source, Func<TSource, TResult> selector)
         {
-            int count = collection.Count;
-            U[] result = new U[count];
+            int count = source.Count;
+            TResult[] result = new TResult[count];
             count = 0;
-            foreach (T t in collection)
+            foreach (TSource t in source)
             {
-                result[count++] = select(t);
+                result[count++] = selector(t);
             }
 
             return result;

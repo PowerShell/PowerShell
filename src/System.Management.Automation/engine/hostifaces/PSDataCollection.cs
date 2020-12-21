@@ -1809,8 +1809,8 @@ namespace System.Management.Automation
     /// Needed to provide a way to get to the non-blocking
     /// MoveNext implementation.
     /// </summary>
-    /// <typeparam name="W"></typeparam>
-    internal interface IBlockingEnumerator<out W> : IEnumerator<W>
+    /// <typeparam name="T"></typeparam>
+    internal interface IBlockingEnumerator<out T> : IEnumerator<T>
     {
         bool MoveNext(bool block);
     }
@@ -1822,14 +1822,14 @@ namespace System.Management.Automation
     /// either all the PowerShell operations are completed or the
     /// PSDataCollection is closed.
     /// </summary>
-    /// <typeparam name="W"></typeparam>
-    internal sealed class PSDataCollectionEnumerator<W> : IBlockingEnumerator<W>
+    /// <typeparam name="T"></typeparam>
+    internal sealed class PSDataCollectionEnumerator<T> : IBlockingEnumerator<T>
     {
         #region Private Data
 
-        private W _currentElement;
+        private T _currentElement;
         private int _index;
-        private readonly PSDataCollection<W> _collToEnumerate;
+        private readonly PSDataCollection<T> _collToEnumerate;
         private readonly bool _neverBlock;
 
         #endregion
@@ -1845,7 +1845,7 @@ namespace System.Management.Automation
         /// <param name="neverBlock">
         /// Controls if the enumerator is blocking by default or not.
         /// </param>
-        internal PSDataCollectionEnumerator(PSDataCollection<W> collection, bool neverBlock)
+        internal PSDataCollectionEnumerator(PSDataCollection<T> collection, bool neverBlock)
         {
             Dbg.Assert(collection != null,
                 "Collection cannot be null");
@@ -1854,7 +1854,7 @@ namespace System.Management.Automation
 
             _collToEnumerate = collection;
             _index = 0;
-            _currentElement = default(W);
+            _currentElement = default(T);
             _collToEnumerate.IsEnumerated = true;
             _neverBlock = neverBlock;
         }
@@ -1872,7 +1872,7 @@ namespace System.Management.Automation
         /// if the enumerator is positioned before the first element or after
         /// the last element; the value of the property is undefined.
         /// </remarks>
-        W IEnumerator<W>.Current
+        T IEnumerator<T>.Current
         {
             get
             {
@@ -1933,7 +1933,7 @@ namespace System.Management.Automation
                         _currentElement = _collToEnumerate[_index];
                         if (_collToEnumerate.ReleaseOnEnumeration)
                         {
-                            _collToEnumerate[_index] = default(W);
+                            _collToEnumerate[_index] = default(T);
                         }
 
                         _index++;
@@ -1975,7 +1975,7 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
-            _currentElement = default(W);
+            _currentElement = default(T);
             _index = 0;
         }
 
