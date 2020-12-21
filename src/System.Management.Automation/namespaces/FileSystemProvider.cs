@@ -5089,7 +5089,7 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                path = NormalizePath(path);
+                path = GetCorrectCasedPath(path);
                 path = EnsureDriveIsRooted(path);
 
                 // If it's not fully normalized, normalize it.
