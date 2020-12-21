@@ -171,7 +171,11 @@ jobs:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
   - powershell: |
-      $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory
+      if (-not (Test-Path "$(System.ArtifactsDirectory)\signed\globaltool"))
+      {
+        $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory -Force
+      }
+
       Move-Item -Path "$(System.ArtifactsDirectory)\signed\PowerShell.*" -Destination "$(System.ArtifactsDirectory)\signed\globaltool" -Force
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
     displayName: Move global tool packages to subfolder and capture
