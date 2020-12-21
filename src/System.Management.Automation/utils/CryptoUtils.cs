@@ -302,7 +302,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
+        public PSCryptoException()
+            : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
         /// Constructor that will be used from within CryptoUtils.
@@ -320,7 +321,8 @@ namespace System.Management.Automation.Internal
         /// Constructor with just message but no inner exception.
         /// </summary>
         /// <param name="message">Error message associated with this failure.</param>
-        public PSCryptoException(string message) : this(message, null) { }
+        public PSCryptoException(string message)
+            : this(message, null) { }
 
         /// <summary>
         /// Constructor with inner exception.
@@ -329,7 +331,8 @@ namespace System.Management.Automation.Internal
         /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
-        public PSCryptoException(string message, Exception innerException) : base(message, innerException)
+        public PSCryptoException(string message, Exception innerException)
+            : base(message, innerException)
         {
             _errorCode = unchecked((uint)-1);
         }

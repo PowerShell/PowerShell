@@ -535,7 +535,8 @@ namespace System.Management.Automation
     {
         private readonly CompiledScriptBlockData _scriptBlockData;
 
-        internal ScriptBlock(IParameterMetadataProvider ast, bool isFilter) : this(new CompiledScriptBlockData(ast, isFilter))
+        internal ScriptBlock(IParameterMetadataProvider ast, bool isFilter)
+            : this(new CompiledScriptBlockData(ast, isFilter))
         {
         }
 
