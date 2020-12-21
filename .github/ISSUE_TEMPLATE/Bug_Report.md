@@ -17,7 +17,7 @@ This repository is **ONLY** for PowerShell 7+ issues:
   
   - If you need to get clarity on what the intended behavior is or if you have questions about PowerShell in general, please instead seek help from the community via the following forums:
   
-    - The [Slack](https://join.slack.com/t/powershell/shared_invite/enQtMzA3MDcxNTM5MTkxLTBmMWIyNzhkYzVjNGRiOTgxZmFlN2E0ZmVmOWU5NDczNTY2NDFhZjFlZTM1MTZiMWIzZDcwMGYzNjQ3YTRkNWM) and [Discord](https://discordapp.com/invite/AtzXnJM) community chat forums (they seamless talk to each other).
+    - The [Slack](https://join.slack.com/t/powershell/shared_invite/enQtMzA3MDcxNTM5MTkxLTBmMWIyNzhkYzVjNGRiOTgxZmFlN2E0ZmVmOWU5NDczNTY2NDFhZjFlZTM1MTZiMWIzZDcwMGYzNjQ3YTRkNWM) and [Discord](https://discordapp.com/invite/AtzXnJM) community chat forums (they seamlessly talk to each other).
  
     - Q&A site [StackOverflow.com](https://stackoverflow.com/questions/tagged/powershell) and the [PowerShell.org](https://powershell.org/forums/) forum for searching or posting questions about PowerShell.
 
