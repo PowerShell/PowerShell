@@ -11,7 +11,7 @@ assignees: ''
 For Windows PowerShell 5.1 issues, suggestions, or feature requests please use the following link instead:
 Windows PowerShell [UserVoice](https://windowsserver.uservoice.com/forums/301869-powershell)
 
-This repository is **ONLY** for PowerShell Core 6 and PowerShell 7+ issues:
+This repository is **ONLY** for PowerShell 7+ issues:
 
   - If you're seeing behavior that deviates from the intended, documented behavior, report it here, assuming that you can reproduce it in the [latest released version](https://github.com/PowerShell/PowerShell/releases) and that it hasn't already been reported (please search the existing issues).
   
