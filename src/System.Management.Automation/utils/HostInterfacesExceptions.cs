@@ -79,8 +79,7 @@ namespace System.Management.Automation.Host
         /// Intentionally public, third-party hosts can call this
         /// </remarks>
         public
-        HostException(string message, Exception innerException, string errorId, ErrorCategory errorCategory) :
-            base(message, innerException)
+        HostException(string message, Exception innerException, string errorId, ErrorCategory errorCategory) : base(message, innerException)
         {
             SetErrorId(errorId);
             SetErrorCategory(errorCategory);
@@ -184,8 +183,7 @@ namespace System.Management.Automation.Host
         /// Intentionally public, third-party hosts can call this
         /// </remarks>
         public
-        PromptingException(string message, Exception innerException, string errorId, ErrorCategory errorCategory) :
-            base(message, innerException, errorId, errorCategory)
+        PromptingException(string message, Exception innerException, string errorId, ErrorCategory errorCategory) : base(message, innerException, errorId, errorCategory)
         {
         }
 

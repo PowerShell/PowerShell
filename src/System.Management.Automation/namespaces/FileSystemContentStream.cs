@@ -111,8 +111,7 @@ namespace Microsoft.PowerShell.Commands
         public FileSystemContentReaderWriter(
             string path, FileMode mode, FileAccess access,
             FileShare share, Encoding encoding, bool usingByteEncoding,
-            bool waitForChanges, CmdletProvider provider, bool isRawStream) :
-                this(path, null, mode, access, share, encoding, usingByteEncoding, waitForChanges, provider, isRawStream)
+            bool waitForChanges, CmdletProvider provider, bool isRawStream) : this(path, null, mode, access, share, encoding, usingByteEncoding, waitForChanges, provider, isRawStream)
         {
         }
 

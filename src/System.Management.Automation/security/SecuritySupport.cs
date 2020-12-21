@@ -704,8 +704,7 @@ namespace System.Management.Automation.Internal
                                                                   out structSize))
                         {
                             Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
-                                (Security.NativeMethods.CERT_ENHKEY_USAGE)
-                                Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
+                                (Security.NativeMethods.CERT_ENHKEY_USAGE)Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
                             IntPtr ep = ekuStruct.rgpszUsageIdentifier;
                             IntPtr ekuptr;
 

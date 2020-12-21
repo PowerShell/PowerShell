@@ -329,8 +329,7 @@ namespace System.Management.Automation.Internal
         /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
-        public PSCryptoException(string message, Exception innerException) :
-            base(message, innerException)
+        public PSCryptoException(string message, Exception innerException) : base(message, innerException)
         {
             _errorCode = unchecked((uint)-1);
         }
@@ -343,8 +342,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
-            :
-            base(info, context)
+            : base(info, context)
         {
             _errorCode = unchecked(0xFFFFFFF);
             Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");

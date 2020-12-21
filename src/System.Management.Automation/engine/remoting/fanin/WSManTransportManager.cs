@@ -2916,8 +2916,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr wsManShellOperationHandle,
             ClientRemotePowerShell shell,
             bool noInput,
-            WSManClientSessionTransportManager sessnTM) :
-            base(shell, sessnTM.CryptoHelper, sessnTM)
+            WSManClientSessionTransportManager sessnTM) : base(shell, sessnTM.CryptoHelper, sessnTM)
         {
             Dbg.Assert(wsManShellOperationHandle != IntPtr.Zero, "Shell operation handle cannot be IntPtr.Zero.");
             Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");

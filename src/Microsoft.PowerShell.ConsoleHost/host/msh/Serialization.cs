@@ -58,8 +58,7 @@ namespace Microsoft.PowerShell
     {
         internal
         WrappedSerializer(DataFormat dataFormat, string streamName, TextWriter output)
-            :
-            base(dataFormat, streamName)
+            : base(dataFormat, streamName)
         {
             Dbg.Assert(output != null, "output should have a value");
 
@@ -147,8 +146,7 @@ namespace Microsoft.PowerShell
     {
         internal
         WrappedDeserializer(DataFormat dataFormat, string streamName, TextReader input)
-            :
-            base(dataFormat, streamName)
+            : base(dataFormat, streamName)
         {
             Dbg.Assert(input != null, "input should have a value");
 

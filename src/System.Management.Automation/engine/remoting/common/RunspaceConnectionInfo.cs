@@ -829,8 +829,7 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>max server life timeout and open timeout are
         /// default in this case</remarks>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential)", MessageId = "4#")]
-        public WSManConnectionInfo(string scheme, string computerName, int port, string appName, string shellUri, PSCredential credential) :
-            this(scheme, computerName, port, appName, shellUri, credential, DefaultOpenTimeout)
+        public WSManConnectionInfo(string scheme, string computerName, int port, string appName, string shellUri, PSCredential credential) : this(scheme, computerName, port, appName, shellUri, credential, DefaultOpenTimeout)
         {
         }
 
@@ -845,8 +844,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="credential"></param>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "4#")]
         public WSManConnectionInfo(bool useSsl, string computerName, int port, string appName, string shellUri,
-            PSCredential credential) :
-            this(useSsl ? DefaultSslScheme : DefaultScheme, computerName, port, appName, shellUri, credential)
+            PSCredential credential) : this(useSsl ? DefaultSslScheme : DefaultScheme, computerName, port, appName, shellUri, credential)
         {
         }
 
@@ -860,8 +858,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="credential"></param>
         /// <param name="openTimeout"></param>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "4#")]
-        public WSManConnectionInfo(bool useSsl, string computerName, int port, string appName, string shellUri, PSCredential credential, int openTimeout) :
-            this(useSsl ? DefaultSslScheme : DefaultScheme, computerName, port, appName, shellUri, credential, openTimeout)
+        public WSManConnectionInfo(bool useSsl, string computerName, int port, string appName, string shellUri, PSCredential credential, int openTimeout) : this(useSsl ? DefaultSslScheme : DefaultScheme, computerName, port, appName, shellUri, credential, openTimeout)
         {
         }
 
@@ -1701,8 +1698,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="processId">Process Id to connect to.</param>
         public NamedPipeConnectionInfo(
-            int processId) :
-            this(processId, string.Empty, _defaultOpenTimeout)
+            int processId) : this(processId, string.Empty, _defaultOpenTimeout)
         { }
 
         /// <summary>
@@ -1712,8 +1708,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="appDomainName">Application domain name to connect to, or default AppDomain if blank.</param>
         public NamedPipeConnectionInfo(
             int processId,
-            string appDomainName) :
-            this(processId, appDomainName, _defaultOpenTimeout)
+            string appDomainName) : this(processId, appDomainName, _defaultOpenTimeout)
         { }
 
         /// <summary>
@@ -1737,8 +1732,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="customPipeName">Pipe name to connect to.</param>
         public NamedPipeConnectionInfo(
-            string customPipeName) :
-            this(customPipeName, _defaultOpenTimeout)
+            string customPipeName) : this(customPipeName, _defaultOpenTimeout)
         { }
 
         /// <summary>
@@ -2288,7 +2282,7 @@ namespace System.Management.Automation.Runspaces
 
             var argsToParse = String.Join(" ", psi.ArgumentList).Trim();
             var argsLength = argsToParse.Length;
-            for (int i=0; i<argsLength; )
+            for (int i = 0; i < argsLength; )
             {
                 var iStart = i;
 
@@ -2311,7 +2305,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                 }
 
-                argvList.Add(argsToParse.Substring(iStart, (i-iStart)));
+                argvList.Add(argsToParse.Substring(iStart, (i - iStart)));
                 while ((++i < argsLength) && argsToParse[i] == ' ') { }
             }
 

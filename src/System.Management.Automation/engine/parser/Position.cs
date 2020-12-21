@@ -646,8 +646,7 @@ namespace System.Management.Automation.Language
             int scriptLineNumber,
             int offsetInLine,
             string line,
-            string fullScript) :
-            this(scriptName, scriptLineNumber, offsetInLine, line)
+            string fullScript) : this(scriptName, scriptLineNumber, offsetInLine, line)
         {
             _fullScript = fullScript;
         }

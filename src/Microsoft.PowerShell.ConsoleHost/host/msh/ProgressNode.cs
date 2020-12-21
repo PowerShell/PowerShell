@@ -47,8 +47,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal
         ProgressNode(Int64 sourceId, ProgressRecord record)
-            :
-            base(record.ActivityId, record.Activity, record.StatusDescription)
+            : base(record.ActivityId, record.Activity, record.StatusDescription)
         {
             Dbg.Assert(record.RecordType == ProgressRecordType.Processing, "should only create node for Processing records");
 

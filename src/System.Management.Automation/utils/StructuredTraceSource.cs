@@ -543,8 +543,7 @@ namespace System.Management.Automation
 
                     // Create the method tracer object
                     return
-                        (IDisposable)
-                            new ScopeTracer(
+                        (IDisposable)new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Method,
                                 methodOutputFormatter,
@@ -592,8 +591,7 @@ namespace System.Management.Automation
 
                     // Create the scope tracer object
                     return
-                        (IDisposable)
-                            new ScopeTracer(
+                        (IDisposable)new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Events,
                                 eventHandlerOutputFormatter,
@@ -644,8 +642,7 @@ namespace System.Management.Automation
 
                     // Create the scope tracer object
                     return
-                        (IDisposable)
-                            new ScopeTracer(
+                        (IDisposable)new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Events,
                                 eventHandlerOutputFormatter,
@@ -708,8 +705,7 @@ namespace System.Management.Automation
                 try
                 {
                     return
-                        (IDisposable)
-                            new ScopeTracer(
+                        (IDisposable)new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Lock,
                                 lockEnterFormatter,

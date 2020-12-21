@@ -31,7 +31,7 @@ namespace mvc.Controllers
                     string contentType = Request.Query[key];
                     Response.OnStarting(state =>
                     {
-                         var httpContext = (HttpContext) state;
+                         var httpContext = (HttpContext)state;
                          httpContext.Response.ContentType = contentType;
                          return Task.FromResult(0);
                     }, HttpContext);

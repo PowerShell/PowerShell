@@ -1087,8 +1087,7 @@ namespace System.Management.Automation.Interpreter
                     }
 
                     factory =
-                        (Func<CallSiteBinder, Instruction>)
-                        instructionType.GetMethod("Factory").CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
+                        (Func<CallSiteBinder, Instruction>)instructionType.GetMethod("Factory").CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
 
                     s_factories[delegateType] = factory;
                 }

@@ -40,8 +40,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="errorRecord"></param>
         /// <param name="originInfo"></param>
         /// <param name="replaceParentContainsErrorRecordException"></param>
-        private RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo, Exception replaceParentContainsErrorRecordException) :
-            base(errorRecord, replaceParentContainsErrorRecordException)
+        private RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo, Exception replaceParentContainsErrorRecordException) : base(errorRecord, replaceParentContainsErrorRecordException)
         {
             if (errorRecord != null)
             {
@@ -123,8 +122,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="progressRecord">The progress record that is wrapped.</param>
         /// <param name="originInfo">Origin information.</param>
-        public RemotingProgressRecord(ProgressRecord progressRecord, OriginInfo originInfo) :
-            base(Validate(progressRecord).ActivityId, Validate(progressRecord).Activity, Validate(progressRecord).StatusDescription)
+        public RemotingProgressRecord(ProgressRecord progressRecord, OriginInfo originInfo) : base(Validate(progressRecord).ActivityId, Validate(progressRecord).Activity, Validate(progressRecord).StatusDescription)
         {
             _originInfo = originInfo;
             if (progressRecord != null)

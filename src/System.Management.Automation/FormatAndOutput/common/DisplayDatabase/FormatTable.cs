@@ -70,8 +70,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="loadErrors">
         /// The errors that occured
         /// </param>
-        internal FormatTableLoadException(ConcurrentBag<string> loadErrors) :
-            base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
+        internal FormatTableLoadException(ConcurrentBag<string> loadErrors) : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
         {
             _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();
