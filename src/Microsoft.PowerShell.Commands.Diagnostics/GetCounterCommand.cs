@@ -16,9 +16,9 @@ using Microsoft.PowerShell.Commands.GetCounter;
 
 namespace Microsoft.PowerShell.Commands
 {
-    ///
+    /// <summary>
     /// Class that implements the Get-Counter cmdlet.
-    ///
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109647")]
     public sealed class GetCounterCommand : PSCmdlet
     {
