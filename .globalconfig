@@ -1262,10 +1262,10 @@ dotnet_diagnostic.SA1213.severity = warning
 dotnet_diagnostic.SA1214.severity = none
 
 # SA1216: Using static directives should be placed at the correct location
-dotnet_diagnostic.SA1216.severity = none
+dotnet_diagnostic.SA1216.severity = warning
 
 # SA1217: Using static directives should be ordered alphabetically
-dotnet_diagnostic.SA1217.severity = none
+dotnet_diagnostic.SA1217.severity = warning
 
 # SA1300: Element should begin with upper-case letter
 dotnet_diagnostic.SA1300.severity = none
