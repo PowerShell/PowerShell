@@ -521,7 +521,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class NewObjectNativeMethods
     {
-
         /// Return Type: HRESULT->LONG->int
         [DllImport(PinvokeDllNames.CLSIDFromProgIDDllName)]
         internal static extern int CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string lpszProgID, out Guid pclsid);

@@ -430,7 +430,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal static class NativeMethods
         {
-
             #region Native DLL locations
 
             private const string SetDynamicTimeZoneApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
