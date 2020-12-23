@@ -84,7 +84,7 @@ namespace mvc.Controllers
             // Content-Type must be applied right before it is sent to the client or MVC will overwrite.
             Response.OnStarting(state =>
                 {
-                     var httpContext = (HttpContext) state;
+                     var httpContext = (HttpContext)state;
                      httpContext.Response.ContentType = contentType;
                      return Task.FromResult(0);
                 }, HttpContext);

@@ -161,8 +161,12 @@ namespace System.Management.Automation
         /// <param name="pipeline">Pipeline to clone from.</param>
         /// <remarks>This constructor is private because this will
         /// only be called from the copy method</remarks>
-        private RemotePipeline(RemotePipeline pipeline) :
-            this((RemoteRunspace)pipeline.Runspace, null, false, pipeline.IsNested)
+        private RemotePipeline(RemotePipeline pipeline)
+            : this(
+                (RemoteRunspace)pipeline.Runspace,
+                command: null,
+                addToHistory: false,
+                pipeline.IsNested)
         {
             _isSteppable = pipeline._isSteppable;
 

@@ -1086,9 +1086,9 @@ namespace System.Management.Automation.Interpreter
                         return new DynamicInstructionN(delegateType, CallSite.Create(delegateType, binder));
                     }
 
-                    factory =
-                        (Func<CallSiteBinder, Instruction>)
-                        instructionType.GetMethod("Factory").CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
+                    factory = (Func<CallSiteBinder, Instruction>)instructionType
+                        .GetMethod("Factory")
+                        .CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
 
                     s_factories[delegateType] = factory;
                 }
