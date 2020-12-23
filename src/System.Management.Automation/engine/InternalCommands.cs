@@ -2655,7 +2655,7 @@ namespace Microsoft.PowerShell.Commands
                         return PSVersionInfo.PSVersion;
                     }
 
-                    if (versionStr.Contains("."))
+                    if (versionStr.Contains('.'))
                     {
                         // If the string contains a '.', let the Version constructor handle the conversion.
                         return inputData;

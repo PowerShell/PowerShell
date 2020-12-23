@@ -6871,27 +6871,27 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static ListType RehydrateList<ListType, ItemType>(PSObject pso, string propertyName, RehydrationFlags flags)
-            where ListType : IList, new()
+        private static TList RehydrateList<TList, TItem>(PSObject pso, string propertyName, RehydrationFlags flags)
+            where TList : IList, new()
         {
             ArrayList deserializedList = GetPropertyValue<ArrayList>(pso, propertyName, flags);
             if (deserializedList == null)
             {
                 if ((flags & RehydrationFlags.NullValueMeansEmptyList) == RehydrationFlags.NullValueMeansEmptyList)
                 {
-                    return new ListType();
+                    return new TList();
                 }
                 else
                 {
-                    return default(ListType);
+                    return default(TList);
                 }
             }
             else
             {
-                ListType newList = new ListType();
+                TList newList = new TList();
                 foreach (object deserializedItem in deserializedList)
                 {
-                    ItemType item = (ItemType)LanguagePrimitives.ConvertTo(deserializedItem, typeof(ItemType), CultureInfo.InvariantCulture);
+                    TItem item = (TItem)LanguagePrimitives.ConvertTo(deserializedItem, typeof(TItem), CultureInfo.InvariantCulture);
                     newList.Add(item);
                 }
 

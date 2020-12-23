@@ -1793,7 +1793,7 @@ $result
             string localUserName = null;
 
             // The format of local admin username should be "ComputerName\AdminName"
-            if (psLocalCredential.UserName.Contains("\\"))
+            if (psLocalCredential.UserName.Contains('\\'))
             {
                 localUserName = psLocalCredential.UserName;
             }

@@ -1022,7 +1022,7 @@ dotnet_diagnostic.SA1001.severity = none
 dotnet_diagnostic.SA1002.severity = warning
 
 # SA1003: Symbols should be spaced correctly
-dotnet_diagnostic.SA1003.severity = none
+dotnet_diagnostic.SA1003.severity = warning
 
 # SA1004: Documentation lines should begin with single space
 dotnet_diagnostic.SA1004.severity = none
@@ -1256,16 +1256,16 @@ dotnet_diagnostic.SA1211.severity = none
 dotnet_diagnostic.SA1212.severity = warning
 
 # SA1213: Event accessors should follow order
-dotnet_diagnostic.SA1213.severity = none
+dotnet_diagnostic.SA1213.severity = warning
 
 # SA1214: Readonly fields should appear before non-readonly fields
 dotnet_diagnostic.SA1214.severity = none
 
 # SA1216: Using static directives should be placed at the correct location
-dotnet_diagnostic.SA1216.severity = none
+dotnet_diagnostic.SA1216.severity = warning
 
 # SA1217: Using static directives should be ordered alphabetically
-dotnet_diagnostic.SA1217.severity = none
+dotnet_diagnostic.SA1217.severity = warning
 
 # SA1300: Element should begin with upper-case letter
 dotnet_diagnostic.SA1300.severity = none
@@ -1307,7 +1307,7 @@ dotnet_diagnostic.SA1312.severity = none
 dotnet_diagnostic.SA1313.severity = none
 
 # SA1314: Type parameter names should begin with T
-dotnet_diagnostic.SA1314.severity = none
+dotnet_diagnostic.SA1314.severity = warning
 
 # SA1316: Tuple element names should use correct casing
 dotnet_diagnostic.SA1316.severity = none

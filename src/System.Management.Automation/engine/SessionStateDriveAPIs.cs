@@ -1204,8 +1204,7 @@ namespace System.Management.Automation
             else
             {
                 PSInvalidOperationException e =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         SessionStateStrings.DriveRemovalPreventedByProvider,
                         drive.Name,
                         drive.Provider);

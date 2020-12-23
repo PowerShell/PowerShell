@@ -6,8 +6,8 @@ Describe 'Tests for $PSStyle automatic variable' {
         $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
         $styleDefaults = @{
             Reset = "`e[0m"
-            BlinkOff = "`e[5m"
-            Blink = "`e[25m"
+            BlinkOff = "`e[25m"
+            Blink = "`e[5m"
             BoldOff = "`e[22m"
             Bold = "`e[1m"
             HiddenOff = "`e[28m"
@@ -18,6 +18,8 @@ Describe 'Tests for $PSStyle automatic variable' {
             Italic = "`e[3m"
             UnderlineOff = "`e[24m"
             Underline = "`e[4m"
+            StrikethroughOff = "`e[29m"
+            Strikethrough = "`e[9m"
         }
 
         $formattingDefaults = @{
@@ -110,5 +112,30 @@ Describe 'Tests for $PSStyle automatic variable' {
         param($key, $value)
 
         $PSStyle.Background.$key | Should -BeExactly $value
+    }
+
+    It '$PSStyle.Foreground.FromRGB(r, g, b) works' {
+        $o = $PSStyle.Foreground.FromRGB(11,22,33)
+        $o | Should -BeExactly "`e[38;2;11;22;33m" -Because ($o | Format-Hex | Out-String)
+    }
+
+    It '$PSStyle.Foreground.FromRGB(rgb) works' {
+        $o = $PSStyle.Foreground.FromRGB(0x223344)
+        $o | Should -BeExactly "`e[38;2;34;51;68m" -Because ($o | Format-Hex | Out-String)
+    }
+
+    It '$PSStyle.Background.FromRGB(r, g, b) works' {
+        $o = $PSStyle.Background.FromRGB(33,44,55)
+        $o | Should -BeExactly "`e[48;2;33;44;55m" -Because ($o | Format-Hex | Out-String)
+    }
+
+    It '$PSStyle.Background.FromRGB(rgb) works' {
+        $o = $PSStyle.Background.FromRGB(0x445566)
+        $o | Should -BeExactly "`e[48;2;68;85;102m" -Because ($o | Format-Hex | Out-String)
+    }
+
+    It '$PSStyle.FormatHyperlink() works' {
+        $o = $PSStyle.FormatHyperlink('PSBlog','https://aka.ms/psblog')
+        $o | Should -BeExactly "`e]8;;https://aka.ms/psblog`e\PSBlog`e]8;;`e\" -Because ($o | Format-Hex | Out-String)
     }
 }
