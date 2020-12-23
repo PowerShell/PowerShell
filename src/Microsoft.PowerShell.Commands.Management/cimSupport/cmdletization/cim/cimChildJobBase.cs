@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return false;
             }
 
-            WsManErrorCode wsManErrorCode = (WsManErrorCode)(UInt32)(errorCodeProperty.Value);
+            WsManErrorCode wsManErrorCode = (WsManErrorCode)(uint)(errorCodeProperty.Value);
             switch (wsManErrorCode) // error codes that should result in sleep-and-retry are based on an email from Ryan
             {
                 case WsManErrorCode.ERROR_WSMAN_QUOTA_MAX_SHELLS:
@@ -423,11 +423,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                   (_jobContext.WarningActionPreference == ActionPreference.Ignore)
                 ) && (!_jobContext.IsRunningInBackground))
             {
-                operationOptions.DisableChannel((UInt32)MessageChannel.Warning);
+                operationOptions.DisableChannel((uint)MessageChannel.Warning);
             }
             else
             {
-                operationOptions.EnableChannel((UInt32)MessageChannel.Warning);
+                operationOptions.EnableChannel((uint)MessageChannel.Warning);
             }
 
             if ((
@@ -435,11 +435,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                   (_jobContext.VerboseActionPreference == ActionPreference.Ignore)
                 ) && (!_jobContext.IsRunningInBackground))
             {
-                operationOptions.DisableChannel((UInt32)MessageChannel.Verbose);
+                operationOptions.DisableChannel((uint)MessageChannel.Verbose);
             }
             else
             {
-                operationOptions.EnableChannel((UInt32)MessageChannel.Verbose);
+                operationOptions.EnableChannel((uint)MessageChannel.Verbose);
             }
 
             if ((
@@ -447,11 +447,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                   (_jobContext.DebugActionPreference == ActionPreference.Ignore)
                 ) && (!_jobContext.IsRunningInBackground))
             {
-                operationOptions.DisableChannel((UInt32)MessageChannel.Debug);
+                operationOptions.DisableChannel((uint)MessageChannel.Debug);
             }
             else
             {
-                operationOptions.EnableChannel((UInt32)MessageChannel.Debug);
+                operationOptions.EnableChannel((uint)MessageChannel.Debug);
             }
 
             switch (this.JobContext.ShouldProcessOptimization)
@@ -763,7 +763,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Handling extended semantics callbacks
 
-        private void WriteProgressCallback(string activity, string currentOperation, string statusDescription, UInt32 percentageCompleted, UInt32 secondsRemaining)
+        private void WriteProgressCallback(string activity, string currentOperation, string statusDescription, uint percentageCompleted, uint secondsRemaining)
         {
             if (string.IsNullOrEmpty(activity))
             {
@@ -775,28 +775,28 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 statusDescription = this.StatusMessage;
             }
 
-            Int32 signedSecondsRemaining;
-            if (secondsRemaining == UInt32.MaxValue)
+            int signedSecondsRemaining;
+            if (secondsRemaining == uint.MaxValue)
             {
                 signedSecondsRemaining = -1;
             }
-            else if (secondsRemaining <= Int32.MaxValue)
+            else if (secondsRemaining <= int.MaxValue)
             {
-                signedSecondsRemaining = (Int32)secondsRemaining;
+                signedSecondsRemaining = (int)secondsRemaining;
             }
             else
             {
-                signedSecondsRemaining = Int32.MaxValue;
+                signedSecondsRemaining = int.MaxValue;
             }
 
-            Int32 signedPercentageComplete;
-            if (percentageCompleted == UInt32.MaxValue)
+            int signedPercentageComplete;
+            if (percentageCompleted == uint.MaxValue)
             {
                 signedPercentageComplete = -1;
             }
             else if (percentageCompleted <= 100)
             {
-                signedPercentageComplete = (Int32)percentageCompleted;
+                signedPercentageComplete = (int)percentageCompleted;
             }
             else
             {
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Debug = 2,
         }
 
-        private void WriteMessageCallback(UInt32 channel, string message)
+        private void WriteMessageCallback(uint channel, string message)
         {
             this.ExceptionSafeWrapper(
                     delegate

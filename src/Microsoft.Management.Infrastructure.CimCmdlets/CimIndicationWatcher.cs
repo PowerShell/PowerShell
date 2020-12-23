@@ -153,7 +153,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string theNamespace,
             string queryDialect,
             string queryExpression,
-            UInt32 operationTimeout)
+            uint operationTimeout)
         {
             ValidationHelper.ValidateNoNullorWhiteSpaceArgument(queryExpression, queryExpressionParameterName);
             computerName = ConstValue.GetComputerName(computerName);
@@ -173,7 +173,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string theNamespace,
             string queryDialect,
             string queryExpression,
-            UInt32 operationTimeout)
+            uint operationTimeout)
         {
             ValidationHelper.ValidateNoNullorWhiteSpaceArgument(queryExpression, queryExpressionParameterName);
             ValidationHelper.ValidateNoNullArgument(cimSession, cimSessionParameterName);
@@ -192,7 +192,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string theNameSpace,
             string theQueryDialect,
             string theQueryExpression,
-            UInt32 theOperationTimeout)
+            uint theOperationTimeout)
         {
             enableRaisingEvents = false;
             status = Status.Default;
@@ -378,7 +378,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string nameSpace;
         private string queryDialect;
         private string queryExpression;
-        private UInt32 operationTimeout;
+        private uint operationTimeout;
         #endregion
         #endregion
     }

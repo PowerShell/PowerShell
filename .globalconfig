@@ -876,7 +876,7 @@ dotnet_diagnostic.IDE0047.severity = silent
 dotnet_diagnostic.IDE0048.severity = suggestion
 
 # IDE0049: PreferBuiltInOrFrameworkType
-dotnet_diagnostic.IDE0049.severity = silent
+dotnet_diagnostic.IDE0049.severity = warning
 
 # IDE0050: ConvertAnonymousTypeToTuple
 dotnet_diagnostic.IDE0050.severity = silent

@@ -17,15 +17,15 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         internal PerformanceCounterSample(string path,
                                string instanceName,
                                double cookedValue,
-                               UInt64 rawValue,
-                               UInt64 secondValue,
+                               ulong rawValue,
+                               ulong secondValue,
                                uint multiCount,
                                PerformanceCounterType counterType,
-                               UInt32 defaultScale,
-                               UInt64 timeBase,
+                               uint defaultScale,
+                               ulong timeBase,
                                DateTime timeStamp,
-                               UInt64 timeStamp100nSec,
-                               UInt32 status)
+                               ulong timeStamp100nSec,
+                               uint status)
         {
             Path = path;
             InstanceName = instanceName;
@@ -47,9 +47,9 @@ namespace Microsoft.PowerShell.Commands.GetCounter
 
         public double CookedValue { get; set; }
 
-        public UInt64 RawValue { get; set; }
+        public ulong RawValue { get; set; }
 
-        public UInt64 SecondValue { get; set; }
+        public ulong SecondValue { get; set; }
 
         public uint MultipleCount { get; set; }
 
@@ -57,13 +57,13 @@ namespace Microsoft.PowerShell.Commands.GetCounter
 
         public DateTime Timestamp { get; set; } = DateTime.MinValue;
 
-        public UInt64 Timestamp100NSec { get; set; }
+        public ulong Timestamp100NSec { get; set; }
 
-        public UInt32 Status { get; set; }
+        public uint Status { get; set; }
 
-        public UInt32 DefaultScale { get; set; }
+        public uint DefaultScale { get; set; }
 
-        public UInt64 TimeBase { get; set; }
+        public ulong TimeBase { get; set; }
     }
 
     public class PerformanceCounterSampleSet

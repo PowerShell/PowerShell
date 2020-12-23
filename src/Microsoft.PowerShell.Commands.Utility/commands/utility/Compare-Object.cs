@@ -32,8 +32,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
-        public int SyncWindow { get; set; } = Int32.MaxValue;
+        [ValidateRange(0, int.MaxValue)]
+        public int SyncWindow { get; set; } = int.MaxValue;
 
         /// <summary>
         /// </summary>

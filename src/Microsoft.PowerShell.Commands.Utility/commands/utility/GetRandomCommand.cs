@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// <!-- author: LukaszA -->
     [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetRandomCommand.RandomNumberParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097016", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(Int32), typeof(Int64), typeof(double))]
+    [OutputType(typeof(int), typeof(long), typeof(double))]
     public class GetRandomCommand : PSCmdlet
     {
         #region Parameter set handling
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool IsInt64(object o)
         {
-            if (o == null || o is Int64)
+            if (o == null || o is long)
             {
                 return true;
             }
@@ -348,11 +348,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
         /// <returns></returns>
-        private Int64 GetRandomInt64(Int64 minValue, Int64 maxValue)
+        private long GetRandomInt64(long minValue, long maxValue)
         {
             // Randomly generate eight bytes and convert the byte array to UInt64
-            var buffer = new byte[sizeof(UInt64)];
-            UInt64 randomUint64;
+            var buffer = new byte[sizeof(ulong)];
+            ulong randomUint64;
 
             BigInteger bigIntegerDiff = (BigInteger)maxValue - (BigInteger)minValue;
 
@@ -364,17 +364,17 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // The difference of two Int64 numbers would not exceed UInt64.MaxValue, so it can be represented by a UInt64 number.
-            UInt64 uint64Diff = (UInt64)bigIntegerDiff;
+            ulong uint64Diff = (ulong)bigIntegerDiff;
 
             // Calculate the number of bits to represent the diff in type UInt64
             int bitsToRepresentDiff = 0;
-            UInt64 diffCopy = uint64Diff;
+            ulong diffCopy = uint64Diff;
             for (; diffCopy != 0; bitsToRepresentDiff++)
             {
                 diffCopy >>= 1;
             }
             // Get the mask for the number of bits
-            UInt64 mask = (0xffffffffffffffff >> (64 - bitsToRepresentDiff));
+            ulong mask = (0xffffffffffffffff >> (64 - bitsToRepresentDiff));
             do
             {
                 // Randomly fill the buffer
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
             } while (uint64Diff <= randomUint64);
 
             double randomNumber = minValue * 1.0 + randomUint64 * 1.0;
-            return (Int64)randomNumber;
+            return (long)randomNumber;
         }
 
         /// <summary>
@@ -425,8 +425,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if ((IsInt64(maxOperand) || IsInt(maxOperand)) && (IsInt64(minOperand) || IsInt(minOperand)))
                 {
-                    Int64 minValue = minOperand != null ? ((minOperand is Int64) ? (Int64)minOperand : (int)minOperand) : 0;
-                    Int64 maxValue = maxOperand != null ? ((maxOperand is Int64) ? (Int64)maxOperand : (int)maxOperand) : Int64.MaxValue;
+                    long minValue = minOperand != null ? ((minOperand is long) ? (long)minOperand : (int)minOperand) : 0;
+                    long maxValue = maxOperand != null ? ((maxOperand is long) ? (long)maxOperand : (int)maxOperand) : long.MaxValue;
 
                     if (minValue >= maxValue)
                     {
@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
 
                     for (int i = 0; i < Count; i++)
                     {
-                        Int64 randomNumber = GetRandomInt64(minValue, maxValue);
+                        long randomNumber = GetRandomInt64(minValue, maxValue);
                         Debug.Assert(minValue <= randomNumber, "lower bound <= random number");
                         Debug.Assert(randomNumber < maxValue, "random number < upper bound");
 
@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // According to the CLR source:
             //     "Including this division at the end gives us significantly improved random number distribution."
-            return Next() * (1.0 / Int32.MaxValue);
+            return Next() * (1.0 / int.MaxValue);
         }
 
         /// <summary>
@@ -626,11 +626,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 randomNumber = InternalSample();
             }
-            while (randomNumber == Int32.MaxValue);
+            while (randomNumber == int.MaxValue);
 
             if (randomNumber < 0)
             {
-                randomNumber += Int32.MaxValue;
+                randomNumber += int.MaxValue;
             }
 
             return randomNumber;
@@ -673,7 +673,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                double largeSample = InternalSampleLargeRange() * (1.0 / (2 * ((uint)Int32.MaxValue)));
+                double largeSample = InternalSampleLargeRange() * (1.0 / (2 * ((uint)int.MaxValue)));
                 randomNumber = (int)((long)(largeSample * range) + minValue);
             }
 
@@ -724,9 +724,9 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 randomNumber = InternalSample();
-            } while (randomNumber == Int32.MaxValue);
+            } while (randomNumber == int.MaxValue);
 
-            randomNumber += Int32.MaxValue;
+            randomNumber += int.MaxValue;
             return randomNumber;
         }
     }

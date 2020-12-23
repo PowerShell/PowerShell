@@ -114,14 +114,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
     [StructLayout(LayoutKind.Sequential, Pack = 2, Size = 16)]
     internal struct SYSTEMTIME
     {
-        public UInt16 year;
-        public UInt16 month;
-        public UInt16 dayOfWeek;
-        public UInt16 day;
-        public UInt16 hour;
-        public UInt16 minute;
-        public UInt16 second;
-        public UInt16 milliseconds;
+        public ushort year;
+        public ushort month;
+        public ushort dayOfWeek;
+        public ushort day;
+        public ushort hour;
+        public ushort minute;
+        public ushort second;
+        public ushort milliseconds;
     }
 
     internal static class PdhFormat
@@ -207,7 +207,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             [MarshalAs(UnmanagedType.LPWStr)]
             public string ParentInstance;
 
-            public UInt32 InstanceIndex;
+            public uint InstanceIndex;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             public string CounterName;
@@ -218,7 +218,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             public uint CStatus;
 
-            public Int64 largeValue;
+            public long largeValue;
 
             // [FieldOffset (4), MarshalAs(UnmanagedType.LPStr)]
             // public string AnsiStringValue;
@@ -249,17 +249,17 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             public uint CStatus;
             public System.Runtime.InteropServices.ComTypes.FILETIME TimeStamp;
-            public Int64 FirstValue;
-            public Int64 SecondValue;
+            public long FirstValue;
+            public long SecondValue;
             public uint MultiCount;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct PDH_TIME_INFO
         {
-            public Int64 StartTime;
-            public Int64 EndTime;
-            public UInt32 SampleCount;
+            public long StartTime;
+            public long EndTime;
+            public uint SampleCount;
         }
 
         //
@@ -270,12 +270,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_INFO
         {
-            [FieldOffset(0)] public UInt32 dwLength;
-            [FieldOffset(4)] public UInt32 dwType;
-            [FieldOffset(8)] public UInt32 CVersion;
-            [FieldOffset(12)] public UInt32 CStatus;
-            [FieldOffset(16)] public UInt32 lScale;
-            [FieldOffset(20)] public UInt32 lDefaultScale;
+            [FieldOffset(0)] public uint dwLength;
+            [FieldOffset(4)] public uint dwType;
+            [FieldOffset(8)] public uint CVersion;
+            [FieldOffset(12)] public uint CStatus;
+            [FieldOffset(16)] public uint lScale;
+            [FieldOffset(20)] public uint lDefaultScale;
             [FieldOffset(24)] public IntPtr dwUserData;
             [FieldOffset(32)] public IntPtr dwQueryUserData;
             [FieldOffset(40)] public string szFullPath;
@@ -284,7 +284,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             [FieldOffset(56)] public string szObjectName;
             [FieldOffset(64)] public string szInstanceName;
             [FieldOffset(72)] public string szParentInstance;
-            [FieldOffset(80)] public UInt32 dwInstanceIndex;
+            [FieldOffset(80)] public uint dwInstanceIndex;
             [FieldOffset(88)] public string szCounterName;
 
             [FieldOffset(96)] public string szExplainText;
@@ -302,7 +302,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         // not on XP
         [DllImport("pdh.dll")]
-        private static extern uint PdhCollectQueryDataWithTime(PdhSafeQueryHandle queryHandle, ref Int64 pllTimeStamp);
+        private static extern uint PdhCollectQueryDataWithTime(PdhSafeQueryHandle queryHandle, ref long pllTimeStamp);
 
         [DllImport("pdh.dll")]
         private static extern uint PdhCollectQueryData(PdhSafeQueryHandle queryHandle);
@@ -350,7 +350,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private static extern uint PdhMakeCounterPath(ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements,
                                                        IntPtr szFullPathBuffer,
                                                        ref IntPtr pcchBufferSize,
-                                                       UInt32 dwFlags);
+                                                       uint dwFlags);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhParseCounterPath(string szFullPathBuffer,
@@ -376,7 +376,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private static extern uint PdhGetCounterInfo(IntPtr hCounter, [MarshalAs(UnmanagedType.U1)] bool bRetrieveExplainText, ref IntPtr pdwBufferSize, IntPtr lpBuffer);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhGetCounterTimeBase(IntPtr hCounter, out UInt64 pTimeBase);
+        private static extern uint PdhGetCounterTimeBase(IntPtr hCounter, out ulong pTimeBase);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhGetDataSourceTimeRangeH(PdhSafeDataSourceHandle hDataSource, ref IntPtr pdwNumEntries, ref PDH_TIME_INFO pInfo, ref IntPtr pdwBufferSize);
@@ -385,7 +385,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private static extern uint PdhSetQueryTimeRange(PdhSafeQueryHandle hQuery, ref PDH_TIME_INFO pInfo);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
-        private static extern uint PdhLookupPerfNameByIndex(string szMachineName, UInt32 dwNameIndex, IntPtr szNameBuffer, ref int pcchNameBufferSize);
+        private static extern uint PdhLookupPerfNameByIndex(string szMachineName, uint dwNameIndex, IntPtr szNameBuffer, ref int pcchNameBufferSize);
 
         private PdhSafeDataSourceHandle _hDataSource = null;
 
@@ -429,14 +429,14 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// <param name="strNative"></param>
         /// <param name="strSize"></param>
         /// <param name="strColl"></param>
-        private static void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)
+        private static void ReadPdhMultiString(ref IntPtr strNative, int strSize, ref StringCollection strColl)
         {
             Debug.Assert(strSize >= 2);
             int offset = 0;
             string allSubstringsWithNulls = string.Empty;
             while (offset <= ((strSize * sizeof(char)) - 4))
             {
-                Int32 next4 = Marshal.ReadInt32(strNative, offset);
+                int next4 = Marshal.ReadInt32(strNative, offset);
                 if (next4 == 0)
                 {
                     break;
@@ -452,7 +452,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             strColl.AddRange(allSubstringsWithNulls.Split('\0'));
         }
 
-        private static uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
+        private static uint GetCounterInfoPlus(IntPtr hCounter, out uint counterType, out uint defaultScale, out ulong timeBase)
         {
             counterType = 0;
             defaultScale = 0;
@@ -467,7 +467,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 bufSize = pBufferSize.ToInt32();
+            int bufSize = pBufferSize.ToInt32();
             IntPtr bufCounterInfo = Marshal.AllocHGlobal(bufSize);
 
             try
@@ -561,11 +561,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint OpenLogForWriting(string logName, PdhLogFileType logFileType, bool bOverwrite, UInt32 maxSize, bool bCircular, string caption)
+        public uint OpenLogForWriting(string logName, PdhLogFileType logFileType, bool bOverwrite, uint maxSize, bool bCircular, string caption)
         {
             Debug.Assert(_hQuery != null);
 
-            UInt32 accessFlags = PdhLogAccess.PDH_LOG_WRITE_ACCESS;
+            uint accessFlags = PdhLogAccess.PDH_LOG_WRITE_ACCESS;
             accessFlags |= bCircular ? PdhLogOpenOption.PDH_LOG_OPT_CIRCULAR : 0;
             accessFlags |= bOverwrite ? PdhLogOpenMode.PDH_LOG_CREATE_ALWAYS : PdhLogOpenMode.PDH_LOG_CREATE_NEW;
 
@@ -599,7 +599,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 endTime = new DateTime(endTime.Ticks, DateTimeKind.Utc);
             }
 
-            pTimeInfo.EndTime = (endTime == DateTime.MaxValue) ? Int64.MaxValue : endTime.ToFileTimeUtc();
+            pTimeInfo.EndTime = (endTime == DateTime.MaxValue) ? long.MaxValue : endTime.ToFileTimeUtc();
 
             pTimeInfo.SampleCount = 0;
 
@@ -615,7 +615,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 cChars = MachineListTcharSizePtr.ToInt32(); // should be ok on 64 bit
+            int cChars = MachineListTcharSizePtr.ToInt32(); // should be ok on 64 bit
             IntPtr strMachineList = Marshal.AllocHGlobal(cChars * sizeof(char));
 
             try
@@ -643,7 +643,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 cChars = pBufferSize.ToInt32();
+            int cChars = pBufferSize.ToInt32();
             IntPtr strObjectList = Marshal.AllocHGlobal(cChars * sizeof(char));
 
             try
@@ -687,7 +687,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 cChars = pCounterBufferSize.ToInt32();
+            int cChars = pCounterBufferSize.ToInt32();
             IntPtr strCountersList = (cChars > 0) ?
                 Marshal.AllocHGlobal((cChars) * sizeof(char)) : IntPtr.Zero;
             // re-set count to 0 if it is lte 2
@@ -798,7 +798,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return false;
             }
 
-            Int32 cChars = pPathBufferSize.ToInt32();
+            int cChars = pPathBufferSize.ToInt32();
             IntPtr strPath = Marshal.AllocHGlobal(cChars * sizeof(char));
 
             try
@@ -842,7 +842,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 cChars = pPathBufferSize.ToInt32();
+            int cChars = pPathBufferSize.ToInt32();
             IntPtr strPath = Marshal.AllocHGlobal(cChars * sizeof(char));
 
             try
@@ -951,8 +951,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             string[] regCounters = (string[])rootKey.GetValue("Counter");
 
             // NOTE: 1-based enumeration because the name strings follow index strings in the array
-            Int32 counterIndex = -1;
-            Int32 objIndex = -1;
+            int counterIndex = -1;
+            int objIndex = -1;
             for (int enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
@@ -1146,7 +1146,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             nextSet = null;
 
-            Int64 batchTimeStampFT = 0;
+            long batchTimeStampFT = 0;
 
             res = PdhCollectQueryDataWithTime(_hQuery, ref batchTimeStampFT);
             if (bSkipReading)
@@ -1179,9 +1179,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             foreach (string path in _consumerPathToHandleAndInstanceMap.Keys)
             {
                 IntPtr counterTypePtr = new(0);
-                UInt32 counterType = (UInt32)PerformanceCounterType.RawBase;
-                UInt32 defaultScale = 0;
-                UInt64 timeBase = 0;
+                uint counterType = (uint)PerformanceCounterType.RawBase;
+                uint defaultScale = 0;
+                ulong timeBase = 0;
 
                 IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
                 Debug.Assert(hCounter != IntPtr.Zero);
@@ -1206,7 +1206,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            defaultScale,
                                            timeBase,
                                            batchStamp,
-                                           (UInt64)batchStamp.ToFileTime(),
+                                           (ulong)batchStamp.ToFileTime(),
                                            (rawValue.CStatus == PdhResults.PDH_CSTATUS_VALID_DATA) ? res : rawValue.CStatus);
 
                     numInvalidDataSamples++;
@@ -1236,7 +1236,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                            defaultScale,
                                            timeBase,
                                            dt,
-                                           (UInt64)dtFT,
+                                           (ulong)dtFT,
                                            (fmtValueDouble.CStatus == PdhResults.PDH_CSTATUS_VALID_DATA) ? res : rawValue.CStatus);
 
                     numInvalidDataSamples++;
@@ -1254,7 +1254,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                            defaultScale,
                                                            timeBase,
                                                            dt,
-                                                           (UInt64)dtFT,
+                                                           (ulong)dtFT,
                                                            fmtValueDouble.CStatus);
             }
 
@@ -1292,7 +1292,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
 
-            Int32 cChars = pcchPathListLength.ToInt32();
+            int cChars = pcchPathListLength.ToInt32();
             IntPtr strPathList = Marshal.AllocHGlobal(cChars * sizeof(char));
 
             try

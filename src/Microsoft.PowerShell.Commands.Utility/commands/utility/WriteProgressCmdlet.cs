@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// Uniquely identifies this activity for purposes of chaining subordinate activities.
         /// </summary>
         [Parameter(Position = 2)]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public int Id { get; set; }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// Identifies the parent Id of this activity, or -1 if none.
         /// </summary>
         [Parameter]
-        [ValidateRange(-1, Int32.MaxValue)]
+        [ValidateRange(-1, int.MaxValue)]
         public int ParentId { get; set; } = -1;
 
         /// <summary>
