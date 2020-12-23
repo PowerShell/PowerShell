@@ -939,7 +939,7 @@ namespace System.Diagnostics.Eventing.Reader
                             break;
                     }
 
-                    pointer = new IntPtr(((Int64)pointer + Marshal.SizeOf(varVal)));
+                    pointer += Marshal.SizeOf(varVal);
                 }
             }
             finally
@@ -984,7 +984,7 @@ namespace System.Diagnostics.Eventing.Reader
                     {
                         UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(pointer);
                         valuesList.Add(ConvertToObject(varVal));
-                        pointer = new IntPtr(((Int64)pointer + Marshal.SizeOf(varVal)));
+                        pointer += Marshal.SizeOf(varVal);
                     }
                 }
 
@@ -1106,7 +1106,7 @@ namespace System.Diagnostics.Eventing.Reader
                         break;
                     keywordsList.Add(s);
                     // nr of bytes = # chars * 2 + 2 bytes for character '\0'.
-                    pointer = new IntPtr((Int64)pointer + (s.Length * 2) + 2);
+                    pointer += (s.Length * 2) + 2;
                 }
 
                 return keywordsList.AsReadOnly();
@@ -1375,7 +1375,7 @@ namespace System.Diagnostics.Eventing.Reader
                 for (int i = 0; i < val.Count; i++)
                 {
                     array.SetValue(Marshal.PtrToStructure<T>(ptr), i);
-                    ptr = new IntPtr((Int64)ptr + size);
+                    ptr += size;
                 }
 
                 return array;
@@ -1398,7 +1398,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     bool value = Marshal.ReadInt32(ptr) != 0;
                     array[i] = value;
-                    ptr = new IntPtr((Int64)ptr + 4);
+                    ptr += 4;
                 }
 
                 return array;
@@ -1419,7 +1419,7 @@ namespace System.Diagnostics.Eventing.Reader
                 for (int i = 0; i < val.Count; i++)
                 {
                     array[i] = DateTime.FromFileTime(Marshal.ReadInt64(ptr));
-                    ptr = new IntPtr((Int64)ptr + 8 * sizeof(byte)); // FILETIME values are 8 bytes
+                    ptr += 8 * sizeof(byte); // FILETIME values are 8 bytes
                 }
 
                 return array;
@@ -1441,7 +1441,7 @@ namespace System.Diagnostics.Eventing.Reader
                 {
                     UnsafeNativeMethods.SystemTime sysTime = Marshal.PtrToStructure<UnsafeNativeMethods.SystemTime>(ptr);
                     array[i] = new DateTime(sysTime.Year, sysTime.Month, sysTime.Day, sysTime.Hour, sysTime.Minute, sysTime.Second, sysTime.Milliseconds);
-                    ptr = new IntPtr((Int64)ptr + 16 * sizeof(byte)); // SystemTime values are 16 bytes
+                    ptr += 16 * sizeof(byte); // SystemTime values are 16 bytes
                 }
 
                 return array;
