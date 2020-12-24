@@ -923,7 +923,7 @@ dotnet_diagnostic.IDE0063.severity = silent
 dotnet_diagnostic.IDE0064.severity = warning
 
 # IDE0065: MoveMisplacedUsingDirectives
-dotnet_diagnostic.IDE0065.severity = silent
+dotnet_diagnostic.IDE0065.severity = warning
 
 # IDE0066: ConvertSwitchStatementToExpression
 dotnet_diagnostic.IDE0066.severity = silent
