@@ -956,7 +956,7 @@ dotnet_diagnostic.IDE0074.severity = warning
 dotnet_diagnostic.IDE0075.severity = warning
 
 # IDE0076: InvalidSuppressMessageAttribute
-dotnet_diagnostic.IDE0076.severity = silent
+dotnet_diagnostic.IDE0076.severity = warning
 
 # IDE0077: LegacyFormatSuppressMessageAttribute
 dotnet_diagnostic.IDE0077.severity = silent
