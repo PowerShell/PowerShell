@@ -1883,11 +1883,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private static int GetCurrentId()
         {
-            int count = Interlocked.Increment(ref CurrentId);
-
-            Debug.Assert(count != uint.MinValue, "Overflow detected.");
-
-            return count;
+            return Interlocked.Increment(ref CurrentId);
         }
 
         /// <summary>
