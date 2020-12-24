@@ -94,7 +94,7 @@ For more information on Repository Maintainers--their responsibilities, who they
 
 Area Experts are people with knowledge of specific components or technologies in the PowerShell domain. They are responsible for code reviews, issue triage, and providing their expertise to others.
 
-They have [write access](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-organizations-and-teams/managing-access-to-your-organizations-repositories) to the PowerShell repository which gives them the power to:
+They have [write access](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization) to the PowerShell repository which gives them the power to:
 
 1. `git push` to all branches *except* `master`.
 1. Merge pull requests to all branches *except* `master` (though this should not be common given that [`master`is the only long-living branch](../git/README.md#understand-branches)).
