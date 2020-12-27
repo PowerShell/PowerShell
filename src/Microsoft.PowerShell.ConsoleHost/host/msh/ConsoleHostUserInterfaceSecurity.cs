@@ -109,6 +109,11 @@ namespace Microsoft.PowerShell
 
             WriteLineToConsole();
 
+            if (!string.IsNullOrEmpty(targetName))
+            {
+                userName = StringUtil.Format("{0}\\{1}", targetName, userName);
+            }
+
             cred = new PSCredential(userName, password);
 
             return cred;
