@@ -86,6 +86,33 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
+        /// Stream parameter.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Stream")]
+        [ValidateSet(
+            "Verbose",
+            "Warning",
+            "Information",
+            "Debug",
+            "Error")]
+
+        public string Stream
+        {
+            get
+            {
+                return _stream;
+            }
+
+            set
+            {
+                //Store the  upper-case value to simplify case statement
+                _stream = value.ToUpper();
+            }
+        }
+
+        private string _stream;
+
+        /// <summary>
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -102,6 +129,10 @@ namespace Microsoft.PowerShell.Commands
                 _commandWrapper.AddNamedParameter("LiteralPath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
             }
+            else if (string.Equals(ParameterSetName, "Stream", StringComparison.OrdinalIgnoreCase))
+            {
+    
+            } 
             else
             {
                 // variable parameter set
@@ -116,7 +147,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            _commandWrapper.Process(_inputObject);
+            if (string.Equals(ParameterSetName, "Stream", StringComparison.OrdinalIgnoreCase)){ 
+                string _message = _inputObject.ToString();
+                switch (_stream) {
+                    case "VERBOSE": WriteVerbose(_message);
+                                    break;
+                    case "WARNING": WriteWarning(_message);
+                                    break;
+                    case "INFORMATION": WriteInformation(new System.Management.Automation.InformationRecord(_message, "Tee-Object"));
+                                        break;
+                    case "DEBUG":   WriteDebug(_message);
+                                    break;
+                    case "ERROR":   Exception exc = new WriteErrorException();
+                                    WriteError(new ErrorRecord(exc, _message, ErrorCategory.WriteError, _inputObject));
+                                   break;
+                }
+            } 
+            else 
+            {
+                _commandWrapper.Process(_inputObject);
+            }
             WriteObject(_inputObject);
         }
 

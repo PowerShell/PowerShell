@@ -19,6 +19,32 @@ Describe "Tee-Object" -Tags "CI" {
 	        Get-Content $teefile | Should -BeExactly "teeobjecttest3"
 	        Remove-Item $teefile -ErrorAction SilentlyContinue
 	    }
+
+ 	    It "Should tee the output to Verbose" {
+	        $out = Write-Output teeobjecttest4  | Tee-Object -Stream Verbose -Verbose 4>&1
+	        $out | Where-Object {$_ -is [System.Management.Automation.VerboseRecord]} | Select-Object -ExpandProperty Message |
+                   Should -BeExactly 'teeobjecttest4'
+	    }
+
+        It "Should tee the output to Debug" {
+	        $out = Write-Output teeobjecttest4  | Tee-Object -Stream Debug 5>&1 -debug
+	        $out | Where-Object {$_ -is [System.Management.Automation.DebugRecord]} | Select-Object -ExpandProperty Message |
+                   Should -BeExactly 'teeobjecttest4'
+	    }
+
+        It "Should tee the output to Error" {
+	        $null = Write-Output teeobjecttest5  | Tee-Object -Stream Error -ErrorVariable errorOutput -ErrorAction SilentlyContinue
+	        $errorOutput[0].TargetObject | Should -BeExactly 'teeobjecttest5'
+	    }
+
+        It "Should tee the output to Warning" {
+	        $null = Write-Output teeobjecttest5  | Tee-Object -Stream Warning -WarningVariable warningOutput -WarningAction SilentlyContinue
+	        $warningOutput[0].Message | Should -BeExactly 'teeobjecttest5'
+	    }
+        It "Should tee the output to Information" {
+	        $null = Write-Output teeobjecttest6  | Tee-Object -Stream Information -InformationVariable informationOutput -InformationAction SilentlyContinue
+	        $informationOutput[0].MessageData | Should -BeExactly 'teeobjecttest6'
+	    }
     }
 }
 
@@ -55,5 +81,53 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
         $results.Length | Should -Be 3
         $results | Should -Be $expected
     }
+
+    It "Positive Verbose Test" {
+        $expected = "1", "2", "3"
+        $results = $expected | Tee-Object -Stream Verbose -Verbose 4>&1
+        $results.Length | Should -Be 6
+        $outputResults=$results | Where-Object {-not ($_ -is [System.Management.Automation.VerboseRecord])}
+        $outputresults | Should -Be $expected
+        $verboseResults =$results | Where-Object {$_ -is [System.Management.Automation.VerboseRecord]}
+        $verboseResults.Message | Should -Be $expected
+    }
+
+    It "Positive Debug Test" {
+        $expected = "1", "2", "3"
+        $results = $expected | Tee-Object -Stream Debug -Debug 5>&1
+        $results.Length | Should -Be 6
+        $outputResults=$results | Where-Object {-not ($_ -is [System.Management.Automation.DebugRecord])}
+        $outputresults | Should -Be $expected
+        $debugResults =$results | Where-Object {$_ -is [System.Management.Automation.DebugRecord]}
+        $debugResults.Message | Should -Be $expected
+    }
+
+    It "Positive Warning Test" {
+        $expected = "1", "2", "3"
+        $results = $expected | Tee-Object -Stream Warning -WarningVariable wa -WarningAction SilentlyContinue
+        $results.Length | Should -Be 3
+        $results | Should -Be $expected
+        $wa.count | Should -Be 3
+        $wa.Message | Should -Be $expected
+    }
+
+    It "Positive Information Test" {
+        $expected = "1", "2", "3"
+        $results = $expected | Tee-Object -Stream Information -InformationVariable info -InformationAction SilentlyContinue
+        $results.Length | Should -Be 3
+        $results | Should -Be $expected
+        $info.count | Should -Be 3
+        $info.MessageData | Should -Be $expected
+    }
+
+    It "Positive Error Stream Test" {
+        $expected = "1", "2", "3"
+        $results = $expected | Tee-Object -Stream Error -ErrorVariable err -ErrorAction SilentlyContinue
+        $results.Length | Should -Be 3
+        $results | Should -Be $expected
+        $err.count | Should -Be 3
+        $err.TargetObject | Should -Be $expected
+    }
+
 
 }
