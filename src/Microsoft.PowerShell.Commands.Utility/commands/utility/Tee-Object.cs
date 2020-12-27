@@ -164,12 +164,12 @@ namespace Microsoft.PowerShell.Commands
                                   WriteError(new ErrorRecord(exc, _message, ErrorCategory.WriteError, _inputObject));
                                   break;
                 }
-
             } 
             else 
             {
                 _commandWrapper.Process(_inputObject);
             }
+            
             WriteObject(_inputObject);
         }
 
