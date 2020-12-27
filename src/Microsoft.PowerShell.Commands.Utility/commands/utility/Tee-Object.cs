@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
-        /// Stream parameter.
+        /// Gets or sets the stream parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Stream")]
         [ValidateSet(
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                //Store the  upper-case value to simplify case statement
+                // Store the  upper-case value to simplify case statement
                 _stream = value.ToUpper();
             }
         }
@@ -132,7 +132,9 @@ namespace Microsoft.PowerShell.Commands
             else if (string.Equals(ParameterSetName, "Stream", StringComparison.OrdinalIgnoreCase))
             {
                 // no initialization needed for this parameterset
-            } else {
+            } 
+            else 
+            {
                 // variable parameter set
                 _commandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
                 _commandWrapper.AddNamedParameter("name", _variable);
@@ -145,21 +147,24 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (string.Equals(ParameterSetName, "Stream", StringComparison.OrdinalIgnoreCase)){ 
+            if (string.Equals(ParameterSetName, "Stream", StringComparison.OrdinalIgnoreCase))
+            { 
                 string _message = _inputObject.ToString();
-                switch (_stream) {
+                switch (_stream) 
+                {
                     case "VERBOSE": WriteVerbose(_message);
                                     break;
                     case "WARNING": WriteWarning(_message);
                                     break;
                     case "INFORMATION": WriteInformation(new System.Management.Automation.InformationRecord(_message, "Tee-Object"));
                                         break;
-                    case "DEBUG":   WriteDebug(_message);
-                                    break;
-                    case "ERROR":   Exception exc = new WriteErrorException();
-                                    WriteError(new ErrorRecord(exc, _message, ErrorCategory.WriteError, _inputObject));
-                                   break;
+                    case "DEBUG": WriteDebug(_message);
+                                break;
+                    case "ERROR": Exception exc = new WriteErrorException();
+                                  WriteError(new ErrorRecord(exc, _message, ErrorCategory.WriteError, _inputObject));
+                                  break;
                 }
+
             } 
             else 
             {
