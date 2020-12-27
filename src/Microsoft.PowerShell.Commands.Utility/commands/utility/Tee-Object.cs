@@ -130,15 +130,8 @@ namespace Microsoft.PowerShell.Commands
                 _commandWrapper.AddNamedParameter("append", _append);
             }
             else if (string.Equals(ParameterSetName, "Stream", StringComparison.OrdinalIgnoreCase))
-<<<<<<< HEAD
             {
-    
-            } 
-            else
-=======
->>>>>>> 575e3ef8b42efb808738556ebc60f0cd322550f3
-            {
-    
+                // no initialization needed for this parameterset
             } else {
                 // variable parameter set
                 _commandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
