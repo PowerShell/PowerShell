@@ -79,8 +79,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool FileSystemEntryFilter(ref FileSystemEntry entry)
-                {
-                    if (errorCode != 0)
+            {
+                if (errorCode != 0)
                 {
                     // While enumerating we can get an error.
                     // In the case ShouldContinueOnErrorPredicate sets the error code.

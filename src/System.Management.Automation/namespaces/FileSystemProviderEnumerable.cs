@@ -24,8 +24,8 @@ namespace Microsoft.PowerShell.Commands
         private DelegateEnumerator? _enumerator;
 
         /// <summary>
-        /// Initializes a new instance of the FileSystemProviderEnumerable
-        /// that allows utilizing custom filter predicates and tranform delegates.
+        /// Initializes a new instance of the <see cref="FileSystemProviderEnumerable{TResult}"/> class.
+        /// The class allows utilizing custom filter predicates and tranform delegates.
         /// </summary>
         /// <param name="directory">The path of the starting directory.</param>
         /// <param name="transform">The delegate to transform internal data to a result.</param>
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
                 => _enumerable.ShouldIncludePredicate?.Invoke(ref entry) ?? true;
 
             protected override bool ContinueOnError(int error)
-                // Here _enumerable can be still null because base constructor can throw 'access denied' before we assign _enumerable.
+                //// Here _enumerable can be still null because base constructor can throw 'access denied' before we assign _enumerable.
                 => _enumerable?.ShouldContinueOnErrorPredicate?.Invoke(error) ?? false;
         }
     }
