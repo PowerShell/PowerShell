@@ -53,14 +53,34 @@ namespace Microsoft.PowerShell.Commands
             FlagsExpression<FileAttributes>? switchEvaluator,
             bool filterHidden,
             InodeTracker? tracker,  // tracker will be non-null only if the user invoked the -FollowSymLinks and -Recurse switch parameters.
+            uint depth,
             CmdletProviderContext context,
             EnumerationOptions options)
         {
             int errorCode = 0;
 
-            bool FileSystemEntryFilter(ref FileSystemEntry entry)
+            // To calculate current depth we remove a root (start) directory from current directory
+            // and count slashes in the tail.
+            static uint GetCurrentDepth(ref FileSystemEntry entry)
             {
-                if (errorCode != 0)
+                var rootLength = entry.RootDirectory.Length;
+                var tail = entry.Directory.Slice(rootLength);
+
+                uint count = 0;
+                int slashPosition = 0;
+
+                while ((slashPosition = tail.IndexOf(StringLiterals.DefaultPathSeparator)) != -1)
+                {
+                    tail = tail.Slice(slashPosition + 1);
+                    count++;
+                }
+
+                return count;
+            }
+
+            bool FileSystemEntryFilter(ref FileSystemEntry entry)
+                {
+                    if (errorCode != 0)
                 {
                     // While enumerating we can get an error.
                     // In the case ShouldContinueOnErrorPredicate sets the error code.
@@ -138,7 +158,8 @@ namespace Microsoft.PowerShell.Commands
                 ShouldRecursePredicate = (ref FileSystemEntry entry) =>
                     {
                         // Making sure to obey the StopProcessing.
-                        if (context.Stopping)
+                        if (context.Stopping ||
+                           (depth < uint.MaxValue && GetCurrentDepth(ref entry) >= depth))
                         {
                             return false;
                         }
@@ -286,6 +307,7 @@ namespace Microsoft.PowerShell.Commands
                         switchEvaluator,
                         filterHidden,
                         tracker,
+                        depth,
                         context,
                         new System.IO.EnumerationOptions { RecurseSubdirectories = recurse, MatchType = MatchType.Win32, AttributesToSkip = 0, IgnoreInaccessible = false }))
                 {
