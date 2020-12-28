@@ -97,17 +97,24 @@ namespace Microsoft.PowerShell
             passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
             );
 
-            //
-            // now, prompt for the password
-            //
-            WriteToConsole(passwordPrompt, true);
-            password = ReadLineAsSecureString();
-            if (password == null)
+            if (!InternalTestHooks.NoPromptForPassword)
             {
-                return null;
-            }
+                //
+                // now, prompt for the password
+                //
+                WriteToConsole(passwordPrompt, true);
+                password = ReadLineAsSecureString();
+                if (password == null)
+                {
+                    return null;
+                }
 
-            WriteLineToConsole();
+                WriteLineToConsole();
+            }
+            else
+            {
+                password = new SecureString();
+            }
 
             if (!string.IsNullOrEmpty(targetName))
             {
