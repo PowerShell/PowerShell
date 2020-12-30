@@ -303,7 +303,7 @@ Describe "TabCompletion" -Tags CI {
 
     Context "Format cmdlet's View paramter completion" {
         It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
-            @{ cmd = 'Format-Table'; expected = "$(if ($EnabledExperimentalFeatures.Contains('PSUnixFileStat')) { 'childrenWithUnixStat ' })children childrenWithHardlink" },
+            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if ($EnabledExperimentalFeatures.Contains('PSUnixFileStat')) { ' childrenWithUnixStat' })" },
             @{ cmd = 'Format-List'; expected = 'children' },
             @{ cmd = 'Format-Wide'; expected = 'children' },
             @{ cmd = 'Format-Custom'; expected = '' }
