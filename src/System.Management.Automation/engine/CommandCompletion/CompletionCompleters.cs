@@ -24,6 +24,7 @@ using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Cim;
 using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
@@ -2282,6 +2283,14 @@ namespace System.Management.Automation
                 case "Measure-Object":
                 case "Sort-Object":
                 case "Where-Object":
+                    {
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionMemberName(context, result, commandAst);
+                        }
+
+                        break;
+                    }
                 case "Format-Custom":
                 case "Format-List":
                 case "Format-Table":
@@ -2290,6 +2299,10 @@ namespace System.Management.Automation
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionMemberName(context, result, commandAst);
+                        }
+                        else if (parameterName.Equals("View", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionFormatViewName(context, boundArguments, result, commandAst, commandName);
                         }
 
                         break;
@@ -3785,46 +3798,81 @@ namespace System.Management.Automation
             result.Add(CompletionResult.Null);
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        private static IEnumerable<PSTypeName> GetInferenceTypes(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
-            if (!(commandAst.Parent is PipelineAst pipelineAst))
-                return;
+            if (commandAst.Parent is not PipelineAst pipelineAst)
+            {
+                return null;
+            }
 
             int i;
             for (i = 0; i < pipelineAst.PipelineElements.Count; i++)
             {
                 if (pipelineAst.PipelineElements[i] == commandAst)
+                {
                     break;
+                }
             }
 
             IEnumerable<PSTypeName> prevType = null;
             if (i == 0)
             {
+                // based on a type of the argument which is binded to 'InputObject' parameter.
                 AstParameterArgumentPair pair;
                 if (!context.PseudoBindingInfo.BoundArguments.TryGetValue("InputObject", out pair)
                     || !pair.ArgumentSpecified)
                 {
-                    return;
+                    return null;
                 }
 
                 var astPair = pair as AstPair;
                 if (astPair == null || astPair.Argument == null)
                 {
-                    return;
+                    return null;
                 }
 
                 prevType = AstTypeInference.InferTypeOf(astPair.Argument, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
             else
             {
+                // based on OutputTypeAttribute() of the first cmdlet in pipeline.
                 prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
 
-            CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            return prevType;
+        }
+
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        {
+            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, result, commandAst);
+            if (prevType is not null)
+            {
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            }
+
             result.Add(CompletionResult.Null);
         }
+
+        private static void NativeCompletionFormatViewName(
+            CompletionContext context,
+            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            List<CompletionResult> result,
+            CommandAst commandAst,
+            string commandName)
+        {
+            IEnumerable<PSTypeName> prevType = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
+
+            if (prevType is not null)
+            {
+                var inferTypeNames = prevType.Select(t => t.Name).ToArray();
+                CompleteFormatViewByInferredType(context.TypeInferenceContext, inferTypeNames, result, commandName);
+            }
+
+            result.Add(CompletionResult.Null);
+        }
+
 
         private static void NativeCompletionTypeName(CompletionContext context, List<CompletionResult> result)
         {
@@ -5695,6 +5743,46 @@ namespace System.Management.Automation
         private static bool IsInDscContext(ExpressionAst expression)
         {
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
+        }
+
+        private static void CompleteFormatViewByInferredType(TypeInferenceContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
+        {
+            var db = context.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
+
+            if (db is null)
+            {
+                return;
+            }
+
+            Type controlBodyType = commandName switch
+            {
+                "Format-Table" => typeof(TableControlBody),
+                "Format-List" => typeof(ListControlBody),
+                "Format-Wide" => typeof(WideControlBody),
+                "Format-Custom" => typeof(ComplexControlBody),
+                _ => null
+            };
+
+            Diagnostics.Assert(controlBodyType is null, "This should never happen unless a new Format-* cmdlet is added");
+
+            HashSet<string> uniqueNames = new();
+            foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
+            {
+                if (vd is not null && controlBodyType == vd.mainControl.GetType() && vd.appliesTo is not null)
+                {
+                    foreach (var applyTo in vd.appliesTo.referenceList)
+                    {
+                        foreach (var inferredTypeName in inferredTypeNames)
+                        {
+                            // We use 'StartsWith()' because 'applyTo.Name' can look like "System.Diagnostics.Process#IncludeUserName".
+                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase) && uniqueNames.Add(vd.name))
+                            {
+                                results.Add(new CompletionResult(vd.name, vd.name, CompletionResultType.Text, vd.name));
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
