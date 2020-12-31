@@ -13,6 +13,33 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CredentialAttribute : ArgumentTransformationAttribute
     {
+        private string caption = CredentialAttributeStrings.CredentialAttribute_Prompt_Caption;
+        private string prompt = CredentialAttributeStrings.CredentialAttribute_Prompt;
+
+        /// <summary>
+        /// Sets the title text to be used when prompting for credentials
+        /// </summary>
+        public string Title {
+            set {
+                if (string.IsNullOrWhiteSpace(value)) {
+                    throw PSTraceSource.NewArgumentNullException(nameof(Caption));
+                }
+                caption = value;
+            }
+        }
+
+        /// <summary>
+        /// Sets the message to be used when prompting for credentials
+        /// </summary>
+        public string Message {
+            set {
+                if (string.IsNullOrWhiteSpace(value)) {
+                    throw PSTraceSource.NewArgumentNullException(nameof(Message));
+                }
+                caption = value;
+            }
+        }
+
         /// <summary>
         /// Transforms the input data to an PSCredential.
         /// </summary>
@@ -66,13 +93,6 @@ namespace System.Management.Automation
 
             if (shouldPrompt)
             {
-                string caption = null;
-                string prompt = null;
-
-                caption = CredentialAttributeStrings.CredentialAttribute_Prompt_Caption;
-
-                prompt = CredentialAttributeStrings.CredentialAttribute_Prompt;
-
                 cred = engineIntrinsics.Host.UI.PromptForCredential(
                            caption,
                            prompt,
