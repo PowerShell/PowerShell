@@ -93,14 +93,7 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
-        public Encoding Encoding
-        {
-            get { return _encoding; }
-
-            set { _encoding = value; }
-        }
-
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// </summary>
@@ -129,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
             }
             
             // passthrough Encoding parameter
-            _commandWrapper.AddNamedParameter("Encoding", _encoding);
+            _commandWrapper.AddNamedParameter("Encoding", Encoding);
         }
 
         /// <summary>
