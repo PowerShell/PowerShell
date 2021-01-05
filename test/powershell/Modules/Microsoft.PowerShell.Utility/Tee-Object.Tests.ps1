@@ -18,7 +18,28 @@ Describe "Tee-Object" -Tags "CI" {
 	        Write-Output teeobjecttest3  | Tee-Object $teefile
 	        Get-Content $teefile | Should -BeExactly "teeobjecttest3"
 	        Remove-Item $teefile -ErrorAction SilentlyContinue
-	    }
+        }
+
+        It "Should tee output to file using selected encoding" {
+            # Pass Encoding to Tee-Object
+            # and then read the resulting object back
+            # using the selected encoding
+            ForEach($encoding in @(
+                "ascii",
+                "bigendianunicode",
+                "default",
+                "latin1",
+                "unicode",
+                "utf32",
+                "utf7",
+                "utf8"
+            )){
+                $teefile = $testfile
+	            Write-Output teeobjecttest3  | Tee-Object $teefile -Encoding $encoding
+	            Get-Content $teefile -Encoding $encoding | Should -BeExactly "teeobjecttest3"
+	            Remove-Item $teefile -ErrorAction SilentlyContinue
+            }
+        }
     }
 }
 
