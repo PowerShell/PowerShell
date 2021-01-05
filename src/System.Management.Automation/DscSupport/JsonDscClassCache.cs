@@ -82,7 +82,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         private static readonly Regex reservedPropertiesRegex = new Regex("^(Require|Trigger|Notify|Before|After|Subscribe)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private const string jsonSchemaSupportExperimentalFeatureName = "PSDscJsonSchemaSupport";
+        /// <summary>
+        /// Experimental feature name for DSC v3
+        /// </summary>
+        public const string DscV3ExperimentalFeatureName = "PSDscV3Support";
 
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
@@ -345,9 +348,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static void ClearCache()
         {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
             }
 
             s_tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
@@ -399,9 +402,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Class declaration from cache.</returns>
         public static PSObject GetGuestConfigCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
         {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
             }
 
             var moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleName, moduleVersion, className, string.IsNullOrEmpty(resourceName) ? className : resourceName);
@@ -451,9 +454,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static Collection<DynamicKeyword> GetKeywordsFromCachedClasses()
         {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
             }
 
             Collection<DynamicKeyword> keywords = new Collection<DynamicKeyword>();
@@ -775,9 +778,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
                                                    List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
         {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
             {
-                Exception exception = new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+                Exception exception = new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
                 errors.Add(exception);
                 return;
             }
@@ -1285,9 +1288,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>The list of resources imported from this module.</returns>
         public static List<string> ImportClassResourcesFromModule(PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
-            if (!ExperimentalFeature.IsEnabled(jsonSchemaSupportExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscJsonSchemaSupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
             }
 
             var resourcesImported = new List<string>();
