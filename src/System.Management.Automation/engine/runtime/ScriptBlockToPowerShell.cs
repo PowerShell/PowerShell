@@ -393,6 +393,8 @@ namespace System.Management.Automation
         ///         }
         ///     }
         /// </summary>
+        /// <param name="usingAst">Using Ast to check.</param>
+        /// <returns>True if using expression is in current call scope.</returns>
         private static bool IsInForeachParallelCallingScope(UsingExpressionAst usingAst)
         {
             Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
@@ -434,7 +436,7 @@ namespace System.Management.Automation
                 currentParent = currentParent.Parent;
             }
 
-            return (foreachNestedCount == 1);
+            return foreachNestedCount == 1;
         }
 
         /// <summary>
