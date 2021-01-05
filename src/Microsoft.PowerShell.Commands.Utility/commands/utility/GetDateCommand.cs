@@ -516,7 +516,15 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'u':
-                            sb.Append((int)dateTime.DayOfWeek);
+                            if (dateTime.DayOfWeek == DayOfWeek.Sunday)
+                            {
+                                sb.Append(7);
+                            }
+                            else
+                            {
+                                sb.Append((int)dateTime.DayOfWeek);
+                            }
+                            
                             break;
 
                         case 'V':
