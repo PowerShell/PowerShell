@@ -408,11 +408,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool allowUsingExpression = this.Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
-            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(
-                                Parallel,
-                                allowUsingExpression,
-                                this.Context,
-                                null);
+            _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesForEachParallel(
+                scriptBlock: Parallel,
+                isTrustedInput: allowUsingExpression,
+                context: this.Context);
 
             // Validate using values map, which is a map of '$using:' variables referenced in the script.
             // Script block variables are not allowed since their behavior is undefined outside the runspace
