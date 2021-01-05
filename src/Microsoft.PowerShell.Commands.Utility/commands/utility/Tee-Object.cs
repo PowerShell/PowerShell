@@ -87,10 +87,10 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
-        /// Encoding Parameter. Controls which encoding to use when writing the file
+        /// Sets the encoding to use when writing the file.
         /// </summary>
-        [Parameter()]
-        [ArgumentToEncodingTransformationAttribute()]
+        [Parameter]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
