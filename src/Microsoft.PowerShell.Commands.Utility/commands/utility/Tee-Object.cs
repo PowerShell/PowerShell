@@ -3,6 +3,7 @@
 
 using System;
 using System.Management.Automation;
+using System.Text;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -86,6 +87,22 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
+        /// Encoding Parameter. Controls which encoding to use when writing the file
+        /// </summary>
+        [Parameter()]
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentEncodingCompletionsAttribute]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding
+        {
+            get { return _encoding; }
+
+            set { _encoding = value; }
+        }
+
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+
+        /// <summary>
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -110,6 +127,9 @@ namespace Microsoft.PowerShell.Commands
                 // Can't use set-var's passthru because it writes the var object to the pipeline, we want just
                 // the values to be written
             }
+            
+            // passthrough Encoding parameter
+            _commandWrapper.AddNamedParameter("Encoding", _encoding);
         }
 
         /// <summary>
