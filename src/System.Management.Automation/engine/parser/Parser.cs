@@ -3007,7 +3007,7 @@ namespace System.Management.Automation.Language
                                 p.AddParameter("Name", "PSDesiredStateConfiguration");
                                 
                                 bool prev3IsLoaded = false;
-                                foreach(PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
+                                foreach (PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
                                 {
                                     if (moduleInfo.Version.Major < 3)
                                     {

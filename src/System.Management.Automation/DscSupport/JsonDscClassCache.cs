@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             var moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleName, moduleVersion, className, string.IsNullOrEmpty(resourceName) ? className : resourceName);
             DscClassCacheEntry classCacheEntry = null;
-            if(GuestConfigClassCache.TryGetValue(moduleQualifiedResourceName, out classCacheEntry))
+            if (GuestConfigClassCache.TryGetValue(moduleQualifiedResourceName, out classCacheEntry))
             {
                 return classCacheEntry.CimClassInstance;
             }
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             {
                 // if class was not found with current ResourceName then it may be a class with non-empty FriendlyName that caller does not know, so perform a broad search
                 string partialClassPath = string.Join('\\', moduleName, moduleVersion, className, string.Empty);
-                foreach(string key in GuestConfigClassCache.Keys)
+                foreach (string key in GuestConfigClassCache.Keys)
                 {
                     if (key.StartsWith(partialClassPath))
                     {
@@ -623,7 +623,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     var values = prop.Qualifiers?.Values;
                     if (values != null)
                     {
-                        foreach(var val in values)
+                        foreach (var val in values)
                         {
                             keyProp.Values.Add(val.ToString());
                         }
@@ -635,7 +635,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     if (nativeValueMap != null)
                     {
                         valueMap = new List<string>();
-                        foreach(var val in nativeValueMap)
+                        foreach (var val in nativeValueMap)
                         {
                             valueMap.Add(val.ToString());
                         }
@@ -1207,7 +1207,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var resourcesFound = new List<string>();
                 var exceptionList = new System.Collections.ObjectModel.Collection<Exception>();
                 LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, exceptionList, null, true, scriptExtent);
-                foreach(Exception ex in exceptionList)
+                foreach (Exception ex in exceptionList)
                 {
                     errorList.Add(new ParseError(scriptExtent,
                         "ClassResourcesLoadingFailed",
@@ -1336,7 +1336,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         
         private static void AddEmbeddedInstanceTypesToCaches(IEnumerable<PSObject> classes, PSModuleInfo module, DSCResourceRunAsCredential runAsBehavior)
         {
-            foreach(dynamic c in classes)
+            foreach (dynamic c in classes)
             {
                 var className = c.ClassName;
                 string alias = GetFriendlyName(c);
@@ -1496,7 +1496,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 var propertyObject = new PSObject();
                 propertyObject.Properties.Add(new PSNoteProperty(@"Name", member.Name));
-                propertyObject.Properties.Add(new PSNoteProperty(@"CimType", mofType + (isArrayType ? "Array" : "")));
+                propertyObject.Properties.Add(new PSNoteProperty(@"CimType", mofType + (isArrayType ? "Array" : string.Empty)));
                 if (!string.IsNullOrEmpty(embeddedInstanceType))
                 {
                     propertyObject.Properties.Add(new PSNoteProperty(@"ReferenceClassName", embeddedInstanceType));
@@ -2203,8 +2203,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             get
             {
                 // The scriptblock cache will handle mutual exclusion
-                return s_cimKeywordImplementationFunction ??
-                       (s_cimKeywordImplementationFunction = ScriptBlock.Create(CimKeywordImplementationFunctionText));
+                return s_cimKeywordImplementationFunction ??= ScriptBlock.Create(CimKeywordImplementationFunctionText);
             }
         }
 
