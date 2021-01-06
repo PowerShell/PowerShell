@@ -1806,7 +1806,6 @@ namespace System.Management.Automation
                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                 if (result != null) return result;
             }
-            
 
             if ((tokenAtCursor.TokenFlags & TokenFlags.CommandName) != 0)
             {
