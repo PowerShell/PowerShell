@@ -1201,6 +1201,7 @@ dir -Recurse `
                 @{ inputStr = "configuration foo { File ab { Attributes =('Archive', "; expected = "'Hidden'" }
                 @{ inputStr = "configuration foo { File ab { Attributes =('Archive', 'Hi"; expected = "Hidden" }
             )
+            Import-Module -Name PSDesiredStateConfiguration -MaximumVersion 2.0.7
         }
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
