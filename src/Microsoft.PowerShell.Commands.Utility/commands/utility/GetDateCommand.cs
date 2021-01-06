@@ -516,7 +516,8 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'u':
-                            sb.Append(StringUtil.Format("{0:0;0;\7}", (int)dateTime.DayOfWeek));
+                            var dayOfWeek = dateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)dateTime.DayOfWeek;
+                            sb.Append(dayOfWeek);
                             break;
 
                         case 'V':
