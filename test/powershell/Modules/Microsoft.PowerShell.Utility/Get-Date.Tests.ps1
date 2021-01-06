@@ -97,6 +97,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-Date -Date $date -UFormat %V | Should -BeExactly $week
     }
 
+    # Using the same test cases as V for ISO week date component parity
     It "using -uformat 'u' produces the correct output" -TestCases @(
         @{date="1998-01-02"; dayOfWeek = "5"},
         @{date="1998-01-03"; dayOfWeek = "6"},
@@ -129,8 +130,6 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{date="2015-01-02"; dayOfWeek = "5"},
         @{date="2015-01-03"; dayOfWeek = "6"},
         @{date="2020-01-03"; dayOfWeek = "5"},
-        @{date="2021-01-03"; dayOfWeek = "7"},
-        @{date="2021-01-04"; dayOfWeek = "1"},
         @{date="2025-01-03"; dayOfWeek = "5"},
         @{date="2026-01-02"; dayOfWeek = "5"},
         @{date="2026-01-03"; dayOfWeek = "6"},
