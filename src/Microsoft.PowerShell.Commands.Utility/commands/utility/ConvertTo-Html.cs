@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!useditems.Contains(s))
                         {
-                            switch (s.ToLower())
+                            switch (s.ToLowerInvariant())
                             {
                                 case "content-type":
                                 case "default-style":

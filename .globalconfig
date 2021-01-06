@@ -154,7 +154,7 @@ dotnet_diagnostic.CA1200.severity = silent
 dotnet_diagnostic.CA1303.severity = none
 
 # CA1304: Specify CultureInfo
-dotnet_diagnostic.CA1304.severity = silent
+dotnet_diagnostic.CA1304.severity = warning
 
 # CA1305: Specify IFormatProvider
 dotnet_diagnostic.CA1305.severity = silent

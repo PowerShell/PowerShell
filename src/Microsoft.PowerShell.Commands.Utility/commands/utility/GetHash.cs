@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // A hash algorithm name is case sensitive
                 // and always must be in upper case
-                _Algorithm = value.ToUpper();
+                _Algorithm = value.ToUpperInvariant();
             }
         }
 
