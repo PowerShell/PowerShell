@@ -1724,11 +1724,11 @@ namespace System.Management.Automation
                     string usageString = string.Empty;
                     if (Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.NewApiIsUsed)
                     {
-                        Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.GetDSCResourceUsageString(keyword);
+                        usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.GetDSCResourceUsageString(keyword);
                     }
                     else
                     {
-                        Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+                        usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
                     }
                     if (results == null)
                     {
