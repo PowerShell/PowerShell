@@ -155,6 +155,7 @@ dotnet_diagnostic.CA1303.severity = none
 
 # CA1304: Specify CultureInfo
 dotnet_diagnostic.CA1304.severity = warning
+dotnet_code_quality.CA1304.excluded_symbol_names = T:System.Resources.ResourceManager
 
 # CA1305: Specify IFormatProvider
 dotnet_diagnostic.CA1305.severity = silent
