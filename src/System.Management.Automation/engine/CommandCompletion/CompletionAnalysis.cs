@@ -1804,7 +1804,10 @@ namespace System.Management.Automation
             if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
             {
                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
-                if (result != null) return result;
+                if (result is not null)
+                {
+                    return result;
+                }
             }
 
             if ((tokenAtCursor.TokenFlags & TokenFlags.CommandName) != 0)
