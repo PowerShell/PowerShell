@@ -291,20 +291,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // take care of the case there is no base object
                 return so.ToString();
             }
-            catch (Exception e)
+            catch (Exception e) when (e is ExtendedTypeSystemException || e is InvalidOperationException)
             {
-                if (e is ExtendedTypeSystemException || e is InvalidOperationException)
+                if (formatErrorObject != null)
                 {
-                    if (formatErrorObject != null)
-                    {
-                        formatErrorObject.sourceObject = so;
-                        formatErrorObject.exception = e;
-                    }
-
-                    return string.Empty;
+                    formatErrorObject.sourceObject = so;
+                    formatErrorObject.exception = e;
                 }
 
-                throw;
+                return string.Empty;
             }
         }
 
