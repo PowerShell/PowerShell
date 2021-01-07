@@ -19,7 +19,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static string StartProcess(
             string tool,
             string args,
-            string stdin = "")
+            string stdin = "",
+            bool readStdout = true)
         {
             ProcessStartInfo startInfo = new();
             startInfo.UseShellExecute = false;
@@ -28,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             startInfo.RedirectStandardError = true;
             startInfo.FileName = tool;
             startInfo.Arguments = args;
-            string stdout;
+            string stdout = string.Empty;
 
             using (Process process = new())
             {
@@ -46,9 +47,12 @@ namespace Microsoft.PowerShell.Commands.Internal
                 process.StandardInput.Write(stdin);
                 process.StandardInput.Close();
 
-                stdout = process.StandardOutput.ReadToEnd();
-                process.WaitForExit(250);
+                if (readStdout)
+                {
+                    stdout = process.StandardOutput.ReadToEnd();
+                }
 
+                process.WaitForExit(250);
                 _clipboardSupported = process.ExitCode == 0;
             }
 
@@ -106,7 +110,14 @@ namespace Microsoft.PowerShell.Commands.Internal
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 tool = "xclip";
-                args = "-selection clipboard -in";
+                if (string.IsNullOrEmpty(text))
+                {
+                    args = "-selection clipboard /dev/null";
+                }
+                else
+                {
+                    args = "-selection clipboard -in";
+                }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -118,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 return;
             }
 
-            StartProcess(tool, args, text);
+            StartProcess(tool, args, text, readStdout: false);
             if (_clipboardSupported == false)
             {
                 _internalClipboard = text;
