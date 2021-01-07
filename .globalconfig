@@ -959,7 +959,7 @@ dotnet_diagnostic.IDE0075.severity = warning
 dotnet_diagnostic.IDE0076.severity = silent
 
 # IDE0077: LegacyFormatSuppressMessageAttribute
-dotnet_diagnostic.IDE0077.severity = silent
+dotnet_diagnostic.IDE0077.severity = warning
 
 # IDE0078: UsePatternCombinators
 dotnet_diagnostic.IDE0078.severity = silent
