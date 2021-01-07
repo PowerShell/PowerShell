@@ -43,11 +43,8 @@ namespace Microsoft.PowerShell.Commands.Internal
                     return string.Empty;
                 }
 
-                if (!string.IsNullOrEmpty(stdin))
-                {
-                    process.StandardInput.Write(stdin);
-                    process.StandardInput.Close();
-                }
+                process.StandardInput.Write(stdin);
+                process.StandardInput.Close();
 
                 stdout = process.StandardOutput.ReadToEnd();
                 process.WaitForExit(250);
@@ -93,11 +90,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         public static void SetText(string text)
         {
-            if (string.IsNullOrEmpty(text))
-            {
-                return;
-            }
-
             if (_clipboardSupported == false)
             {
                 _internalClipboard = text;
