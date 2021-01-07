@@ -440,11 +440,29 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'G':
-                            sb.Append("{0:yyyy}");
-                            break;
-
                         case 'g':
-                            sb.Append("{0:yy}");
+                            var isoweek = ISOWeek.GetWeekOfYear(dateTime);
+                            var isoweekyear = dateTime.Year;
+
+                            if (isoweek == 53 && dateTime.Month == 1)
+                            {
+                                isoweekyear--;
+                            }
+                            else if (isoweek == 1 && dateTime.Month == 12)
+                            {
+                                isoweekyear++;
+                            }
+
+                            if (UFormat[i] == 'g')
+                            {
+                                isoweekyear %= 100;
+                                sb.Append(StringUtil.Format("{0:00}", isoweekyear));
+                            }
+                            else
+                            {
+                                sb.Append(isoweekyear);
+                            }
+
                             break;
 
                         case 'H':
