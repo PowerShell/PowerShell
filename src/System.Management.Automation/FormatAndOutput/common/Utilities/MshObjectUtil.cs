@@ -293,6 +293,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             catch (Exception e) when (e is ExtendedTypeSystemException || e is InvalidOperationException)
             {
+                // These exceptions are being caught and handled by returning an empty string when
+                // the object cannot be stringified due to ETS or an instance in the collection has been modified
                 if (formatErrorObject != null)
                 {
                     formatErrorObject.sourceObject = so;
