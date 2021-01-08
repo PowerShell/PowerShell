@@ -1843,6 +1843,7 @@ namespace System.Management.Automation
         {
             Reset,
             FormatAccent,
+            TableHeader,
             ErrorAccent,
             Error,
             Warning,
@@ -1870,6 +1871,8 @@ namespace System.Management.Automation
                         return psstyle.Reset;
                     case FormatStyle.FormatAccent:
                         return psstyle.Formatting.FormatAccent;
+                    case FormatStyle.TableHeader:
+                        return psstyle.Formatting.TableHeader;
                     case FormatStyle.ErrorAccent:
                         return psstyle.Formatting.ErrorAccent;
                     case FormatStyle.Error:

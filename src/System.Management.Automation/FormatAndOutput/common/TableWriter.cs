@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                     {
-                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + line + PSStyle.Instance.Reset);
+                        lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
                     }
                     else
                     {
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     generatedRows?.Add(line);
                     if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && isHeader)
                     {
-                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + line + PSStyle.Instance.Reset);
+                        lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
                     }
                     else
                     {
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 generatedRows?.Add(line);
                 if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && isHeader)
                 {
-                    lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + line + PSStyle.Instance.Reset);
+                    lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
                 }
                 else
                 {

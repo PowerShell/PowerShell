@@ -308,6 +308,11 @@ namespace System.Management.Automation
             public string FormatAccent { get; set; } = "\x1b[32;1m";
 
             /// <summary>
+            /// Gets or sets the style for table headers.
+            /// </summary>
+            public string TableHeader { get; set; } = "\x1b[32;1m";
+
+            /// <summary>
             /// Gets or sets the accent style for errors.
             /// </summary>
             public string ErrorAccent { get; set; } = "\x1b[36;1m";
