@@ -1334,7 +1334,7 @@ namespace System.Management.Automation
         Decryption
     }
 
-    internal class AmsiUtils
+    internal static class AmsiUtils
     {
         private static string GetProcessHostName(string processName)
         {
@@ -1580,7 +1580,7 @@ namespace System.Management.Automation
         public static bool AmsiInitialized = false;
         public static bool AmsiCleanedUp = false;
 
-        internal class AmsiNativeMethods
+        internal static class AmsiNativeMethods
         {
             internal enum AMSI_RESULT
             {

@@ -100,7 +100,8 @@ dotnet_diagnostic.CA1050.severity = warning
 dotnet_diagnostic.CA1051.severity = silent
 
 # CA1052: Static holder types should be Static or NotInheritable
-dotnet_diagnostic.CA1052.severity = none
+dotnet_diagnostic.CA1052.severity = warning
+dotnet_code_quality.ca1052.api_surface = private, internal
 
 # CA1054: URI-like parameters should not be strings
 dotnet_diagnostic.CA1054.severity = none

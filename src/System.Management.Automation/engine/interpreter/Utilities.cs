@@ -224,7 +224,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal class ScriptingRuntimeHelpers
+    internal static class ScriptingRuntimeHelpers
     {
         internal static object Int32ToObject(int i)
         {
