@@ -441,8 +441,8 @@ namespace Microsoft.PowerShell.Commands
 
                         case 'G':
                         case 'g':
-                            var isoweek = ISOWeek.GetWeekOfYear(dateTime);
-                            var isoweekyear = dateTime.Year;
+                            var isoWeek = ISOWeek.GetWeekOfYear(dateTime);
+                            var isoWeekYear = dateTime.Year;
 
                             if (isoweek == 53 && dateTime.Month == 1)
                             {
