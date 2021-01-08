@@ -444,23 +444,23 @@ namespace Microsoft.PowerShell.Commands
                             var isoWeek = ISOWeek.GetWeekOfYear(dateTime);
                             var isoWeekYear = dateTime.Year;
 
-                            if (isoweek == 53 && dateTime.Month == 1)
+                            if (isoWeek == 53 && dateTime.Month == 1)
                             {
-                                isoweekyear--;
+                                isoWeekYear--;
                             }
-                            else if (isoweek == 1 && dateTime.Month == 12)
+                            else if (isoWeek == 1 && dateTime.Month == 12)
                             {
-                                isoweekyear++;
+                                isoWeekYear++;
                             }
 
                             if (UFormat[i] == 'g')
                             {
-                                isoweekyear %= 100;
-                                sb.Append(StringUtil.Format("{0:00}", isoweekyear));
+                                isoWeekYear %= 100;
+                                sb.Append(StringUtil.Format("{0:00}", isoWeekYear));
                             }
                             else
                             {
-                                sb.Append(isoweekyear);
+                                sb.Append(isoWeekYear);
                             }
 
                             break;
