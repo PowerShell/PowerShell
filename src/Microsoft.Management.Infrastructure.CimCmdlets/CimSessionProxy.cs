@@ -344,7 +344,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSessionProxy(string computerName)
         {
             CreateSetSession(computerName, null, null, null, false);
-            this.isDefaultSession = (computerName == ConstValue.NullComputerName);
+            this.isDefaultSession = computerName == ConstValue.NullComputerName;
         }
 
         /// <summary>
@@ -360,7 +360,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSessionProxy(string computerName, CimSessionOptions sessionOptions)
         {
             CreateSetSession(computerName, null, sessionOptions, null, false);
-            this.isDefaultSession = (computerName == ConstValue.NullComputerName);
+            this.isDefaultSession = computerName == ConstValue.NullComputerName;
         }
 
         /// <summary>
@@ -403,7 +403,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string cimsessionComputerName = cimInstance.GetCimSessionComputerName();
             CreateSetSession(cimsessionComputerName, null, null, null, false);
-            this.isDefaultSession = (cimsessionComputerName == ConstValue.NullComputerName);
+            this.isDefaultSession = cimsessionComputerName == ConstValue.NullComputerName;
 
             DebugHelper.WriteLogEx("Create a temp session with computerName = {0}.", 0, cimsessionComputerName);
         }
@@ -421,7 +421,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSessionProxy(string computerName, CimSessionOptions sessionOptions, CimOperationOptions operOptions)
         {
             CreateSetSession(computerName, null, sessionOptions, operOptions, false);
-            this.isDefaultSession = (computerName == ConstValue.NullComputerName);
+            this.isDefaultSession = computerName == ConstValue.NullComputerName;
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSessionProxy(string computerName, CimOperationOptions operOptions)
         {
             CreateSetSession(computerName, null, null, operOptions, false);
-            this.isDefaultSession = (computerName == ConstValue.NullComputerName);
+            this.isDefaultSession = computerName == ConstValue.NullComputerName;
         }
 
         /// <summary>

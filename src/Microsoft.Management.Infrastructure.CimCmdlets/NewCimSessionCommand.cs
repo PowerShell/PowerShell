@@ -225,7 +225,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             outputCredential = null;
             if (options != null)
             {
-                DComSessionOptions dcomOptions = (options as DComSessionOptions);
+                DComSessionOptions dcomOptions = options as DComSessionOptions;
                 if (dcomOptions != null)
                 {
                     bool conflict = false;

@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private CimGetCimClass GetOperationAgent()
         {
-            return (this.AsyncOperation as CimGetCimClass);
+            return this.AsyncOperation as CimGetCimClass;
         }
 
         /// <summary>
