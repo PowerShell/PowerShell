@@ -1761,6 +1761,7 @@ namespace System.Management.Automation
     /// <seealso cref="Provider.CmdletProvider"/>
     /// is no longer available.
     /// </remarks>
+#nullable enable
     public interface IContainsErrorRecord
     {
         /// <summary>
@@ -1789,6 +1790,7 @@ namespace System.Management.Automation
         /// </remarks>
         ErrorRecord ErrorRecord { get; }
     }
+#nullable restore
 
     /// <summary>
     /// Objects implementing this interface can be used by
