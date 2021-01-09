@@ -23,6 +23,21 @@ namespace System.Management.Automation
     }
     #endregion OutputRendering
 
+    /// <summary>
+    /// Defines the options for views of progress rendering.
+    /// </summary>
+    public enum ProgressView
+    {
+        /// <summary>Minimal</summary>
+        Minimal = 0,
+        
+        /// <summary>MinimalWithClear</summary>
+        MinimalWithClear = 1,
+
+        /// <summary>Full</summary>
+        Full = 2,
+    }
+
     #region PSStyle
     /// <summary>
     /// Contains configuration for how PowerShell renders text.
@@ -260,6 +275,27 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Contains configuration for the progress bar visualization.
+        /// </summary>
+        public class ProgressConfiguration
+        {
+            /// <summary>
+            /// Gets or sets the style for progress bar.
+            /// </summary>
+            public string Style { get; set; } = "\x1b[33;1m";
+
+            /// <summary>
+            /// Gets or sets the max width of the progress bar.
+            /// </summary>
+            public int MaxWidth { get; set; } = 120;
+
+            /// <summary>
+            /// Gets or sets the style for progress bar.
+            /// </summary>
+            public ProgressView View { get; set; } = ProgressView.Minimal;
+        }
+
+        /// <summary>
         /// Contains formatting styles for steams and objects.
         /// </summary>
         public class FormattingData
@@ -293,11 +329,6 @@ namespace System.Management.Automation
             /// Gets or sets the style for debug messages.
             /// </summary>
             public string Debug { get; set; } = "\x1b[33;1m";
-
-            /// <summary>
-            /// Gets or sets the style for progress bar.
-            /// </summary>
-            public string Progress { get; set; } = "\x1b[33;1m";
         }
 
         /// <summary>
@@ -397,6 +428,11 @@ namespace System.Management.Automation
         public FormattingData Formatting { get; }
 
         /// <summary>
+        /// Gets the configuration for progress rendering.
+        /// </summary>
+        public ProgressConfiguration Progress { get; }
+
+        /// <summary>
         /// Gets foreground colors.
         /// </summary>
         public ForegroundColor Foreground { get; }
@@ -411,6 +447,7 @@ namespace System.Management.Automation
         private PSStyle()
         {
             Formatting = new FormattingData();
+            Progress   = new ProgressConfiguration();
             Foreground = new ForegroundColor();
             Background = new BackgroundColor();
         }

@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiProgress"))
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && (PSStyle.Instance.Progress.View == ProgressView.Minimal || PSStyle.Instance.Progress.View == ProgressView.MinimalWithClear))
             {
                 this.Style = RenderStyle.Ansi;
             }
@@ -382,16 +382,16 @@ namespace Microsoft.PowerShell
             int secRemainLength = secRemain.Length + 1;
 
             // limit progress bar to 120 chars as no need to render full width
-            if (maxWidth > 120)
+            if (PSStyle.Instance.Progress.MaxWidth > 0 && maxWidth > PSStyle.Instance.Progress.MaxWidth)
             {
-                maxWidth = 120;
+                maxWidth = PSStyle.Instance.Progress.MaxWidth;
             }
 
             // 4 is for the extra space and square brackets below and one extra space
             int barWidth = maxWidth - Activity.Length - indentation - 4;
 
             var sb = new StringBuilder();
-            int padding = maxWidth + PSStyle.Instance.Formatting.Progress.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
+            int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
             sb.Append(PSStyle.Instance.Reverse);
 
             if (StatusDescription.Length > barWidth - secRemainLength)
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell
                 StringUtil.Format(
                     "{0}{1}{2} [{3}]",
                     indent,
-                    PSStyle.Instance.Formatting.Progress,
+                    PSStyle.Instance.Progress.Style,
                     Activity,
                     sb.ToString())
                 .PadRight(padding));
