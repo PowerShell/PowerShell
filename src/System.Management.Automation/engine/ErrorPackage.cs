@@ -769,7 +769,10 @@ namespace System.Management.Automation
         /// </remarks>
         public string RecommendedAction
         {
-            get { return ErrorRecord.NotNull(_recommendedAction); }
+            get
+            {
+                return ErrorRecord.NotNull(_recommendedAction);
+            }
 
             set
             {

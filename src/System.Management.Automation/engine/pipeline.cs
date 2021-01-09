@@ -1467,7 +1467,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineReader<object> ExternalInput
         {
-            get { return _externalInputPipe; }
+            get
+            {
+                return _externalInputPipe;
+            }
 
             set
             {
@@ -1493,7 +1496,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineWriter ExternalSuccessOutput
         {
-            get { return _externalSuccessOutput; }
+            get
+            {
+                return _externalSuccessOutput;
+            }
 
             set
             {
@@ -1520,7 +1526,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineWriter ExternalErrorOutput
         {
-            get { return _externalErrorOutput; }
+            get
+            {
+                return _externalErrorOutput;
+            }
 
             set
             {
@@ -1567,7 +1576,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal SessionStateScope ExecutionScope
         {
-            get { return _executionScope; }
+            get
+            {
+                return _executionScope;
+            }
 
             set
             {

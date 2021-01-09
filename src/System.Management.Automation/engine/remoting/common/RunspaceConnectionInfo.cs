@@ -208,7 +208,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public int OpenTimeout
         {
-            get { return _openTimeout; }
+            get
+            {
+                return _openTimeout;
+            }
 
             set
             {
@@ -598,7 +601,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string CertificateThumbprint
         {
-            get { return _thumbPrint; }
+            get
+            {
+                return _thumbPrint;
+            }
 
             set
             {
@@ -675,7 +681,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return _proxyAuthentication; }
+            get
+            {
+                return _proxyAuthentication;
+            }
 
             set
             {
@@ -702,7 +711,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public PSCredential ProxyCredential
         {
-            get { return _proxyCredential; }
+            get
+            {
+                return _proxyCredential;
+            }
 
             set
             {
@@ -1583,7 +1595,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -1705,7 +1720,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string AppDomainName
         {
-            get { return _appDomainName; }
+            get
+            {
+                return _appDomainName;
+            }
 
             set
             {
@@ -1812,7 +1830,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -2795,7 +2816,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -2920,7 +2944,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {

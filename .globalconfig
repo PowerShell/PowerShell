@@ -1368,7 +1368,7 @@ dotnet_diagnostic.SA1502.severity = none
 dotnet_diagnostic.SA1503.severity = none
 
 # SA1504: All accessors should be single-line or multi-line
-dotnet_diagnostic.SA1504.severity = none
+dotnet_diagnostic.SA1504.severity = warning
 
 # SA1505: Opening braces should not be followed by blank line
 dotnet_diagnostic.SA1505.severity = none

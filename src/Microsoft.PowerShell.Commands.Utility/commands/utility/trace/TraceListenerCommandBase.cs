@@ -32,7 +32,10 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         internal PSTraceSourceOptions OptionsInternal
         {
-            get { return _options; }
+            get
+            {
+                return _options;
+            }
 
             set
             {
@@ -53,7 +56,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal TraceOptions ListenerOptionsInternal
         {
-            get { return _traceOptions; }
+            get
+            {
+                return _traceOptions;
+            }
 
             set
             {
