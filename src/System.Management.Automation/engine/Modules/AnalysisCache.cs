@@ -371,7 +371,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    foreach (string item in Directory.GetFiles(baseDirectory, "*.ps1"))
+                    foreach (string item in Directory.EnumerateFiles(baseDirectory, "*.ps1"))
                     {
                         var command = Path.GetFileNameWithoutExtension(item);
                         result.AddOrUpdate(command, CommandTypes.ExternalScript,
