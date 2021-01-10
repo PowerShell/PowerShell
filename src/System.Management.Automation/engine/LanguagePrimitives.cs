@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            if (assemblyQualifiedTypeName.IndexOf(',') == -1)
+            if (!assemblyQualifiedTypeName.Contains(','))
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;

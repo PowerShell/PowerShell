@@ -1989,9 +1989,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder result = new(name.Length);
             foreach (char c in name)
             {
-                if (("\"'`$".IndexOf(c) == (-1)) &&
-                    (!char.IsControl(c)) &&
-                    (!char.IsWhiteSpace(c)))
+                if (!"\"'`$".Contains(c)
+                    && !char.IsControl(c)
+                    && !char.IsWhiteSpace(c))
                 {
                     result.Append(c);
                 }

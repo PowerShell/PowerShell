@@ -127,7 +127,7 @@ namespace System.Management.Automation
 
             foreach (string filePath in files)
             {
-                if (filePath.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
+                if (filePath.Contains(pattern, StringComparison.OrdinalIgnoreCase))
                 {
                     result.Add(filePath);
                     break;

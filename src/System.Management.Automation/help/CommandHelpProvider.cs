@@ -1022,7 +1022,7 @@ namespace System.Management.Automation
             {
                 if (decoratedSearch)
                 {
-                    if (target.IndexOf(StringLiterals.CommandVerbNounSeparator) >= 0)
+                    if (target.Contains(StringLiterals.CommandVerbNounSeparator))
                     {
                         patternList.Add(target + "*");
                     }

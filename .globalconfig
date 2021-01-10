@@ -468,7 +468,7 @@ dotnet_diagnostic.CA2247.severity = warning
 dotnet_diagnostic.CA2248.severity = suggestion
 
 # CA2249: Consider using 'string.Contains' instead of 'string.IndexOf'
-dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA2249.severity = warning
 
 # CA2300: Do not use insecure deserializer BinaryFormatter
 dotnet_diagnostic.CA2300.severity = none
