@@ -4956,7 +4956,7 @@ namespace System.Management.Automation
                 //Complete the parameter if the cursor is at a parameter
                 if (lineToCursor.LastIndexOf($"-{currentParameter}") + currentParameter.Length + 1 == cursorIndex)
                 {
-                    replacementIndex = cursorIndex - currentParameter.Length;
+                    replacementIndex = context.CursorPosition.Offset - currentParameter.Length;
                     replacementLength = currentParameter.Length;
 
                     var requiresParameters = new Tuple<string, string>[4] {
@@ -4989,7 +4989,7 @@ namespace System.Management.Automation
                         currentValue = foundMatches[^1].Groups[^1].Value;
                     }
 
-                    replacementIndex = cursorIndex - currentValue.Length;
+                    replacementIndex = context.CursorPosition.Offset - currentValue.Length;
                     replacementLength = currentValue.Length;
 
                     if (currentParameter.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
