@@ -124,8 +124,8 @@ namespace System.Management.Automation
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
                 new ExperimentalFeature(
-                    name: "PSDscV3Support",
-                    description: "Support cross-platform DSC v3"),
+                    name: "PS7DscSupport",
+                    description: "Support cross-platform DSC"),
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),

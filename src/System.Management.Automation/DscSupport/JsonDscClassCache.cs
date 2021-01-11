@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Experimental feature name for DSC v3
         /// </summary>
-        public const string DscV3ExperimentalFeatureName = "PSDscV3Support";
+        public const string DscExperimentalFeatureName = "PS7DscSupport";
 
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
@@ -348,9 +348,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static void ClearCache()
         {
-            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PS7DscSupportDisabled);
             }
 
             s_tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
@@ -402,9 +402,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Class declaration from cache.</returns>
         public static PSObject GetGuestConfigCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
         {
-            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PS7DscSupportDisabled);
             }
 
             var moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleName, moduleVersion, className, string.IsNullOrEmpty(resourceName) ? className : resourceName);
@@ -454,9 +454,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         public static Collection<DynamicKeyword> GetKeywordsFromCachedClasses()
         {
-            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PS7DscSupportDisabled);
             }
 
             Collection<DynamicKeyword> keywords = new Collection<DynamicKeyword>();
@@ -778,9 +778,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
                                                    List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
         {
-            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
             {
-                Exception exception = new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
+                Exception exception = new InvalidOperationException(ParserStrings.PS7DscSupportDisabled);
                 errors.Add(exception);
                 return;
             }
@@ -1288,9 +1288,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>The list of resources imported from this module.</returns>
         public static List<string> ImportClassResourcesFromModule(PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
-            if (!ExperimentalFeature.IsEnabled(DscV3ExperimentalFeatureName))
+            if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
             {
-                throw new InvalidOperationException(ParserStrings.PsDscV3SupportDisabled);
+                throw new InvalidOperationException(ParserStrings.PS7DscSupportDisabled);
             }
 
             var resourcesImported = new List<string>();

@@ -1455,8 +1455,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="PsDscMissingSchemaStore" xml:space="preserve">
     <value>Unable to find DSC schema store at "{0}". Please ensure PS DSC for Linux is installed.</value>
   </data>
-  <data name="PsDscV3SupportDisabled" xml:space="preserve">
-    <value>PSDscV3Support experimental feature is disabled; use Enable-ExperimentalFeature or update powershell.config.json to enable this feature.</value>
+  <data name="PS7DscSupportDisabled" xml:space="preserve">
+    <value>PS7DscSupport experimental feature is disabled; use Enable-ExperimentalFeature or update powershell.config.json to enable this feature.</value>
   </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>

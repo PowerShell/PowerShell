@@ -2996,7 +2996,7 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            if (ExperimentalFeature.IsEnabled(Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.DscV3ExperimentalFeatureName))
+                            if (ExperimentalFeature.IsEnabled(Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.DscExperimentalFeatureName))
                             {
                                 // In addition to checking if experimental feature is enabled
                                 // also check if PSDesiredStateConfiguration is already loaded

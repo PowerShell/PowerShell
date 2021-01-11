@@ -587,7 +587,15 @@ Fix steps:
 
         $json = & $publishPath\pwsh -noprofile -command {
             $expFeatures = [System.Collections.Generic.List[string]]::new()
-            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+            Get-ExperimentalFeature | ForEach-Object {
+                # Special case for DSC code in PS;
+                # this exp feature requires new DSC module that is not inbox,
+                # so we don't want default DSC use case be broken
+                if ($_.Name -ne "PS7DscSupport")
+                {
+                    $expFeatures.Add($_.Name)
+                }
+            }
 
             # Make sure ExperimentalFeatures from modules in PSHome are added
             # https://github.com/PowerShell/PowerShell/issues/10550
