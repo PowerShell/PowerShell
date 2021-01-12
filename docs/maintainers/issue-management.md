@@ -60,7 +60,7 @@ Those labels denoted by `WG-*` are owned by a Working Group (WG) defined
 * `WG-Engine-Providers`: built-in PowerShell providers such as FileSystem, Certificates,
    Registry, etc. (or anything returned by `Get-PSProvider`)
 * `WG-Interactive-Console`: the console experience
-* `WG-Interactive-Debugging: debugging PowerShell script
+* `WG-Interactive-Debugging`: debugging PowerShell script
 * `WG-Interactive-HelpSystem`: anything related to the help infrastructure and formatting of help
 * `WG-Interactive-IntelliSense`: tab completion
 * `WG-Interactive-PSReadline`: PSReadline related issues
