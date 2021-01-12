@@ -28,16 +28,16 @@ namespace System.Management.Automation.Subsystem
         public string Name { get; }
 
         /// <summary>
-        /// Gets the name of the predictor.
+        /// Gets the mini-session id that represents a specific invocation to the <see cref="ICommandPredictor.GetSuggestion"/> API of the predictor.
         /// </summary>
-        public string Session { get; }
+        public uint Session { get; }
 
         /// <summary>
         /// Gets the suggestions.
         /// </summary>
         public IReadOnlyList<PredictiveSuggestion> Suggestions { get; }
 
-        internal PredictionResult(Guid id, string name, string session, List<PredictiveSuggestion> suggestions)
+        internal PredictionResult(Guid id, string name, uint session, List<PredictiveSuggestion> suggestions)
         {
             Id = id;
             Name = name;
@@ -93,9 +93,9 @@ namespace System.Management.Automation.Subsystem
                     state =>
                     {
                         var predictor = (ICommandPredictor)state!;
-                        var (session, list) = predictor.GetSuggestion(client, context, cancellationSource.Token);
-                        return session != null && list?.Count > 0
-                            ? new PredictionResult(predictor.Id, predictor.Name, session, list)
+                        SuggestionPackage pkg = predictor.GetSuggestion(client, context, cancellationSource.Token);
+                        return pkg.Session.HasValue && pkg.SuggestionEntries?.Count > 0
+                            ? new PredictionResult(predictor.Id, predictor.Name, pkg.Session.Value, pkg.SuggestionEntries)
                             : null;
                     },
                     predictor,
@@ -161,10 +161,8 @@ namespace System.Management.Automation.Subsystem
         /// When the value is <code>> 0</code>, it's the number of displayed suggestions from the list returned in <see cref="session"/>, starting from the index 0.
         /// When the value is <code><= 0</code>, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
-        public static void OnSuggestionDisplayed(Guid predictorId, string session, int countOrIndex)
+        public static void OnSuggestionDisplayed(Guid predictorId, uint session, int countOrIndex)
         {
-            Requires.NotNullOrEmpty(session, nameof(session));
-
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
             {
@@ -189,9 +187,8 @@ namespace System.Management.Automation.Subsystem
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
         /// <param name="session">The mini-session where the accepted suggestion came from.</param>
         /// <param name="suggestionText">The accepted suggestion text.</param>
-        public static void OnSuggestionAccepted(Guid predictorId, string session, string suggestionText)
+        public static void OnSuggestionAccepted(Guid predictorId, uint session, string suggestionText)
         {
-            Requires.NotNullOrEmpty(session, nameof(session));
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();

@@ -50,8 +50,8 @@ namespace System.Management.Automation.Subsystem
         /// <param name="clientId">Represents the client that initiates the call.</param>
         /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>
         /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
-        /// <returns>A value tuple consist of a session id, and a list of predictive suggestions.</returns>
-        (string? Session, List<PredictiveSuggestion>? List) GetSuggestion(string clientId, PredictionContext context, CancellationToken cancellationToken);
+        /// <returns>An instance of <see cref="SuggestionPackage"/>.</returns>
+        SuggestionPackage GetSuggestion(string clientId, PredictionContext context, CancellationToken cancellationToken);
 
         /// <summary>
         /// One or more suggestions provided by the predictor were displayed to the user.
@@ -61,14 +61,14 @@ namespace System.Management.Automation.Subsystem
         /// When the value is <code>> 0</code>, it's the number of displayed suggestions from the list returned in <see cref="session"/>, starting from the index 0.
         /// When the value is <code><= 0</code>, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
-        void OnSuggestionDisplayed(string session, int countOrIndex);
+        void OnSuggestionDisplayed(uint session, int countOrIndex);
 
         /// <summary>
         /// The suggestion provided by the predictor was accepted.
         /// </summary>
         /// <param name="session">Represents the mini-session where the accepted suggestion came from.</param>
         /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
-        void OnSuggestionAccepted(string session, string acceptedSuggestion);
+        void OnSuggestionAccepted(uint session, string acceptedSuggestion);
     }
 
     /// <summary>
@@ -171,6 +171,31 @@ namespace System.Management.Automation.Subsystem
 
             SuggestionText = suggestion;
             ToolTip = toolTip;
+        }
+    }
+
+    /// <summary>
+    /// A package returned from <see cref="ICommandPredictor.GetSuggestion"/>.
+    /// </summary>
+    public struct SuggestionPackage
+    {
+        /// <summary>
+        /// The mini-session that represents a specific invocation to <see cref="ICommandPredictor.GetSuggestion"/>.
+        /// </summary>
+        public uint? Session { get; }
+
+        /// <summary>
+        /// Suggestion entries returned from that mini-session.
+        /// </summary>
+        public List<PredictiveSuggestion>? SuggestionEntries { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SuggestionPackage"/> struct.
+        /// </summary>
+        public SuggestionPackage(uint session, List<PredictiveSuggestion> suggestionEntries)
+        {
+            Session = session;
+            SuggestionEntries = suggestionEntries;
         }
     }
 }
