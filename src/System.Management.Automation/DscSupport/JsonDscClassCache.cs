@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
     internal class DscClassCacheEntry
     {
         /// <summary>
-        /// Initializes variables with default values.
+        /// Initializes a new instance of the <see cref="DscClassCacheEntry"/> class.
         /// </summary>
         public DscClassCacheEntry()
             : this(DSCResourceRunAsCredential.Default, isImportedImplicitly: false, cimClassInstance: null, modulePath: string.Empty)
@@ -56,8 +56,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         public DSCResourceRunAsCredential DscResRunAsCred { get; set; }
 
         /// <summary>
-        /// If we have implicitly imported this resource, we will set this field to true. This will
-        /// only happen to InBox resources.
+        /// Gets or sets a value indicating if we have implicitly imported this resource.
         /// </summary>
         public bool IsImportedImplicitly { get; set; }
 
@@ -67,12 +66,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         public PSObject CimClassInstance { get; set; }
 
         /// <summary>
-        /// Path of the implementing module for this resource.
+        /// Gets or sets path of the implementing module for this resource.
         /// </summary>
         public string ModulePath { get; set; }
     }
 
     /// <summary>
+    /// DSC class cache for this runspace.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed Internal use only")]
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
 
         /// <summary>
-        /// DSC class cache for this runspace.
+        /// Gets DSC class cache for this runspace.
         /// Cache stores the DSCRunAsBehavior, cim class and boolean to indicate if an Inbox resource has been implicitly imported.
         /// </summary>
         private static Dictionary<string, DscClassCacheEntry> ClassCache
@@ -120,8 +120,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static Dictionary<string, DscClassCacheEntry> t_classCache;
 
         /// <summary>
-        /// DSC class cache for GuestConfig.
-        /// It is similar to ClassCache, but maintains values between operations.
+        /// Gets DSC class cache for GuestConfig; it is similar to ClassCache, but maintains values between operations.
         /// </summary>
         private static Dictionary<string, DscClassCacheEntry> GuestConfigClassCache
         {
@@ -235,11 +234,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Import base classes from the given file.
         /// </summary>
-        /// <param name="path">Path to schema file</param>
-        /// <param name="moduleInfo">Module information</param>
-        /// <param name="errors">Error collection that will be shown to the user</param>
-        /// <param name="importInBoxResourcesImplicitly">Flag for implicitly imported resource</param>
-        /// <returns>Class objects from schema file</returns>
+        /// <param name="path">Path to schema file.</param>
+        /// <param name="moduleInfo">Module information.</param>
+        /// <param name="errors">Error collection that will be shown to the user.</param>
+        /// <param name="importInBoxResourcesImplicitly">Flag for implicitly imported resource.</param>
+        /// <returns>Class objects from schema file.</returns>
         public static IEnumerable<PSObject> ImportBaseClasses(string path, Tuple<string, Version> moduleInfo, Collection<Exception> errors, bool importInBoxResourcesImplicitly)
         {
             if (string.IsNullOrEmpty(path))
@@ -381,10 +380,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns class declaration from GuestConfigClassCache.
         /// </summary>
-        /// <param name="moduleName">Module name</param>
-        /// <param name="moduleVersion">Module version</param>
-        /// <param name="className">Name of the class</param>
-        /// <param name="resourceName">Friendly name of the resource</param>
+        /// <param name="moduleName">Module name.</param>
+        /// <param name="moduleVersion">Module version.</param>
+        /// <param name="className">Name of the class.</param>
+        /// <param name="resourceName">Friendly name of the resource.</param>
         /// <returns>Class declaration from cache.</returns>
         public static PSObject GetGuestConfigCachedClass(string moduleName, string moduleVersion, string className, string resourceName)
         {
@@ -436,6 +435,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Method to get the cached classes in the form of DynamicKeyword.
         /// </summary>
+        /// <returns>Dynamic keyword collection.</returns>
         public static Collection<DynamicKeyword> GetKeywordsFromCachedClasses()
         {
             if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
@@ -461,14 +461,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             return keywords;
         }
 
-        /// <summary>
-        /// A method to generate a keyword from a CIM class object and register it to DynamicKeyword table.
-        /// </summary>
-        /// <param name="moduleName"></param>
-        /// <param name="moduleVersion"></param>
-        /// <param name="cimClass"></param>
-        /// <param name="functionsToDefine">If true, don't define the keywords, just create the functions.</param>
-        /// <param name="runAsBehavior">To Specify RunAsBehavior of the class.</param>
         private static void CreateAndRegisterKeywordFromCimClass(string moduleName, Version moduleVersion, PSObject cimClass, Dictionary<string, ScriptBlock> functionsToDefine, DSCResourceRunAsCredential runAsBehavior)
         {
             var keyword = CreateKeywordFromCimClass(moduleName, moduleVersion, cimClass, runAsBehavior);
@@ -489,6 +481,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     throw e;
                 }
             }
+
             // Add the dynamic keyword to the table
             DynamicKeyword.AddKeyword(keyword);
 
@@ -678,13 +671,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             return keyword;
         }
 
-        /// <summary>
-        /// Update range restriction for meta configuration keywords
-        /// the restrictions are for
-        /// ConfigurationModeFrequency: 15-44640
-        /// RefreshFrequency: 30-44640.
-        /// </summary>
-        /// <param name="keyword"></param>
         private static void UpdateKnownRestriction(DynamicKeyword keyword)
         {
             const int RefreshFrequencyMin = 30;
@@ -821,15 +807,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
-        // This function is called after parsing the Import-DscResource keyword and it's arguments, but before parsing
-        // anything else.
+        // This function is called after parsing the Import-DscResource keyword and it's arguments, but before parsing anything else.
         private static ParseError[] ImportResourcePostParse(DynamicKeywordStatementAst ast)
         {
             var elements = Ast.CopyElements(ast.CommandElements);
-
-            Diagnostics.Assert(elements[0] is StringConstantExpressionAst &&
-                               ((StringConstantExpressionAst)elements[0]).Value.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase),
-                               "Incorrect ast for expected keyword");
             var commandAst = new CommandAst(ast.Extent, elements, TokenKind.Unknown, null);
 
             const string NameParam = "Name";
@@ -1026,7 +1007,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             // by design mandatoryPropertiesNames are not empty at this point:
             // every resource must have at least one Key property.
-
             HashtableAst hashtableAst = null;
             foreach (var commandElementsAst in ast.CommandElements)
             {
@@ -1179,9 +1159,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 LoadPowerShellClassResourcesFromModule(moduleInfo, moduleInfo, resourcesToImport, resourcesFound, exceptionList, null, true, scriptExtent);
                 foreach (Exception ex in exceptionList)
                 {
-                    errorList.Add(new ParseError(scriptExtent,
-                        "ClassResourcesLoadingFailed",
-                        ex.Message));
+                    errorList.Add(new ParseError(scriptExtent, "ClassResourcesLoadingFailed", ex.Message));
                 }
 
                 foreach (var resource in resourcesFound)
@@ -1201,9 +1179,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 {
                     if (!resourceNameToImport.Contains("*"))
                     {
-                        errorList.Add(new ParseError(scriptExtent,
-                                                     "DscResourcesNotFoundDuringParsing",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.DscResourcesNotFoundDuringParsing, resourceNameToImport)));
+                        errorList.Add(new ParseError(scriptExtent, "DscResourcesNotFoundDuringParsing", string.Format(CultureInfo.CurrentCulture, ParserStrings.DscResourcesNotFoundDuringParsing, resourceNameToImport)));
                     }
                 }
             }
@@ -1231,7 +1207,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             else
             {
                 string scriptPath = null;
-                // handle RootModule and nestedModule together
                 if (moduleInfo.RootModule != null)
                 {
                     scriptPath = Path.Join(moduleInfo.ModuleBase, moduleInfo.RootModule);
@@ -1370,7 +1345,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         {
             // MOF-based implementation of this used to generate MOF string representing classes/typeAst and pass it to MMI/MOF deserializer to get CimClass array
             // Here we are avoiding that roundtrip by constructing the resulting PSObjects directly
-
             var className = typeAst.Name;
 
             string cimSuperClassName = null;
@@ -1379,7 +1353,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 cimSuperClassName = "OMI_BaseResource";
             }
 
-            var _CimClassProperties = ProcessMembers(embeddedInstanceTypes, typeAst, className).ToArray();
+            var cimClassProperties = ProcessMembers(embeddedInstanceTypes, typeAst, className).ToArray();
 
             Queue<object> bases = new Queue<object>();
             foreach (var b in typeAst.BaseTypes)
@@ -1417,7 +1391,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             result.Properties.Add(new PSNoteProperty("ClassVersion", "1.0.0"));
             result.Properties.Add(new PSNoteProperty("FriendlyName", className));
             result.Properties.Add(new PSNoteProperty("SuperClassName", cimSuperClassName));
-            result.Properties.Add(new PSNoteProperty("ClassProperties", _CimClassProperties));
+            result.Properties.Add(new PSNoteProperty("ClassProperties", cimClassProperties));
 
             return new[] { result };
         }
@@ -1510,10 +1484,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                             attributesPSObject = new PSObject();
                         }
 
-                        List<string> ValueMap = new List<string>(validateSet.ValidValues);
-                        List<string> Values = new List<string>(validateSet.ValidValues);
-                        attributesPSObject.Properties.Add(new PSNoteProperty("ValueMap", ValueMap));
-                        attributesPSObject.Properties.Add(new PSNoteProperty("Values", Values));
+                        List<string> valueMap = new List<string>(validateSet.ValidValues);
+                        List<string> values = new List<string>(validateSet.ValidValues);
+                        attributesPSObject.Properties.Add(new PSNoteProperty("ValueMap", valueMap));
+                        attributesPSObject.Properties.Add(new PSNoteProperty("Values", values));
                     }
                 }
 
@@ -1574,7 +1548,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         for (int i = 0; i < typeAst.Attributes.Count; i++)
                         {
                             var a = typeAst.Attributes[i];
-                            if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                            if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute))
+                            {
+                                return true;
+                            }
                         }
                     }
 
@@ -1706,7 +1683,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 bool temp;
                 var elementType = type.GetElementType();
                 if (!elementType.IsArray)
+                {
                     return MapTypeToMofType(type.GetElementType(), memberName, className, out temp, out embeddedInstanceType, embeddedInstanceTypes);
+                }
             }
             else
             {
@@ -1834,9 +1813,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                 ParserStrings.GetBadlyFormedRequiredResourceId, badDependsOnReference, definingResource);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.GetBadlyFormedRequiredResourceId, badDependsOnReference, definingResource);
             e.SetErrorId("GetBadlyFormedRequiredResourceId");
             return e.ErrorRecord;
         }
@@ -1849,9 +1826,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                 ParserStrings.GetBadlyFormedExclusiveResourceId, badExclusiveResourcereference, definingResource);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.GetBadlyFormedExclusiveResourceId, badExclusiveResourcereference, definingResource);
             e.SetErrorId("GetBadlyFormedExclusiveResourceId");
             return e.ErrorRecord;
         }
@@ -1863,9 +1838,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord GetPullModeNeedConfigurationSource(string resourceId)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                 ParserStrings.GetPullModeNeedConfigurationSource, resourceId);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.GetPullModeNeedConfigurationSource, resourceId);
             e.SetErrorId("GetPullModeNeedConfigurationSource");
             return e.ErrorRecord;
         }
@@ -1877,9 +1850,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord DisabledRefreshModeNotValidForPartialConfig(string resourceId)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                 ParserStrings.DisabledRefreshModeNotValidForPartialConfig, resourceId);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.DisabledRefreshModeNotValidForPartialConfig, resourceId);
             e.SetErrorId("DisabledRefreshModeNotValidForPartialConfig");
             return e.ErrorRecord;
         }
@@ -1892,9 +1863,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>The error record to use.</returns>
         public static ErrorRecord DuplicateResourceIdInNodeStatementErrorRecord(string duplicateResourceId, string nodeName)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                 ParserStrings.DuplicateResourceIdInNodeStatement, duplicateResourceId, nodeName);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.DuplicateResourceIdInNodeStatement, duplicateResourceId, nodeName);
             e.SetErrorId("DuplicateResourceIdInNodeStatement");
             return e.ErrorRecord;
         }
@@ -1906,9 +1875,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord InvalidConfigurationNameErrorRecord(string configurationName)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.InvalidConfigurationName, configurationName);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.InvalidConfigurationName, configurationName);
             e.SetErrorId("InvalidConfigurationName");
             return e.ErrorRecord;
         }
@@ -1923,9 +1890,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord InvalidValueForPropertyErrorRecord(string propertyName, string value, string keywordName, string validValues)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.InvalidValueForProperty, value, propertyName, keywordName, validValues);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.InvalidValueForProperty, value, propertyName, keywordName, validValues);
             e.SetErrorId("InvalidValueForProperty");
             return e.ErrorRecord;
         }
@@ -1938,9 +1903,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord InvalidLocalConfigurationManagerPropertyErrorRecord(string propertyName, string validProperties)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.InvalidLocalConfigurationManagerProperty, propertyName, validProperties);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.InvalidLocalConfigurationManagerProperty, propertyName, validProperties);
             e.SetErrorId("InvalidLocalConfigurationManagerProperty");
             return e.ErrorRecord;
         }
@@ -1955,9 +1918,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord UnsupportedValueForPropertyErrorRecord(string propertyName, string value, string keywordName, string validValues)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.UnsupportedValueForProperty, value, propertyName, keywordName, validValues);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.UnsupportedValueForProperty, value, propertyName, keywordName, validValues);
             e.SetErrorId("UnsupportedValueForProperty");
             return e.ErrorRecord;
         }
@@ -1971,9 +1932,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord MissingValueForMandatoryPropertyErrorRecord(string keywordName, string typeName, string propertyName)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.MissingValueForMandatoryProperty, keywordName, typeName, propertyName);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.MissingValueForMandatoryProperty, keywordName, typeName, propertyName);
             e.SetErrorId("MissingValueForMandatoryProperty");
             return e.ErrorRecord;
         }
@@ -1984,9 +1943,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord DebugModeShouldHaveOneValue()
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.DebugModeShouldHaveOneValue);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.DebugModeShouldHaveOneValue);
             e.SetErrorId("DebugModeShouldHaveOneValue");
             return e.ErrorRecord;
         }
@@ -2002,9 +1959,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord ValueNotInRangeErrorRecord(string property, string name, int providedValue, int lower, int upper)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                ParserStrings.ValueNotInRange, property, name, providedValue, lower, upper);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.ValueNotInRange, property, name, providedValue, lower, upper);
             e.SetErrorId("ValueNotInRange");
             return e.ErrorRecord;
         }
@@ -2016,9 +1971,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <returns>Generated error record.</returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {
-            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
-                 ParserStrings.PsDscRunAsCredentialMergeErrorForCompositeResources, resourceId);
-
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.PsDscRunAsCredentialMergeErrorForCompositeResources, resourceId);
             e.SetErrorId("PsDscRunAsCredentialMergeErrorForCompositeResources");
             return e.ErrorRecord;
         }
@@ -2040,8 +1993,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         ///            [ DependsOn = [string[]] ]
         ///        }
         /// </summary>
-        /// <param name="keyword"></param>
-        /// <returns></returns>
+        /// <param name="keyword">Dynamic keyword.</param>
+        /// <returns>Usage string.</returns>
         public static string GetDSCResourceUsageString(DynamicKeyword keyword)
         {
             StringBuilder usageString;
@@ -2086,7 +2039,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     }
 
                     var propVal = prop.Value;
-                    if (listKeyProperties && propVal.IsKey || !listKeyProperties && !propVal.IsKey)
+                    if ((listKeyProperties && propVal.IsKey) || (!listKeyProperties && !propVal.IsKey))
                     {
                         usageString.Append(propVal.Mandatory ? "    " : "    [ ");
                         usageString.Append(prop.Key);
