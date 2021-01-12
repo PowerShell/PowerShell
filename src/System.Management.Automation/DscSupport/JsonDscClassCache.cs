@@ -38,10 +38,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Initializes all values.
         /// </summary>
-        /// <param name="dscResourceRunAsCredential"></param>
-        /// <param name="isImportedImplicitly"></param>
-        /// <param name="cimClassInstance"></param>
-        /// <param name="modulePath"></param>
+        /// <param name="dscResourceRunAsCredential">Run as credential value.</param>
+        /// <param name="isImportedImplicitly">Resource is imported implicitly.</param>
+        /// <param name="cimClassInstance">Class definition.</param>
+        /// <param name="modulePath">Path of module defining the class.</param>
         public DscClassCacheEntry(DSCResourceRunAsCredential dscResourceRunAsCredential, bool isImportedImplicitly, PSObject cimClassInstance, string modulePath)
         {
             DscResRunAsCred = dscResourceRunAsCredential;
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// Store the RunAs Credentials that this DSC resource will use.
+        /// Gets or sets the RunAs Credentials that this DSC resource will use.
         /// </summary>
         public DSCResourceRunAsCredential DscResRunAsCred { get; set; }
 
@@ -360,26 +360,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             CacheResourcesFromMultipleModuleVersions = false;
         }
 
-        /// <summary>
-        /// Returns module qualified resource name in "Module\Version\Class" format.
-        /// </summary>
-        /// <param name="moduleName"></param>
-        /// <param name="moduleVersion"></param>
-        /// <param name="className"></param>
-        /// <param name="resourceName"></param>
-        /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
         }
 
-        /// <summary>
-        /// Finds resources in the that which matches the specified class and module name.
-        /// </summary>
-        /// <param name="moduleName">Module name.</param>
-        /// <param name="className">Resource type name.</param>
-        /// <param name="resourceName">Resource friendly name.</param>
-        /// <returns>List of found resources in the form of Dictionary{moduleQualifiedName, cimClass}, otherwise empty list.</returns>
         private static List<KeyValuePair<string, DscClassCacheEntry>> FindResourceInCache(string moduleName, string className, string resourceName)
         {
             return (from cacheEntry in ClassCache
@@ -514,13 +499,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
-        /// <summary>
-        /// A method to generate a keyword from a CIM class object. This is used for DSC.
-        /// </summary>
-        /// <param name="moduleName"></param>
-        /// <param name="moduleVersion"></param>
-        /// <param name="cimClass"></param>
-        /// <param name="runAsBehavior">To specify RunAs behavior of the class.</param>
         private static DynamicKeyword CreateKeywordFromCimClass(string moduleName, Version moduleVersion, dynamic cimClass, DSCResourceRunAsCredential runAsBehavior)
         {
             var resourceName = cimClass.ClassName;
@@ -716,11 +694,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             const int ConfigurationModeFrequencyMax = 44640;
 
             if (
-                string.Equals(keyword.ResourceName,
+                string.Equals(
+                    keyword.ResourceName,
                     "MSFT_DSCMetaConfigurationV2",
                     StringComparison.OrdinalIgnoreCase)
                 ||
-                string.Equals(keyword.ResourceName,
+                string.Equals(
+                    keyword.ResourceName,
                     "MSFT_DSCMetaConfiguration",
                     StringComparison.OrdinalIgnoreCase))
             {
@@ -843,18 +823,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         // This function is called after parsing the Import-DscResource keyword and it's arguments, but before parsing
         // anything else.
-        private static ParseError[] ImportResourcePostParse(DynamicKeywordStatementAst kwAst)
+        private static ParseError[] ImportResourcePostParse(DynamicKeywordStatementAst ast)
         {
-            var elements = Ast.CopyElements(kwAst.CommandElements);
+            var elements = Ast.CopyElements(ast.CommandElements);
 
             Diagnostics.Assert(elements[0] is StringConstantExpressionAst &&
                                ((StringConstantExpressionAst)elements[0]).Value.Equals("Import-DscResource", StringComparison.OrdinalIgnoreCase),
                                "Incorrect ast for expected keyword");
-            var commandAst = new CommandAst(kwAst.Extent, elements, TokenKind.Unknown, null);
+            var commandAst = new CommandAst(ast.Extent, elements, TokenKind.Unknown, null);
 
-            const string nameParam = "Name";
-            const string moduleNameParam = "ModuleName";
-            const string moduleVersionParam = "ModuleVersion";
+            const string NameParam = "Name";
+            const string ModuleNameParam = "ModuleName";
+            const string ModuleVersionParam = "ModuleVersion";
 
             StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false);
 
@@ -879,15 +859,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     continue;
                 }
 
-                if (nameParam.StartsWith(boundParameterName, StringComparison.OrdinalIgnoreCase))
+                if (NameParam.StartsWith(boundParameterName, StringComparison.OrdinalIgnoreCase))
                 {
                     resourceNameBindingResult = parameterBindingResult;
                 }
-                else if (moduleNameParam.StartsWith(boundParameterName, StringComparison.OrdinalIgnoreCase))
+                else if (ModuleNameParam.StartsWith(boundParameterName, StringComparison.OrdinalIgnoreCase))
                 {
                     moduleNameBindingResult = parameterBindingResult;
                 }
-                else if (moduleVersionParam.StartsWith(boundParameterName, StringComparison.OrdinalIgnoreCase))
+                else if (ModuleVersionParam.StartsWith(boundParameterName, StringComparison.OrdinalIgnoreCase))
                 {
                     moduleVersionBindingResult = parameterBindingResult;
                 }
@@ -899,7 +879,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             if (errorList.Count == 0 && moduleNameBindingResult == null && resourceNameBindingResult == null)
             {
-                errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceNeedParams", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                errorList.Add(new ParseError(ast.Extent, "ImportDscResourceNeedParams", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
             }
 
             // Check here if Version is specified but modulename is not specified
@@ -911,7 +891,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 // once we have different error messages for 2 scenarios we can remove this check
                 if (resourceNameBindingResult != null)
                 {
-                    errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceNeedModuleNameWithModuleVersion", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                    errorList.Add(new ParseError(ast.Extent, "ImportDscResourceNeedModuleNameWithModuleVersion", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                 }
             }
 
@@ -922,7 +902,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 if (!IsConstantValueVisitor.IsConstant(resourceNameBindingResult.Value, out resourceName, true, true) ||
                     !LanguagePrimitives.TryConvertTo(resourceName, out resourceNames))
                 {
-                    errorList.Add(new ParseError(resourceNameBindingResult.Value.Extent, "RequiresInvalidStringArgument", string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, nameParam)));
+                    errorList.Add(new ParseError(resourceNameBindingResult.Value.Extent, "RequiresInvalidStringArgument", string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, NameParam)));
                 }
             }
 
@@ -987,25 +967,25 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
                 else
                 {
-                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "RequiresInvalidStringArgument", string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, moduleNameParam)));
+                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "RequiresInvalidStringArgument", string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, ModuleNameParam)));
                 }
             }
 
             if (errorList.Count == 0)
             {
                 // No errors, try to load the resources
-                LoadResourcesFromModuleInImportResourcePostParse(kwAst.Extent, moduleSpecifications, resourceNames, errorList);
+                LoadResourcesFromModuleInImportResourcePostParse(ast.Extent, moduleSpecifications, resourceNames, errorList);
             }
 
             return errorList.ToArray();
         }
 
         // This function performs semantic checks for Import-DscResource
-        private static ParseError[] ImportResourceCheckSemantics(DynamicKeywordStatementAst kwAst)
+        private static ParseError[] ImportResourceCheckSemantics(DynamicKeywordStatementAst ast)
         {
             List<ParseError> errorList = null;
 
-            var keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(kwAst.Parent);
+            var keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(ast.Parent);
             while (keywordAst != null)
             {
                 if (keywordAst.Keyword.Keyword.Equals("Node"))
@@ -1015,7 +995,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         errorList = new List<ParseError>();
                     }
 
-                    errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceInsideNode", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
+                    errorList.Add(new ParseError(ast.Extent, "ImportDscResourceInsideNode", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
                     break;
                 }
 
@@ -1033,10 +1013,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         // This function performs semantic checks for all DSC Resources keywords.
-        private static ParseError[] CheckMandatoryPropertiesPresent(DynamicKeywordStatementAst kwAst)
+        private static ParseError[] CheckMandatoryPropertiesPresent(DynamicKeywordStatementAst ast)
         {
             HashSet<string> mandatoryPropertiesNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var pair in kwAst.Keyword.Properties)
+            foreach (var pair in ast.Keyword.Properties)
             {
                 if (pair.Value.Mandatory)
                 {
@@ -1048,9 +1028,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             // every resource must have at least one Key property.
 
             HashtableAst hashtableAst = null;
-            foreach (var ast in kwAst.CommandElements)
+            foreach (var commandElementsAst in ast.CommandElements)
             {
-                hashtableAst = ast as HashtableAst;
+                hashtableAst = commandElementsAst as HashtableAst;
                 if (hashtableAst != null)
                 {
                     break;
@@ -1083,7 +1063,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             if (mandatoryPropertiesNames.Count > 0)
             {
                 ParseError[] errors = new ParseError[mandatoryPropertiesNames.Count];
-                var extent = kwAst.CommandElements[0].Extent;
+                var extent = ast.CommandElements[0].Extent;
                 int i = 0;
                 foreach (string name in mandatoryPropertiesNames)
                 {
@@ -1093,8 +1073,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         string.Format(
                             CultureInfo.CurrentCulture,
                             ParserStrings.MissingValueForMandatoryProperty,
-                            kwAst.Keyword.Keyword,
-                            kwAst.Keyword.Properties.First(p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint,
+                            ast.Keyword.Keyword,
+                            ast.Keyword.Properties.First(p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint,
                             name));
                     i++;
                 }
@@ -1155,9 +1135,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                                 new ParseError(
                                     scriptExtent,
                                     "MultipleModuleEntriesFoundDuringParse",
-                                    string.Format(CultureInfo.CurrentCulture,
-                                                ParserStrings.MultipleModuleEntriesFoundDuringParse,
-                                                moduleToImport.Name)));
+                                    string.Format(CultureInfo.CurrentCulture, ParserStrings.MultipleModuleEntriesFoundDuringParse, moduleToImport.Name)));
                         }
                         else
                         {
@@ -1441,7 +1419,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             result.Properties.Add(new PSNoteProperty("SuperClassName", cimSuperClassName));
             result.Properties.Add(new PSNoteProperty("ClassProperties", _CimClassProperties));
 
-            return new [] {result};
+            return new[] { result };
         }
 
         private static List<PSObject> ProcessMembers(List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)
@@ -1550,13 +1528,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             return result;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="resourceDefinitions"></param>
-        /// <param name="errorList"></param>
-        /// <param name="extent"></param>
-        /// <returns></returns>
         private static bool GetResourceDefinitionsFromModule(string fileName, out IEnumerable<Ast> resourceDefinitions, Collection<Exception> errorList, IScriptExtent extent)
         {
             resourceDefinitions = null;
@@ -1594,34 +1565,26 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 return false;
             }
 
-            resourceDefinitions = ast.FindAll(n =>
-            {
-                var typeAst = n as TypeDefinitionAst;
-                if (typeAst != null)
+            resourceDefinitions = ast.FindAll(
+                n =>
                 {
-                    for (int i = 0; i < typeAst.Attributes.Count; i++)
+                    var typeAst = n as TypeDefinitionAst;
+                    if (typeAst != null)
                     {
-                        var a = typeAst.Attributes[i];
-                        if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                        for (int i = 0; i < typeAst.Attributes.Count; i++)
+                        {
+                            var a = typeAst.Attributes[i];
+                            if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                        }
                     }
-                }
 
-                return false;
-            }, false);
+                    return false;
+                },
+                false);
 
             return true;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="module"></param>
-        /// <param name="resourcesToImport"></param>
-        /// <param name="resourcesFound"></param>
-        /// <param name="functionsToDefine"></param>
-        /// <param name="errorList"></param>
-        /// <param name="extent"></param>
-        /// <returns></returns>
         private static bool LoadPowerShellClassResourcesFromModule(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errorList, IScriptExtent extent)
         {
             IEnumerable<Ast> resourceDefinitions;
@@ -1632,8 +1595,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             var result = false;
 
-            const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(module._declaredDscResourceExports, wildcardOptions);
+            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
+            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(module._declaredDscResourceExports, options);
 
             foreach (var r in resourceDefinitions)
             {
@@ -1655,7 +1618,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     }
                 }
 
-                if (skip) continue;
+                if (skip)
+                {
+                    continue;
+                }
 
                 // Parse the Resource Attribute to see if RunAs behavior is specified for the resource.
                 DSCResourceRunAsCredential runAsBehavior = DSCResourceRunAsCredential.Default;
@@ -1688,16 +1654,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static readonly Dictionary<Type, string> s_mapPrimitiveDotNetTypeToMof = new Dictionary<Type, string>()
         {
             { typeof(sbyte), "sint8" },
-            { typeof(byte) , "uint8"},
-            { typeof(short) , "sint16"},
-            { typeof(ushort) , "uint16"},
-            { typeof(int) , "sint32"},
-            { typeof(uint) , "uint32"},
-            { typeof(long) , "sint64"},
+            { typeof(byte), "uint8" },
+            { typeof(short), "sint16" },
+            { typeof(ushort), "uint16" },
+            { typeof(int), "sint32" },
+            { typeof(uint), "uint32" },
+            { typeof(long), "sint64" },
             { typeof(ulong), "uint64" },
-            { typeof(float) , "real32"},
-            { typeof(double) , "real64"},
-            { typeof(bool) , "boolean"},
+            { typeof(float), "real32" },
+            { typeof(double), "real64" },
+            { typeof(bool), "boolean" },
             { typeof(string), "string" },
             { typeof(DateTime), "datetime" },
             { typeof(PSCredential), "string" },
@@ -2147,8 +2113,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Format the type name of a CIM property in a presentable way.
         /// </summary>
-        /// <param name="prop">Dynamic keyword property</param>
-        /// <param name="isOptionalProperty">If this is optional property or not</param>
+        /// <param name="prop">Dynamic keyword property.</param>
+        /// <param name="isOptionalProperty">If this is optional property or not.</param>
         /// <returns>CIM property type string.</returns>
         private static StringBuilder FormatCimPropertyType(DynamicKeywordProperty prop, bool isOptionalProperty)
         {
