@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the encoding to use when writing the file.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter]
         [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
