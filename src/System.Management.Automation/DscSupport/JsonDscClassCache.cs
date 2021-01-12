@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// Initializes all values.
+        /// Initializes a new instance of the <see cref="DscClassCacheEntry"/> class.
         /// </summary>
         /// <param name="dscResourceRunAsCredential">Run as credential value.</param>
         /// <param name="isImportedImplicitly">Resource is imported implicitly.</param>
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         public bool IsImportedImplicitly { get; set; }
 
         /// <summary>
-        /// A CimClass instance for this resource.
+        /// Gets or sets CimClass instance for this resource.
         /// </summary>
         public PSObject CimClassInstance { get; set; }
 
@@ -719,8 +719,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// </summary>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
             LoadDefaultCimKeywords(functionsToDefine, errors: null, modulePathList: null, cacheResourcesFromMultipleModuleVersions: false);
@@ -2113,7 +2113,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
-        /// The scriptblock that implements the CIM keyword functionality.
+        /// Gets the scriptblock that implements the CIM keyword functionality.
         /// </summary>
         private static ScriptBlock CimKeywordImplementationFunction
         {

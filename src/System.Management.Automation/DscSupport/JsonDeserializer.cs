@@ -16,6 +16,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Instantiates a default deserializer.
         /// </summary>
+        /// <returns>Default deserializer.</returns>
         public static JsonDeserializer Create()
         {
             return new JsonDeserializer();
@@ -28,6 +29,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns schema of Cim classes from specified json file.
         /// </summary>
+        /// <param name="json">Json text to deserialize.</param>
+        /// <param name="useNewRunspace">If a new runspace should be used.</param>
+        /// <returns>Deserialized PSObjects.</returns>
         public IEnumerable<PSObject> DeserializeClasses(string json, bool useNewRunspace = false)
         {
             if (string.IsNullOrEmpty(json))

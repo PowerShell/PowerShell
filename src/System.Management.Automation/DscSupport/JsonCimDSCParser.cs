@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     if (string.Equals(superClassName, "OMI_BaseResource", StringComparison.OrdinalIgnoreCase))
                     {
                         // Get the name of the file without schema.mof/json extension
-                        if (!(className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase)))
+                        if (!className.Equals(fileNameDefiningClass, StringComparison.OrdinalIgnoreCase))
                         {
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                 ParserStrings.ClassNameNotSameAsDefiningFile, className, fileNameDefiningClass);
