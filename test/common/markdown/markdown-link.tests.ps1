@@ -7,7 +7,7 @@ Describe "Verify Markdown Links" {
         {
             Write-Verbose "installing markdown-link-check ..." -Verbose
             start-nativeExecution {
-                sudo yarn global add markdown-link-check@3.7.2
+                sudo yarn global add markdown-link-check@3.8.5
             }
         }
 
@@ -36,7 +36,7 @@ Describe "Verify Markdown Links" {
             param([object] $group)
             foreach($file in $group.Group)
             {
-                $results = markdown-link-check $file 2>&1
+                $results = markdown-link-check -r $file 2>&1
                 Write-Output ([PSCustomObject]@{
                     file = $file
                     results = $results

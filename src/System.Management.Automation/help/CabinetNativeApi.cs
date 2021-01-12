@@ -84,7 +84,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Finalizer to ensure destruction of unmanaged resources.
+        /// Finalizes an instance of the <see cref="CabinetExtractor"/> class.
         /// </summary>
         ~CabinetExtractor()
         {

@@ -25,13 +25,13 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class RemoteDiscoveryHelper
+    internal static class RemoteDiscoveryHelper
     {
         #region PSRP
 
         private static Collection<string> RehydrateHashtableKeys(PSObject pso, string propertyName)
         {
-            var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
+            const DeserializingTypeConverter.RehydrationFlags rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             Hashtable hashtable = DeserializingTypeConverter.GetPropertyValue<Hashtable>(pso, propertyName, rehydrationFlags);
             if (hashtable == null)
@@ -53,7 +53,7 @@ namespace System.Management.Automation
 
         internal static PSModuleInfo RehydratePSModuleInfo(PSObject deserializedModuleInfo)
         {
-            var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
+            const DeserializingTypeConverter.RehydrationFlags rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             string name = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Name", rehydrationFlags);
             string path = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Path", rehydrationFlags);
@@ -815,9 +815,10 @@ namespace System.Management.Automation
                     ErrorRecord errorRecord = GetErrorRecordForRemoteDiscoveryProvider(exception);
                     if (!cmdlet.MyInvocation.ExpectingInput)
                     {
-                        if ((errorRecord.FullyQualifiedErrorId.IndexOf(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase) != (-1)) ||
-                            (cancellationToken.IsCancellationRequested || (exception is OperationCanceledException)) ||
-                            (!cimSession.TestConnection()))
+                        if (errorRecord.FullyQualifiedErrorId.Contains(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase)
+                            || cancellationToken.IsCancellationRequested
+                            || exception is OperationCanceledException
+                            || !cimSession.TestConnection())
                         {
                             cmdlet.ThrowTerminatingError(errorRecord);
                         }

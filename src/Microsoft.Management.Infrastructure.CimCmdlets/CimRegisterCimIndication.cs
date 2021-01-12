@@ -47,25 +47,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// subscription result
         /// </para>
         /// </summary>
-        public CimSubscriptionResult Result
-        {
-            get
-            {
-                return result;
-            }
-        }
-
-        private readonly CimSubscriptionResult result;
+        public CimSubscriptionResult Result { get; }
 
         /// <summary>
-        /// <para>Constructor</para>
+        /// Initializes a new instance of the <see cref="CimSubscriptionResultEventArgs"/> class.
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionResultEventArgs(
             CimSubscriptionResult theResult)
         {
             this.context = null;
-            this.result = theResult;
+            this.Result = theResult;
         }
     }
 
@@ -81,25 +73,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// subscription result
         /// </para>
         /// </summary>
-        public Exception Exception
-        {
-            get
-            {
-                return exception;
-            }
-        }
-
-        private readonly Exception exception;
+        public Exception Exception { get; }
 
         /// <summary>
-        /// <para>Constructor</para>
+        /// Initializes a new instance of the <see cref="CimSubscriptionExceptionEventArgs"/> class.
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionExceptionEventArgs(
             Exception theException)
         {
             this.context = null;
-            this.exception = theException;
+            this.Exception = theException;
         }
     }
 
@@ -118,9 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
 
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimRegisterCimIndication"/> class.
         /// </summary>
         public CimRegisterCimIndication()
             : base()
@@ -219,7 +201,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimWriteError cimWriteError = actionArgs.Action as CimWriteError;
             if (cimWriteError != null)
             {
-                this.exception = cimWriteError.Exception;
+                this.Exception = cimWriteError.Exception;
                 if (!this.ackedEvent.IsSet)
                 {
                     // an exception happened
@@ -233,10 +215,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     DebugHelper.WriteLog("Raise an exception event", 2);
 
-                    temp(this, new CimSubscriptionExceptionEventArgs(this.exception));
+                    temp(this, new CimSubscriptionExceptionEventArgs(this.Exception));
                 }
 
-                DebugHelper.WriteLog("Got an exception: {0}", 2, exception);
+                DebugHelper.WriteLog("Got an exception: {0}", 2, Exception);
             }
 
             CimWriteResultObject cimWriteResultObject = actionArgs.Action as CimWriteResultObject;
@@ -276,7 +258,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
             this.ackedEvent.Wait();
-            if (this.exception != null)
+            if (this.Exception != null)
             {
                 DebugHelper.WriteLogEx("error happened", 0);
                 if (this.Cmdlet != null)
@@ -285,14 +267,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                     // throw terminating error
                     ErrorRecord errorRecord = ErrorToErrorRecord.ErrorRecordFromAnyException(
-                        new InvocationContext(this.TargetComputerName, null), this.exception, null);
+                        new InvocationContext(this.TargetComputerName, null), this.Exception, null);
                     this.Cmdlet.ThrowTerminatingError(errorRecord);
                 }
                 else
                 {
                     DebugHelper.WriteLogEx("Throw exception", 1);
                     // throw exception out
-                    throw this.exception;
+                    throw this.Exception;
                 }
             }
 
@@ -363,15 +345,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Exception occurred while start the subscription.
         /// </summary>
-        internal Exception Exception
-        {
-            get
-            {
-                return exception;
-            }
-        }
-
-        private Exception exception;
+        internal Exception Exception { get; private set; }
 
         #endregion
 

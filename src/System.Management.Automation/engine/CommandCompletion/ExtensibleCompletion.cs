@@ -58,6 +58,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A type specified by the <see cref="ArgumentCompleterAttribute"/> must implement this interface.
     /// </summary>
+#nullable enable
     public interface IArgumentCompleter
     {
         /// <summary>
@@ -82,6 +83,7 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters);
     }
+#nullable restore
 
     /// <summary>
     /// </summary>
@@ -129,7 +131,7 @@ namespace System.Management.Automation
 
             if (CommandName == null || CommandName.Length == 0)
             {
-                CommandName = new[] { "" };
+                CommandName = new[] { string.Empty };
             }
 
             for (int i = 0; i < CommandName.Length; i++)

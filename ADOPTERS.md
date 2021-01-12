@@ -18,7 +18,7 @@ This is a list of adopters of using PowerShell in production or in their product
 * [Azure Functions - PowerShell](https://github.com/Azure/azure-functions-powershell-worker) is a serverless compute service to execute PowerShell scripts in the cloud without worrying about managing resources.
   In addition, Azure Functions provides client tools such as [`Az.Functions`](https://www.powershellgallery.com/packages/Az.Functions), a cross-platform PowerShell module to manage function apps and service plans in the cloud.
   For more information about Functions, please visit [functions overview](https://docs.microsoft.com/azure/azure-functions/functions-overview).
-* [PowerShell Universal Dashboard](https://ironmansoftware.com/powershell-universal-dashboard) is a cross-platform web framework for PowerShell. 
+* [PowerShell Universal](https://ironmansoftware.com/powershell-universal) is a cross-platform web framework for PowerShell. 
   It provides the ability to create robust, interactive websites, REST APIs, and Electron-based desktop apps with PowerShell script. 
   More information about PowerShell Universal Dashboard is available at the [PowerShell Universal Dashboard Docs](https://docs.universaldashboard.io).
 * [System Frontier](https://systemfrontier.com/solutions/powershell/) provides dynamically generated web GUIs and REST APIs for PowerShell and other scripting languages.  

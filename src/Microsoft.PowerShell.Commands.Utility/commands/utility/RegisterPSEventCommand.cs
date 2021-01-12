@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 (!(bool)Forward)
                )
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(EventingStrings.ActionMandatoryForLocal),
                     "ACTION_MANDATORY_FOR_LOCAL",
                     ErrorCategory.InvalidArgument,

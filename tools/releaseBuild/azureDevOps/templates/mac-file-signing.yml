@@ -9,11 +9,13 @@ jobs:
     pool:
       name: Package ES Standard Build
     variables:
-      BuildConfiguration: release
-      BuildPlatform: any cpu
+      - group: ESRP
 
     steps:
     - checkout: self
+      clean: true
+
+    - checkout: ComplianceRepo
       clean: true
 
     - template: shouldSign.yml
@@ -63,27 +65,15 @@ jobs:
         Write-Host $zipFile
       displayName: 'Compress macOS binary files'
 
-    - pwsh: |
-        $pkgFiles = "$(Build.StagingDirectory)\macos\powershell-files-$(Version)-osx-x64.zip", "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
-        tools/releaseBuild/generatePackgeSigning.ps1 -MacDeveloperFiles $pkgFiles -path "$(System.ArtifactsDirectory)\package.xml"
-      displayName: 'Generate macOS binary Signing Xml'
-
-    - pwsh: |
-        Get-Content "$(System.ArtifactsDirectory)\package.xml"
-      displayName: 'Capture macOS signing xml'
-      # Diagnostics is not critical it passes every time it runs
-      continueOnError: true
-
-    - task: PkgESCodeSign@10
-      displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
-      env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-      inputs:
-        signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-        outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
-        binVersion: $(SigingVersion)
-        binVersionOverride: $(SigningVersionOverride)
-      condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(Build.StagingDirectory)\macos
+          signOutputPath: $(Build.StagingDirectory)\signedMacOSPackages
+          certificateId: "CP-401337-Apple"
+          pattern: |
+            **\*.zip
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
 
     - pwsh: |
         $destination = "$(System.ArtifactsDirectory)\azureMacOs"
@@ -100,8 +90,12 @@ jobs:
         artifactName: signedMacOsBins
         condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-    - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-      displayName: 'Run Defender Scan'
+    - ${{ if eq(variables['SHOULD_SIGN'], 'true') }}:
+      - template: EsrpScan.yml@ComplianceRepo
+        parameters:
+            scanPath: $(System.ArtifactsDirectory)\azureMacOs
+            pattern: |
+              **\*
 
     - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
       displayName: 'Component Detection'

@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
-                ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
+                ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; read > 0; totalLength += read)
                 {
                     if (_ownerCmdlet != null)
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
-            ProgressRecord record = new ProgressRecord(
+            ProgressRecord record = new(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
@@ -323,13 +323,13 @@ namespace Microsoft.PowerShell.Commands
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
-            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
             WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
         {
-            StringBuilder result = new StringBuilder(capacity: ChunkSize);
+            StringBuilder result = new(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
             int useBufferSize = 64;
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaexp = new Regex(
+        private static readonly Regex s_metaexp = new(
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
             );

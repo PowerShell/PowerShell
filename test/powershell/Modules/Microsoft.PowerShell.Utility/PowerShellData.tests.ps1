@@ -1,6 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
+    BeforeAll {
+        $largePsd1Path = Join-Path -Path $TestDrive -ChildPath 'large.psd1'
+        $largePsd1Builder = [System.Text.StringBuilder]::new('@{')
+        1..501 | ForEach-Object {
+            $largePsd1Builder.Append("key$_ = $_;")
+        }
+        $largePsd1Builder.Append('}')
+        Set-Content -Path $largePsd1Path -Value $largePsd1Builder.ToString()
+
+        if ((Get-ExperimentalFeature Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck).Enabled -ne $true) {
+            $skipTest = $true
+        }
+    }
 
     It "Validates error on a missing path" {
         { Import-PowerShellDataFile -Path /SomeMissingDirectory -ErrorAction Stop } |
@@ -32,4 +45,12 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         $result.Hello | Should -BeExactly "World"
     }
 
+    It 'Fails if psd1 file has more than 500 keys' {
+        { Import-PowerShellDataFile $largePsd1Path } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand'
+    }
+
+    It 'Succeeds if -NoLimit is used and has more than 500 keys' -Skip:$skipTest {
+        $result = Import-PowerShellDataFile $largePsd1Path -SkipLimitCheck
+        $result.Keys.Count | Should -Be 501
+    }
 }

@@ -24,67 +24,27 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Id of the cimsession.
         /// </summary>
-        public uint SessionId
-        {
-            get
-            {
-                return this.sessionId;
-            }
-        }
-
-        private readonly uint sessionId;
+        public uint SessionId { get; }
 
         /// <summary>
         /// InstanceId of the cimsession.
         /// </summary>
-        public Guid InstanceId
-        {
-            get
-            {
-                return this.instanceId;
-            }
-        }
-
-        private readonly Guid instanceId;
+        public Guid InstanceId { get; }
 
         /// <summary>
         /// Name of the cimsession.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-        }
-
-        private readonly string name;
+        public string Name { get; }
 
         /// <summary>
         /// Computer name of the cimsession.
         /// </summary>
-        public string ComputerName
-        {
-            get
-            {
-                return this.computerName;
-            }
-        }
-
-        private readonly string computerName;
+        public string ComputerName { get; }
 
         /// <summary>
         /// Wrapped cimsession object.
         /// </summary>
-        public CimSession CimSession
-        {
-            get
-            {
-                return this.cimSession;
-            }
-        }
-
-        private readonly CimSession cimSession;
+        public CimSession CimSession { get; }
 
         /// <summary>
         /// Computer name of the cimsession.
@@ -127,11 +87,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimSession theCimSession,
             ProtocolType theProtocol)
         {
-            this.sessionId = theSessionId;
-            this.instanceId = theInstanceId;
-            this.name = theName;
-            this.computerName = theComputerName;
-            this.cimSession = theCimSession;
+            this.SessionId = theSessionId;
+            this.InstanceId = theInstanceId;
+            this.Name = theName;
+            this.ComputerName = theComputerName;
+            this.CimSession = theCimSession;
             this.psObject = null;
             this.protocol = theProtocol;
         }
@@ -140,18 +100,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             if (psObject == null)
             {
-                psObject = new PSObject(this.cimSession);
-                psObject.Properties.Add(new PSNoteProperty(CimSessionState.idPropName, this.sessionId));
-                psObject.Properties.Add(new PSNoteProperty(CimSessionState.namePropName, this.name));
-                psObject.Properties.Add(new PSNoteProperty(CimSessionState.instanceidPropName, this.instanceId));
+                psObject = new PSObject(this.CimSession);
+                psObject.Properties.Add(new PSNoteProperty(CimSessionState.idPropName, this.SessionId));
+                psObject.Properties.Add(new PSNoteProperty(CimSessionState.namePropName, this.Name));
+                psObject.Properties.Add(new PSNoteProperty(CimSessionState.instanceidPropName, this.InstanceId));
                 psObject.Properties.Add(new PSNoteProperty(CimSessionState.computernamePropName, this.ComputerName));
                 psObject.Properties.Add(new PSNoteProperty(CimSessionState.protocolPropName, this.Protocol));
             }
             else
             {
                 psObject.Properties[CimSessionState.idPropName].Value = this.SessionId;
-                psObject.Properties[CimSessionState.namePropName].Value = this.name;
-                psObject.Properties[CimSessionState.instanceidPropName].Value = this.instanceId;
+                psObject.Properties[CimSessionState.namePropName].Value = this.Name;
+                psObject.Properties[CimSessionState.instanceidPropName].Value = this.InstanceId;
                 psObject.Properties[CimSessionState.computernamePropName].Value = this.ComputerName;
                 psObject.Properties[CimSessionState.protocolPropName].Value = this.Protocol;
             }
@@ -264,9 +224,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// <para>
-        /// The constructor.
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimSessionState"/> class.
         /// </summary>
         internal CimSessionState()
         {
@@ -546,7 +504,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="errRecords"></param>
         /// <param name="propertyName"></param>
         /// <param name="propertyValue"></param>
-        private void AddErrorRecord(
+        private static void AddErrorRecord(
             ref List<ErrorRecord> errRecords,
             string propertyName,
             object propertyValue)
@@ -646,7 +604,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     if (pattern.IsMatch(kvp.Key))
                     {
                         HashSet<CimSessionWrapper> wrappers = kvp.Value;
-                        foundSession = (wrappers.Count > 0);
+                        foundSession = wrappers.Count > 0;
                         foreach (CimSessionWrapper wrapper in wrappers)
                         {
                             if (!sessionIds.Contains(wrapper.SessionId))
@@ -686,7 +644,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if (this.curCimSessionsByComputerName.ContainsKey(computername))
                 {
                     HashSet<CimSessionWrapper> wrappers = this.curCimSessionsByComputerName[computername];
-                    foundSession = (wrappers.Count > 0);
+                    foundSession = wrappers.Count > 0;
                     foreach (CimSessionWrapper wrapper in wrappers)
                     {
                         if (!sessionIds.Contains(wrapper.SessionId))
@@ -785,7 +743,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimSessionBase"/> class.
         /// </summary>
         public CimSessionBase()
         {
@@ -908,9 +866,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal class CimTestCimSessionContext : XOperationContextBase
         {
             /// <summary>
-            /// <para>
-            /// The constructor.
-            /// </para>
+            /// Initializes a new instance of the <see cref="CimTestCimSessionContext"/> class.
             /// </summary>
             /// <param name="theProxy"></param>
             /// <param name="wrapper"></param>
@@ -919,33 +875,23 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimSessionWrapper wrapper)
             {
                 this.proxy = theProxy;
-                this.cimSessionWrapper = wrapper;
+                this.CimSessionWrapper = wrapper;
                 this.nameSpace = null;
             }
 
             /// <summary>
             /// <para>Namespace</para>
             /// </summary>
-            internal CimSessionWrapper CimSessionWrapper
-            {
-                get
-                {
-                    return this.cimSessionWrapper;
-                }
-            }
-
-            private readonly CimSessionWrapper cimSessionWrapper;
+            internal CimSessionWrapper CimSessionWrapper { get; }
         }
 
         /// <summary>
-        /// <para>
-        /// The constructor.
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimNewSession"/> class.
         /// </summary>
         internal CimNewSession() : base()
         {
             this.cimTestSession = new CimTestSession();
-            this._disposed = false;
+            this.Disposed = false;
         }
 
         /// <summary>
@@ -1062,15 +1008,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Indicates whether this object was disposed or not.
         /// </para>
         /// </summary>
-        protected bool Disposed
-        {
-            get
-            {
-                return _disposed;
-            }
-        }
-
-        private bool _disposed;
+        protected bool Disposed { get; private set; }
 
         /// <summary>
         /// <para>
@@ -1104,13 +1042,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="disposing">Whether it is directly called.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposed)
+            if (!this.Disposed)
             {
                 if (disposing)
                 {
                     // free managed resources
                     this.cimTestSession.Dispose();
-                    this._disposed = true;
+                    this.Disposed = true;
                 }
                 // free native resources if there are any
             }
@@ -1130,7 +1068,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetSession : CimSessionBase
     {
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimGetSession"/> class.
         /// </summary>
         public CimGetSession() : base()
         {
@@ -1212,7 +1150,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static readonly string RemoveCimSessionActionName = "Remove CimSession";
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimRemoveSession"/> class.
         /// </summary>
         public CimRemoveSession() : base()
         {
@@ -1282,7 +1220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimTestSession : CimAsyncOperation
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimTestSession"/> class.
         /// </summary>
         internal CimTestSession()
             : base()

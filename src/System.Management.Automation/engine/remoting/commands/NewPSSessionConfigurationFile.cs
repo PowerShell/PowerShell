@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (Full)
                     {
-                        string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
+                        const string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment, exampleModulesToImport, streamWriter, true));
                     }
                 }
@@ -1621,7 +1621,7 @@ namespace Microsoft.PowerShell.Commands
                 // Modules to import
                 if (_modulesToImport == null)
                 {
-                    string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
+                    const string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment, exampleModulesToImport, streamWriter, true));
                 }
                 else
@@ -1855,7 +1855,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Utility methods for configuration file commands.
     /// </summary>
-    internal class SessionConfigurationUtils
+    internal static class SessionConfigurationUtils
     {
         /// <summary>
         /// This routine builds a fragment of the config file

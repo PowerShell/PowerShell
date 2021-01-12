@@ -379,12 +379,13 @@ namespace System.Management.Automation
     /// <summary>
     /// Interface to expose a job debugger.
     /// </summary>
+#nullable enable
     public interface IJobDebugger
     {
         /// <summary>
         /// Job Debugger.
         /// </summary>
-        Debugger Debugger
+        Debugger? Debugger
         {
             get;
         }
@@ -398,6 +399,7 @@ namespace System.Management.Automation
             set;
         }
     }
+#nullable restore
 
     /// <summary>
     /// Represents a command running in background. A job object can internally
@@ -668,7 +670,10 @@ namespace System.Management.Automation
         /// </summary>
         public string PSJobTypeName
         {
-            get { return _jobTypeName; }
+            get
+            {
+                return _jobTypeName;
+            }
 
             protected internal set
             {
@@ -1740,8 +1745,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal PSRemotingJob(string[] computerNames,
                         List<IThrottleOperation> computerNameHelpers, string remoteCommand, string name)
-            :
-            this(computerNames, computerNameHelpers, remoteCommand, 0, name)
+            : this(computerNames, computerNameHelpers, remoteCommand, 0, name)
         { }
 
         /// <summary>
@@ -1758,8 +1762,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, string remoteCommand, string name)
-            :
-            this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
+            : this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
         { }
 
         /// <summary>
@@ -2016,7 +2019,7 @@ namespace System.Management.Automation
             SubmitAndWaitForConnect(connectJobOperations);
         }
 
-        private void SubmitAndWaitForConnect(List<IThrottleOperation> connectJobOperations)
+        private static void SubmitAndWaitForConnect(List<IThrottleOperation> connectJobOperations)
         {
             using (ThrottleManager connectThrottleManager = new ThrottleManager())
             {
@@ -2286,7 +2289,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return _hideComputerName; }
+            get
+            {
+                return _hideComputerName;
+            }
 
             set
             {
@@ -2934,7 +2940,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return _hideComputerName; }
+            get
+            {
+                return _hideComputerName;
+            }
 
             set
             {
@@ -2968,7 +2977,7 @@ namespace System.Management.Automation
             get
             {
                 RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-                return (remoteRS != null) ? remoteRS.CanDisconnect : false;
+                return remoteRS != null && remoteRS.CanDisconnect;
             }
         }
 
@@ -4122,7 +4131,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private void RestoreRemoteOutput(Pipeline runningCmd)
+        private static void RestoreRemoteOutput(Pipeline runningCmd)
         {
             if (runningCmd != null)
             {
@@ -4518,9 +4527,10 @@ namespace System.Management.Automation
         }
     }
 
+#nullable enable
     internal interface IOutputProcessingState
     {
-        event EventHandler<OutputProcessingStateEventArgs> OutputProcessingStateChanged;
+        event EventHandler<OutputProcessingStateEventArgs>? OutputProcessingStateChanged;
     }
 
     #endregion

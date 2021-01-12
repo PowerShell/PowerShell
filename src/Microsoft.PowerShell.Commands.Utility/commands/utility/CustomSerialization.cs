@@ -441,7 +441,7 @@ namespace System.Management.Automation
         /// <param name="ct"></param>
         /// <param name="dictionary"></param>
         /// <param name="enumerable"></param>
-        private void GetKnownContainerTypeInfo(
+        private static void GetKnownContainerTypeInfo(
             object source, out ContainerType ct, out IDictionary dictionary, out IEnumerable enumerable)
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
@@ -675,7 +675,7 @@ namespace System.Management.Automation
         /// <param name="source"></param>
         /// <returns>
         /// </returns>
-        private bool PSObjectHasNotes(PSObject source)
+        private static bool PSObjectHasNotes(PSObject source)
         {
             if (source.InstanceMembers != null && source.InstanceMembers.Count > 0)
             {
@@ -741,7 +741,7 @@ namespace System.Management.Automation
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
             if (source.GetSerializationMethod(null) == SerializationMethod.SpecificProperties)
             {
-                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new();
                 foreach (string propertyName in source.GetSpecificPropertiesToSerialize(null))
                 {
                     PSPropertyInfo property = source.Properties[propertyName];
@@ -954,7 +954,7 @@ namespace System.Management.Automation
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
-        private string GetStringFromPSObject(PSObject source)
+        private static string GetStringFromPSObject(PSObject source)
         {
             Dbg.Assert(source != null, "caller should have validated the information");
 

@@ -94,11 +94,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                return _cmdletInvocationContext ??
-                    (_cmdletInvocationContext = new CimCmdletInvocationContext(
-                        this.CmdletDefinitionContext,
-                        this.Cmdlet,
-                        this.GetDynamicNamespace()));
+                return _cmdletInvocationContext ??= new CimCmdletInvocationContext(
+                    this.CmdletDefinitionContext,
+                    this.Cmdlet,
+                    this.GetDynamicNamespace());
             }
         }
 
@@ -200,7 +199,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="session">Remote session to invoke the method in.</param>
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         /// <returns></returns>
         internal override StartableJob CreateInstanceMethodInvocationJob(CimSession session, CimInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
@@ -282,7 +281,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                 cimSession.ComputerName,
                                 nameOfUnsupportedSwitch);
                             Exception exception = new NotSupportedException(errorMessage);
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            ErrorRecord errorRecord = new(
                                 exception,
                                 "NoExtendedSemanticsSupportInRemoteDcomProtocol",
                                 ErrorCategory.NotImplemented,
@@ -339,7 +338,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Session affinity management
 
-        private static readonly ConditionalWeakTable<CimInstance, CimSession> s_cimInstanceToSessionOfOrigin = new ConditionalWeakTable<CimInstance, CimSession>();
+        private static readonly ConditionalWeakTable<CimInstance, CimSession> s_cimInstanceToSessionOfOrigin = new();
 
         internal static void AssociateSessionOfOriginWithInstance(CimInstance cimInstance, CimSession sessionOfOrigin)
         {
@@ -395,10 +394,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (this.CmdletDefinitionContext.ExposeCimNamespaceParameter)
                 {
-                    Collection<Attribute> namespaceAttributes = new Collection<Attribute>();
+                    Collection<Attribute> namespaceAttributes = new();
                     namespaceAttributes.Add(new ValidateNotNullOrEmptyAttribute());
                     namespaceAttributes.Add(new ParameterAttribute());
-                    RuntimeDefinedParameter namespaceRuntimeParameter = new RuntimeDefinedParameter(
+                    RuntimeDefinedParameter namespaceRuntimeParameter = new(
                         CimNamespaceParameter,
                         typeof(string),
                         namespaceAttributes);

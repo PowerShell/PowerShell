@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Text;
 
 // interfaces for host interaction
@@ -411,6 +412,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
+
+            s = Utils.GetOutputString(s, isHost: false);
+
             if (_suppressNewline)
             {
                 _writer.Write(s);

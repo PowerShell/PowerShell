@@ -174,7 +174,7 @@ namespace System.Management.Automation.Configuration
             WriteValueToFile<string>(scope, key, executionPolicy);
         }
 
-        private string GetExecutionPolicySettingKey(string shellId)
+        private static string GetExecutionPolicySettingKey(string shellId)
         {
             return string.Equals(shellId, Utils.DefaultPowerShellShellID, StringComparison.Ordinal)
                 ? ExecutionPolicyDefaultShellKey

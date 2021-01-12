@@ -111,11 +111,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Use C# destructor syntax for finalization code.
-        /// This destructor will run only if the Dispose method
-        /// does not get called.
-        /// It gives your base class the opportunity to finalize.
-        /// Do not provide destructors in types derived from this class.
+        /// Finalizes an instance of the <see cref="WSManPluginServerSession"/> class.
         /// </summary>
         ~WSManPluginServerSession()
         {

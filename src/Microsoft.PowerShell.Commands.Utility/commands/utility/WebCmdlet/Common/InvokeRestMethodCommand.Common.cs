@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isRssOrFeed)
                 {
-                    XmlDocument workingDocument = new XmlDocument();
+                    XmlDocument workingDocument = new();
                     // performing a Read() here to avoid rrechecking
                     // "rss" or "feed" items
                     reader.Read();
@@ -143,9 +143,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Mostly cribbed from Serialization.cs#GetXmlReaderSettingsForCliXml()
-        private XmlReaderSettings GetSecureXmlReaderSettings()
+        private static XmlReaderSettings GetSecureXmlReaderSettings()
         {
-            XmlReaderSettings xrs = new XmlReaderSettings();
+            XmlReaderSettings xrs = new();
 
             xrs.CheckCharacters = false;
             xrs.CloseInput = false;
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
             return xrs;
         }
 
-        private bool TryConvertToXml(string xml, out object doc, ref Exception exRef)
+        private static bool TryConvertToXml(string xml, out object doc, ref Exception exRef)
         {
             try
             {
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
             return (doc != null);
         }
 
-        private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
+        private static bool TryConvertToJson(string json, out object obj, ref Exception exRef)
         {
             bool converted = false;
             try
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Helper Methods
 
-        private RestReturnType CheckReturnType(HttpResponseMessage response)
+        private static RestReturnType CheckReturnType(HttpResponseMessage response)
         {
             if (response == null) { throw new ArgumentNullException(nameof(response)); }
 

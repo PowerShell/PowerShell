@@ -17,14 +17,14 @@ namespace Microsoft.PowerShell.Cmdletization
 
         private static ModuleBuilder CreateModuleBuilder()
         {
-            AssemblyName aName = new AssemblyName(namespacePrefix);
+            AssemblyName aName = new(namespacePrefix);
             AssemblyBuilder ab = AssemblyBuilder.DefineDynamicAssembly(aName, AssemblyBuilderAccess.Run);
             ModuleBuilder mb = ab.DefineDynamicModule(aName.Name);
             return mb;
         }
 
-        private static Lazy<ModuleBuilder> s_moduleBuilder = new Lazy<ModuleBuilder>(CreateModuleBuilder, isThreadSafe: true);
-        private static object s_moduleBuilderUsageLock = new object();
+        private static Lazy<ModuleBuilder> s_moduleBuilder = new(CreateModuleBuilder, isThreadSafe: true);
+        private static object s_moduleBuilderUsageLock = new();
 
         internal static string GetEnumFullName(EnumMetadataEnum enumMetadata)
         {

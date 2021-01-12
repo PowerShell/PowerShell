@@ -102,9 +102,9 @@ namespace Microsoft.PowerShell
 
                 // create cleared region to clear progress bar later
                 _savedRegion = tempProgressRegion;
-                for(int row = 0; row < rows; row++)
+                for (int row = 0; row < rows; row++)
                 {
-                    for(int col = 0; col < cols; col++)
+                    for (int col = 0; col < cols; col++)
                     {
                         _savedRegion[row, col].Character = ' ';
                     }
@@ -208,8 +208,7 @@ namespace Microsoft.PowerShell
 
                 bool sizeChanged =
                         (newRegion.GetLength(0) != _progressRegion.GetLength(0))
-                    || (newRegion.GetLength(1) != _progressRegion.GetLength(1))
-                    ? true : false;
+                    || (newRegion.GetLength(1) != _progressRegion.GetLength(1));
 
                 _progressRegion = newRegion;
 

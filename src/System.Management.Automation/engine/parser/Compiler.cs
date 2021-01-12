@@ -926,7 +926,10 @@ namespace System.Management.Automation.Language
                 return _memberFunctionReturnType;
             }
 
-            set { _memberFunctionReturnType = value; }
+            set
+            {
+                _memberFunctionReturnType = value;
+            }
         }
 
         private Type _memberFunctionReturnType;
@@ -2045,7 +2048,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
+        private static Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
         {
             if (lambda == null)
             {
@@ -2589,7 +2592,7 @@ namespace System.Management.Automation.Language
             return Expression.Lambda<Action<FunctionContext>>(body, funcName, new[] { s_functionContext });
         }
 
-        private void GenerateTypesAndUsings(ScriptBlockAst rootForDefiningTypesAndUsings, List<Expression> exprs)
+        private static void GenerateTypesAndUsings(ScriptBlockAst rootForDefiningTypesAndUsings, List<Expression> exprs)
         {
             // We don't postpone load assemblies, import modules from 'using' to the moment, when enclosed scriptblock is executed.
             // We do loading, when root of the script is compiled.
@@ -6353,7 +6356,7 @@ namespace System.Management.Automation.Language
             return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
-        private Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
+        private static Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
         {
             var callInfo = new CallInfo(args.Count());
             var binder = PSInvokeBaseCtorBinder.Get(callInfo, constraints);

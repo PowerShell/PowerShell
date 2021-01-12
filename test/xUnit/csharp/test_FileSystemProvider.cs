@@ -39,12 +39,21 @@ namespace PSTests.Parallel
             File.AppendAllText(testPath, testContent);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            File.Delete(testPath);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }        
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                File.Delete(testPath);
+            }
         }
 
-        private ExecutionContext GetExecutionContext()
+        private static ExecutionContext GetExecutionContext()
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
@@ -54,7 +63,7 @@ namespace PSTests.Parallel
             return executionContext;
         }
 
-        private ProviderInfo GetProvider()
+        private static ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);

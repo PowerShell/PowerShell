@@ -40,7 +40,10 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "Enumerate")]
         public string ApplicationName
         {
-            get { return applicationname; }
+            get
+            {
+                return applicationname;
+            }
 
             set
             {
@@ -60,7 +63,10 @@ namespace Microsoft.WSMan.Management
         [Alias("UBPO", "Base")]
         public SwitchParameter BasePropertiesOnly
         {
-            get { return basepropertiesonly; }
+            get
+            {
+                return basepropertiesonly;
+            }
 
             set
             {
@@ -81,7 +87,10 @@ namespace Microsoft.WSMan.Management
         [Alias("CN")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -109,7 +118,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         public Uri ConnectionURI
         {
-            get { return connectionuri; }
+            get
+            {
+                return connectionuri;
+            }
 
             set
             {
@@ -126,7 +138,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public Uri Dialect
         {
-            get { return dialect; }
+            get
+            {
+                return dialect;
+            }
 
             set
             {
@@ -145,7 +160,10 @@ namespace Microsoft.WSMan.Management
                   ParameterSetName = "Enumerate")]
         public SwitchParameter Enumerate
         {
-            get { return enumerate; }
+            get
+            {
+                return enumerate;
+            }
 
             set
             {
@@ -163,7 +181,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public string Filter
         {
-            get { return filter; }
+            get
+            {
+                return filter;
+            }
 
             set
             {
@@ -182,7 +203,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public string Fragment
         {
-            get { return fragment; }
+            get
+            {
+                return fragment;
+            }
 
             set
             {
@@ -204,7 +228,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable OptionSet
         {
-            get { return optionset; }
+            get
+            {
+                return optionset;
+            }
 
             set
             {
@@ -222,7 +249,10 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "GetInstance")]
         public Int32 Port
         {
-            get { return port; }
+            get
+            {
+                return port;
+            }
 
             set
             {
@@ -241,7 +271,10 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "Enumerate")]
         public SwitchParameter Associations
         {
-            get { return associations; }
+            get
+            {
+                return associations;
+            }
 
             set
             {
@@ -264,7 +297,10 @@ namespace Microsoft.WSMan.Management
         [Alias("RURI")]
         public Uri ResourceURI
         {
-            get { return resourceuri; }
+            get
+            {
+                return resourceuri;
+            }
 
             set
             {
@@ -293,7 +329,10 @@ namespace Microsoft.WSMan.Management
         [Alias("RT")]
         public string ReturnType
         {
-            get { return returntype; }
+            get
+            {
+                return returntype;
+            }
 
             set
             {
@@ -315,7 +354,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable SelectorSet
         {
-            get { return selectorset; }
+            get
+            {
+                return selectorset;
+            }
 
             set
             {
@@ -336,7 +378,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public SessionOption SessionOption
         {
-            get { return sessionoption; }
+            get
+            {
+                return sessionoption;
+            }
 
             set
             {
@@ -356,7 +401,10 @@ namespace Microsoft.WSMan.Management
 
         public SwitchParameter Shallow
         {
-            get { return shallow; }
+            get
+            {
+                return shallow;
+            }
 
             set
             {
@@ -379,7 +427,10 @@ namespace Microsoft.WSMan.Management
         [Alias("SSL")]
         public SwitchParameter UseSSL
         {
-            get { return usessl; }
+            get
+            {
+                return usessl;
+            }
 
             set
             {
@@ -662,7 +713,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -1032,7 +1086,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -1294,7 +1351,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {

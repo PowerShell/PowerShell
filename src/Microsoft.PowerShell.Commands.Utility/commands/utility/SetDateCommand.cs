@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 #else
                 // build up the SystemTime struct to pass to SetSystemTime
-                NativeMethods.SystemTime systemTime = new NativeMethods.SystemTime();
+                NativeMethods.SystemTime systemTime = new();
                 systemTime.Year = (UInt16)dateToUse.Year;
                 systemTime.Month = (UInt16)dateToUse.Month;
                 systemTime.Day = (UInt16)dateToUse.Day;
@@ -102,8 +102,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // output DateTime object wrapped in an PSObject with DisplayHint attached
-            PSObject outputObj = new PSObject(dateToUse);
-            PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
+            PSObject outputObj = new(dateToUse);
+            PSNoteProperty note = new("DisplayHint", DisplayHint);
             outputObj.Properties.Add(note);
 
             WriteObject(outputObj);

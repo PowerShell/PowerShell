@@ -707,7 +707,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : string.Empty);
+                return _message ??= (_wrapperException != null) ? _wrapperException.Message : string.Empty;
             }
         }
 

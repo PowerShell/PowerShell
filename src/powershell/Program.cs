@@ -266,8 +266,8 @@ namespace Microsoft.PowerShell
             // Check arg chars in order and allow prefixes
             for (int i = 1; i < arg.Length; i++)
             {
-                if (arg[i] != paramToCheck[i-1]
-                    && arg[i] != paramToCheckUpper[i-1])
+                if (arg[i] != paramToCheck[i - 1]
+                    && arg[i] != paramToCheckUpper[i - 1])
                 {
                     return false;
                 }
@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell
             //
             // Since command_name is ignored and we can't use null (it's the terminator)
             // we use empty string
-            execArgs[4] = "";
+            execArgs[4] = string.Empty;
 
             // Add the arguments passed to pwsh on the end.
             args.CopyTo(execArgs, 5);
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell
             (string path, int quotedLength) invocationInfo)
         {
             // "exec "
-            string prefix = "exec ";
+            const string prefix = "exec ";
             prefix.AsSpan().CopyTo(strBuf);
 
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell
             i += invocationInfo.quotedLength;
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
-            string suffix = " \"$@\"";
+            const string suffix = " \"$@\"";
             Span<char> bufSuffix = strBuf.Slice(i);
             suffix.AsSpan().CopyTo(bufSuffix);
         }

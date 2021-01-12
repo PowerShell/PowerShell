@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception ex)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                 new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.PersistDebugPreferenceFailure, processName), ex),
                 fullyQualifiedErrorId,
                 ErrorCategory.InvalidOperation,
