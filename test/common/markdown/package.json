@@ -6,7 +6,7 @@
     "main": "gulpfile.js",
     "dependencies": {
         "gulp": "^4.0.2",
-        "markdownlint": "^0.21.0",
+        "markdownlint": "^0.22.0",
         "through2": "^4.0.2"
     },
     "resolutions": {

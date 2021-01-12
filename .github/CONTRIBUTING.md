@@ -82,7 +82,7 @@ which can be run in interactive mode to correct typos or add words to the ignore
 
 To run the spellchecker, follow these steps:
 
-* install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+* install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
 * run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
@@ -96,9 +96,9 @@ which can be run to see if any links are dead.
 
 To run the link-checker, follow these steps:
 
-* install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+* install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install markdown-link-check by
-  `npm install -g markdown-link-check@3.7.2` (v3.7.2 **only**)
+  `npm install -g markdown-link-check@3.8.5`
 * run `find . \*.md -exec markdown-link-check {} \;`
 
 ## Contributing to Code
