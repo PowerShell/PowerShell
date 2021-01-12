@@ -76,7 +76,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return CimInstance; }
+            get
+            {
+                return CimInstance;
+            }
 
             set
             {
@@ -118,7 +121,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter]
         public Uri ResourceUri
         {
-            get { return resourceUri; }
+            get
+            {
+                return resourceUri;
+            }
 
             set
             {
@@ -146,7 +152,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computerName; }
+            get
+            {
+                return computerName;
+            }
 
             set
             {
@@ -168,7 +177,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.Management.Infrastructure.CimSession[] CimSession
         {
-            get { return cimSession; }
+            get
+            {
+                return cimSession;
+            }
 
             set
             {

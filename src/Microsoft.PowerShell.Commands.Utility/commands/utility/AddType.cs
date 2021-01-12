@@ -292,7 +292,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("RA")]
         public string[] ReferencedAssemblies
         {
-            get { return _referencedAssemblies; }
+            get
+            {
+                return _referencedAssemblies;
+            }
 
             set
             {

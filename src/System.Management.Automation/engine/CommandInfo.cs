@@ -230,7 +230,10 @@ namespace System.Management.Automation
         /// </summary>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {

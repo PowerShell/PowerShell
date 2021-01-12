@@ -1449,7 +1449,10 @@ namespace System.Management.Automation
         /// </summary>
         public PSTraceSourceOptions Options
         {
-            get { return _flags; }
+            get
+            {
+                return _flags;
+            }
 
             set
             {

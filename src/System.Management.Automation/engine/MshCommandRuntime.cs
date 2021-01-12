@@ -3136,7 +3136,10 @@ namespace System.Management.Automation
         /// </remarks>
         internal bool Verbose
         {
-            get { return _verboseFlag; }
+            get
+            {
+                return _verboseFlag;
+            }
 
             set
             {
@@ -3209,7 +3212,10 @@ namespace System.Management.Automation
         /// </remarks>
         internal bool Debug
         {
-            get { return _debugFlag; }
+            get
+            {
+                return _debugFlag;
+            }
 
             set
             {

@@ -233,7 +233,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(-1, int.MaxValue)]
         public int Timeout
         {
-            get { return _timeout; }
+            get
+            {
+                return _timeout;
+            }
 
             set
             {
@@ -252,7 +255,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = DefaultParameterSet)]
         public WaitForServiceTypes For
         {
-            get { return _waitFor; }
+            get
+            {
+                return _waitFor;
+            }
 
             set
             {
@@ -272,7 +278,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, Int16.MaxValue)]
         public Int16 Delay
         {
-            get { return (Int16)_delay; }
+            get
+            {
+                return (Int16)_delay;
+            }
 
             set
             {

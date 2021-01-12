@@ -417,7 +417,7 @@ namespace System.Management.Automation.ComInterop
         }
     }
 
-    internal class VarEnumSelector
+    internal static class VarEnumSelector
     {
         internal static Type GetTypeForVarEnum(VarEnum vt)
         {

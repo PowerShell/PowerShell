@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Text;
 
-[module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "Microsoft.PowerShell.Commands.ByteCollection")]
+[module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "~T:Microsoft.PowerShell.Commands.ByteCollection")]
 
 namespace Microsoft.PowerShell.Commands
 {

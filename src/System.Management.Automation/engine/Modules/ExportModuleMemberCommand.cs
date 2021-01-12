@@ -28,7 +28,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Function
         {
-            get { return _functionList; }
+            get
+            {
+                return _functionList;
+            }
 
             set
             {
@@ -57,7 +60,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Cmdlet
         {
-            get { return _cmdletList; }
+            get
+            {
+                return _cmdletList;
+            }
 
             set
             {
@@ -86,7 +92,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Variable
         {
-            get { return _variableExportList; }
+            get
+            {
+                return _variableExportList;
+            }
 
             set
             {
@@ -115,7 +124,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Alias
         {
-            get { return _aliasExportList; }
+            get
+            {
+                return _aliasExportList;
+            }
 
             set
             {

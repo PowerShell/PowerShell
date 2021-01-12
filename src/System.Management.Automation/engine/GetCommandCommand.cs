@@ -280,7 +280,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] ParameterName
         {
-            get { return _parameterNames; }
+            get
+            {
+                return _parameterNames;
+            }
 
             set
             {

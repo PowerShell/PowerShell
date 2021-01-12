@@ -759,7 +759,10 @@ namespace System.Management.Automation
 
         public override ScopedItemOptions Options
         {
-            get { return base.Options; }
+            get
+            {
+                return base.Options;
+            }
 
             set
             {

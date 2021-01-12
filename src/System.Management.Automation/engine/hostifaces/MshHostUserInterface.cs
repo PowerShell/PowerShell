@@ -1202,6 +1202,7 @@ namespace System.Management.Automation.Host
     /// by giving the user ability to select more than one choice. The PromptForChoice method available
     /// in PSHostUserInterface class supports only one choice selection.
     /// </summary>
+#nullable enable
     public interface IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
@@ -1226,9 +1227,10 @@ namespace System.Management.Automation.Host
         /// implementation.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        Collection<int> PromptForChoice(string caption, string message,
-            Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices);
+        Collection<int> PromptForChoice(string? caption, string? message,
+            Collection<ChoiceDescription> choices, IEnumerable<int>? defaultChoices);
     }
+#nullable restore
 
     /// <summary>
     /// Helper methods used by PowerShell's Hosts: ConsoleHost and InternalHost to process

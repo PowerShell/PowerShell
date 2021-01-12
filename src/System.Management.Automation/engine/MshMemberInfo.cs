@@ -3670,7 +3670,7 @@ namespace System.Management.Automation
     /// <summary>
     /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection.
     /// </summary>
-    internal class MemberMatch
+    internal static class MemberMatch
     {
         internal static WildcardPattern GetNamePattern(string name)
         {

@@ -27,7 +27,7 @@ namespace System.Management.Automation
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
     /// </summary>
-    internal class AnalysisCache
+    internal static class AnalysisCache
     {
         private static readonly AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
@@ -371,7 +371,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    foreach (string item in Directory.GetFiles(baseDirectory, "*.ps1"))
+                    foreach (string item in Directory.EnumerateFiles(baseDirectory, "*.ps1"))
                     {
                         var command = Path.GetFileNameWithoutExtension(item);
                         result.AddOrUpdate(command, CommandTypes.ExternalScript,

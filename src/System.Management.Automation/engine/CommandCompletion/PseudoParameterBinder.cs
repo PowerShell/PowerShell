@@ -728,7 +728,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public object ConstantValue
         {
-            get { return _constantValue; }
+            get
+            {
+                return _constantValue;
+            }
 
             internal set
             {
@@ -745,7 +748,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public CommandElementAst Value
         {
-            get { return _value; }
+            get
+            {
+                return _value;
+            }
 
             internal set
             {

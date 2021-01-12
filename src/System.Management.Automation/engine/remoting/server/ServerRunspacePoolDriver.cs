@@ -28,6 +28,7 @@ namespace System.Management.Automation
     /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
     /// </summary>
+#nullable enable
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
@@ -36,6 +37,7 @@ namespace System.Management.Automation
 
         bool HandleStopSignal();
     }
+#nullable restore
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function

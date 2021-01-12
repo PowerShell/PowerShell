@@ -470,7 +470,10 @@ namespace System.Management.Automation
         /// </summary>
         public ModuleAccessMode AccessMode
         {
-            get { return _accessMode; }
+            get
+            {
+                return _accessMode;
+            }
 
             set
             {

@@ -281,7 +281,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter WriteEvents
         {
-            get { return _writeStateChangedEvents; }
+            get
+            {
+                return _writeStateChangedEvents;
+            }
 
             set
             {
@@ -294,7 +297,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter WriteJobInResults
         {
-            get { return _outputJobFirst; }
+            get
+            {
+                return _outputJobFirst;
+            }
 
             set
             {

@@ -26,7 +26,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Helper class for WinRT types.
     /// </summary>
-    internal class WinRTHelper
+    internal static class WinRTHelper
     {
         internal static bool IsWinRTType(Type type)
         {

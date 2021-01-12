@@ -926,7 +926,10 @@ namespace System.Management.Automation.Language
                 return _memberFunctionReturnType;
             }
 
-            set { _memberFunctionReturnType = value; }
+            set
+            {
+                _memberFunctionReturnType = value;
+            }
         }
 
         private Type _memberFunctionReturnType;

@@ -33,7 +33,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CredentialParameterSet)]
         public PasswordAuthenticationMechanism Authentication
         {
-            get { return authentication; }
+            get
+            {
+                return authentication;
+            }
 
             set
             {
@@ -103,7 +106,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public UInt32 OperationTimeoutSec
         {
-            get { return operationTimeout; }
+            get
+            {
+                return operationTimeout;
+            }
 
             set
             {
@@ -132,7 +138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public UInt32 Port
         {
-            get { return port; }
+            get
+            {
+                return port;
+            }
 
             set
             {
@@ -225,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             outputCredential = null;
             if (options != null)
             {
-                DComSessionOptions dcomOptions = (options as DComSessionOptions);
+                DComSessionOptions dcomOptions = options as DComSessionOptions;
                 if (dcomOptions != null)
                 {
                     bool conflict = false;

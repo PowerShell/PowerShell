@@ -14,7 +14,7 @@ using Microsoft.PowerShell;
 
 namespace System.Management.Automation.Language
 {
-    internal class TypeDefiner
+    internal static class TypeDefiner
     {
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
         internal const string DynamicClassAssemblyFullNamePrefix = "PowerShell Class Assembly,";

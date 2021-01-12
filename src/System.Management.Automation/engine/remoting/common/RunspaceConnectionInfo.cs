@@ -208,7 +208,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public int OpenTimeout
         {
-            get { return _openTimeout; }
+            get
+            {
+                return _openTimeout;
+            }
 
             set
             {
@@ -598,7 +601,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string CertificateThumbprint
         {
-            get { return _thumbPrint; }
+            get
+            {
+                return _thumbPrint;
+            }
 
             set
             {
@@ -675,7 +681,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return _proxyAuthentication; }
+            get
+            {
+                return _proxyAuthentication;
+            }
 
             set
             {
@@ -702,7 +711,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public PSCredential ProxyCredential
         {
-            get { return _proxyCredential; }
+            get
+            {
+                return _proxyCredential;
+            }
 
             set
             {
@@ -1142,10 +1154,9 @@ namespace System.Management.Automation.Runspaces
                 resolvedShellUri = DefaultShellUri;
             }
 
-            if (resolvedShellUri.IndexOf(
-                System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) == -1)
+            if (!resolvedShellUri.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase))
             {
-                resolvedShellUri = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
+                resolvedShellUri = WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
             }
 
             return resolvedShellUri;
@@ -1452,8 +1463,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default value for shell.
         /// </summary>
-        private const string DefaultShellUri =
-             System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
+        private const string DefaultShellUri = WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
 
         /// <summary>
         /// Default credentials - null indicates credentials of
@@ -1583,7 +1593,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -1705,7 +1718,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string AppDomainName
         {
-            get { return _appDomainName; }
+            get
+            {
+                return _appDomainName;
+            }
 
             set
             {
@@ -1812,7 +1828,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -2795,7 +2814,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -2920,7 +2942,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {

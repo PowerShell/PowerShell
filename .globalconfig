@@ -100,7 +100,8 @@ dotnet_diagnostic.CA1050.severity = warning
 dotnet_diagnostic.CA1051.severity = silent
 
 # CA1052: Static holder types should be Static or NotInheritable
-dotnet_diagnostic.CA1052.severity = none
+dotnet_diagnostic.CA1052.severity = warning
+dotnet_code_quality.ca1052.api_surface = private, internal
 
 # CA1054: URI-like parameters should not be strings
 dotnet_diagnostic.CA1054.severity = none
@@ -467,7 +468,7 @@ dotnet_diagnostic.CA2247.severity = warning
 dotnet_diagnostic.CA2248.severity = suggestion
 
 # CA2249: Consider using 'string.Contains' instead of 'string.IndexOf'
-dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA2249.severity = warning
 
 # CA2300: Do not use insecure deserializer BinaryFormatter
 dotnet_diagnostic.CA2300.severity = none
@@ -956,10 +957,10 @@ dotnet_diagnostic.IDE0074.severity = warning
 dotnet_diagnostic.IDE0075.severity = warning
 
 # IDE0076: InvalidSuppressMessageAttribute
-dotnet_diagnostic.IDE0076.severity = silent
+dotnet_diagnostic.IDE0076.severity = warning
 
 # IDE0077: LegacyFormatSuppressMessageAttribute
-dotnet_diagnostic.IDE0077.severity = silent
+dotnet_diagnostic.IDE0077.severity = warning
 
 # IDE0078: UsePatternCombinators
 dotnet_diagnostic.IDE0078.severity = silent
@@ -1367,7 +1368,7 @@ dotnet_diagnostic.SA1502.severity = none
 dotnet_diagnostic.SA1503.severity = none
 
 # SA1504: All accessors should be single-line or multi-line
-dotnet_diagnostic.SA1504.severity = none
+dotnet_diagnostic.SA1504.severity = warning
 
 # SA1505: Opening braces should not be followed by blank line
 dotnet_diagnostic.SA1505.severity = none

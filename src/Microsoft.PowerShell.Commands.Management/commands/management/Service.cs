@@ -1495,7 +1495,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ServiceName", "SN")]
         public new string Name
         {
-            get { return serviceName; }
+            get
+            {
+                return serviceName;
+            }
 
             set
             {
@@ -1523,7 +1526,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("DN")]
         public new string DisplayName
         {
-            get { return displayName; }
+            get
+            {
+                return displayName;
+            }
 
             set
             {
@@ -1552,7 +1558,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Description
         {
-            get { return description; }
+            get
+            {
+                return description;
+            }
 
             set
             {
@@ -1575,7 +1584,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public ServiceStartupType StartupType
         {
-            get { return startupType; }
+            get
+            {
+                return startupType;
+            }
 
             set
             {
@@ -1611,7 +1623,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateSetAttribute(new string[] { "Running", "Stopped", "Paused" })]
         public string Status
         {
-            get { return serviceStatus; }
+            get
+            {
+                return serviceStatus;
+            }
 
             set
             {
