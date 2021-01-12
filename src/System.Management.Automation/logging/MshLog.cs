@@ -469,7 +469,8 @@ namespace System.Management.Automation
                 if (NeedToLogCommandLifecycleEvent(provider, executionContext))
                 {
                     provider.LogCommandLifecycleEvent(
-                        () => logContext ?? (logContext = GetLogContext(executionContext, invocationInfo)), commandState);
+                        () => logContext ??= GetLogContext(executionContext, invocationInfo),
+                        commandState);
                 }
             }
         }

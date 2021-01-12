@@ -422,7 +422,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private Pipe GetRedirectionPipe(
+        private static Pipe GetRedirectionPipe(
             PipelineResultTypes toType,
             MshCommandRuntime mcr)
         {

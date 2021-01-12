@@ -688,18 +688,6 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// Finalizer
-            ///
-            /// Note: Do not depend on the finalizer! This object should be
-            /// properly disposed of when no longer needed via a direct call
-            /// to Dispose().
-            /// </summary>
-            ~WSManData_ManToUn()
-            {
-                Dispose(false);
-            }
-
-            /// <summary>
             /// Gets the type of data.
             /// </summary>
             internal uint Type
@@ -745,6 +733,14 @@ namespace System.Management.Automation.Remoting.Client
                     Marshal.FreeHGlobal(_marshalledObject);
                     _marshalledObject = IntPtr.Zero;
                 }
+            }
+
+            /// <summary>
+            /// Finalizes an instance of the <see cref="WSManData_ManToUn"/> class.
+            /// </summary>
+            ~WSManData_ManToUn()
+            {
+                Dispose(false);
             }
 
             /// <summary>
@@ -3019,6 +3015,7 @@ namespace System.Management.Automation.Remoting.Client
     /// unit testing.
     /// Note: It is implemented as a class to avoid exposing it outside the module.
     /// </summary>
+#nullable enable
     internal interface IWSManNativeApiFacade
     {
         // TODO: Expand this to cover the rest of the API once I prove that it works!
@@ -3037,7 +3034,7 @@ namespace System.Management.Automation.Remoting.Client
         int WSManPluginReceiveResult(
             IntPtr requestDetails,
             int flags,
-            string stream,
+            string? stream,
             IntPtr streamResult,
             string commandState,
             int exitCode);
@@ -3052,6 +3049,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr shutdownCallback,
             IntPtr shutdownContext);
     }
+#nullable restore
 
     /// <summary>
     /// Concrete implementation of the PInvoke facade for use in the production code.

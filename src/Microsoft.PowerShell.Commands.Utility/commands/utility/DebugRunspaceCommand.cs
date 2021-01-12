@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
-        private readonly ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
+        private readonly ManualResetEventSlim _newRunningScriptEvent = new(true);
         private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion
@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void SetLocalMode(System.Management.Automation.Debugger debugger, bool localMode)
+        private static void SetLocalMode(System.Management.Automation.Debugger debugger, bool localMode)
         {
             ServerRemoteDebugger remoteDebugger = debugger as ServerRemoteDebugger;
             if (remoteDebugger != null)

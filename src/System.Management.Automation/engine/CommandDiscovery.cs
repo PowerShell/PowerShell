@@ -65,7 +65,10 @@ namespace System.Management.Automation
         /// </summary>
         public ScriptBlock CommandScriptBlock
         {
-            get { return _scriptBlock; }
+            get
+            {
+                return _scriptBlock;
+            }
 
             set
             {
@@ -149,7 +152,7 @@ namespace System.Management.Automation
         /// <returns>
         /// True if the cmdlet is a special cmdlet that shouldn't be part of the discovery list. Or false otherwise.
         /// </returns>
-        private bool IsSpecialCmdlet(Type implementingType)
+        private static bool IsSpecialCmdlet(Type implementingType)
         {
             // These commands should never be put in the discovery list.  They are an internal implementation
             // detail of the formatting and output component. That component uses these cmdlets by creating
@@ -994,7 +997,7 @@ namespace System.Management.Automation
             {
                 if (!searcher.MoveNext())
                 {
-                    if (!commandName.Contains("-") && !commandName.Contains("\\"))
+                    if (!commandName.Contains('-') && !commandName.Contains('\\'))
                     {
                         discoveryTracer.WriteLine(
                             "The command [{0}] was not found, trying again with get- prepended",
@@ -1348,7 +1351,7 @@ namespace System.Management.Automation
             }
 
             // Cache the new lookup paths
-            return _cachedLookupPaths ?? (_cachedLookupPaths = result);
+            return _cachedLookupPaths ??= result;
         }
 
         /// <summary>

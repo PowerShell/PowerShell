@@ -298,6 +298,10 @@ namespace Microsoft.PowerShell
             private int _oldestSoFar;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private
         ProgressNode
         FindOldestLeafmostNodeHelper(ArrayList treeToSearch, out ArrayList listWhereFound, out int indexWhereFound)
@@ -821,11 +825,9 @@ namespace Microsoft.PowerShell
         {
             nodesCompressed = 0;
 
-            int age = 0;
-
             while (true)
             {
-                ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, age, priorStyle);
+                ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, oldestSoFar: 0, priorStyle);
                 if (node == null)
                 {
                     // We've compressed every node of the prior style already.

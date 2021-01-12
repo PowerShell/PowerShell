@@ -117,7 +117,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Function
         {
-            get { return _functionImportList; }
+            get
+            {
+                return _functionImportList;
+            }
 
             set
             {
@@ -144,7 +147,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Cmdlet
         {
-            get { return _cmdletImportList; }
+            get
+            {
+                return _cmdletImportList;
+            }
 
             set
             {
@@ -172,7 +178,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Variable
         {
-            get { return _variableExportList; }
+            get
+            {
+                return _variableExportList;
+            }
 
             set
             {
@@ -199,7 +208,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Alias
         {
-            get { return _aliasExportList; }
+            get
+            {
+                return _aliasExportList;
+            }
 
             set
             {
@@ -375,7 +387,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateSet("Local", "Global")]
         public string Scope
         {
-            get { return _scope; }
+            get
+            {
+                return _scope;
+            }
 
             set
             {
@@ -1401,7 +1416,7 @@ namespace Microsoft.PowerShell.Commands
             return cimModuleFile.FileCode == RemoteDiscoveryHelper.CimFileCode.CmdletizationV1;
         }
 
-        private IEnumerable<string> CreateCimModuleFiles(
+        private static IEnumerable<string> CreateCimModuleFiles(
             RemoteDiscoveryHelper.CimModule remoteCimModule,
             RemoteDiscoveryHelper.CimFileCode fileCode,
             Func<RemoteDiscoveryHelper.CimModuleFile, bool> filesFilter,
@@ -2076,7 +2091,7 @@ namespace Microsoft.PowerShell.Commands
             return moduleProxyList;
         }
 
-        private void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
+        private static void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
         {
             // Set modulebase of engine modules to point to $pshome
             // This is so that Get-Help can load the correct help.

@@ -11,6 +11,12 @@ Describe "Replace Operator" -Tags CI {
             $res | Should -BeExactly "image.jpg"
         }
 
+        It "Replace operator can convert an substitution object to string" {
+            $substitution = Get-Process -Id $pid
+            $res = "!3!" -replace "3",$substitution
+            $res | Should -BeExactly "!System.Diagnostics.Process (pwsh)!"
+        }
+
         It "Replace operator can be case-insensitive and case-sensitive" {
             $res = "book" -replace "B","C"
             $res | Should -BeExactly "Cook"
@@ -28,6 +34,18 @@ Describe "Replace Operator" -Tags CI {
 
             $res = "PowerPoint" -replace "Point"
             $res | Should -BeExactly "Power"
+        }
+
+        It "Replace operator can take an enumerable as first argument, a mandatory pattern, and an optional substitution" {
+            $res = "PowerPoint1","PowerPoint2" -replace "Point","Shell"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "PowerShell1"
+            $res[1] | Should -BeExactly "PowerShell2"
+
+            $res = "PowerPoint1","PowerPoint2" -replace "Point"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "Power1"
+            $res[1] | Should -BeExactly "Power2"
         }
     }
 

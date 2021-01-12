@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no need to lock as the cmdlet parameters will not be assigned
                 // from multiple threads.
-                return _sessionOption ?? (_sessionOption = new PSSessionOption());
+                return _sessionOption ??= new PSSessionOption();
             }
         }
 
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int idleTimeout = session.Runspace.ConnectionInfo.IdleTimeout;
             int maxIdleTimeout = session.Runspace.ConnectionInfo.MaxIdleTimeout;
-            int minIdleTimeout = BaseTransportManager.MinimumIdleTimeout;
+            const int minIdleTimeout = BaseTransportManager.MinimumIdleTimeout;
 
             if (idleTimeout != BaseTransportManager.UseServerDefaultIdleTimeout &&
                 (idleTimeout > maxIdleTimeout || idleTimeout < minIdleTimeout))
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
+        private static string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 

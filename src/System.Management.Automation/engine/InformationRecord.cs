@@ -81,7 +81,7 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<string> Tags
         {
-            get { return _tags ?? (_tags = new List<string>()); }
+            get { return _tags ??= new List<string>(); }
 
             internal set { _tags = value; }
         }
@@ -109,7 +109,10 @@ namespace System.Management.Automation
                 return _user;
             }
 
-            set { _user = value; }
+            set
+            {
+                _user = value;
+            }
         }
 
         private string _user;
@@ -120,7 +123,7 @@ namespace System.Management.Automation
         [DataMember]
         public string Computer
         {
-            get { return this._computerName ?? (this._computerName = PsUtils.GetHostName()); }
+            get { return this._computerName ??= PsUtils.GetHostName(); }
 
             set { this._computerName = value; }
         }
@@ -143,7 +146,10 @@ namespace System.Management.Automation
                 return this._processId.Value;
             }
 
-            set { _processId = value; }
+            set
+            {
+                _processId = value;
+            }
         }
 
         private uint? _processId;

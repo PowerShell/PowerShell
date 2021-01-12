@@ -13,7 +13,7 @@ using BOOL = System.UInt32;
 namespace System.Management.Automation.Security
 {
     // Crypto API native constants
-    internal partial class NativeConstants
+    internal static partial class NativeConstants
     {
         internal const int CRYPT_OID_INFO_OID_KEY = 1;
         internal const int CRYPT_OID_INFO_NAME_KEY = 2;
@@ -1955,18 +1955,18 @@ namespace System.Management.Automation.Security
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct CRYPTCATCDF
+        internal readonly struct CRYPTCATCDF
         {
-            private DWORD _cbStruct;
-            private IntPtr _hFile;
-            private DWORD _dwCurFilePos;
-            private DWORD _dwLastMemberOffset;
-            private BOOL _fEOF;
+            private readonly DWORD _cbStruct;
+            private readonly IntPtr _hFile;
+            private readonly DWORD _dwCurFilePos;
+            private readonly DWORD _dwLastMemberOffset;
+            private readonly BOOL _fEOF;
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            private string _pwszResultDir;
+            private readonly string _pwszResultDir;
 
-            private IntPtr _hCATStore;
+            private readonly IntPtr _hCATStore;
         }
 
         [StructLayout(LayoutKind.Sequential)]

@@ -88,7 +88,10 @@ namespace System.Management.Automation.Remoting
 
         internal Fragmentor Fragmentor
         {
-            get { return _fragmentor; }
+            get
+            {
+                return _fragmentor;
+            }
 
             set
             {
@@ -163,8 +166,8 @@ namespace System.Management.Automation.Remoting
             */
             if (_dataSyncObjects != null && _dataToBeSent != null)
             {
-                int promptResponseIndex = (int)DataPriorityType.PromptResponse;
-                int defaultIndex = (int)DataPriorityType.Default;
+                const int promptResponseIndex = (int)DataPriorityType.PromptResponse;
+                const int defaultIndex = (int)DataPriorityType.Default;
 
                 lock (_dataSyncObjects[promptResponseIndex])
                 {

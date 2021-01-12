@@ -1163,9 +1163,6 @@
       <Component Id="cmpf2a3c81eb19246b6be74af07e70a06f0">
         <File Id="fil90f9e9f09d6744f68331100e6d7da03d" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.dll" />
       </Component>
-      <Component Id="cmp75c6b7b418bb4f439dd5519c570a14e0">
-        <File Id="fil1c8a95614a8348f9ac6982b3340a303c" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.xml" />
-      </Component>
       <Directory Id="dir23E9C47466D341314C603F5C7118348B" Name="ref">
         <Component Id="cmp50D8B0DCCF114B58987590FF8212ACB9">
           <File Id="filAAF1E2DE95144FAD97B91D1E8EA8ADC6" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Data.DataSetExtensions.dll" />
@@ -3451,7 +3448,6 @@
       <ComponentRef Id="cmp557A49B03E72CD07149A6CD0595C9245" />
       <ComponentRef Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" />
       <ComponentRef Id="cmpf2a3c81eb19246b6be74af07e70a06f0" />
-      <ComponentRef Id="cmp75c6b7b418bb4f439dd5519c570a14e0" />
       <ComponentRef Id="cmp50D8B0DCCF114B58987590FF8212ACB9" />
       <ComponentRef Id="cmpC39C65F1709E407B9D6AD3AF64F710D3" />
       <ComponentRef Id="cmp2C63290BD1A34304BAF371F4146D9EFD" />

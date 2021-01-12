@@ -83,7 +83,10 @@ namespace System.Management.Automation
                 return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
 
-            set { _debugTraceLevel = value; }
+            set
+            {
+                _debugTraceLevel = value;
+            }
         }
 
         private int _debugTraceLevel;
@@ -100,7 +103,10 @@ namespace System.Management.Automation
                 return !IgnoreScriptDebug && _debugTraceStep;
             }
 
-            set { _debugTraceStep = value; }
+            set
+            {
+                _debugTraceStep = value;
+            }
         }
 
         private bool _debugTraceStep;
@@ -113,9 +119,7 @@ namespace System.Management.Automation
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
 
-            return (context != null)
-                       ? context.IsStrictVersion(majorVersion)
-                       : false;
+            return (context != null) && context.IsStrictVersion(majorVersion);
         }
         /// <summary>
         /// Check to see a specific version of strict mode is enabled.  The check is always scoped,
@@ -488,7 +492,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return InitialSessionState != null ? InitialSessionState.UseFullLanguageModeInDebugger : false;
+                return InitialSessionState != null && InitialSessionState.UseFullLanguageModeInDebugger;
             }
         }
 
@@ -666,7 +670,7 @@ namespace System.Management.Automation
         /// <value></value>
         internal HelpSystem HelpSystem
         {
-            get { return _helpSystem ?? (_helpSystem = new HelpSystem(this)); }
+            get { return _helpSystem ??= new HelpSystem(this); }
         }
 
         private HelpSystem _helpSystem;
@@ -745,7 +749,7 @@ namespace System.Management.Automation
         /// </summary>
         internal EngineIntrinsics EngineIntrinsics
         {
-            get { return _engineIntrinsics ?? (_engineIntrinsics = new EngineIntrinsics(this)); }
+            get { return _engineIntrinsics ??= new EngineIntrinsics(this); }
         }
 
         private EngineIntrinsics _engineIntrinsics;

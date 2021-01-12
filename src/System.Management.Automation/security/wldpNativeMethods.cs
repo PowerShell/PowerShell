@@ -78,28 +78,31 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
-            // Check the WLDP API
-            SystemEnforcementMode lockdownPolicy = GetWldpPolicy(path, handle);
-            if (lockdownPolicy == SystemEnforcementMode.Enforce)
+            // Check the WLDP File policy via API
+            var wldpFilePolicy = GetWldpPolicy(path, handle);
+            if (wldpFilePolicy == SystemEnforcementMode.Enforce)
             {
-                return lockdownPolicy;
+                return wldpFilePolicy;
+            }
+
+            // Check the AppLocker File policy via API
+            // This needs to be checked before WLDP audit policy
+            // So, that we don't end up in Audit mode,
+            // when we should be enforce mode.
+            var appLockerFilePolicy = GetAppLockerPolicy(path, handle);
+            if (appLockerFilePolicy == SystemEnforcementMode.Enforce)
+            {
+                return appLockerFilePolicy;
             }
 
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
             SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
-            if ((systemWldpPolicy == SystemEnforcementMode.Enforce) ||
-                (systemWldpPolicy == SystemEnforcementMode.Audit))
+            if ((systemWldpPolicy == SystemEnforcementMode.Audit) ||
+                (systemWldpPolicy == SystemEnforcementMode.Enforce))
             {
-                return lockdownPolicy;
-            }
-
-            // Check the AppLocker API
-            lockdownPolicy = GetAppLockerPolicy(path, handle);
-            if (lockdownPolicy == SystemEnforcementMode.Enforce)
-            {
-                return lockdownPolicy;
+                return wldpFilePolicy;
             }
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
@@ -107,7 +110,7 @@ namespace System.Management.Automation.Security
             if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
                 SaferPolicy.Disallowed)
             {
-                return lockdownPolicy;
+                return appLockerFilePolicy;
             }
 
             // If it's not set to 'Enforce' by the platform, allow debug overrides
@@ -230,7 +233,7 @@ namespace System.Management.Automation.Security
 
                                 // AppLocker fails when you try to check a policy on a file
                                 // with no content. So create a scratch file and test on that.
-                                string dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
+                                string dtAppLockerTestFileContents = AppLockerTestFileContents + Environment.TickCount64;
                                 IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
                                 IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
@@ -358,7 +361,7 @@ namespace System.Management.Automation.Security
             {
                 // Assume everything under SYSTEM32 is trusted, with a purposefully sloppy
                 // check so that we can actually put it in the filename during testing.
-                if (path.IndexOf("System32", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
                 {
                     return SystemEnforcementMode.None;
                 }
@@ -488,7 +491,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native constants for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeConstants
+        internal static class WldpNativeConstants
         {
             internal const uint WLDP_HOST_INFORMATION_REVISION = 0x00000001;
 
@@ -538,7 +541,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native methods for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeMethods
+        internal static class WldpNativeMethods
         {
             /// Return Type: HRESULT->LONG->int
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*

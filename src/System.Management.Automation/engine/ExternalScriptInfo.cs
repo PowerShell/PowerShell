@@ -193,7 +193,10 @@ namespace System.Management.Automation
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>
@@ -358,9 +361,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                return _commandMetadata ??=
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 
@@ -444,7 +446,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data != null && data.IsElevationRequired;
             }
         }
 

@@ -563,19 +563,56 @@ namespace Microsoft.PowerShell.Telemetry
                 return defaultValue;
             }
 
-            switch (str.ToLowerInvariant())
+            var boolStr = str.AsSpan();
+
+            if (boolStr.Length == 1)
             {
-                case "true":
-                case "1":
-                case "yes":
+                if (boolStr[0] == '1')
+                {
                     return true;
-                case "false":
-                case "0":
-                case "no":
+                }
+
+                if (boolStr[0] == '0')
+                {
                     return false;
-                default:
-                    return defaultValue;
+                }
             }
+
+            if (boolStr.Length == 3 &&
+                (boolStr[0] == 'y' || boolStr[0] == 'Y') &&
+                (boolStr[1] == 'e' || boolStr[1] == 'E') &&
+                (boolStr[2] == 's' || boolStr[2] == 'S'))
+            {
+                return true;
+            }
+
+            if (boolStr.Length == 2 &&
+                (boolStr[0] == 'n' || boolStr[0] == 'N') &&
+                (boolStr[1] == 'o' || boolStr[1] == 'O'))
+            {
+                return false;
+            }
+
+            if (boolStr.Length == 4 &&
+                (boolStr[0] == 't' || boolStr[0] == 'T') &&
+                (boolStr[1] == 'r' || boolStr[1] == 'R') &&
+                (boolStr[2] == 'u' || boolStr[2] == 'U') &&
+                (boolStr[3] == 'e' || boolStr[3] == 'E'))
+            {
+                return true;
+            }
+
+            if (boolStr.Length == 5 &&
+                (boolStr[0] == 'f' || boolStr[0] == 'F') &&
+                (boolStr[1] == 'a' || boolStr[1] == 'A') &&
+                (boolStr[2] == 'l' || boolStr[2] == 'L') &&
+                (boolStr[3] == 's' || boolStr[3] == 'S') &&
+                (boolStr[4] == 'e' || boolStr[4] == 'E'))
+            {
+                return false;
+            }
+
+            return defaultValue;
         }
 
         /// <summary>

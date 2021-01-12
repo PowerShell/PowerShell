@@ -18,7 +18,9 @@ namespace System.Management.Automation.Remoting
     {
         /// <summary>
         /// </summary>
+#pragma warning disable CA2211 // Non-constant fields should not be visible
         public static bool IsServerManager;
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 
         #region Public Properties
 

@@ -233,7 +233,7 @@ namespace System.Management.Automation.Internal
 
             // Find out if this is an invoke and disconnect operation and if so whether the endpoint
             // supports disconnect.  Throw exception if disconnect is not supported.
-            bool invokeAndDisconnect = (shell.Settings != null) ? shell.Settings.InvokeAndDisconnect : false;
+            bool invokeAndDisconnect = shell.Settings != null && shell.Settings.InvokeAndDisconnect;
             if (invokeAndDisconnect && !EndpointSupportsDisconnect)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.EndpointDoesNotSupportDisconnect);
@@ -938,7 +938,7 @@ namespace System.Management.Automation.Internal
             get
             {
                 WSManClientSessionTransportManager wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
-                return (wsmanTransportManager != null) ? wsmanTransportManager.SupportsDisconnect : false;
+                return wsmanTransportManager != null && wsmanTransportManager.SupportsDisconnect;
             }
         }
 

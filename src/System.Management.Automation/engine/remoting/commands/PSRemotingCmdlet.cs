@@ -669,7 +669,10 @@ namespace Microsoft.PowerShell.Commands
                 return _sessionOption;
             }
 
-            set { _sessionOption = value; }
+            set
+            {
+                _sessionOption = value;
+            }
         }
 
         private PSSessionOption _sessionOption;
@@ -707,7 +710,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = NewPSSessionCommand.UriParameterSet)]
         public virtual string CertificateThumbprint
         {
-            get { return _thumbPrint; }
+            get
+            {
+                return _thumbPrint;
+            }
 
             set
             {
@@ -1879,7 +1885,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Check the powershell version of the remote server.
         /// </summary>
-        private string GetRemoteServerPsVersion(RemoteRunspace remoteRunspace)
+        private static string GetRemoteServerPsVersion(RemoteRunspace remoteRunspace)
         {
             if (remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
             {
@@ -2427,7 +2433,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="localScriptBlock"></param>
         /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
-        private List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
+        private static List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
             if (localScriptBlock == null)
             {
@@ -3003,9 +3009,9 @@ namespace Microsoft.PowerShell.Commands
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(session.VMName)
                                                                       : inputName.Equals(session.ContainerId)) &&
-                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
+                                                     (sessionNamePattern == null || sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -3063,7 +3069,7 @@ namespace Microsoft.PowerShell.Commands
                                                                       : inputName.Equals(session.ContainerId)) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -3106,9 +3112,9 @@ namespace Microsoft.PowerShell.Commands
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
-                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
+                                                     (sessionNamePattern == null || sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 
@@ -3143,7 +3149,7 @@ namespace Microsoft.PowerShell.Commands
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
-                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
+                                                     (configurationNamePattern == null || configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 
@@ -4328,7 +4334,7 @@ namespace System.Management.Automation.Remoting
         public bool NoCompression { get; set; } = false;
 
         /// <summary>
-        /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
+        /// If <see langword="true"/> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session).
         /// </summary>
@@ -4353,7 +4359,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return _proxyAuthentication; }
+            get
+            {
+                return _proxyAuthentication;
+            }
 
             set
             {

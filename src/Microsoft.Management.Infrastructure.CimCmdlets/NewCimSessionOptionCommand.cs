@@ -45,7 +45,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="NewCimSessionOptionCommand"/> class.
         /// </summary>
         public NewCimSessionOptionCommand()
             : base(parameters, parameterSets)
@@ -64,7 +64,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ParameterSetName = WSManParameterSet)]
         public SwitchParameter NoEncryption
         {
-            get { return noEncryption; }
+            get
+            {
+                return noEncryption;
+            }
 
             set
             {
@@ -85,7 +88,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public SwitchParameter SkipCACheck
         {
-            get { return skipCACheck; }
+            get
+            {
+                return skipCACheck;
+            }
 
             set
             {
@@ -106,7 +112,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public SwitchParameter SkipCNCheck
         {
-            get { return skipCNCheck; }
+            get
+            {
+                return skipCNCheck;
+            }
 
             set
             {
@@ -127,7 +136,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public SwitchParameter SkipRevocationCheck
         {
-            get { return skipRevocationCheck; }
+            get
+            {
+                return skipRevocationCheck;
+            }
 
             set
             {
@@ -148,7 +160,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public SwitchParameter EncodePortInServicePrincipalName
         {
-            get { return encodeportinserviceprincipalname; }
+            get
+            {
+                return encodeportinserviceprincipalname;
+            }
 
             set
             {
@@ -171,7 +186,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public PacketEncoding Encoding
         {
-            get { return encoding; }
+            get
+            {
+                return encoding;
+            }
 
             set
             {
@@ -193,7 +211,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public Uri HttpPrefix
         {
-            get { return httpprefix; }
+            get
+            {
+                return httpprefix;
+            }
 
             set
             {
@@ -212,7 +233,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public UInt32 MaxEnvelopeSizeKB
         {
-            get { return maxenvelopesizekb; }
+            get
+            {
+                return maxenvelopesizekb;
+            }
 
             set
             {
@@ -233,7 +257,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public PasswordAuthenticationMechanism ProxyAuthentication
         {
-            get { return proxyAuthentication; }
+            get
+            {
+                return proxyAuthentication;
+            }
 
             set
             {
@@ -253,7 +280,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public string ProxyCertificateThumbprint
         {
-            get { return proxycertificatethumbprint; }
+            get
+            {
+                return proxycertificatethumbprint;
+            }
 
             set
             {
@@ -272,7 +302,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Credential()]
         public PSCredential ProxyCredential
         {
-            get { return proxycredential; }
+            get
+            {
+                return proxycredential;
+            }
 
             set
             {
@@ -292,7 +325,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public ProxyType ProxyType
         {
-            get { return proxytype; }
+            get
+            {
+                return proxytype;
+            }
 
             set
             {
@@ -313,7 +349,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = WSManParameterSet)]
         public SwitchParameter UseSsl
         {
-            get { return usessl; }
+            get
+            {
+                return usessl;
+            }
 
             set
             {
@@ -334,7 +373,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ParameterSetName = DcomParameterSet)]
         public ImpersonationType Impersonation
         {
-            get { return impersonation; }
+            get
+            {
+                return impersonation;
+            }
 
             set
             {
@@ -355,7 +397,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ParameterSetName = DcomParameterSet)]
         public SwitchParameter PacketIntegrity
         {
-            get { return packetintegrity; }
+            get
+            {
+                return packetintegrity;
+            }
 
             set
             {
@@ -376,7 +421,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ParameterSetName = DcomParameterSet)]
         public SwitchParameter PacketPrivacy
         {
-            get { return packetprivacy; }
+            get
+            {
+                return packetprivacy;
+            }
 
             set
             {
@@ -400,7 +448,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = ProtocolNameParameterSet)]
         public ProtocolType Protocol
         {
-            get { return protocol; }
+            get
+            {
+                return protocol;
+            }
 
             set
             {
@@ -416,28 +467,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Specifies the UI Culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public CultureInfo UICulture
-        {
-            get { return uiculture; }
-
-            set { uiculture = value; }
-        }
-
-        private CultureInfo uiculture;
+        public CultureInfo UICulture { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Culture".
         /// Specifies the culture to use. i.e. en-us, ar-sa.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public CultureInfo Culture
-        {
-            get { return culture; }
-
-            set { culture = value; }
-        }
-
-        private CultureInfo culture;
+        public CultureInfo Culture { get; set; }
 
         #endregion
 

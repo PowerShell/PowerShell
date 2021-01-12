@@ -25,41 +25,25 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterDefinitionEntry
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterDefinitionEntry"/> class.
         /// </summary>
         /// <param name="parameterSetName"></param>
         /// <param name="mandatory"></param>
         internal ParameterDefinitionEntry(string parameterSetName, bool mandatory)
         {
-            this.mandatory = mandatory;
-            this.parameterSetName = parameterSetName;
+            this.IsMandatory = mandatory;
+            this.ParameterSetName = parameterSetName;
         }
 
         /// <summary>
         /// Property ParameterSetName.
         /// </summary>
-        internal string ParameterSetName
-        {
-            get
-            {
-                return this.parameterSetName;
-            }
-        }
-
-        private readonly string parameterSetName = null;
+        internal string ParameterSetName { get; }
 
         /// <summary>
         /// Whether the parameter is mandatory to the set.
         /// </summary>
-        internal bool IsMandatory
-        {
-            get
-            {
-                return this.mandatory;
-            }
-        }
-
-        private readonly bool mandatory = false;
+        internal bool IsMandatory { get; }
     }
 
     /// <summary>
@@ -70,36 +54,36 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterSetEntry
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         internal ParameterSetEntry(UInt32 mandatoryParameterCount)
         {
-            this.mandatoryParameterCount = mandatoryParameterCount;
-            this.isDefaultParameterSet = false;
+            this.MandatoryParameterCount = mandatoryParameterCount;
+            this.IsDefaultParameterSet = false;
             reset();
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="toClone"></param>
         internal ParameterSetEntry(ParameterSetEntry toClone)
         {
-            this.mandatoryParameterCount = toClone.MandatoryParameterCount;
-            this.isDefaultParameterSet = toClone.IsDefaultParameterSet;
+            this.MandatoryParameterCount = toClone.MandatoryParameterCount;
+            this.IsDefaultParameterSet = toClone.IsDefaultParameterSet;
             reset();
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         /// <param name="mandatory"></param>
         internal ParameterSetEntry(UInt32 mandatoryParameterCount, bool isDefault)
         {
-            this.mandatoryParameterCount = mandatoryParameterCount;
-            this.isDefaultParameterSet = isDefault;
+            this.MandatoryParameterCount = mandatoryParameterCount;
+            this.IsDefaultParameterSet = isDefault;
             reset();
         }
 
@@ -108,107 +92,39 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal void reset()
         {
-            this.setMandatoryParameterCount = this.setMandatoryParameterCountAtBeginProcess;
-            this.isValueSet = this.isValueSetAtBeginProcess;
+            this.SetMandatoryParameterCount = this.SetMandatoryParameterCountAtBeginProcess;
+            this.IsValueSet = this.IsValueSetAtBeginProcess;
         }
 
         /// <summary>
         /// Property <c>DefaultParameterSet</c>
         /// </summary>
-        internal bool IsDefaultParameterSet
-        {
-            get
-            {
-                return this.isDefaultParameterSet;
-            }
-        }
-
-        private readonly bool isDefaultParameterSet = false;
+        internal bool IsDefaultParameterSet { get; }
 
         /// <summary>
         /// Property <c>MandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 MandatoryParameterCount
-        {
-            get
-            {
-                return this.mandatoryParameterCount;
-            }
-        }
-
-        private readonly UInt32 mandatoryParameterCount = 0;
+        internal UInt32 MandatoryParameterCount { get; } = 0;
 
         /// <summary>
         /// Property <c>IsValueSet</c>
         /// </summary>
-        internal bool IsValueSet
-        {
-            get
-            {
-                return this.isValueSet;
-            }
-
-            set
-            {
-                this.isValueSet = value;
-            }
-        }
-
-        private bool isValueSet = false;
+        internal bool IsValueSet { get; set; }
 
         /// <summary>
         /// Property <c>IsValueSetAtBeginProcess</c>
         /// </summary>
-        internal bool IsValueSetAtBeginProcess
-        {
-            get
-            {
-                return this.isValueSetAtBeginProcess;
-            }
-
-            set
-            {
-                this.isValueSetAtBeginProcess = value;
-            }
-        }
-
-        private bool isValueSetAtBeginProcess = false;
+        internal bool IsValueSetAtBeginProcess { get; set; }
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCount
-        {
-            get
-            {
-                return this.setMandatoryParameterCount;
-            }
-
-            set
-            {
-                this.setMandatoryParameterCount = value;
-            }
-        }
-
-        private UInt32 setMandatoryParameterCount = 0;
+        internal UInt32 SetMandatoryParameterCount { get; set; } = 0;
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCountAtBeginProcess
-        {
-            get
-            {
-                return this.setMandatoryParameterCountAtBeginProcess;
-            }
-
-            set
-            {
-                this.setMandatoryParameterCountAtBeginProcess = value;
-            }
-        }
-
-        private UInt32 setMandatoryParameterCountAtBeginProcess = 0;
+        internal UInt32 SetMandatoryParameterCountAtBeginProcess { get; set; } = 0;
     }
 
     /// <summary>
@@ -217,7 +133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterBinder
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterBinder"/> class.
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="sets"></param>
@@ -531,7 +447,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 try
                 {
-                    this.parameterSetName = this.parameterBinder.GetParameterSet();
+                    this.ParameterSetName = this.parameterBinder.GetParameterSet();
                 }
                 finally
                 {
@@ -539,7 +455,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            DebugHelper.WriteLog("current parameterset is: " + this.parameterSetName, 4);
+            DebugHelper.WriteLog("current parameterset is: " + this.ParameterSetName, 4);
         }
 
         /// <summary>
@@ -567,7 +483,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// </summary>
         internal CimBaseCommand()
         {
@@ -576,7 +492,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// </summary>
         internal CimBaseCommand(Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,
             Dictionary<string, ParameterSetEntry> sets)
@@ -690,13 +606,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private readonly object myLock = new();
 
         /// <summary>
-        /// <para>
-        /// parameter set name
-        /// </para>
-        /// </summary>
-        private string parameterSetName;
-
-        /// <summary>
         /// This flag is introduced to resolve the parameter set name
         /// during process record
         /// Whether at begin process time, false means in processrecord.
@@ -747,13 +656,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Get current ParameterSetName of the cmdlet
         /// </para>
         /// </summary>
-        internal string ParameterSetName
-        {
-            get
-            {
-                return this.parameterSetName;
-            }
-        }
+        internal string ParameterSetName { get; private set; }
 
         /// <summary>
         /// Gets/Sets cmdlet operation wrapper object.

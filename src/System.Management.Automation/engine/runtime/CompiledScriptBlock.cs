@@ -535,8 +535,8 @@ namespace System.Management.Automation
     {
         private readonly CompiledScriptBlockData _scriptBlockData;
 
-        internal ScriptBlock(IParameterMetadataProvider ast, bool isFilter) :
-            this(new CompiledScriptBlockData(ast, isFilter))
+        internal ScriptBlock(IParameterMetadataProvider ast, bool isFilter)
+            : this(new CompiledScriptBlockData(ast, isFilter))
         {
         }
 
@@ -1004,7 +1004,7 @@ namespace System.Management.Automation
                 args = Array.Empty<object>();
             }
 
-            bool runOptimized = context._debuggingMode > 0 ? false : createLocalScope;
+            bool runOptimized = context._debuggingMode <= 0 && createLocalScope;
             var codeToInvoke = GetCodeToInvoke(ref runOptimized, clauseToInvoke);
             if (codeToInvoke == null)
             {
@@ -1789,7 +1789,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private class SuspiciousContentChecker
+        private static class SuspiciousContentChecker
         {
             // Based on a (bad) random number generator, but good enough
             // for our simple needs.
@@ -2207,7 +2207,7 @@ namespace System.Management.Automation
             _scriptBlock = scriptBlock;
             _useLocalScope = useNewScope;
             _fromScriptFile = fromScriptFile;
-            _runOptimized = _scriptBlock.Compile(optimized: context._debuggingMode > 0 ? false : useNewScope);
+            _runOptimized = _scriptBlock.Compile(optimized: context._debuggingMode <= 0 && useNewScope);
             _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimized);
             _localsTuple.SetAutomaticVariable(AutomaticVariable.PSCmdlet, this, context);
             _scriptBlock.SetPSScriptRootAndPSCommandPath(_localsTuple, context);

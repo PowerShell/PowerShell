@@ -206,7 +206,7 @@ namespace System.Management.Automation.Remoting
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
 
-            string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
+            const string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
             ServerRemoteSession result = new ServerRemoteSession(
@@ -285,10 +285,10 @@ namespace System.Management.Automation.Remoting
         /// This parameter contains the remote data received from client.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If the parameter <paramref name="dataEventArg" /> is null.
+        /// If the parameter <paramref name="dataEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
+        /// If the parameter <paramref name="dataEventArg"/> does not contain remote data.
         /// </exception>
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.

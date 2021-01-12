@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell
         /// string fields at all, nothing is lost.
         /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct StartUpInfo
+        internal readonly struct StartUpInfo
         {
             public readonly UInt32 cb;
             private readonly IntPtr lpReserved;
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell
             /// <param name="pv"></param>
             /// <returns></returns>
             [PreserveSig]
-            HResult GetValue([In] ref PropertyKey key, [Out] PropVariant pv);
+            HResult GetValue([In] in PropertyKey key, [Out] PropVariant pv);
 
             /// <summary>
             /// Sets the value of a property in the store.
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell
             /// <param name="pv"></param>
             /// <returns></returns>
             [PreserveSig]
-            HResult SetValue([In] ref PropertyKey key, [In] PropVariant pv);
+            HResult SetValue([In] in PropertyKey key, [In] PropVariant pv);
 
             /// <summary>
             /// Commits the changes.

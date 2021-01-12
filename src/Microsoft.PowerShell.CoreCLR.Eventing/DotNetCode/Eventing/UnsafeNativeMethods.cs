@@ -84,7 +84,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static string GetMessage(int errorCode)
         {
-            StringBuilder sb = new StringBuilder(512);
+            StringBuilder sb = new(512);
             int result = UnsafeNativeMethods.FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS |
                 FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY,
                 UnsafeNativeMethods.s_NULL, errorCode, 0, sb, sb.Capacity, UnsafeNativeMethods.s_NULL);
@@ -132,7 +132,7 @@ namespace System.Diagnostics.Eventing
         // Control (Is Enabled) APIs
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventEnabled", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
-        internal static extern int EventEnabled([In] long registrationHandle, [In] ref System.Diagnostics.Eventing.EventDescriptor eventDescriptor);
+        internal static extern int EventEnabled([In] long registrationHandle, [In] in System.Diagnostics.Eventing.EventDescriptor eventDescriptor);
 
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventProviderEnabled", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
@@ -143,7 +143,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern unsafe uint EventWrite(
                 [In] long registrationHandle,
-                [In] ref EventDescriptor eventDescriptor,
+                [In] in EventDescriptor eventDescriptor,
                 [In] uint userDataCount,
                 [In] void* userData
                 );
@@ -162,7 +162,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern unsafe uint EventWriteTransfer(
                 [In] long registrationHandle,
-                [In] ref EventDescriptor eventDescriptor,
+                [In] in EventDescriptor eventDescriptor,
                 [In] Guid* activityId,
                 [In] Guid* relatedActivityId,
                 [In] uint userDataCount,

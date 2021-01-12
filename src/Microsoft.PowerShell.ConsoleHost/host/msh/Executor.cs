@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell
             return ExecuteCommandHelper(tempPipeline, out exceptionThrown, options);
         }
 
-        private Command GetOutDefaultCommand(bool endOfStatement)
+        private static Command GetOutDefaultCommand(bool endOfStatement)
         {
             return new Command(command: "Out-Default",
                                isScript: false,

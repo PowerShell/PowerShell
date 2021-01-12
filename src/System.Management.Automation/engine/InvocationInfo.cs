@@ -201,11 +201,13 @@ namespace System.Management.Automation
         {
             get
             {
-                return _boundParameters ??
-                       (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
+                return _boundParameters ??= new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             }
 
-            internal set { _boundParameters = value; }
+            internal set
+            {
+                _boundParameters = value;
+            }
         }
 
         /// <summary>
@@ -213,7 +215,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<object> UnboundArguments
         {
-            get { return _unboundArguments ?? (_unboundArguments = new List<object>()); }
+            get { return _unboundArguments ??= new List<object>(); }
 
             internal set { _unboundArguments = value; }
         }
@@ -382,7 +384,10 @@ namespace System.Management.Automation
                 }
             }
 
-            set { _scriptPosition = value; }
+            set
+            {
+                _scriptPosition = value;
+            }
         }
 
         /// <summary>

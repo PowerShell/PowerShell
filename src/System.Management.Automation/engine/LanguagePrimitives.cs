@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            if (assemblyQualifiedTypeName.IndexOf(',') == -1)
+            if (!assemblyQualifiedTypeName.Contains(','))
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
@@ -2133,7 +2133,7 @@ namespace System.Management.Automation
                 WildcardPattern[] fromValuePatterns;
                 if (!multipleValues)
                 {
-                    if (sourceValueString.Contains(","))
+                    if (sourceValueString.Contains(','))
                     {
                         throw new PSInvalidCastException("InvalidCastEnumCommaAndNoFlags", null,
                             ExtendedTypeSystem.InvalidCastExceptionEnumerationNoFlagAndComma,
@@ -4349,19 +4349,21 @@ namespace System.Management.Automation
 
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
+#nullable enable
         internal interface IConversionData
         {
             object Converter { get; }
 
             ConversionRank Rank { get; }
 
-            object Invoke(object valueToConvert,
+            object? Invoke(object? valueToConvert,
                           Type resultType,
                           bool recurse,
-                          PSObject originalValueToConvert,
-                          IFormatProvider formatProvider,
-                          TypeTable backupTable);
+                          PSObject? originalValueToConvert,
+                          IFormatProvider? formatProvider,
+                          TypeTable? backupTable);
         }
+#nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : IConversionData
@@ -5104,7 +5106,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private struct SignatureComparator
+        private readonly struct SignatureComparator
         {
             private enum TypeMatchingContext
             {

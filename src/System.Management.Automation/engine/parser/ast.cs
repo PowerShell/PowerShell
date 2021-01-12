@@ -29,10 +29,14 @@ namespace System.Management.Automation.Language
     using System.Runtime.CompilerServices;
     using System.Reflection.Emit;
 
+#nullable enable
+
     internal interface ISupportsAssignment
     {
         IAssignableValue GetAssignableValue();
     }
+
+#nullable restore
 
     internal interface IAssignableValue
     {
@@ -199,6 +203,19 @@ namespace System.Management.Automation.Language
         /// </exception>
         public object SafeGetValue()
         {
+            return SafeGetValue(skipHashtableSizeCheck: false);
+        }
+
+        /// <summary>
+        /// Constructs the resultant object from the AST and returns it if it is safe.
+        /// </summary>
+        /// <param name="skipHashtableSizeCheck">Set to skip hashtable limit validation.</param>
+        /// <returns>The object represented by the AST as a safe object.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// If <paramref name="extent"/> is deemed unsafe.
+        /// </exception>
+        public object SafeGetValue(bool skipHashtableSizeCheck)
+        {
             try
             {
                 ExecutionContext context = null;
@@ -207,7 +224,7 @@ namespace System.Management.Automation.Language
                     context = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
                 }
 
-                return GetSafeValueVisitor.GetSafeValue(this, context, GetSafeValueVisitor.SafeValueContext.Default);
+                return GetSafeValueVisitor.GetSafeValue(this, context, skipHashtableSizeCheck ? GetSafeValueVisitor.SafeValueContext.SkipHashtableSizeCheck : GetSafeValueVisitor.SafeValueContext.Default);
             }
             catch
             {
@@ -1754,7 +1771,7 @@ namespace System.Management.Automation.Language
         /// </exception>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="blockName"/> is not one of the valid kinds for a named block,
-        /// or if <paramref name="unnamed"/> is <c>true</c> and <paramref name="blockName"/> is neither
+        /// or if <paramref name="unnamed"/> is <see langword="true"/> and <paramref name="blockName"/> is neither
         /// <see cref="TokenKind.Process"/> nor <see cref="TokenKind.End"/>.
         /// </exception>
         public NamedBlockAst(IScriptExtent extent, TokenKind blockName, StatementBlockAst statementBlock, bool unnamed)
@@ -3449,7 +3466,7 @@ namespace System.Management.Automation.Language
             if (ReturnType == null)
                 return true;
             var typeName = ReturnType.TypeName as TypeName;
-            return typeName == null ? false : typeName.IsType(typeof(void));
+            return typeName != null && typeName.IsType(typeof(void));
         }
 
         internal Type GetReturnType()
@@ -8167,10 +8184,12 @@ namespace System.Management.Automation.Language
         IScriptExtent Extent { get; }
     }
 
+#nullable enable
     internal interface ISupportsTypeCaching
     {
-        Type CachedType { get; set; }
+        Type? CachedType { get; set; }
     }
+#nullable restore
 
     /// <summary>
     /// A simple type that is not an array or does not have generic arguments.

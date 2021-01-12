@@ -26,7 +26,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Constructor
 
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimAsyncOperation"/> class.
         /// </summary>
         protected CimAsyncOperation()
         {

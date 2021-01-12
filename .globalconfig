@@ -100,7 +100,8 @@ dotnet_diagnostic.CA1050.severity = warning
 dotnet_diagnostic.CA1051.severity = silent
 
 # CA1052: Static holder types should be Static or NotInheritable
-dotnet_diagnostic.CA1052.severity = none
+dotnet_diagnostic.CA1052.severity = warning
+dotnet_code_quality.ca1052.api_surface = private, internal
 
 # CA1054: URI-like parameters should not be strings
 dotnet_diagnostic.CA1054.severity = none
@@ -268,7 +269,7 @@ dotnet_diagnostic.CA1814.severity = none
 dotnet_diagnostic.CA1815.severity = none
 
 # CA1816: Dispose methods should call SuppressFinalize
-dotnet_diagnostic.CA1816.severity = suggestion
+dotnet_diagnostic.CA1816.severity = warning
 
 # CA1819: Properties should not return arrays
 dotnet_diagnostic.CA1819.severity = none
@@ -280,7 +281,8 @@ dotnet_diagnostic.CA1820.severity = none
 dotnet_diagnostic.CA1821.severity = warning
 
 # CA1822: Mark members as static
-dotnet_diagnostic.CA1822.severity = suggestion
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_code_quality.ca1822.api_surface = private
 
 # CA1823: Avoid unused private fields
 dotnet_diagnostic.CA1823.severity = none
@@ -391,7 +393,7 @@ dotnet_diagnostic.CA2207.severity = warning
 dotnet_diagnostic.CA2208.severity = suggestion
 
 # CA2211: Non-constant fields should not be visible
-dotnet_diagnostic.CA2211.severity = suggestion
+dotnet_diagnostic.CA2211.severity = warning
 
 # CA2213: Disposable fields should be disposed
 dotnet_diagnostic.CA2213.severity = none
@@ -466,7 +468,7 @@ dotnet_diagnostic.CA2247.severity = warning
 dotnet_diagnostic.CA2248.severity = suggestion
 
 # CA2249: Consider using 'string.Contains' instead of 'string.IndexOf'
-dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA2249.severity = warning
 
 # CA2300: Do not use insecure deserializer BinaryFormatter
 dotnet_diagnostic.CA2300.severity = none
@@ -949,16 +951,16 @@ dotnet_diagnostic.IDE0072.severity = silent
 dotnet_diagnostic.IDE0073.severity = suggestion
 
 # IDE0074: UseCoalesceCompoundAssignment
-dotnet_diagnostic.IDE0074.severity = silent
+dotnet_diagnostic.IDE0074.severity = warning
 
 # IDE0075: SimplifyConditionalExpression
-dotnet_diagnostic.IDE0075.severity = silent
+dotnet_diagnostic.IDE0075.severity = warning
 
 # IDE0076: InvalidSuppressMessageAttribute
-dotnet_diagnostic.IDE0076.severity = silent
+dotnet_diagnostic.IDE0076.severity = warning
 
 # IDE0077: LegacyFormatSuppressMessageAttribute
-dotnet_diagnostic.IDE0077.severity = silent
+dotnet_diagnostic.IDE0077.severity = warning
 
 # IDE0078: UsePatternCombinators
 dotnet_diagnostic.IDE0078.severity = silent
@@ -1012,7 +1014,7 @@ dotnet_diagnostic.SA0001.severity = none
 dotnet_diagnostic.SA0002.severity = none
 
 # SA1000: Keywords should be spaced correctly
-dotnet_diagnostic.SA1000.severity = none
+dotnet_diagnostic.SA1000.severity = warning
 
 # SA1001: Commas should be spaced correctly
 dotnet_diagnostic.SA1001.severity = none
@@ -1021,7 +1023,7 @@ dotnet_diagnostic.SA1001.severity = none
 dotnet_diagnostic.SA1002.severity = warning
 
 # SA1003: Symbols should be spaced correctly
-dotnet_diagnostic.SA1003.severity = none
+dotnet_diagnostic.SA1003.severity = warning
 
 # SA1004: Documentation lines should begin with single space
 dotnet_diagnostic.SA1004.severity = none
@@ -1162,7 +1164,7 @@ dotnet_diagnostic.SA1120.severity = none
 dotnet_diagnostic.SA1121.severity = none
 
 # SA1122: Use string.Empty for empty strings
-dotnet_diagnostic.SA1122.severity = none
+dotnet_diagnostic.SA1122.severity = warning
 
 # SA1123: Do not place regions within elements
 dotnet_diagnostic.SA1123.severity = none
@@ -1231,7 +1233,7 @@ dotnet_diagnostic.SA1203.severity = none
 dotnet_diagnostic.SA1204.severity = none
 
 # SA1205: Partial elements should declare access
-dotnet_diagnostic.SA1205.severity = none
+dotnet_diagnostic.SA1205.severity = warning
 
 # SA1206: Declaration keywords should follow order
 dotnet_diagnostic.SA1206.severity = none
@@ -1255,16 +1257,16 @@ dotnet_diagnostic.SA1211.severity = none
 dotnet_diagnostic.SA1212.severity = warning
 
 # SA1213: Event accessors should follow order
-dotnet_diagnostic.SA1213.severity = none
+dotnet_diagnostic.SA1213.severity = warning
 
 # SA1214: Readonly fields should appear before non-readonly fields
 dotnet_diagnostic.SA1214.severity = none
 
 # SA1216: Using static directives should be placed at the correct location
-dotnet_diagnostic.SA1216.severity = none
+dotnet_diagnostic.SA1216.severity = warning
 
 # SA1217: Using static directives should be ordered alphabetically
-dotnet_diagnostic.SA1217.severity = none
+dotnet_diagnostic.SA1217.severity = warning
 
 # SA1300: Element should begin with upper-case letter
 dotnet_diagnostic.SA1300.severity = none
@@ -1306,7 +1308,7 @@ dotnet_diagnostic.SA1312.severity = none
 dotnet_diagnostic.SA1313.severity = none
 
 # SA1314: Type parameter names should begin with T
-dotnet_diagnostic.SA1314.severity = none
+dotnet_diagnostic.SA1314.severity = warning
 
 # SA1316: Tuple element names should use correct casing
 dotnet_diagnostic.SA1316.severity = none
@@ -1366,7 +1368,7 @@ dotnet_diagnostic.SA1502.severity = none
 dotnet_diagnostic.SA1503.severity = none
 
 # SA1504: All accessors should be single-line or multi-line
-dotnet_diagnostic.SA1504.severity = none
+dotnet_diagnostic.SA1504.severity = warning
 
 # SA1505: Opening braces should not be followed by blank line
 dotnet_diagnostic.SA1505.severity = none
@@ -1531,7 +1533,7 @@ dotnet_diagnostic.SA1641.severity = none
 dotnet_diagnostic.SA1642.severity = none
 
 # SA1643: Destructor summary documentation should begin with standard text
-dotnet_diagnostic.SA1643.severity = none
+dotnet_diagnostic.SA1643.severity = warning
 
 # SA1648: inheritdoc should be used with inheriting class
 dotnet_diagnostic.SA1648.severity = none

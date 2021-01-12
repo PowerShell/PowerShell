@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// </summary>
         public CommandInvocationIntrinsics InvokeCommand
         {
-            get { return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(_context)); }
+            get { return _invokeCommand ??= new CommandInvocationIntrinsics(_context); }
         }
 
         #endregion Public methods

@@ -1120,14 +1120,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         public void Begin(bool expectInput) => Begin(expectInput, commandRuntime: (ICommandRuntime)null);
 
         /// <summary>
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
@@ -1311,14 +1311,6 @@ namespace System.Management.Automation
             }
 
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Finalizer for class SteppablePipeline.
-        /// </summary>
-        ~SteppablePipeline()
-        {
-            Dispose(false);
         }
 
         #endregion IDispose

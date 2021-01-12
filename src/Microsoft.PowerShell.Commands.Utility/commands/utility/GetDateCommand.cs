@@ -368,15 +368,15 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // output DateTime object wrapped in an PSObject with DisplayHint attached
-                PSObject outputObj = new PSObject(dateToUse);
-                PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
+                PSObject outputObj = new(dateToUse);
+                PSNoteProperty note = new("DisplayHint", DisplayHint);
                 outputObj.Properties.Add(note);
 
                 WriteObject(outputObj);
             }
         }
 
-        private static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime s_epoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// This is more an implementation of the UNIX strftime.
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         private string UFormatDateString(DateTime dateTime)
         {
             int offset = 0;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             // folks may include the "+" as part of the format string
             if (UFormat[0] == '+')

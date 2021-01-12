@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (actionPreferenceComesFromCommandLineParameter)
             {
                 Exception exception = new ArgumentException(message);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "ActionPreferenceNotSupportedByCimCmdletAdapter", ErrorCategory.NotImplemented, null);
+                ErrorRecord errorRecord = new(exception, "ActionPreferenceNotSupportedByCimCmdletAdapter", ErrorCategory.NotImplemented, null);
                 cmdlet.ThrowTerminatingError(errorRecord);
             }
         }
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        private readonly Lazy<CimSession> _defaultCimSession = new Lazy<CimSession>(CreateDefaultCimSession);
+        private readonly Lazy<CimSession> _defaultCimSession = new(CreateDefaultCimSession);
 
         private static CimSession CreateDefaultCimSession()
         {

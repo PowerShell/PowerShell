@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             string args,
             string stdin = "")
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            ProcessStartInfo startInfo = new();
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = true;
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             startInfo.Arguments = args;
             string stdout;
 
-            using (Process process = new Process())
+            using (Process process = new())
             {
                 process.StartInfo = startInfo;
                 try

@@ -22,7 +22,7 @@ using System.Text;
 
 namespace System.Diagnostics.Eventing.Reader
 {
-    internal class NativeWrapper
+    internal static class NativeWrapper
     {
         public class SystemProperties
         {
@@ -514,7 +514,7 @@ namespace System.Diagnostics.Eventing.Reader
         {
             int bufferNeeded;
 
-            StringBuilder sb = new StringBuilder(null);
+            StringBuilder sb = new(null);
             bool status = UnsafeNativeMethods.EvtFormatMessage(handle, EventLogHandle.Zero, msgId, 0, null, UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId, 0, sb, out bufferNeeded);
             int error = Marshal.GetLastWin32Error();
 
@@ -672,9 +672,9 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecuritySafeCritical]
         public static void EvtSetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType, object val)
         {
-            UnsafeNativeMethods.EvtVariant varVal = new UnsafeNativeMethods.EvtVariant();
+            UnsafeNativeMethods.EvtVariant varVal = new();
 
-            CoTaskMemSafeHandle taskMem = new CoTaskMemSafeHandle();
+            CoTaskMemSafeHandle taskMem = new();
 
             using (taskMem)
             {
@@ -762,7 +762,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public static string EvtNextChannelPath(EventLogHandle handle, ref bool finish)
         {
-            StringBuilder sb = new StringBuilder(null);
+            StringBuilder sb = new(null);
             int channelNameNeeded;
 
             bool status = UnsafeNativeMethods.EvtNextChannelPath(handle, 0, sb, out channelNameNeeded);
@@ -791,7 +791,7 @@ namespace System.Diagnostics.Eventing.Reader
         [System.Security.SecurityCritical]
         public static string EvtNextPublisherId(EventLogHandle handle, ref bool finish)
         {
-            StringBuilder sb = new StringBuilder(null);
+            StringBuilder sb = new(null);
             int ProviderIdNeeded;
 
             bool status = UnsafeNativeMethods.EvtNextPublisherId(handle, 0, sb, out ProviderIdNeeded);
@@ -958,7 +958,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr pointer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-            UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues;
+            const UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues;
 
             try
             {
@@ -976,7 +976,7 @@ namespace System.Diagnostics.Eventing.Reader
                 if (!status)
                     ThrowEventLogException(win32Error);
 
-                List<object> valuesList = new List<object>(propCount);
+                List<object> valuesList = new(propCount);
                 if (propCount > 0)
                 {
                     pointer = buffer;
@@ -1001,7 +1001,7 @@ namespace System.Diagnostics.Eventing.Reader
         public static string EvtFormatMessageRenderName(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
         {
             int bufferNeeded;
-            StringBuilder sb = new StringBuilder(null);
+            StringBuilder sb = new(null);
 
             bool status = UnsafeNativeMethods.EvtFormatMessage(pmHandle, eventHandle, 0, 0, null, flag, 0, sb, out bufferNeeded);
             int error = Marshal.GetLastWin32Error();
@@ -1059,7 +1059,7 @@ namespace System.Diagnostics.Eventing.Reader
 
             try
             {
-                List<string> keywordsList = new List<string>();
+                List<string> keywordsList = new();
                 bool status = UnsafeNativeMethods.EvtFormatMessageBuffer(pmHandle, eventHandle, 0, 0, IntPtr.Zero, flag, 0, IntPtr.Zero, out bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
 
@@ -1124,7 +1124,7 @@ namespace System.Diagnostics.Eventing.Reader
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-            UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderBookmark;
+            const UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderBookmark;
 
             try
             {
@@ -1164,7 +1164,7 @@ namespace System.Diagnostics.Eventing.Reader
                 stringVariants[i].StringVal = values[i];
             }
 
-            StringBuilder sb = new StringBuilder(null);
+            StringBuilder sb = new(null);
             bool status = UnsafeNativeMethods.EvtFormatMessage(handle, eventHandle, 0xffffffff, values.Length, stringVariants, UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageEvent, 0, sb, out bufferNeeded);
             int error = Marshal.GetLastWin32Error();
 
@@ -1396,7 +1396,7 @@ namespace System.Diagnostics.Eventing.Reader
                 bool[] array = new bool[val.Count];
                 for (int i = 0; i < val.Count; i++)
                 {
-                    bool value = (Marshal.ReadInt32(ptr) != 0) ? true : false;
+                    bool value = Marshal.ReadInt32(ptr) != 0;
                     array[i] = value;
                     ptr = new IntPtr((Int64)ptr + 4);
                 }

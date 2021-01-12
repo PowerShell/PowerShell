@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The MamlUtil class.
     /// </summary>
-    internal class MamlUtil
+    internal static class MamlUtil
     {
         /// <summary>
         /// Takes Name value from maml2 and overrides it in maml1.

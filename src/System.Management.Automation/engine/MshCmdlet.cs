@@ -68,7 +68,7 @@ namespace System.Management.Automation
     /// Type used to define a parameter on a cmdlet script of function that
     /// can only be used as a switch.
     /// </summary>
-    public struct SwitchParameter
+    public readonly struct SwitchParameter
     {
         private readonly bool _isPresent;
         /// <summary>
@@ -956,7 +956,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If the cmdlet declares paging support (via <see cref="CmdletCommonMetadataAttribute.SupportsPaging"/>),
         /// then <see cref="PagingParameters"/> property contains arguments of the paging parameters.
-        /// Otherwise <see cref="PagingParameters"/> property is <c>null</c>.
+        /// Otherwise <see cref="PagingParameters"/> property is <see langword="null"/>.
         /// </summary>
         public PagingParameters PagingParameters
         {
@@ -999,7 +999,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(Context, this));
+                    return _invokeCommand ??= new CommandInvocationIntrinsics(Context, this);
                 }
             }
         }

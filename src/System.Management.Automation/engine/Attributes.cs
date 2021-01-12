@@ -326,7 +326,10 @@ namespace System.Management.Automation
         /// </summary>
         public bool SupportsTransactions
         {
-            get { return _supportsTransactions; }
+            get
+            {
+                return _supportsTransactions;
+            }
 
             set
             {
@@ -507,7 +510,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ParameterSetName
         {
-            get => _parameterSetName ?? (_parameterSetName = new[] { ParameterAttribute.AllParameterSets });
+            get => _parameterSetName ??= new[] { ParameterAttribute.AllParameterSets };
 
             set => _parameterSetName = value;
         }
@@ -1083,7 +1086,7 @@ namespace System.Management.Automation
             _rangeKind = kind;
         }
 
-        private void ValidateRange(object element, ValidateRangeKind rangeKind)
+        private static void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
             Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)

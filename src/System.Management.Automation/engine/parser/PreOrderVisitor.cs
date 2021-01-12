@@ -254,6 +254,7 @@ namespace System.Management.Automation.Language
     /// Implement this interface when you implement <see cref="AstVisitor"/> or <see cref="AstVisitor2"/> when
     /// you want to do something after possibly visiting the children of the ast.
     /// </summary>
+#nullable enable
     public interface IAstPostVisitHandler
     {
         /// <summary>

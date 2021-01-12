@@ -54,7 +54,10 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            set { _autosize = value; }
+            set
+            {
+                _autosize = value;
+            }
         }
 
         private bool? _autosize = null;
@@ -74,7 +77,10 @@ namespace Microsoft.PowerShell.Commands
                 return -1;
             }
 
-            set { _column = value; }
+            set
+            {
+                _column = value;
+            }
         }
 
         private int? _column = null;
@@ -83,12 +89,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            FormattingCommandLineParameters parameters = new();
 
             if (_prop != null)
             {
-                ParameterProcessor processor = new ParameterProcessor(new FormatWideParameterDefinition());
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                ParameterProcessor processor = new(new FormatWideParameterDefinition());
+                TerminatingErrorContext invocationContext = new(this);
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
@@ -111,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
                     // the user specified -autosize:true AND a column number
                     string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new InvalidDataException(),
                         "FormatCannotSpecifyAutosizeAndColumns",
                         ErrorCategory.InvalidArgument,
@@ -134,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
             if (_autosize.HasValue)
                 parameters.autosize = _autosize.Value;
 
-            WideSpecificParameters wideSpecific = new WideSpecificParameters();
+            WideSpecificParameters wideSpecific = new();
             parameters.shapeParameters = wideSpecific;
             if (_column.HasValue)
             {

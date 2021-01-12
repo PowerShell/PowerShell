@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private LineOutput InstantiateLineOutputInterface()
         {
-            PrinterLineOutput printOutput = new PrinterLineOutput(_printerName);
+            PrinterLineOutput printOutput = new(_printerName);
             return (LineOutput)printOutput;
         }
     }

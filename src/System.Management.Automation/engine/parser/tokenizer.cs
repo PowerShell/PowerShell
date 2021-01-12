@@ -77,8 +77,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return t_dynamicKeywords ??
-                       (t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
+                return t_dynamicKeywords ??= new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -92,8 +91,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return t_dynamicKeywordsStack ??
-                       (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
+                return t_dynamicKeywordsStack ??= new Stack<Dictionary<string, DynamicKeyword>>();
             }
         }
 
@@ -320,8 +318,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return _properties ??
-                       (_properties = new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase));
+                return _properties ??= new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -334,8 +331,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return _parameters ??
-                       (_parameters = new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase));
+                return _parameters ??= new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -426,7 +422,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public List<string> Attributes
         {
-            get { return _attributes ?? (_attributes = new List<string>()); }
+            get { return _attributes ??= new List<string>(); }
         }
 
         private List<string> _attributes;
@@ -436,7 +432,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public List<string> Values
         {
-            get { return _values ?? (_values = new List<string>()); }
+            get { return _values ??= new List<string>(); }
         }
 
         private List<string> _values;
@@ -446,7 +442,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Dictionary<string, string> ValueMap
         {
-            get { return _valueMap ?? (_valueMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
+            get { return _valueMap ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); }
         }
 
         private Dictionary<string, string> _valueMap;

@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
 
                 string[] pathValue = value;
 
-                List<string> resolvedPaths = new List<string>();
+                List<string> resolvedPaths = new();
 
                 // Verify that the paths are resolved and valid
                 foreach (string path in pathValue)
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                List<string> resolvedPaths = new List<string>();
+                List<string> resolvedPaths = new();
                 foreach (string path in value)
                 {
                     string literalPath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Throw an error if it is an unrecognized extension
                     default:
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             new Exception(
                                 StringUtil.Format(AddTypeStrings.FileExtensionNotSupported, currentExtension)),
                             "EXTENSION_NOT_SUPPORTED",
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (!string.Equals(activeExtension, currentExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     // All files must have the same extension otherwise throw.
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new Exception(
                             StringUtil.Format(AddTypeStrings.MultipleExtensionsNotSupported)),
                         "MULTIPLE_EXTENSION_NOT_SUPPORTED",
@@ -292,7 +292,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("RA")]
         public string[] ReferencedAssemblies
         {
-            get { return _referencedAssemblies; }
+            get
+            {
+                return _referencedAssemblies;
+            }
 
             set
             {
@@ -327,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Try to resolve the path
                     ProviderInfo provider = null;
-                    Collection<string> newPaths = new Collection<string>();
+                    Collection<string> newPaths = new();
 
                     try
                     {
@@ -336,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
                     // Ignore the ItemNotFound -- we handle it.
                     catch (ItemNotFoundException) { }
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new Exception(
                             StringUtil.Format(AddTypeStrings.OutputAssemblyDidNotResolve, _outputAssembly)),
                         "INVALID_OUTPUT_ASSEMBLY",
@@ -470,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Get the -FromMember template for a given language
-        private string GetMethodTemplate(Language language)
+        private static string GetMethodTemplate(Language language)
         {
             switch (language)
             {
@@ -486,7 +489,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Get the -FromMember namespace template for a given language
-        private string GetNamespaceTemplate(Language language)
+        private static string GetNamespaceTemplate(Language language)
         {
             switch (language)
             {
@@ -502,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Get the -FromMember namespace template for a given language
-        private string GetUsingTemplate(Language language)
+        private static string GetUsingTemplate(Language language)
         {
             switch (language)
             {
@@ -520,7 +523,7 @@ namespace Microsoft.PowerShell.Commands
         // Generate the code for the using statements
         private string GetUsingSet(Language language)
         {
-            StringBuilder usingNamespaceSet = new StringBuilder();
+            StringBuilder usingNamespaceSet = new();
 
             switch (language)
             {
@@ -578,7 +581,7 @@ namespace Microsoft.PowerShell.Commands
             // assembly type without an output assembly
             if (string.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey(nameof(OutputType)))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new Exception(
                         string.Format(
                             CultureInfo.CurrentCulture,
@@ -630,21 +633,21 @@ namespace Microsoft.PowerShell.Commands
         private static readonly string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
 
         // These assemblies are always automatically added to ReferencedAssemblies.
-        private static readonly Lazy<PortableExecutableReference[]> s_autoReferencedAssemblies = new Lazy<PortableExecutableReference[]>(InitAutoIncludedRefAssemblies);
+        private static readonly Lazy<PortableExecutableReference[]> s_autoReferencedAssemblies = new(InitAutoIncludedRefAssemblies);
 
         // A HashSet of assembly names to be ignored if they are specified in '-ReferencedAssemblies'
-        private static readonly Lazy<HashSet<string>> s_refAssemblyNamesToIgnore = new Lazy<HashSet<string>>(InitRefAssemblyNamesToIgnore);
+        private static readonly Lazy<HashSet<string>> s_refAssemblyNamesToIgnore = new(InitRefAssemblyNamesToIgnore);
 
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
-        private static readonly Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new Lazy<IEnumerable<PortableExecutableReference>>(InitDefaultRefAssemblies);
+        private static readonly Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new(InitDefaultRefAssemblies);
 
         private bool InMemory { get { return string.IsNullOrEmpty(_outputAssembly); } }
 
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
-        private static readonly HashSet<string> s_sourceTypesCache = new HashSet<string>();
-        private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
+        private static readonly HashSet<string> s_sourceTypesCache = new();
+        private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
 
@@ -840,7 +843,7 @@ namespace Microsoft.PowerShell.Commands
         // However, this does give us a massive usability improvement, as users can just say
         // Add-Type -AssemblyName Forms (instead of System.Windows.Forms)
         // This is just long, not unmaintainable.
-        private Assembly LoadAssemblyHelper(string assemblyName)
+        private static Assembly LoadAssemblyHelper(string assemblyName)
         {
             Assembly loadedAssembly = null;
 
@@ -898,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region SourceCodeProcessing
 
-        private OutputKind OutputAssemblyTypeToOutputKind(OutputAssemblyType outputType)
+        private static OutputKind OutputAssemblyTypeToOutputKind(OutputAssemblyType outputType)
         {
             switch (outputType)
             {
@@ -914,12 +917,11 @@ namespace Microsoft.PowerShell.Commands
         {
             string sdkDirectory = s_defaultSdkDirectory;
             string baseDirectory = this.SessionState.Path.CurrentLocation.Path;
-            string additionalReferenceDirectories = null;
 
             switch (Language)
             {
                 case Language.CSharp:
-                    return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
+                    return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory);
 
                 default:
                     throw PSTraceSource.NewNotSupportedException();
@@ -996,7 +998,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             SourceText sourceText;
-            List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
+            List<SyntaxTree> syntaxTrees = new();
 
             switch (ParameterSetName)
             {
@@ -1075,12 +1077,12 @@ namespace Microsoft.PowerShell.Commands
 
         private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<string> newTypes)
         {
-            AllNamedTypeSymbolsVisitor visitor = new AllNamedTypeSymbolsVisitor();
+            AllNamedTypeSymbolsVisitor visitor = new();
             visitor.Visit(compilation.Assembly.GlobalNamespace);
 
             foreach (var symbolName in visitor.DuplicateSymbols)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new Exception(
                         string.Format(AddTypeStrings.TypeAlreadyExists, symbolName)),
                     "TYPE_ALREADY_EXISTS",
@@ -1091,7 +1093,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!visitor.DuplicateSymbols.IsEmpty)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new InvalidOperationException(AddTypeStrings.CompilerErrors),
                     "COMPILER_ERRORS",
                     ErrorCategory.InvalidData,
@@ -1107,8 +1109,8 @@ namespace Microsoft.PowerShell.Commands
         // Visit symbols in all namespaces and collect duplicates.
         private class AllNamedTypeSymbolsVisitor : SymbolVisitor
         {
-            public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
-            public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
+            public readonly ConcurrentBag<string> DuplicateSymbols = new();
+            public readonly ConcurrentBag<string> UniqueSymbols = new();
 
             public override void VisitNamespace(INamespaceSymbol symbol)
             {
@@ -1136,7 +1138,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CacheNewTypes(ConcurrentBag<string> newTypes)
+        private static void CacheNewTypes(ConcurrentBag<string> newTypes)
         {
             foreach (var typeName in newTypes)
             {
@@ -1244,7 +1246,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             new Exception(errorText),
                             "SOURCE_CODE_ERROR",
                             ErrorCategory.InvalidData,
@@ -1256,7 +1258,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (IsError)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new InvalidOperationException(AddTypeStrings.CompilerErrors),
                         "COMPILER_ERRORS",
                         ErrorCategory.InvalidData,
@@ -1266,7 +1268,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string BuildErrorMessage(Diagnostic diagnisticRecord)
+        private static string BuildErrorMessage(Diagnostic diagnisticRecord)
         {
             var location = diagnisticRecord.Location;
 
@@ -1289,7 +1291,7 @@ namespace Microsoft.PowerShell.Commands
                 var errorLineString = textLines[errorLineNumber].ToString();
                 var errorPosition = lineSpan.StartLinePosition.Character;
 
-                StringBuilder sb = new StringBuilder(diagnisticMessage.Length + errorLineString.Length * 2 + 4);
+                StringBuilder sb = new(diagnisticMessage.Length + errorLineString.Length * 2 + 4);
 
                 sb.AppendLine(diagnisticMessage);
                 sb.AppendLine(errorLineString);
@@ -1315,7 +1317,7 @@ namespace Microsoft.PowerShell.Commands
         private static int SyntaxTreeArrayGetHashCode(IEnumerable<SyntaxTree> sts)
         {
             // We use our extension method EnumerableExtensions.SequenceGetHashCode<T>().
-            List<int> stHashes = new List<int>();
+            List<int> stHashes = new();
             foreach (var st in sts)
             {
                 stHashes.Add(SyntaxTreeGetHashCode(st));

@@ -79,7 +79,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
             New-BuildInfoJson -ReleaseTag $releaseTag
         }
     }
-    elseif($branchOnly -eq 'master' -or $branchOnly -like '*dailytest*')
+    elseif(($branchOnly -eq 'master' -and $env:BUILD_REASON -ne 'Manual')  -or $branchOnly -like '*dailytest*')
     {
         $isDaily = $true
         Write-Verbose "daily build" -Verbose

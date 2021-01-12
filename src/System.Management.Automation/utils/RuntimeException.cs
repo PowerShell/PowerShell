@@ -263,7 +263,10 @@ namespace System.Management.Automation
         /// </summary>
         public bool WasThrownFromThrowStatement
         {
-            get { return _thrownByThrowStatement; }
+            get
+            {
+                return _thrownByThrowStatement;
+            }
 
             set
             {

@@ -4618,7 +4618,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        private bool TryUseTokenAsSimpleName(Token token)
+        private static bool TryUseTokenAsSimpleName(Token token)
         {
             if (token.Kind == TokenKind.Identifier
                 || token.Kind == TokenKind.DynamicKeyword
@@ -4631,7 +4631,7 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        private void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)
+        private static void RecordErrorAsts(Ast errAst, ref List<Ast> astsOnError)
         {
             if (errAst == null)
             {
@@ -4646,7 +4646,7 @@ namespace System.Management.Automation.Language
             astsOnError.Add(errAst);
         }
 
-        private void RecordErrorAsts(IEnumerable<Ast> errAsts, ref List<Ast> astsOnError)
+        private static void RecordErrorAsts(IEnumerable<Ast> errAsts, ref List<Ast> astsOnError)
         {
             if (errAsts == null || !errAsts.Any())
             {
@@ -7983,7 +7983,7 @@ namespace System.Management.Automation.Language
 
         private static object[] arrayOfOneArg
         {
-            get { return t_arrayOfOneArg ?? (t_arrayOfOneArg = new object[1]); }
+            get { return t_arrayOfOneArg ??= new object[1]; }
         }
 
         [ThreadStatic]
@@ -7991,7 +7991,7 @@ namespace System.Management.Automation.Language
 
         private static object[] arrayOfTwoArgs
         {
-            get { return t_arrayOfTwoArgs ?? (t_arrayOfTwoArgs = new object[2]); }
+            get { return t_arrayOfTwoArgs ??= new object[2]; }
         }
 
         [ThreadStatic]
@@ -8057,7 +8057,7 @@ namespace System.Management.Automation.Language
             SaveError(error);
         }
 
-        private void ReportErrorsAsWarnings(Collection<Exception> errors)
+        private static void ReportErrorsAsWarnings(Collection<Exception> errors)
         {
             var executionContext = Runspaces.Runspace.DefaultRunspace.ExecutionContext;
             if (executionContext != null && executionContext.InternalHost != null && executionContext.InternalHost.UI != null)
