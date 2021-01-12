@@ -40,22 +40,35 @@ namespace System.Management.Automation.Subsystem
         /// A command line was accepted to execute.
         /// The predictor can start processing early as needed with the latest history.
         /// </summary>
+        /// <param name="clientId">Represents the client that initiates the call.</param>
         /// <param name="history">History command lines provided as references for prediction.</param>
-        void StartEarlyProcessing(IReadOnlyList<string> history);
+        void StartEarlyProcessing(string clientId, IReadOnlyList<string> history);
 
         /// <summary>
-        /// The suggestion given by the predictor was accepted.
+        /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
-        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
-        void OnSuggestionAccepted(string acceptedSuggestion);
-
-        /// <summary>
-        /// Get the predictive suggestions.
-        /// </summary>
+        /// <param name="clientId">Represents the client that initiates the call.</param>
         /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>
         /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
-        /// <returns>A list of predictive suggestions.</returns>
-        List<PredictiveSuggestion>? GetSuggestion(PredictionContext context, CancellationToken cancellationToken);
+        /// <returns>A value tuple consist of a session id, and a list of predictive suggestions.</returns>
+        (string? Session, List<PredictiveSuggestion>? List) GetSuggestion(string clientId, PredictionContext context, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// One or more suggestions provided by the predictor were displayed to the user.
+        /// </summary>
+        /// <param name="session">The mini-session where the displayed suggestions came from.</param>
+        /// <param name="countOrIndex">
+        /// When the value is <code>> 0</code>, it's the number of displayed suggestions from the list returned in <see cref="session"/>, starting from the index 0.
+        /// When the value is <code><= 0</code>, it means a single suggestion from the list got displayed, and the index is the absolute value.
+        /// </param>
+        void OnSuggestionDisplayed(string session, int countOrIndex);
+
+        /// <summary>
+        /// The suggestion provided by the predictor was accepted.
+        /// </summary>
+        /// <param name="session">Represents the mini-session where the accepted suggestion came from.</param>
+        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
+        void OnSuggestionAccepted(string session, string acceptedSuggestion);
     }
 
     /// <summary>

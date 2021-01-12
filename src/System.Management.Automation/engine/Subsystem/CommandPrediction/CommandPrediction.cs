@@ -28,14 +28,20 @@ namespace System.Management.Automation.Subsystem
         public string Name { get; }
 
         /// <summary>
+        /// Gets the name of the predictor.
+        /// </summary>
+        public string Session { get; }
+
+        /// <summary>
         /// Gets the suggestions.
         /// </summary>
         public IReadOnlyList<PredictiveSuggestion> Suggestions { get; }
 
-        internal PredictionResult(Guid id, string name, List<PredictiveSuggestion> suggestions)
+        internal PredictionResult(Guid id, string name, string session, List<PredictiveSuggestion> suggestions)
         {
             Id = id;
             Name = name;
+            Session = session;
             Suggestions = suggestions;
         }
     }
@@ -48,22 +54,24 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Collect the predictive suggestions from registered predictors using the default timeout.
         /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static Task<List<PredictionResult>?> PredictInput(Ast ast, Token[] astTokens)
+        public static Task<List<PredictionResult>?> PredictInput(string client, Ast ast, Token[] astTokens)
         {
-            return PredictInput(ast, astTokens, millisecondsTimeout: 20);
+            return PredictInput(client, ast, astTokens, millisecondsTimeout: 20);
         }
 
         /// <summary>
         /// Collect the predictive suggestions from registered predictors using the specified timeout.
         /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <param name="millisecondsTimeout">The milliseconds to timeout.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static async Task<List<PredictionResult>?> PredictInput(Ast ast, Token[] astTokens, int millisecondsTimeout)
+        public static async Task<List<PredictionResult>?> PredictInput(string client, Ast ast, Token[] astTokens, int millisecondsTimeout)
         {
             Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
 
@@ -85,8 +93,10 @@ namespace System.Management.Automation.Subsystem
                     state =>
                     {
                         var predictor = (ICommandPredictor)state!;
-                        List<PredictiveSuggestion>? texts = predictor.GetSuggestion(context, cancellationSource.Token);
-                        return texts?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, texts) : null;
+                        var (session, list) = predictor.GetSuggestion(client, context, cancellationSource.Token);
+                        return session != null && list?.Count > 0
+                            ? new PredictionResult(predictor.Id, predictor.Name, session, list)
+                            : null;
                     },
                     predictor,
                     cancellationSource.Token,
@@ -99,7 +109,7 @@ namespace System.Management.Automation.Subsystem
                 Task.Delay(millisecondsTimeout, cancellationSource.Token)).ConfigureAwait(false);
             cancellationSource.Cancel();
 
-            var results = new List<PredictionResult>(predictors.Count);
+            var resultList = new List<PredictionResult>(predictors.Count);
             foreach (Task<PredictionResult?> task in tasks)
             {
                 if (task.IsCompletedSuccessfully)
@@ -107,19 +117,20 @@ namespace System.Management.Automation.Subsystem
                     PredictionResult? result = task.Result;
                     if (result != null)
                     {
-                        results.Add(result);
+                        resultList.Add(result);
                     }
                 }
             }
 
-            return results;
+            return resultList;
         }
 
         /// <summary>
         /// Allow registered predictors to do early processing when a command line is accepted.
         /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="history">History command lines provided as references for prediction.</param>
-        public static void OnCommandLineAccepted(IReadOnlyList<string> history)
+        public static void OnCommandLineAccepted(string client, IReadOnlyList<string> history)
         {
             Requires.NotNull(history, nameof(history));
 
@@ -134,7 +145,7 @@ namespace System.Management.Automation.Subsystem
                 if (predictor.SupportEarlyProcessing)
                 {
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.StartEarlyProcessing(history),
+                        state => state.StartEarlyProcessing(client, history),
                         predictor,
                         preferLocal: false);
                 }
@@ -142,12 +153,45 @@ namespace System.Management.Automation.Subsystem
         }
 
         /// <summary>
-        /// Send feedback to predictors about their last suggestions.
+        /// Send feedback to a predictor when one or more suggestions from it were displayed to the user.
         /// </summary>
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
-        /// <param name="suggestionText">The accepted suggestion text.</param>
-        public static void OnSuggestionAccepted(Guid predictorId, string suggestionText)
+        /// <param name="session">The mini-session where the displayed suggestions came from.</param>
+        /// <param name="countOrIndex">
+        /// When the value is <code>> 0</code>, it's the number of displayed suggestions from the list returned in <see cref="session"/>, starting from the index 0.
+        /// When the value is <code><= 0</code>, it means a single suggestion from the list got displayed, and the index is the absolute value.
+        /// </param>
+        public static void OnSuggestionDisplayed(Guid predictorId, string session, int countOrIndex)
         {
+            Requires.NotNullOrEmpty(session, nameof(session));
+
+            var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
+            if (predictors.Count == 0)
+            {
+                return;
+            }
+
+            foreach (ICommandPredictor predictor in predictors)
+            {
+                if (predictor.AcceptFeedback && predictor.Id == predictorId)
+                {
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(
+                        state => state.OnSuggestionDisplayed(session, countOrIndex),
+                        predictor,
+                        preferLocal: false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send feedback to a predictor when a suggestion from it was accepted.
+        /// </summary>
+        /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
+        /// <param name="session">The mini-session where the accepted suggestion came from.</param>
+        /// <param name="suggestionText">The accepted suggestion text.</param>
+        public static void OnSuggestionAccepted(Guid predictorId, string session, string suggestionText)
+        {
+            Requires.NotNullOrEmpty(session, nameof(session));
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
@@ -161,7 +205,7 @@ namespace System.Management.Automation.Subsystem
                 if (predictor.AcceptFeedback && predictor.Id == predictorId)
                 {
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.OnSuggestionAccepted(suggestionText),
+                        state => state.OnSuggestionAccepted(session, suggestionText),
                         predictor,
                         preferLocal: false);
                 }
