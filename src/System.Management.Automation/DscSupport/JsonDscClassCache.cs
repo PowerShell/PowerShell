@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static readonly Regex reservedPropertiesRegex = new Regex("^(Require|Trigger|Notify|Before|After|Subscribe)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
-        /// Experimental feature name for DSC v3
+        /// Experimental feature name for DSC v3.
         /// </summary>
         public const string DscExperimentalFeatureName = "PS7DscSupport";
 
@@ -203,8 +203,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var moduleInfos = ModuleCmdletBase.GetModuleIfAvailable(new Microsoft.PowerShell.Commands.ModuleSpecification()
                     {
                         Name = "PSDesiredStateConfiguration",
+
                         // Version in the next line is actually MinimumVersion
-                        Version = new Version(3,0,0)
+                        Version = new Version(3, 0, 0)
                     });
 
                 if (moduleInfos.Count > 0)
@@ -439,9 +440,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
         private static bool IsMagicProperty(string propertyName)
         {
-            return System.Text.RegularExpressions.Regex.Match(propertyName,
-                "^(ResourceId|SourceInfo|ModuleName|ModuleVersion|ConfigurationName)$",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success;
+            return System.Text.RegularExpressions.Regex.Match(propertyName, "^(ResourceId|SourceInfo|ModuleName|ModuleVersion|ConfigurationName)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success;
         }
 
         private static string GetFriendlyName(dynamic cimClass)
@@ -528,9 +527,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             string alias = GetFriendlyName(cimClass);
             var keywordString = string.IsNullOrEmpty(alias) ? resourceName : alias;
 
-            //
             // Skip all of the base, meta, registration and other classes that are not intended to be used directly by a script author
-            //
             if (System.Text.RegularExpressions.Regex.Match(keywordString, "^OMI_Base|^OMI_.*Registration", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
             {
                 return null;
@@ -669,7 +666,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         {
                             s_tracer.WriteLine(
                                 "DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {0}, count of 'ValueMap': {1}. Skip the keyword '{2}'.",
-                                keyProp.Values.Count, valueMap.Count, keyword.Keyword);
+                                keyProp.Values.Count,
+                                valueMap.Count,
+                                keyword.Keyword);
                             return null;
                         }
 
@@ -682,7 +681,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                             {
                                 s_tracer.WriteLine(
                                     "DSC CreateDynamicKeywordFromClass: same string value '{0}' appears more than once in qualifier 'Values'. Skip the keyword '{1}'.",
-                                    key, keyword.Keyword);
+                                    key,
+                                    keyword.Keyword);
                                 return null;
                             }
 
@@ -716,10 +716,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             const int ConfigurationModeFrequencyMax = 44640;
 
             if (
-                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfigurationV2",
+                string.Equals(keyword.ResourceName,
+                    "MSFT_DSCMetaConfigurationV2",
                     StringComparison.OrdinalIgnoreCase)
                 ||
-                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfiguration",
+                string.Equals(keyword.ResourceName,
+                    "MSFT_DSCMetaConfiguration",
                     StringComparison.OrdinalIgnoreCase))
             {
                 if (keyword.Properties["RefreshFrequencyMins"] != null)
@@ -775,8 +777,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="errors">Collection of any errors encountered while loading keywords.</param>
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         /// <param name="cacheResourcesFromMultipleModuleVersions">Allow caching the resources from multiple versions of modules.</param>
-        private static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors,
-                                                   List<string> modulePathList, bool cacheResourcesFromMultipleModuleVersions)
+        private static void LoadDefaultCimKeywords(
+            Dictionary<string, ScriptBlock> functionsToDefine,
+            Collection<Exception> errors,
+            List<string> modulePathList,
+            bool cacheResourcesFromMultipleModuleVersions)
         {
             if (!ExperimentalFeature.IsEnabled(DscExperimentalFeatureName))
             {
@@ -856,9 +861,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             var errorList = new List<ParseError>();
             foreach (var bindingException in bindingResult.BindingExceptions.Values)
             {
-                errorList.Add(new ParseError(bindingException.CommandElement.Extent,
-                                             "ParameterBindingException",
-                                             bindingException.BindingException.Message));
+                errorList.Add(new ParseError(bindingException.CommandElement.Extent, "ParameterBindingException", bindingException.BindingException.Message));
             }
 
             ParameterBindingResult moduleNameBindingResult = null;
@@ -919,9 +922,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 if (!IsConstantValueVisitor.IsConstant(resourceNameBindingResult.Value, out resourceName, true, true) ||
                     !LanguagePrimitives.TryConvertTo(resourceName, out resourceNames))
                 {
-                    errorList.Add(new ParseError(resourceNameBindingResult.Value.Extent,
-                                                 "RequiresInvalidStringArgument",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, nameParam)));
+                    errorList.Add(new ParseError(resourceNameBindingResult.Value.Extent, "RequiresInvalidStringArgument", string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, nameParam)));
                 }
             }
 
@@ -931,9 +932,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 object moduleVer = null;
                 if (!IsConstantValueVisitor.IsConstant(moduleVersionBindingResult.Value, out moduleVer, true, true))
                 {
-                    errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent,
-                                                 "RequiresArgumentMustBeConstant",
-                                                 ParserStrings.RequiresArgumentMustBeConstant));
+                    errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent, "RequiresArgumentMustBeConstant", ParserStrings.RequiresArgumentMustBeConstant));
                 }
 
                 if (moduleVer is double)
@@ -946,9 +945,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 if (!LanguagePrimitives.TryConvertTo(moduleVer, out moduleVersion))
                 {
-                    errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent,
-                                                 "RequiresVersionInvalid",
-                                                 ParserStrings.RequiresVersionInvalid));
+                    errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent, "RequiresVersionInvalid", ParserStrings.RequiresVersionInvalid));
                 }
             }
 
@@ -958,9 +955,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 object moduleName = null;
                 if (!IsConstantValueVisitor.IsConstant(moduleNameBindingResult.Value, out moduleName, true, true))
                 {
-                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                 "RequiresArgumentMustBeConstant",
-                                                 ParserStrings.RequiresArgumentMustBeConstant));
+                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "RequiresArgumentMustBeConstant", ParserStrings.RequiresArgumentMustBeConstant));
                 }
 
                 if (LanguagePrimitives.TryConvertTo(moduleName, out moduleSpecifications))
@@ -968,25 +963,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     // if resourceNames are specified then we can not specify multiple modules name
                     if (moduleSpecifications != null && moduleSpecifications.Length > 1 && resourceNames != null)
                     {
-                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                     "ImportDscResourceMultipleModulesNotSupportedWithName",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceMultipleModulesNotSupportedWithName)));
+                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "ImportDscResourceMultipleModulesNotSupportedWithName", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceMultipleModulesNotSupportedWithName)));
                     }
 
                     // if moduleversion is specified then we can not specify multiple modules name
                     if (moduleSpecifications != null && moduleSpecifications.Length > 1 && moduleVersion != null)
                     {
-                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                     "ImportDscResourceMultipleModulesNotSupportedWithVersion",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "ImportDscResourceMultipleModulesNotSupportedWithVersion", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                     }
 
                     // if moduleversion is specified then we can not specify another version in modulespecification object of ModuleName
                     if (moduleSpecifications != null && (moduleSpecifications[0].Version != null || moduleSpecifications[0].MaximumVersion != null) && moduleVersion != null)
                     {
-                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                     "ImportDscResourceMultipleModuleVersionsNotSupported",
-                                                     string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
+                        errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "ImportDscResourceMultipleModuleVersionsNotSupported", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                     }
 
                     // If moduleVersion is specified we have only one module Name in valid scenario
@@ -998,9 +987,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 }
                 else
                 {
-                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
-                                                 "RequiresInvalidStringArgument",
-                                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, moduleNameParam)));
+                    errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent, "RequiresInvalidStringArgument", string.Format(CultureInfo.CurrentCulture, ParserStrings.RequiresInvalidStringArgument, moduleNameParam)));
                 }
             }
 
@@ -1028,9 +1015,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         errorList = new List<ParseError>();
                     }
 
-                    errorList.Add(new ParseError(kwAst.Extent,
-                                         "ImportDscResourceInsideNode",
-                                         string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
+                    errorList.Add(new ParseError(kwAst.Extent, "ImportDscResourceInsideNode", string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceInsideNode)));
                     break;
                 }
 
@@ -1102,10 +1087,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 int i = 0;
                 foreach (string name in mandatoryPropertiesNames)
                 {
-                    errors[i] = new ParseError(extent, "MissingValueForMandatoryProperty",
-                        string.Format(CultureInfo.CurrentCulture, ParserStrings.MissingValueForMandatoryProperty,
-                                    kwAst.Keyword.Keyword, kwAst.Keyword.Properties.First(
-                                        p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint, name));
+                    errors[i] = new ParseError(
+                        extent,
+                        "MissingValueForMandatoryProperty",
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            ParserStrings.MissingValueForMandatoryProperty,
+                            kwAst.Keyword.Keyword,
+                            kwAst.Keyword.Properties.First(p => StringComparer.OrdinalIgnoreCase.Equals(p.Value.Name, name)).Value.TypeConstraint,
+                            name));
                     i++;
                 }
 
@@ -1122,10 +1112,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="moduleSpecifications">Module information, can be null.</param>
         /// <param name="resourceNames">Name of the resource to be loaded from module.</param>
         /// <param name="errorList">List of errors reported by the method.</param>
-        internal static void LoadResourcesFromModuleInImportResourcePostParse(IScriptExtent scriptExtent,
-                                                           ModuleSpecification[] moduleSpecifications,
-                                                           string[] resourceNames,
-                                                           List<ParseError> errorList)
+        internal static void LoadResourcesFromModuleInImportResourcePostParse(
+            IScriptExtent scriptExtent,
+            ModuleSpecification[] moduleSpecifications,
+            string[] resourceNames,
+            List<ParseError> errorList)
         {
             // get all required modules
             var modules = new Collection<PSModuleInfo>();
@@ -1160,11 +1151,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     {
                         if (moduleInfos.Count > 1)
                         {
-                            errorList.Add(new ParseError(scriptExtent,
-                                                         "MultipleModuleEntriesFoundDuringParse",
-                                                         string.Format(CultureInfo.CurrentCulture,
-                                                                       ParserStrings.MultipleModuleEntriesFoundDuringParse,
-                                                                       moduleToImport.Name)));
+                            errorList.Add(
+                                new ParseError(
+                                    scriptExtent,
+                                    "MultipleModuleEntriesFoundDuringParse",
+                                    string.Format(CultureInfo.CurrentCulture,
+                                                ParserStrings.MultipleModuleEntriesFoundDuringParse,
+                                                moduleToImport.Name)));
                         }
                         else
                         {
@@ -1172,8 +1165,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                                 ? moduleToImport.Name
                                 : string.Format(CultureInfo.CurrentCulture, "<{0}, {1}>", moduleToImport.Name, moduleToImport.Version);
 
-                            errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse",
-                                string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
+                            errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse", string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
                         }
 
                         return;
@@ -1239,7 +1231,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
-        private static void LoadPowerShellClassResourcesFromModule(PSModuleInfo primaryModuleInfo, PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, ICollection<string> resourcesFound,
+        private static void LoadPowerShellClassResourcesFromModule(
+            PSModuleInfo primaryModuleInfo,
+            PSModuleInfo moduleInfo,
+            ICollection<string> resourcesToImport,
+            ICollection<string> resourcesFound,
             Collection<Exception> errorList,
             Dictionary<string, ScriptBlock> functionsToDefine = null,
             bool recurse = true,
@@ -1280,11 +1276,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         }
 
         /// <summary>
+        /// Import class resources from module.
         /// </summary>
-        /// <param name="moduleInfo"></param>
-        /// <param name="resourcesToImport"></param>
-        /// <param name="functionsToDefine"></param>
-        /// <param name="errors"></param>
+        /// <param name="moduleInfo">Module information.</param>
+        /// <param name="resourcesToImport">Collection of resources to import.</param>
+        /// <param name="functionsToDefine">Functions to define.</param>
+        /// <param name="errors">List of errors to return.</param>
         /// <returns>The list of resources imported from this module.</returns>
         public static List<string> ImportClassResourcesFromModule(PSModuleInfo moduleInfo, ICollection<string> resourcesToImport, Dictionary<string, ScriptBlock> functionsToDefine, Collection<Exception> errors)
         {
@@ -1478,9 +1475,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 if (memberType != null)
                 {
-                    mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
-                        out embeddedInstanceType,
-                        embeddedInstanceTypes);
+                    mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType, embeddedInstanceTypes);
                     if (memberType.IsEnum)
                     {
                         enumNames = Enum.GetNames(memberType);
@@ -1489,9 +1484,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 else
                 {
                     // PropertyType can't be null, we used typeof(object) above in that case so we don't get here.
-                    mofType = MapTypeNameToMofType(property.PropertyType.TypeName, member.Name, className,
-                        out isArrayType,
-                        out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
+                    mofType = MapTypeNameToMofType(property.PropertyType.TypeName, member.Name, className, out isArrayType, out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
                 var propertyObject = new PSObject();
@@ -1655,7 +1648,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 bool skip = true;
                 foreach (var toImport in resourcesToImport)
                 {
-                    if ((WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase)).IsMatch(resourceDefnAst.Name))
+                    if (WildcardPattern.Get(toImport, WildcardOptions.IgnoreCase).IsMatch(resourceDefnAst.Name))
                     {
                         skip = false;
                         break;
@@ -1814,8 +1807,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
-        private static void ProcessJsonForDynamicKeywords(PSModuleInfo module, ICollection<string> resourcesFound,
-            Dictionary<string, ScriptBlock> functionsToDefine, PSObject[] classes, DSCResourceRunAsCredential runAsBehavior, Collection<Exception> errors)
+        private static void ProcessJsonForDynamicKeywords(
+            PSModuleInfo module,
+            ICollection<string> resourcesFound,
+            Dictionary<string, ScriptBlock> functionsToDefine,
+            PSObject[] classes,
+            DSCResourceRunAsCredential runAsBehavior,
+            Collection<Exception> errors)
         {
             foreach (dynamic c in classes)
             {
@@ -1867,7 +1865,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         /// <param name="badDependsOnReference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
-        /// <returns></returns>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord GetBadlyFormedRequiredResourceIdErrorRecord(string badDependsOnReference, string definingResource)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1882,7 +1880,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// </summary>
         /// <param name="badExclusiveResourcereference">The malformed resource.</param>
         /// <param name="definingResource">The referencing resource instance.</param>
-        /// <returns></returns>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord GetBadlyFormedExclusiveResourceIdErrorRecord(string badExclusiveResourcereference, string definingResource)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1895,8 +1893,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// If a partial configuration is in 'Pull' Mode, it needs a configuration source.
         /// </summary>
-        /// <param name="resourceId"></param>
-        /// <returns></returns>
+        /// <param name="resourceId">Resource id.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord GetPullModeNeedConfigurationSource(string resourceId)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1909,8 +1907,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Refresh Mode can not be Disabled for the Partial Configurations.
         /// </summary>
-        /// <param name="resourceId"></param>
-        /// <returns></returns>
+        /// <param name="resourceId">Resource id.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord DisabledRefreshModeNotValidForPartialConfig(string resourceId)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1938,8 +1936,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns an error record to use in the case of a configuration name is invalid.
         /// </summary>
-        /// <param name="configurationName"></param>
-        /// <returns></returns>
+        /// <param name="configurationName">Configuration name.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord InvalidConfigurationNameErrorRecord(string configurationName)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1952,11 +1950,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns an error record to use in the case of the given value for a property is invalid.
         /// </summary>
-        /// <param name="propertyName"></param>
-        /// <param name="value"></param>
-        /// <param name="keywordName"></param>
-        /// <param name="validValues"></param>
-        /// <returns></returns>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="value">Property value.</param>
+        /// <param name="keywordName">Keyword name.</param>
+        /// <param name="validValues">Valid property values.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord InvalidValueForPropertyErrorRecord(string propertyName, string value, string keywordName, string validValues)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1969,9 +1967,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns an error record to use in case the given property is not valid LocalConfigurationManager property.
         /// </summary>
-        /// <param name="propertyName"></param>
-        /// <param name="validProperties"></param>
-        /// <returns></returns>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="validProperties">Valid properties.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord InvalidLocalConfigurationManagerPropertyErrorRecord(string propertyName, string validProperties)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -1984,11 +1982,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns an error record to use in the case of the given value for a property is not supported.
         /// </summary>
-        /// <param name="propertyName"></param>
-        /// <param name="value"></param>
-        /// <param name="keywordName"></param>
-        /// <param name="validValues"></param>
-        /// <returns></returns>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="value">Property value.</param>
+        /// <param name="keywordName">Keyword name.</param>
+        /// <param name="validValues">Valid property values.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord UnsupportedValueForPropertyErrorRecord(string propertyName, string value, string keywordName, string validValues)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -2001,10 +1999,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns an error record to use in the case of no value is provided for a mandatory property.
         /// </summary>
-        /// <param name="keywordName"></param>
-        /// <param name="typeName"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
+        /// <param name="keywordName">Keyword name.</param>
+        /// <param name="typeName">Type name.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord MissingValueForMandatoryPropertyErrorRecord(string keywordName, string typeName, string propertyName)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -2017,7 +2015,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Returns an error record to use in the case of more than one values are provided for DebugMode property.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord DebugModeShouldHaveOneValue()
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -2030,12 +2028,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Return an error to indicate a value is out of range for a dynamic keyword property.
         /// </summary>
-        /// <param name="property"></param>
-        /// <param name="name"></param>
-        /// <param name="providedValue"></param>
-        /// <param name="lower"></param>
-        /// <param name="upper"></param>
-        /// <returns></returns>
+        /// <param name="property">Rroperty name.</param>
+        /// <param name="name">Resource name.</param>
+        /// <param name="providedValue">Provided value.</param>
+        /// <param name="lower">Valid range lower bound.</param>
+        /// <param name="upper">Valid range upper bound.</param>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord ValueNotInRangeErrorRecord(string property, string name, int providedValue, int lower, int upper)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -2049,7 +2047,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value.
         /// </summary>
         /// <param name="resourceId">ResourceId of resource.</param>
-        /// <returns></returns>
+        /// <returns>Generated error record.</returns>
         public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
         {
             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
@@ -2149,9 +2147,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <summary>
         /// Format the type name of a CIM property in a presentable way.
         /// </summary>
-        /// <param name="prop"></param>
-        /// <param name="isOptionalProperty"></param>
-        /// <returns></returns>
+        /// <param name="prop">Dynamic keyword property</param>
+        /// <param name="isOptionalProperty">If this is optional property or not</param>
+        /// <returns>CIM property type string.</returns>
         private static StringBuilder FormatCimPropertyType(DynamicKeywordProperty prop, bool isOptionalProperty)
         {
             string cimTypeName = prop.TypeConstraint;

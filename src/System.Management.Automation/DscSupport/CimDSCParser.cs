@@ -41,9 +41,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             using (System.Management.Automation.PowerShell powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
-                const string script = "param($targetType,$moduleName) & (Microsoft.PowerShell.Core\\Get-Module $moduleName) { New-Object $targetType } ";
+                const string Script = "param($targetType,$moduleName) & (Microsoft.PowerShell.Core\\Get-Module $moduleName) { New-Object $targetType } ";
 
-                powerShell.AddScript(script);
+                powerShell.AddScript(Script);
                 powerShell.AddArgument(targetType);
                 powerShell.AddArgument(moduleName);
 
@@ -951,7 +951,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="mofPath">
         /// Path to CIM MOF schema file for reading
         /// </param>
-        /// <returns>List of classes from MOF schema file</returns>
+        /// <returns>List of classes from MOF schema file.</returns>
         public static List<CimClass> ReadCimSchemaMof(string mofPath)
         {
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);

@@ -1730,6 +1730,7 @@ namespace System.Management.Automation
                     {
                         usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
                     }
+
                     if (results == null)
                     {
                         results = new List<CompletionResult>();
