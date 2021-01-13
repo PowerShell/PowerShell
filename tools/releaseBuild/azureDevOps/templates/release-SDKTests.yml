@@ -36,13 +36,6 @@ jobs:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json).sdk.version
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
 
         Find-Dotnet
@@ -54,9 +47,9 @@ jobs:
             Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
         }
 
-        ## Install latest version from the channel
+        ## Remove old .NET SDKs
+        Remove-Item $Home/.dotnet -Recurse -Force
 
-        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
         Start-PSBootstrap
 
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
