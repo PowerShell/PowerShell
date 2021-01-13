@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="5.0.0" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0" />
@@ -30,6 +30,7 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.7.0" />
     <!-- the source could not be found for the following package(s) -->
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
+    <!-- do not update this one because it brings in minor version upgrades -->
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
   </ItemGroup>
 
