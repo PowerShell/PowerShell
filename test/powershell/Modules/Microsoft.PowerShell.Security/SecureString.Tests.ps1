@@ -24,9 +24,9 @@ Describe "SecureString conversion tests" -Tags "CI" {
     }
 
     It "can convert back from a secure string" {
-        $secret = "abcd"
-        $ss1 = ConvertTo-SecureString -AsPlainText -Force $secret
+        $value = "abcd"
+        $ss1 = ConvertTo-SecureString -AsPlainText -Force $value
         $ss2 = ConvertFrom-SecureString $ss1 | ConvertTo-SecureString
-        $ss2 | ConvertFrom-SecureString -AsPlainText | Should -Be $secret
+        $ss2 | ConvertFrom-SecureString -AsPlainText | Should -Be $value
     }
 }

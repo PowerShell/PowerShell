@@ -2405,7 +2405,7 @@ function Copy-PSGalleryModules
     Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent -PSModule
 
     $cache = dotnet nuget locals global-packages -l
-    if ($cache -match "info : global-packages: (.*)") {
+    if ($cache -match "(?:info : )?global-packages: (.*)") {
         $nugetCache = $matches[1]
     }
     else {
