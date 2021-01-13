@@ -50,11 +50,11 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
     It 'Verifies in scope using variables with different names in nested calls' {
         $Test1 = "TestA"
         $results = 1..2 | ForEach-Object -parallel {
-          $using:Test1
-          $Test2 = "TestB"
-          1..2 | ForEach-Object -parallel {
-            $using:Test2
-          }
+            $using:Test1
+            $Test2 = "TestB"
+            1..2 | ForEach-Object -parallel {
+                $using:Test2
+            }
         }
         $results.Count | Should -BeExactly 6
         $groups = $results | Group-Object -AsHashTable

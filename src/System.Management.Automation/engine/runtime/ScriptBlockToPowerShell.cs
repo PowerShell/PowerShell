@@ -324,11 +324,13 @@ namespace System.Management.Automation
         /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted.</param>
         /// <param name = "context">Execution context.</param>
+        /// <param name = "foreachNames">List of foreach command names and aliases</param>
         /// <returns>Dictionary of using variable map.</returns>
         internal static Dictionary<string, object> GetUsingValuesForEachParallel(
             ScriptBlock scriptBlock,
             bool isTrustedInput,
-            ExecutionContext context)
+            ExecutionContext context,
+            string[] foreachNames)
         {
             // Using variables for Foreach-Object -Parallel use are restricted to be within the 
             // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
@@ -348,7 +350,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < usingAsts.Count; ++i)
                 {
                     usingAst = (UsingExpressionAst)usingAsts[i];
-                    if (IsInForeachParallelCallingScope(usingAst))
+                    if (IsInForeachParallelCallingScope(usingAst, foreachNames))
                     {
                         var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
@@ -394,8 +396,11 @@ namespace System.Management.Automation
         ///     }
         /// </summary>
         /// <param name="usingAst">Using Ast to check.</param>
+        /// <param name-"foreachNames">List of foreach-object command names.</param>
         /// <returns>True if using expression is in current call scope.</returns>
-        private static bool IsInForeachParallelCallingScope(UsingExpressionAst usingAst)
+        private static bool IsInForeachParallelCallingScope(
+            UsingExpressionAst usingAst,
+            string[] foreachNames)
         {
             Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
 
@@ -411,9 +416,16 @@ namespace System.Management.Automation
                     {
                         if (commandElement is StringConstantExpressionAst commandName)
                         {
-                            if (commandName.Value.Equals("foreach", StringComparison.OrdinalIgnoreCase) ||
-                                commandName.Value.Equals("foreach-object", StringComparison.OrdinalIgnoreCase) ||
-                                commandName.Value.Equals("%"))
+                            bool found = false;
+                            foreach (var foreachName in foreachNames)
+                            {
+                                if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found)
                             {
                                 // Verify this is foreach-object with parallel parameter set.
                                 var bindingResult = StaticParameterBinder.BindCommand(commandAst);
