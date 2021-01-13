@@ -63,6 +63,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         )
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
+        Get-Module Microsoft.PowerShell.Management | Remove-Module -Force
     }
 
     AfterAll {
@@ -170,11 +171,17 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             $ModuleVersion
         )
 
-        $moduleSpecification  = @{ModuleName = $name ; ModuleVersion = $ModuleVersion}
-        $modules = Get-Module -FullyQualifiedName $moduleSpecification
-        $modules | Should -HaveCount 1
-        $modules.Name | Should -BeExactly $ExpectedName
-        $modules.Version | Should -BeExactly $ModuleVersion
+        try {
+            $moduleSpecification = @{ModuleName = $name ; ModuleVersion = $ModuleVersion }
+            $modules = Get-Module -FullyQualifiedName $moduleSpecification
+            $modules | Should -HaveCount 1
+            $modules.Name | Should -BeExactly $ExpectedName
+            $modules.Version | Should -BeExactly $ModuleVersion
+        } catch {
+            "psmodulepath: $env:PSModulePath" | Write-Verbose -Verbose
+            $modules | Select-Object Name, Version, path | Out-String -Width 1000 | Write-Verbose -Verbose
+            throw
+        }
     }
 
     It "Get-Module <Name> -Refresh -ListAvailable" {
