@@ -47,8 +47,11 @@ jobs:
             Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
         }
 
-        ## Remove old .NET SDKs
-        Remove-Item $Home/.dotnet -Recurse -Force
+        ## Remove old .NET SDKs if any exists
+        if (Test-Path -Type Container $Home/.dotnet)
+        {
+            Remove-Item $Home/.dotnet -Recurse -Force
+        }
 
         Start-PSBootstrap
 
