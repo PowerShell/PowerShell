@@ -4923,29 +4923,30 @@ namespace System.Management.Automation
 
         #region Comments
 
-
         internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
             List<CompletionResult> results = new List<CompletionResult>();
 
-            //Complete #requires statements
+            // Complete #requires statements
             if (context.WordToComplete.StartsWith("#requires ", StringComparison.OrdinalIgnoreCase))
             {
                 int cursorIndex = context.CursorPosition.ColumnNumber - 1;
-                //cursor is within the "#requires " statement.
+
+                // cursor is within the "#requires " statement.
                 if (cursorIndex < 10)
                 {
                     return results;
                 }
 
                 string lineToCursor = context.CursorPosition.Line.Substring(0, cursorIndex);
-                //RunAsAdministrator must be the last parameter in a Requires statement so no completion if the cursor is after the parameter.
+
+                // RunAsAdministrator must be the last parameter in a Requires statement so no completion if the cursor is after the parameter.
                 if (lineToCursor.Contains(" -RunAsAdministrator", StringComparison.OrdinalIgnoreCase))
                 {
                     return results;
                 }
 
-                //Regex to find parameter like " -Parameter1" or " -"
+                // Regex to find parameter like " -Parameter1" or " -"
                 MatchCollection foundMatches = Regex.Matches(lineToCursor, "\\s-([A-Za-z]+|$)");
                 if (foundMatches.Count == 0)
                 {
@@ -4953,17 +4954,19 @@ namespace System.Management.Automation
                 }
 
                 string currentParameter = foundMatches[^1].Groups[1].Value;
-                //Complete the parameter if the cursor is at a parameter
+
+                // Complete the parameter if the cursor is at a parameter
                 if (lineToCursor.LastIndexOf($"-{currentParameter}") + currentParameter.Length + 1 == cursorIndex)
                 {
                     replacementIndex = context.CursorPosition.Offset - currentParameter.Length;
                     replacementLength = currentParameter.Length;
 
-                    var requiresParameters = new Tuple<string, string>[4] {
-                        new Tuple<string, string>("Modules","Specifies PowerShell modules that the script requires."),
-                        new Tuple<string, string>("PSEdition","Specifies a PowerShell edition that the script requires."),
-                        new Tuple<string, string>("RunAsAdministrator","Specifies that PowerShell must be running as administrator on Windows."),
-                        new Tuple<string, string>("Version","Specifies the minimum version of PowerShell that the script requires.")
+                    var requiresParameters = new Tuple<string, string>[4]
+                    {
+                        new Tuple<string, string>("Modules", "Specifies PowerShell modules that the script requires."),
+                        new Tuple<string, string>("PSEdition", "Specifies a PowerShell edition that the script requires."),
+                        new Tuple<string, string>("RunAsAdministrator", "Specifies that PowerShell must be running as administrator on Windows."),
+                        new Tuple<string, string>("Version", "Specifies the minimum version of PowerShell that the script requires.")
                     };
                     foreach (var parameter in requiresParameters)
                     {
@@ -4974,10 +4977,9 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                //Complete parameter values
                 else
                 {
-                    //Regex to find parameter values (any text that appears after various delimiters)
+                    // Regex to find parameter values (any text that appears after various delimiters)
                     foundMatches = Regex.Matches(lineToCursor, "(\\s|,|;|{|\"|'|=)(\\w+|$)");
                     string currentValue;
                     if (foundMatches.Count == 0)
@@ -4994,9 +4996,10 @@ namespace System.Management.Automation
 
                     if (currentParameter.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
                     {
-                        var psEditionValues = new Tuple<string, string>[2] {
-                            new Tuple<string, string>("Core","Specifies that the script requires PowerShell Core to run."),
-                            new Tuple<string, string>("Desktop","Specifies that the script requires Windows PowerShell to run.")
+                        var psEditionValues = new Tuple<string, string>[2]
+                        {
+                            new Tuple<string, string>("Core", "Specifies that the script requires PowerShell Core to run."),
+                            new Tuple<string, string>("Desktop", "Specifies that the script requires Windows PowerShell to run.")
                         };
                         foreach (var value in psEditionValues)
                         {
@@ -5012,31 +5015,36 @@ namespace System.Management.Automation
                         int hashtableStart = lineToCursor.LastIndexOf("@{");
                         int hashtableEnd = lineToCursor.LastIndexOf('}');
 
-                        //Cursor is inside a hashtable
-                        if (hashtableStart != -1 && hashtableEnd == -1 || hashtableEnd < hashtableStart)
+                        // Cursor is inside a hashtable
+                        if (hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart))
                         {
                             string hashtableString = lineToCursor.Substring(hashtableStart);
-                            //Regex to find hashtable keys with or without quotes
+
+                            // Regex to find hashtable keys with or without quotes
                             foundMatches = Regex.Matches(hashtableString, "(@{|;)\\s*(?:'|\"|\\w*)\\w*");
                             var hashtableKeys = new string[foundMatches.Count];
                             for (int i = 0; i < hashtableKeys.Length; i++)
                             {
                                 hashtableKeys[i] = foundMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
                             }
+
                             var lastCaptureGroup = foundMatches[^1].Groups[0];
 
-                            //Are we completing a key for the hashtable?
+                            // Are we completing a key for the hashtable?
                             if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
                             {
-                                var moduleKeys = new Tuple<string, string>[2] {
-                                    new Tuple<string, string>("ModuleName","Required. Specifies the module name."),
-                                    new Tuple<string, string>("GUID","Optional. Specifies the GUID of the module.")
+                                var moduleKeys = new Tuple<string, string>[2]
+                                {
+                                    new Tuple<string, string>("ModuleName", "Required. Specifies the module name."),
+                                    new Tuple<string, string>("GUID", "Optional. Specifies the GUID of the module.")
                                 };
-                                //The following keys cannot be used together so they get their own table for lookup.
-                                var moduleVersionKeys = new Dictionary<string, string>(3, StringComparer.OrdinalIgnoreCase) {
-                                    {"ModuleVersion", "Specifies a minimum acceptable version of the module." },
-                                    {"RequiredVersion", "Specifies an exact, required version of the module." },
-                                    {"MaximumVersion", "Specifies the maximum acceptable version of the module." },
+
+                                // The following keys cannot be used together so they get their own table for lookup.
+                                var moduleVersionKeys = new Dictionary<string, string>(3, StringComparer.OrdinalIgnoreCase)
+                                {
+                                    { "ModuleVersion", "Specifies a minimum acceptable version of the module." },
+                                    { "RequiredVersion", "Specifies an exact, required version of the module." },
+                                    { "MaximumVersion", "Specifies the maximum acceptable version of the module." },
                                 };
                                 foreach (var value in moduleKeys)
                                 {
@@ -5070,6 +5078,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 return results;
             }
 
