@@ -94,9 +94,7 @@ namespace System.Management.Automation.Subsystem
                     {
                         var predictor = (ICommandPredictor)state!;
                         SuggestionPackage pkg = predictor.GetSuggestion(client, context, cancellationSource.Token);
-                        return pkg.Session.HasValue && pkg.SuggestionEntries?.Count > 0
-                            ? new PredictionResult(predictor.Id, predictor.Name, pkg.Session.Value, pkg.SuggestionEntries)
-                            : null;
+                        return pkg.SuggestionEntries?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, pkg.Session, pkg.SuggestionEntries) : null;
                     },
                     predictor,
                     cancellationSource.Token,

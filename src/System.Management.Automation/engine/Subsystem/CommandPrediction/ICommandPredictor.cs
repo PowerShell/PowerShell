@@ -182,7 +182,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// The mini-session that represents a specific invocation to <see cref="ICommandPredictor.GetSuggestion"/>.
         /// </summary>
-        public uint? Session { get; }
+        public uint Session { get; }
 
         /// <summary>
         /// Suggestion entries returned from that mini-session.
