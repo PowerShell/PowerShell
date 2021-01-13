@@ -89,7 +89,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the encoding to use when writing the file.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "File")]
+        [Parameter(ParameterSetName = "LiteralFile")]
         [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
@@ -105,12 +106,14 @@ namespace Microsoft.PowerShell.Commands
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("filepath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
+                _commandWrapper.AddNamedParameter("Encoding", Encoding);
             }
             else if (string.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("LiteralPath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
+                _commandWrapper.AddNamedParameter("Encoding", Encoding);
             }
             else
             {
@@ -120,9 +123,6 @@ namespace Microsoft.PowerShell.Commands
                 // Can't use set-var's passthru because it writes the var object to the pipeline, we want just
                 // the values to be written
             }
-            
-            // passthrough Encoding parameter
-            _commandWrapper.AddNamedParameter("Encoding", Encoding);
         }
 
         /// <summary>
