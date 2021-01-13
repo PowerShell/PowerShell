@@ -1940,24 +1940,6 @@
               </Component>
             </Directory>
           </Directory>
-          <Component Id="cmpF13697663FB34052A68E6D323D073453" Guid="{869218b1-1d89-41a8-96d8-b18537b28c1e}">
-            <File Id="fil8F351C758ABA4FDE855162F46365C59A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Log_20200422202439.log" />
-          </Component>
-          <Component Id="cmpFB6591BEDC9242D2BD827BEF7C3D3852" Guid="{6a717758-bff1-4c5f-a6ce-7d0e5781b7c6}">
-            <File Id="filE655B0E0FCFF484B9B7D3B61E5D535E4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Metadata_20200422202439.json" />
-          </Component>
-          <Component Id="cmpC829EE6AFA81430A9DC8A9517FE37B75" Guid="{bf6d54dd-cc1a-4e0e-9138-7b30d31ec846}">
-            <File Id="filAD694F06057649F497AA6CFE4BEFC87B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Manifest_20200422202439.json" />
-          </Component>
-          <Component Id="cmpA5FCB1CC1E8643FFA9C11CF8AB57328D" Guid="{e3c6bccf-fdc1-4317-a9fa-50ae928490fb}">
-            <File Id="fil546A0FBC61FA4D0081E34ABD7649FA03" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Log_20200422202549.log" />
-          </Component>
-          <Component Id="cmp2315C92A6900449E85558C6F9A75D3C3" Guid="{1fa2d063-92aa-4c97-b109-c2a8eaa1c817}">
-            <File Id="fil350DDBC70F8849F29F1EF59E3BC9973E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Metadata_20200422202549.json" />
-          </Component>
-          <Component Id="cmp313E535FFA29467F8E2D4D0E353016EE" Guid="{dd853094-4bfb-443b-b799-cd394fa91f71}">
-            <File Id="fil7F6CD1E71C694183978275D008B10599" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Manifest_20200422202549.json" />
-          </Component>
         </Directory>
         <Directory Name="ThreadJob" Id="dir507D08FD3D324A449516FEFAFCC90874">
           <Component Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" Guid="{4ba93428-ae32-4a1d-9f84-0989a2da8eab}">
@@ -3074,8 +3056,8 @@
       <Component Id="cmp2E32A6E773F543F0A150B972F8D3E23A" Guid="{a43d0117-1193-4316-a0f6-fef892870f38}">
         <File Id="fil66411B8941CA492E93BF262EA72C6BE6" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.xml" />
       </Component>
-      <Component Id="cmp2DD86631184942F1A98A1DCCD3D1F732" Guid="{61eacfa1-8b3c-4f69-8820-33acae8e2b03}">
-        <File Id="fil2B735FF5C5C243B7AD352405F1005457" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.20.26901.dll" />
+      <Component Id="cmpEF472DCE4A9840E089F155E8E7078C94" Guid="{b9eef929-8e21-4e9a-99f8-e05d653a645b}">
+        <File Id="fil98F04942FF954485BAF7FE26805014A2" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.20.56602.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4061,13 +4043,7 @@
       <ComponentRef Id="cmp73A4CC8E2C9E4594A3D8258C9E00D7E6" />
       <ComponentRef Id="cmpAC984FA3A67247BC996F60290C87D0A1" />
       <ComponentRef Id="cmp2E32A6E773F543F0A150B972F8D3E23A" />
-      <ComponentRef Id="cmp2DD86631184942F1A98A1DCCD3D1F732" />
-      <ComponentRef Id="cmpF13697663FB34052A68E6D323D073453" />
-      <ComponentRef Id="cmpFB6591BEDC9242D2BD827BEF7C3D3852" />
-      <ComponentRef Id="cmpC829EE6AFA81430A9DC8A9517FE37B75" />
-      <ComponentRef Id="cmpA5FCB1CC1E8643FFA9C11CF8AB57328D" />
-      <ComponentRef Id="cmp2315C92A6900449E85558C6F9A75D3C3" />
-      <ComponentRef Id="cmp313E535FFA29467F8E2D4D0E353016EE" />
+      <ComponentRef Id="cmpEF472DCE4A9840E089F155E8E7078C94" />
     </ComponentGroup>
   </Fragment>
 </Wix>
