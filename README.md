@@ -62,15 +62,15 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | Windows (Arm)  | [64-bit][rl-winarm64] (preview)                     | [64-bit][pv-winarm64]                           | [Instructions][in-arm]                         |
 | Raspbian (Arm) | [32-bit][rl-arm32]/[64-bit][rl-arm64]               | [32-bit][pv-arm32]/[64-bit][pv-arm64]           | [Instructions][in-raspbian]                    |
 
-[lts-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x86.msi
-[lts-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/PowerShell-7.0.3-win-x64.msi
-[lts-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.18.04_amd64.deb
-[lts-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.ubuntu.16.04_amd64.deb
-[lts-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.debian.9_amd64.deb
-[lts-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts_7.0.3-1.debian.10_amd64.deb
-[lts-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts-7.0.3-1.rhel.7.x86_64.rpm
-[lts-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts-7.0.3-1.centos.8.x86_64.rpm
-[lts-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts-7.0.3-osx-x64.pkg
+[lts-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/PowerShell-7.0.4-win-x86.msi
+[lts-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/PowerShell-7.0.4-win-x64.msi
+[lts-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts_7.0.4-1.ubuntu.18.04_amd64.deb
+[lts-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts_7.0.4-1.ubuntu.16.04_amd64.deb
+[lts-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts_7.0.4-1.debian.9_amd64.deb
+[lts-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts_7.0.4-1.debian.10_amd64.deb
+[lts-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-1.rhel.7.x86_64.rpm
+[lts-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-1.centos.8.x86_64.rpm
+[lts-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-osx-x64.pkg
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/PowerShell-7.1.0-win-x86.msi
