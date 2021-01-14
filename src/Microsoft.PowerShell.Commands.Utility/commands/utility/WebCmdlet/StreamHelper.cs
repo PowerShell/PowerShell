@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
             var fileSizeUnit = (FileSizeUnit)(Math.Log10(bytes) / 3);
             double value = bytes / (double)Math.Pow(1024, (long)fileSizeUnit);
             var significantDigits = (int)fileSizeUnit;
-            var format = "0." + new String('0', sPowignificantDigits);
+            var format = "0." + new String('0', significantDigits);
             return value.ToString(format) + $" {fileSizeUnit}";
         }
     }
