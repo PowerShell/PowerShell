@@ -836,6 +836,7 @@ namespace System.Management.Automation
                                                 break;
                                             }
                                         }
+                                        
                                         if (lastAst is AttributeAst)
                                         {
                                             completionContext.ReplacementLength = replacementLength = 0;
