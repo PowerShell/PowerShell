@@ -437,13 +437,9 @@ function Get-ReleaseTag
 # Implements CI 'on_finish' step
 function Invoke-CIFinish
 {
-    param(
-        [string] $NuGetKey
-    )
-
     if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
-        return New-LinuxPackage -NugetKey $NugetKey
+        return New-LinuxPackage
     }
 
     try {
@@ -686,10 +682,6 @@ function Invoke-LinuxTestsCore
 
 function New-LinuxPackage
 {
-    param(
-        [string]
-        $NugetKey
-    )
 
     $isFullBuild = Test-DailyBuild
     $releaseTag = Get-ReleaseTag
