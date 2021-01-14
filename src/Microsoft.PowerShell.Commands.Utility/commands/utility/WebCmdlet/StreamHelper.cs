@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("powershell-tests,PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
+
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -24,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Data
 
+        private long? _contentLength;
         private readonly Stream _originalStreamToProxy;
         private bool _isInitialized = false;
         private readonly Cmdlet _ownerCmdlet;
@@ -37,9 +40,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet)
+        /// <param name="contentLength">Expected download size in Bytes.</param>
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength)
             : base(initialCapacity)
         {
+            this._contentLength = contentLength;
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
         }
@@ -225,7 +230,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_ownerCmdlet != null)
                     {
-                        record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
+                        record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus,
+                            DisplayHumanReadableFileSize(totalLength),
+                            DisplayHumanReadableFileSize(_contentLength == null ? 0 : (long)_contentLength));
+                        if (_contentLength != null && _contentLength > 0)
+                        {
+                            record.PercentComplete = (int)(totalLength * 100 / (long)_contentLength);
+                        }
                         _ownerCmdlet.WriteProgress(record);
 
                         if (_ownerCmdlet.IsStopping)
@@ -259,6 +270,25 @@ namespace Microsoft.PowerShell.Commands
                 throw;
             }
         }
+
+        private enum FileSizeUnit
+        {
+            Byte, KB, MB, GB, TB, PB, EB
+        }
+
+        internal static string DisplayHumanReadableFileSize(long bytes)
+        {
+            if (bytes <= 0)
+            {
+                return $"0 {FileSizeUnit.Byte}";
+            }
+
+            var fileSizeUnit = (FileSizeUnit)(Math.Log10(bytes) / 3);
+            double value = bytes / (double)Math.Pow(1024, (long)fileSizeUnit);
+            var significantDigits = (int)fileSizeUnit;
+            var format = "0." + new String('0', sPowignificantDigits);
+            return value.ToString(format) + $" {fileSizeUnit}";
+        }
     }
 
     internal static class StreamHelper
@@ -285,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
-            ProgressRecord record = new(
+            ProgressRecord record = new ProgressRecord(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
@@ -323,13 +353,13 @@ namespace Microsoft.PowerShell.Commands
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
-            using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
             WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
         {
-            StringBuilder result = new(capacity: ChunkSize);
+            StringBuilder result = new StringBuilder(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
             int useBufferSize = 64;
@@ -411,7 +441,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaexp = new(
+        private static readonly Regex s_metaexp = new Regex(
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
             );

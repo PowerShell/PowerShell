@@ -22,6 +22,21 @@ namespace PSTests.Parallel
             Assert.False(Utils.IsWinPEHost());
         }
 
+        [Theory]
+        [InlineData(long.MinValue, "0 Byte")]
+        [InlineData(-1, "0 Byte")]
+        [InlineData(0, "0 Byte")]
+        [InlineData(1, "1 Byte")]
+        [InlineData(1024, "1.0 KB")]
+        [InlineData(3000, "2.9 KB")]
+        [InlineData(1024 * 1024, "1.00 MB")]
+        [InlineData(1024 * 1024 * 1024, "1.000 GB")]
+        [InlineData(long.MaxValue, "8.000000 EB")]
+        public static void DisplayHumanReadableFileSize(long bytes, string expected)
+        {
+            Assert.Equal(expected, WebResponseContentMemoryStream.DisplayHumanReadableFileSize(bytes));
+        }
+
         [Fact]
         public static void TestHistoryStack()
         {

@@ -37,7 +37,8 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldWriteToPipeline)
             {
                 // creating a MemoryStream wrapper to response stream here to support IsStopping.
-                responseStream = new WebResponseContentMemoryStream(responseStream, StreamHelper.ChunkSize, this);
+                responseStream = new WebResponseContentMemoryStream(responseStream, StreamHelper.ChunkSize, this,
+                    response.Content.Headers.ContentLength.Value);
                 WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
