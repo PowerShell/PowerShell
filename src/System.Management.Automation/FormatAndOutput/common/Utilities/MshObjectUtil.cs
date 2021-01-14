@@ -20,6 +20,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal static class PSObjectHelper
     {
+        #region tracer
+        [TraceSource("PSObjectHelper", "PSObjectHelper")]
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("PSObjectHelper", "PSObjectHelper");
+        #endregion tracer
+
         internal const char Ellipsis = '\u2026';
 
         internal static string PSObjectIsOfExactType(Collection<string> typeNames)
@@ -295,6 +300,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // These exceptions are being caught and handled by returning an empty string when
                 // the object cannot be stringified due to ETS or an instance in the collection has been modified
+                tracer.WriteLine("Exception during conversion to string, emitting empty string.");
+
                 if (formatErrorObject != null)
                 {
                     formatErrorObject.sourceObject = so;
