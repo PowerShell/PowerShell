@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Data
 
-        private long? _contentLength;
+        private readonly long? _contentLength;
         private readonly Stream _originalStreamToProxy;
         private bool _isInitialized = false;
         private readonly Cmdlet _ownerCmdlet;
@@ -230,13 +230,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_ownerCmdlet != null)
                     {
-                        record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus,
+                        record.StatusDescription = StringUtil.Format(
+                            WebCmdletStrings.ReadResponseProgressStatus,
                             DisplayHumanReadableFileSize(totalLength),
                             DisplayHumanReadableFileSize(_contentLength == null ? 0 : (long)_contentLength));
                         if (_contentLength != null && _contentLength > 0)
                         {
                             record.PercentComplete = (int)(totalLength * 100 / (long)_contentLength);
                         }
+
                         _ownerCmdlet.WriteProgress(record);
 
                         if (_ownerCmdlet.IsStopping)
@@ -286,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
             var fileSizeUnit = (FileSizeUnit)(Math.Log10(bytes) / 3);
             double value = bytes / (double)Math.Pow(1024, (long)fileSizeUnit);
             var significantDigits = (int)fileSizeUnit;
-            var format = "0." + new String('0', significantDigits);
+            var format = "0." + new string('0', significantDigits);
             return value.ToString(format) + $" {fileSizeUnit}";
         }
     }
@@ -315,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
-            ProgressRecord record = new ProgressRecord(
+            ProgressRecord record = new(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
@@ -353,13 +355,13 @@ namespace Microsoft.PowerShell.Commands
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
-            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
             WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
         {
-            StringBuilder result = new StringBuilder(capacity: ChunkSize);
+            StringBuilder result = new(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
             int useBufferSize = 64;
@@ -441,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaexp = new Regex(
+        private static readonly Regex s_metaexp = new(
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
             );
