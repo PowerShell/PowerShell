@@ -6,7 +6,7 @@ parameters:
 
 steps:
   - powershell: |
-        Get-ChildItem -Path '${{ parameters.artifactPath }}' -File -filter '${{ parameters.artifactFilter }}' -ErrorAction SilentlyContinue |
+        Get-ChildItem -Path '${{ parameters.artifactPath }}' -Recurse -File -filter '${{ parameters.artifactFilter }}' -ErrorAction SilentlyContinue |
             Select-Object -ExpandProperty FullName |
                 ForEach-Object {
                     Write-Host "##vso[artifact.upload containerfolder=${{ parameters.artifactName }};artifactname=${{ parameters.artifactName }}]$_"
