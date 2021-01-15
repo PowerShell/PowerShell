@@ -4947,7 +4947,7 @@ namespace System.Management.Automation
                 }
 
                 // Regex to find parameter like " -Parameter1" or " -"
-                MatchCollection foundMatches = Regex.Matches(lineToCursor, "\\s-([A-Za-z]+|$)");
+                MatchCollection foundMatches = Regex.Matches(lineToCursor, @"\s-([A-Za-z]+|$)");
                 if (foundMatches.Count == 0)
                 {
                     return results;
@@ -4980,7 +4980,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Regex to find parameter values (any text that appears after various delimiters)
-                    foundMatches = Regex.Matches(lineToCursor, "(\\s|,|;|{|\"|'|=)(\\w+|$)");
+                    foundMatches = Regex.Matches(lineToCursor, @"(\s|,|;|{|\""|'|=)(\w+|$)");
                     string currentValue;
                     if (foundMatches.Count == 0)
                     {
@@ -5021,7 +5021,7 @@ namespace System.Management.Automation
                             string hashtableString = lineToCursor.Substring(hashtableStart);
 
                             // Regex to find hashtable keys with or without quotes
-                            foundMatches = Regex.Matches(hashtableString, "(@{|;)\\s*(?:'|\"|\\w*)\\w*");
+                            foundMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
                             var hashtableKeys = new string[foundMatches.Count];
                             for (int i = 0; i < hashtableKeys.Length; i++)
                             {
