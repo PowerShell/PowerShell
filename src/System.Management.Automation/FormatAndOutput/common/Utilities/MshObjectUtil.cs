@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("PSObjectHelper", "PSObjectHelper")]
-        internal static readonly PSTraceSource Tracer = PSTraceSource.GetTracer("PSObjectHelper", "PSObjectHelper");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("PSObjectHelper", "PSObjectHelper");
         #endregion tracer
 
         internal const char Ellipsis = '\u2026';
