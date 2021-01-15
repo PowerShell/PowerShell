@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -236,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
                             DisplayHumanReadableFileSize(_contentLength is null ? 0 : (long)_contentLength));
                         if (_contentLength != null && _contentLength > 0)
                         {
-                            record.PercentComplete = (int)(totalLength * 100 / (long)_contentLength);
+                            record.PercentComplete = Math.Min((int)(totalLength * 100 / (long)_contentLength), 100);
                         }
 
                         _ownerCmdlet.WriteProgress(record);
@@ -332,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (contentLength != null && contentLength > 0)
                     {
-                        record.PercentComplete = (int)(output.Position * 100 / (long)contentLength);
+                        record.PercentComplete = Math.Min((int)(output.Position * 100 / (long)contentLength), 100);
                     }
 
                     cmdlet.WriteProgress(record);
