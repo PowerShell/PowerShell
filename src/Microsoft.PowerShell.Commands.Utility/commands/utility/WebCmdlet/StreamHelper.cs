@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                         record.StatusDescription = StringUtil.Format(
                             WebCmdletStrings.ReadResponseProgressStatus,
                             DisplayHumanReadableFileSize(totalLength),
-                            DisplayHumanReadableFileSize(_contentLength == null ? 0 : (long)_contentLength));
+                            DisplayHumanReadableFileSize(_contentLength is null ? 0 : (long)_contentLength));
                         if (_contentLength != null && _contentLength > 0)
                         {
                             record.PercentComplete = (int)(totalLength * 100 / (long)_contentLength);
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
         {
             if (cmdlet == null)
             {
@@ -325,7 +325,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 do
                 {
-                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
+                    record.StatusDescription = StringUtil.Format(
+                        WebCmdletStrings.WriteRequestProgressStatus,
+                        WebResponseContentMemoryStream.DisplayHumanReadableFileSize(output.Position),
+                        WebResponseContentMemoryStream.DisplayHumanReadableFileSize(contentLength is null ? 0 : (long)contentLength));
+
+                    if (contentLength != null && contentLength > 0)
+                    {
+                        record.PercentComplete = (int)(output.Position * 100 / (long)contentLength);
+                    }
+
                     cmdlet.WriteProgress(record);
 
                     Task.Delay(1000).Wait(cancellationToken);
@@ -350,13 +359,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream">Input stream.</param>
         /// <param name="filePath">Output file name.</param>
         /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
+        /// <param name="contentLength">Expected download size in Bytes.</param>
         /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationToken cancellationToken)
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
             using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
-            WriteToStream(stream, output, cmdlet, cancellationToken);
+            WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)
