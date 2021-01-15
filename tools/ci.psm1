@@ -437,13 +437,9 @@ function Get-ReleaseTag
 # Implements CI 'on_finish' step
 function Invoke-CIFinish
 {
-    param(
-        [string] $NuGetKey
-    )
-
     if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
-        return New-LinuxPackage -NugetKey $NugetKey
+        return New-LinuxPackage
     }
 
     try {
@@ -536,12 +532,6 @@ function Invoke-CIFinish
             {
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
-            }
-
-            if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
-            {
-                Write-Log "pushing $_ to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $NuGetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if(!$pushedAllArtifacts)
@@ -692,10 +682,6 @@ function Invoke-LinuxTestsCore
 
 function New-LinuxPackage
 {
-    param(
-        [string]
-        $NugetKey
-    )
 
     $isFullBuild = Test-DailyBuild
     $releaseTag = Get-ReleaseTag
@@ -714,16 +700,6 @@ function New-LinuxPackage
         else
         {
             Write-Error -Message "Package NOT found: $package"
-        }
-
-        # Publish the packages to the nuget feed if:
-        # 1 - It's a Daily build (already checked, for not a PR)
-        # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
-        # 3 - it's a nupkg file
-        if($isFullBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
-        {
-            Write-Log "pushing $package to $env:NUGET_URL"
-            Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
         }
 
         if($isFullBuild)
