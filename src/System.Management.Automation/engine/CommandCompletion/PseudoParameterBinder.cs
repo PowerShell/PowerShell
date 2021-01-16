@@ -1868,6 +1868,7 @@ namespace System.Management.Automation.Language
                     result = argument;
                     break;
                 }
+
                 if (splatted == false)
                 {
                     nonPositionalArguments.Add(argument);
