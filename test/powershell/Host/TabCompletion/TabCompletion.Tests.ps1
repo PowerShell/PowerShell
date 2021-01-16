@@ -953,6 +953,13 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 4
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
         }
+
+        It "Test completion with splatted variable" {
+            $inputStr = 'Get-Content @Splat -P'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+        }
     }
 
     Context "Module completion for 'using module'" {
