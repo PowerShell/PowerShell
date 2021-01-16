@@ -23,14 +23,15 @@ steps:
     path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
 - pwsh: |
-    #Exclude all global tool packages. Their names start with 'PowerShell.'
+    # Exclude all global tool packages. Their names start with 'PowerShell.'
     $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
     Copy-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
     $releaseVersion = Get-Content "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
     $globalToolPath = "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell.$releaseVersion.nupkg"
-    ### -WhatIf to make sure we do not release global tool. Remove -WhatIf when the PowerShell name reservation is done.
-    ### Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release" -WhatIf
+
+    # Publish the global tool package for stable release.
+    Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
 
     Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
   displayName: Download and capture nupkgs
