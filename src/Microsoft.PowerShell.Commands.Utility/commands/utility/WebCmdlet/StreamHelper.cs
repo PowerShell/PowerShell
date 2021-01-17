@@ -227,6 +227,7 @@ namespace Microsoft.PowerShell.Commands
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
+                string totalDownloadSize = DisplayHumanReadableFileSize(_contentLength is null ? 0 : (long)_contentLength);
                 for (int read = 1; read > 0; totalLength += read)
                 {
                     if (_ownerCmdlet != null)
@@ -234,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
                         record.StatusDescription = StringUtil.Format(
                             WebCmdletStrings.ReadResponseProgressStatus,
                             DisplayHumanReadableFileSize(totalLength),
-                            DisplayHumanReadableFileSize(_contentLength is null ? 0 : (long)_contentLength));
+                            totalDownloadSize);
                         if (_contentLength != null && _contentLength > 0)
                         {
                             record.PercentComplete = Math.Min((int)(totalLength * 100 / (long)_contentLength), 100);
@@ -322,6 +323,7 @@ namespace Microsoft.PowerShell.Commands
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
+            string totalDownloadSize = WebResponseContentMemoryStream.DisplayHumanReadableFileSize(contentLength is null ? 0 : (long)contentLength);
             try
             {
                 do
@@ -329,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
                     record.StatusDescription = StringUtil.Format(
                         WebCmdletStrings.WriteRequestProgressStatus,
                         WebResponseContentMemoryStream.DisplayHumanReadableFileSize(output.Position),
-                        WebResponseContentMemoryStream.DisplayHumanReadableFileSize(contentLength is null ? 0 : (long)contentLength));
+                        totalDownloadSize);
 
                     if (contentLength != null && contentLength > 0)
                     {
