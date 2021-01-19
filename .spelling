@@ -861,6 +861,11 @@ SytzeAndr
 yashrajbharti
 Leonhardt
 tylerleonhardt
+nuget.config
+libmi
+rpms
+authenticode
+env
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -935,3 +940,4 @@ wpaProfile
  - CHANGELOG/preview.md
 ThomasNieto
 spongemike2
+
