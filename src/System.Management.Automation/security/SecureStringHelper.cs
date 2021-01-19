@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -389,7 +390,9 @@ namespace Microsoft.PowerShell
 #nullable enable
         internal static unsafe SecureString FromPlainTextString(string plainTextString)
         {
-            if (plainTextString.Length == 0)
+            Debug.Assert(plainTextString is not null);
+
+            if (string.IsNullOrEmpty(plainTextString))
             {
                 return new SecureString();
             }
