@@ -90,9 +90,6 @@ namespace Microsoft.PowerShell.Commands
         /// Sets the encoding to use when writing the file.
         /// </summary>
         [Parameter(ParameterSetName = "File")]
-        /// <summary>
-        /// Sets the encoding to use when writing the file.
-        /// </summary>
         [Parameter(ParameterSetName = "LiteralFile")]
         [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
