@@ -1007,8 +1007,53 @@ yml
 youtube
 Youssef1313
 zackjknight
+<<<<<<< HEAD
 ComInterop
 runtime#33060
+=======
+vexx32
+perf
+britishben
+felixfbecker
+vpondala
+dependabot
+jellyfrog
+1redone
+tommymaynard
+vmsilvamolina
+fbehrens
+lockdown
+lukexjeremy
+deserializing
+kiazhi
+v6.1.2
+Menagarishvili
+anmenaga
+fxdependent
+sba923
+replicaJunction
+lupino3
+hvitved
+unvalidated
+Geweldig
+mjanko5
+v7.0.0
+renehernandez
+ece-jacob-scott
+st0le
+MohiTheFish
+CodeFormatter
+StyleCop
+SytzeAndr
+yashrajbharti
+Leonhardt
+tylerleonhardt
+nuget.config
+libmi
+rpms
+authenticode
+env
+>>>>>>> 2f3b740ee (Merged PR 14193: Update CHANGELOG for 7.0.4)
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1128,6 +1173,7 @@ wpaProfile
  - CHANGELOG/7.1.md
 ThomasNieto
 spongemike2
+<<<<<<< HEAD
 davidseibel
 HumanEquivalentUnit
 hemisphera
@@ -1222,3 +1268,6 @@ RPMs
 NullableAttribute
 PSDesiredStateConfiguration
 about_PSDesiredStateConfiguration
+=======
+
+>>>>>>> 2f3b740ee (Merged PR 14193: Update CHANGELOG for 7.0.4)
