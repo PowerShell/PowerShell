@@ -1007,10 +1007,8 @@ yml
 youtube
 Youssef1313
 zackjknight
-<<<<<<< HEAD
 ComInterop
 runtime#33060
-=======
 vexx32
 perf
 britishben
@@ -1053,7 +1051,6 @@ libmi
 rpms
 authenticode
 env
->>>>>>> 2f3b740ee (Merged PR 14193: Update CHANGELOG for 7.0.4)
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1173,7 +1170,6 @@ wpaProfile
  - CHANGELOG/7.1.md
 ThomasNieto
 spongemike2
-<<<<<<< HEAD
 davidseibel
 HumanEquivalentUnit
 hemisphera
@@ -1268,6 +1264,4 @@ RPMs
 NullableAttribute
 PSDesiredStateConfiguration
 about_PSDesiredStateConfiguration
-=======
 
->>>>>>> 2f3b740ee (Merged PR 14193: Update CHANGELOG for 7.0.4)
