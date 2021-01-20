@@ -946,7 +946,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// Reads CIM MOF schema file and returns classes defined in it; this is used in MOF->JSON and MOF->PSClass convertion tools.
+        /// Reads CIM MOF schema file and returns classes defined in it.
+        /// This is used in MOF->JSON and MOF->PSClass convertion tools.
         /// </summary>
         /// <param name="mofPath">
         /// Path to CIM MOF schema file for reading.
