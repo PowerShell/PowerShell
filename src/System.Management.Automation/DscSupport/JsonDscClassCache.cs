@@ -78,16 +78,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         Justification = "Needed Internal use only")]
     public static class DscClassCache
     {
-        private static readonly HashSet<string> reservedDynamicKeywords = new HashSet<string>(new []{ "Synchronization","Certificate","IIS","SQL" }, StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> _reservedDynamicKeywords = new HashSet<string>(new []{ "Synchronization","Certificate","IIS","SQL" }, StringComparer.OrdinalIgnoreCase);
 
-        private static readonly HashSet<string> reservedProperties = new HashSet<string>(new []{ "Require", "Trigger", "Notify", "Before", "After", "Subscribe" }, StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> _reservedProperties = new HashSet<string>(new []{ "Require", "Trigger", "Notify", "Before", "After", "Subscribe" }, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Experimental feature name for DSC v3.
         /// </summary>
         public const string DscExperimentalFeatureName = "PS7DscSupport";
 
-        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
+        private static readonly PSTraceSource _tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
         // Constants for items in the module qualified name (Module\Version\ClassName)
         private const int IndexModuleName = 0;
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private const int IndexFriendlyName = 3;
 
         // Create a HashSet for fast lookup. According to MSDN, the time complexity of search for an element in a HashSet is O(1)
-        private static readonly HashSet<string> s_hiddenResourceCache =
+        private static readonly HashSet<string> _hiddenResourceCache =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
 
         /// <summary>
@@ -107,17 +107,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         {
             get
             {
-                if (t_classCache == null)
+                if (_classCache == null)
                 {
-                    t_classCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
+                    _classCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
                 }
 
-                return t_classCache;
+                return _classCache;
             }
         }
 
         [ThreadStatic]
-        private static Dictionary<string, DscClassCacheEntry> t_classCache;
+        private static Dictionary<string, DscClassCacheEntry> _classCache;
 
         /// <summary>
         /// Gets DSC class cache for GuestConfig; it is similar to ClassCache, but maintains values between operations.
@@ -126,31 +126,31 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         {
             get
             {
-                if (t_guestConfigClassCache == null)
+                if (_guestConfigClassCache == null)
                 {
-                    t_guestConfigClassCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
+                    _guestConfigClassCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
                 }
 
-                return t_guestConfigClassCache;
+                return _guestConfigClassCache;
             }
         }
 
         [ThreadStatic]
-        private static Dictionary<string, DscClassCacheEntry> t_guestConfigClassCache;
+        private static Dictionary<string, DscClassCacheEntry> _guestConfigClassCache;
 
         /// <summary>
         /// DSC classname to source module mapper.
         /// </summary>
         private static Dictionary<string, Tuple<string, Version>> ByClassModuleCache
-            => t_byClassModuleCache ??= new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
+            => _byClassModuleCache ??= new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
 
         [ThreadStatic]
-        private static Dictionary<string, Tuple<string, Version>> t_byClassModuleCache;
+        private static Dictionary<string, Tuple<string, Version>> _byClassModuleCache;
 
         /// <summary>
         /// Default ModuleName and ModuleVersion to use.
         /// </summary>
-        private static readonly Tuple<string, Version> s_defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version(3, 0));
+        private static readonly Tuple<string, Version> _defaultModuleInfoForResource = new Tuple<string, Version>("PSDesiredStateConfiguration", new Version(3, 0));
 
         /// <summary>
         /// When this property is set to true, DSC Cache will cache multiple versions of a resource.
@@ -159,18 +159,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         ///       because the Mof serializer does not support deserialization of classes with different versions.
         /// </summary>
         [ThreadStatic]
-        private static bool t_cacheResourcesFromMultipleModuleVersions;
+        private static bool _cacheResourcesFromMultipleModuleVersions;
 
         private static bool CacheResourcesFromMultipleModuleVersions
         {
             get
             {
-                return t_cacheResourcesFromMultipleModuleVersions;
+                return _cacheResourcesFromMultipleModuleVersions;
             }
 
             set
             {
-                t_cacheResourcesFromMultipleModuleVersions = value;
+                _cacheResourcesFromMultipleModuleVersions = value;
             }
         }
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
-            s_tracer.WriteLine("Initializing DSC class cache");
+            _tracer.WriteLine("Initializing DSC class cache");
 
             // Load the base schema files.
             ClearCache();
@@ -226,9 +226,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
 
             var resourceBaseFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "BaseResource.schema.json");
-            ImportBaseClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors, false);
+            ImportBaseClasses(resourceBaseFile, _defaultModuleInfoForResource, errors, false);
             var metaConfigFile = Path.Join(dscConfigurationDirectory, "BaseRegistration", "MSFT_DSCMetaConfiguration.json");
-            ImportBaseClasses(metaConfigFile, s_defaultModuleInfoForResource, errors, false);
+            ImportBaseClasses(metaConfigFile, _defaultModuleInfoForResource, errors, false);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            s_tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
+            _tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
 
             var parser = new CimDSCParser();
 
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             catch (PSInvalidOperationException e)
             {
                 // Ignore modules with invalid schemas.
-                s_tracer.WriteLine("DSC ClassCache: Error importing file '{0}', with error '{1}'.  Skipping file.", path, e);
+                _tracer.WriteLine("DSC ClassCache: Error importing file '{0}', with error '{1}'.  Skipping file.", path, e);
                 if (errors != null)
                 {
                     errors.Add(e);
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                         continue;
                     }
 
-                    if (s_hiddenResourceCache.Contains(className))
+                    if (_hiddenResourceCache.Contains(className))
                     {
                         continue;
                     }
@@ -314,11 +314,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     sb.Append(',');
                 }
 
-                s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added the following classes to the cache: {1}", path, sb.ToString());
+                _tracer.WriteLine("DSC ClassCache: loading file '{0}' added the following classes to the cache: {1}", path, sb.ToString());
             }
             else
             {
-                s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added no classes to the cache.");
+                _tracer.WriteLine("DSC ClassCache: loading file '{0}' added no classes to the cache.");
             }
 
             return classes;
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 throw new InvalidOperationException(ParserStrings.PS7DscSupportDisabled);
             }
 
-            s_tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
+            _tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
             ClassCache.Clear();
             ByClassModuleCache.Clear();
             CacheResourcesFromMultipleModuleVersions = false;
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             };
 
             // If it's one of reserved dynamic keyword, mark it
-            if (reservedDynamicKeywords.Contains(keywordString))
+            if (_reservedDynamicKeywords.Contains(keywordString))
             {
                 keyword.IsReservedKeyword = true;
             }
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     }
 
                     // If it's one of our reserved properties, save it for error reporting
-                    if (reservedProperties.Contains(prop.Name))
+                    if (_reservedProperties.Contains(prop.Name))
                     {
                         keyword.HasReservedProperties = true;
                         continue;
@@ -635,7 +635,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     {
                         if (valueMap.Count != keyProp.Values.Count)
                         {
-                            s_tracer.WriteLine(
+                            _tracer.WriteLine(
                                 "DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {0}, count of 'ValueMap': {1}. Skip the keyword '{2}'.",
                                 keyProp.Values.Count,
                                 valueMap.Count,
@@ -650,7 +650,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                             if (keyProp.ValueMap.ContainsKey(key))
                             {
-                                s_tracer.WriteLine(
+                                _tracer.WriteLine(
                                     "DSC CreateDynamicKeywordFromClass: same string value '{0}' appears more than once in qualifier 'Values'. Skip the keyword '{1}'.",
                                     key,
                                     keyword.Keyword);
@@ -780,8 +780,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var nodeKeyword = new DynamicKeyword()
                 {
                     BodyMode = DynamicKeywordBodyMode.ScriptBlock,
-                    ImplementingModule = s_defaultModuleInfoForResource.Item1,
-                    ImplementingModuleVersion = s_defaultModuleInfoForResource.Item2,
+                    ImplementingModule = _defaultModuleInfoForResource.Item1,
+                    ImplementingModuleVersion = _defaultModuleInfoForResource.Item2,
                     NameMode = DynamicKeywordNameMode.NameRequired,
                     Keyword = "Node",
                 };
@@ -795,8 +795,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                 var nodeKeyword = new DynamicKeyword()
                 {
                     BodyMode = DynamicKeywordBodyMode.Command,
-                    ImplementingModule = s_defaultModuleInfoForResource.Item1,
-                    ImplementingModuleVersion = s_defaultModuleInfoForResource.Item2,
+                    ImplementingModule = _defaultModuleInfoForResource.Item1,
+                    ImplementingModuleVersion = _defaultModuleInfoForResource.Item2,
                     NameMode = DynamicKeywordNameMode.NoName,
                     Keyword = "Import-DscResource",
                     MetaStatement = true,

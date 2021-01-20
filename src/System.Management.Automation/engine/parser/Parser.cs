@@ -12,6 +12,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
@@ -2996,7 +2997,7 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            if (ExperimentalFeature.IsEnabled(Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.DscExperimentalFeatureName))
+                            if (ExperimentalFeature.IsEnabled(Dsc.Json.DscClassCache.DscExperimentalFeatureName))
                             {
                                 // In addition to checking if experimental feature is enabled
                                 // also check if PSDesiredStateConfiguration is already loaded
@@ -3021,16 +3022,16 @@ namespace System.Management.Automation.Language
 
                                 if (useJsonSchema)
                                 {
-                                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    Dsc.Json.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
                                 }
                                 else
                                 {
-                                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    Dsc.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
                                 }
                             }
                             else
                             {
-                                Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                Dsc.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
                             }
 
                             // Report any errors encountered while loading CIM dynamic keywords.
@@ -3275,11 +3276,11 @@ namespace System.Management.Automation.Language
                     //
                     if (useJsonSchema)
                     {
-                        Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.ClearCache();
+                        Dsc.Json.DscClassCache.ClearCache();
                     }
                     else
                     {
-                        Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.ClearCache();
+                        Dsc.DscClassCache.ClearCache();
                     }
 
                     System.Management.Automation.Language.DynamicKeyword.Reset();
