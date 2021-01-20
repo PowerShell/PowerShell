@@ -20,27 +20,22 @@ Describe "Tee-Object" -Tags "CI" {
 	        Remove-Item $teefile -ErrorAction SilentlyContinue
         }
 
-        It "Should tee output to file using selected encoding" -TestCases @(
-            @{ Encoding = "ascii" },
-            @{ Encoding = "bigendianunicode" },
-            @{ Encoding = "default" },
-            @{ Encoding = "latin1" },
-            @{ Encoding = "unicode" },
-            @{ Encoding = "utf32" },
-            @{ Encoding = "utf7" },
-            @{ Encoding = "utf8" }
+        $unicodeTestString = "A1£ę௸🤔"
+        It "Should tee output to file using <encoding> encoding when selected" -TestCases @(
+            @{ Encoding = "ascii"; Content = "teeobjecttest1"},
+            @{ Encoding = "bigendianunicode"; Content = $unicodeTestString  },
+            @{ Encoding = "default"; Content = $unicodeTestString },
+            @{ Encoding = "latin1"; Content = "téèõbjêcttëst1" },
+            @{ Encoding = "unicode"; Content = $unicodeTestString },
+            @{ Encoding = "utf32"; Content = $unicodeTestString },
+            @{ Encoding = "utf7"; Content = $unicodeTestString},
+            @{ Encoding = "utf8"; Content = $unicodeTestString}
         ) {
-            param($Encoding)
-            $contentSets =
-                @(@('a1','aa2','aaa3','aaaa4','aaaaa5'), # utf-8
-                @('€1','€€2','€€€3','€€€€4','€€€€€5'), # utf-16
-                @('𐍈1','𐍈𐍈2','𐍈𐍈𐍈3','𐍈𐍈𐍈𐍈4','𐍈𐍈𐍈𐍈𐍈5')) # utf-32
-            ForEach ($content in $contentSets){
-                $teefile = $testfile
-                Write-Output -InputObject content  | Tee-Object -FilePath $teefile -Encoding $Encoding
-                Get-Content -Path $teefile -Encoding $Encoding | Should -BeExactly "teeobjecttest3"
-                Remove-Item -Path $teefile -ErrorAction SilentlyContinue
-            }
+            param($Encoding, $Content)
+            $teefile = $testfile
+            Write-Output -InputObject $content  | Tee-Object -FilePath $teefile -Encoding $Encoding
+            Get-Content -Path $teefile -Encoding $Encoding | Should -BeExactly $content
+            Remove-Item -Path $teefile -ErrorAction SilentlyContinue
         }
     }
 }
