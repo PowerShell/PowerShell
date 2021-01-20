@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
-        /// Gets or Sets the encoding to use when writing the file.
+        /// Gets or sets the encoding to use when writing the file.
         /// </summary>
         [Parameter(ParameterSetName = "File")]
         [Parameter(ParameterSetName = "LiteralFile")]
