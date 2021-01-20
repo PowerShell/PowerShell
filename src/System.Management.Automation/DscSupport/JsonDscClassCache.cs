@@ -78,9 +78,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         Justification = "Needed Internal use only")]
     public static class DscClassCache
     {
-        private static readonly HashSet<string> _reservedDynamicKeywords = new HashSet<string>(new []{ "Synchronization","Certificate","IIS","SQL" }, StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> _reservedDynamicKeywords = new HashSet<string>(new[] { "Synchronization", "Certificate", "IIS", "SQL" }, StringComparer.OrdinalIgnoreCase);
 
-        private static readonly HashSet<string> _reservedProperties = new HashSet<string>(new []{ "Require", "Trigger", "Notify", "Before", "After", "Subscribe" }, StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> _reservedProperties = new HashSet<string>(new[] { "Require", "Trigger", "Notify", "Before", "After", "Subscribe" }, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Experimental feature name for DSC v3.
