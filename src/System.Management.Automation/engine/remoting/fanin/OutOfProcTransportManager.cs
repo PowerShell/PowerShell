@@ -1735,13 +1735,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 try
                 {
-                    using (var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId))
-                    {
-                        if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
-                        {
-                            sshProcess.Kill();
-                        }
-                    }
+                    _connectionInfo.KillSSHProcess(sshProcessId);
                 }
                 catch (ArgumentException) { }
                 catch (InvalidOperationException) { }
