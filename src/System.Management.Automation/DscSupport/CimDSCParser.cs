@@ -41,9 +41,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             using (System.Management.Automation.PowerShell powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
-                const string Script = "param($targetType,$moduleName) & (Microsoft.PowerShell.Core\\Get-Module $moduleName) { New-Object $targetType } ";
-
-                powerShell.AddScript(Script);
+                powerShell.AddScript("param($targetType,$moduleName) & (Microsoft.PowerShell.Core\\Get-Module $moduleName) { New-Object $targetType } ");
                 powerShell.AddArgument(targetType);
                 powerShell.AddArgument(moduleName);
 

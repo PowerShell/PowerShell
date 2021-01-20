@@ -78,9 +78,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         Justification = "Needed Internal use only")]
     public static class DscClassCache
     {
-        private static readonly Regex reservedDynamicKeywordRegex = new Regex("^(Synchronization|Certificate|IIS|SQL)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly HashSet<string> reservedDynamicKeywords = new HashSet<string>(new []{ "Synchronization","Certificate","IIS","SQL" }, StringComparer.OrdinalIgnoreCase);
 
-        private static readonly Regex reservedPropertiesRegex = new Regex("^(Require|Trigger|Notify|Before|After|Subscribe)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly HashSet<string> reservedProperties = new HashSet<string>(new []{ "Require", "Trigger", "Notify", "Before", "After", "Subscribe" }, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Experimental feature name for DSC v3.
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
                 if (moduleInfos.Count > 0)
                 { 
-                    // to be consistent with Import-Module behavior, we use the fist occurrence that we find in PSModulePath
+                    // to be consistent with Import-Module behavior, we use the first occurrence that we find in PSModulePath
                     var moduleDirectory = Path.GetDirectoryName(moduleInfos[0].Path);
                     dscConfigurationDirectory = Path.Join(moduleDirectory, "Configuration");
                 }
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             };
 
             // If it's one of reserved dynamic keyword, mark it
-            if (reservedDynamicKeywordRegex.Match(keywordString).Success)
+            if (reservedDynamicKeywords.Contains(keywordString))
             {
                 keyword.IsReservedKeyword = true;
             }
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
                     }
 
                     // If it's one of our reserved properties, save it for error reporting
-                    if (reservedPropertiesRegex.Match(prop.Name).Success)
+                    if (reservedProperties.Contains(prop.Name))
                     {
                         keyword.HasReservedProperties = true;
                         continue;
