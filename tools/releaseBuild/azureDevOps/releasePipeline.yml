@@ -225,6 +225,24 @@ stages:
     pool: server
     environment: PSReleaseUpdateDotnetDocker
 
+- stage: UpdateWinGet
+  dependsOn: GitHubManualTasks
+  displayName: Add manifest entry to winget
+  jobs:
+  - deployment: UpdateWinGet
+    displayName: Add manifest entry to winget
+    pool: server
+    environment: PSReleaseUpdateWinGet
+
+- stage: PublishMsix
+  dependsOn: GitHubManualTasks
+  displayName: Publish MSIX to store
+  jobs:
+  - deployment: PublishMsix
+    displayName: Publish MSIX to store
+    pool: server
+    environment: PSReleasePublishMsix
+
 - stage: BuildInfoJson
   dependsOn: GitHubManualTasks
   displayName: Upload BuildInfoJson
