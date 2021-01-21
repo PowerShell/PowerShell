@@ -7,13 +7,10 @@ using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("powershell-tests,PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -227,14 +224,14 @@ namespace Microsoft.PowerShell.Commands
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
-                string totalDownloadSize = DisplayHumanReadableFileSize(_contentLength is null ? 0 : (long)_contentLength);
+                string totalDownloadSize = _contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)_contentLength);
                 for (int read = 1; read > 0; totalLength += read)
                 {
                     if (_ownerCmdlet != null)
                     {
                         record.StatusDescription = StringUtil.Format(
                             WebCmdletStrings.ReadResponseProgressStatus,
-                            DisplayHumanReadableFileSize(totalLength),
+                            Utils.DisplayHumanReadableFileSize(totalLength),
                             totalDownloadSize);
                         if (_contentLength != null && _contentLength > 0)
                         {
@@ -274,25 +271,6 @@ namespace Microsoft.PowerShell.Commands
                 throw;
             }
         }
-
-        private enum FileSizeUnit
-        {
-            Byte, KB, MB, GB, TB, PB, EB
-        }
-
-        internal static string DisplayHumanReadableFileSize(long bytes)
-        {
-            if (bytes <= 0)
-            {
-                return $"0 {FileSizeUnit.Byte}";
-            }
-
-            var fileSizeUnit = (FileSizeUnit)(Math.Log10(bytes) / 3);
-            double value = bytes / (double)Math.Pow(1024, (long)fileSizeUnit);
-            var significantDigits = (int)fileSizeUnit;
-            var format = "0." + new string('0', significantDigits);
-            return value.ToString(format) + $" {fileSizeUnit}";
-        }
     }
 
     internal static class StreamHelper
@@ -323,14 +301,14 @@ namespace Microsoft.PowerShell.Commands
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
-            string totalDownloadSize = WebResponseContentMemoryStream.DisplayHumanReadableFileSize(contentLength is null ? 0 : (long)contentLength);
+            string totalDownloadSize = contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)contentLength);
             try
             {
                 do
                 {
                     record.StatusDescription = StringUtil.Format(
                         WebCmdletStrings.WriteRequestProgressStatus,
-                        WebResponseContentMemoryStream.DisplayHumanReadableFileSize(output.Position),
+                        Utils.DisplayHumanReadableFileSize(output.Position),
                         totalDownloadSize);
 
                     if (contentLength != null && contentLength > 0)

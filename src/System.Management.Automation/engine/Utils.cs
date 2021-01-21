@@ -5,8 +5,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -19,7 +17,6 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 #if !UNIX
@@ -1889,6 +1886,25 @@ namespace System.Management.Automation
         }
 
         #endregion
+        
+        private enum FileSizeUnit
+        {
+            Byte, KB, MB, GB, TB, PB, EB
+        }
+        
+        internal static string DisplayHumanReadableFileSize(long bytes)
+        {
+            if (bytes <= 0)
+            {
+                return $"0 {FileSizeUnit.Byte}";
+            }
+
+            var fileSizeUnit = (FileSizeUnit)(Math.Log10(bytes) / 3);
+            double value = bytes / (double)Math.Pow(1024, (long)fileSizeUnit);
+            var significantDigits = (int)fileSizeUnit;
+            var format = "0." + new string('0', significantDigits);
+            return value.ToString(format) + $" {fileSizeUnit}";
+        }
     }
 
     #region ImplicitRemotingBatching

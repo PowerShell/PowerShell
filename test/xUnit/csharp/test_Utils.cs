@@ -34,7 +34,7 @@ namespace PSTests.Parallel
         [InlineData(long.MaxValue, "8.000000 EB")]
         public static void DisplayHumanReadableFileSize(long bytes, string expected)
         {
-            Assert.Equal(expected, WebResponseContentMemoryStream.DisplayHumanReadableFileSize(bytes));
+            Assert.Equal(expected, Utils.DisplayHumanReadableFileSize(bytes));
         }
 
         [Fact]
