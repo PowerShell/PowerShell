@@ -24,7 +24,7 @@ class CommitNode {
         $this.Body = $body
         $this.IsBreakingChange = $body -match "\[breaking change\]"
 
-        if ($subject -match "\(#(\d+)\)") {
+        if ($subject -match "\(#(\d+)\)$") {
             $this.PullRequest = $Matches[1]
         }
     }
