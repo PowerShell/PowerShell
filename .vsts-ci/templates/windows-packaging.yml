@@ -30,5 +30,5 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
-      Invoke-CIFinish -NuGetKey $(NUGET_KEY)
+      Invoke-CIFinish
     displayName: Build and Test Package
