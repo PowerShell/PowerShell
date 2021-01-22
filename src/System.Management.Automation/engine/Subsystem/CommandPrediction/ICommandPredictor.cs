@@ -58,8 +58,8 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="session">The mini-session where the displayed suggestions came from.</param>
         /// <param name="countOrIndex">
-        /// When the value is <code>> 0</code>, it's the number of displayed suggestions from the list returned in <see cref="session"/>, starting from the index 0.
-        /// When the value is <code><= 0</code>, it means a single suggestion from the list got displayed, and the index is the absolute value.
+        /// When the value is greater than 0, it's the number of displayed suggestions from the list returned in <paramref name="session"/>, starting from the index 0.
+        /// When the value is less than or equal to 0, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
         void OnSuggestionDisplayed(uint session, int countOrIndex);
 
@@ -180,18 +180,20 @@ namespace System.Management.Automation.Subsystem
     public struct SuggestionPackage
     {
         /// <summary>
-        /// The mini-session that represents a specific invocation to <see cref="ICommandPredictor.GetSuggestion"/>.
+        /// Gets the mini-session that represents a specific invocation to <see cref="ICommandPredictor.GetSuggestion"/>.
         /// </summary>
         public uint Session { get; }
 
         /// <summary>
-        /// Suggestion entries returned from that mini-session.
+        /// Gets the suggestion entries returned from that mini-session.
         /// </summary>
         public List<PredictiveSuggestion>? SuggestionEntries { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SuggestionPackage"/> struct.
         /// </summary>
+        /// <param name="session">The mini-session where suggestions came from.</param>
+        /// <param name="suggestionEntries">The suggestions to return.</param>
         public SuggestionPackage(uint session, List<PredictiveSuggestion> suggestionEntries)
         {
             Session = session;

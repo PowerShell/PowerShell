@@ -156,8 +156,8 @@ namespace System.Management.Automation.Subsystem
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
         /// <param name="session">The mini-session where the displayed suggestions came from.</param>
         /// <param name="countOrIndex">
-        /// When the value is <code>> 0</code>, it's the number of displayed suggestions from the list returned in <see cref="session"/>, starting from the index 0.
-        /// When the value is <code><= 0</code>, it means a single suggestion from the list got displayed, and the index is the absolute value.
+        /// When the value is greater than 0, it's the number of displayed suggestions from the list returned in <paramref name="session"/>, starting from the index 0.
+        /// When the value is less than or equal to 0, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
         public static void OnSuggestionDisplayed(Guid predictorId, uint session, int countOrIndex)
         {
