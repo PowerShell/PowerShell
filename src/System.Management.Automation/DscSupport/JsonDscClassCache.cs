@@ -1388,7 +1388,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
 
             var result = new PSObject();
             result.Properties.Add(new PSNoteProperty("ClassName", className));
-            result.Properties.Add(new PSNoteProperty("ClassVersion", "1.0.0"));
             result.Properties.Add(new PSNoteProperty("FriendlyName", className));
             result.Properties.Add(new PSNoteProperty("SuperClassName", cimSuperClassName));
             result.Properties.Add(new PSNoteProperty("ClassProperties", cimClassProperties));
