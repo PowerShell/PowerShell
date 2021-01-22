@@ -20,9 +20,9 @@ namespace PSTests.Sequential
 
         public List<string> AcceptedSuggestions { get; }
 
-        public static readonly MyPredictor SlowPredictor;
+        public List<string> DisplayedSuggestions { get; }
 
-        public static readonly MyPredictor FastPredictor;
+        public static readonly MyPredictor SlowPredictor, FastPredictor;
 
         static MyPredictor()
         {
@@ -48,6 +48,7 @@ namespace PSTests.Sequential
 
             History = new List<string>();
             AcceptedSuggestions = new List<string>();
+            DisplayedSuggestions = new List<string>();
         }
 
         public Guid Id => _id;
@@ -60,17 +61,25 @@ namespace PSTests.Sequential
 
         bool ICommandPredictor.AcceptFeedback => true;
 
-        public void StartEarlyProcessing(IReadOnlyList<string> history)
+        public void StartEarlyProcessing(string clientId, IReadOnlyList<string> history)
         {
-            History.AddRange(history);
+            foreach (string item in history)
+            {
+                History.Add($"{clientId}-{item}");
+            }
         }
 
-        public void OnSuggestionAccepted(string acceptedSuggestion)
+        public void OnSuggestionDisplayed(uint session, int countOrIndex)
         {
-            AcceptedSuggestions.Add(acceptedSuggestion);
+            DisplayedSuggestions.Add($"{session}-{countOrIndex}");
         }
 
-        public List<PredictiveSuggestion> GetSuggestion(PredictionContext context, CancellationToken cancellationToken)
+        public void OnSuggestionAccepted(uint session, string acceptedSuggestion)
+        {
+            AcceptedSuggestions.Add($"{session}-{acceptedSuggestion}");
+        }
+
+        public SuggestionPackage GetSuggestion(string clientId, PredictionContext context, CancellationToken cancellationToken)
         {
             if (_delay)
             {
@@ -81,24 +90,30 @@ namespace PSTests.Sequential
 
             // You can get the user input from the AST.
             var userInput = context.InputAst.Extent.Text;
-            return new List<PredictiveSuggestion> {
-                new PredictiveSuggestion($"{userInput} TEST-1 from {Name}"),
-                new PredictiveSuggestion($"{userInput} TeSt-2 from {Name}"),
+            var entries = new List<PredictiveSuggestion> {
+                new PredictiveSuggestion($"'{userInput}' from '{clientId}' - TEST-1 from {Name}"),
+                new PredictiveSuggestion($"'{userInput}' from '{clientId}' - TeSt-2 from {Name}"),
             };
+
+            return new SuggestionPackage(56, entries);
         }
     }
 
     public static class CommandPredictionTests
     {
+        private const string client = "PredictionTest";
+        private const uint session = 56;
+
         [Fact]
         public static void PredictInput()
         {
+            const string input = "Hello world";
             MyPredictor slow = MyPredictor.SlowPredictor;
             MyPredictor fast = MyPredictor.FastPredictor;
-            Ast ast = Parser.ParseInput("Hello world", out Token[] tokens, out _);
+            Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
 
             // Returns null when no predictor implementation registered
-            List<PredictionResult> results = CommandPrediction.PredictInput(ast, tokens).Result;
+            List<PredictionResult> results = CommandPrediction.PredictInput(client, ast, tokens).Result;
             Assert.Null(results);
 
             try
@@ -111,32 +126,35 @@ namespace PSTests.Sequential
                 // cannot finish before the specified timeout.
                 // The specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInput(ast, tokens, millisecondsTimeout: 1000).Result;
+                results = CommandPrediction.PredictInput(client, ast, tokens, millisecondsTimeout: 1000).Result;
                 Assert.Single(results);
 
                 PredictionResult res = results[0];
                 Assert.Equal(fast.Id, res.Id);
+                Assert.Equal(session, res.Session);
                 Assert.Equal(2, res.Suggestions.Count);
-                Assert.Equal($"Hello world TEST-1 from {fast.Name}", res.Suggestions[0].SuggestionText);
-                Assert.Equal($"Hello world TeSt-2 from {fast.Name}", res.Suggestions[1].SuggestionText);
+                Assert.Equal($"'{input}' from '{client}' - TEST-1 from {fast.Name}", res.Suggestions[0].SuggestionText);
+                Assert.Equal($"'{input}' from '{client}' - TeSt-2 from {fast.Name}", res.Suggestions[1].SuggestionText);
 
                 // Expect the results from both 'slow' and 'fast' predictors
                 // Same here -- the specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInput(ast, tokens, millisecondsTimeout: 4000).Result;
+                results = CommandPrediction.PredictInput(client, ast, tokens, millisecondsTimeout: 4000).Result;
                 Assert.Equal(2, results.Count);
 
                 PredictionResult res1 = results[0];
                 Assert.Equal(slow.Id, res1.Id);
+                Assert.Equal(session, res1.Session);
                 Assert.Equal(2, res1.Suggestions.Count);
-                Assert.Equal($"Hello world TEST-1 from {slow.Name}", res1.Suggestions[0].SuggestionText);
-                Assert.Equal($"Hello world TeSt-2 from {slow.Name}", res1.Suggestions[1].SuggestionText);
+                Assert.Equal($"'{input}' from '{client}' - TEST-1 from {slow.Name}", res1.Suggestions[0].SuggestionText);
+                Assert.Equal($"'{input}' from '{client}' - TeSt-2 from {slow.Name}", res1.Suggestions[1].SuggestionText);
 
                 PredictionResult res2 = results[1];
                 Assert.Equal(fast.Id, res2.Id);
+                Assert.Equal(session, res2.Session);
                 Assert.Equal(2, res2.Suggestions.Count);
-                Assert.Equal($"Hello world TEST-1 from {fast.Name}", res2.Suggestions[0].SuggestionText);
-                Assert.Equal($"Hello world TeSt-2 from {fast.Name}", res2.Suggestions[1].SuggestionText);
+                Assert.Equal($"'{input}' from '{client}' - TEST-1 from {fast.Name}", res2.Suggestions[0].SuggestionText);
+                Assert.Equal($"'{input}' from '{client}' - TeSt-2 from {fast.Name}", res2.Suggestions[1].SuggestionText);
             }
             finally
             {
@@ -160,8 +178,10 @@ namespace PSTests.Sequential
                 var history = new[] { "hello", "world" };
                 var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
-                CommandPrediction.OnCommandLineAccepted(history);
-                CommandPrediction.OnSuggestionAccepted(slow.Id, "Yeah");
+                CommandPrediction.OnCommandLineAccepted(client, history);
+                CommandPrediction.OnSuggestionDisplayed(slow.Id, session, 2);
+                CommandPrediction.OnSuggestionDisplayed(fast.Id, session, -1);
+                CommandPrediction.OnSuggestionAccepted(slow.Id, session, "Yeah");
 
                 // The calls to 'StartEarlyProcessing' and 'OnSuggestionAccepted' are queued in thread pool,
                 // so we wait a bit to make sure the calls are done.
@@ -171,15 +191,21 @@ namespace PSTests.Sequential
                 }
 
                 Assert.Equal(2, slow.History.Count);
-                Assert.Equal(history[0], slow.History[0]);
-                Assert.Equal(history[1], slow.History[1]);
+                Assert.Equal($"{client}-{history[0]}", slow.History[0]);
+                Assert.Equal($"{client}-{history[1]}", slow.History[1]);
 
                 Assert.Equal(2, fast.History.Count);
-                Assert.Equal(history[0], fast.History[0]);
-                Assert.Equal(history[1], fast.History[1]);
+                Assert.Equal($"{client}-{history[0]}", fast.History[0]);
+                Assert.Equal($"{client}-{history[1]}", fast.History[1]);
+
+                Assert.Single(slow.DisplayedSuggestions);
+                Assert.Equal($"{session}-2", slow.DisplayedSuggestions[0]);
+
+                Assert.Single(fast.DisplayedSuggestions);
+                Assert.Equal($"{session}--1", fast.DisplayedSuggestions[0]);
 
                 Assert.Single(slow.AcceptedSuggestions);
-                Assert.Equal("Yeah", slow.AcceptedSuggestions[0]);
+                Assert.Equal($"{session}-Yeah", slow.AcceptedSuggestions[0]);
 
                 Assert.Empty(fast.AcceptedSuggestions);
             }
