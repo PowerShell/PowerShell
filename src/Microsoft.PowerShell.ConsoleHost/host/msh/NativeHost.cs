@@ -5,8 +5,8 @@
 
 using System;
 using System.IO;
-using System.Runtime.Loader;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 
 namespace Microsoft.PowerShell
 {
@@ -19,10 +19,10 @@ namespace Microsoft.PowerShell
         /// Load an assembly in memory from unmanaged code.
         /// </summary>
         /// <param name="data">
-        /// Unmanaged pointer to assembly data buffer
+        /// Unmanaged pointer to assembly data buffer.
         /// </param>
         /// <param name="size">
-        /// Size in bytes of the assembly data buffer
+        /// Size in bytes of the assembly data buffer.
         /// </param>
         [UnmanagedCallersOnly]
         public static void LoadAssemblyData(IntPtr data, int size)
