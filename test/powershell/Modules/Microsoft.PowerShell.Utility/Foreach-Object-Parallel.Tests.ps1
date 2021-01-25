@@ -84,9 +84,9 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $ps.Commands.AddScript("`$ProgressPreference='Continue'; 1..2 | ForEach-Object -Parallel { Write-Progress -Activity Progress -Status Running }") | Out-Null
         $ps.Invoke()
         $pr = $ps.Streams.Progress.ReadAll()
-        $pr.Count | Should -be 2
-        $pr[0].Activity | Should -be Progress
-        $pr[0].StatusDescription | Should -be Running
+        $pr.Count | Should -Be 2
+        $pr[0].Activity | Should -Be Progress
+        $pr[0].StatusDescription | Should -Be Running
         $ps.Dispose()
     }
  
