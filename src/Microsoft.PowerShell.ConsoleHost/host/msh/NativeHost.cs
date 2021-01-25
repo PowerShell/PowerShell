@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell
         {
             byte[] bytes = new byte[size];
             Marshal.Copy(data, bytes, 0, size);
-            Stream stream = new MemoryStream(bytes);
+            using var stream = new MemoryStream(bytes);
             AssemblyLoadContext.Default.LoadFromStream(stream);
         }
     }
