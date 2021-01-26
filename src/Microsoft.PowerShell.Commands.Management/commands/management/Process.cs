@@ -1247,7 +1247,16 @@ namespace Microsoft.PowerShell.Commands
                         StopDependentService(process);
                     }
 
-                    if (!process.HasExited)
+                    // If the process has not exited and we are not Forcing, attempt close request 
+                    if (!process.HasExited && !Force)
+                    {
+                        _closeRequest = process.CloseMainWindow();
+                    }
+
+                    // If CloseMainWindow request was not successful, or unsupported, fallback to Kill
+                    // In some cases, this can have the affect that running Stop-Process without Force 
+                    /// twice would revert to Kill()
+                    if (!_closeRequest)
                     {
                         process.Kill();
                     }
@@ -1296,6 +1305,11 @@ namespace Microsoft.PowerShell.Commands
         /// Should the current powershell process to be killed.
         /// </summary>
         private bool _shouldKillCurrentProcess;
+
+        /// <summary>
+        /// Was the current process successfully sent a Close Request, or should it be Killed.
+        /// </summary>
+        private bool _closeRequest;
 
         /// <summary>
         /// Boolean variables to display the warning using ShouldContinue.
