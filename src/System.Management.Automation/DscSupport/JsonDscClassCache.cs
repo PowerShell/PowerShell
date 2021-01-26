@@ -174,11 +174,24 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             }
         }
 
+        [ThreadStatic]
+        private static bool t_newApiIsUsed = false;
+
         /// <summary>
         /// Flag shows if PS7 DSC APIs were used.
         /// </summary>
-        [ThreadStatic]
-        public static bool NewApiIsUsed = false;
+        public static bool NewApiIsUsed
+        {
+            get
+            {
+                return t_newApiIsUsed;
+            }
+
+            set
+            {
+                t_newApiIsUsed = value;
+            }
+        }
 
         /// <summary>
         /// Initialize the class cache with the default classes in $ENV:SystemDirectory\Configuration.
