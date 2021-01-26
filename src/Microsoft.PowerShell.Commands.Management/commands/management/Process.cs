@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If CloseMainWindow request was not successful, or unsupported, fallback to Kill
                     // In some cases, this can have the affect that running Stop-Process without Force 
-                    /// twice would revert to Kill()
+                    // twice would revert to Kill()
                     if (!_closeRequest)
                     {
                         process.Kill();
