@@ -2,7 +2,7 @@
 name: Distribution Support Request
 about: Requests support for a new distribution
 title: "Distribution Support Request"
-labels: Distribution-Request
+labels: Distribution-Request, Needs-Triage
 assignees: ''
 
 ---
