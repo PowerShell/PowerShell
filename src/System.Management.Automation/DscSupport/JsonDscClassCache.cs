@@ -99,6 +99,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
         private static readonly HashSet<string> s_hiddenResourceCache =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
 
+        // A collection to prevent circular importing case when Import-DscResource does not have a module specified
+        [ThreadStatic]
+        private static readonly HashSet<string> t_currentImportDscResourceInvocations = new(StringComparer.OrdinalIgnoreCase);
+
         /// <summary>
         /// Gets DSC class cache for this runspace.
         /// Cache stores the DSCRunAsBehavior, cim class and boolean to indicate if an Inbox resource has been implicitly imported.
@@ -373,6 +377,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             ClassCache.Clear();
             ByClassModuleCache.Clear();
             CacheResourcesFromMultipleModuleVersions = false;
+            t_currentImportDscResourceInvocations.Clear();
         }
 
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
@@ -1149,11 +1154,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
             else if (resourceNames != null)
             {
                 // Lookup the required resources under available PowerShell modules when modulename is not specified
-                using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+                // Make sure that this is not a circular import/parsing
+                var callLocation = string.Join(':', scriptExtent.File, scriptExtent.StartLineNumber, scriptExtent.StartColumnNumber, scriptExtent.Text);
+                if (!t_currentImportDscResourceInvocations.Contains(callLocation))
                 {
-                    powerShell.AddCommand("Get-Module");
-                    powerShell.AddParameter("ListAvailable");
-                    modules = powerShell.Invoke<PSModuleInfo>();
+                    t_currentImportDscResourceInvocations.Add(callLocation);
+                    using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+                    {
+                        powerShell.AddCommand("Get-Module");
+                        powerShell.AddParameter("ListAvailable");
+                        modules = powerShell.Invoke<PSModuleInfo>();
+                    }
                 }
             }
 
