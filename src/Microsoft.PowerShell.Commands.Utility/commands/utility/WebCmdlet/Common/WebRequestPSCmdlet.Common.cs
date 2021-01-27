@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsStandardMethodSet()
         {
-            return (ParameterSetName == "StandardMethod");
+            return (ParameterSetName == "StandardMethod" || ParameterSetName == "StandardMethodNoProxy");
         }
 
         private bool IsCustomMethodSet()
