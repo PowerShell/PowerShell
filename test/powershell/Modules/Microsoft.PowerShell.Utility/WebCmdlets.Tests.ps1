@@ -692,7 +692,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'} -NoProxy"
         $result = ExecuteWebCommand -command $command
-        ($result.Output.Content | ConvertFrom-Json).args.testparam | Should -Be "testvalue"
+        ($result.Output.Content | ConvertFrom-Json).query | Should -Be "?testparam=testvalue"
     }
 
     It "Validate Invoke-WebRequest returns HTTP errors in exception" {
@@ -2280,7 +2280,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'} -NoProxy"
         $result = ExecuteWebCommand -command $command
-        $result.Output.args.testparam | Should -Be "testvalue"
+        $result.Output.Query | Should -Be "?testparam=testvalue"
     }
 
     It "Validate Invoke-RestMethod returns HTTP errors in exception" {

@@ -820,7 +820,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsCustomMethodSet()
         {
-            return (ParameterSetName == "CustomMethod");
+            return (ParameterSetName == "CustomMethod" || ParameterSetName == "CustomMethodNoProxy");
         }
 
         private string GetBasicAuthorizationHeader()
