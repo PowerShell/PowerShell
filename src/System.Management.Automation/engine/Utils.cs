@@ -2312,6 +2312,14 @@ namespace System.Management.Automation.Internal
             }
         }
 
+        internal static void NotNullOrEmpty(ICollection value, string paramName)
+        {
+            if (value == null || value.Count == 0)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
         internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
         {
             if (!precondition)

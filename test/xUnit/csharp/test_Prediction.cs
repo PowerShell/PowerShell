@@ -69,14 +69,14 @@ namespace PSTests.Sequential
             }
         }
 
-        public void OnSuggestionDisplayed(uint session, int countOrIndex)
+        public void OnSuggestionDisplayed(string clientId, uint session, int countOrIndex)
         {
-            DisplayedSuggestions.Add($"{session}-{countOrIndex}");
+            DisplayedSuggestions.Add($"{clientId}-{session}-{countOrIndex}");
         }
 
-        public void OnSuggestionAccepted(uint session, string acceptedSuggestion)
+        public void OnSuggestionAccepted(string clientId, uint session, string acceptedSuggestion)
         {
-            AcceptedSuggestions.Add($"{session}-{acceptedSuggestion}");
+            AcceptedSuggestions.Add($"{clientId}-{session}-{acceptedSuggestion}");
         }
 
         public SuggestionPackage GetSuggestion(string clientId, PredictionContext context, CancellationToken cancellationToken)
@@ -180,9 +180,9 @@ namespace PSTests.Sequential
                 var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
                 CommandPrediction.OnCommandLineAccepted(Client, history);
-                CommandPrediction.OnSuggestionDisplayed(slow.Id, Session, 2);
-                CommandPrediction.OnSuggestionDisplayed(fast.Id, Session, -1);
-                CommandPrediction.OnSuggestionAccepted(slow.Id, Session, "Yeah");
+                CommandPrediction.OnSuggestionDisplayed(Client, slow.Id, Session, 2);
+                CommandPrediction.OnSuggestionDisplayed(Client, fast.Id, Session, -1);
+                CommandPrediction.OnSuggestionAccepted(Client, slow.Id, Session, "Yeah");
 
                 // The calls to 'StartEarlyProcessing' and 'OnSuggestionAccepted' are queued in thread pool,
                 // so we wait a bit to make sure the calls are done.
@@ -200,13 +200,13 @@ namespace PSTests.Sequential
                 Assert.Equal($"{Client}-{history[1]}", fast.History[1]);
 
                 Assert.Single(slow.DisplayedSuggestions);
-                Assert.Equal($"{Session}-2", slow.DisplayedSuggestions[0]);
+                Assert.Equal($"{Client}-{Session}-2", slow.DisplayedSuggestions[0]);
 
                 Assert.Single(fast.DisplayedSuggestions);
-                Assert.Equal($"{Session}--1", fast.DisplayedSuggestions[0]);
+                Assert.Equal($"{Client}-{Session}--1", fast.DisplayedSuggestions[0]);
 
                 Assert.Single(slow.AcceptedSuggestions);
-                Assert.Equal($"{Session}-Yeah", slow.AcceptedSuggestions[0]);
+                Assert.Equal($"{Client}-{Session}-Yeah", slow.AcceptedSuggestions[0]);
 
                 Assert.Empty(fast.AcceptedSuggestions);
             }

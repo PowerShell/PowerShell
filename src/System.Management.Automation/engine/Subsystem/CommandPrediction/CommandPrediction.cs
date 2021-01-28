@@ -29,15 +29,16 @@ namespace System.Management.Automation.Subsystem
 
         /// <summary>
         /// Gets the mini-session id that represents a specific invocation to the <see cref="ICommandPredictor.GetSuggestion"/> API of the predictor.
+        /// When it's not specified, it's considered by a client that the predictor doesn't expect feedback.
         /// </summary>
-        public uint Session { get; }
+        public uint? Session { get; }
 
         /// <summary>
         /// Gets the suggestions.
         /// </summary>
         public IReadOnlyList<PredictiveSuggestion> Suggestions { get; }
 
-        internal PredictionResult(Guid id, string name, uint session, List<PredictiveSuggestion> suggestions)
+        internal PredictionResult(Guid id, string name, uint? session, List<PredictiveSuggestion> suggestions)
         {
             Id = id;
             Name = name;
@@ -153,13 +154,14 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Send feedback to a predictor when one or more suggestions from it were displayed to the user.
         /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
         /// <param name="session">The mini-session where the displayed suggestions came from.</param>
         /// <param name="countOrIndex">
         /// When the value is greater than 0, it's the number of displayed suggestions from the list returned in <paramref name="session"/>, starting from the index 0.
         /// When the value is less than or equal to 0, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
-        public static void OnSuggestionDisplayed(Guid predictorId, uint session, int countOrIndex)
+        public static void OnSuggestionDisplayed(string client, Guid predictorId, uint session, int countOrIndex)
         {
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -172,7 +174,7 @@ namespace System.Management.Automation.Subsystem
                 if (predictor.AcceptFeedback && predictor.Id == predictorId)
                 {
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.OnSuggestionDisplayed(session, countOrIndex),
+                        state => state.OnSuggestionDisplayed(client, session, countOrIndex),
                         predictor,
                         preferLocal: false);
                 }
@@ -182,10 +184,11 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Send feedback to a predictor when a suggestion from it was accepted.
         /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
         /// <param name="session">The mini-session where the accepted suggestion came from.</param>
         /// <param name="suggestionText">The accepted suggestion text.</param>
-        public static void OnSuggestionAccepted(Guid predictorId, uint session, string suggestionText)
+        public static void OnSuggestionAccepted(string client, Guid predictorId, uint session, string suggestionText)
         {
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
 
@@ -200,7 +203,7 @@ namespace System.Management.Automation.Subsystem
                 if (predictor.AcceptFeedback && predictor.Id == predictorId)
                 {
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.OnSuggestionAccepted(session, suggestionText),
+                        state => state.OnSuggestionAccepted(client, session, suggestionText),
                         predictor,
                         preferLocal: false);
                 }
