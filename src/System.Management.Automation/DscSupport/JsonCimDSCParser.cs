@@ -10,7 +10,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Security;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
 {
     /// <summary>
     /// Class that does high level Cim schema parsing.

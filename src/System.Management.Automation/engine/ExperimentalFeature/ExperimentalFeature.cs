@@ -125,7 +125,7 @@ namespace System.Management.Automation
                     description: "Don't have $ErrorActionPreference affect stderr output"),
                 new ExperimentalFeature(
                     name: "PS7DscSupport",
-                    description: "Support cross-platform DSC"),
+                    description: "Support the cross-platform class-based DSC"),
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),

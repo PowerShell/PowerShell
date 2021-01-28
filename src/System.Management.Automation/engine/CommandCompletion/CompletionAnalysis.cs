@@ -1721,8 +1721,8 @@ namespace System.Management.Automation
 
                 foreach (var keyword in matchedResults)
                 {
-                    string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.NewApiIsUsed
-                        ? Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json.DscClassCache.GetDSCResourceUsageString(keyword)
+                    string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform.DscClassCache.NewApiIsUsed
+                        ? Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform.DscClassCache.GetDSCResourceUsageString(keyword)
                         : Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
 
                     if (results == null)

@@ -588,7 +588,7 @@ Fix steps:
 
         $json = & $publishPath\pwsh -noprofile -command {
             # Special case for DSC code in PS;
-            # this exp feature requires new DSC module that is not inbox,
+            # this experimental feature requires new DSC module that is not inbox,
             # so we don't want default DSC use case be broken
             $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
 

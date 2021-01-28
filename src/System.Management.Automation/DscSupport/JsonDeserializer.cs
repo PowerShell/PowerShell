@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.Json
+namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
 {
     internal class JsonDeserializer
     {

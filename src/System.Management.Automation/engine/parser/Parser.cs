@@ -2933,7 +2933,7 @@ namespace System.Management.Automation.Language
             //
             Runspaces.Runspace localRunspace = null;
             bool topLevel = false;
-            bool useJsonSchema = false;
+            bool useCrossPlatformSchema = false;
             try
             {
                 // At this point, we'll need a runspace to use to hold the metadata for the parse. If there is no
@@ -2969,7 +2969,6 @@ namespace System.Management.Automation.Language
 
                 ExpressionAst configurationBodyScriptBlock = null;
 
-                // Automatically import the PSDesiredStateConfiguration module at this point.
                 PowerShell p = null;
 
                 // Save the parser we're using so we can resume the current parse when we're done.
@@ -2997,7 +2996,7 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            if (ExperimentalFeature.IsEnabled(Dsc.Json.DscClassCache.DscExperimentalFeatureName))
+                            if (ExperimentalFeature.IsEnabled(Dsc.CrossPlatform.DscClassCache.DscExperimentalFeatureName))
                             {
                                 // In addition to checking if experimental feature is enabled
                                 // also check if PSDesiredStateConfiguration is already loaded
@@ -3013,16 +3012,17 @@ namespace System.Management.Automation.Language
                                     if (moduleInfo.Version.Major < 3)
                                     {
                                         prev3IsLoaded = true;
+                                        break;
                                     }
                                 }
 
                                 p.Commands.Clear();
                                 
-                                useJsonSchema = !prev3IsLoaded;
+                                useCrossPlatformSchema = !prev3IsLoaded;
 
-                                if (useJsonSchema)
+                                if (useCrossPlatformSchema)
                                 {
-                                    Dsc.Json.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    Dsc.CrossPlatform.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
                                 }
                                 else
                                 {
@@ -3274,9 +3274,9 @@ namespace System.Management.Automation.Language
                     // Clear out all of the cached classes and keywords.
                     // They will need to be reloaded when the generated function is actually run.
                     //
-                    if (useJsonSchema)
+                    if (useCrossPlatformSchema)
                     {
-                        Dsc.Json.DscClassCache.ClearCache();
+                        Dsc.CrossPlatform.DscClassCache.ClearCache();
                     }
                     else
                     {
