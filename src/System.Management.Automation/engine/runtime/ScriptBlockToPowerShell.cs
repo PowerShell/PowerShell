@@ -393,17 +393,18 @@ namespace System.Management.Automation
             UsingExpressionAst usingAst,
             string[] foreachNames)
         {
-            // Example:
-            //  $Test1 = "Hello"
-            //  1 | ForEach-Object -Parallel { 
-            //      $using:Test1
-            //      $Test2 = "Goodbye"
-            //      1 | ForEach-Object -Parallel {
-            //          $using:Test1    # Invalid using scope
-            //          $using:Test2    # Valid using scope
-            //      }
-            //  }
-
+            /*
+                Example:
+                $Test1 = "Hello"
+                1 | ForEach-Object -Parallel { 
+                   $using:Test1
+                   $Test2 = "Goodbye"
+                   1 | ForEach-Object -Parallel {
+                       $using:Test1    # Invalid using scope
+                       $using:Test2    # Valid using scope
+                   }
+                }
+            */
             Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
 
             // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
