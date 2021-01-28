@@ -324,7 +324,7 @@ namespace System.Management.Automation
         /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted.</param>
         /// <param name = "context">Execution context.</param>
-        /// <param name = "foreachNames">List of foreach command names and aliases</param>
+        /// <param name = "foreachNames">List of foreach command names and aliases.</param>
         /// <returns>Dictionary of using variable map.</returns>
         internal static Dictionary<string, object> GetUsingValuesForEachParallel(
             ScriptBlock scriptBlock,
@@ -385,15 +385,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Walks the using Ast to verify it is used within a foreach-object -parallel command
         /// and parameter set scope, and not from within a nested foreach-object -parallel call.
-        ///     $Test1 = "Hello"
-        ///     1 | ForEach-Object -Parallel { 
-        ///         $using:Test1
-        ///         $Test2 = "Goodbye"
-        ///         1 | ForEach-Object -Parallel {
-        ///             $using:Test1    # Invalid using scope
-        ///             $using:Test2    # Valid using scope
-        ///         }
-        ///     }
         /// </summary>
         /// <param name="usingAst">Using Ast to check.</param>
         /// <param name-"foreachNames">List of foreach-object command names.</param>
@@ -402,6 +393,17 @@ namespace System.Management.Automation
             UsingExpressionAst usingAst,
             string[] foreachNames)
         {
+            // Example:
+            //  $Test1 = "Hello"
+            //  1 | ForEach-Object -Parallel { 
+            //      $using:Test1
+            //      $Test2 = "Goodbye"
+            //      1 | ForEach-Object -Parallel {
+            //          $using:Test1    # Invalid using scope
+            //          $using:Test2    # Valid using scope
+            //      }
+            //  }
+
             Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
 
             // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
@@ -425,6 +427,7 @@ namespace System.Management.Automation
                                     break;
                                 }
                             }
+                            
                             if (found)
                             {
                                 // Verify this is foreach-object with parallel parameter set.

@@ -385,7 +385,8 @@ namespace Microsoft.PowerShell.Commands
         // TODO: Look into using SessionState.Internal.GetAliasTable() to find all user created aliases.
         //       But update Alias command logic to maintain reverse table that lists all aliases mapping
         //       to a single command definition, for performance.
-        private static string[] ForEachNames = new string[] {
+        private static string[] forEachNames = new string[]
+        {
             "ForEach-Object",
             "foreach",
             "%"
@@ -422,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
                 scriptBlock: Parallel,
                 isTrustedInput: allowUsingExpression,
                 context: this.Context,
-                foreachNames: ForEachNames);
+                foreachNames: forEachNames);
 
             // Validate using values map, which is a map of '$using:' variables referenced in the script.
             // Script block variables are not allowed since their behavior is undefined outside the runspace
