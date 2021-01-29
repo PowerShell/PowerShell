@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell
             BufferCell[,] newRegion;
             if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
             {
-                newRegion = new BufferCell[0,_content.Length];
+                newRegion = new BufferCell[0, _content.Length];
             }
             else
             {
@@ -315,6 +315,7 @@ namespace Microsoft.PowerShell
                         Console.Out.Write(_content[i]);
                     }
                 }
+
                 _rawui.CursorPosition = currentPosition;
                 Console.CursorVisible = true;
             }

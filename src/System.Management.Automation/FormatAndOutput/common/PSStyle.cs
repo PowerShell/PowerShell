@@ -28,10 +28,10 @@ namespace System.Management.Automation
     /// </summary>
     public enum ProgressView
     {
-        /// <summary>Minimal</summary>
+        /// <summary>Render progress using minimal space.</summary>
         Minimal = 0,
 
-        /// <summary>Full</summary>
+        /// <summary>Class rendering of progress.</summary>
         Full = 1,
     }
 
