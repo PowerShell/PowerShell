@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell
 
         private void WriteContent()
         {
-            if (_content != null && ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+            if (_content != null)
             {
                 Console.CursorVisible = false;
                 var currentPosition = _rawui.CursorPosition;
