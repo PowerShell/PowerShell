@@ -1270,17 +1270,11 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
                 "libstdc++6",
-                "zlib1g"
+                "zlib1g",
+                "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                "libssl1.0.0|libssl1.1|libssl1.02"
             )
 
-            switch -regex ($Distribution) {
-                "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-                "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "ubuntu\.20\.04" { $Dependencies += @("libssl1.1", "libicu66") }
-                "debian\.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
-                "debian\.(10|11)" { $Dependencies += @("libssl1.1", "libicu63") }
-                default { throw "Debian distro '$Distribution' is not supported." }
-            }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
                 "openssl-libs",
