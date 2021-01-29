@@ -1272,7 +1272,7 @@ function Get-PackageDependencies
                 "libstdc++6",
                 "zlib1g",
                 "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
-                "libssl1.0.0|libssl1.1|libssl1.02"
+                "libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
         } elseif ($Environment.IsRedHatFamily) {
