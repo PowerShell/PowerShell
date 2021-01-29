@@ -71,10 +71,16 @@ namespace Microsoft.PowerShell
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
 
+                if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                {
+                    rows = _content.Length;
+                    cols = PSStyle.Instance.Progress.MaxWidth;
+                }
+
                 _savedCursor = _rawui.CursorPosition;
                 _location.X = 0;
 
-                if (Platform.IsLinux || (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal))
+                if (!Platform.IsWindows || ((ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)))
                 {
                     _location.Y = _rawui.CursorPosition.Y;
 
@@ -109,13 +115,14 @@ namespace Microsoft.PowerShell
 
                     // create cleared region to clear progress bar later
                     _savedRegion = tempProgressRegion;
-                    for (int row = 0; row < rows; row++)
+                    if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View != ProgressView.Minimal)
                     {
-                        for (int col = 0; col < cols; col++)
+                        for (int row = 0; row < rows; row++)
                         {
-                            _savedRegion[row, col].Character = ' ';
-                            _savedRegion[row, col].ForegroundColor = Console.ForegroundColor;
-                            _savedRegion[row, col].BackgroundColor = Console.BackgroundColor;
+                            for (int col = 0; col < cols; col++)
+                            {
+                                _savedRegion[row, col].Character = ' ';
+                            }
                         }
                     }
 
@@ -160,12 +167,31 @@ namespace Microsoft.PowerShell
         {
             if (IsShowing)
             {
-                // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
-                // we have no way of knowing if the screen buffer has changed since we were hidden.  By "no good way" I mean that
-                // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
-                // be very complicated.
+                if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                {
+                    _rawui.CursorPosition = _location;
+                    for (int i = 0; i < _content.Length; i++)
+                    {
+                        if (i < _content.Length - 1)
+                        {
+                            Console.Out.WriteLine(string.Empty.PadRight(PSStyle.Instance.Progress.MaxWidth));
+                        }
+                        else
+                        {
+                            Console.Out.Write(string.Empty.PadRight(PSStyle.Instance.Progress.MaxWidth));
+                        }
+                    }
+                }
+                else
+                {
+                    // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
+                    // we have no way of knowing if the screen buffer has changed since we were hidden.  By "no good way" I mean that
+                    // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
+                    // be very complicated.
 
-                _rawui.SetBufferContents(_location, _savedRegion);
+                    _rawui.SetBufferContents(_location, _savedRegion);
+                }
+
                 _savedRegion = null;
                 _rawui.CursorPosition = _savedCursor;
             }
@@ -201,9 +227,16 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
+            BufferCell[,] newRegion;
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+            {
+                newRegion = new BufferCell[0,_content.Length];
+            }
+            else
+            {
+                newRegion = _rawui.NewBufferCellArray(_content, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
+            }
 
-            BufferCell[,] newRegion = _rawui.NewBufferCellArray(_content, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
             Dbg.Assert(newRegion != null, "NewBufferCellArray has failed!");
 
             if (_progressRegion == null)
@@ -279,7 +312,6 @@ namespace Microsoft.PowerShell
 
         private Coordinates _location = new Coordinates(0, 0);
         private Coordinates _savedCursor;
-//        private int _previousRows;
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;
