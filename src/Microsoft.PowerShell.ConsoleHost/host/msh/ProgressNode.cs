@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && (PSStyle.Instance.Progress.View == ProgressView.Minimal || PSStyle.Instance.Progress.View == ProgressView.MinimalWithClear))
+            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
             {
                 this.Style = RenderStyle.Ansi;
             }
@@ -421,6 +421,8 @@ namespace Microsoft.PowerShell
             {
                 sb.Append(PSStyle.Instance.ReverseOff);
             }
+
+            sb.Append(PSStyle.Instance.Reset);
 
             strCollection.Add(
                 StringUtil.Format(

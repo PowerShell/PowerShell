@@ -30,12 +30,9 @@ namespace System.Management.Automation
     {
         /// <summary>Minimal</summary>
         Minimal = 0,
-        
-        /// <summary>MinimalWithClear</summary>
-        MinimalWithClear = 1,
 
         /// <summary>Full</summary>
-        Full = 2,
+        Full = 1,
     }
 
     #region PSStyle
