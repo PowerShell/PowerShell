@@ -422,15 +422,14 @@ namespace Microsoft.PowerShell
                 sb.Append(PSStyle.Instance.ReverseOff);
             }
 
-            sb.Append(PSStyle.Instance.Reset);
-
             strCollection.Add(
                 StringUtil.Format(
-                    "{0}{1}{2} [{3}]",
+                    "{0}{1}{2} [{3}]{4}",
                     indent,
                     PSStyle.Instance.Progress.Style,
                     Activity,
-                    sb.ToString())
+                    sb.ToString(),
+                    PSStyle.Instance.Reset)
                 .PadRight(padding));
         }
 

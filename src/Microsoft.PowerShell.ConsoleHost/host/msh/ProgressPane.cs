@@ -180,9 +180,9 @@ namespace Microsoft.PowerShell
                         maxWidth = _bufSize.Width;
                     }
 
-                    for (int i = 0; i < _content.Length; i++)
+                    for (int i = 0; i < _savedRegion.GetLength(1); i++)
                     {
-                        if (i < _content.Length - 1)
+                        if (i < _savedRegion.GetLength(1) - 1)
                         {
                             Console.Out.WriteLine(string.Empty.PadRight(maxWidth));
                         }
