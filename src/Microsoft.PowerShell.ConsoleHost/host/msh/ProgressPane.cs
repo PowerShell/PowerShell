@@ -259,26 +259,6 @@ namespace Microsoft.PowerShell
             {
                 Console.CursorVisible = false;
                 var currentPosition = _rawui.CursorPosition;
-
-                if (_content.Length > _previousRows)
-                {
-                    int scrollRows = _content.Length - _previousRows;
-
-                    if (_rawui.CursorPosition.X != 0 || _previousRows == 0)
-                    {
-                        scrollRows++;
-                    }
-
-                    _previousRows = _content.Length;
-
-                    for (int i = 0; i < scrollRows; i++)
-                    {
-                        Console.Out.WriteLine();
-                    }
-
-                    _location.Y = _rawui.CursorPosition.Y - _previousRows;
-                }
-
                 _rawui.CursorPosition = _location;
 
                 for (int i = 0; i < _content.Length; i++)
@@ -292,7 +272,6 @@ namespace Microsoft.PowerShell
                         Console.Out.Write(_content[i]);
                     }
                 }
-
                 _rawui.CursorPosition = currentPosition;
                 Console.CursorVisible = true;
             }
@@ -300,7 +279,7 @@ namespace Microsoft.PowerShell
 
         private Coordinates _location = new Coordinates(0, 0);
         private Coordinates _savedCursor;
-        private int _previousRows;
+//        private int _previousRows;
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;
