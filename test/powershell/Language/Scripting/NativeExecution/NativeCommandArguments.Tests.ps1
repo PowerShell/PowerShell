@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+$PSNativeApplicationUsesArgumentList = 1
 Describe "Native Command Arguments" -tags "CI" {
     # When passing arguments to native commands, quoted segments that contain
     # spaces need to be quoted with '"' characters when they are passed to the
@@ -11,8 +12,8 @@ Describe "Native Command Arguments" -tags "CI" {
         $a = 'a"b c"d'
         $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
         $lines.Count | Should -Be 3
-        $lines[0] | Should -BeExactly 'Arg 0 is <ab cd>'
-        $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
+        $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
+        $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
         $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
     }
 
@@ -30,8 +31,8 @@ Describe "Native Command Arguments" -tags "CI" {
     It "Should handle spaces between escaped quotes" {
         $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
         $lines.Count | Should -Be 2
-        $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
-        $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
+        $lines[0] | Should -BeExactly 'Arg 0 is <a\"b c\"d>'
+        $lines[1] | Should -BeExactly 'Arg 1 is <a\"b c\"d>'
     }
 
     It "Should correctly quote paths with spaces: <arguments>" -TestCases @(
