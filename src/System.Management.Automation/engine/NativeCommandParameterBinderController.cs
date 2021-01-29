@@ -39,6 +39,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the command arguments as an array of strings
+        /// </summary>
+        internal string[] ArgumentList
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).ArgumentList;
+            }
+        }
+
+        /// <summary>
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.
         /// </summary>
