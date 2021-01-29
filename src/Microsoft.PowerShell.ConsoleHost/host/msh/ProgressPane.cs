@@ -75,6 +75,10 @@ namespace Microsoft.PowerShell
                 {
                     rows = _content.Length;
                     cols = PSStyle.Instance.Progress.MaxWidth;
+                    if (PSStyle.Instance.Progress.MaxWidth > _bufSize.Width)
+                    {
+                        cols = _bufSize.Width;
+                    }
                 }
 
                 _savedCursor = _rawui.CursorPosition;
@@ -170,15 +174,21 @@ namespace Microsoft.PowerShell
                 if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
                 {
                     _rawui.CursorPosition = _location;
+                    int maxWidth = PSStyle.Instance.Progress.MaxWidth;
+                    if (maxWidth > _bufSize.Width)
+                    {
+                        maxWidth = _bufSize.Width;
+                    }
+
                     for (int i = 0; i < _content.Length; i++)
                     {
                         if (i < _content.Length - 1)
                         {
-                            Console.Out.WriteLine(string.Empty.PadRight(PSStyle.Instance.Progress.MaxWidth));
+                            Console.Out.WriteLine(string.Empty.PadRight(maxWidth));
                         }
                         else
                         {
-                            Console.Out.Write(string.Empty.PadRight(PSStyle.Instance.Progress.MaxWidth));
+                            Console.Out.Write(string.Empty.PadRight(maxWidth));
                         }
                     }
                 }
