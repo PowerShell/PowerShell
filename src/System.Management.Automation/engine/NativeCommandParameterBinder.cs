@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -151,6 +152,16 @@ namespace System.Management.Automation
 
         private readonly StringBuilder _arguments = new StringBuilder();
 
+        internal string[] ArgumentList
+        {
+            get
+            {
+                return _argumentList.ToArray();
+            }
+        }
+
+        private List<string> _argumentList = new List<string>();
+
         #endregion internal members
 
         #region private members
@@ -199,11 +210,15 @@ namespace System.Management.Automation
                 if (!string.IsNullOrEmpty(arg))
                 {
                     _arguments.Append(separator);
+                    // Don't add the separator to the argument list, it's
+                    // an artifact of constructing the string to be used.
 
                     if (sawVerbatimArgumentMarker)
                     {
                         arg = Environment.ExpandEnvironmentVariables(arg);
                         _arguments.Append(arg);
+                        // we need to split the argument on spaces
+                        _argumentList.AddRange(arg.Split(" ", StringSplitOptions.RemoveEmptyEntries));
                     }
                     else
                     {
@@ -227,10 +242,12 @@ namespace System.Management.Automation
                             if (stringConstantType == StringConstantType.DoubleQuoted)
                             {
                                 _arguments.Append(ResolvePath(arg, Context));
+                                _argumentList.Add(ResolvePath(arg, Context));
                             }
                             else
                             {
                                 _arguments.Append(arg);
+                                _argumentList.Add(arg);
                             }
 
                             // need to escape all trailing backslashes so the native command receives it correctly
@@ -244,7 +261,22 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            PossiblyGlobArg(arg, stringConstantType);
+                            if (argArrayAst != null)
+                            {
+                                // Ok, we have a literal array, so take the extent, break it on spaces
+                                // and add them to the argument list
+                                // Question? Should the break be space or tab (bash says no)
+                                // _argumentList.AddRange(argArrayAst.Extent.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries));
+                                foreach (string element in argArrayAst.Extent.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    PossiblyGlobArg(element, stringConstantType);
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                PossiblyGlobArg(arg, stringConstantType);
+                            }
                         }
                     }
                 }
@@ -291,6 +323,8 @@ namespace System.Management.Automation
                             // Fallthrough will append the pattern unchanged.
                         }
 
+                        // TODO: we may need to add our own thing here
+
                         // Expand paths, but only from the file system.
                         if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
                         {
@@ -298,6 +332,7 @@ namespace System.Management.Automation
                             foreach (var path in paths)
                             {
                                 _arguments.Append(sep);
+                                // _argumentList.Add(sep);
                                 sep = " ";
                                 var expandedPath = (path.BaseObject as FileSystemInfo).FullName;
                                 if (normalizePath)
@@ -311,10 +346,12 @@ namespace System.Management.Automation
                                     _arguments.Append('"');
                                     _arguments.Append(expandedPath);
                                     _arguments.Append('"');
+                                    _argumentList.Add(expandedPath);
                                 }
                                 else
                                 {
                                     _arguments.Append(expandedPath);
+                                    _argumentList.Add(expandedPath);
                                 }
 
                                 argExpanded = true;
@@ -331,12 +368,14 @@ namespace System.Management.Automation
                     if (string.Equals(arg, "~"))
                     {
                         _arguments.Append(home);
+                        _argumentList.Add(home);
                         argExpanded = true;
                     }
                     else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                     {
                         var replacementString = home + arg.Substring(1);
                         _arguments.Append(replacementString);
+                        _argumentList.Add(replacementString);
                         argExpanded = true;
                     }
                 }
@@ -351,6 +390,7 @@ namespace System.Management.Automation
             if (!argExpanded)
             {
                 _arguments.Append(arg);
+                _argumentList.Add(arg);
             }
         }
 
