@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
                 _savedCursor = _rawui.CursorPosition;
                 _location.X = 0;
 
-                if (!Platform.IsWindows || ((ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)))
+                if (!Platform.IsWindows || (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal))
                 {
                     _location.Y = _rawui.CursorPosition.Y;
 
