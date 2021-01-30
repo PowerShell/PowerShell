@@ -271,6 +271,7 @@ function Start-PSBuild {
         [Parameter(ParameterSetName="Default")]
         [switch]$NoPSModuleRestore,
         [switch]$CI,
+        [switch]$ForGuestConfigService,
 
         # Skips the step where the pwsh that's been built is used to create a configuration
         # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
@@ -320,6 +321,15 @@ function Start-PSBuild {
     if ("win-arm","win-arm64" -contains $Runtime -and -not $environment.IsWindows) {
         throw "Cross compiling for win-arm or win-arm64 is only supported on Windows environment"
     }
+
+    if ($ForGuestConfigService -and $Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+        throw "Special build for the Guest Config service is done only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
+    }
+
+    if ($ForGuestConfigService -and $CrossGen) {
+        throw "Special build for the Guest Config service requires the minimal disk footprint, so `CrossGen` is not allowed"
+    }
+
     function Stop-DevPowerShell {
         Get-Process pwsh* |
             Where-Object {
@@ -389,6 +399,7 @@ Fix steps:
         Verbose=$true
         SMAOnly=[bool]$SMAOnly
         PSModuleRestore=$PSModuleRestore
+        ForGuestConfigService=$ForGuestConfigService
     }
     $script:Options = New-PSOptions @OptionsArguments
 
@@ -413,7 +424,7 @@ Fix steps:
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -like 'fxdependent*') {
+    if($Options.Runtime -like 'fxdependent*' -or $ForGuestConfigService) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
@@ -466,11 +477,12 @@ Fix steps:
         Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*') {
-            if ($Options.Runtime -like 'win-arm*') {
-                $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
-            } else {
-                $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
+            $sdkToUse = 'Microsoft.NET.Sdk'
+            if ($Options.Runtime -like 'win7-*' -and !$ForGuestConfigService) {
+                $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
+
+            $Arguments += "/property:SDKToUse=$sdkToUse"
 
             Write-Log -message "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
@@ -650,14 +662,14 @@ function Restore-PSPackage
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
 
-        $sdkToUse = if (($Options.Runtime -eq 'fxdependent-win-desktop' -or $Options.Runtime -like 'win*')) { # this is fxd or some windows runtime
-            if ($Options.Runtime -like 'win-arm*') {
-                'Microsoft.NET.Sdk'
-            } else {
-                'Microsoft.NET.Sdk.WindowsDesktop'
+        if ($Options.Runtime -eq 'fxdependent-win-desktop') {
+            $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
+        }
+        else {
+            $sdkToUse = 'Microsoft.NET.Sdk'
+            if ($Options.Runtime -like 'win7-*' -and !$ForGuestConfigService) {
+                $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
-        } else {
-            'Microsoft.NET.Sdk'
         }
 
         if ($PSModule.IsPresent) {
@@ -782,7 +794,9 @@ function New-PSOptions {
 
         [switch]$SMAOnly,
 
-        [switch]$PSModuleRestore
+        [switch]$PSModuleRestore,
+
+        [switch]$ForGuestConfigService
     )
 
     # Add .NET CLI tools to PATH
@@ -876,7 +890,8 @@ function New-PSOptions {
                 -Configuration $Configuration `
                 -PSModuleRestore $PSModuleRestore.IsPresent `
                 -Framework $Framework `
-                -Output $Output
+                -Output $Output `
+                -ForGuestConfigService $ForGuestConfigService
 }
 
 # Get the Options of the last build
@@ -3009,7 +3024,8 @@ function Restore-PSOptions {
                     -Configuration $options.Configuration `
                     -PSModuleRestore $options.PSModuleRestore `
                     -Framework $options.Framework `
-                    -Output $options.Output
+                    -Output $options.Output `
+                    -ForGuestConfigService $options.ForGuestConfigService
 
     Set-PSOptions -Options $newOptions
 }
@@ -3046,7 +3062,11 @@ function New-PSOptionsObject
 
         [Parameter(Mandatory)]
         [String]
-        $Output
+        $Output,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $ForGuestConfigService
     )
 
     return @{
@@ -3058,6 +3078,7 @@ function New-PSOptionsObject
         Output = $Output
         CrossGen = $CrossGen
         PSModuleRestore = $PSModuleRestore
+        ForGuestConfigService = $ForGuestConfigService
     }
 }
 
