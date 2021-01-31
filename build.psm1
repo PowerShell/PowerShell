@@ -488,8 +488,12 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
 
-            if ($CrossGen) {
-                ## fxdependent package cannot be CrossGen'ed
+            if ($ForGuestConfigService) {
+                # Remove symbol files, xml document files.
+                Remove-Item "$publishPath\*.pdb", "$publishPath\*.xml" -Force
+            }
+            elseif ($CrossGen) {
+                # fxdependent package cannot be CrossGen'ed
                 Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
                 Write-Log -message "pwsh.exe with ngen binaries is available at: $($Options.Output)"
             }
