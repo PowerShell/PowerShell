@@ -194,6 +194,7 @@ namespace System.Management.Automation.Subsystem
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SuggestionPackage"/> struct without providing a session id.
+        /// Note that, when a session id is not specified, it's considered by a client that the predictor doesn't expect feedback.
         /// </summary>
         /// <param name="suggestionEntries">The suggestions to return.</param>
         public SuggestionPackage(List<PredictiveSuggestion> suggestionEntries)

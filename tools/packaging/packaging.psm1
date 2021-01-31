@@ -2036,24 +2036,27 @@ function CopyReferenceAssemblies
     switch ($assemblyName) {
         { $_ -in $supportedRefList } {
             $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
-            Copy-Item $refDll -Destination $refNugetPath -Force
-            Write-Log "Copied file $refDll to $refNugetPath"
+            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
         }
 
         "Microsoft.PowerShell.SDK" {
             foreach ($asmFileName in $assemblyFileList) {
                 $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
                 if (Test-Path -Path $refFile) {
-                    Copy-Item $refFile -Destination $refNugetPath -Force
-                    Write-Log "Copied file $refFile to $refNugetPath"
+                    $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
+                    Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
+                    Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
                 }
             }
         }
 
         default {
             $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
-            Copy-Item $ref_SMA -Destination $refNugetPath -Force
-            Write-Log "Copied file $ref_SMA to $refNugetPath"
+            $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
+            Copy-Item $ref_SMA, $ref_doc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
         }
     }
 }
@@ -2235,8 +2238,13 @@ function New-ReferenceAssembly
             throw "$assemblyName.dll was not found at: $Linux64BinPath"
         }
 
+        $dllXmlDoc = Join-Path $Linux64BinPath "$assemblyName.xml"
+        if (-not (Test-Path $dllXmlDoc)) {
+            throw "$assemblyName.xml was not found at: $Linux64BinPath"
+        }
+
         $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
-        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgs"
 
         Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
         Write-Log "Reference assembly file generated at: $generatedSource"
@@ -2267,6 +2275,9 @@ function New-ReferenceAssembly
 
             Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
             Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            Copy-Item $dllXmlDoc $RefAssemblyDestinationPath -Force
+            Write-Log "Xml document '$assemblyName.xml' copied to $RefAssemblyDestinationPath"
 
             if ($assemblyName -eq "System.Management.Automation") {
                 $SMAReferenceAssembly = $refBinPath
