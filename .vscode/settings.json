@@ -36,6 +36,5 @@
   "powershell.codeFormatting.whitespaceAfterSeparator": true,
 
   // Omnisharp : Enable EditorConfig support
-  "omnisharp.enableEditorConfigSupport": true,
-  "powershell.codeFormatting.addWhitespaceAroundPipe": true
+  "omnisharp.enableEditorConfigSupport": true
 }
