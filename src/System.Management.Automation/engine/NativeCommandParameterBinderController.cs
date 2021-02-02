@@ -50,6 +50,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get whether to use the new API for StartInfo
+        /// </summary>
+        internal bool UseArgumentList
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).UseArgumentList;
+            }
+        }
+
+        /// <summary>
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.
         /// </summary>

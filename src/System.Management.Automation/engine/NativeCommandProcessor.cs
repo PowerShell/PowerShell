@@ -1160,16 +1160,9 @@ namespace System.Management.Automation
             ExecutionContext context = this.Command.Context;
 
             // We provide the user a way to select the new behavior via a new preference variable
-            // If the variable is set (and it 1) we will use the new behavior
-            bool OldStyleNativeInvocation = true;
-            string preference = LanguagePrimitives.ConvertTo<string>(context.GetVariableValue(new VariablePath("PSNativeApplicationUsesArgumentList")));
-            if (!string.IsNullOrEmpty(preference) && preference == "1")
-            {
-                OldStyleNativeInvocation = false;
-            }
             using (ParameterBinderBase.bindingTracer.TraceScope( "BIND NAMED native application line args [{0}]", this.Path))
             {
-                if (OldStyleNativeInvocation)
+                if (!NativeParameterBinderController.UseArgumentList)
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope( "BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
@@ -1181,7 +1174,7 @@ namespace System.Management.Automation
                     // Use new API for running native application
                     int position = 0;
                     foreach (string nativeArgument in NativeParameterBinderController.ArgumentList) {
-                        if (!string.IsNullOrEmpty(nativeArgument)) {
+                        if (nativeArgument != null) {
                             using (ParameterBinderBase.bindingTracer.TraceScope( "BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
                             {
                                 startInfo.ArgumentList.Add(nativeArgument);
