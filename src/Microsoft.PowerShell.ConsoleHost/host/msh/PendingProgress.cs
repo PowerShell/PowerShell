@@ -517,7 +517,7 @@ namespace Microsoft.PowerShell
             {
                 node.Age = Math.Min(node.Age + 1, Int32.MaxValue - 1);
 
-                if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
                     node.Style = ProgressNode.RenderStyle.Ansi;
                 }
@@ -592,9 +592,9 @@ namespace Microsoft.PowerShell
 
             ArrayList result = new ArrayList();
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+            if (ProgressNode.IsMinimalProgressRenderingEnabled())
             {
-                RenderHelper(result, _topLevelNodes, 0, maxWidth, rawUI);
+                RenderHelper(result, _topLevelNodes, indentation: 0, maxWidth, rawUI);
                 return (string[])result.ToArray(typeof(string));
             }
 

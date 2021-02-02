@@ -71,11 +71,11 @@ namespace Microsoft.PowerShell
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
 
-                if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
                     rows = _content.Length;
                     cols = PSStyle.Instance.Progress.MaxWidth;
-                    if (PSStyle.Instance.Progress.MaxWidth > _bufSize.Width)
+                    if (cols > _bufSize.Width)
                     {
                         cols = _bufSize.Width;
                     }
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell
                 _savedCursor = _rawui.CursorPosition;
                 _location.X = 0;
 
-                if (!Platform.IsWindows || (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal))
+                if (!Platform.IsWindows || ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
                     _location.Y = _rawui.CursorPosition.Y;
 
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell
                             new Rectangle(_location.X, _location.Y, _location.X + cols - 1, _location.Y + rows - 1));
                 }
 
-                if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
                     WriteContent();
                 }
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell
         {
             if (IsShowing)
             {
-                if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
                     _rawui.CursorPosition = _location;
                     int maxWidth = PSStyle.Instance.Progress.MaxWidth;
@@ -238,8 +238,13 @@ namespace Microsoft.PowerShell
             }
 
             BufferCell[,] newRegion;
-            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+            if (ProgressNode.IsMinimalProgressRenderingEnabled())
             {
+                // Legacy progress rendering relies on a BufferCell which defines a character, foreground color, and background color
+                // per cell.  This model doesn't work with ANSI escape sequences.  However, there is existing logic on rendering that
+                // relies on the existence of the BufferCell to know if something has been rendered previously.  Here we are creating
+                // an empty BufferCell, but using the second dimension to capture the number of rows so that we can clear that many
+                // elsewhere in Hide().
                 newRegion = new BufferCell[0, _content.Length];
             }
             else
@@ -284,7 +289,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+                    if (ProgressNode.IsMinimalProgressRenderingEnabled())
                     {
                         WriteContent();
                     }

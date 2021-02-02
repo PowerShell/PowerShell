@@ -39,7 +39,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Contains configuration for how PowerShell renders text.
     /// </summary>
-    public class PSStyle
+    public sealed class PSStyle
     {
         /// <summary>
         /// Contains foreground colors.

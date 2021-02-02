@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal)
+            if (IsMinimalProgressRenderingEnabled())
             {
                 this.Style = RenderStyle.Ansi;
             }
@@ -354,6 +354,11 @@ namespace Microsoft.PowerShell
                         secRemain,
                         StatusDescription),
                     maxWidth));
+        }
+
+        internal static bool IsMinimalProgressRenderingEnabled()
+        {
+            return ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal;
         }
 
         /// <summary>
