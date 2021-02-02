@@ -162,6 +162,20 @@ namespace System.Management.Automation
 
         private List<string> _argumentList = new List<string>();
 
+        /// <summary>
+        /// If true, we will use the new ArgumentList variant for StartInfo
+        /// </summary>
+        internal bool UseArgumentList
+        {
+            get
+            {
+                string preference = LanguagePrimitives.ConvertTo<string>(
+                    Context.GetVariableValue(new VariablePath("PSNativeApplicationUsesArgumentList"))
+                    );
+                return (preference == "1");
+            }
+        }
+
         #endregion internal members
 
         #region private members
@@ -187,9 +201,11 @@ namespace System.Management.Automation
             do
             {
                 string arg;
+                object currentObj;
                 if (list == null)
                 {
                     arg = PSObject.ToStringParser(context, obj);
+                    currentObj = obj;
                 }
                 else
                 {
@@ -198,7 +214,8 @@ namespace System.Management.Automation
                         break;
                     }
 
-                    arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
+                    currentObj = ParserOps.Current(null, list);
+                    arg = PSObject.ToStringParser(context, currentObj);
 
                     currentElement += 1;
                     if (currentElement != 0)
@@ -261,7 +278,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (argArrayAst != null)
+                            if (argArrayAst != null && UseArgumentList)
                             {
                                 // Ok, we have a literal array, so take the extent, break it on spaces
                                 // and add them to the argument list
@@ -279,6 +296,11 @@ namespace System.Management.Automation
                             }
                         }
                     }
+                }
+                else if (UseArgumentList && currentObj != null)
+                {
+                    // add empty strings to arglist, but not nulls
+                    _argumentList.Add(arg);
                 }
             }
             while (list != null);
