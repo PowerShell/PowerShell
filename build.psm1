@@ -587,8 +587,10 @@ Fix steps:
         -not ($Runtime -like 'fxdependent*')) {
 
         $json = & $publishPath\pwsh -noprofile -command {
-            $expFeatures = [System.Collections.Generic.List[string]]::new()
-            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+            # Special case for DSC code in PS;
+            # this experimental feature requires new DSC module that is not inbox,
+            # so we don't want default DSC use case be broken
+            $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
 
             # Make sure ExperimentalFeatures from modules in PSHome are added
             # https://github.com/PowerShell/PowerShell/issues/10550
@@ -598,7 +600,7 @@ Fix steps:
                 }
             }
 
-            ConvertTo-Json $expFeatures.ToArray()
+            ConvertTo-Json $expFeatures
         }
 
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
