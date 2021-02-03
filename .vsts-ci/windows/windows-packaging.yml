@@ -78,3 +78,4 @@ stages:
   - template: templates/windows-packaging.yml
     parameters:
       channel: stable
+      architecture: x86
