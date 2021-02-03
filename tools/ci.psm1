@@ -475,7 +475,7 @@ function Invoke-CIFinish
         }
 
         # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
