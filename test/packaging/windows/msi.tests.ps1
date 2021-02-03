@@ -54,6 +54,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         $msiX64Path = $env:PsMsiX64Path
         $channel = $env:PSMsiChannel
+        $runtime = $env:PSMsiRuntime
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -82,11 +83,21 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Upgrade code" {
+        $channelRuntime = "$channel-$runtime"
         BeforeAll {
-            if ($channel -eq 'preview') {
-                $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
-            } else {
-                $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
+            switch ($channelRuntime) {
+                "preview-win-x64" {
+                    $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+                }
+                "stable-win-x64" {
+                    $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
+                }
+                "preview-win-x86" {
+                    $msiUpgradeCode = '86abcfbd-1ccc-4a88-b8b2-0facfde29094'
+                }
+                "stable-win-x86" {
+                    $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
+                }
             }
         }
 
