@@ -84,6 +84,7 @@ Describe -Name "Windows MSI" -Fixture {
 
     Context "Upgrade code" {
         BeforeAll {
+            Write-Verbose "cr-$channel-$runtime" -Verbose
             switch ("$channel-$runtime") {
                 "preview-win-x64" {
                     $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
@@ -96,6 +97,9 @@ Describe -Name "Windows MSI" -Fixture {
                 }
                 "stable-win-x86" {
                     $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
+                }
+                default {
+                    throw "'$_' not a valid channel runtime combination"
                 }
             }
         }
