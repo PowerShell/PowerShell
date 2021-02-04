@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell
 
         private void WriteContent()
         {
-            if (_content != null)
+            if (_content is not null)
             {
                 Console.CursorVisible = false;
                 var currentPosition = _rawui.CursorPosition;
