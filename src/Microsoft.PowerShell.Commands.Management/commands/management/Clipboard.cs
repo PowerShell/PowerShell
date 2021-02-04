@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static string StartProcess(
             string tool,
             string args,
-            string stdin = "",
+            string stdin = string.Empty,
             bool readStdout = true)
         {
             ProcessStartInfo startInfo = new();
