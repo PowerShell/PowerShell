@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell
 
         internal static bool IsMinimalProgressRenderingEnabled()
         {
-            return ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View == ProgressView.Minimal;
+            return ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.View == ProgressView.Minimal;
         }
 
         /// <summary>

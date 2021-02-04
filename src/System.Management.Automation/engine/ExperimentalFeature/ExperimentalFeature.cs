@@ -21,6 +21,7 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
+        internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
 
         #endregion
 
@@ -130,7 +131,7 @@ namespace System.Management.Automation
                     name: "PSAnsiRendering",
                     description: "Enable $PSStyle variable to control ANSI rendering of strings"),
                 new ExperimentalFeature(
-                    name: "PSAnsiProgress",
+                    name: PSAnsiProgressFeatureName,
                     description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

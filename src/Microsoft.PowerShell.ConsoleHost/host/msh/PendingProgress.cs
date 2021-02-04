@@ -517,10 +517,9 @@ namespace Microsoft.PowerShell
             {
                 node.Age = Math.Min(node.Age + 1, Int32.MaxValue - 1);
 
-.                node.Style = ProgressNode.IsMinimalProgressRenderingEnabled()
+                node.Style = ProgressNode.IsMinimalProgressRenderingEnabled()
                     ? ProgressNode.RenderStyle.Ansi
                     : node.Style = ProgressNode.RenderStyle.FullPlus;
- ``
 
                 return true;
             }

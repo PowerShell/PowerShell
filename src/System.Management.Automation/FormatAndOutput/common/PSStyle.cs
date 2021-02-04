@@ -31,8 +31,8 @@ namespace System.Management.Automation
         /// <summary>Render progress using minimal space.</summary>
         Minimal = 0,
 
-        /// <summary>Class rendering of progress.</summary>
-        Full = 1,
+        /// <summary>Classic rendering of progress.</summary>
+        Classic = 1,
     }
 
     #region PSStyle
@@ -287,7 +287,7 @@ namespace System.Management.Automation
             public int MaxWidth { get; set; } = 120;
 
             /// <summary>
-            /// Gets or sets the style for progress bar.
+            /// Gets or sets the view for progress bar.
             /// </summary>
             public ProgressView View { get; set; } = ProgressView.Minimal;
         }

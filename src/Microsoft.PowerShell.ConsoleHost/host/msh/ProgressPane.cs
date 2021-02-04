@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell
 
                     // create cleared region to clear progress bar later
                     _savedRegion = tempProgressRegion;
-                    if (ExperimentalFeature.IsEnabled("PSAnsiProgress") && PSStyle.Instance.Progress.View != ProgressView.Minimal)
+                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.View != ProgressView.Minimal)
                     {
                         for (int row = 0; row < rows; row++)
                         {
