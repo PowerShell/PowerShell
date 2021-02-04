@@ -65,14 +65,9 @@ namespace Microsoft.PowerShell
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
 
-            if (IsMinimalProgressRenderingEnabled())
-            {
-                this.Style = RenderStyle.Ansi;
-            }
-            else
-            {
-                this.Style = RenderStyle.FullPlus;
-            }
+            this.Style = IsMinimalProgressRenderingEnabled()
+                ? RenderStyle.Ansi
+                : this.Style = RenderStyle.FullPlus;
 
             this.SourceId = sourceId;
         }
