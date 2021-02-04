@@ -83,9 +83,8 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Upgrade code" {
-        $channelRuntime = "$channel-$runtime"
         BeforeAll {
-            switch ($channelRuntime) {
+            switch ("$channel-$runtime") {
                 "preview-win-x64" {
                     $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
                 }
