@@ -157,9 +157,9 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "MSI should have updated path" -Skip:(!(Test-Elevated)) {
             if ($channel -eq 'preview') {
-                $pattern = '*files\powershell*\preview*'
+                $pattern = '*files*\powershell*\preview*'
             } else {
-                $pattern = '*files\powershell*'
+                $pattern = '*files*\powershell*'
             }
 
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -169,10 +169,6 @@ Describe -Name "Windows MSI" -Fixture {
                 ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object { $_ -notin $beforePath } |
                 ForEach-Object { Write-Verbose -Verbose $_ }
-            }
-
-            if ($runtime -eq 'win7-x86') {
-                Set-ItResult -Pending -Because "Setting path is not working on x86"
             }
 
             $psPath | Should -Not -BeNullOrEmpty
