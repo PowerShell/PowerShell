@@ -688,6 +688,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ($result.Output.Content | ConvertFrom-Json).args.testparam | Should -Be "testvalue"
     }
 
+    It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET and -NoProxy" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'} -NoProxy"
+        $result = ExecuteWebCommand -command $command
+        ($result.Output.Content | ConvertFrom-Json).query | Should -Be "?testparam=testvalue"
+    }
+
     It "Validate Invoke-WebRequest returns HTTP errors in exception" {
         $query = @{
             body           = "I am a teapot!!!"
@@ -2267,6 +2274,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should -Be "testvalue"
+    }
+
+    It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET and -NoProxy" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'} -NoProxy"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Query | Should -Be "?testparam=testvalue"
     }
 
     It "Validate Invoke-RestMethod returns HTTP errors in exception" {
