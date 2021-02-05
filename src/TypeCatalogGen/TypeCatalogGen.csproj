@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Generates CorePsTypeCatalog.cs given powershell.inc</Description>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>TypeCatalogGen</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>

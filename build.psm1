@@ -750,8 +750,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("net5.0")]
-        [string]$Framework = "net5.0",
+        [ValidateSet("net6.0")]
+        [string]$Framework = "net6.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
