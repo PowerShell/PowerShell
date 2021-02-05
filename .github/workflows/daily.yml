@@ -31,16 +31,16 @@ jobs:
         run: |
           $currentVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Write-Verbose "OLD_VERSION=$currentVersion" -Verbose
-          "OLD_VERSION=$currentVersion" | Out-File $GITHUB_ENV -Append
+          "OLD_VERSION=$currentVersion" | Out-File $env:GITHUB_ENV -Append
 
           ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Write-Verbose "NEW_VERSION=$newVersion" -Verbose
-          "NEW_VERSION=$newVersion" | Out-File $GITHUB_ENV -Append
+          "NEW_VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Append
 
           if ($currentVersion -ne $newVersion) {
             Write-Verbose "CREATE_PR=true" -Verbose
-            "CREATE_PR=true" | Out-File $GITHUB_ENV -Append
+            "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
           }
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
