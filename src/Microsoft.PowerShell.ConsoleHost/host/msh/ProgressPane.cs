@@ -326,7 +326,14 @@ namespace Microsoft.PowerShell
                 }
 
                 _rawui.CursorPosition = currentPosition;
-                Console.CursorVisible = true;
+                try
+                {
+                    Console.CursorVisible = true;
+                }
+                catch (System.IO.IOException)
+                {
+                    // ignore if set can't set cursor visibility
+                }
             }
         }
 
