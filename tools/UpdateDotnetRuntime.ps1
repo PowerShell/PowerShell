@@ -233,7 +233,7 @@ if ($dotnetUpdate.ShouldUpdate) {
         if ($feedname -eq 'dotnet-internal') {
             # This NuGet feed is for internal to Microsoft use only.
             $dotnetInternalFeed = $dotnetMetadataJson.internalfeed.url
-            $updatedNugetFile = (Get-Content .\nuget.config -Raw) -replace "</packageSources>", "  <add key=`"dotnet6-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
+            $updatedNugetFile = (Get-Content "$PSScriptRoot/../nuget.config" -Raw) -replace "</packageSources>", "  <add key=`"dotnet-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
             $updatedNugetFile | Out-File .\nuget.config -Force
             Register-PackageSource -Name 'dotnet-internal' -Location $dotnetInternalFeed -ProviderName NuGet
             Write-Verbose -Message "Register new package source 'dotnet-internal'" -verbose
