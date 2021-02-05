@@ -79,3 +79,7 @@ stages:
     parameters:
       channel: stable
       architecture: x86
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: x86

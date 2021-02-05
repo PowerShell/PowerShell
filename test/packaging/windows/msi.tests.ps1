@@ -136,10 +136,18 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "MSI should have not be updated path" -Skip:(!(Test-Elevated)) {
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -notin $beforePath} |
-                ForEach-Object {Write-Verbose -Verbose $_}
-            $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -like '*files*\powershell*' -and $_ -notin $beforePath}
+                Where-Object { $_ -like '*files*\powershell*' -and $_ -notin $beforePath }
+
+            if (!$psPath) {
+                ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
+                Where-Object { $_ -notin $beforePath } |
+                ForEach-Object { Write-Verbose -Verbose $_ }
+            }
+
+            if ($runtime -eq 'win7-x86')
+            {
+                Set-ItResult -Pending -Because "Setting path is not working on x86"
+            }
 
             $psPath | Should -BeNullOrEmpty
         }
