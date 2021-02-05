@@ -142,7 +142,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net5.0"></group>
+            <group targetFramework="net6.0"></group>
         </dependencies>
     </metadata>
 </package>

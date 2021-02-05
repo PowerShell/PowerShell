@@ -5,7 +5,7 @@
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
