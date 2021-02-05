@@ -42,8 +42,13 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             Get-Clipboard -Raw | Should -BeExactly "hello$([Environment]::NewLine)world"
         }
 
-        It 'Set-Clipboard accepts empty string' {
-            '' | Set-Clipboard
+        It 'Set-Clipboard accepts <value> string' -TestCases @(
+            @{ value = 'empty'; input = "" }
+            @{ value = 'null' ; input = $null }
+        ){
+            param ($input)
+
+            $input | Set-Clipboard
             Get-Clipboard -Raw | Should -BeNullOrEmpty
         }
     }
