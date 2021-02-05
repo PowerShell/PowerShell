@@ -221,7 +221,7 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     $addDotnetSource = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
 
-    if (!$UseNuGetOrg -and ($addDotnetSource)) {
+    if (!$UseNuGetOrg -and $addDotnetSource) {
         $nugetFileSources = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add
 
         if ($addDotnetSource -and $feedname -ne 'dotnet-internal') {
