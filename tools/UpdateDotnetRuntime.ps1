@@ -230,7 +230,7 @@ if ($dotnetUpdate.ShouldUpdate) {
             Write-Verbose -Message "Register new package source $feedname" -verbose
         }
 
-        if ($addDotnetSource -and $feedname -eq 'dotnet-internal') {
+        if ($feedname -eq 'dotnet-internal') {
             # This NuGet feed is for internal to Microsoft use only.
             $dotnetInternalFeed = $dotnetMetadataJson.internalfeed.url
             $updatedNugetFile = (Get-Content .\nuget.config -Raw) -replace "</packageSources>", "  <add key=`"dotnet6-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
