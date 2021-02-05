@@ -224,7 +224,7 @@ if ($dotnetUpdate.ShouldUpdate) {
     if (!$UseNuGetOrg -and $addDotnetSource) {
         $nugetFileSources = ([xml](Get-Content "$PSScriptRoot/../nuget.config" -Raw)).Configuration.packagesources.add
 
-        if ($addDotnetSource -and $feedname -ne 'dotnet-internal') {
+        if ($feedname -ne 'dotnet-internal') {
             $dotnetFeed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
             Register-PackageSource -Name $feedname -Location $dotnetFeed -ProviderName NuGet
             Write-Verbose -Message "Register new package source $feedname" -verbose
