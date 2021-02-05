@@ -136,6 +136,9 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "MSI should have not be updated path" -Skip:(!(Test-Elevated)) {
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
+                Where-Object {$_ -notin $beforePath} |
+                ForEach-Object {Write-Verbose -Verbose $_}
+            $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files*\powershell*' -and $_ -notin $beforePath}
 
             $psPath | Should -BeNullOrEmpty
