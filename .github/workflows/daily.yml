@@ -3,6 +3,7 @@
 
 name: PowerShell Daily
 on:
+    workflow_dispatch:
     schedule:
     # At 13:00 UTC every day.
     - cron:  '0 13 * * *'
