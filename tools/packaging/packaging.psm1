@@ -336,6 +336,7 @@ function Start-PSPackage {
                 if ($Runtime -match "-x86") {
                     $TargetArchitecture = "x86"
                 }
+                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
                 $Arguments = @{
                     ProductNameSuffix = $NameSuffix
