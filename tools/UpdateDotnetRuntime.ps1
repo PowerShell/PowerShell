@@ -222,7 +222,7 @@ if ($dotnetUpdate.ShouldUpdate) {
     $addDotnetSource = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
 
     if (!$UseNuGetOrg -and $addDotnetSource) {
-        $nugetFileSources = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add
+        $nugetFileSources = ([xml](Get-Content "$PSScriptRoot/../nuget.config" -Raw)).Configuration.packagesources.add
 
         if ($addDotnetSource -and $feedname -ne 'dotnet-internal') {
             $dotnetFeed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
