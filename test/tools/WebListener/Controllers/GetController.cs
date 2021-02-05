@@ -35,6 +35,7 @@ namespace mvc.Controllers
                 {"headers", headers},
                 {"origin" , Request.HttpContext.Connection.RemoteIpAddress.ToString()},
                 {"url"    , UriHelper.GetDisplayUrl(Request)},
+                {"query"  , Request.QueryString.ToUriComponent()},
                 {"method" , Request.Method}
             };
 
