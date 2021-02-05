@@ -68,7 +68,7 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
 
         # Run script synchronously on remote session, and let disconnect script disconnect the remote session.
         $null = Invoke-Command -Session $session -ScriptBlock {
-            1..60 | ForEach-Object { Start-Sleep 1; "Output $_" }
+            1..90 | ForEach-Object { Start-Sleep 1; "Output $_" }
         } -ErrorAction SilentlyContinue
 
         # Session should be disconnected.
