@@ -448,7 +448,7 @@ namespace System.Management.Automation
                 foreach (string link in _links)
                 {
                     XmlElement navigationLink = _doc.CreateElement("maml:navigationLink", mamlURI);
-                    bool isOnlineHelp = Uri.IsWellFormedUriString(Uri.EscapeUriString(link), UriKind.Absolute);
+                    bool isOnlineHelp = Uri.IsWellFormedUriString(Uri.EscapeDataString(link), UriKind.Absolute);
                     string nodeName = isOnlineHelp ? "maml:uri" : "maml:linkText";
                     XmlElement linkText = _doc.CreateElement(nodeName, mamlURI);
                     XmlText linkText_text = _doc.CreateTextNode(link);
