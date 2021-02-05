@@ -116,7 +116,7 @@ Describe "Verify Markdown Links" {
                             catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
-                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
+                                    throw "Failed to complete request to `"$url`". $($_.Exception.Response.StatusCode) $($_.Exception.Message)"
                                 }
                             }
                         }
