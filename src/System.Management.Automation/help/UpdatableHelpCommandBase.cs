@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fullyQualifiedNames">FullyQualifiedNames.</param>
         internal void Process(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> fullyQualifiedNames)
         {
-            _helpSystem.WebClient.UseDefaultCredentials = _useDefaultCredentials;
+            _helpSystem._useDefaultCredentials = _useDefaultCredentials;
 
             if (moduleNames != null)
             {
