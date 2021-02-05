@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell
     ProgressNode : ProgressRecord
     {
         /// <summary>
-        /// Indicates the various layouts for rendering a particular node.  Each style is progressively less terse.
+        /// Indicates the various layouts for rendering a particular node.
         /// </summary>
         internal
         enum

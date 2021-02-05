@@ -101,11 +101,7 @@ namespace Microsoft.PowerShell
                     {
                         // Scroll the console screen up by 'scrollRows'
                         var bottomLocation = _location;
-                        bottomLocation.Y = _rawui.BufferSize.Height;
-                        if (Platform.IsWindows)
-                        {
-                            bottomLocation.Y--;
-                        }
+                        bottomLocation.Y = _rawui.BufferSize.Height - 1;
 
                         _rawui.CursorPosition = bottomLocation;
                         for (int i = 0; i < scrollRows; i++)

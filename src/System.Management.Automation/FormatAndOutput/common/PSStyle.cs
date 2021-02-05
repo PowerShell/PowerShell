@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains foreground colors.
         /// </summary>
-        public class ForegroundColor
+        public sealed class ForegroundColor
         {
             /// <summary>
             /// Gets the color black.
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains background colors.
         /// </summary>
-        public class BackgroundColor
+        public sealed class BackgroundColor
         {
             /// <summary>
             /// Gets the color black.
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains configuration for the progress bar visualization.
         /// </summary>
-        public class ProgressConfiguration
+        public sealed class ProgressConfiguration
         {
             /// <summary>
             /// Gets or sets the style for progress bar.
@@ -295,7 +295,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains formatting styles for steams and objects.
         /// </summary>
-        public class FormattingData
+        public sealed class FormattingData
         {
             /// <summary>
             /// Gets or sets the accent style for formatting.
