@@ -1304,33 +1304,34 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override void WriteProgress(Int64 sourceId, ProgressRecord record)
         {
-            if (record == null)
-            {
-                Dbg.Assert(false, "WriteProgress called with null ProgressRecord");
-            }
-            else if (!Console.IsOutputRedirected)
-            {
-                bool matchPattern;
-                string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
-                if (matchPattern)
-                {
-                    record = new ProgressRecord(record) { CurrentOperation = currentOperation };
-                }
+            Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
 
-                // We allow only one thread at a time to update the progress state.)
-                if (_parent.ErrorFormat == Serialization.DataFormat.XML)
+            if (Console.IsOutputRedirected)
+            {
+                // Do not write progress bar when the stdout is redirected.
+                return;
+            }
+
+            bool matchPattern;
+            string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
+            if (matchPattern)
+            {
+                record = new ProgressRecord(record) { CurrentOperation = currentOperation };
+            }
+
+            // We allow only one thread at a time to update the progress state.)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
+            {
+                PSObject obj = new PSObject();
+                obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
+                obj.Properties.Add(new PSNoteProperty("Record", record));
+                _parent.ErrorSerializer.Serialize(obj, "progress");
+            }
+            else
+            {
+                lock (_instanceLock)
                 {
-                    PSObject obj = new PSObject();
-                    obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
-                    obj.Properties.Add(new PSNoteProperty("Record", record));
-                    _parent.ErrorSerializer.Serialize(obj, "progress");
-                }
-                else
-                {
-                    lock (_instanceLock)
-                    {
-                        HandleIncomingProgressRecord(sourceId, record);
-                    }
+                    HandleIncomingProgressRecord(sourceId, record);
                 }
             }
         }
