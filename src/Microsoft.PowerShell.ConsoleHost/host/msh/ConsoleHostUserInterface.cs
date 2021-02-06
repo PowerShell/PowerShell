@@ -1308,7 +1308,7 @@ namespace Microsoft.PowerShell
             {
                 Dbg.Assert(false, "WriteProgress called with null ProgressRecord");
             }
-            else
+            else if (!Console.IsOutputRedirected)
             {
                 bool matchPattern;
                 string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);

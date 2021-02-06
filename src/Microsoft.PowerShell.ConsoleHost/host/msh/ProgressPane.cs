@@ -301,14 +301,7 @@ namespace Microsoft.PowerShell
         {
             if (_content is not null)
             {
-                try
-                {
-                    Console.CursorVisible = false;
-                }
-                catch (System.IO.IOException)
-                {
-                    // ignore if set can't set cursor visibility
-                }
+                Console.CursorVisible = false;
 
                 var currentPosition = _rawui.CursorPosition;
                 _rawui.CursorPosition = _location;
@@ -326,14 +319,7 @@ namespace Microsoft.PowerShell
                 }
 
                 _rawui.CursorPosition = currentPosition;
-                try
-                {
-                    Console.CursorVisible = true;
-                }
-                catch (System.IO.IOException)
-                {
-                    // ignore if set can't set cursor visibility
-                }
+                Console.CursorVisible = true;
             }
         }
 
