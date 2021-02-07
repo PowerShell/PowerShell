@@ -97,8 +97,11 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-Date -Date $date -UFormat %V | Should -BeExactly $week
     }
 
-    # Using the same test cases as V for ISO week date component parity
+    # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
     It "using -uformat 'G' produces the correct output" -TestCases @(
+        @{date="0055-12-31"; year = "0054"},
+        @{date="0325-01-01"; year = "0325"},
+        @{date="0777-01-01"; year = "0776"},
         @{date="1998-01-02"; year = "1998"},
         @{date="1998-01-03"; year = "1998"},
         @{date="2003-01-03"; year = "2003"},
@@ -139,8 +142,11 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-Date -Date $date -UFormat %G | Should -BeExactly $year
     }
 
-    # Using the same test cases as V for ISO week date component parity
+    # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
     It "using -uformat 'g' produces the correct output" -TestCases @(
+        @{date="0055-12-31"; yy = "54"},
+        @{date="0325-01-01"; yy = "25"},
+        @{date="0777-01-01"; yy = "76"},
         @{date="1998-01-02"; yy = "98"},
         @{date="1998-01-03"; yy = "98"},
         @{date="2003-01-03"; yy = "03"},
@@ -222,7 +228,6 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         param($date, $dayOfWeek)
         Get-Date -Date $date -UFormat %u | Should -BeExactly $dayOfWeek
     }
-    
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
         @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
         @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
