@@ -12,6 +12,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
@@ -2932,6 +2933,7 @@ namespace System.Management.Automation.Language
             //
             Runspaces.Runspace localRunspace = null;
             bool topLevel = false;
+            bool useCrossPlatformSchema = false;
             try
             {
                 // At this point, we'll need a runspace to use to hold the metadata for the parse. If there is no
@@ -2967,7 +2969,6 @@ namespace System.Management.Automation.Language
 
                 ExpressionAst configurationBodyScriptBlock = null;
 
-                // Automatically import the PSDesiredStateConfiguration module at this point.
                 PowerShell p = null;
 
                 // Save the parser we're using so we can resume the current parse when we're done.
@@ -2995,7 +2996,43 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                            if (ExperimentalFeature.IsEnabled(Dsc.CrossPlatform.DscClassCache.DscExperimentalFeatureName))
+                            {
+                                // In addition to checking if experimental feature is enabled
+                                // also check if PSDesiredStateConfiguration is already loaded
+                                // if pre-v3 is already loaded then use old mof-based APIs
+                                // otherwise use json-based APIs
+
+                                p.AddCommand(new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand)));
+                                p.AddParameter("Name", "PSDesiredStateConfiguration");
+                                
+                                bool prev3IsLoaded = false;
+                                foreach (PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
+                                {
+                                    if (moduleInfo.Version.Major < 3)
+                                    {
+                                        prev3IsLoaded = true;
+                                        break;
+                                    }
+                                }
+
+                                p.Commands.Clear();
+                                
+                                useCrossPlatformSchema = !prev3IsLoaded;
+
+                                if (useCrossPlatformSchema)
+                                {
+                                    Dsc.CrossPlatform.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                }
+                                else
+                                {
+                                    Dsc.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                }
+                            }
+                            else
+                            {
+                                Dsc.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                            }
 
                             // Report any errors encountered while loading CIM dynamic keywords.
                             if (CIMKeywordErrors.Count > 0)
@@ -3237,7 +3274,15 @@ namespace System.Management.Automation.Language
                     // Clear out all of the cached classes and keywords.
                     // They will need to be reloaded when the generated function is actually run.
                     //
-                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.ClearCache();
+                    if (useCrossPlatformSchema)
+                    {
+                        Dsc.CrossPlatform.DscClassCache.ClearCache();
+                    }
+                    else
+                    {
+                        Dsc.DscClassCache.ClearCache();
+                    }
+
                     System.Management.Automation.Language.DynamicKeyword.Reset();
                 }
 

@@ -1182,7 +1182,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1243,7 +1243,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {

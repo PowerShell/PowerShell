@@ -1270,17 +1270,11 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
                 "libstdc++6",
-                "zlib1g"
+                "zlib1g",
+                "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                "libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
-            switch -regex ($Distribution) {
-                "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-                "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "ubuntu\.20\.04" { $Dependencies += @("libssl1.1", "libicu66") }
-                "debian\.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
-                "debian\.(10|11)" { $Dependencies += @("libssl1.1", "libicu63") }
-                default { throw "Debian distro '$Distribution' is not supported." }
-            }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
                 "openssl-libs",
@@ -2036,24 +2030,27 @@ function CopyReferenceAssemblies
     switch ($assemblyName) {
         { $_ -in $supportedRefList } {
             $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
-            Copy-Item $refDll -Destination $refNugetPath -Force
-            Write-Log "Copied file $refDll to $refNugetPath"
+            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
         }
 
         "Microsoft.PowerShell.SDK" {
             foreach ($asmFileName in $assemblyFileList) {
                 $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
                 if (Test-Path -Path $refFile) {
-                    Copy-Item $refFile -Destination $refNugetPath -Force
-                    Write-Log "Copied file $refFile to $refNugetPath"
+                    $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
+                    Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
+                    Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
                 }
             }
         }
 
         default {
             $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
-            Copy-Item $ref_SMA -Destination $refNugetPath -Force
-            Write-Log "Copied file $ref_SMA to $refNugetPath"
+            $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
+            Copy-Item $ref_SMA, $ref_doc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
         }
     }
 }
@@ -2235,8 +2232,13 @@ function New-ReferenceAssembly
             throw "$assemblyName.dll was not found at: $Linux64BinPath"
         }
 
+        $dllXmlDoc = Join-Path $Linux64BinPath "$assemblyName.xml"
+        if (-not (Test-Path $dllXmlDoc)) {
+            throw "$assemblyName.xml was not found at: $Linux64BinPath"
+        }
+
         $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
-        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgs"
 
         Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
         Write-Log "Reference assembly file generated at: $generatedSource"
@@ -2267,6 +2269,9 @@ function New-ReferenceAssembly
 
             Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
             Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            Copy-Item $dllXmlDoc $RefAssemblyDestinationPath -Force
+            Write-Log "Xml document '$assemblyName.xml' copied to $RefAssemblyDestinationPath"
 
             if ($assemblyName -eq "System.Management.Automation") {
                 $SMAReferenceAssembly = $refBinPath
@@ -2366,6 +2371,11 @@ function CleanupGeneratedSourceCode
             ApplyTo = @("System.Management.Automation")
             Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)]"
             Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute] */ "
         },
         @{
             ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")

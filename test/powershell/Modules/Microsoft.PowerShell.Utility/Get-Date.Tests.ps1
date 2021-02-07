@@ -97,6 +97,48 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-Date -Date $date -UFormat %V | Should -BeExactly $week
     }
 
+    # Using the same test cases as V for ISO week date component parity
+    It "using -uformat 'u' produces the correct output" -TestCases @(
+        @{date="1998-01-02"; dayOfWeek = "5"},
+        @{date="1998-01-03"; dayOfWeek = "6"},
+        @{date="2003-01-03"; dayOfWeek = "5"},
+        @{date="2004-01-02"; dayOfWeek = "5"},
+        @{date="2004-01-03"; dayOfWeek = "6"},
+        @{date="2005-01-01"; dayOfWeek = "6"},
+        @{date="2005-01-02"; dayOfWeek = "7"},
+        @{date="2005-12-31"; dayOfWeek = "6"},
+        @{date="2006-01-01"; dayOfWeek = "7"},
+        @{date="2006-01-02"; dayOfWeek = "1"},
+        @{date="2006-12-31"; dayOfWeek = "7"},
+        @{date="2007-01-01"; dayOfWeek = "1"},
+        @{date="2007-12-30"; dayOfWeek = "7"},
+        @{date="2007-12-31"; dayOfWeek = "1"},
+        @{date="2008-01-01"; dayOfWeek = "2"},
+        @{date="2008-12-28"; dayOfWeek = "7"},
+        @{date="2008-12-29"; dayOfWeek = "1"},
+        @{date="2008-12-30"; dayOfWeek = "2"},
+        @{date="2008-12-31"; dayOfWeek = "3"},
+        @{date="2009-01-01"; dayOfWeek = "4"},
+        @{date="2009-01-02"; dayOfWeek = "5"},
+        @{date="2009-01-03"; dayOfWeek = "6"},
+        @{date="2009-12-31"; dayOfWeek = "4"},
+        @{date="2010-01-01"; dayOfWeek = "5"},
+        @{date="2010-01-02"; dayOfWeek = "6"},
+        @{date="2010-01-03"; dayOfWeek = "7"},
+        @{date="2010-01-04"; dayOfWeek = "1"},
+        @{date="2014-01-03"; dayOfWeek = "5"},
+        @{date="2015-01-02"; dayOfWeek = "5"},
+        @{date="2015-01-03"; dayOfWeek = "6"},
+        @{date="2020-01-03"; dayOfWeek = "5"},
+        @{date="2025-01-03"; dayOfWeek = "5"},
+        @{date="2026-01-02"; dayOfWeek = "5"},
+        @{date="2026-01-03"; dayOfWeek = "6"},
+        @{date="2031-01-03"; dayOfWeek = "5"}
+    ) {
+        param($date, $dayOfWeek)
+        Get-Date -Date $date -UFormat %u | Should -BeExactly $dayOfWeek
+    }
+
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
         @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
         @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
