@@ -2982,6 +2982,11 @@ function New-MSIPackage
         [ValidateScript( {Test-Path $_})]
         [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
+
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
@@ -3101,6 +3106,25 @@ function New-MSIPackage
     else
     {
         $errorMessage = "Failed to create $msiLocationPath"
+        throw $errorMessage
+    }
+
+    $exeLocationPath = Join-Path $PWD "$packageName.exe"
+    $exePdbLocationPath = Join-Path $PWD "$packageName.exe.wixpdb"
+
+    Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
+        IsPreview = $isPreview
+        TargetPath = $msiLocationPath
+    }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
+
+    if ((Test-Path $exeLocationPath) )
+    {
+        Write-Verbose "You can find the MSI @ $exeLocationPath" -Verbose
+        $exeLocationPath
+    }
+    else
+    {
+        $errorMessage = "Failed to create $exeLocationPath"
         throw $errorMessage
     }
 }
