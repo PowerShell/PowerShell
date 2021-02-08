@@ -73,11 +73,3 @@ stages:
       tagSet: Others
 
   - template: templates/verify-xunit.yml
-
-- stage: PackagingWin
-  displayName: Packaging for Windows
-  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
-  jobs:
-  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
-  - template: templates/windows-packaging.yml
-

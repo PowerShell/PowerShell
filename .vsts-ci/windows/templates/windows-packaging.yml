@@ -1,16 +1,18 @@
 parameters:
   pool: 'Hosted VS2017'
   jobName: 'win_packaging'
+  architecture: 'x64'
+  channel: 'preview'
   parentJobs: []
 
 jobs:
-- job: ${{ parameters.jobName }}
+- job: ${{ parameters.jobName }}_${{ parameters.channel }}_${{ parameters.architecture }}
   dependsOn:
       ${{ parameters.parentJobs }}
   pool:
     name: ${{ parameters.pool }}
 
-  displayName: Windows Packaging
+  displayName: Windows Packaging - ${{ parameters.architecture }} - ${{ parameters.channel }}
 
   steps:
   - powershell: |
@@ -30,5 +32,5 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
-      Invoke-CIFinish
+      Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
     displayName: Build and Test Package
