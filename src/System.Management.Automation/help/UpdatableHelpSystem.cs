@@ -242,7 +242,7 @@ namespace System.Management.Automation.Help
 
         internal HttpClient HttpClient { get; }
 
-        internal bool _useDefaultCredentials;
+        internal bool UseDefaultCredentials;
 
         internal string CurrentModule { get; set; }
 
@@ -260,7 +260,7 @@ namespace System.Management.Automation.Help
             _cmdlet = cmdlet;
             _cancelTokenSource = new CancellationTokenSource();
 
-            _useDefaultCredentials = useDefaultCredentials;
+            UseDefaultCredentials = useDefaultCredentials;
 
 #if !CORECLR
             WebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(HandleDownloadProgressChanged);
@@ -341,7 +341,7 @@ namespace System.Management.Automation.Help
                 string xml;
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.UseDefaultCredentials = _useDefaultCredentials;
+                    handler.UseDefaultCredentials = UseDefaultCredentials;
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.Timeout = _defaultTimeout;
@@ -422,7 +422,7 @@ namespace System.Management.Automation.Help
                     using (HttpClientHandler handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
-                        handler.UseDefaultCredentials = _useDefaultCredentials;
+                        handler.UseDefaultCredentials = UseDefaultCredentials;
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Help
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 handler.AllowAutoRedirect = false;
-                handler.UseDefaultCredentials = _useDefaultCredentials;
+                handler.UseDefaultCredentials = UseDefaultCredentials;
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
