@@ -29,12 +29,11 @@ jobs:
     displayName: Remove Old .NET SDKs
     condition: succeededOrFailed()
 
-  - powershell: |
-      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+  - pwsh: |
       Import-Module .\tools\ci.psm1
-      Invoke-CIInstall
+      Invoke-CIInstall -SkipUser
     displayName: Bootstrap
-    condition: succeededOrFailed()
+    condition: succeeded()
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
