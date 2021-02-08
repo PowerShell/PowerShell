@@ -48,8 +48,8 @@ pr:
     - /src/powershell-win-core/powershell-win-core.csproj
     - /tools/ci.psm1
     - /tools/packaging/*
-    - /assets/files.wxs
-    - /assets/Product.wxs
+    - /assets/wix/files.wxs
+    - /assets/wix/Product.wxs
 
 variables:
   - name: GIT_CONFIG_PARAMETERS
