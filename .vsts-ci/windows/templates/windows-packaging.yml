@@ -22,6 +22,13 @@ jobs:
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
+  - pwsh: |
+      if (Test-Path -Path $HOME/.dotnet) {
+          Remove-Item $HOME/.dotnet -Recurse -Force
+      }
+    displayName: Remove Old .NET SDKs
+    condition: succeededOrFailed()
+
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
