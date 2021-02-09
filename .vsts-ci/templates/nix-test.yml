@@ -34,10 +34,16 @@ jobs:
     continueOnError: true
 
   - pwsh: |
+      if (Test-Path -Path $HOME/.dotnet) {
+          Remove-Item $HOME/.dotnet -Recurse -Force
+      }
+    displayName: Remove Old .NET SDKs
+    condition: succeededOrFailed()
+
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
-    condition: succeededOrFailed()
 
   - task: ExtractFiles@1
     displayName: 'Extract Build ZIP'
