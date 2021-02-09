@@ -22,7 +22,7 @@
   <Bundle Name="PowerShell Bootstrapper" Version="1.0.0.0" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
     <!-- See https://wixtoolset.org/documentation/manual/v3/bundle/wixstdba/ for a list of WiX standard bootstrapper types. -->
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
-      <bal:WixStandardBootstrapperApplication LicenseFile="license.txt" LogoFile="assets\ps_black_32x32.ico" />
+      <bal:WixStandardBootstrapperApplication LogoFile="assets\ps_black_32x32.ico" />
     </BootstrapperApplicationRef>
     <Chain>
       <MsiPackage SourceFile="$(var.TargetPath)" Compressed="yes" />
