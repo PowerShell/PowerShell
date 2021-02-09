@@ -99,7 +99,8 @@ Describe "Verify Markdown Links" {
                         # check against the allowed failures
                         $allowedFailures = [System.Net.HttpStatusCode[]](
                             503, # Service Unavailable
-                            504  # Gateway Timeout
+                            504, # Gateway Timeout
+                            403  # Forbidden, some sites block with from AzDO with this code
                         )
 
                         $prefix = $url.Substring(0,7)
