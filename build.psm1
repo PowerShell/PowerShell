@@ -397,7 +397,8 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
+    # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
+    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     if ($Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
