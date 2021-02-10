@@ -180,7 +180,8 @@ jobs:
       $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force
 
       $missingSignatures | ForEach-Object {
-        $relativePath = $_.replace($BuildPath,'')
+        $pathWithoutLeaf = Split-Path $_
+        $relativePath = $pathWithoutLeaf.replace($BuildPath,'')
         $targetDirectory = Join-Path -Path $filesToSignDirectory -ChildPath $relativePath
         Copy-Item -Path $_ -Destination $targetDirectory
       }
