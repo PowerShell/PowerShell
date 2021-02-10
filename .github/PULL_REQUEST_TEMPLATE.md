@@ -34,7 +34,8 @@
     - [ ] I have considered the user experience from a tooling perspective and don't believe tooling will be impacted.
     - **OR**
     - [ ] I have considered the user experience from a tooling perspective and opened an issue in the relevant tool repository. This may include:
-        - [ ] Impact on [PowerShell Editor Services](https://github.com/PowerShell/PowerShellEditorServices) which is used in the [PowerShell extension](https://github.com/PowerShell/vscode-powershell) for VSCode (which runs in a different PS Host).
+        - [ ] Impact on [PowerShell Editor Services](https://github.com/PowerShell/PowerShellEditorServices) which is used in the [PowerShell extension](https://github.com/PowerShell/vscode-powershell) for VSCode
+        (which runs in a different PS Host).
             - [ ] Issue filed: <!-- Number/link of that issue here -->
         - [ ] Impact on Completions (both in the console and in editors) - one of PowerShell's most powerful features.
             - [ ] Issue filed: <!-- Number/link of that issue here -->
