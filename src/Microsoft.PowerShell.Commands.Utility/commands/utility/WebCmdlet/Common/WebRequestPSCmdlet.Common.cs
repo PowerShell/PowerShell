@@ -1508,7 +1508,6 @@ namespace Microsoft.PowerShell.Commands
                                 string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
-                                    request.RequestUri,
                                     requestContentLength);
                                 WriteVerbose(reqVerboseMsg);
 
