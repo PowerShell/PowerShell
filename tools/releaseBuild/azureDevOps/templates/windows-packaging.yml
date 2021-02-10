@@ -178,7 +178,14 @@ jobs:
       $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force
 
       $missingSignatures | ForEach-Object {
-        Copy-Item -Path $_ -Destination $filesToSignDirectory
+        $pathWithoutLeaf = Split-Path $_
+        $relativePath = $pathWithoutLeaf.replace($BuildPath,'')
+        $targetDirectory = Join-Path -Path $filesToSignDirectory -ChildPath $relativePath
+        if(!(Test-Path $targetDirectory))
+        {
+          $null = New-Item -ItemType Directory -Path $targetDirectory -Force
+        }
+        Copy-Item -Path $_ -Destination $targetDirectory
       }
 
     displayName: Create ThirdParty Signing Folder
