@@ -31,7 +31,7 @@ steps:
     $globalToolPath = "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell.$releaseVersion.nupkg"
 
     # Publish the global tool package for stable release.
-    Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+    # Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
 
     Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
   displayName: Download and capture nupkgs
