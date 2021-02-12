@@ -32,6 +32,7 @@ pr:
     include:
     - .vsts-ci/windows/*
     - assets/wix/*
+    - build.psm1
     - global.json
     - nuget.config
     - PowerShell.Common.props
