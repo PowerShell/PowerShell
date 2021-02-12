@@ -92,7 +92,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public CimSession[] CimSession
         {
-            get { return cimSession; }
+            get
+            {
+                return cimSession;
+            }
 
             set
             {
@@ -118,7 +121,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computerName; }
+            get
+            {
+                return computerName;
+            }
 
             set
             {
@@ -208,7 +214,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private CimGetCimClass GetOperationAgent()
         {
-            return (this.AsyncOperation as CimGetCimClass);
+            return this.AsyncOperation as CimGetCimClass;
         }
 
         /// <summary>

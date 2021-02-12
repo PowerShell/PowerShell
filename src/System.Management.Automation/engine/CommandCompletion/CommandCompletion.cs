@@ -1301,7 +1301,10 @@ namespace System.Management.Automation
 
             private int ReplacementIndex
             {
-                get { return _replacementIndex; }
+                get
+                {
+                    return _replacementIndex;
+                }
 
                 set
                 {

@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell
             try
             {
                 string profileDir = Platform.CacheDirectory;
-#if ! UNIX
+#if !UNIX
                 if (!Directory.Exists(profileDir))
                 {
                     Directory.CreateDirectory(profileDir);
@@ -2870,15 +2870,13 @@ namespace Microsoft.PowerShell
         {
             internal
             ConsoleHostStartupException()
-                :
-                base()
+                : base()
             {
             }
 
             internal
             ConsoleHostStartupException(string message)
-                :
-                base(message)
+                : base(message)
             {
             }
 
@@ -2886,15 +2884,13 @@ namespace Microsoft.PowerShell
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
                 System.Runtime.Serialization.StreamingContext context)
-                :
-                base(info, context)
+                : base(info, context)
             {
             }
 
             internal
             ConsoleHostStartupException(string message, Exception innerException)
-                :
-                base(message, innerException)
+                : base(message, innerException)
             {
             }
         }

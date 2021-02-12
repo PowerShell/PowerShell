@@ -2373,7 +2373,7 @@ else
                         // Add this check after checking if it a path
                         if (!string.IsNullOrEmpty(modulepath.Trim()))
                         {
-                            if ((modulepath.Contains("\\") || modulepath.Contains(":")) &&
+                            if ((modulepath.Contains('\\') || modulepath.Contains(':')) &&
                                 !(Directory.Exists(modulepath) || File.Exists(modulepath)))
                             {
                                 throw new ArgumentException(

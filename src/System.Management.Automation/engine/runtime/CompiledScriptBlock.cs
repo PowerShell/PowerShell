@@ -535,8 +535,8 @@ namespace System.Management.Automation
     {
         private readonly CompiledScriptBlockData _scriptBlockData;
 
-        internal ScriptBlock(IParameterMetadataProvider ast, bool isFilter) :
-            this(new CompiledScriptBlockData(ast, isFilter))
+        internal ScriptBlock(IParameterMetadataProvider ast, bool isFilter)
+            : this(new CompiledScriptBlockData(ast, isFilter))
         {
         }
 
@@ -1789,7 +1789,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private class SuspiciousContentChecker
+        private static class SuspiciousContentChecker
         {
             // Based on a (bad) random number generator, but good enough
             // for our simple needs.

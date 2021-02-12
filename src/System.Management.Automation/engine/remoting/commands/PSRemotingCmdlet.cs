@@ -669,7 +669,10 @@ namespace Microsoft.PowerShell.Commands
                 return _sessionOption;
             }
 
-            set { _sessionOption = value; }
+            set
+            {
+                _sessionOption = value;
+            }
         }
 
         private PSSessionOption _sessionOption;
@@ -707,7 +710,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = NewPSSessionCommand.UriParameterSet)]
         public virtual string CertificateThumbprint
         {
-            get { return _thumbPrint; }
+            get
+            {
+                return _thumbPrint;
+            }
 
             set
             {
@@ -2434,7 +2440,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(localScriptBlock), "Caller needs to make sure the parameter value is not null");
             }
 
-            var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(localScriptBlock.Ast);
+            var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressions(localScriptBlock.Ast);
             return allUsingExprs.Select(usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
         }
 
@@ -4353,7 +4359,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return _proxyAuthentication; }
+            get
+            {
+                return _proxyAuthentication;
+            }
 
             set
             {

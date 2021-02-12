@@ -21,6 +21,7 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
+        internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
 
         #endregion
 
@@ -124,11 +125,17 @@ namespace System.Management.Automation
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
                 new ExperimentalFeature(
+                    name: "PS7DscSupport",
+                    description: "Support the cross-platform class-based DSC"),
+                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
                     name: "PSAnsiRendering",
                     description: "Enable $PSStyle variable to control ANSI rendering of strings"),
+                new ExperimentalFeature(
+                    name: PSAnsiProgressFeatureName,
+                    description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

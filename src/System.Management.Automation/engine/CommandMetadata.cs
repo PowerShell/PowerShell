@@ -464,7 +464,10 @@ namespace System.Management.Automation
         /// </summary>
         public string DefaultParameterSetName
         {
-            get { return _defaultParameterSetName; }
+            get
+            {
+                return _defaultParameterSetName;
+            }
 
             set
             {
@@ -528,7 +531,10 @@ namespace System.Management.Automation
                 return _remotingCapability;
             }
 
-            set { _remotingCapability = value; }
+            set
+            {
+                _remotingCapability = value;
+            }
         }
 
         private RemotingCapability _remotingCapability = RemotingCapability.PowerShell;

@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal class ExperimentalFeatureConfigHelper
+    internal static class ExperimentalFeatureConfigHelper
     {
         internal static void UpdateConfig(PSCmdlet cmdlet, string[] name, ConfigScope scope, bool enable)
         {

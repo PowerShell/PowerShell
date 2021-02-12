@@ -55,7 +55,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath", "LP")]
         public string LiteralPath
         {
-            get { return _path; }
+            get
+            {
+                return _path;
+            }
 
             set
             {

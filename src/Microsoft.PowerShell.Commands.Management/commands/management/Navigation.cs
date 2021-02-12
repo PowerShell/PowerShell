@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
             // may be getting piped in.
             bool result = true;
 
-            if (paths != null && paths.Length >= 0)
+            if (paths != null)
             {
                 foreach (string path in paths)
                 {
@@ -1609,8 +1609,7 @@ namespace Microsoft.PowerShell.Commands
                             if (!Force && drive == SessionState.Drive.Current)
                             {
                                 PSInvalidOperationException invalidOperation =
-                                    (PSInvalidOperationException)
-                                    PSTraceSource.NewInvalidOperationException(
+                                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                                         NavigationResources.RemoveDriveInUse,
                                         drive.Name);
 
@@ -2637,8 +2636,7 @@ namespace Microsoft.PowerShell.Commands
                     if (isCurrentLocationOrAncestor)
                     {
                         PSInvalidOperationException invalidOperation =
-                            (PSInvalidOperationException)
-                            PSTraceSource.NewInvalidOperationException(
+                            (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                                 NavigationResources.RemoveItemInUse,
                                 resolvedPath.Path);
 
@@ -3012,8 +3010,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
-                        (PSInvalidOperationException)
-                        PSTraceSource.NewInvalidOperationException(
+                        (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                             NavigationResources.MoveItemDoesntExist,
                             path);
 
@@ -3099,8 +3096,7 @@ namespace Microsoft.PowerShell.Commands
             if (isCurrentLocationOrAncestor)
             {
                 PSInvalidOperationException invalidOperation =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         NavigationResources.MoveItemInUse,
                         path);
 
@@ -3354,8 +3350,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
-                        (PSInvalidOperationException)
-                        PSTraceSource.NewInvalidOperationException(
+                        (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                             NavigationResources.RenameItemDoesntExist,
                             path);
 
@@ -3441,8 +3436,7 @@ namespace Microsoft.PowerShell.Commands
             if (isCurrentLocationOrAncestor)
             {
                 PSInvalidOperationException invalidOperation =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         NavigationResources.RenamedItemInUse,
                         path);
 

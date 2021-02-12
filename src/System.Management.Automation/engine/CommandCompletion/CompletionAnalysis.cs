@@ -526,6 +526,12 @@ namespace System.Management.Automation
 
                             result = CompletionCompleters.CompleteCommandArgument(completionContext);
                         }
+                        else if (lastAst is AttributeAst)
+                        {
+                            completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                            completionContext.ReplacementLength = replacementLength = 0;
+                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                        }
                         else
                         {
                             //
@@ -820,6 +826,7 @@ namespace System.Management.Automation
                                 case TokenKind.Equals:
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
+                                case TokenKind.LParen:
                                     {
                                         if (lastAst is AssignmentStatementAst assignmentAst)
                                         {
@@ -829,25 +836,18 @@ namespace System.Management.Automation
                                                 break;
                                             }
                                         }
+                                        
+                                        if (lastAst is AttributeAst)
+                                        {
+                                            completionContext.ReplacementLength = replacementLength = 0;
+                                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                            break;
+                                        }
 
                                         bool unused;
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
-                                case TokenKind.LParen:
-                                    if (lastAst is AttributeAst)
-                                    {
-                                        completionContext.ReplacementLength = replacementLength = 0;
-                                        result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
-                                    }
-                                    else
-                                    {
-                                        bool unused;
-                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                            ref replacementIndex, ref replacementLength, out unused);
-                                    }
-
-                                    break;
                                 default:
                                     break;
                             }
@@ -1721,7 +1721,10 @@ namespace System.Management.Automation
 
                 foreach (var keyword in matchedResults)
                 {
-                    string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+                    string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform.DscClassCache.NewApiIsUsed
+                        ? Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform.DscClassCache.GetDSCResourceUsageString(keyword)
+                        : Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+
                     if (results == null)
                     {
                         results = new List<CompletionResult>();

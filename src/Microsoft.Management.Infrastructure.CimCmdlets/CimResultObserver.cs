@@ -115,8 +115,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cancellationDisposable"></param>
         public AsyncResultCompleteEventArgs(
             CimSession session,
-            IObservable<object> observable) :
-            base(session, observable, AsyncResultType.Completion)
+            IObservable<object> observable)
+            : base(session, observable, AsyncResultType.Completion)
         {
         }
     }
@@ -137,8 +137,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public AsyncResultObjectEventArgs(
             CimSession session,
             IObservable<object> observable,
-            object resultObject) :
-            base(session, observable, AsyncResultType.Result)
+            object resultObject)
+            : base(session, observable, AsyncResultType.Result)
         {
             this.resultObject = resultObject;
         }
@@ -162,8 +162,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public AsyncResultErrorEventArgs(
             CimSession session,
             IObservable<object> observable,
-            Exception error) :
-            base(session, observable, AsyncResultType.Exception)
+            Exception error)
+            : base(session, observable, AsyncResultType.Exception)
         {
             this.error = error;
         }
@@ -179,8 +179,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimSession session,
             IObservable<object> observable,
             Exception error,
-            CimResultContext cimResultContext) :
-            base(session, observable, AsyncResultType.Exception, cimResultContext)
+            CimResultContext cimResultContext)
+            : base(session, observable, AsyncResultType.Exception, cimResultContext)
         {
             this.error = error;
         }

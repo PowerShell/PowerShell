@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            if (assemblyQualifiedTypeName.IndexOf(',') == -1)
+            if (!assemblyQualifiedTypeName.Contains(','))
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
@@ -1595,8 +1595,8 @@ namespace System.Management.Automation
             { "BooleanArray",   "bool[]" },
             { "UInt8Array",     "byte[]" },
             { "SInt8Array",     "Sbyte[]" },
-            { "UInt16Array",    "uint16[]" },
-            { "SInt16Array",    "int64[]" },
+            { "UInt16Array",    "UInt16[]" },
+            { "SInt16Array",    "Int16[]" },
             { "UInt32Array",    "UInt32[]" },
             { "SInt32Array",    "Int32[]" },
             { "UInt64Array",    "UInt64[]" },
@@ -2133,7 +2133,7 @@ namespace System.Management.Automation
                 WildcardPattern[] fromValuePatterns;
                 if (!multipleValues)
                 {
-                    if (sourceValueString.Contains(","))
+                    if (sourceValueString.Contains(','))
                     {
                         throw new PSInvalidCastException("InvalidCastEnumCommaAndNoFlags", null,
                             ExtendedTypeSystem.InvalidCastExceptionEnumerationNoFlagAndComma,

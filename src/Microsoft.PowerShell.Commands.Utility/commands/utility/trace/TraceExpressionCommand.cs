@@ -46,7 +46,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 2)]
         public PSTraceSourceOptions Option
         {
-            get { return base.OptionsInternal; }
+            get
+            {
+                return base.OptionsInternal;
+            }
 
             set
             {
@@ -82,7 +85,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public TraceOptions ListenerOption
         {
-            get { return base.ListenerOptionsInternal; }
+            get
+            {
+                return base.ListenerOptionsInternal;
+            }
 
             set
             {

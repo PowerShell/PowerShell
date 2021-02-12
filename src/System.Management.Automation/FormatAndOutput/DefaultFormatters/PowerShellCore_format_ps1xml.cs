@@ -273,6 +273,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_PSStyleFormattingData());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+ProgressConfiguration",
+                ViewsOf_System_Management_Automation_PSStyleProgressConfiguration());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSStyle+ForegroundColor",
                 ViewsOf_System_Management_Automation_PSStyleForegroundColor());
 
@@ -2039,6 +2043,8 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Italic)$($_.Italic.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Italic")
                         .AddItemScriptBlock(@"""$($_.UnderlineOff)$($_.UnderlineOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "UnderlineOff")
                         .AddItemScriptBlock(@"""$($_.Underline)$($_.Underline.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Underline")
+                        .AddItemScriptBlock(@"""$($_.StrikethroughOff)$($_.StrikethroughOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "StrikethroughOff")
+                        .AddItemScriptBlock(@"""$($_.Strikethrough)$($_.Strikethrough.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Strikethrough")
                         .AddItemProperty(@"OutputRendering")
                         .AddItemScriptBlock(@"""$($_.Formatting.FormatAccent)$($_.Formatting.FormatAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FormatAccent")
                         .AddItemScriptBlock(@"""$($_.Formatting.ErrorAccent)$($_.Formatting.ErrorAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.ErrorAccent")
@@ -2046,6 +2052,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Formatting.Warning)$($_.Formatting.Warning.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Warning")
                         .AddItemScriptBlock(@"""$($_.Formatting.Verbose)$($_.Formatting.Verbose.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Verbose")
                         .AddItemScriptBlock(@"""$($_.Formatting.Debug)$($_.Formatting.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Debug")
+                        .AddItemScriptBlock(@"""$($_.Progress.Style)$($_.Progress.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Progress.Style")
+                        .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
+                        .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
                         .AddItemScriptBlock(@"""$($_.Foreground.Black)$($_.Foreground.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Black")
                         .AddItemScriptBlock(@"""$($_.Foreground.White)$($_.Foreground.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.White")
                         .AddItemScriptBlock(@"""$($_.Foreground.DarkGray)$($_.Foreground.DarkGray.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.DarkGray")
@@ -2093,6 +2102,18 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Warning)$($_.Warning.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Warning")
                         .AddItemScriptBlock(@"""$($_.Verbose)$($_.Verbose.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Verbose")
                         .AddItemScriptBlock(@"""$($_.Debug)$($_.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Debug")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleProgressConfiguration()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+ProgressConfiguration",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Style)$($_.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Style")
+                        .AddItemProperty(@"MaxWidth")
+                        .AddItemProperty(@"View")
                     .EndEntry()
                 .EndList());
         }

@@ -551,8 +551,7 @@ namespace Microsoft.PowerShell
             {
                 var handle = NativeMethods.CreateFile(
                     "CONIN$",
-                    (UInt32)
-                    (NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
+                    (UInt32)(NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
                     (UInt32)NativeMethods.ShareModes.ShareRead,
                     (IntPtr)0,
                     (UInt32)NativeMethods.CreationDisposition.OpenExisting,
@@ -2171,8 +2170,7 @@ namespace Microsoft.PowerShell
                     {
                         for (int c = atContentsCol; c < bufferSize.X + atContentsCol; c++, characterBufferIndex++)
                         {
-                            contents[r, c].Character = (char)
-                                characterBuffer[characterBufferIndex].UnicodeChar;
+                            contents[r, c].Character = (char)characterBuffer[characterBufferIndex].UnicodeChar;
                             ConsoleColor fgColor, bgColor;
                             WORDToColor(characterBuffer[characterBufferIndex].Attributes,
                                 out fgColor,

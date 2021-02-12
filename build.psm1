@@ -397,7 +397,8 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
+    # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
+    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     if ($Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
@@ -587,8 +588,12 @@ Fix steps:
         -not ($Runtime -like 'fxdependent*')) {
 
         $json = & $publishPath\pwsh -noprofile -command {
-            $expFeatures = [System.Collections.Generic.List[string]]::new()
-            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+            # Special case for DSC code in PS;
+            # this experimental feature requires new DSC module that is not inbox,
+            # so we don't want default DSC use case be broken
+            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
+
+            $expFeatures | Out-String | Write-Verbose -Verbose
 
             # Make sure ExperimentalFeatures from modules in PSHome are added
             # https://github.com/PowerShell/PowerShell/issues/10550
@@ -598,7 +603,7 @@ Fix steps:
                 }
             }
 
-            ConvertTo-Json $expFeatures.ToArray()
+            ConvertTo-Json $expFeatures
         }
 
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
@@ -748,8 +753,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("net5.0")]
-        [string]$Framework = "net5.0",
+        [ValidateSet("net6.0")]
+        [string]$Framework = "net6.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion

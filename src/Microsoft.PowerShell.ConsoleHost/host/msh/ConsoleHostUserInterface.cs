@@ -1182,7 +1182,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1243,7 +1243,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1304,33 +1304,34 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override void WriteProgress(Int64 sourceId, ProgressRecord record)
         {
-            if (record == null)
+            Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
+
+            if (Console.IsOutputRedirected)
             {
-                Dbg.Assert(false, "WriteProgress called with null ProgressRecord");
+                // Do not write progress bar when the stdout is redirected.
+                return;
+            }
+
+            bool matchPattern;
+            string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
+            if (matchPattern)
+            {
+                record = new ProgressRecord(record) { CurrentOperation = currentOperation };
+            }
+
+            // We allow only one thread at a time to update the progress state.)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
+            {
+                PSObject obj = new PSObject();
+                obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
+                obj.Properties.Add(new PSNoteProperty("Record", record));
+                _parent.ErrorSerializer.Serialize(obj, "progress");
             }
             else
             {
-                bool matchPattern;
-                string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
-                if (matchPattern)
+                lock (_instanceLock)
                 {
-                    record = new ProgressRecord(record) { CurrentOperation = currentOperation };
-                }
-
-                // We allow only one thread at a time to update the progress state.)
-                if (_parent.ErrorFormat == Serialization.DataFormat.XML)
-                {
-                    PSObject obj = new PSObject();
-                    obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
-                    obj.Properties.Add(new PSNoteProperty("Record", record));
-                    _parent.ErrorSerializer.Serialize(obj, "progress");
-                }
-                else
-                {
-                    lock (_instanceLock)
-                    {
-                        HandleIncomingProgressRecord(sourceId, record);
-                    }
+                    HandleIncomingProgressRecord(sourceId, record);
                 }
             }
         }

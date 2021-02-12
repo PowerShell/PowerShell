@@ -9,7 +9,7 @@ using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation
 {
-    internal class HelpUtils
+    internal static class HelpUtils
     {
         private static string userHomeHelpPath = null;
 

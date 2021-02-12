@@ -1066,17 +1066,21 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private Dictionary<K, V> RehydrateDictionary<K, V>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, V> valueRehydrator)
+        private Dictionary<TKey, TValue> RehydrateDictionary<TKey, TValue>(
+            string commandName,
+            PSObject deserializedObject, 
+            string propertyName,
+            Func<PSObject, TValue> valueRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
 
             if (valueRehydrator == null)
             {
-                valueRehydrator = (PSObject pso) => ConvertTo<V>(commandName, pso);
+                valueRehydrator = (PSObject pso) => ConvertTo<TValue>(commandName, pso);
             }
 
-            Dictionary<K, V> result = new();
+            Dictionary<TKey, TValue> result = new();
             PSPropertyInfo deserializedDictionaryProperty = deserializedObject.Properties[propertyName];
             if (deserializedDictionaryProperty != null)
             {
@@ -1085,10 +1089,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (DictionaryEntry deserializedItem in deserializedDictionary)
                     {
-                        K itemKey = ConvertTo<K>(commandName, deserializedItem.Key);
+                        TKey itemKey = ConvertTo<TKey>(commandName, deserializedItem.Key);
 
                         PSObject deserializedItemValue = ConvertTo<PSObject>(commandName, deserializedItem.Value);
-                        V itemValue = valueRehydrator(deserializedItemValue);
+                        TValue itemValue = valueRehydrator(deserializedItemValue);
 
                         result.Add(itemKey, itemValue);
                     }
@@ -1128,7 +1132,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns><see langword="true"/> if the name is safe; <see langword="false"/> otherwise.</returns>
         private static bool IsSafeParameterName(string parameterName)
         {
-            return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(":");
+            return IsSafeNameOrIdentifier(parameterName) && !parameterName.Contains(':');
         }
 
         /// <summary>
@@ -1985,9 +1989,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder result = new(name.Length);
             foreach (char c in name)
             {
-                if (("\"'`$".IndexOf(c) == (-1)) &&
-                    (!char.IsControl(c)) &&
-                    (!char.IsWhiteSpace(c)))
+                if (!"\"'`$".Contains(c)
+                    && !char.IsControl(c)
+                    && !char.IsWhiteSpace(c))
                 {
                     result.Append(c);
                 }

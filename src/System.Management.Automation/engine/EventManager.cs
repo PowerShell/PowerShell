@@ -1895,9 +1895,17 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber
         /// class. Additionally supports an Action scriptblock.
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, object source,
-            string eventName, string sourceIdentifier, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
-            this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
+        internal PSEventSubscriber(
+            ExecutionContext context,
+            int id,
+            object source,
+            string eventName,
+            string sourceIdentifier,
+            ScriptBlock action,
+            bool supportEvent,
+            bool forwardEvent,
+            int maxTriggerCount)
+            : this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
             // Create the bound scriptblock, and job.
             if (action != null)
@@ -1924,9 +1932,17 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber
         /// class. Additionally supports an Action scriptblock.
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, object source,
-            string eventName, string sourceIdentifier, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
-            this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
+        internal PSEventSubscriber(
+            ExecutionContext context,
+            int id,
+            object source,
+            string eventName,
+            string sourceIdentifier,
+            PSEventReceivedEventHandler handlerDelegate,
+            bool supportEvent,
+            bool forwardEvent,
+            int maxTriggerCount)
+            : this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
             HandlerDelegate = handlerDelegate;
         }
@@ -2456,8 +2472,12 @@ namespace System.Management.Automation
         /// The name of the job
         /// </param>
         /// </summary>
-        public PSEventJob(PSEventManager eventManager, PSEventSubscriber subscriber, ScriptBlock action, string name) :
-            base(action?.ToString(), name)
+        public PSEventJob(
+            PSEventManager eventManager,
+            PSEventSubscriber subscriber,
+            ScriptBlock action,
+            string name)
+            : base(action?.ToString(), name)
         {
             if (eventManager == null)
                 throw new ArgumentNullException(nameof(eventManager));

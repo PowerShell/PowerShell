@@ -476,7 +476,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Name
         {
-            get { return processNames; }
+            get
+            {
+                return processNames;
+            }
 
             set
             {
@@ -878,7 +881,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return processNames; }
+            get
+            {
+                return processNames;
+            }
 
             set
             {
@@ -1472,7 +1478,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return processNames; }
+            get
+            {
+                return processNames;
+            }
 
             set
             {
@@ -1635,7 +1644,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential]
         public PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -1660,7 +1672,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Lup")]
         public SwitchParameter LoadUserProfile
         {
-            get { return _loaduserprofile; }
+            get
+            {
+                return _loaduserprofile;
+            }
 
             set
             {
@@ -1678,7 +1693,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("nnw")]
         public SwitchParameter NoNewWindow
         {
-            get { return _nonewwindow; }
+            get
+            {
+                return _nonewwindow;
+            }
 
             set
             {
@@ -1703,7 +1721,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string RedirectStandardError
         {
-            get { return _redirectstandarderror; }
+            get
+            {
+                return _redirectstandarderror;
+            }
 
             set
             {
@@ -1722,7 +1743,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string RedirectStandardInput
         {
-            get { return _redirectstandardinput; }
+            get
+            {
+                return _redirectstandardinput;
+            }
 
             set
             {
@@ -1741,7 +1765,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string RedirectStandardOutput
         {
-            get { return _redirectstandardoutput; }
+            get
+            {
+                return _redirectstandardoutput;
+            }
 
             set
             {
@@ -1769,7 +1796,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public ProcessWindowStyle WindowStyle
         {
-            get { return _windowstyle; }
+            get
+            {
+                return _windowstyle;
+            }
 
             set
             {
@@ -1793,7 +1823,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Default")]
         public SwitchParameter UseNewEnvironment
         {
-            get { return _UseNewEnvironment; }
+            get
+            {
+                return _UseNewEnvironment;
+            }
 
             set
             {

@@ -62,7 +62,10 @@ namespace Microsoft.PowerShell.Commands
         [AllowEmptyString]
         public string[] LiteralPath
         {
-            get { return _paths; }
+            get
+            {
+                return _paths;
+            }
 
             set
             {

@@ -83,7 +83,10 @@ namespace System.Management.Automation
                 return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
 
-            set { _debugTraceLevel = value; }
+            set
+            {
+                _debugTraceLevel = value;
+            }
         }
 
         private int _debugTraceLevel;
@@ -100,7 +103,10 @@ namespace System.Management.Automation
                 return !IgnoreScriptDebug && _debugTraceStep;
             }
 
-            set { _debugTraceStep = value; }
+            set
+            {
+                _debugTraceStep = value;
+            }
         }
 
         private bool _debugTraceStep;

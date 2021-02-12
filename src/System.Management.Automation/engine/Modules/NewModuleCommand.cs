@@ -42,7 +42,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public ScriptBlock ScriptBlock
         {
-            get { return _scriptBlock; }
+            get
+            {
+                return _scriptBlock;
+            }
 
             set
             {
@@ -60,7 +63,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Function
         {
-            get { return _functionImportList; }
+            get
+            {
+                return _functionImportList;
+            }
 
             set
             {
@@ -88,7 +94,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Cmdlet
         {
-            get { return _cmdletImportList; }
+            get
+            {
+                return _cmdletImportList;
+            }
 
             set
             {

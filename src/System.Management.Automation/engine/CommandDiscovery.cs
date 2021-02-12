@@ -65,7 +65,10 @@ namespace System.Management.Automation
         /// </summary>
         public ScriptBlock CommandScriptBlock
         {
-            get { return _scriptBlock; }
+            get
+            {
+                return _scriptBlock;
+            }
 
             set
             {
@@ -994,7 +997,7 @@ namespace System.Management.Automation
             {
                 if (!searcher.MoveNext())
                 {
-                    if (!commandName.Contains("-") && !commandName.Contains("\\"))
+                    if (!commandName.Contains('-') && !commandName.Contains('\\'))
                     {
                         discoveryTracer.WriteLine(
                             "The command [{0}] was not found, trying again with get- prepended",

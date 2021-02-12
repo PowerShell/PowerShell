@@ -25,7 +25,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class RemoteDiscoveryHelper
+    internal static class RemoteDiscoveryHelper
     {
         #region PSRP
 
@@ -815,9 +815,10 @@ namespace System.Management.Automation
                     ErrorRecord errorRecord = GetErrorRecordForRemoteDiscoveryProvider(exception);
                     if (!cmdlet.MyInvocation.ExpectingInput)
                     {
-                        if ((errorRecord.FullyQualifiedErrorId.IndexOf(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase) != (-1)) ||
-                            (cancellationToken.IsCancellationRequested || (exception is OperationCanceledException)) ||
-                            (!cimSession.TestConnection()))
+                        if (errorRecord.FullyQualifiedErrorId.Contains(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase)
+                            || cancellationToken.IsCancellationRequested
+                            || exception is OperationCanceledException
+                            || !cimSession.TestConnection())
                         {
                             cmdlet.ThrowTerminatingError(errorRecord);
                         }

@@ -8184,10 +8184,12 @@ namespace System.Management.Automation.Language
         IScriptExtent Extent { get; }
     }
 
+#nullable enable
     internal interface ISupportsTypeCaching
     {
-        Type CachedType { get; set; }
+        Type? CachedType { get; set; }
     }
+#nullable restore
 
     /// <summary>
     /// A simple type that is not an array or does not have generic arguments.

@@ -20,9 +20,9 @@ using System.Xml;
 
 namespace Microsoft.PowerShell.Commands
 {
-    ///
+    /// <summary>
     /// Class that implements the Get-WinEvent cmdlet.
-    ///
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096581")]
     public sealed class GetWinEventCommand : PSCmdlet
     {
@@ -42,15 +42,7 @@ namespace Microsoft.PowerShell.Commands
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ListLog",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
-        public string[] ListLog
-        {
-            get { return _listLog; }
-
-            set { _listLog = value; }
-        }
-
-        private string[] _listLog = { "*" };
+        public string[] ListLog { get; set; } = { "*" };
 
         /// <summary>
         /// GetLog parameter.
@@ -66,14 +58,7 @@ namespace Microsoft.PowerShell.Commands
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.LogName",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-        public string[] LogName
-        {
-            get { return _logName; }
-
-            set { _logName = value; }
-        }
-
-        private string[] _logName = { "*" };
+        public string[] LogName { get; set; } = { "*" };
 
         /// <summary>
         /// ListProvider parameter.
@@ -87,20 +72,11 @@ namespace Microsoft.PowerShell.Commands
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "ListProviderParamHelp")]
         [AllowEmptyCollection]
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ListProvider",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
-        public string[] ListProvider
-        {
-            get { return _listProvider; }
-
-            set { _listProvider = value; }
-        }
-
-        private string[] _listProvider = { "*" };
+        public string[] ListProvider { get; set; } = { "*" };
 
         /// <summary>
         /// ProviderName parameter.
@@ -112,20 +88,11 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "GetProviderParamHelp")]
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.ProviderName",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
-        public string[] ProviderName
-        {
-            get { return _providerName; }
-
-            set { _providerName = value; }
-        }
-
-        private string[] _providerName;
+        public string[] ProviderName { get; set; }
 
         /// <summary>
         /// Path parameter.
@@ -137,20 +104,12 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = true,
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "PathParamHelp")]
-
         [Alias("PSPath")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.Path",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-        public string[] Path
-        {
-            get { return _path; }
-
-            set { _path = value; }
-        }
-
-        private string[] _path;
+        public string[] Path { get; set; }
 
         /// <summary>
         /// MaxEvents parameter.
@@ -186,14 +145,7 @@ namespace Microsoft.PowerShell.Commands
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "MaxEventsParamHelp")]
         [ValidateRange((Int64)1, Int64.MaxValue)]
-        public Int64 MaxEvents
-        {
-            get { return _maxEvents; }
-
-            set { _maxEvents = value; }
-        }
-
-        private Int64 _maxEvents = -1;
+        public Int64 MaxEvents { get; set; } = -1;
 
         /// <summary>
         /// ComputerName parameter.
@@ -222,17 +174,9 @@ namespace Microsoft.PowerShell.Commands
                 ParameterSetName = "XmlQuerySet",
                 HelpMessageBaseName = "GetEventResources",
                 HelpMessageResourceId = "ComputerNameParamHelp")]
-
         [ValidateNotNull]
         [Alias("Cn")]
-        public string ComputerName
-        {
-            get { return _computerName; }
-
-            set { _computerName = value; }
-        }
-
-        private string _computerName = string.Empty;
+        public string ComputerName { get; set; } = string.Empty;
 
         /// <summary>
         /// Credential parameter.
@@ -245,14 +189,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "XmlQuerySet")]
         [Parameter(ParameterSetName = "FileSet")]
         [Credential]
-        public PSCredential Credential
-        {
-            get { return _credential; }
-
-            set { _credential = value; }
-        }
-
-        private PSCredential _credential = PSCredential.Empty;
+        public PSCredential Credential { get; set; } = PSCredential.Empty;
 
         /// <summary>
         /// FilterXPath parameter.
@@ -273,14 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 HelpMessageBaseName = "GetEventResources")]
         [ValidateNotNull]
-        public string FilterXPath
-        {
-            get { return _filter; }
-
-            set { _filter = value; }
-        }
-
-        private string _filter = "*";
+        public string FilterXPath { get; set; } = "*";
 
         /// <summary>
         /// FilterXml parameter.
@@ -292,20 +222,11 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 ParameterSetName = "XmlQuerySet",
                 HelpMessageBaseName = "GetEventResources")]
-
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.FilterXml",
                             Justification = "An XmlDocument is required here because that is the type Powershell supports")]
-
-        public XmlDocument FilterXml
-        {
-            get { return _xmlQuery; }
-
-            set { _xmlQuery = value; }
-        }
-
-        private XmlDocument _xmlQuery = null;
+        public XmlDocument FilterXml { get; set; }
 
         /// <summary>
         /// FilterHashtable parameter.
@@ -317,20 +238,11 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 ParameterSetName = "HashQuerySet",
                 HelpMessageBaseName = "GetEventResources")]
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
                             Scope = "member",
                             Target = "Microsoft.PowerShell.Commands.GetEvent.FilterHashtable",
                             Justification = "A string[] is required here because that is the type Powershell supports")]
-
-        public Hashtable[] FilterHashtable
-        {
-            get { return _selector; }
-
-            set { _selector = value; }
-        }
-
-        private Hashtable[] _selector;
+        public Hashtable[] FilterHashtable { get; set; }
 
         /// <summary>
         /// Force switch.
@@ -338,16 +250,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "ListLogSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
         [Parameter(ParameterSetName = "GetLogSet")]
-
         [Parameter(ParameterSetName = "HashQuerySet")]
-        public SwitchParameter Force
-        {
-            get { return _force; }
-
-            set { _force = value; }
-        }
-
-        private SwitchParameter _force;
+        public SwitchParameter Force { get; set; }
 
         /// <summary>
         /// Oldest switch.
@@ -355,7 +259,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "FileSet")]
         [Parameter(ParameterSetName = "GetProviderSet")]
         [Parameter(ParameterSetName = "GetLogSet")]
-
         [Parameter(ParameterSetName = "HashQuerySet")]
         [Parameter(ParameterSetName = "XmlQuerySet")]
         public SwitchParameter Oldest
@@ -501,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void AccumulatePipelineLogNames()
         {
-            _accumulatedLogNames.AddRange(_logName);
+            _accumulatedLogNames.AddRange(LogName);
         }
 
         //
@@ -510,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void AccumulatePipelineProviderNames()
         {
-            _accumulatedProviderNames.AddRange(_logName);
+            _accumulatedProviderNames.AddRange(LogName);
         }
 
         //
@@ -519,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void AccumulatePipelineFileNames()
         {
-            _accumulatedFileNames.AddRange(_logName);
+            _accumulatedFileNames.AddRange(LogName);
         }
 
         //
@@ -544,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    logQuery = new EventLogQuery(_logNamesMatchingWildcard[0], PathType.LogName, _filter);
+                    logQuery = new EventLogQuery(_logNamesMatchingWildcard[0], PathType.LogName, FilterXPath);
                 }
 
                 logQuery.Session = eventLogSession;
@@ -561,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
         {
             using (EventLogSession eventLogSession = CreateSession())
             {
-                FindProvidersByLogForWildcardPatterns(eventLogSession, _providerName);
+                FindProvidersByLogForWildcardPatterns(eventLogSession, ProviderName);
 
                 if (_providersByLogMap.Count == 0)
                 {
@@ -604,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
         {
             using (EventLogSession eventLogSession = CreateSession())
             {
-                foreach (string logPattern in _listLog)
+                foreach (string logPattern in ListLog)
                 {
                     bool bMatchFound = false;
                     WildcardPattern wildLogPattern = new(logPattern, WildcardOptions.IgnoreCase);
@@ -660,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!bMatchFound)
                     {
                         string msg = _resourceMgr.GetString("NoMatchingLogsFound");
-                        Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, _computerName, logPattern));
+                        Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, ComputerName, logPattern));
                         WriteError(new ErrorRecord(exc, "NoMatchingLogsFound", ErrorCategory.ObjectNotFound, null));
                     }
                 }
@@ -674,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
         {
             using (EventLogSession eventLogSession = CreateSession())
             {
-                foreach (string provPattern in _listProvider)
+                foreach (string provPattern in ListProvider)
                 {
                     bool bMatchFound = false;
                     WildcardPattern wildProvPattern = new(provPattern, WildcardOptions.IgnoreCase);
@@ -707,7 +610,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!bMatchFound)
                     {
                         string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("NoMatchingProvidersFound"),
-                                                _computerName, provPattern);
+                                                ComputerName, provPattern);
                         Exception exc = new(msg);
                         WriteError(new ErrorRecord(exc, "NoMatchingProvidersFound", ErrorCategory.ObjectNotFound, null));
                     }
@@ -727,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // Do minimal parsing of xmlQuery to determine if any direct channels or ETL files are in it.
                     //
-                    XmlElement root = _xmlQuery.DocumentElement;
+                    XmlElement root = FilterXml.DocumentElement;
                     XmlNodeList queryNodes = root.SelectNodes("//Query//Select");
                     foreach (XmlNode queryNode in queryNodes)
                     {
@@ -749,7 +652,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                EventLogQuery logQuery = new(null, PathType.LogName, _xmlQuery.InnerXml);
+                EventLogQuery logQuery = new(null, PathType.LogName, FilterXml.InnerXml);
                 logQuery.Session = eventLogSession;
                 logQuery.ReverseDirection = !_oldest;
 
@@ -768,9 +671,9 @@ namespace Microsoft.PowerShell.Commands
                 // At this point, _path array contains paths that might have wildcards,
                 // environment variables or PS drives. Let's resolve those.
                 //
-                for (int i = 0; i < _path.Length; i++)
+                for (int i = 0; i < Path.Length; i++)
                 {
-                    StringCollection resolvedPaths = ValidateAndResolveFilePath(_path[i]);
+                    StringCollection resolvedPaths = ValidateAndResolveFilePath(Path[i]);
                     foreach (string resolvedPath in resolvedPaths)
                     {
                         _resolvedPaths.Add(resolvedPath);
@@ -791,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    logQuery = new EventLogQuery(_resolvedPaths[0], PathType.FilePath, _filter);
+                    logQuery = new EventLogQuery(_resolvedPaths[0], PathType.FilePath, FilterXPath);
                 }
 
                 logQuery.Session = eventLogSession;
@@ -833,30 +736,30 @@ namespace Microsoft.PowerShell.Commands
         {
             EventLogSession eventLogSession = null;
 
-            if (_computerName == string.Empty)
+            if (ComputerName == string.Empty)
             {
                 // Set _computerName to "localhost" for future error messages,
                 // but do not use it for the connection to avoid RPC overhead.
-                _computerName = "localhost";
+                ComputerName = "localhost";
 
-                if (_credential == PSCredential.Empty)
+                if (Credential == PSCredential.Empty)
                 {
                     return new EventLogSession();
                 }
             }
-            else if (_credential == PSCredential.Empty)
+            else if (Credential == PSCredential.Empty)
             {
-                return new EventLogSession(_computerName);
+                return new EventLogSession(ComputerName);
             }
 
             // If we are here, either both computer name and credential were passed initially,
             // or credential only - we will use it with "localhost"
 
-            NetworkCredential netCred = (NetworkCredential)_credential;
-            eventLogSession = new EventLogSession(_computerName,
+            NetworkCredential netCred = (NetworkCredential)Credential;
+            eventLogSession = new EventLogSession(ComputerName,
                                  netCred.Domain,
                                  netCred.UserName,
-                                 _credential.Password,
+                                 Credential.Password,
                                  SessionAuthentication.Default
                                  );
             //
@@ -894,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    if (_maxEvents != -1 && numEvents >= _maxEvents)
+                    if (MaxEvents != -1 && numEvents >= MaxEvents)
                     {
                         break;
                     }
@@ -974,7 +877,7 @@ namespace Microsoft.PowerShell.Commands
                         uint queryId = 0;
                         foreach (string log in _logNamesMatchingWildcard)
                         {
-                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, log, _filter });
+                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, log, FilterXPath });
                         }
 
                         result.Append(queryListClose);
@@ -989,7 +892,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string filePath in _resolvedPaths)
                         {
                             string properFilePath = filePrefix + filePath;
-                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, properFilePath, _filter });
+                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, properFilePath, FilterXPath });
                         }
 
                         result.Append(queryListClose);
@@ -1111,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
 
             uint queryId = 0;
 
-            foreach (Hashtable hash in _selector)
+            foreach (Hashtable hash in FilterHashtable)
             {
                 string xpathString = string.Empty;
                 string xpathStringSuppress = string.Empty;
@@ -1674,7 +1577,7 @@ namespace Microsoft.PowerShell.Commands
             catch (EventLogNotFoundException)
             {
                 string msg = _resourceMgr.GetString("NoMatchingLogsFound");
-                Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, _computerName, logName));
+                Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, ComputerName, logName));
                 WriteError(new ErrorRecord(exc, "NoMatchingLogsFound", ErrorCategory.ObjectNotFound, logName));
                 return false;
             }
@@ -1833,7 +1736,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void CheckHashTablesForNullValues()
         {
-            foreach (Hashtable hash in _selector)
+            foreach (Hashtable hash in FilterHashtable)
             {
                 foreach (string key in hash.Keys)
                 {
@@ -1875,13 +1778,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providers.Count == 0)
             {
-                return _filter;
+                return FilterXPath;
             }
 
-            string ret = _filter;
+            string ret = FilterXPath;
             string predicate = BuildProvidersPredicate(providers);
 
-            if (_filter.Equals("*", StringComparison.OrdinalIgnoreCase))
+            if (FilterXPath.Equals("*", StringComparison.OrdinalIgnoreCase))
             {
                 ret += "[" + predicate + "]";
             }
@@ -1890,7 +1793,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // Extend the XPath provided in the _filter
                 //
-                int lastPredClose = _filter.LastIndexOf(']');
+                int lastPredClose = FilterXPath.LastIndexOf(']');
                 if (lastPredClose == -1)
                 {
                     ret += "[" + predicate + "]";
@@ -2113,7 +2016,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!bMatched)
                 {
                     string msg = _resourceMgr.GetString("NoMatchingLogsFound");
-                    Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, _computerName, logPattern));
+                    Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, ComputerName, logPattern));
                     WriteError(new ErrorRecord(exc, "NoMatchingLogsFound", ErrorCategory.ObjectNotFound, logPattern));
                 }
             }
@@ -2150,7 +2053,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!bMatched)
                 {
                     string msg = _resourceMgr.GetString("NoMatchingProvidersFound");
-                    Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, _computerName, provPattern));
+                    Exception exc = new(string.Format(CultureInfo.InvariantCulture, msg, ComputerName, provPattern));
                     WriteError(new ErrorRecord(exc, "NoMatchingProvidersFound", ErrorCategory.ObjectNotFound, provPattern));
                 }
             }
