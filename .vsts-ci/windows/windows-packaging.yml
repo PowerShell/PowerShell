@@ -44,7 +44,6 @@ pr:
     - src/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj
     - src/Microsoft.PowerShell.CoreCLR.Eventing/Microsoft.PowerShell.CoreCLR.Eventing.csproj
     - src/Microsoft.PowerShell.GlobalTool.Shim/Microsoft.PowerShell.GlobalTool.Shim.csproj
-    - src/Microsoft.PowerShell.LocalAccounts/Microsoft.PowerShell.LocalAccounts.csproj
     - src/Microsoft.PowerShell.MarkdownRender/Microsoft.PowerShell.MarkdownRender.csproj
     - src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj
     - src/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.csproj
