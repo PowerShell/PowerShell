@@ -1,5 +1,111 @@
 # Current preview release
 
+## [7.2.0-preview.3] - 2021-02-11
+
+### Breaking Changes
+
+- Fix `Get-Date -UFormat %u` behavior to comply with ISO 8601 (#14549) (Thanks @brianary!)
+
+### Engine Updates and Fixes
+
+- Together with `PSDesiredStateConfiguration` `v3` module allows `Get-DscResource`, `Invoke-DscResource` and DSC configuration compilation on all platforms, supported by PowerShell (using class-based DSC resources).
+
+### Performance
+
+- Avoid array allocations from `Directory.GetDirectories` and `Directory.GetFiles`. (#14326) (Thanks @xtqqczze!)
+- Avoid `string.ToLowerInvariant()` from `GetEnvironmentVariableAsBool()` to avoid loading libicu at startup (#14323) (Thanks @iSazonov!)
+- Get PowerShell version in `PSVersionInfo` using assembly attribute instead of `FileVersionInfo` (#14332) (Thanks @Fs00!)
+
+### General Cmdlet Updates and Fixes
+
+- Suppress `Write-Progress` in `ConsoleHost` if output is redirected and fix tests (#14716)
+- Experimental feature `PSAnsiProgress`: Add minimal progress bar using ANSI rendering (#14414)
+- Fix web cmdlets to properly construct URI from body when using `-NoProxy` (#14673)
+- Update the `ICommandPredictor` to provide more feedback and also make feedback easier to be correlated (#14649)
+- Reset color after writing `Verbose`, `Debug`, and `Warning` messages (#14698)
+- Fix using variable for nested `ForEach-Object -Parallel` calls (#14548)
+- When formatting, if collection is modified, don't fail the entire pipeline (#14438)
+- Improve completion of parameters for attributes (#14525) (Thanks @MartinGC94!)
+- Write proper error messages for `Get-Command ' '` (#13564) (Thanks @jakekerr!)
+- Fix typo in the resource string `ProxyURINotSupplied` (#14526) (Thanks @romero126!)
+- Add support to `$PSStyle` for strikethrough and hyperlinks (#14461)
+- Fix `$PSStyle` blink codes (#14447) (Thanks @iSazonov!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @powercode</p>
+
+</summary>
+
+<ul>
+<li>Fix coding style issues: RCS1215, IDE0090, SA1504, SA1119, RCS1139, IDE0032 (#14356, #14341, #14241, #14204, #14442, #14443) (Thanks @xtqqczze!)</li>
+<li>Enable coding style checks: CA2249, CA1052, IDE0076, IDE0077, SA1205, SA1003, SA1314, SA1216, SA1217, SA1213 (#14395, #14483, #14494, #14495, #14441, #14476, #14470, #14471, #14472) (Thanks @xtqqczze!)</li>
+<li>Enable nullable in PowerShell codebase (#14160, #14172, #14088, #14154, #14166, #14184, #14178) (Thanks @powercode!)</li>
+<li>Use <code>string.Split(char)</code> instead of <code>string.Split(string)</code> (#14465) (Thanks @xtqqczze!)</li>
+<li>Use <code>string.Contains(char)</code> overload (#14368) (Thanks @xtqqczze!)</li>
+<li>Refactor complex <code>if</code> statements (#14398) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Update script to use .NET 6 build resources (#14705)
+- Fix the daily GitHub action (#14711) (Thanks @imba-tjd!)
+- GitHub Actions: fix deprecated `::set-env` (#14629) (Thanks @imba-tjd!)
+- Update markdown test tools (#14325) (Thanks @RDIL!)
+- Upgrade `StyleCopAnalyzers` to `v1.2.0-beta.312` (#14354) (Thanks @xtqqczze!)
+
+### Tests
+
+- Remove packaging from daily Windows build (#14749)
+- Update link to the Manning book (#14750)
+- A separate Windows packaging CI (#14670)
+- Update `ini` component version in test `package.json` (#14454)
+- Disable `libmi` dependent tests for macOS. (#14446)
+
+### Build and Packaging Improvements
+
+<details>
+
+<ul>
+<li>Fix the NuGet feed name and URL for .NET 6</li>
+<li>Fix third party signing for files in sub-folders (#14751)</li>
+<li>Make build script variable an <code>ArrayList</code> to enable <code>Add()</code> method (#14748)</li>
+<li>Remove old .NET SDKs to make <code>dotnet restore</code> work with the latest SDK in CI pipeline (#14746)</li>
+<li>Remove outdated Linux dependencies (#14688)</li>
+<li>Bump .NET SDK version to 6.0.0-preview.1 (#14719)</li>
+<li>Bump <code>NJsonSchema</code> to 10.3.4 (#14714)</li>
+<li>Update daily GitHub action to allow manual trigger (#14718)</li>
+<li>Bump <code>XunitXml.TestLogger</code> to 3.0.62 (#14702)</li>
+<li>Make universal deb package based on the deb package specification (#14681)</li>
+<li>Add manual release automation steps and improve changelog script (#14445)</li>
+<li>Fix release build to upload global tool packages to artifacts (#14620)</li>
+<li>Port changes from the PowerShell v7.0.4 release (#14637)</li>
+<li>Port changes from the PowerShell v7.1.1 release (#14621)</li>
+<li>Updated README and <code>metadata.json</code> (#14401, #14606, #14612)</li>
+<li>Do not push nupkg artifacts to MyGet (#14613)</li>
+<li>Use one feed in each <code>nuget.config</code> in official builds (#14363)</li>
+<li>Fix path signed RPMs are uploaded from in release build (#14424)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update distribution support request template to point to .NET 5.0 support document (#14578)
+- Remove security GitHub issue template (#14453)
+- Add intent for using the Discussions feature in repo (#14399)
+- Fix Universal Dashboard to refer to PowerShell Universal (#14437)
+- Update document link because of HTTP 301 redirect (#14431) (Thanks @xtqqczze!)
+
+[7.2.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.2...v7.2.0-preview.3
+
 ## [7.2.0-preview.2] - 2020-12-15
 
 ### Breaking Changes
