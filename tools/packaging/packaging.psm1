@@ -3111,11 +3111,12 @@ function New-MSIPackage
 
     $exeLocationPath = Join-Path $PWD "$packageName.exe"
     $exePdbLocationPath = Join-Path $PWD "$packageName.exe.wixpdb"
+    $windowsVersion = Get-WindowsVersion -packageName $packageName
 
     Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
         IsPreview = $isPreview
         TargetPath = $msiLocationPath
-        ProductSemanticVersion = $ProductSemanticVersion
+        WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
 
     if ((Test-Path $exeLocationPath) )
@@ -3276,27 +3277,7 @@ function New-MSIXPackage
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
 
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
-    if (([Version]$ProductVersion).Revision -eq -1) {
-        $ProductVersion += ".0"
-    }
-
-    # The Store requires the last digit of the version to be 0 so we swap the build and revision
-    # This only affects Preview versions where the last digit is the preview number
-    # For stable versions, the last digit is already zero so no changes
-    $pversion = [version]$ProductVersion
-    if ($pversion.Revision -ne 0) {
-        $revision = $pversion.Revision
-        if ($packageName.Contains('-rc')) {
-            # For Release Candidates, we use numbers in the 100 range
-            $revision += 100
-        }
-
-        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
-        $ProductVersion = $pversion.ToString()
-    }
-
-    Write-Verbose "Version: $productversion" -Verbose
+    $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview) {
@@ -3624,6 +3605,36 @@ function New-WixId
 
     $guidPortion = (New-Guid).Guid.ToUpperInvariant() -replace '\-' ,''
     "$Prefix$guidPortion"
+}
+
+function Get-WindowsVersion {
+    param (
+        [parameter(Mandator)]
+        [string]$PackageName
+    )
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    if (([Version]$ProductVersion).Revision -eq -1) {
+        $ProductVersion += ".0"
+    }
+
+    # The Store requires the last digit of the version to be 0 so we swap the build and revision
+    # This only affects Preview versions where the last digit is the preview number
+    # For stable versions, the last digit is already zero so no changes
+    $pversion = [version]$ProductVersion
+    if ($pversion.Revision -ne 0) {
+        $revision = $pversion.Revision
+        if ($packageName.Contains('-rc')) {
+            # For Release Candidates, we use numbers in the 100 range
+            $revision += 100
+        }
+
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
+        $ProductVersion = $pversion.ToString()
+    }
+
+    Write-Verbose "Version: $productversion" -Verbose
+    return $productversion
 }
 
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'

@@ -19,7 +19,7 @@
     <?endif?>
   <?endif?>
 
-  <Bundle Name="PowerShell Bootstrapper" Version="$(var.ProductSemanticVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
+  <Bundle Name="PowerShell Bootstrapper" Version="$(var.WindowsVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
     <!-- See https://wixtoolset.org/documentation/manual/v3/bundle/wixstdba/ for a list of WiX standard bootstrapper types. -->
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
       <bal:WixStandardBootstrapperApplication LicenseUrl="" LogoFile="assets\ps_black_32x32.ico" SuppressOptionsUI="yes" />
