@@ -3609,7 +3609,7 @@ function New-WixId
 
 function Get-WindowsVersion {
     param (
-        [parameter(Mandator)]
+        [parameter(Mandatory)]
         [string]$PackageName
     )
 
