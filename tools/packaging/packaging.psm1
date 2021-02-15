@@ -3115,6 +3115,7 @@ function New-MSIPackage
     Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
         IsPreview = $isPreview
         TargetPath = $msiLocationPath
+        ProductSemanticVersion = $ProductSemanticVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
 
     if ((Test-Path $exeLocationPath) )
