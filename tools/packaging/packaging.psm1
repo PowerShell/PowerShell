@@ -3653,7 +3653,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersionTokens = $Version.Split('-')
     $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
 
-    if (1 -eq $packageVersionTokens.Count) {
+    if (1 -eq $packageVersionTokens.Count -and ([Version]$packageVersion).Revision -eq -1) {
         # In case the input is of the form a.b.c, add a '0' at the end for revision field
         $packageVersion = $packageVersion + '.0'
     } elseif (1 -lt $packageVersionTokens.Count) {
