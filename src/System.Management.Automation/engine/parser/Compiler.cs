@@ -7099,7 +7099,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(Expression.DebugInfo(_debugSymbolDocument, _extent.StartLineNumber, _extent.StartColumnNumber, _extent.EndLineNumber, _extent.EndColumnNumber));
             }
 
-            var method = _checkBreakpoints
+            MethodInfo method = _checkBreakpoints
                 ? CachedReflectionInfo.FunctionContext_UpdatePosition
                 : CachedReflectionInfo.FunctionContext_UpdatePositionNoBreak;
             exprs.Add(Expression.Call(Compiler.s_functionContext, method, ExpressionCache.Constant(_sequencePoint)));

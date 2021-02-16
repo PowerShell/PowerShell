@@ -56,7 +56,7 @@ namespace System.Management.Automation
         {
             ClearCompiledScriptBlockTable();
 
-            foreach (var csb in ScriptBlock.GetCachedCompiledScriptBlockData())
+            foreach (CompiledScriptBlockData csb in ScriptBlock.GetCachedCompiledScriptBlockData())
             {
                 s_compiledScriptBlockTable.TryAdd(csb, csb);
             }
@@ -627,7 +627,7 @@ namespace System.Management.Automation
             return s_cachedScripts.Values;
         }
 
-        internal static CompiledScriptBlockData TryGetCompiledCachedScriptBlock(string fileName, string fileContents)
+        internal static CompiledScriptBlockData TryGetCachedCompiledScriptBlock(string fileName, string fileContents)
         {
             if (InternalTestHooks.IgnoreScriptBlockCache)
             {
@@ -684,7 +684,7 @@ namespace System.Management.Automation
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {
-            var compiledScriptBlockData = TryGetCompiledCachedScriptBlock(fileName, fileContents);
+            var compiledScriptBlockData = TryGetCachedCompiledScriptBlock(fileName, fileContents);
             if (compiledScriptBlockData != null)
             {
                 return new ScriptBlock(compiledScriptBlockData);

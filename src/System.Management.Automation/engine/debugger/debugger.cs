@@ -1241,7 +1241,7 @@ namespace System.Management.Automation
             int shift = sequencePointPosition == 0 ? 1 : 2;
             if (_callStack.Count - shift >= 0)
             {
-                var scriptBlock = _callStack[_callStack.Count - shift].FunctionContext._scriptBlock;
+                ScriptBlock scriptBlock = _callStack[_callStack.Count - shift].FunctionContext._scriptBlock;
                 if (scriptBlock is not null)
                 {
                     return scriptBlock.Id;

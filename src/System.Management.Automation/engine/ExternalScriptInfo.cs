@@ -189,7 +189,9 @@ namespace System.Management.Automation
             get
             {
                 if (Context == null)
+                {
                     return SessionStateEntryVisibility.Public;
+                }
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
@@ -268,7 +270,7 @@ namespace System.Management.Automation
             var scriptContents = ScriptContents;
             if (_scriptBlock == null)
             {
-                var compiledScriptBlockData = ScriptBlock.TryGetCompiledCachedScriptBlock(_path, scriptContents);
+                CompiledScriptBlockData compiledScriptBlockData = ScriptBlock.TryGetCachedCompiledScriptBlock(_path, scriptContents);
                 if (compiledScriptBlockData != null)
                 {
                     this.ScriptBlock = new ScriptBlock(compiledScriptBlockData);
