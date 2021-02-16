@@ -6416,7 +6416,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    foreach (string item in System.IO.Directory.GetFiles(baseDirectory, "*.ps1"))
+                    foreach (string item in System.IO.Directory.EnumerateFiles(baseDirectory, "*.ps1"))
                     {
                         module.AddDetectedFunctionExport(Path.GetFileNameWithoutExtension(item));
                     }
