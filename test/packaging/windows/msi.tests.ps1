@@ -106,7 +106,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "$Channel MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
             $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
-            $result.Count | Should -Be 0 -Because "Query should return nothing if $channel x64 is not installed"
+            $result.Count | Should -Be 0 -Because "Query should return nothing if $channel $runtime is not installed"
         }
 
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
@@ -117,7 +117,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
             $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
-            $result.Count | Should -Be 1 -Because "Query should return 1 result if Upgrade code is for x64 $channel"
+            $result.Count | Should -Be 1 -Because "Query should return 1 result if Upgrade code is for $runtime $channel"
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
