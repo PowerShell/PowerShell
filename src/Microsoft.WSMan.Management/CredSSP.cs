@@ -97,6 +97,10 @@ namespace Microsoft.WSMan.Management
     /// the server, hence allowing the user to perform management operations that
     /// access a second hop.
     /// </summary>
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/release/v7.0.4
     [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096628")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
