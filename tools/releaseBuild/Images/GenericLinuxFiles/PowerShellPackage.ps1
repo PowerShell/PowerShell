@@ -61,7 +61,11 @@ function BuildPackages {
             $buildParams.Add("Runtime", 'alpine-x64')
         } else {
             # make the artifact name unique
+<<<<<<< HEAD
             $projectAssetsZipName = "linuxProjectAssets-$((Get-Date).Ticks)-symbols.zip"
+=======
+            $projectAssetsZipName = "linuxProjectAssets-$((get-date).Ticks)-symbols.zip"
+>>>>>>> upstream/release/v7.0.4
             $buildParams.Add("Crossgen", $true)
         }
 
