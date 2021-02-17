@@ -15,9 +15,13 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <PackageReference Include="System.Security.AccessControl" Version="5.0.0-rc.2.20479.6" />
 =======
     <PackageReference Include="System.Security.AccessControl" Version="4.7.0" />
 >>>>>>> upstream/release/v7.0.4
+=======
+    <PackageReference Include="System.Security.AccessControl" Version="5.0.0" />
+>>>>>>> origin/release/v7.1.1
   </ItemGroup>
 </Project>
