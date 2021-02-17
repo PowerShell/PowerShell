@@ -764,7 +764,11 @@ try {
 
         It "Can set Password value at max 256" {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
+<<<<<<< HEAD
             Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("123@"+"A"*252) -AsPlainText -Force)
+=======
+            Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("123@"+"A"*252) -asplaintext -Force)
+>>>>>>> upstream/release/v7.0.4
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Name | Should -BeExactly TestUserSet1
