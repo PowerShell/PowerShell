@@ -1,5 +1,6 @@
 {
   "sdk": {
+<<<<<<< HEAD
     "channel": "release/6.0.1xx-preview1",
     "packageVersionPattern": "6.0.0-preview.1",
     "sdkImageVersion": "6.0.100",
@@ -7,5 +8,11 @@
   },
   "internalfeed" : {
     "url": null
+=======
+    "channel": "release/5.0.1xx",
+    "packageVersionPattern": "5.0.0",
+    "sdkImageVersion": "5.0.100",
+    "nextChannel": "net5/rc2"
+>>>>>>> origin/release/v7.1.1
   }
 }
