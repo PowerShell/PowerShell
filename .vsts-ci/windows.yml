@@ -25,6 +25,7 @@ pr:
     - '*'
     exclude:
 <<<<<<< HEAD
+<<<<<<< HEAD
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
     - .dependabot/config.yml
@@ -38,6 +39,14 @@ pr:
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 >>>>>>> upstream/release/v7.0.4
+=======
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - test/common/markdown/*
+>>>>>>> origin/release/v7.1.1
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
