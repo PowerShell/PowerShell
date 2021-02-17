@@ -2,6 +2,9 @@
 
 * [Current preview changelog](preview.md)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/release/v7.1.1
 * [7.1 changelog](7.1.md)
 * [7.0 changelog](7.0.md)
 =======
