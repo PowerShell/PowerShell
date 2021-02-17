@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "StableReleaseTag": "v7.1.2",
   "PreviewReleaseTag": "v7.2.0-preview.3",
   "ServicingReleaseTag": "v7.0.5",
@@ -6,4 +7,12 @@
   "LTSReleaseTag" : ["v7.0.5"],
   "NextReleaseTag": "v7.2.0-preview.4",
   "LTSRelease": false
+=======
+  "StableReleaseTag": "v6.2.3",
+  "PreviewReleaseTag": "v7.0.0-rc.1",
+  "ServicingReleaseTag": "v6.1.6",
+  "ReleaseTag": "v6.2.4",
+  "NextReleaseTag": "v7.0.0-preview.7",
+  "LTSRelease": true
+>>>>>>> upstream/release/v7.0.4
 }
