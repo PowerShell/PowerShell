@@ -63,6 +63,10 @@ jobs:
         ## Install latest version from the channel
         #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
 
+<<<<<<< HEAD
+=======
+        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+>>>>>>> origin/release/v7.1.1
         Start-PSBootstrap
 
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
