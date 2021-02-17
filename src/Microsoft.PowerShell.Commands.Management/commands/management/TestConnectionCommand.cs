@@ -837,7 +837,10 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender?.Dispose();
+<<<<<<< HEAD
                     _dnsLookupCancel.Dispose();
+=======
+>>>>>>> upstream/release/v7.0.4
                 }
 
                 _disposed = true;
