@@ -17,7 +17,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements the New-WinEvent cmdlet.
     /// This cmdlet writes a new Etw event using the provider specified in parameter.
+<<<<<<< HEAD
     /// </summary>
+=======
+    ///
+>>>>>>> upstream/release/v7.0.4
     [Cmdlet(VerbsCommon.New, "WinEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096808")]
     public sealed class NewWinEventCommand : PSCmdlet
     {
