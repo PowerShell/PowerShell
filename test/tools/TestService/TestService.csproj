@@ -13,7 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0-rc.2.20479.6" />
+=======
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.0.1" />
+>>>>>>> upstream/release/v7.0.4
   </ItemGroup>
 
 </Project>
