@@ -3114,8 +3114,8 @@ function New-MSIPackage
     $windowsVersion = Get-WindowsVersion -packageName $packageName
 
     Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
-        IsPreview = $isPreview
-        TargetPath = $msiLocationPath
+        IsPreview      = $isPreview
+        TargetPath     = $msiLocationPath
         WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
 
