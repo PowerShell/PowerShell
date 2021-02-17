@@ -22,7 +22,11 @@ param (
     [switch]$InteractiveAuth,
 
     [Parameter()]
+<<<<<<< HEAD
     [switch]$UseInternalFeed
+=======
+    [switch]$UseRTMFeed
+>>>>>>> origin/release/v7.1.1
 )
 
 <#
@@ -98,6 +102,7 @@ function Update-PackageVersion {
 
     $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
+<<<<<<< HEAD
     $source = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseInternalFeed) { 'dotnet-internal' } else { 'dotnet' }
 
     # Always add nuget.org as some packages are only found there.
@@ -105,6 +110,9 @@ function Update-PackageVersion {
         @($source, "nuget.org")
     }
 
+=======
+    $source = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseRTMFeed) { 'dotnet5-rtm' } else { 'dotnet5' }
+>>>>>>> origin/release/v7.1.1
     $packages.GetEnumerator() | ForEach-Object {
         $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
 
@@ -112,8 +120,18 @@ function Update-PackageVersion {
             $version = $v.Version
 
             foreach ($p in $pkgs) {
+<<<<<<< HEAD
                 # some packages are directly updated on nuget.org so need to check that too.
                 if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
+=======
+                if ($UseRTMFeed -and $p.Version -eq $versionPattern) {
+                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                        $v.NewVersion = $p.Version
+                        break
+                    }
+                }
+                elseif ($p.Version -like "$versionPattern*") {
+>>>>>>> origin/release/v7.1.1
                     if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
                         $v.NewVersion = $p.Version
                         break
@@ -217,14 +235,27 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Find-Dotnet
 
+<<<<<<< HEAD
     $feedname = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseInternalFeed) { 'dotnet-internal' } else { 'dotnet' }
 
     $addDotnetSource = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
+=======
+    $feedname = if ($UseRTMFeed) {
+        'dotnet5-rtm'
+    } elseif ($UseNuGetOrg) {
+        'dotnet5'
+    } else {
+        'dotnet-internal'
+    }
+
+    $addDotnet5Source = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
+>>>>>>> origin/release/v7.1.1
 
     if (!$UseNuGetOrg -and $addDotnetSource) {
         $nugetFileContent = Get-Content "$PSScriptRoot/../nuget.config" -Raw
         $nugetFileSources = ([xml]($nugetFileContent)).Configuration.packagesources.add
 
+<<<<<<< HEAD
         if ($feedname -ne 'dotnet-internal') {
             $dotnetFeed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
             Register-PackageSource -Name $feedname -Location $dotnetFeed -ProviderName NuGet
@@ -232,6 +263,15 @@ if ($dotnetUpdate.ShouldUpdate) {
         }
 
         if ($feedname -eq 'dotnet-internal') {
+=======
+        if ($addDotnet5Source -and $feedname -ne 'dotnet-internal') {
+            $dotnet5Feed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name $feedname -Location $dotnet5Feed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source $feedname" -verbose
+        }
+
+        if ($addDotnet5Source -and $InteractiveAuth -and $feedname -eq 'dotnet-internal') {
+>>>>>>> origin/release/v7.1.1
             # This NuGet feed is for internal to Microsoft use only.
             $dotnetInternalFeed = $dotnetMetadataJson.internalfeed.url
             $updatedNugetFile = $nugetFileContent -replace "</packageSources>", "  <add key=`"dotnet-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
