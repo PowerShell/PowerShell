@@ -11,6 +11,7 @@ pr:
     - release*
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -44,6 +45,21 @@ resources:
 - repo: self
   clean: true
 >>>>>>> upstream/release/v7.0.4
+=======
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+>>>>>>> origin/release/v7.1.1
 
 stages:
   - stage: prep
