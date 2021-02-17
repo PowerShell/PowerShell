@@ -352,7 +352,11 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements' -Compress
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
+<<<<<<< HEAD
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
+=======
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
+>>>>>>> upstream/release/v7.0.4
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
@@ -362,7 +366,11 @@ function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
         if ($Compress) {
             $items = $clSection.ChangeLogMessage -join "`n"
             $thankYou = "We thank the following contributors!`n`n"
+<<<<<<< HEAD
             $thankYou += ($clSection.ThankYouMessage | Select-Object -Unique | Where-Object { if($_) { return $true} return $false}) -join ", "
+=======
+            $thankYou += ($clSection.ThankYouMessage | Where-Object { if($_) { return $true} return $false}) -join ", "
+>>>>>>> upstream/release/v7.0.4
 
             "<details>`n"
             "<summary>`n"
