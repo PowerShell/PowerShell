@@ -23,6 +23,10 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/release/v7.0.4
     [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096843")]
     public class InvokeWSManActionCommand : AuthenticatingWSManCommand, IDisposable
     {
