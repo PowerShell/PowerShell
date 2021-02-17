@@ -64,5 +64,8 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)-private'
+<<<<<<< HEAD
     resourceGroup: '$(StorageResourceGroup)'
+=======
+>>>>>>> upstream/release/v7.0.4
   condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))
