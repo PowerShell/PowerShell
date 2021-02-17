@@ -13,7 +13,11 @@ Set-StrictMode -Version 3.0
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
 
+<<<<<<< HEAD
 $dotnetCLIChannel = $(Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json).Sdk.Channel
+=======
+$dotnetCLIChannel = 'release'
+>>>>>>> upstream/release/v7.0.4
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -150,6 +154,7 @@ function Get-EnvironmentInformation
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
         $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian' -or $LinuxInfo.ID -match 'kali'}
+<<<<<<< HEAD
         $environment += @{'IsDebian9' = $environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsDebian10' = $environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
         $environment += @{'IsDebian11' = $environment.IsDebian -and $LinuxInfo.PRETTY_NAME -match 'bullseye'}
@@ -157,6 +162,14 @@ function Get-EnvironmentInformation
         $environment += @{'IsUbuntu16' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsUbuntu20' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '20.04'}
+=======
+        $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
+        $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
+        $environment += @{'IsDebian11' = $Environment.IsDebian -and $LinuxInfo.PRETTY_NAME -match 'bullseye'}
+        $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu' -or $LinuxID -match 'Ubuntu'}
+        $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
+        $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
+>>>>>>> upstream/release/v7.0.4
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -535,6 +548,7 @@ Fix steps:
         $psVersion = git --git-dir="$PSScriptRoot/.git" describe
     }
 
+<<<<<<< HEAD
     if ($environment.IsLinux) {
         if ($environment.IsRedHatFamily -or $environment.IsDebian) {
             # Symbolic links added here do NOT affect packaging as we do not build on Debian.
@@ -556,6 +570,28 @@ Fix steps:
                 $sslTarget = "/lib64/libssl.so.10"
                 $cryptoTarget = "/lib64/libcrypto.so.10"
             }
+=======
+    if ($Environment.IsRedHatFamily -or $Environment.IsDebian) {
+        # Symbolic links added here do NOT affect packaging as we do not build on Debian.
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and macOS builds for itself
+        # against the correct versions.
+
+        if ($Environment.IsDebian10 -or $Environment.IsDebian11){
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.1"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1"
+        }
+        elseif ($Environment.IsDebian9){
+            # NOTE: Debian 8 doesn't need these symlinks
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
+        }
+        else { #IsRedHatFamily
+            $sslTarget = "/lib64/libssl.so.10"
+            $cryptoTarget = "/lib64/libcrypto.so.10"
+        }
+>>>>>>> upstream/release/v7.0.4
 
             if ( ! (Test-Path "$publishPath/libssl.so.1.0.0")) {
                 $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
