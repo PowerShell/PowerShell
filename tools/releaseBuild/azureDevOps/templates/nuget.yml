@@ -7,7 +7,7 @@ jobs:
     ${{ parameters.parentJobs }}
   displayName: Build NuGet packages
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool: Package ES CodeHub Lab E
 
   timeoutInMinutes: 90
 
@@ -50,6 +50,13 @@ jobs:
     displayName: 'Use .NET Core SDK from global.json'
     inputs:
       version: '$(SDKVersion)'
+    condition: ne(variables['SDKVersion'], '5.0.100')
+
+  - pwsh: |
+      Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+      Install-Dotnet -Version '5.0.100-rtm.20526.5'
+    displayName: Install-DotNet
+    condition: eq(variables['SDKVersion'], '5.0.100')
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts'
