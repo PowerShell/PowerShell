@@ -8,7 +8,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Disable-PSBreakpoint.
     /// </summary>
+<<<<<<< HEAD
     [Cmdlet(VerbsLifecycle.Disable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = BreakpointParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096498")]
+=======
+    [Cmdlet(VerbsLifecycle.Disable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096498")]
+>>>>>>> upstream/release/v7.0.4
     [OutputType(typeof(Breakpoint))]
     public class DisablePSBreakpointCommand : PSBreakpointUpdaterCommandBase
     {
