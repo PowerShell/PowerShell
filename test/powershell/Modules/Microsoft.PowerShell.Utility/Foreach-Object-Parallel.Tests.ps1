@@ -412,6 +412,7 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
 
 Describe 'ForEach-Object -Parallel runspace pool tests' -Tags 'CI' {
 
+<<<<<<< HEAD
     It "Verifies job allocated runspace count is limited to pool size" {
 
         $job = 1..4 | ForEach-Object -Parallel { Start-Sleep 1 } -AsJob -ThrottleLimit 2 | Wait-Job
@@ -429,6 +430,8 @@ Describe 'ForEach-Object -Parallel runspace pool tests' -Tags 'CI' {
 
 Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
 
+=======
+>>>>>>> upstream/release/v7.0.4
     It 'Verifies job queuing and throttle limit' {
 
         # Run four job tasks, two in parallel at a time.
