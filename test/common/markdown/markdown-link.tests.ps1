@@ -99,7 +99,8 @@ Describe "Verify Markdown Links" {
                         # check against the allowed failures
                         $allowedFailures = [System.Net.HttpStatusCode[]](
                             503, # Service Unavailable
-                            504  # Gateway Timeout
+                            504, # Gateway Timeout
+                            403  # Forbidden, some sites block with from AzDO with this code
                         )
 
                         $prefix = $url.Substring(0,7)
@@ -116,7 +117,7 @@ Describe "Verify Markdown Links" {
                             catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
-                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
+                                    throw "Failed to complete request to `"$url`". $($_.Exception.Response.StatusCode) $($_.Exception.Message)"
                                 }
                             }
                         }

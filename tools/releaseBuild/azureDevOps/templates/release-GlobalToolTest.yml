@@ -39,11 +39,11 @@ jobs:
 
         Find-Dotnet
 
-        if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
+        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
         {
-            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-            Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-            Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
+            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source 'dotnet'" -verbose
         }
 
         ## Install latest version from the channel

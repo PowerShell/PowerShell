@@ -8,7 +8,7 @@ $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.p
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "ubuntu.20.04", "debian.9", "debian.10", "debian.11")
 $RedhatDistributions = @("rhel.7","centos.8")
-$script:netCoreRuntime = 'net5.0'
+$script:netCoreRuntime = 'net6.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -336,6 +336,7 @@ function Start-PSPackage {
                 if ($Runtime -match "-x86") {
                     $TargetArchitecture = "x86"
                 }
+                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
                 $Arguments = @{
                     ProductNameSuffix = $NameSuffix
@@ -1268,7 +1269,6 @@ function Get-PackageDependencies
                 "libc6",
                 "libgcc1",
                 "libgssapi-krb5-2",
-                "liblttng-ust0",
                 "libstdc++6",
                 "zlib1g",
                 "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
@@ -2011,7 +2011,7 @@ function New-ILNugetPackage
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/net5.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/net6.0' folder properly.
   This is a helper function used by 'New-ILNugetPackage'
 #>
 function CopyReferenceAssemblies
@@ -2604,7 +2604,6 @@ function New-NugetContentPackage
     $arguments = @('pack')
     $arguments += @('--output',$nugetFolder)
     $arguments += @('--configuration',$PackageConfiguration)
-    $arguments += @('--runtime',$PackageRuntime)
     $arguments += "/p:StagingPath=$stagingRoot"
     $arguments += "/p:RID=$PackageRuntime"
     $arguments += "/p:SemVer=$nugetSemanticVersion"
@@ -2845,7 +2844,7 @@ function New-MSIPatch
         [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $PatchWxsPath = "$RepoRoot\assets\patch-template.wxs",
+        [string] $PatchWxsPath = "$RepoRoot\assets\wix\patch-template.wxs",
 
         [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
         [switch] $Delta
@@ -2885,7 +2884,7 @@ function New-MSIPatch
     Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
     Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
 
-    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\files.wxs"
+    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\wix\files.wxs"
     [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
 
     # Update the patch version
@@ -2949,7 +2948,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -2976,12 +2975,12 @@ function New-MSIPackage
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$RepoRoot\assets\Product.wxs",
+        [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
 
         # File describing the MSI file components
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs",
+        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
@@ -3183,7 +3182,7 @@ function Start-MsiBuild {
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
@@ -3332,7 +3331,7 @@ function Test-FileWxs
         # File describing the MSI file components from the asset folder
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs",
+        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
         # File describing the MSI file components generated by heat
         [ValidateNotNullOrEmpty()]
