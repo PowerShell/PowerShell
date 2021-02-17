@@ -6,6 +6,7 @@
     "main": "gulpfile.js",
     "dependencies": {
         "gulp": "^4.0.2",
+<<<<<<< HEAD
         "markdownlint": "^0.22.0",
         "through2": "^4.0.2"
     },
@@ -13,6 +14,11 @@
         "yargs-parser": "^13.1.2" ,
         "y18n": "^5.0.5",
         "ini": "^1.3.6"
+=======
+        "markdownlint": "^0.21.0",
+        "through2": "^4.0.2",
+        "yargs-parser": "13.1.2"
+>>>>>>> origin/release/v7.1.1
     },
     "devDependencies": {
         "gulp-concat": "^2.6.1",
