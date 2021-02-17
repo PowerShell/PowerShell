@@ -14,7 +14,11 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
+<<<<<<< HEAD
     vmImage: windows-latest
+=======
+    name: Package ES Standard Build
+>>>>>>> upstream/release/v7.0.4
   variables:
     - name: BuildConfiguration
       value: ${{ parameters.BuildConfiguration }}
@@ -30,6 +34,10 @@ jobs:
 
   - checkout: self
     clean: true
+<<<<<<< HEAD
+=======
+    persistCredentials: true
+>>>>>>> upstream/release/v7.0.4
 
   - checkout: ComplianceRepo
     clean: true
@@ -60,7 +68,11 @@ jobs:
 
   - template: cloneToOfficialPath.yml
 
+<<<<<<< HEAD
   - powershell: |
+=======
+  - pwsh: |
+>>>>>>> upstream/release/v7.0.4
       # cleanup previous install
       if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
         Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
@@ -68,7 +80,11 @@ jobs:
 
       $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
       $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip'
+<<<<<<< HEAD
       Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
+=======
+      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
+>>>>>>> upstream/release/v7.0.4
 
       Import-Module '$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/wix.psm1'
       Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
@@ -124,10 +140,15 @@ jobs:
         "$($fullSymbolsFolder)\System.Management.Automation.dll" = ""
       }
 
+<<<<<<< HEAD
       $itemsToExclude = @{
         # This package is retrieved from https://www.github.com/powershell/MarkdownRender
         "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll" = ""
       }
+=======
+      $itemsToExclude = @(
+      )
+>>>>>>> upstream/release/v7.0.4
 
       if ("$env:Architecture" -notlike 'fxdependent*')
       {
