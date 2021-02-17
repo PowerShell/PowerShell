@@ -33,7 +33,7 @@ Describe -Name "Windows EXE" -Fixture {
                 $switch = '/uninstall'
             }
 
-            $installProcess = Start-Process -wait $ExePath -ArgumentList $switch, '/quiet' -PassThru
+            $installProcess = Start-Process -wait $ExePath -ArgumentList $switch, '/quiet', '/norestart' -PassThru
             if ($installProcess.ExitCode -ne 0) {
                 $exitCode = $installProcess.ExitCode
                 throw "$action EXE failed and returned error code $exitCode."
