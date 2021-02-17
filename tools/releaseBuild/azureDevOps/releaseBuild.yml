@@ -10,6 +10,7 @@ pr:
     - master
     - release*
 
+<<<<<<< HEAD
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -23,6 +24,26 @@ variables:
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
+=======
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+
+# Set AzDevOps Agent to clean the machine after the end of the build
+resources:
+- repo: self
+  clean: true
+>>>>>>> upstream/release/v7.0.4
 
 stages:
   - stage: prep
