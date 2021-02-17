@@ -162,6 +162,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsUbuntu16' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsUbuntu20' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '20.04'}
+<<<<<<< HEAD
 =======
         $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsDebian10' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '10'}
@@ -170,6 +171,8 @@ function Get-EnvironmentInformation
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
 >>>>>>> upstream/release/v7.0.4
+=======
+>>>>>>> origin/release/v7.1.1
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -1819,6 +1822,11 @@ function Start-PSBootstrap {
     )
 
     Write-Log -message "Installing PowerShell build dependencies"
+
+    # Temporary workaround to consume .NET 5 pre-release RTM build. Remove after .NET 5 RTM. Details: https://github.com/PowerShell/PowerShell/issues/13974
+    if ($Version -eq '5.0.100') {
+        $Version = '5.0.100-rtm.20526.5'
+    }
 
     Push-Location $PSScriptRoot/tools
 
