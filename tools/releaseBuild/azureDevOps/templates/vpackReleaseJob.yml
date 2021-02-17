@@ -5,7 +5,7 @@ jobs:
 - job: vpack_${{ parameters.architecture }}
   displayName: Build and Publish VPack - ${{ parameters.architecture }}
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool: Package ES CodeHub Lab E
   steps:
   - checkout: self
     clean: true
