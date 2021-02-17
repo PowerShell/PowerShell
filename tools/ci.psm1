@@ -438,13 +438,14 @@ function Get-ReleaseTag
 function Invoke-CIFinish
 {
     param(
+        [string] $NuGetKey,
         [string] $Runtime = 'win7-x64',
         [string] $Channel = 'preview'
     )
 
     if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
-        return New-LinuxPackage
+        return New-LinuxPackage -NugetKey $NugetKey
     }
 
     try {
@@ -475,7 +476,7 @@ function Invoke-CIFinish
         }
 
         # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
-        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -502,7 +503,6 @@ function Invoke-CIFinish
         # the packaging tests find the MSI package using env:PSMsiX64Path
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
         $env:PSMsiChannel = $Channel
-        $env:PSMsiRuntime = $Runtime
 
         # Install the latest Pester and import it
         $maximumPesterVersion = '4.99'
@@ -549,6 +549,12 @@ function Invoke-CIFinish
             {
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
+            }
+
+            if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
+            {
+                Write-Log "pushing $_ to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $NuGetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if(!$pushedAllArtifacts)
@@ -699,6 +705,10 @@ function Invoke-LinuxTestsCore
 
 function New-LinuxPackage
 {
+    param(
+        [string]
+        $NugetKey
+    )
 
     $isFullBuild = Test-DailyBuild
     $releaseTag = Get-ReleaseTag
@@ -717,6 +727,16 @@ function New-LinuxPackage
         else
         {
             Write-Error -Message "Package NOT found: $package"
+        }
+
+        # Publish the packages to the nuget feed if:
+        # 1 - It's a Daily build (already checked, for not a PR)
+        # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
+        # 3 - it's a nupkg file
+        if($isFullBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+        {
+            Write-Log "pushing $package to $env:NUGET_URL"
+            Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
         }
 
         if($isFullBuild)

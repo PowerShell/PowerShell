@@ -22,14 +22,15 @@ jobs:
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
-  - pwsh: |
+  - powershell: |
+      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
-      Invoke-CIInstall -SkipUser
+      Invoke-CIInstall
     displayName: Bootstrap
-    condition: succeeded()
+    condition: succeededOrFailed()
 
-  - pwsh: |
+  - powershell: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
-      Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
+      Invoke-CIFinish -NuGetKey $(NUGET_KEY) -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
     displayName: Build and Test Package
