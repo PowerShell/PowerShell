@@ -26,10 +26,14 @@ pr:
     - '*'
     exclude:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/release/v7.1.1
     - test/common/markdown/*
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
     - .dependabot/config.yml
+<<<<<<< HEAD
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
     - /.vsts-ci/windows.yml
@@ -38,6 +42,8 @@ pr:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
+=======
+>>>>>>> origin/release/v7.1.1
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 >>>>>>> upstream/release/v7.0.4
