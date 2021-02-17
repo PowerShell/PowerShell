@@ -25,7 +25,11 @@ Describe "Unblock-File" -Tags "CI" {
 
                 function Block-File {
                     param($path)
+<<<<<<< HEAD
                     Set-Content -Path $path -Value 'test'
+=======
+                    Set-Content -Path $path -value 'test'
+>>>>>>> upstream/release/v7.0.4
                     xattr -w com.apple.quarantine '0081;5dd5c373;Microsoft Edge;1A9A933D-619A-4036-BAF3-17A7966A1BA8' $path
 
                 }
@@ -75,7 +79,11 @@ Describe "Unblock-File" -Tags "CI" {
         It "Write an error if a file is read only" {
             $TestFile = Join-Path $TestDrive "testfileunlock.ps1"
             Block-File -Path $TestFile
+<<<<<<< HEAD
             Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $true
+=======
+            Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $True
+>>>>>>> upstream/release/v7.0.4
 
             $TestFileCreated = Get-ChildItem $TestFile
             $TestFileCreated.IsReadOnly | Should -BeTrue
