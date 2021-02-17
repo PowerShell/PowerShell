@@ -41,7 +41,11 @@ process named `powershell`, and will attach to it. If you need more fine-grained
 control, replace `processName` with `processId` and provide a PID. (Please be
 careful not to commit such a change.)
 
+<<<<<<< HEAD
 [core-debug]: https://docs.microsoft.com/dotnet/core/tutorials/with-visual-studio-code#debug
+=======
+[core-debug]: https://devblogs.microsoft.com/devops/experimental-net-core-debugging-in-vs-code/
+>>>>>>> upstream/release/v7.0.4
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
 
