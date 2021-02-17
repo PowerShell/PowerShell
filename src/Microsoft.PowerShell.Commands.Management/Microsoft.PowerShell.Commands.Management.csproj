@@ -48,10 +48,14 @@
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
 <<<<<<< HEAD
+<<<<<<< HEAD
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0-rc.2.20479.6" />
 =======
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.7.0" />
 >>>>>>> upstream/release/v7.0.4
+=======
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
+>>>>>>> origin/release/v7.1.1
   </ItemGroup>
 
 </Project>
