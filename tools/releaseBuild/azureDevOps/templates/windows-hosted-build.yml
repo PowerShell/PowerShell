@@ -30,9 +30,12 @@ jobs:
   - checkout: self
     clean: true
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     persistCredentials: true
 >>>>>>> upstream/release/v7.0.4
+=======
+>>>>>>> origin/release/v7.1.1
 
   - template: SetVersionVariables.yml
     parameters:
