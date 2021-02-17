@@ -16,7 +16,10 @@ jobs:
   pool:
     vmImage: windows-latest
   variables:
+<<<<<<< HEAD
     runCodesignValidationInjection: false
+=======
+>>>>>>> upstream/release/v7.0.4
     BuildConfiguration: ${{ parameters.BuildConfiguration }}
     BuildPlatform: ${{ parameters.BuildPlatform }}
     Architecture: ${{ parameters.Architecture }}
@@ -26,6 +29,10 @@ jobs:
 
   - checkout: self
     clean: true
+<<<<<<< HEAD
+=======
+    persistCredentials: true
+>>>>>>> upstream/release/v7.0.4
 
   - template: SetVersionVariables.yml
     parameters:
