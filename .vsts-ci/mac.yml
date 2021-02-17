@@ -25,6 +25,7 @@ pr:
     include:
     - '*'
     exclude:
+<<<<<<< HEAD
     - test/common/markdown/*
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
@@ -33,6 +34,13 @@ pr:
     - tools/releaseBuild/azureDevOps/templates/*
     - /.vsts-ci/windows.yml
     - /.vsts-ci/windows/*
+=======
+    - /.vsts-ci/misc-analysis.yml
+    - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+>>>>>>> upstream/release/v7.0.4
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -46,6 +54,15 @@ variables:
 resources:
 - repo: self
   clean: true
+<<<<<<< HEAD
+=======
+jobs:
+- template: templates/ci-build.yml
+  parameters:
+    pool: macOS-latest
+    jobName: mac_build
+    displayName: macOS Build
+>>>>>>> upstream/release/v7.0.4
 
 stages:
 - stage: BuildMac
@@ -80,9 +97,17 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
+<<<<<<< HEAD
   - template: templates/verify-xunit.yml
     parameters:
       pool: macOS-latest
+=======
+- template: templates/verify-xunit.yml
+  parameters:
+    pool: macOS-latest
+    parentJobs:
+      - mac_build
+>>>>>>> upstream/release/v7.0.4
 
 - stage: CodeCovTestPackage
   displayName: CodeCoverage and Test Packages
