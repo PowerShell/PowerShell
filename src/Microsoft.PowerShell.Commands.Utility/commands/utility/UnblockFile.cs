@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+<<<<<<< HEAD
 using System.Diagnostics.CodeAnalysis;
 #if UNIX
 using System.Globalization;
@@ -15,6 +16,16 @@ using System.Runtime.InteropServices;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 #endif
+=======
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Runtime.InteropServices;
+>>>>>>> upstream/release/v7.0.4
 
 #endregion
 
@@ -147,10 +158,17 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
+<<<<<<< HEAD
                 if (IsBlocked(path))
                 {
                     UInt32 result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
                     if (result != 0)
+=======
+                if(IsBlocked(path))
+                {
+                    UInt32 result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
+                    if(result != 0)
+>>>>>>> upstream/release/v7.0.4
                     {
                         string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
                         Exception e = new InvalidOperationException(errorMessage);
@@ -197,9 +215,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if UNIX
+<<<<<<< HEAD
         private static bool IsBlocked(string path)
         {
             const uint valueSize = 1024;
+=======
+        private bool IsBlocked(string path)
+        {
+            uint valueSize = 1024;
+>>>>>>> upstream/release/v7.0.4
             IntPtr value = Marshal.AllocHGlobal((int)valueSize);
             try
             {
