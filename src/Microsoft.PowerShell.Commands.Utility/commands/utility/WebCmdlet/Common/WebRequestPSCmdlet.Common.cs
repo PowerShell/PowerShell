@@ -1284,7 +1284,11 @@ namespace Microsoft.PowerShell.Commands
                         catch (FormatException ex)
                         {
                             var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+<<<<<<< HEAD
                             ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+=======
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+>>>>>>> upstream/release/v7.0.4
                             ThrowTerminatingError(er);
                         }
                     }
