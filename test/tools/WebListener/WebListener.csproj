@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0-rc.2.20475.17" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-rc.2.20479.6" />
+=======
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.6" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
+>>>>>>> upstream/release/v7.0.4
   </ItemGroup>
 
   <ItemGroup>
