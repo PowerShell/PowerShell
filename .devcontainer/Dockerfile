@@ -4,10 +4,14 @@
 #-------------------------------------------------------------------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 FROM mcr.microsoft.com/dotnet/nightly/sdk:6.0.100
 =======
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1.105
 >>>>>>> upstream/release/v7.0.4
+=======
+FROM mcr.microsoft.com/dotnet/nightly/sdk:5.0.100
+>>>>>>> origin/release/v7.1.1
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
