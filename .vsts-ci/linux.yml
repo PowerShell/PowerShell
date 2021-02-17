@@ -42,6 +42,7 @@ variables:
 resources:
 - repo: self
   clean: true
+<<<<<<< HEAD
 
 stages:
 - stage: BuildLinux
@@ -83,6 +84,56 @@ stages:
       pool: ubuntu-16.04
       purpose: ElevatedPesterTests
       tagSet: Others
+=======
+jobs:
+- template: templates/ci-build.yml
+  parameters:
+    pool: ubuntu-16.04
+    jobName: linux_build
+    displayName: linux Build
+
+- template: templates/nix-test.yml
+  parameters:
+    name: Linux
+    pool: ubuntu-16.04
+    purpose: UnelevatedPesterTests
+    tagSet: CI
+    parentJobs:
+      - linux_build
+
+- template: templates/nix-test.yml
+  parameters:
+    name: Linux
+    pool: ubuntu-16.04
+    purpose: ElevatedPesterTests
+    tagSet: CI
+    parentJobs:
+      - linux_build
+
+- template: templates/nix-test.yml
+  parameters:
+    name: Linux
+    pool: ubuntu-16.04
+    purpose: UnelevatedPesterTests
+    tagSet: Others
+    parentJobs:
+      - linux_build
+
+- template: templates/nix-test.yml
+  parameters:
+    name: Linux
+    pool: ubuntu-16.04
+    purpose: ElevatedPesterTests
+    tagSet: Others
+    parentJobs:
+      - linux_build
+
+- template: templates/verify-xunit.yml
+  parameters:
+    pool: ubuntu-16.04
+    parentJobs:
+      - linux_build
+>>>>>>> upstream/release/v7.0.4
 
   - template: templates/verify-xunit.yml
     parameters:
