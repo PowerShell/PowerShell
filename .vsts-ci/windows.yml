@@ -24,12 +24,20 @@ pr:
     include:
     - '*'
     exclude:
+<<<<<<< HEAD
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
     - .dependabot/config.yml
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
     - test/common/markdown/*
+=======
+    - /.vsts-ci/misc-analysis.yml
+    - /.github/ISSUE_TEMPLATE/*
+    - /.dependabot/config.yml
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+>>>>>>> upstream/release/v7.0.4
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
@@ -73,3 +81,14 @@ stages:
       tagSet: Others
 
   - template: templates/verify-xunit.yml
+<<<<<<< HEAD
+=======
+
+- stage: PackagingWin
+  displayName: Packaging for Windows
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
+  - template: templates/windows-packaging.yml
+
+>>>>>>> upstream/release/v7.0.4
