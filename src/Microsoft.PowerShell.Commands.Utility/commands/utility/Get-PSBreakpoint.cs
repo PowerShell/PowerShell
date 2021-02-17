@@ -27,12 +27,18 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Get-PSBreakpoint.
     /// </summary>
+<<<<<<< HEAD
     [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097108")]
     [OutputType(typeof(CommandBreakpoint), ParameterSetName = new[] { CommandParameterSetName })]
     [OutputType(typeof(LineBreakpoint), ParameterSetName = new[] { LineParameterSetName })]
     [OutputType(typeof(VariableBreakpoint), ParameterSetName = new[] { VariableParameterSetName })]
     [OutputType(typeof(Breakpoint), ParameterSetName = new[] { TypeParameterSetName, IdParameterSetName })]
     public class GetPSBreakpointCommand : PSBreakpointAccessorCommandBase
+=======
+    [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = "Script", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097108")]
+    [OutputType(typeof(Breakpoint))]
+    public class GetPSBreakpointCommand : PSCmdlet
+>>>>>>> upstream/release/v7.0.4
     {
         #region strings
 
