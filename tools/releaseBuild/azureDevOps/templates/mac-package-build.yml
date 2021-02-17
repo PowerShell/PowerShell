@@ -14,11 +14,17 @@ jobs:
     runCodesignValidationInjection: false
   steps:
 <<<<<<< HEAD
+<<<<<<< HEAD
   - checkout: self
     clean: true
 
 =======
 >>>>>>> upstream/release/v7.0.4
+=======
+  - checkout: self
+    clean: true
+
+>>>>>>> origin/release/v7.1.1
   - pwsh: |
       # create folder
       sudo mkdir /PowerShell
