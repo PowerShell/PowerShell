@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Current preview release
 
 ## [7.2.0-preview.3] - 2021-02-11
@@ -405,3 +406,5 @@
 - Fix `crontab` formatting in example doc (#13712) (Thanks @dgoldman-msft!)
 
 [7.2.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.1.0...v7.2.0-preview.1
+=======
+>>>>>>> origin/release/v7.1.1
