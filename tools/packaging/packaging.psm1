@@ -542,7 +542,11 @@ function New-TarballPackage {
     }
 
     $Staging = "$PSScriptRoot/staging"
+<<<<<<< HEAD
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
+=======
+    New-StagingFolder -StagingPath $Staging
+>>>>>>> upstream/release/v7.0.4
 
     if (-not $ExcludeSymbolicLinks.IsPresent) {
         New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
@@ -623,7 +627,11 @@ function New-PSBuildZip
         [string]$VstsVariableName
     )
 
+<<<<<<< HEAD
     $name = Split-Path -Path $BuildPath -Leaf
+=======
+    $name = split-path -Path $BuildPath -Leaf
+>>>>>>> upstream/release/v7.0.4
     $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
     Compress-Archive -Path $BuildPath\* -DestinationPath $zipLocationPath
     if ($VstsVariableName)
@@ -650,11 +658,19 @@ function Update-PSSignedBuildFolder
 
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $SignedFilesPath -ChildPath '*'
+<<<<<<< HEAD
     Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
         $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
         $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
         Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -Force
+=======
+    Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
+        $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
+        $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
+        Write-Log "replacing $destination with $_"
+        Copy-Item -Path $_ -Destination $destination -force
+>>>>>>> upstream/release/v7.0.4
     }
 }
 
@@ -1000,7 +1016,11 @@ Function New-LinkInfo
         $linkTarget
     )
 
+<<<<<<< HEAD
     $linkDir = Join-Path -Path '/tmp' -ChildPath ([System.IO.Path]::GetRandomFileName())
+=======
+    $linkDir = Join-Path -path '/tmp' -ChildPath ([System.IO.Path]::GetRandomFileName())
+>>>>>>> upstream/release/v7.0.4
     $null = New-Item -ItemType Directory -Path $linkDir
     $linkSource = Join-Path -Path $linkDir -ChildPath 'pwsh'
 
@@ -1275,6 +1295,16 @@ function Get-PackageDependencies
                 "libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
+<<<<<<< HEAD
+=======
+            switch -regex ($Distribution) {
+                "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
+                "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
+                "debian\.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
+                "debian\.(10|11)" { $Dependencies += @("libssl1.1", "libicu63") }
+                default { throw "Debian distro '$Distribution' is not supported." }
+            }
+>>>>>>> upstream/release/v7.0.4
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
                 "openssl-libs",
@@ -1428,7 +1458,11 @@ function New-ManGzip
     {
         $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
         $newRonnFile = $RonnFile -replace 'pwsh', $prodName
+<<<<<<< HEAD
         Copy-Item -Path $RonnFile -Destination $newRonnFile -Force
+=======
+        Copy-Item -Path $RonnFile -Destination $newRonnFile -force
+>>>>>>> upstream/release/v7.0.4
         $RonnFile = $newRonnFile
     }
 
@@ -1888,8 +1922,13 @@ function New-ILNugetPackage
                     "Microsoft.PowerShell.Utility"
                 )
 
+<<<<<<< HEAD
                 $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
                 $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+=======
+                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
+                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
+>>>>>>> upstream/release/v7.0.4
 
                 foreach ($module in $winBuiltInModules) {
                     $source = Join-Path $WinFxdBinPath "Modules\$module"
@@ -2030,9 +2069,14 @@ function CopyReferenceAssemblies
     switch ($assemblyName) {
         { $_ -in $supportedRefList } {
             $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
+<<<<<<< HEAD
             $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
             Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
             Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
+=======
+            Copy-Item $refDll -Destination $refNugetPath -Force
+            Write-Log "Copied file $refDll to $refNugetPath"
+>>>>>>> upstream/release/v7.0.4
         }
 
         "Microsoft.PowerShell.SDK" {
@@ -3427,7 +3471,11 @@ function Test-FileWxs
         Write-Verbose "Rebuilding componentRefs" -Verbose
 
         # add all the file components to the patch
+<<<<<<< HEAD
         foreach($component in $componentRefs)
+=======
+        foreach($component in $components)
+>>>>>>> upstream/release/v7.0.4
         {
             $componentId = $component.Id
             Write-Verbose "Removing $componentId" -Verbose
