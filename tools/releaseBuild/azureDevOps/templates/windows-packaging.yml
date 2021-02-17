@@ -60,7 +60,7 @@ jobs:
 
   - template: cloneToOfficialPath.yml
 
-  - pwsh: |
+  - powershell: |
       # cleanup previous install
       if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
         Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
@@ -68,7 +68,7 @@ jobs:
 
       $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
       $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip'
-      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
+      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
 
       Import-Module '$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/wix.psm1'
       Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
@@ -124,10 +124,10 @@ jobs:
         "$($fullSymbolsFolder)\System.Management.Automation.dll" = ""
       }
 
-      $itemsToExclude = @(
+      $itemsToExclude = @{
         # This package is retrieved from https://www.github.com/powershell/MarkdownRender
-        "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll"
-      )
+        "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll" = ""
+      }
 
       if ("$env:Architecture" -notlike 'fxdependent*')
       {
@@ -180,14 +180,7 @@ jobs:
       $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force
 
       $missingSignatures | ForEach-Object {
-        $pathWithoutLeaf = Split-Path $_
-        $relativePath = $pathWithoutLeaf.replace($BuildPath,'')
-        $targetDirectory = Join-Path -Path $filesToSignDirectory -ChildPath $relativePath
-        if(!(Test-Path $targetDirectory))
-        {
-          $null = New-Item -ItemType Directory -Path $targetDirectory -Force
-        }
-        Copy-Item -Path $_ -Destination $targetDirectory
+        Copy-Item -Path $_ -Destination $filesToSignDirectory
       }
 
     displayName: Create ThirdParty Signing Folder
