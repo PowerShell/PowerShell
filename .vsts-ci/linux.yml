@@ -24,13 +24,20 @@ pr:
     include:
     - '*'
     exclude:
+    - test/common/markdown/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
+<<<<<<< HEAD
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
     - /.vsts-ci/windows.yml
     - /.vsts-ci/windows/*
+=======
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+>>>>>>> origin/release/v7.1.1
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
