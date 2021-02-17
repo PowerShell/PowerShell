@@ -13,9 +13,12 @@ jobs:
     HOMEBREW_NO_ANALYTICS: 1
     runCodesignValidationInjection: false
   steps:
+<<<<<<< HEAD
   - checkout: self
     clean: true
 
+=======
+>>>>>>> upstream/release/v7.0.4
   - pwsh: |
       # create folder
       sudo mkdir /PowerShell
