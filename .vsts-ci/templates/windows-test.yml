@@ -38,9 +38,8 @@ jobs:
       Write-Host "Old Path:"
       Write-Host $env:Path
 
-      $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
-      $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
-      $env:Path = $paths -join ";"
+      # Remove ALL occurrences 'Program Files\dotnet'
+      $env:Path = ($env:Path).Split(';').Where( { -not $_.Contains('Program Files\dotnet') } -join ";" 
 
       Write-Host "New Path:"
       Write-Host $env:Path
