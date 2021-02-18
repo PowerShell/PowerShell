@@ -440,12 +440,12 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'G':
-                            sb.Append(StringUtil.Format("{0:0000}", GetIsoYear(dateTime)));
+                            sb.Append(StringUtil.Format("{0:0000}", ISOWeek.GetYear(dateTime)));
                             break;
 
                         case 'g':
-                            int isoYearWithoutCentury = GetIsoYear(dateTime) % 100;
-                            sb.Append(StringUtil.Format("{0:00}", isoYearWithoutCentury);
+                            int isoYearWithoutCentury = ISOWeek.GetYear(dateTime) % 100;
+                            sb.Append(StringUtil.Format("{0:00}", isoYearWithoutCentury));
                             break;
 
                         case 'H':
@@ -566,30 +566,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return StringUtil.Format(sb.ToString(), dateTime);
-        }
-
-        /// <summary>
-        /// This method returns the year of the ISO week calendar, which assigns each entire week to the Gregorian year that contains Thursday.
-        /// </summary>
-        private static int GetIsoYear(DateTime dateTime)
-        {
-            int isoWeek = ISOWeek.GetWeekOfYear(dateTime);
-
-            // When the Gregorian year ends between Thursday and Sunday,
-            // the rest of that ISO week belongs to the previous ISO week calendar year.
-            if (isoWeek == 53 && dateTime.Month == 1)
-            {
-                return dateTime.Year - 1;
-            }
-
-            // When the Gregorian year begins between Sunday and Thursday,
-            // the rest of that ISO week belongs to the next ISO week calendar year.
-            if (isoWeek == 1 && dateTime.Month == 12)
-            {
-                return dateTime.Year + 1;
-            }
-
-            return dateTime.Year;
         }
 
         #endregion

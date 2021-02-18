@@ -99,7 +99,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
     # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
     It "using -uformat 'G' produces the correct output" -TestCases @(
-        @{date="0055-12-31"; year = "0054"},
+        @{date="0055-12-31"; year = "0055"},
         @{date="0325-01-01"; year = "0325"},
         @{date="0777-01-01"; year = "0776"},
         @{date="1998-01-02"; year = "1998"},
@@ -110,7 +110,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{date="2005-01-01"; year = "2004"},
         @{date="2005-01-02"; year = "2004"},
         @{date="2005-12-31"; year = "2005"},
-        @{date="2006-01-01"; year = "2006"},
+        @{date="2006-01-01"; year = "2005"},
         @{date="2006-01-02"; year = "2006"},
         @{date="2006-12-31"; year = "2006"},
         @{date="2007-01-01"; year = "2007"},
@@ -144,7 +144,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
     # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
     It "using -uformat 'g' produces the correct output" -TestCases @(
-        @{date="0055-12-31"; yy = "54"},
+        @{date="0055-12-31"; yy = "55"},
         @{date="0325-01-01"; yy = "25"},
         @{date="0777-01-01"; yy = "76"},
         @{date="1998-01-02"; yy = "98"},
@@ -155,7 +155,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{date="2005-01-01"; yy = "04"},
         @{date="2005-01-02"; yy = "04"},
         @{date="2005-12-31"; yy = "05"},
-        @{date="2006-01-01"; yy = "06"},
+        @{date="2006-01-01"; yy = "05"},
         @{date="2006-01-02"; yy = "06"},
         @{date="2006-12-31"; yy = "06"},
         @{date="2007-01-01"; yy = "07"},
