@@ -1678,7 +1678,7 @@ function Install-Dotnet {
 
     # Install for Linux and OS X
     if ($environment.IsLinux -or $environment.IsMacOS) {
-        $curl = Get-Command -Name curl -CommandType Application -TotalCount 1 -ErrorAction Stop
+        $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
@@ -1689,7 +1689,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                & $curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
+                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1700,11 +1700,11 @@ function Install-Dotnet {
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
             Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
+            & $wget $installObtainUrl/$installScript
 
             if ((Get-ChildItem "./$installScript").Length -eq 0) {
                 throw "./$installScript was 0 length"
             }
-            & $curl -sO $installObtainUrl/$installScript
 
             $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
 
