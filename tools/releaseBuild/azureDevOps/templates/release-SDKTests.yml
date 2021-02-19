@@ -12,12 +12,28 @@ jobs:
     - checkout: self
       clean: true
 
-    - download: releasePipeline
-      artifact: finalResults
-      patterns: '**/*.nupkg'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: finalResults
+        patterns: '**/*.nupkg'
+        path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
 
-    - download: releasePipeline
-      artifact: metadata
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: metadata
+        path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
         $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
