@@ -1633,7 +1633,9 @@ function Install-Dotnet {
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
-    if ($Environment.IsLinux -or $Environment.IsMacOS) {
+    if ($environment.IsLinux -or $environment.IsMacOS) {
+        $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
+
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($Environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
@@ -1643,7 +1645,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
+                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1653,8 +1655,24 @@ function Install-Dotnet {
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
-            curl -sO $installObtainUrl/$installScript
-            bash ./$installScript -c $Channel -v $Version
+            Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
+            & $wget $installObtainUrl/$installScript
+
+            if ((Get-ChildItem "./$installScript").Length -eq 0) {
+                throw "./$installScript was 0 length"
+            }
+
+            $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
+
+            if ($InstallDir) {
+                $bashArgs += @('-i', $InstallDir)
+            }
+
+            if ($AzureFeed) {
+                $bashArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
+            }
+
+            bash @bashArgs
         }
     } elseif ($Environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
