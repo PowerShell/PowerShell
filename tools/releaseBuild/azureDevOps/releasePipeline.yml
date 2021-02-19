@@ -238,10 +238,7 @@ stages:
   dependsOn: GitHubManualTasks
   displayName: Publish MSIX to store
   jobs:
-  - deployment: PublishMsix
-    displayName: Publish MSIX to store
-    pool: server
-    environment: PSReleasePublishMsix
+  - template: templates/release-MsixBundle.yml
 
 - stage: BuildInfoJson
   dependsOn: GitHubManualTasks

@@ -73,6 +73,7 @@ jobs:
       architecture: arm32
       version: $(version)
       msi: no
+      msix: no
 
   - template: upload.yml
     parameters:

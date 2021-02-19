@@ -66,3 +66,9 @@ steps:
     ContainerName: '$(AzureVersion)-private'
     resourceGroup: '$(StorageResourceGroup)'
   condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))
+
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(Build.StagingDirectory)\signedPackages
+    artifactFilter: PowerShell-${{ parameters.version }}.msixbundle
+    condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))

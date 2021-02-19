@@ -1,0 +1,45 @@
+parameters:
+  jobName: ""
+  displayName: ""
+  imageName: ""
+  globalToolExeName: 'pwsh.exe'
+  globalToolPackageName: 'PowerShell.Windows.x64'
+
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.imageName }}
+  steps:
+    - checkout: self
+      clean: true
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: finalResults
+        patterns: '**/*.msix'
+        path: '$(Pipeline.Workspace)/msix'
+
+    - pwsh: |
+        if ($null -eq Get-Command makeappx -ErrorAction Ignore) {
+          $msixUrl = '$(makeappUrl)'
+          Invoke-RestMethod -Uri $msixUrl -OutFile '\makeappx.zip'
+          Expand-Archive '\makeappx.zip' -destination '\' -Force
+        }
+      displayName: Install tools
+
+    - pwsh: |
+        $file = Get-ChildItem "$(Pipeline.Workspace)/msix" | Select-Object -First 1
+        $release = ($file.BaseName -split "-")[2]
+        $prefix = ($file.BaseName -split "-win")[0]
+        $pkgName = "$prefix.msixbundle"
+        Write-Verbose -Verbose "Creating $pkgName"
+        makeappx.exe bundle /d "$(Pipeline.Workspace)/msix" /p "$(Build.StagingDirectory)\signedPackages\$pkgName"
+      displayName: Build MsixBundle
