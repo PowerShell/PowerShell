@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             for (int k = 0; k < lines.Length; k++)
             {
-                var currentLine = lines[k];
+                string currentLine = lines[k];
 
                 if (currentLine == null || displayCells.Length(currentLine) <= firstLineLen)
                 {
