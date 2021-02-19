@@ -516,11 +516,24 @@ namespace Microsoft.PowerShell
             }
         }
 
+        // Check the signature via the SIP which should never erroneously validate an invalid signature
+        // or altered script.
         private static Signature GetSignatureWithEncodingRetry(string path, ExternalScriptInfo script)
         {
-            string verificationContents = System.Text.Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
-            Signature signature = SignatureHelper.GetSignature(path, verificationContents);
 
+            // Invoke the SIP directly with the most simple method
+            Signature signature = SignatureHelper.GetSignature(path, null);
+            if (signature.Status == SignatureStatus.Valid)
+            {
+                return signature;
+            }
+
+            // try harder to validate the signature by being explicit about encoding
+            // and providing the script contents
+            string verificationContents = System.Text.Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
+            signature = SignatureHelper.GetSignature(path, verificationContents);
+
+            // A last ditch effort -
             // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
             if ((signature.Status != SignatureStatus.Valid) && (script.OriginalEncoding != System.Text.Encoding.Unicode))
             {
