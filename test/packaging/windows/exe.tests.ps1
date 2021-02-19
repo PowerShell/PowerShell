@@ -27,7 +27,7 @@ Describe -Name "Windows EXE" -Fixture {
                 [String]$ExePath
             )
             $action = "$($PSCmdlet.ParameterSetName)ing"
-            if ($Install.IsPresent) {
+            if ($Install) {
                 $switch = '/install'
             } else {
                 $switch = '/uninstall'

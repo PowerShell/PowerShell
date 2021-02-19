@@ -2984,7 +2984,7 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
+        [ValidateScript({Test-Path $_})]
         [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
@@ -3119,7 +3119,7 @@ function New-MSIPackage
         WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
 
-    if ((Test-Path $exeLocationPath) )
+    if (Test-Path $exeLocationPath)
     {
         Write-Verbose "You can find the MSI @ $exeLocationPath" -Verbose
         $exeLocationPath
