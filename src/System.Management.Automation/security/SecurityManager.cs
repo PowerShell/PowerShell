@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell
         private static Signature GetSignatureWithEncodingRetry(string path, ExternalScriptInfo script)
         {
             // Invoke the SIP directly with the most simple method
-            Signature signature = SignatureHelper.GetSignature(path, null);
+            Signature signature = SignatureHelper.GetSignature(path, fileContent: null);
             if (signature.Status == SignatureStatus.Valid)
             {
                 return signature;
