@@ -30,7 +30,6 @@ jobs:
 
   - checkout: self
     clean: true
-    persistCredentials: true
 
   - checkout: ComplianceRepo
     clean: true

@@ -25,7 +25,6 @@ jobs:
 
   - checkout: self
     clean: true
-    persistCredentials: true
 
   - template: SetVersionVariables.yml
     parameters:

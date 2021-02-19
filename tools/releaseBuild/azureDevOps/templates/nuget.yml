@@ -31,6 +31,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
+<<<<<<< HEAD
 
   - checkout: ComplianceRepo
     clean: true
@@ -38,6 +39,8 @@ jobs:
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+=======
+>>>>>>> 55c285805... Add checkout step to release build templates (#13840)
 
   - powershell: |
       $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
