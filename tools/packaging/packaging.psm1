@@ -515,7 +515,7 @@ function New-TarballPackage {
 
         [switch] $ExcludeSymbolicLinks,
 
-        [string] $CurrentLocation
+        [string] $CurrentLocation = (Get-Location)
     )
 
     if ($PackageNameSuffix) {
@@ -1617,7 +1617,7 @@ function New-ZipPackage
 
         [switch] $Force,
 
-        [string] $CurrentLocation
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1691,7 +1691,7 @@ function New-PdbZipPackage
 
         [switch] $Force,
 
-        [string] $CurrentLocation
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
