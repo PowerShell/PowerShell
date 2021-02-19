@@ -513,7 +513,9 @@ function New-TarballPackage {
 
         [switch] $Force,
 
-        [switch] $ExcludeSymbolicLinks
+        [switch] $ExcludeSymbolicLinks,
+
+        [string] $CurrentLocation
     )
 
     if ($PackageNameSuffix) {
@@ -530,7 +532,7 @@ function New-TarballPackage {
         $packageName = $packageName -f "osx"
     }
 
-    $packagePath = Join-Path -Path $PWD -ChildPath $packageName
+    $packagePath = Join-Path -Path $CurrentLocation -ChildPath $packageName
     Write-Verbose "Create package $packageName"
     Write-Verbose "Package destination path: $packagePath"
 
@@ -734,7 +736,10 @@ function New-UnixPackage {
         $NoSudo,
 
         [switch]
-        $LTS
+        $LTS,
+
+        [string]
+        $CurrentLocation = (Get-Location)
     )
 
     DynamicParam {
@@ -967,7 +972,7 @@ function New-UnixPackage {
         }
 
         # Magic to get path output
-        $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+        $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
             if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
@@ -1610,7 +1615,9 @@ function New-ZipPackage
         [ValidateNotNullOrEmpty()]
         [string] $PackageSourcePath,
 
-        [switch] $Force
+        [switch] $Force,
+
+        [string] $CurrentLocation
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1622,7 +1629,7 @@ function New-ZipPackage
 
     Write-Verbose "Create Zip for Product $zipPackageName"
 
-    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+    $zipLocationPath = Join-Path $CurrentLocation "$zipPackageName.zip"
 
     if ($Force.IsPresent)
     {
@@ -1682,7 +1689,9 @@ function New-PdbZipPackage
         [Parameter(Mandatory = $true)]
         [string] $PackageSourcePath,
 
-        [switch] $Force
+        [switch] $Force,
+
+        [string] $CurrentLocation
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1694,7 +1703,7 @@ function New-PdbZipPackage
 
     Write-Verbose "Create Symbols Zip for Product $zipPackageName"
 
-    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+    $zipLocationPath = Join-Path $CurrentLocation "$zipPackageName.zip"
 
     if ($Force.IsPresent)
     {
@@ -2999,7 +3008,9 @@ function New-MSIPackage
         [string] $ProductTargetArchitecture,
 
         # Force overwrite of package
-        [Switch] $Force
+        [Switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $wixPaths = Get-WixPath
@@ -3048,11 +3059,11 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $PWD "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $PWD "$packageName.wixpdb"
 
-    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
-    {
+    $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
+
+    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath)) {
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
@@ -3238,7 +3249,9 @@ function New-MSIXPackage
         [string] $Architecture,
 
         # Force overwrite of package
-        [Switch] $Force
+        [Switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
@@ -3323,7 +3336,7 @@ function New-MSIXPackage
         Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
         Pop-Location
         Write-Verbose "Creating msix package" -Verbose
-        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
     }
 }
