@@ -11,6 +11,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 using Dbg = System.Management.Automation;
 
@@ -529,14 +530,14 @@ namespace Microsoft.PowerShell
 
             // try harder to validate the signature by being explicit about encoding
             // and providing the script contents
-            string verificationContents = System.Text.Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
+            string verificationContents = Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
             signature = SignatureHelper.GetSignature(path, verificationContents);
 
             // A last ditch effort -
             // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
-            if ((signature.Status != SignatureStatus.Valid) && (script.OriginalEncoding != System.Text.Encoding.Unicode))
+            if ((signature.Status != SignatureStatus.Valid) && (script.OriginalEncoding != Encoding.Unicode))
             {
-                verificationContents = System.Text.Encoding.Unicode.GetString(System.Text.Encoding.Unicode.GetPreamble()) + script.ScriptContents;
+                verificationContents = Encoding.Unicode.GetString(Encoding.Unicode.GetPreamble()) + script.ScriptContents;
                 Signature fallbackSignature = SignatureHelper.GetSignature(path, verificationContents);
 
                 if (fallbackSignature.Status == SignatureStatus.Valid)
