@@ -3120,8 +3120,8 @@ function New-MSIPackage
         throw $errorMessage
     }
 
-    $exeLocationPath = Join-Path $PWD "$packageName.exe"
-    $exePdbLocationPath = Join-Path $PWD "$packageName.exe.wixpdb"
+    $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
+    $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
     $windowsVersion = Get-WindowsVersion -packageName $packageName
 
     Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
