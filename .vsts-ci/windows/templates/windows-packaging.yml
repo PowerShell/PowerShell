@@ -33,12 +33,3 @@ jobs:
       New-CodeCoverageAndTestPackage
       Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
     displayName: Build and Test Package
-
-  - pwsh: |
-      $resourceUris = '$(RESOURCE_URIS)'
-      Write-Host "ru-$resourceUris"
-      if($resourceUris -eq 'undefined') {
-        Write-Host 'Clearing...'
-        Write-Host "##vso[task.setvariable variable=RESOURCE_URIS;]"
-      }
-    displayName: Clear RESOURCE_URIS if 'undefined')
