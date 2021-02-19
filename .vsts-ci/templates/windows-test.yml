@@ -39,7 +39,7 @@ jobs:
       Write-Host $env:Path
 
       # Remove ALL occurrences 'Program Files\dotnet'
-      $env:Path = ($env:Path).Split(';').Where( { -not $_.Contains('Program Files\dotnet') } -join ";" 
+      $env:Path = ($env:Path).Split(';').Where( { -not $_.Contains('Program Files\dotnet') } ) -join ";" 
 
       Write-Host "New Path:"
       Write-Host $env:Path
