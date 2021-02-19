@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe -Name "Windows MSI" -Fixture {
+Describe -Name "Windows EXE" -Fixture {
     BeforeAll {
         function Test-Elevated {
             [CmdletBinding()]
@@ -14,7 +14,7 @@ Describe -Name "Windows MSI" -Fixture {
             return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
         }
 
-        function Invoke-Msiexec {
+        function Invoke-ExeInstaller {
             param(
                 [Parameter(ParameterSetName = 'Install', Mandatory)]
                 [Switch]$Install,
@@ -24,43 +24,29 @@ Describe -Name "Windows MSI" -Fixture {
 
                 [Parameter(Mandatory)]
                 [ValidateScript({Test-Path -Path $_})]
-                [String]$MsiPath,
-
-                [Parameter(ParameterSetName = 'Install')]
-                [HashTable] $Properties
-
+                [String]$ExePath
             )
             $action = "$($PSCmdlet.ParameterSetName)ing"
-            if ($Install.IsPresent) {
-                $switch = '/I'
+            if ($Install) {
+                $switch = '/install'
             } else {
-                $switch = '/x'
+                $switch = '/uninstall'
             }
 
-            $additionalOptions = @()
-            if ($Properties) {
-                foreach ($key in $Properties.Keys) {
-                    $additionalOptions += "$key=$($Properties.$key)"
-                }
-            }
-
-            $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
-            $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
-            if ($msiExecProcess.ExitCode -ne 0) {
-                $exitCode = $msiExecProcess.ExitCode
-                throw "$action MSI failed and returned error code $exitCode."
+            $installProcess = Start-Process -wait $ExePath -ArgumentList $switch, '/quiet', '/norestart' -PassThru
+            if ($installProcess.ExitCode -ne 0) {
+                $exitCode = $installProcess.ExitCode
+                throw "$action EXE failed and returned error code $exitCode."
             }
         }
 
-        $msiX64Path = $env:PsMsiX64Path
+        $exePath = $env:PsExePath
         $channel = $env:PSMsiChannel
         $runtime = $env:PSMsiRuntime
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files\powershell*'})
-
-        $msiLog = Join-Path -Path $TestDrive -ChildPath 'msilog.txt'
 
         foreach ($pathPart in $beforePath) {
             Write-Warning "Found existing PowerShell path: $pathPart"
@@ -69,20 +55,12 @@ Describe -Name "Windows MSI" -Fixture {
         if (!(Test-Elevated)) {
             Write-Warning "Tests must be elevated"
         }
-        $uploadedLog = $false
     }
     BeforeEach {
         $error.Clear()
     }
-    AfterEach {
-        if ($error.Count -ne 0 -and !$uploadedLog) {
-            Copy-Item -Path $msiLog -Destination $env:temp -Force
-            Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            $uploadedLog = $true
-        }
-    }
 
-    Context "Upgrade code" {
+    Context "$Channel-$Runtime" {
         BeforeAll {
             Write-Verbose "cr-$channel-$runtime" -Verbose
             switch ("$channel-$runtime") {
@@ -109,50 +87,15 @@ Describe -Name "Windows MSI" -Fixture {
             $result.Count | Should -Be 0 -Because "Query should return nothing if $channel $runtime is not installed"
         }
 
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+        It "EXE should install without error" -Skip:(!(Test-Elevated)) {
             {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 1}
+                Invoke-ExeInstaller -Install -ExePath $exePath
             } | Should -Not -Throw
         }
 
         It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
             $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
             $result.Count | Should -Be 1 -Because "Query should return 1 result if Upgrade code is for $runtime $channel"
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-    }
-
-    Context "Add Path disabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0}
-            } | Should -Not -Throw
-        }
-
-        It "MSI should have not be updated path" -Skip:(!(Test-Elevated)) {
-            $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object { $_ -like '*files\powershell*' -and $_ -notin $beforePath }
-
-            $psPath | Should -BeNullOrEmpty
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-    }
-
-    Context "Add Path enabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 1}
-            } | Should -Not -Throw
         }
 
         It "MSI should have updated path" -Skip:(!(Test-Elevated)) {
@@ -176,7 +119,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
             {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+                Invoke-ExeInstaller -Uninstall -ExePath $exePath
             } | Should -Not -Throw
         }
     }

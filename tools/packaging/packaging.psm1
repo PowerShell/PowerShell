@@ -513,7 +513,9 @@ function New-TarballPackage {
 
         [switch] $Force,
 
-        [switch] $ExcludeSymbolicLinks
+        [switch] $ExcludeSymbolicLinks,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     if ($PackageNameSuffix) {
@@ -530,7 +532,7 @@ function New-TarballPackage {
         $packageName = $packageName -f "osx"
     }
 
-    $packagePath = Join-Path -Path $PWD -ChildPath $packageName
+    $packagePath = Join-Path -Path $CurrentLocation -ChildPath $packageName
     Write-Verbose "Create package $packageName"
     Write-Verbose "Package destination path: $packagePath"
 
@@ -734,7 +736,10 @@ function New-UnixPackage {
         $NoSudo,
 
         [switch]
-        $LTS
+        $LTS,
+
+        [string]
+        $CurrentLocation = (Get-Location)
     )
 
     DynamicParam {
@@ -967,7 +972,7 @@ function New-UnixPackage {
         }
 
         # Magic to get path output
-        $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+        $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
             if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
@@ -1610,7 +1615,9 @@ function New-ZipPackage
         [ValidateNotNullOrEmpty()]
         [string] $PackageSourcePath,
 
-        [switch] $Force
+        [switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1622,7 +1629,7 @@ function New-ZipPackage
 
     Write-Verbose "Create Zip for Product $zipPackageName"
 
-    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+    $zipLocationPath = Join-Path $CurrentLocation "$zipPackageName.zip"
 
     if ($Force.IsPresent)
     {
@@ -1682,7 +1689,9 @@ function New-PdbZipPackage
         [Parameter(Mandatory = $true)]
         [string] $PackageSourcePath,
 
-        [switch] $Force
+        [switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1694,7 +1703,7 @@ function New-PdbZipPackage
 
     Write-Verbose "Create Symbols Zip for Product $zipPackageName"
 
-    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+    $zipLocationPath = Join-Path $CurrentLocation "$zipPackageName.zip"
 
     if ($Force.IsPresent)
     {
@@ -2982,6 +2991,11 @@ function New-MSIPackage
         [ValidateScript( {Test-Path $_})]
         [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
+
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
@@ -2994,7 +3008,9 @@ function New-MSIPackage
         [string] $ProductTargetArchitecture,
 
         # Force overwrite of package
-        [Switch] $Force
+        [Switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $wixPaths = Get-WixPath
@@ -3043,11 +3059,11 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $PWD "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $PWD "$packageName.wixpdb"
 
-    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
-    {
+    $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
+
+    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath)) {
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
@@ -3101,6 +3117,27 @@ function New-MSIPackage
     else
     {
         $errorMessage = "Failed to create $msiLocationPath"
+        throw $errorMessage
+    }
+
+    $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
+    $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
+    $windowsVersion = Get-WindowsVersion -packageName $packageName
+
+    Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
+        IsPreview      = $isPreview
+        TargetPath     = $msiLocationPath
+        WindowsVersion = $windowsVersion
+    }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
+
+    if (Test-Path $exeLocationPath)
+    {
+        Write-Verbose "You can find the MSI @ $exeLocationPath" -Verbose
+        $exeLocationPath
+    }
+    else
+    {
+        $errorMessage = "Failed to create $exeLocationPath"
         throw $errorMessage
     }
 }
@@ -3212,7 +3249,9 @@ function New-MSIXPackage
         [string] $Architecture,
 
         # Force overwrite of package
-        [Switch] $Force
+        [Switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
@@ -3251,27 +3290,7 @@ function New-MSIXPackage
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
 
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
-    if (([Version]$ProductVersion).Revision -eq -1) {
-        $ProductVersion += ".0"
-    }
-
-    # The Store requires the last digit of the version to be 0 so we swap the build and revision
-    # This only affects Preview versions where the last digit is the preview number
-    # For stable versions, the last digit is already zero so no changes
-    $pversion = [version]$ProductVersion
-    if ($pversion.Revision -ne 0) {
-        $revision = $pversion.Revision
-        if ($packageName.Contains('-rc')) {
-            # For Release Candidates, we use numbers in the 100 range
-            $revision += 100
-        }
-
-        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
-        $ProductVersion = $pversion.ToString()
-    }
-
-    Write-Verbose "Version: $productversion" -Verbose
+    $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview) {
@@ -3317,7 +3336,7 @@ function New-MSIXPackage
         Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
         Pop-Location
         Write-Verbose "Creating msix package" -Verbose
-        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
     }
 }
@@ -3601,6 +3620,36 @@ function New-WixId
     "$Prefix$guidPortion"
 }
 
+function Get-WindowsVersion {
+    param (
+        [parameter(Mandatory)]
+        [string]$PackageName
+    )
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    if (([Version]$ProductVersion).Revision -eq -1) {
+        $ProductVersion += ".0"
+    }
+
+    # The Store requires the last digit of the version to be 0 so we swap the build and revision
+    # This only affects Preview versions where the last digit is the preview number
+    # For stable versions, the last digit is already zero so no changes
+    $pversion = [version]$ProductVersion
+    if ($pversion.Revision -ne 0) {
+        $revision = $pversion.Revision
+        if ($packageName.Contains('-rc')) {
+            # For Release Candidates, we use numbers in the 100 range
+            $revision += 100
+        }
+
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
+        $ProductVersion = $pversion.ToString()
+    }
+
+    Write-Verbose "Version: $productversion" -Verbose
+    return $productversion
+}
+
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
 # This function converts the above version into major.minor[.build[.revision]] format
 function Get-PackageVersionAsMajorMinorBuildRevision
@@ -3617,7 +3666,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersionTokens = $Version.Split('-')
     $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
 
-    if (1 -eq $packageVersionTokens.Count) {
+    if (1 -eq $packageVersionTokens.Count -and ([Version]$packageVersion).Revision -eq -1) {
         # In case the input is of the form a.b.c, add a '0' at the end for revision field
         $packageVersion = $packageVersion + '.0'
     } elseif (1 -lt $packageVersionTokens.Count) {
