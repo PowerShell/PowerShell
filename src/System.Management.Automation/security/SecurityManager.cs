@@ -535,7 +535,8 @@ namespace Microsoft.PowerShell
 
             // A last ditch effort -
             // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
-            if ((signature.Status != SignatureStatus.Valid) && (script.OriginalEncoding != Encoding.Unicode))
+            if (signature.Status != SignatureStatus.Valid
+                && script.OriginalEncoding != Encoding.Unicode)
             {
                 verificationContents = Encoding.Unicode.GetString(Encoding.Unicode.GetPreamble()) + script.ScriptContents;
                 Signature fallbackSignature = SignatureHelper.GetSignature(path, verificationContents);
