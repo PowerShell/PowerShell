@@ -36,28 +36,9 @@ jobs:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json).sdk.version
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-            Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-            Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
-        }
-
-        ## Install latest version from the channel
-
-        Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-
+        Start-PSBootstrap -Force
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
       displayName: Install .NET
