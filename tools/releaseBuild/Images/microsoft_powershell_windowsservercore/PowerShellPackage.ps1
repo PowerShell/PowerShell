@@ -149,7 +149,7 @@ try{
 
         Write-Verbose "Exporting packages ..." -Verbose
 
-        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix | ForEach-Object {
+        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix,$location\*.exe | ForEach-Object {
             $file = $_.FullName
             Write-Verbose "Copying $file to $destination" -Verbose
             Copy-Item -Path $file -Destination "$destination\" -Force
