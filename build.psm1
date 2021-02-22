@@ -599,7 +599,7 @@ Fix steps:
             # https://github.com/PowerShell/PowerShell/issues/10550
             @("PSDesiredStateConfiguration.InvokeDscResource") | ForEach-Object {
                 if (!$expFeatures.Contains($_)) {
-                    $expFeatures.Add($_)
+                    $null = $expFeatures.Add($_)
                 }
             }
 
