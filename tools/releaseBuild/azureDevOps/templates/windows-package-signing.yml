@@ -48,6 +48,7 @@ jobs:
         pattern: |
           **\*.msi
           **\*.msix
+          **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
 
