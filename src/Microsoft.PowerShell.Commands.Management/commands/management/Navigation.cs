@@ -2693,7 +2693,7 @@ namespace Microsoft.PowerShell.Commands
                     bool shouldRecurse = Recurse;
                     bool treatAsFile = false;
 
-                    // only check if path is a directory using DirectoryInfo if using FileSystemProvider
+                    // only check if path is a directory using DirectoryInfo if using FileSystemProvider, otherwise will fail for other providers like Registry
                     if (resolvedPath.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
                         try
