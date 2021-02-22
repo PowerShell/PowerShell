@@ -10,6 +10,8 @@ jobs:
       name: Package ES Standard Build
     variables:
       - group: ESRP
+      - name: runCodesignValidationInjection
+        value: false
 
     steps:
     - checkout: self
