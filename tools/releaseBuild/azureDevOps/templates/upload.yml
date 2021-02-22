@@ -46,7 +46,7 @@ steps:
     condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - task: AzureFileCopy@4
-  displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
+  displayName: 'upload signed exe to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
     azureSubscription: '$(AzureFileCopySubscription)'
