@@ -1,7 +1,10 @@
 jobs:
 - job: DeleteBlob
   variables:
-    runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Delete blob is exists
   pool:
     vmImage: windows-latest

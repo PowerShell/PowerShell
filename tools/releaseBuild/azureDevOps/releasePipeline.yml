@@ -13,7 +13,10 @@ resources:
       - release/*
 
 variables:
-  runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
 
 stages:
 - stage: ValidateSDK
