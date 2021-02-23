@@ -69,6 +69,8 @@ jobs:
     - name: buildName
       value: ${{ parameters.buildName }}
     - group: ESRP
+    - name: runCodesignValidationInjection
+      value: false
 
   steps:
   - checkout: self
