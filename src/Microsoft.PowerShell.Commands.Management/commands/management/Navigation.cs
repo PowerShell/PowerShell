@@ -2699,7 +2699,16 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             System.IO.DirectoryInfo di = new(providerPath);
-                            if (di != null && di.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint) && (di.Attributes.HasFlag(System.IO.FileAttributes.Directory) && !shouldRecurse))
+
+                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSForceRemoveReparsePoint))
+                            {
+                                if (di != null && di.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint) && (di.Attributes.HasFlag(System.IO.FileAttributes.Directory) && !shouldRecurse))
+                                {
+                                    shouldRecurse = false;
+                                    treatAsFile = true;
+                                }
+                            }
+                            else if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
                             {
                                 shouldRecurse = false;
                                 treatAsFile = true;

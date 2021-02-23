@@ -3108,11 +3108,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    // For non-reparse points, the behavior is to manually recurse so if `-Confirm` is used, then the user
-                    // gets a confirmation at each level.  Unfortunately, a reparse point behaves differently and requires
-                    // the `Delete(recursive)` overload to successfully delete the folder (like a OneDrive folder).
-                    // Symlinks are still treated as files.
-                    directory.Delete(recursive: recurse);
+                    if (force && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSForceRemoveReparsePoint))
+                    {
+                        // For non-reparse points, the behavior is to manually recurse so if `-Confirm` is used, then the user
+                        // gets a confirmation at each level.  Unfortunately, a reparse point behaves differently and requires
+                        // the `Delete(recursive)` overload to successfully delete the folder (like a OneDrive folder).
+                        // Symlinks are still treated as files.
+                        directory.Delete(recursive: recurse);
+                    }
+                    else
+                    {
+                        directory.Delete();
+                    }
                 }
                 catch (Exception e)
                 {
