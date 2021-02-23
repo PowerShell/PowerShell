@@ -11,6 +11,7 @@ steps:
     path: '$(Pipeline.Workspace)/releasePipeline/BuildInfoJson'
 
 - pwsh: |
+    # Remove extra ticks to make the serialized date time more readable in the generated JSON file
     $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/BuildInfoJson/*.json"
     $fileName = Split-Path $jsonFile -Leaf
 
