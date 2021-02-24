@@ -1912,7 +1912,7 @@ namespace Microsoft.PowerShell.Commands
                                 //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
+                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(recursiveDirectory))
                                     {
                                         continue;
                                     }
@@ -2064,7 +2064,7 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;
@@ -3104,15 +3104,11 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
             {
                 try
                 {
-                    // TODO:
-                    // Different symlinks seem to vary by behavior.
-                    // In particular, OneDrive symlinks won't remove without recurse,
-                    // but the .NET API here does not allow us to distinguish them.
-                    // We may need to revisit using p/Invokes here to get the right behavior
+                    // Name surrogates should just be detached.
                     directory.Delete();
                 }
                 catch (Exception e)
@@ -8244,28 +8240,39 @@ namespace Microsoft.PowerShell.Commands
             return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
-        internal static bool IsReparsePointWithTarget(FileSystemInfo fileInfo)
+        internal static bool IsReparsePointLikeSymlink(FileSystemInfo fileInfo)
         {
-            if (!IsReparsePoint(fileInfo))
-            {
-                return false;
-            }
-#if !UNIX
-            // It is a reparse point and we should check some reparse point tags.
-            var data = new WIN32_FIND_DATA();
+#if UNIX
+            // Reparse point on Unix is a symlink.
+            return IsReparsePoint(fileInfo);
+#else
+            WIN32_FIND_DATA data = default;
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
+                if (handle.IsInvalid)
+                {
+                    // It is our convention - if we can not open the file object we process it like a symlink.
+                    return true;
+                }
+
+                if ((data.dwReserved0 & 0x0400) == 0)
+                {
+                    // Not a reparse point.
+                    return false;
+                }
+
                 // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
+                if ((data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
             }
-#endif
+
             return true;
+#endif
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)
