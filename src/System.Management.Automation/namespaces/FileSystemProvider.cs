@@ -3101,12 +3101,6 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Diagnostics.Assert(directory != null, "Caller should always check directory");
 
-            //if (InternalTestHooks.OneDriveTestOn && !InternalTestHooks.OneDriveTestRecuseOn && directory.Name == InternalTestHooks.OneDriveTestSymlinkName)
-            //{
-            //    WriteError(new ErrorRecord(exception: null, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
-            //    return;
-            //}
-
             bool continueRemoval = true;
 
             // We only want to confirm the removal if this is the root of the
@@ -3120,11 +3114,16 @@ namespace Microsoft.PowerShell.Commands
 
             if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
             {
+                void WriteErrorHelper(Exception exception)
+                {
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                }
+
                 try
                 {
                     if (InternalTestHooks.OneDriveTestOn)
                     {
-                        WriteError(new ErrorRecord(new IOException(), errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                        WriteErrorHelper(new IOException());
                         return;
                     }
                     else
@@ -3137,7 +3136,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
                     var exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    WriteErrorHelper(exception);
                 }
 
                 return;

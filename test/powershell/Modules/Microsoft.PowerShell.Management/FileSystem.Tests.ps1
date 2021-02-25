@@ -626,10 +626,11 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             try
             {
                 # '$betaDir' is a symlink - we don't follow symlinks
+                # This emulates PowerShell 6.2 and below behavior.
                 $ci = Get-ChildItem -Path $alphaDir -Recurse
                 $ci.Count | Should -BeExactly 7
 
-                # Now we follow the symlink like on OneDrive
+                # Now we follow the symlink like on OneDrive.
                 [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecuseOn', $true)
                 $ci = Get-ChildItem -Path $alphaDir -Recurse
                 $ci.Count | Should -BeExactly 10
@@ -782,7 +783,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             try
             {
                 # With the test hook turned on we don't remove '$betaDir' symlink.
-                # This emulate PowerShell 7.1 and below behavior.
+                # This emulates PowerShell 7.1 and below behavior.
                 { Remove-Item -Path $betaLink -Recurse -ErrorAction Stop } | Should -Throw -ErrorId "DeleteSymbolicLinkFailed,Microsoft.PowerShell.Commands.RemoveItemCommand"
 
                 # Now we emulate OneDrive and follow the symlink like on OneDrive.
