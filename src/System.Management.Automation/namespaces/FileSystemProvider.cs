@@ -8255,7 +8255,10 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
-                if ((data.dwReserved0 & 0x0400) == 0)
+                // To exclude one extra p/invoke in some scenarios
+                // we don't check fileInfo.FileAttributes
+                const int FILE_ATTRIBUTE_REPARSE_POINT = 0x0400;
+                if ((data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
                 {
                     // Not a reparse point.
                     return false;
