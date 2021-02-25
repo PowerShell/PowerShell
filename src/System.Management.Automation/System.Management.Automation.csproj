@@ -14,7 +14,7 @@
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <!-- the Application Insights package -->
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.16.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.17.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="6.0.0-preview.1.21102.12" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0-preview.1.21102.12" />
