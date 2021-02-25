@@ -24,7 +24,7 @@ class CommitNode {
         $this.Body = $body
         $this.IsBreakingChange = $body -match "\[breaking change\]"
 
-        if ($subject -match "\(#(\d+)\)") {
+        if ($subject -match "\(#(\d+)\)$") {
             $this.PullRequest = $Matches[1]
         }
     }
@@ -352,7 +352,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements' -Compress
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
-    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {

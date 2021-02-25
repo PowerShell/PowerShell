@@ -8,7 +8,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
-    internal class PlatformInvokes
+    internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
         internal class FILETIME
@@ -32,7 +32,7 @@ namespace System.Management.Automation
             {
                 return ((long)dwHighDateTime << 32) + dwLowDateTime;
             }
-        };
+        }
 
         [Flags]
         // dwDesiredAccess of CreateFile

@@ -276,7 +276,10 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         public TimeSpan CleanupInterval
         {
-            get { return _cleanupInterval; }
+            get
+            {
+                return _cleanupInterval;
+            }
 
             set
             {

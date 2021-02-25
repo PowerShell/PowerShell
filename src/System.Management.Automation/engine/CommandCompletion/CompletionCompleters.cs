@@ -511,7 +511,7 @@ namespace System.Management.Automation
                 && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith('-'))
             {
                 var lastAst = context.RelatedAsts.Last();
-                var wordToMatch = string.Concat(context.WordToComplete.AsSpan().Slice(1), "*");
+                var wordToMatch = string.Concat(context.WordToComplete.AsSpan(1), "*");
                 var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
                 var parameterNames = keywordAst.CommandElements.Where(ast => ast is CommandParameterAst).Select(ast => (ast as CommandParameterAst).ParameterName);
                 foreach (var parameterName in s_parameterNamesOfImportDSCResource)
@@ -4086,7 +4086,9 @@ namespace System.Management.Automation
         private sealed class ArgumentLocation
         {
             internal bool IsPositional { get; set; }
+
             internal int Position { get; set; }
+
             internal AstParameterArgumentPair Argument { get; set; }
         }
 
@@ -4705,7 +4707,7 @@ namespace System.Management.Automation
                 provider = wordToComplete.Substring(0, colon + 1);
                 if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
                 {
-                    pattern = string.Concat("variable:", wordToComplete.AsSpan().Slice(colon + 1), "*");
+                    pattern = string.Concat("variable:", wordToComplete.AsSpan(colon + 1), "*");
                 }
                 else
                 {
@@ -4999,6 +5001,7 @@ namespace System.Management.Automation
                     new Tuple<string, string>("Where", "Where({ expression } [, mode [, numberToReturn]])"),
                     new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])")
                 };
+
         // List of DSC collection-value variables
         private static readonly HashSet<string> s_dscCollectionVariables =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "SelectedNodes", "AllNodes" };
@@ -5367,7 +5370,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            bool isReadOnly = (CimFlags.ReadOnly == (cimProperty.Flags & CimFlags.ReadOnly));
+            bool isReadOnly = ((cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly);
             return type + " " + cimProperty.Name + " { get; " + (isReadOnly ? "}" : "set; }");
         }
 
@@ -5440,6 +5443,7 @@ namespace System.Management.Automation
         private abstract class TypeCompletionBase
         {
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix);
+
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove);
 
             internal static string RemoveBackTick(string typeName)
@@ -6092,7 +6096,7 @@ namespace System.Management.Automation
 
                 foreach (var dir in searchPaths)
                 {
-                    foreach (var file in Directory.GetFiles(dir))
+                    foreach (var file in Directory.EnumerateFiles(dir))
                     {
                         if (wildcardPattern.IsMatch(Path.GetFileName(file)))
                         {
@@ -6956,6 +6960,7 @@ namespace System.Management.Automation
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return false; }
 
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return false; }
+
         // REVIEW: we could relax this to allow specific commands
         public object VisitCommand(CommandAst commandAst) { return false; }
 

@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell
                         // choices to be picked.
 
                         // user did not pick up any choices..choose the default
-                        if ((result.Count == 0) && (defaultChoiceKeys.Keys.Count >= 0))
+                        if (result.Count == 0)
                         {
                             // if there's a default, pick that one.
                             foreach (int defaultChoice in defaultChoiceKeys.Keys)
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell
             int lineLenMax = RawUI.WindowSize.Width - 1;
             int lineLen = 0;
 
-            string choiceTemplate = "[{0}] {1}  ";
+            const string choiceTemplate = "[{0}] {1}  ";
 
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {

@@ -31,7 +31,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public AccessRightTypeNames Type
         {
-            get { return _type; }
+            get
+            {
+                return _type;
+            }
 
             set
             {
@@ -43,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         private AccessRightTypeNames _type;
         private bool _isTypeSet = false;
 
-        private string ConvertToNTAccount(SecurityIdentifier securityIdentifier)
+        private static string ConvertToNTAccount(SecurityIdentifier securityIdentifier)
         {
             try
             {
@@ -55,11 +58,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private List<string> GetApplicableAccessRights(int accessMask, AccessRightTypeNames? typeName)
+        private static List<string> GetApplicableAccessRights(int accessMask, AccessRightTypeNames? typeName)
         {
-            List<Type> typesToExamine = new List<Type>();
-            List<string> foundAccessRightNames = new List<string>();
-            HashSet<int> foundAccessRightValues = new HashSet<int>();
+            List<Type> typesToExamine = new();
+            List<string> foundAccessRightNames = new();
+            HashSet<int> foundAccessRightValues = new();
 
             if (typeName != null)
             {
@@ -93,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
             return foundAccessRightNames;
         }
 
-        private Type GetRealAccessRightType(AccessRightTypeNames typeName)
+        private static Type GetRealAccessRightType(AccessRightTypeNames typeName)
         {
             switch (typeName)
             {
@@ -114,17 +117,17 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string[] ConvertAccessControlListToStrings(CommonAcl acl, AccessRightTypeNames? typeName)
+        private static string[] ConvertAccessControlListToStrings(CommonAcl acl, AccessRightTypeNames? typeName)
         {
             if (acl == null || acl.Count == 0)
             {
                 return Array.Empty<string>();
             }
 
-            List<string> aceStringList = new List<string>(acl.Count);
+            List<string> aceStringList = new(acl.Count);
             foreach (CommonAce ace in acl)
             {
-                StringBuilder aceString = new StringBuilder();
+                StringBuilder aceString = new();
                 string ntAccount = ConvertToNTAccount(ace.SecurityIdentifier);
                 aceString.Append($"{ntAccount}: {ace.AceQualifier}");
 

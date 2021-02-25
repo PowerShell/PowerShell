@@ -105,10 +105,15 @@ namespace System.Management.Automation
         }
 
         internal List<string> DiscoveredExports { get; set; }
+
         internal Dictionary<string, string> DiscoveredAliases { get; set; }
+
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
+
         internal List<string> DiscoveredCommandFilters { get; set; }
+
         internal bool AddsSelfToPath { get; set; }
+
         internal List<TypeDefinitionAst> DiscoveredClasses { get; set; }
     }
 
@@ -160,11 +165,17 @@ namespace System.Management.Automation
         private readonly bool _forCompletion;
 
         internal List<string> DiscoveredExports { get; set; }
+
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
+
         internal Dictionary<string, FunctionDefinitionAst> DiscoveredFunctions { get; set; }
+
         internal Dictionary<string, string> DiscoveredAliases { get; set; }
+
         internal List<string> DiscoveredCommandFilters { get; set; }
+
         internal bool AddsSelfToPath { get; set; }
+
         internal List<TypeDefinitionAst> DiscoveredClasses { get; set; }
 
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
@@ -451,7 +462,7 @@ namespace System.Management.Automation
         //
         // It also only populates the bound parameters for a limited set of parameters needed
         // for module analysis.
-        private Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
+        private static Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
@@ -564,6 +575,7 @@ namespace System.Management.Automation
     internal class RequiredModuleInfo
     {
         internal string Name { get; set; }
+
         internal List<string> CommandsToPostFilter { get; set; }
     }
 }

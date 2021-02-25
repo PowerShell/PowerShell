@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
         /// Default - The most restrictive policy available.
         /// </summary>
         Default = Restricted
-    };
+    }
 
     /// <summary>
     /// Defines the available configuration scopes for an execution
@@ -704,7 +704,6 @@ namespace System.Management.Automation.Internal
                                                                   out structSize))
                         {
                             Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
-                                (Security.NativeMethods.CERT_ENHKEY_USAGE)
                                 Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
                             IntPtr ep = ekuStruct.rgpszUsageIdentifier;
                             IntPtr ekuptr;
@@ -1335,7 +1334,7 @@ namespace System.Management.Automation
         Decryption
     }
 
-    internal class AmsiUtils
+    internal static class AmsiUtils
     {
         private static string GetProcessHostName(string processName)
         {
@@ -1407,7 +1406,7 @@ namespace System.Management.Automation
             const string EICAR_STRING = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
             if (InternalTestHooks.UseDebugAmsiImplementation)
             {
-                if (content.IndexOf(EICAR_STRING, StringComparison.Ordinal) >= 0)
+                if (content.Contains(EICAR_STRING, StringComparison.Ordinal))
                 {
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED;
                 }
@@ -1581,7 +1580,7 @@ namespace System.Management.Automation
         public static bool AmsiInitialized = false;
         public static bool AmsiCleanedUp = false;
 
-        internal class AmsiNativeMethods
+        internal static class AmsiNativeMethods
         {
             internal enum AMSI_RESULT
             {

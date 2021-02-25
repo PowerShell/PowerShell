@@ -334,8 +334,8 @@ namespace System.Management.Automation.Remoting
 
             // PSEdit support.  Existence of RemoteSessionOpenFileEvent event indicates host supports PSEdit
             _hostSupportsPSEdit = false;
-            PSEventManager localEventManager = (Runspace != null) ? Runspace.Events : null;
-            _hostSupportsPSEdit = (localEventManager != null) ? localEventManager.GetEventSubscribers(HostUtilities.RemoteSessionOpenFileEvent).GetEnumerator().MoveNext() : false;
+            PSEventManager localEventManager = Runspace?.Events;
+            _hostSupportsPSEdit = localEventManager != null && localEventManager.GetEventSubscribers(HostUtilities.RemoteSessionOpenFileEvent).GetEnumerator().MoveNext();
             if (_hostSupportsPSEdit)
             {
                 AddPSEditForRunspace(remoteRunspace);

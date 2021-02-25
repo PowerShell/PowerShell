@@ -104,7 +104,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException exception)
             {
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CouldNotPromptForCredential", ErrorCategory.InvalidOperation, null);
+                ErrorRecord errorRecord = new(
+                    exception,
+                    "CouldNotPromptForCredential",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
                 WriteError(errorRecord);
             }
 

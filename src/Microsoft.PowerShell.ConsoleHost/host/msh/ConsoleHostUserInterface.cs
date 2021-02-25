@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell
                     // Handle Ctrl-C ending input
                     if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
 #else
-                    if (string.IsNullOrEmpty(key) || (char)3 == key[0])
+                    if (string.IsNullOrEmpty(key) || key[0] == (char)3)
 #endif
                     {
                         PipelineStoppedException e = new PipelineStoppedException();
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                    if ((char)13 == key[0])
+                    if (key[0] == (char)13)
 #endif
                     {
                         //
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Backspace)
 #else
-                    if ((char)8 == key[0])
+                    if (key[0] == (char)8)
 #endif
                     {
                         //
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
+        private static void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
         {
             if (newLine)
             {
@@ -696,6 +696,7 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
+            value = Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
 
             if (_parent.IsRunningAsync)
             {
@@ -1179,11 +1180,17 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
-                WriteLine(
-                    DebugForegroundColor,
-                    DebugBackgroundColor,
-                    StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                {
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
+                }
+                else
+                {
+                    WriteLine(
+                        DebugForegroundColor,
+                        DebugBackgroundColor,
+                        StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                }
             }
         }
 
@@ -1234,10 +1241,17 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                WriteLine(
-                    VerboseForegroundColor,
-                    VerboseBackgroundColor,
-                    StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                {
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
+                }
+                else
+                {
+                    WriteLine(
+                        VerboseForegroundColor,
+                        VerboseBackgroundColor,
+                        StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                }
             }
         }
 
@@ -1271,10 +1285,17 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                WriteLine(
-                    WarningForegroundColor,
-                    WarningBackgroundColor,
-                    StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                {
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
+                }
+                else
+                {
+                    WriteLine(
+                        WarningForegroundColor,
+                        WarningBackgroundColor,
+                        StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                }
             }
         }
 
@@ -1283,33 +1304,34 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override void WriteProgress(Int64 sourceId, ProgressRecord record)
         {
-            if (record == null)
+            Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
+
+            if (Console.IsOutputRedirected)
             {
-                Dbg.Assert(false, "WriteProgress called with null ProgressRecord");
+                // Do not write progress bar when the stdout is redirected.
+                return;
+            }
+
+            bool matchPattern;
+            string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
+            if (matchPattern)
+            {
+                record = new ProgressRecord(record) { CurrentOperation = currentOperation };
+            }
+
+            // We allow only one thread at a time to update the progress state.)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
+            {
+                PSObject obj = new PSObject();
+                obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
+                obj.Properties.Add(new PSNoteProperty("Record", record));
+                _parent.ErrorSerializer.Serialize(obj, "progress");
             }
             else
             {
-                bool matchPattern;
-                string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
-                if (matchPattern)
+                lock (_instanceLock)
                 {
-                    record = new ProgressRecord(record) { CurrentOperation = currentOperation };
-                }
-
-                // We allow only one thread at a time to update the progress state.)
-                if (_parent.ErrorFormat == Serialization.DataFormat.XML)
-                {
-                    PSObject obj = new PSObject();
-                    obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
-                    obj.Properties.Add(new PSNoteProperty("Record", record));
-                    _parent.ErrorSerializer.Serialize(obj, "progress");
-                }
-                else
-                {
-                    lock (_instanceLock)
-                    {
-                        HandleIncomingProgressRecord(sourceId, record);
-                    }
+                    HandleIncomingProgressRecord(sourceId, record);
                 }
             }
         }
@@ -1334,34 +1356,45 @@ namespace Microsoft.PowerShell
             else
             {
                 if (writer == _parent.ConsoleTextWriter)
-                    WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
+                {
+                    if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        WriteLine(value);
+                    }
+                    else
+                    {
+                        WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
+                    }
+                }
                 else
+                {
                     Console.Error.WriteLine(value);
+                }
             }
         }
 
-        // Format colors
         public ConsoleColor FormatAccentColor { get; set; } = ConsoleColor.Green;
 
-        // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
+
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
+
         public ConsoleColor ErrorBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Warning colors
         public ConsoleColor WarningForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor WarningBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Debug colors
         public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor DebugBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Verbose colors
         public ConsoleColor VerboseForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor VerboseBackgroundColor { get; set; } = Console.BackgroundColor;
 
-        // Progress colors
         public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Black;
+
         public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.Yellow;
 
         #endregion Line-oriented interaction
@@ -1847,7 +1880,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="input">The string to process.</param>
         /// <returns>The string with any \0 characters removed...</returns>
-        private string RemoveNulls(string input)
+        private static string RemoveNulls(string input)
         {
             if (input.Contains('\0'))
             {
@@ -2042,7 +2075,7 @@ namespace Microsoft.PowerShell
         }
 
 #if !UNIX
-        private void SendLeftArrows(int length)
+        private static void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
             for (int i = 0; i < length; i++)

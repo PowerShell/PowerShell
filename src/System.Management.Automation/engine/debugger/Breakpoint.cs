@@ -434,7 +434,9 @@ namespace System.Management.Automation
         }
 
         internal int SequencePointIndex { get; set; }
+
         internal IScriptExtent[] SequencePoints { get; set; }
+
         internal BitArray BreakpointBitArray { get; set; }
 
         private class CheckBreakpointInScript : AstVisitor

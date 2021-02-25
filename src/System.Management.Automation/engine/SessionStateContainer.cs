@@ -2061,7 +2061,7 @@ namespace System.Management.Automation
         }
 
         // Detect if the GetChildItemDynamicParameters has been overridden.
-        private bool HasGetChildItemDynamicParameters(ProviderInfo providerInfo)
+        private static bool HasGetChildItemDynamicParameters(ProviderInfo providerInfo)
         {
             Type providerType = providerInfo.ImplementingType;
 
@@ -4038,7 +4038,7 @@ namespace System.Management.Automation
         #region CopyItem
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4106,7 +4106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4776,7 +4776,7 @@ namespace System.Management.Automation
 
         // This function validates a remote path, and if it exists, it returns the root path.
         //
-        private string ValidateRemotePathAndGetRoot(string path, Runspaces.PSSession session, CmdletProviderContext context, PSLanguageMode? languageMode, bool sourceIsRemote)
+        private static string ValidateRemotePathAndGetRoot(string path, Runspaces.PSSession session, CmdletProviderContext context, PSLanguageMode? languageMode, bool sourceIsRemote)
         {
             Hashtable op = null;
 
@@ -4790,9 +4790,8 @@ namespace System.Management.Automation
                 if (languageMode.HasValue &&
                     (languageMode.Value == PSLanguageMode.ConstrainedLanguage || languageMode.Value == PSLanguageMode.NoLanguage))
                 {
-                    var psRemoteUtilsName = CopyFileRemoteUtils.PSCopyRemoteUtilsName;
                     ps.Runspace = session.Runspace;
-                    ps.AddCommand("Get-Command").AddArgument(psRemoteUtilsName);
+                    ps.AddCommand("Get-Command").AddArgument(CopyFileRemoteUtils.PSCopyRemoteUtilsName);
                     var result = ps.Invoke<bool>();
 
                     if (result.Count == 0)
@@ -4816,12 +4815,11 @@ namespace System.Management.Automation
 
                     ps.Commands.Clear();
                     ps.Streams.ClearStreams();
-                    ps.AddCommand(psRemoteUtilsName);
+                    ps.AddCommand(CopyFileRemoteUtils.PSCopyRemoteUtilsName);
                 }
                 else
                 {
-                    string remoteScript = CopyFileRemoteUtils.PSValidatePathDefinition;
-                    ps.AddScript(remoteScript);
+                    ps.AddScript(CopyFileRemoteUtils.PSValidatePathDefinition);
                 }
 
                 ps.AddParameter("pathToValidate", path);
@@ -4894,7 +4892,7 @@ namespace System.Management.Automation
             return root;
         }
 
-        private bool isValidSession(PSSession session, CmdletProviderContext context, out PSLanguageMode? languageMode)
+        private static bool isValidSession(PSSession session, CmdletProviderContext context, out PSLanguageMode? languageMode)
         {
             // session == null is validated by the parameter binding
             if (session.Availability != RunspaceAvailability.Available)

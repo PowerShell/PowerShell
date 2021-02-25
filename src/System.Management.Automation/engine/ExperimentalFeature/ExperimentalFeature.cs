@@ -21,6 +21,7 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
+        internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
 
         #endregion
 
@@ -124,8 +125,17 @@ namespace System.Management.Automation
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
                 new ExperimentalFeature(
+                    name: "PS7DscSupport",
+                    description: "Support the cross-platform class-based DSC"),
+                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
+                    name: "PSAnsiRendering",
+                    description: "Enable $PSStyle variable to control ANSI rendering of strings"),
+                new ExperimentalFeature(
+                    name: PSAnsiProgressFeatureName,
+                    description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -345,20 +355,21 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(experimentName))
             {
-                string paramName = nameof(experimentName);
+                const string paramName = nameof(experimentName);
                 throw PSTraceSource.NewArgumentNullException(paramName, Metadata.ArgumentNullOrEmpty, paramName);
             }
 
             if (experimentAction == ExperimentAction.None)
             {
-                string paramName = nameof(experimentAction);
-                string invalidMember = nameof(ExperimentAction.None);
+                const string paramName = nameof(experimentAction);
+                const string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }
         }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>

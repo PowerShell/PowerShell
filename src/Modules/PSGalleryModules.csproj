@@ -1,6 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
-  <Import Project="..\..\PowerShell.Common.props" />
+  <PropertyGroup>
+    <Product>PowerShell</Product>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
+
+    <TargetFramework>net6.0</TargetFramework>
+
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="PowerShellGet" Version="2.2.5" />

@@ -75,7 +75,10 @@ namespace Microsoft.PowerShell.Cmdletization
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         protected TSession[] Session
         {
-            get { return _session ?? (_session = new TSession[] { this.DefaultSession }); }
+            get
+            {
+                return _session ??= new TSession[] { this.DefaultSession };
+            }
 
             set
             {
@@ -126,9 +129,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Doing so will interfere with ThrottleLimit functionality.
         /// </para>
         /// <para>
-        /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
+        /// <see cref="Job.WriteObject"/> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
-        /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
+        /// until calls from <see cref="Job.WriteObject"/> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
         internal abstract StartableJob CreateQueryJob(TSession session, QueryBuilder query);
@@ -171,16 +174,16 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="session">Remote session to invoke the method in.</param>
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         /// <remarks>
         /// <para>
         /// This method shouldn't do any processing or interact with the remote session.
         /// Doing so will interfere with ThrottleLimit functionality.
         /// </para>
         /// <para>
-        /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
+        /// <see cref="Job.WriteObject"/> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
-        /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
+        /// until calls from <see cref="Job.WriteObject"/> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
         internal abstract StartableJob CreateInstanceMethodInvocationJob(TSession session, TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru);
@@ -213,9 +216,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Doing so will interfere with ThrottleLimit functionality.
         /// </para>
         /// <para>
-        /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
+        /// <see cref="Job.WriteObject"/> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
-        /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
+        /// until calls from <see cref="Job.WriteObject"/> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
         internal abstract StartableJob CreateStaticMethodInvocationJob(TSession session, MethodInvocationInfo methodInvocationInfo);
@@ -237,7 +240,7 @@ namespace Microsoft.PowerShell.Cmdletization
             return methodInvocationJob;
         }
 
-        private void HandleJobOutput(Job job, TSession sessionForJob, bool discardNonPipelineResults, Action<PSObject> outputAction)
+        private static void HandleJobOutput(Job job, TSession sessionForJob, bool discardNonPipelineResults, Action<PSObject> outputAction)
         {
             Action<PSObject> processOutput =
                     (PSObject pso) =>
@@ -325,37 +328,37 @@ namespace Microsoft.PowerShell.Cmdletization
 
         private static void DiscardJobOutputs(Job job, JobOutputs jobOutputsToDiscard)
         {
-            if (JobOutputs.Output == (jobOutputsToDiscard & JobOutputs.Output))
+            if ((jobOutputsToDiscard & JobOutputs.Output) == JobOutputs.Output)
             {
                 DiscardJobOutputs(job.Output);
             }
 
-            if (JobOutputs.Error == (jobOutputsToDiscard & JobOutputs.Error))
+            if ((jobOutputsToDiscard & JobOutputs.Error) == JobOutputs.Error)
             {
                 DiscardJobOutputs(job.Error);
             }
 
-            if (JobOutputs.Warning == (jobOutputsToDiscard & JobOutputs.Warning))
+            if ((jobOutputsToDiscard & JobOutputs.Warning) == JobOutputs.Warning)
             {
                 DiscardJobOutputs(job.Warning);
             }
 
-            if (JobOutputs.Verbose == (jobOutputsToDiscard & JobOutputs.Verbose))
+            if ((jobOutputsToDiscard & JobOutputs.Verbose) == JobOutputs.Verbose)
             {
                 DiscardJobOutputs(job.Verbose);
             }
 
-            if (JobOutputs.Debug == (jobOutputsToDiscard & JobOutputs.Debug))
+            if ((jobOutputsToDiscard & JobOutputs.Debug) == JobOutputs.Debug)
             {
                 DiscardJobOutputs(job.Debug);
             }
 
-            if (JobOutputs.Progress == (jobOutputsToDiscard & JobOutputs.Progress))
+            if ((jobOutputsToDiscard & JobOutputs.Progress) == JobOutputs.Progress)
             {
                 DiscardJobOutputs(job.Progress);
             }
 
-            if (JobOutputs.Results == (jobOutputsToDiscard & JobOutputs.Results))
+            if ((jobOutputsToDiscard & JobOutputs.Results) == JobOutputs.Results)
             {
                 DiscardJobOutputs(job.Results);
             }
@@ -397,7 +400,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         /// <param name="query">Query parameters.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the object instance being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the object instance being operated on.</param>
         public override void ProcessRecord(QueryBuilder query, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             _parentJob.DisableFlowControlForPendingJobsQueue();
@@ -576,7 +579,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         /// <param name="objectInstance">The object on which to invoke the method.</param>
         /// <param name="methodInvocationInfo">Method invocation details.</param>
-        /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
+        /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         public override void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             if (objectInstance == null) throw new ArgumentNullException(nameof(objectInstance));

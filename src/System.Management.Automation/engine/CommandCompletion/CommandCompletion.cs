@@ -157,7 +157,7 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
@@ -236,7 +236,7 @@ namespace System.Management.Automation
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(ast, tokens, cursorPosition, options, debugger);
@@ -740,7 +740,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            private struct CommandAndName
+            private readonly struct CommandAndName
             {
                 internal readonly PSObject Command;
                 internal readonly PSSnapinQualifiedName CommandName;
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation
                 return isAbsolute;
             }
 
-            private struct PathItemAndConvertedPath
+            private readonly struct PathItemAndConvertedPath
             {
                 internal readonly string Path;
                 internal readonly PSObject Item;
@@ -1301,7 +1301,10 @@ namespace System.Management.Automation
 
             private int ReplacementIndex
             {
-                get { return _replacementIndex; }
+                get
+                {
+                    return _replacementIndex;
+                }
 
                 set
                 {

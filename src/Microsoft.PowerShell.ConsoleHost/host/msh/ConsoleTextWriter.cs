@@ -13,8 +13,7 @@ namespace Microsoft.PowerShell
     {
         internal
         ConsoleTextWriter(ConsoleHostUserInterface ui)
-            :
-            base(System.Globalization.CultureInfo.CurrentCulture)
+            : base(System.Globalization.CultureInfo.CurrentCulture)
         {
             Dbg.Assert(ui != null, "ui needs a value");
 

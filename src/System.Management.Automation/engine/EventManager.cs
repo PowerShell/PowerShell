@@ -680,7 +680,7 @@ namespace System.Management.Automation
                 }
 
                 // Retrieve the event from the object
-                BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
+                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(eventName, bindingFlags);
 
                 // If we can't find the event, throw an exception
@@ -844,7 +844,7 @@ namespace System.Management.Automation
 
                 Type sourceType = subscriber.SourceObject as Type ?? subscriber.SourceObject.GetType();
 
-                BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
+                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(subscriber.EventName, bindingFlags);
 
                 if ((eventInfo != null) && (existingSubscriber != null))
@@ -1511,14 +1511,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Destructor for the EventManager class.
-        /// </summary>
-        ~PSLocalEventManager()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Disposes the EventManager class.
         /// </summary>
         public void Dispose()
@@ -1551,6 +1543,14 @@ namespace System.Management.Automation
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="PSLocalEventManager"/> class.
+        /// </summary>
+        ~PSLocalEventManager()
+        {
+            Dispose(false);
         }
     }
 
@@ -1895,9 +1895,17 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber
         /// class. Additionally supports an Action scriptblock.
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, object source,
-            string eventName, string sourceIdentifier, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
-            this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
+        internal PSEventSubscriber(
+            ExecutionContext context,
+            int id,
+            object source,
+            string eventName,
+            string sourceIdentifier,
+            ScriptBlock action,
+            bool supportEvent,
+            bool forwardEvent,
+            int maxTriggerCount)
+            : this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
             // Create the bound scriptblock, and job.
             if (action != null)
@@ -1924,9 +1932,17 @@ namespace System.Management.Automation
         /// Creates an instance of the PSEventSubscriber
         /// class. Additionally supports an Action scriptblock.
         /// </summary>
-        internal PSEventSubscriber(ExecutionContext context, int id, object source,
-            string eventName, string sourceIdentifier, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
-            this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
+        internal PSEventSubscriber(
+            ExecutionContext context,
+            int id,
+            object source,
+            string eventName,
+            string sourceIdentifier,
+            PSEventReceivedEventHandler handlerDelegate,
+            bool supportEvent,
+            bool forwardEvent,
+            int maxTriggerCount)
+            : this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
             HandlerDelegate = handlerDelegate;
         }
@@ -2456,8 +2472,12 @@ namespace System.Management.Automation
         /// The name of the job
         /// </param>
         /// </summary>
-        public PSEventJob(PSEventManager eventManager, PSEventSubscriber subscriber, ScriptBlock action, string name) :
-            base(action == null ? null : action.ToString(), name)
+        public PSEventJob(
+            PSEventManager eventManager,
+            PSEventSubscriber subscriber,
+            ScriptBlock action,
+            string name)
+            : base(action?.ToString(), name)
         {
             if (eventManager == null)
                 throw new ArgumentNullException(nameof(eventManager));

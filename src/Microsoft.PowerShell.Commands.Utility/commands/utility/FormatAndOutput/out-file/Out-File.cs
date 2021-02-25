@@ -25,7 +25,8 @@ namespace Microsoft.PowerShell.Commands
     public class OutFileCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// Set inner command.
+        /// Initializes a new instance of the <see cref="OutFileCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public OutFileCommand()
         {
@@ -227,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use the stream writer to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput(_sw, computedWidth, _suppressNewline);
+            TextWriterLineOutput twlo = new(_sw, computedWidth, _suppressNewline);
 
             // finally have the ILineOutput interface extracted
             return (LineOutput)twlo;

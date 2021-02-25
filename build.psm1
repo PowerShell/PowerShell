@@ -337,7 +337,8 @@ function Start-PSBuild {
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
             # Excluded src/Modules/nuget.config as this is required for release build.
-            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config
+            # Excluded nuget.config as this is required for release build.
+            git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
         } finally {
             Pop-Location
         }
@@ -396,7 +397,8 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
+    # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
+    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     if ($Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
@@ -586,18 +588,22 @@ Fix steps:
         -not ($Runtime -like 'fxdependent*')) {
 
         $json = & $publishPath\pwsh -noprofile -command {
-            $expFeatures = [System.Collections.Generic.List[string]]::new()
-            Get-ExperimentalFeature | ForEach-Object { $expFeatures.Add($_.Name) }
+            # Special case for DSC code in PS;
+            # this experimental feature requires new DSC module that is not inbox,
+            # so we don't want default DSC use case be broken
+            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
+
+            $expFeatures | Out-String | Write-Verbose -Verbose
 
             # Make sure ExperimentalFeatures from modules in PSHome are added
             # https://github.com/PowerShell/PowerShell/issues/10550
             @("PSDesiredStateConfiguration.InvokeDscResource") | ForEach-Object {
                 if (!$expFeatures.Contains($_)) {
-                    $expFeatures.Add($_)
+                    $null = $expFeatures.Add($_)
                 }
             }
 
-            ConvertTo-Json $expFeatures.ToArray()
+            ConvertTo-Json $expFeatures
         }
 
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
@@ -628,7 +634,9 @@ function Restore-PSPackage
 
         [switch] $Force,
 
-        [switch] $InteractiveAuth
+        [switch] $InteractiveAuth,
+
+        [switch] $PSModule
     )
 
     if (-not $ProjectDirs)
@@ -652,7 +660,10 @@ function Restore-PSPackage
             'Microsoft.NET.Sdk'
         }
 
-        if ($Options.Runtime -notlike 'fxdependent*') {
+        if ($PSModule.IsPresent) {
+            $RestoreArguments = @("--verbosity")
+        }
+        elseif ($Options.Runtime -notlike 'fxdependent*') {
             $RestoreArguments = @("--runtime", $Options.Runtime, "/property:SDKToUse=$sdkToUse", "--verbosity")
         } else {
             $RestoreArguments = @("/property:SDKToUse=$sdkToUse", "--verbosity")
@@ -742,8 +753,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("net5.0")]
-        [string]$Framework = "net5.0",
+        [ValidateSet("net6.0")]
+        [string]$Framework = "net6.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1667,7 +1678,7 @@ function Install-Dotnet {
 
     # Install for Linux and OS X
     if ($environment.IsLinux -or $environment.IsMacOS) {
-        $curl = Get-Command -Name curl -CommandType Application -TotalCount 1 -ErrorAction Stop
+        $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
@@ -1678,7 +1689,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                & $curl -sO $uninstallObtainUrl/uninstall/$uninstallScript
+                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1688,7 +1699,12 @@ function Install-Dotnet {
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
-            & $curl -sO $installObtainUrl/$installScript
+            Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
+            & $wget $installObtainUrl/$installScript
+
+            if ((Get-ChildItem "./$installScript").Length -eq 0) {
+                throw "./$installScript was 0 length"
+            }
 
             $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
 
@@ -2500,7 +2516,7 @@ function Copy-PSGalleryModules
 
     Find-DotNet
 
-    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
+    Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent -PSModule
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "global-packages: (.*)") {
@@ -3282,8 +3298,10 @@ function New-NugetConfigFile
   <packageSources>
     <clear />
     <add key="[FEEDNAME]" value="[FEED]" />
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
   <packageSourceCredentials>
     <[FEEDNAME]>
       <add key="Username" value="[USERNAME]" />

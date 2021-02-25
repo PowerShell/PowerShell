@@ -560,7 +560,7 @@ namespace System.Management.Automation
     /// A simple implementation of CRC32.
     /// See "CRC-32 algorithm" in https://en.wikipedia.org/wiki/Cyclic_redundancy_check.
     /// </summary>
-    internal class CRC32Hash
+    internal static class CRC32Hash
     {
         // CRC-32C polynomial representations
         private const uint polynomial = 0x1EDC6F41;

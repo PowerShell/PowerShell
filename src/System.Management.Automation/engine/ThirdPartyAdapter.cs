@@ -351,7 +351,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a property if it's name matches the specified <see cref="MemberNamePredicate"/>, otherwise null.
         /// </summary>
-        /// <returns>An adapted property if the predicate matches, or <c>null</c>.</returns>
+        /// <returns>An adapted property if the predicate matches, or <see langword="null"/>.</returns>
         public virtual PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
         {
             foreach (var property in GetProperties(baseObject))

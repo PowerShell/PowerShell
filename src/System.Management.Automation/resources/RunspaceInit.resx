@@ -153,6 +153,9 @@
   <data name="OutputEncodingDescription" xml:space="preserve">
     <value>The text encoding used when piping text to a native executable file</value>
   </data>
+  <data name="PSStyleDescription" xml:space="preserve">
+    <value>Configuration controlling how text is rendered.</value>
+  </data>
   <data name="PSEmailServerDescription" xml:space="preserve">
     <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
   </data>

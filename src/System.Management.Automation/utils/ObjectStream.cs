@@ -1403,7 +1403,7 @@ namespace System.Management.Automation.Internal
                         // subtraction to ensure we don't have an
                         // overflow exception
                         int freeSpace = _capacity - _objects.Count;
-                        if (0 >= freeSpace)
+                        if (freeSpace <= 0)
                         {
                             // NOTE: lock is released in finally
                             continue;

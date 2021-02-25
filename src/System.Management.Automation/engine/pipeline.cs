@@ -91,14 +91,6 @@ namespace System.Management.Automation.Internal
             _disposed = true;
         }
 
-        /// <summary>
-        /// Finalizer for class PipelineProcessor.
-        /// </summary>
-        ~PipelineProcessor()
-        {
-            Dispose(false);
-        }
-
         #endregion IDispose
 
         #region Execution Logging
@@ -174,7 +166,7 @@ namespace System.Management.Automation.Internal
             Log(message, null, PipelineExecutionStatus.Error);
         }
 
-        private string GetCommand(InvocationInfo invocationInfo)
+        private static string GetCommand(InvocationInfo invocationInfo)
         {
             if (invocationInfo == null)
                 return string.Empty;
@@ -187,7 +179,7 @@ namespace System.Management.Automation.Internal
             return string.Empty;
         }
 
-        private string GetCommand(Exception exception)
+        private static string GetCommand(Exception exception)
         {
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
@@ -1475,7 +1467,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineReader<object> ExternalInput
         {
-            get { return _externalInputPipe; }
+            get
+            {
+                return _externalInputPipe;
+            }
 
             set
             {
@@ -1501,7 +1496,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineWriter ExternalSuccessOutput
         {
-            get { return _externalSuccessOutput; }
+            get
+            {
+                return _externalSuccessOutput;
+            }
 
             set
             {
@@ -1528,7 +1526,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineWriter ExternalErrorOutput
         {
-            get { return _externalErrorOutput; }
+            get
+            {
+                return _externalErrorOutput;
+            }
 
             set
             {
@@ -1575,7 +1576,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal SessionStateScope ExecutionScope
         {
-            get { return _executionScope; }
+            get
+            {
+                return _executionScope;
+            }
 
             set
             {

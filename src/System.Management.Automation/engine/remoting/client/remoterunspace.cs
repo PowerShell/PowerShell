@@ -1201,7 +1201,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            return _sessionStateProxy ?? (_sessionStateProxy = new RemoteSessionStateProxy(this));
+            return _sessionStateProxy ??= new RemoteSessionStateProxy(this);
         }
 
         private RemoteSessionStateProxy _sessionStateProxy = null;
@@ -1939,7 +1939,7 @@ namespace System.Management.Automation
                         if (re.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException))
                         {
                             throw new IncompleteParseException(
-                                (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : null,
+                                re.ErrorRecord.Exception?.Message,
                                 re.ErrorRecord.FullyQualifiedErrorId);
                         }
 
@@ -2660,7 +2660,7 @@ namespace System.Management.Automation
             // Attempt to process debugger stop event on original thread if it
             // is available (i.e., if it is blocked by EndInvoke).
             PowerShell powershell = _runspace.RunspacePool.RemoteRunspacePoolInternal.GetCurrentRunningPowerShell();
-            AsyncResult invokeAsyncResult = (powershell != null) ? powershell.EndInvokeAsyncResult : null;
+            AsyncResult invokeAsyncResult = powershell?.EndInvokeAsyncResult;
 
             bool invokedOnBlockedThread = false;
             if ((invokeAsyncResult != null) && (!invokeAsyncResult.IsCompleted))

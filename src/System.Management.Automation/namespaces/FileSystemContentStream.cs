@@ -109,10 +109,26 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates raw stream.
         /// </param>
         public FileSystemContentReaderWriter(
-            string path, FileMode mode, FileAccess access,
-            FileShare share, Encoding encoding, bool usingByteEncoding,
-            bool waitForChanges, CmdletProvider provider, bool isRawStream) :
-                this(path, null, mode, access, share, encoding, usingByteEncoding, waitForChanges, provider, isRawStream)
+            string path,
+            FileMode mode,
+            FileAccess access,
+            FileShare share,
+            Encoding encoding,
+            bool usingByteEncoding,
+            bool waitForChanges,
+            CmdletProvider provider,
+            bool isRawStream)
+            : this(
+                path,
+                streamName: null,
+                mode,
+                access,
+                share,
+                encoding,
+                usingByteEncoding,
+                waitForChanges,
+                provider,
+                isRawStream)
         {
         }
 
@@ -1515,7 +1531,7 @@ namespace Microsoft.PowerShell.Commands
 
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
                 public byte[] LeadBytes;
-            };
+            }
 
             /// <summary>
             /// Get information on a named code page.

@@ -72,7 +72,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter IncludeEqual
         {
-            get { return _includeEqual; }
+            get
+            {
+                return _includeEqual;
+            }
 
             set
             {
@@ -101,10 +104,10 @@ namespace Microsoft.PowerShell.Commands
         private List<OrderByPropertyEntry> _referenceEntries;
 
         private readonly List<OrderByPropertyEntry> _referenceEntryBacklog
-            = new List<OrderByPropertyEntry>();
+            = new();
 
         private readonly List<OrderByPropertyEntry> _differenceEntryBacklog
-            = new List<OrderByPropertyEntry>();
+            = new();
 
         private OrderByProperty _orderByProperty = null;
         private OrderByPropertyComparer _comparer = null;
@@ -208,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
             //     Add differenceEntry to differenceEntryBacklog
             if (differenceEntry != null)
             {
-                if (0 < SyncWindow)
+                if (SyncWindow > 0)
                 {
                     while (_differenceEntryBacklog.Count >= SyncWindow)
                     {
@@ -234,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             //     Add referenceEntry to referenceEntryBacklog
             if (referenceEntry != null)
             {
-                if (0 < SyncWindow)
+                if (SyncWindow > 0)
                 {
                     while (_referenceEntryBacklog.Count >= SyncWindow)
                     {
@@ -256,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
             if (_comparer != null)
                 return;
 
-            List<PSObject> referenceObjectList = new List<PSObject>(ReferenceObject);
+            List<PSObject> referenceObjectList = new(ReferenceObject);
             _orderByProperty = new OrderByProperty(
                 this, referenceObjectList, Property, true, _cultureInfo, CaseSensitive);
             Diagnostics.Assert(_orderByProperty.Comparer != null, "no comparer");
@@ -327,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                 mshobj = new PSObject();
                 if (Property == null || Property.Length == 0)
                 {
-                    PSNoteProperty inputNote = new PSNoteProperty(
+                    PSNoteProperty inputNote = new(
                         InputObjectPropertyName, entry.inputObject);
                     mshobj.Properties.Add(inputNote);
                 }
@@ -348,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
                         object prop = hash[FormatParameterDefinitionKeys.ExpressionEntryKey];
                         Diagnostics.Assert(prop != null, "null prop");
                         string propName = prop.ToString();
-                        PSNoteProperty propertyNote = new PSNoteProperty(
+                        PSNoteProperty propertyNote = new(
                             propName,
                             entry.orderValues[i].PropertyValue);
                         try
@@ -364,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             mshobj.Properties.Remove(SideIndicatorPropertyName);
-            PSNoteProperty sideNote = new PSNoteProperty(
+            PSNoteProperty sideNote = new(
                 SideIndicatorPropertyName, sideIndicator);
             mshobj.Properties.Add(sideNote);
             WriteObject(mshobj);
@@ -406,12 +409,12 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_comparer == null && 0 < DifferenceObject.Length)
+            if (_comparer == null && DifferenceObject.Length > 0)
             {
                 InitComparer();
             }
 
-            List<PSObject> differenceList = new List<PSObject>(DifferenceObject);
+            List<PSObject> differenceList = new(DifferenceObject);
             List<OrderByPropertyEntry> differenceEntries =
                 OrderByProperty.CreateOrderMatrix(
                 this, differenceList, _orderByProperty.MshParameterList);
@@ -459,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            List<PSObject> differenceList = new List<PSObject>(DifferenceObject);
+            List<PSObject> differenceList = new(DifferenceObject);
             _orderByProperty = new OrderByProperty(
                 this, differenceList, Property, true, _cultureInfo, CaseSensitive);
             List<OrderByPropertyEntry> differenceEntries =

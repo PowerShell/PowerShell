@@ -467,7 +467,7 @@ namespace Microsoft.WSMan.Management
                                     }
                                     else
                                     {
-                                        XmlNode tmpNode = node.ChildNodes[0];//.Item[0];
+                                        XmlNode tmpNode = node.ChildNodes[0]; //.Item[0];
                                         if (!tmpNode.NodeType.ToString().Equals("text", StringComparison.OrdinalIgnoreCase))
                                         {
                                             throw new ArgumentException(_resourceMgr.GetString("NOAttributeMatch"));
@@ -1092,7 +1092,7 @@ namespace Microsoft.WSMan.Management
                     while (!_sr.EndOfStream)
                     {
                         string Line = _sr.ReadLine();
-                        if (Line.Contains("="))
+                        if (Line.Contains('='))
                         {
                             string[] arr = Line.Split('=', count: 2);
                             if (!ResourceValueCache.ContainsKey(arr[0].Trim()))

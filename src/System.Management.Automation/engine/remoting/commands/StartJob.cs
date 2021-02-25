@@ -505,7 +505,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual Version PSVersion
         {
-            get { return _psVersion; }
+            get
+            {
+                return _psVersion;
+            }
 
             set
             {

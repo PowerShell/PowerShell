@@ -31,9 +31,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _convertTypes == null
-                           ? null
-                           : _convertTypes.LastOrDefault();
+                return _convertTypes?.LastOrDefault();
             }
         }
 

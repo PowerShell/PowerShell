@@ -75,7 +75,9 @@ namespace System.Management.Automation.Remoting.Internal
         /// <summary>
         /// </summary>
         public PSStreamObjectType ObjectType { get; set; }
+
         internal object Value { get; set; }
+
         internal Guid Id { get; set; }
 
         internal PSStreamObject(PSStreamObjectType objectType, object value, Guid id)
@@ -89,8 +91,8 @@ namespace System.Management.Automation.Remoting.Internal
         /// </summary>
         /// <param name="objectType"></param>
         /// <param name="value"></param>
-        public PSStreamObject(PSStreamObjectType objectType, object value) :
-            this(objectType, value, Guid.Empty)
+        public PSStreamObject(PSStreamObjectType objectType, object value)
+            : this(objectType, value, Guid.Empty)
         {
         }
 

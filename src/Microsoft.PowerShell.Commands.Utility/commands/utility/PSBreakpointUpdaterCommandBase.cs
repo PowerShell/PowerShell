@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region private data
 
-        private readonly Dictionary<Guid, Runspace> runspaces = new Dictionary<Guid, Runspace>();
+        private readonly Dictionary<Guid, Runspace> runspaces = new();
 
         #endregion private data
 

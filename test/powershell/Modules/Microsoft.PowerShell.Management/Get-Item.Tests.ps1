@@ -112,15 +112,37 @@ Describe "Get-Item" -Tags "CI" {
                 return
             }
             $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamDirectory = "$TESTDRIVE/altstreamdir"
+            $noAltStreamDirectory = "$TESTDRIVE/noaltstreamdir"
             $stringData = "test data"
             $streamName = "test"
-            $item = New-Item -type file $altStreamPath
+            $absentStreamName = "noExist"
+            $null = New-Item -type file $altStreamPath
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
+            $null = New-Item -type directory $altStreamDirectory
+            Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData
+            $null = New-Item -type directory $noAltStreamDirectory
         }
-        It "Should find an alternate stream if present" -Skip:$skipNotWindows {
+        It "Should find an alternate stream on a file if present" -Skip:$skipNotWindows {
             $result = Get-Item $altStreamPath -Stream $streamName
             $result.Length | Should -Be ($stringData.Length + [Environment]::NewLine.Length)
             $result.Stream | Should -Be $streamName
+        }
+        It "Should error if it cannot find alternate stream on an existing file" -Skip:$skipNotWindows {
+            { Get-Item $altStreamPath -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+        It "Should find an alternate stream on a directory if present, and it should not be a container" -Skip:$skipNotWindows {
+            $result = Get-Item $altStreamDirectory -Stream $streamName
+            $result.Length | Should -Be ($stringData.Length + [Environment]::NewLine.Length )
+            $result.Stream | Should -Be $streamName
+            $result.PSIsContainer | Should -BeExactly $false
+        }
+        It "Should not find an alternate stream on a directory if not present" -Skip:$skipNotWindows {
+            { Get-Item $noAltStreamDirectory -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+        It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
+            $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
+            $result | Should -BeExactly $null
         }
     }
 

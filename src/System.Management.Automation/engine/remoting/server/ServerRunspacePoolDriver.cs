@@ -28,12 +28,16 @@ namespace System.Management.Automation
     /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
     /// </summary>
+#nullable enable
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
+#nullable restore
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function
@@ -1246,7 +1250,7 @@ namespace System.Management.Automation
             /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
-        };
+        }
 
         private class DebuggerCommandArgument
         {
@@ -1484,9 +1488,7 @@ namespace System.Management.Automation
 
                 Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 preProcessOutput.Add(
-                    breakpoint == null
-                        ? false
-                        : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
+                    breakpoint != null && serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
             }
@@ -1626,7 +1628,7 @@ namespace System.Management.Automation
                         pump = null;
                     }
 
-                    return (pump != null) ? !(pump.IsBusy) : false;
+                    return (pump != null) && !(pump.IsBusy);
                 }
             }
 
@@ -2064,7 +2066,7 @@ namespace System.Management.Automation
         public override void SetDebuggerStepMode(bool enabled)
         {
             // Enable both the wrapper and wrapped debuggers for debugging before setting step mode.
-            DebugModes mode = DebugModes.LocalScript | DebugModes.RemoteScript;
+            const DebugModes mode = DebugModes.LocalScript | DebugModes.RemoteScript;
             base.SetDebugMode(mode);
             _wrappedDebugger.Value.SetDebugMode(mode);
 
@@ -2710,7 +2712,7 @@ namespace System.Management.Automation
                 powershell.InvocationStateChanged += HandlePowerShellInvocationStateChanged;
                 powershell.SetIsNested(false);
 
-                string script = @"
+                const string script = @"
                     param ($Debugger, $Commands, $output)
                     trap { throw $_ }
 

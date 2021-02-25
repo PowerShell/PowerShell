@@ -17,9 +17,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal abstract class CimBaseAction
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CimBaseAction"/> class.
         /// </summary>
-        public CimBaseAction()
+        protected CimBaseAction()
         {
         }
 
@@ -44,20 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <see cref="CimSession"/>, <see cref="CimOperationOptions"/> object.
         /// </para>
         /// </summary>
-        protected XOperationContextBase Context
-        {
-            get
-            {
-                return this.context;
-            }
-
-            set
-            {
-                this.context = value;
-            }
-        }
-
-        private XOperationContextBase context;
+        protected XOperationContextBase Context { get; set; }
     }
 
     /// <summary>
@@ -69,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimSyncAction"/> class.
         /// </summary>
         public CimSyncAction()
         {

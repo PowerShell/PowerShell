@@ -256,6 +256,62 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         DynamicParamTest -PipelineVariable bar | ForEach-Object { $bar } | Should -Be "hi"
     }
 
+    Context "PipelineVariable Behaviour" {
+
+        BeforeAll {
+            function Write-PipelineVariable {
+                [CmdletBinding()]
+                [OutputType([int])]
+                param(
+                    [Parameter(ValueFromPipeline)]
+                    $a
+                )
+                begin { 1 }
+                process { 2 }
+                end { 3 }
+            }
+
+            $testScripts = @(
+                @{
+                    CmdletType = 'Script Cmdlet'
+                    Script     = {
+                        1..3 |
+                            Write-PipelineVariable -PipelineVariable pipe |
+                            Select-Object -Property @(
+                                @{ Name = "PipelineVariableSet"; Expression = { $null -ne $pipe ? $true : $false } }
+                                @{ Name = "PipelineVariable"; Expression = { $pipe } }
+                            )
+                    }
+                }
+                @{
+                    CmdletType = 'Compiled Cmdlet'
+                    Script     = {
+                        1..3 |
+                            Write-PipelineVariable |
+                            ForEach-Object { $_ } -PipelineVariable pipe |
+                            Select-Object -Property @(
+                                @{ Name = "PipelineVariableSet"; Expression = { $null -ne $pipe ? $true : $false } }
+                                @{ Name = "PipelineVariable"; Expression = { $pipe } }
+                            )
+                    }
+                }
+            )
+        }
+
+        AfterAll {
+            Remove-Item -Path 'function:Write-PipelineVariable'
+        }
+
+        It 'should set the pipeline variable every time for a <CmdletType>' -TestCases $testScripts {
+            param($Script, $CmdletType)
+
+            $result = & $Script
+            $result.Count | Should -Be 5
+            $result.PipelineVariableSet | Should -Not -Contain $false
+            $result.PipelineVariable | Should -Be 1, 2, 2, 2, 3
+        }
+    }
+
     Context "Use automatic variables as default value for parameters" {
         BeforeAll {
             ## Explicit use of 'CmdletBinding' make it a script cmdlet

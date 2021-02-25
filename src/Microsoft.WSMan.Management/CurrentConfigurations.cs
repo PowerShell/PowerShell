@@ -131,7 +131,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (nodeToRemove is XmlAttribute)
                 {
-                    this.RemoveAttribute(nodeToRemove as XmlAttribute);
+                    RemoveAttribute(nodeToRemove as XmlAttribute);
                 }
             }
             else
@@ -217,7 +217,7 @@ namespace Microsoft.WSMan.Management
         /// Removes the attribute from OwnerNode.
         /// </summary>
         /// <param name="attributeToRemove">Attribute to Remove.</param>
-        private void RemoveAttribute(XmlAttribute attributeToRemove)
+        private static void RemoveAttribute(XmlAttribute attributeToRemove)
         {
             XmlElement ownerElement = attributeToRemove.OwnerElement;
             ownerElement.RemoveAttribute(attributeToRemove.Name);

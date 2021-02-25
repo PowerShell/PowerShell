@@ -105,7 +105,7 @@ namespace System.Management.Automation.Remoting
             ObjectId = objectId;
             FragmentId = fragmentId;
 
-            IsStartFragment = (fragmentId == 0) ? true : false;
+            IsStartFragment = fragmentId == 0;
             IsEndFragment = isEndFragment;
 
             _blob = blob;
@@ -142,7 +142,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal int BlobLength
         {
-            get { return _blobLength; }
+            get
+            {
+                return _blobLength;
+            }
 
             set
             {
@@ -156,7 +159,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal byte[] Blob
         {
-            get { return _blob; }
+            get
+            {
+                return _blob;
+            }
 
             set
             {
@@ -205,10 +211,10 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         internal byte[] GetBytes()
         {
-            int objectIdSize = 8; // number of bytes of long
-            int fragmentIdSize = 8; // number of bytes of long
-            int flagsSize = 1; // 1 byte for IsEndOfFrag and IsControl
-            int blobLengthSize = 4; // number of bytes of int
+            const int objectIdSize = 8; // number of bytes of long
+            const int fragmentIdSize = 8; // number of bytes of long
+            const int flagsSize = 1; // 1 byte for IsEndOfFrag and IsControl
+            const int blobLengthSize = 4; // number of bytes of int
 
             int totalLength = objectIdSize + fragmentIdSize + flagsSize + blobLengthSize + BlobLength;
 
@@ -883,9 +889,11 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         public override bool CanRead { get { return true; } }
+
         /// <summary>
         /// </summary>
         public override bool CanSeek { get { return false; } }
+
         /// <summary>
         /// </summary>
         public override bool CanWrite { get { return true; } }
@@ -893,6 +901,7 @@ namespace System.Management.Automation.Remoting
         /// Gets the length of the stream in bytes.
         /// </summary>
         public override long Length { get { return _length; } }
+
         /// <summary>
         /// </summary>
         public override long Position
@@ -908,6 +917,7 @@ namespace System.Management.Automation.Remoting
         public override void Flush()
         {
         }
+
         /// <summary>
         /// </summary>
         /// <param name="offset"></param>
@@ -917,6 +927,7 @@ namespace System.Management.Automation.Remoting
         {
             throw new NotSupportedException();
         }
+
         /// <summary>
         /// </summary>
         /// <param name="value"></param>

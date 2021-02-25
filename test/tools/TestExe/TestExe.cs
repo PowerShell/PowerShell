@@ -13,7 +13,7 @@ namespace TestExe
         {
             if (args.Length > 0)
             {
-                switch(args[0].ToLowerInvariant())
+                switch (args[0].ToLowerInvariant())
                 {
                     case "-echoargs":
                         EchoArgs(args);
@@ -48,7 +48,7 @@ namespace TestExe
         {
             for (int i = 1; i < args.Length; i++)
             {
-                Console.WriteLine("Arg {0} is <{1}>", i-1, args[i]);
+                Console.WriteLine("Arg {0} is <{1}>", i - 1, args[i]);
             }
         }
 

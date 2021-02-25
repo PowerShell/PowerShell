@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+  <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
+  <?if $(sys.BUILDARCH)=x64?>
+    <?define UpgradeCodePreview = "3C90221B-D500-43C6-A4A6-0BE6C2C1B317"?>
+    <?define UpgradeCodeRelease = "7A804CBB-648E-4276-9A58-081862DB1B99"?>
+    <?if $(var.IsPreview)=True?>
+      <?define UpgradeCode = $(var.UpgradeCodePreview)?>
+    <?else?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
+    <?endif?>
+  <?else?>
+    <?define UpgradeCodePreview = "4A699A9C-E904-4024-BCD2-44E098A8C6BD"?>
+    <?define UpgradeCodeRelease = "ED46CB02-64B3-43FD-A63E-6CF269D8C21C"?>
+    <?if $(var.IsPreview)=True?>
+      <?define UpgradeCode = $(var.UpgradeCodePreview)?>
+    <?else?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
+    <?endif?>
+  <?endif?>
+
+  <Bundle Name="PowerShell $(var.WindowsVersion)-$(sys.BUILDARCH)" Version="$(var.WindowsVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
+    <!-- See https://wixtoolset.org/documentation/manual/v3/bundle/wixstdba/ for a list of WiX standard bootstrapper types. -->
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication LicenseFile="assets\wix\ExeLicense.rtf" LogoFile="assets\ps_black_32x32.ico" />
+    </BootstrapperApplicationRef>
+    <Chain>
+      <MsiPackage SourceFile="$(var.TargetPath)" Compressed="yes" />
+    </Chain>
+  </Bundle>
+</Wix>

@@ -181,7 +181,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if ((int)WSManPluginErrorCodes.NoError != result)
+            if (result != (int)WSManPluginErrorCodes.NoError)
             {
                 ReportError(result, "WSManPluginReceiveResult");
             }
@@ -247,7 +247,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if ((int)WSManPluginErrorCodes.NoError != result)
+            if (result != (int)WSManPluginErrorCodes.NoError)
             {
                 ReportError(result, "WSManPluginReceiveResult");
             }
@@ -304,6 +304,7 @@ namespace System.Management.Automation.Remoting
                 _activeCmdTransportManagers.Remove(cmdId);
             }
         }
+
         #endregion
         internal bool EnableTransportManagerSendDataToClient(
             WSManNativeApi.WSManPluginRequest requestDetails,

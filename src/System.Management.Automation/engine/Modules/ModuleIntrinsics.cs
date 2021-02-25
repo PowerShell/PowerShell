@@ -703,9 +703,9 @@ namespace System.Management.Automation
             }
 
 #if UNIX
-            StringComparison strcmp = StringComparison.Ordinal;
+            const StringComparison strcmp = StringComparison.Ordinal;
 #else
-            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+            const StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
             // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
         /// <returns></returns>
-        private static string GetSharedModulePath()
+        internal static string GetSharedModulePath()
         {
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
@@ -1719,6 +1719,7 @@ namespace System.Management.Automation
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
     /// w.r.t compiled assembly loading.
     /// </summary>
+#nullable enable
     public interface IModuleAssemblyInitializer
     {
         /// <summary>

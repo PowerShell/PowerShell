@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     class ConsoleColorCmdlet : PSCmdlet
     {
         /// <summary>
-        /// Default ctor.
+        /// Initializes a new instance of the <see cref="ConsoleColorCmdlet"/> class.
         /// </summary>
         public ConsoleColorCmdlet()
         {
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         private static ErrorRecord BuildOutOfRangeErrorRecord(object val, string errorId)
         {
             string msg = StringUtil.Format(HostStrings.InvalidColorErrorTemplate, val.ToString());
-            ArgumentOutOfRangeException e = new ArgumentOutOfRangeException("value", val, msg);
+            ArgumentOutOfRangeException e = new("value", val, msg);
             return new ErrorRecord(e, errorId, ErrorCategory.InvalidArgument, null);
         }
         #endregion helper

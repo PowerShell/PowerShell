@@ -234,7 +234,7 @@ namespace System.Management.Automation
             // Convert this index into something printable (we hope)...
             string msgString = PSObject.ToString(null, index, ",", null, null, true, true);
             if (msgString.Length > 20)
-                msgString = string.Concat(msgString.AsSpan().Slice(0, 20), " ...");
+                msgString = string.Concat(msgString.AsSpan(0, 20), " ...");
             return msgString;
         }
 

@@ -64,7 +64,10 @@ namespace System.Management.Automation
         /// </exception>
         internal SessionStateScope ScriptScope
         {
-            get { return _scriptScope; }
+            get
+            {
+                return _scriptScope;
+            }
 
             set
             {
@@ -111,7 +114,7 @@ namespace System.Management.Automation
         /// the provider has already been notified.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="newDrive" /> is null.
+        /// If <paramref name="newDrive"/> is null.
         /// </exception>
         /// <exception cref="SessionStateException">
         /// If a drive of the same name already exists in this scope.
@@ -165,7 +168,7 @@ namespace System.Management.Automation
         /// by the provider.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="drive" /> is null.
+        /// If <paramref name="drive"/> is null.
         /// </exception>
         internal void RemoveDrive(PSDriveInfo drive)
         {
@@ -216,7 +219,7 @@ namespace System.Management.Automation
         /// exists in this scope or null if one does not exist.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="name" /> is null.
+        /// If <paramref name="name"/> is null.
         /// </exception>
         internal PSDriveInfo GetDrive(string name)
         {
@@ -489,7 +492,7 @@ namespace System.Management.Automation
             }
             else
             {
-                variable = (LocalsTuple != null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
+                variable = (LocalsTuple?.TrySetVariable(name, value)) ?? new PSVariable(name, value);
             }
 
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
@@ -1615,7 +1618,10 @@ namespace System.Management.Automation
                 return Parent != null ? Parent.TypeResolutionState : Language.TypeResolutionState.UsingSystem;
             }
 
-            set { _typeResolutionState = value; }
+            set
+            {
+                _typeResolutionState = value;
+            }
         }
 
         internal IDictionary<string, Type> TypeTable { get; private set; }
@@ -1692,7 +1698,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetDrives()
         {
-            return _drives ?? (_drives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
+            return _drives ??= new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private Dictionary<string, PSDriveInfo> _drives;
@@ -1704,8 +1710,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetAutomountedDrives()
         {
-            return _automountedDrives ??
-                   (_automountedDrives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
+            return _automountedDrives ??= new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private Dictionary<string, PSDriveInfo> _automountedDrives;

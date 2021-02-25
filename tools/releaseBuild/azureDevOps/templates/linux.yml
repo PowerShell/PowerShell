@@ -7,13 +7,21 @@ jobs:
 - job: build_${{ parameters.buildName }}
   displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
-  pool: Hosted Ubuntu 1604
+  pool:
+    vmImage: ubuntu-16.04
   dependsOn: ${{ parameters.parentJob }}
   variables:
-    build: ${{ parameters.buildName }}
-    runCodesignValidationInjection: false
+    - name: runCodesignValidationInjection
+      value: false
+    - name: build
+      value: ${{ parameters.buildName }}
+    - group: ESRP
+
   steps:
   - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
     clean: true
 
   - template: SetVersionVariables.yml
@@ -34,16 +42,19 @@ jobs:
     displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
 
   - template: insert-nuget-config-azfeed.yml
-
+    parameters:
+      repoRoot: $(REPOROOT)
 
   - powershell: |
-      import-module ./build.psm1
+      import-module "$env:REPOROOT/build.psm1"
       Sync-PSTags -AddRemoteIfMissing
     displayName: SyncTags
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
   - powershell: |
-      tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
+      & "$env:REPOROOT/tools/releaseBuild/vstsbuild.ps1" -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+      $env:AzDevOpsFeedPAT2 = $null
 
     displayName: 'Build and package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
@@ -52,10 +63,21 @@ jobs:
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: build_${{ parameters.buildName }}
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool:
+    vmImage: windows-latest
   variables:
-    buildName: ${{ parameters.buildName }}
+    - name: buildName
+      value: ${{ parameters.buildName }}
+    - group: ESRP
+    - name: runCodesignValidationInjection
+      value: false
+
   steps:
+  - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
+    clean: true
 
   - template: shouldSign.yml
 
@@ -86,32 +108,26 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)\rpm'
     condition: and(eq(variables['buildName'], 'RPM'),succeeded())
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run Defender Scan'
+  - template: EsrpScan.yml@ComplianceRepo
+    parameters:
+        scanPath: $(System.ArtifactsDirectory)
+        pattern: |
+          **\*.rpm
+          **\*.deb
+          **\*.tar.gz
 
-  - powershell: |
-      $authenticodefiles = @()
-      Get-ChildItem -Path '$(System.ArtifactsDirectory)\rpm\*.rpm' -recurse | ForEach-Object { $authenticodefiles += $_.FullName}
-      tools/releaseBuild/generatePackgeSigning.ps1 -LinuxFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Generate RPM Signing Xml'
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables['buildName'], 'RPM') }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\rpm
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-450779-Pgp"
+          pattern: |
+            **\*.rpm
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
 
-  - powershell: |
-      Get-Content "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Capture RPM signing xml'
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign RPM $(System.ArtifactsDirectory)\package.xml'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-
+  # requires windows
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - DEB and tar.gz'
     inputs:
@@ -125,6 +141,7 @@ jobs:
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
 
+  # requires windows
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - RPM - Unsigned'
     inputs:
@@ -135,10 +152,11 @@ jobs:
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
+  # requires windows
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - RPM - Signed'
     inputs:
-      SourcePath: '$(Build.StagingDirectory)\signedPackages\*'
+      SourcePath: '$(Build.StagingDirectory)\signedPackages\release\*'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
@@ -152,7 +170,7 @@ jobs:
 
   - template: upload-final-results.yml
     parameters:
-      artifactPath: '$(Build.StagingDirectory)\signedPackages'
+      artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
       condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0

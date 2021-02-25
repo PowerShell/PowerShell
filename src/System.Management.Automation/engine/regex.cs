@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// Specifies culture-invariant matching.
         /// </summary>
         CultureInvariant = 4
-    };
+    }
 
     /// <summary>
     /// Represents a wildcard pattern.
@@ -184,7 +184,7 @@ namespace System.Management.Automation
             if (index == Pattern.Length - 1 && Pattern[index] == '*')
             {
                 // No special characters present in the pattern before last position and last character is asterisk.
-                var patternWithoutAsterisk = Pattern.AsMemory().Slice(0, index);
+                var patternWithoutAsterisk = Pattern.AsMemory(0, index);
                 _isMatch = str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
                 return;
             }
@@ -325,7 +325,7 @@ namespace System.Management.Automation
         /// converted to their unescaped form.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="pattern" /> is null.
+        /// If <paramref name="pattern"/> is null.
         /// </exception>
         public static string Unescape(string pattern)
         {
@@ -729,7 +729,7 @@ namespace System.Management.Automation
 
             return e;
         }
-    };
+    }
 
     /// <summary>
     /// Convert a string with wild cards into its equivalent regex.
@@ -1264,7 +1264,7 @@ namespace System.Management.Automation
             }
         }
 
-        private struct CharacterNormalizer
+        private readonly struct CharacterNormalizer
         {
             private readonly CultureInfo _cultureInfo;
             private readonly bool _caseInsensitive;

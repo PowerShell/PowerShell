@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal bool _useDefaultCredentials = false;
+        private bool _useDefaultCredentials = false;
 
         /// <summary>
         /// Forces the operation to complete.
@@ -299,9 +299,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Match wildcards
-            WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { moduleNamePattern }, wildcardOptions);
+            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                globPatterns: new[] { moduleNamePattern },
+                options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             foreach (KeyValuePair<string, string> name in s_metadataCache)
             {
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fullyQualifiedNames">FullyQualifiedNames.</param>
         internal void Process(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> fullyQualifiedNames)
         {
-            _helpSystem.WebClient.UseDefaultCredentials = _useDefaultCredentials;
+            _helpSystem.UseDefaultCredentials = _useDefaultCredentials;
 
             if (moduleNames != null)
             {
@@ -784,7 +784,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 yield return path;
 
-                foreach (string subDirectory in Directory.GetDirectories(path))
+                foreach (string subDirectory in Directory.EnumerateDirectories(path))
                 {
                     foreach (string subDirectory2 in RecursiveResolvePathHelper(subDirectory))
                     {

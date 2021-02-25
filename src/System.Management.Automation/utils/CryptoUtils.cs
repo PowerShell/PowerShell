@@ -302,7 +302,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
+        public PSCryptoException()
+            : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
         /// Constructor that will be used from within CryptoUtils.
@@ -320,7 +321,8 @@ namespace System.Management.Automation.Internal
         /// Constructor with just message but no inner exception.
         /// </summary>
         /// <param name="message">Error message associated with this failure.</param>
-        public PSCryptoException(string message) : this(message, null) { }
+        public PSCryptoException(string message)
+            : this(message, null) { }
 
         /// <summary>
         /// Constructor with inner exception.
@@ -329,8 +331,8 @@ namespace System.Management.Automation.Internal
         /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
-        public PSCryptoException(string message, Exception innerException) :
-            base(message, innerException)
+        public PSCryptoException(string message, Exception innerException)
+            : base(message, innerException)
         {
             _errorCode = unchecked((uint)-1);
         }
@@ -343,8 +345,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
-            :
-            base(info, context)
+            : base(info, context)
         {
             _errorCode = unchecked(0xFFFFFFF);
             Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");
@@ -625,18 +626,6 @@ namespace System.Management.Automation.Internal
                     _aes.Dispose();
                 }
             }
-        }
-
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~PSRSACryptoServiceProvider()
-        {
-            // When Dispose() is called, GC.SuppressFinalize()
-            // is called and therefore this finalizer will not
-            // be invoked. Hence this is run only on process
-            // shutdown
-            Dispose(true);
         }
 
         #endregion IDisposable

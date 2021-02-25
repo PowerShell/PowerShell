@@ -51,12 +51,13 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Represents the a span of text in a script.
     /// </summary>
+#nullable enable
     public interface IScriptExtent
     {
         /// <summary>
         /// The filename the extent includes, or null if the extent is not included in any file.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The starting position of the extent.
@@ -103,6 +104,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         int EndOffset { get; }
     }
+#nullable restore
 
     /// <summary>
     /// A few utility functions for script positions.
@@ -644,8 +646,8 @@ namespace System.Management.Automation.Language
             int scriptLineNumber,
             int offsetInLine,
             string line,
-            string fullScript) :
-            this(scriptName, scriptLineNumber, offsetInLine, line)
+            string fullScript)
+            : this(scriptName, scriptLineNumber, offsetInLine, line)
         {
             _fullScript = fullScript;
         }

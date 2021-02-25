@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// </summary>
         public DriveManagementIntrinsics Drive
         {
-            get { return _drive ?? (_drive = new DriveManagementIntrinsics(_sessionState)); }
+            get { return _drive ??= new DriveManagementIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
-            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); }
+            get { return _provider ??= new CmdletProviderManagementIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         public PathIntrinsics Path
         {
-            get { return _path ?? (_path = new PathIntrinsics(_sessionState)); }
+            get { return _path ??= new PathIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSVariableIntrinsics PSVariable
         {
-            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); }
+            get { return _variable ??= new PSVariableIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -336,6 +336,7 @@ namespace System.Management.Automation
         Private = 1
     }
 
+#nullable enable
     internal interface IHasSessionStateEntryVisibility
     {
         SessionStateEntryVisibility Visibility { get; set; }

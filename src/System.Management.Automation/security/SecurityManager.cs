@@ -11,6 +11,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 using Dbg = System.Management.Automation;
 
@@ -368,7 +369,7 @@ namespace Microsoft.PowerShell
             return policyCheckPassed;
         }
 
-        private bool SetPolicyFromAuthenticodePrompt(string path, PSHost host, ref Exception reason, Signature signature)
+        private static bool SetPolicyFromAuthenticodePrompt(string path, PSHost host, ref Exception reason, Signature signature)
         {
             bool policyCheckPassed = false;
 
@@ -398,14 +399,14 @@ namespace Microsoft.PowerShell
                         reason = new UnauthorizedAccessException(reasonMessage);
                         policyCheckPassed = false;
                     }
-                    
+
                     break;
             }
 
             return policyCheckPassed;
         }
 
-        private bool IsLocalFile(string filename)
+        private static bool IsLocalFile(string filename)
         {
 #if UNIX
             return true;
@@ -425,7 +426,7 @@ namespace Microsoft.PowerShell
 
         // Checks that a publisher is trusted by the system or is one of
         // the signed product binaries
-        private bool IsTrustedPublisher(Signature signature, string file)
+        private static bool IsTrustedPublisher(Signature signature, string file)
         {
             // Get the thumbprint of the current signature
             X509Certificate2 signerCertificate = signature.SignerCertificate;
@@ -444,7 +445,7 @@ namespace Microsoft.PowerShell
             return false;
         }
 
-        private bool IsUntrustedPublisher(Signature signature, string file)
+        private static bool IsUntrustedPublisher(Signature signature, string file)
         {
             // Get the thumbprint of the current signature
             X509Certificate2 signerCertificate = signature.SignerCertificate;
@@ -467,7 +468,7 @@ namespace Microsoft.PowerShell
         /// Trust a publisher by adding it to the "Trusted Publishers" store.
         /// </summary>
         /// <param name="signature"></param>
-        private void TrustPublisher(Signature signature)
+        private static void TrustPublisher(Signature signature)
         {
             // Get the certificate of the signer
             X509Certificate2 signerCertificate = signature.SignerCertificate;
@@ -485,7 +486,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private void UntrustPublisher(Signature signature)
+        private static void UntrustPublisher(Signature signature)
         {
             // Get the certificate of the signer
             X509Certificate2 signerCertificate = signature.SignerCertificate;
@@ -516,15 +517,28 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private Signature GetSignatureWithEncodingRetry(string path, ExternalScriptInfo script)
+        // Check the signature via the SIP which should never erroneously validate an invalid signature
+        // or altered script.
+        private static Signature GetSignatureWithEncodingRetry(string path, ExternalScriptInfo script)
         {
-            string verificationContents = System.Text.Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
-            Signature signature = SignatureHelper.GetSignature(path, verificationContents);
-
-            // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
-            if ((signature.Status != SignatureStatus.Valid) && (script.OriginalEncoding != System.Text.Encoding.Unicode))
+            // Invoke the SIP directly with the most simple method
+            Signature signature = SignatureHelper.GetSignature(path, fileContent: null);
+            if (signature.Status == SignatureStatus.Valid)
             {
-                verificationContents = System.Text.Encoding.Unicode.GetString(System.Text.Encoding.Unicode.GetPreamble()) + script.ScriptContents;
+                return signature;
+            }
+
+            // try harder to validate the signature by being explicit about encoding
+            // and providing the script contents
+            string verificationContents = Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
+            signature = SignatureHelper.GetSignature(path, verificationContents);
+
+            // A last ditch effort -
+            // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
+            if (signature.Status != SignatureStatus.Valid
+                && script.OriginalEncoding != Encoding.Unicode)
+            {
+                verificationContents = Encoding.Unicode.GetString(Encoding.Unicode.GetPreamble()) + script.ScriptContents;
                 Signature fallbackSignature = SignatureHelper.GetSignature(path, verificationContents);
 
                 if (fallbackSignature.Status == SignatureStatus.Valid)
@@ -640,7 +654,7 @@ namespace Microsoft.PowerShell
             return allowRun;
         }
 
-        private RunPromptDecision AuthenticodePrompt(string path,
+        private static RunPromptDecision AuthenticodePrompt(string path,
                                                 Signature signature,
                                                 PSHost host)
         {
@@ -713,7 +727,7 @@ namespace Microsoft.PowerShell
             return decision;
         }
 
-        private RunPromptDecision RemoteFilePrompt(string path, PSHost host)
+        private static RunPromptDecision RemoteFilePrompt(string path, PSHost host)
         {
             if ((host == null) || (host.UI == null))
             {
@@ -743,7 +757,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private Collection<ChoiceDescription> GetAuthenticodePromptChoices()
+        private static Collection<ChoiceDescription> GetAuthenticodePromptChoices()
         {
             Collection<ChoiceDescription> choices = new Collection<ChoiceDescription>();
 
@@ -764,7 +778,7 @@ namespace Microsoft.PowerShell
             return choices;
         }
 
-        private Collection<ChoiceDescription> GetRemoteFilePromptChoices()
+        private static Collection<ChoiceDescription> GetRemoteFilePromptChoices()
         {
             Collection<ChoiceDescription> choices = new Collection<ChoiceDescription>();
 

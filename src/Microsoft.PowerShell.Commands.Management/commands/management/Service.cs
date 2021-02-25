@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             if (!status)
             {
                 int lastError = Marshal.GetLastWin32Error();
-                Win32Exception exception = new Win32Exception(lastError);
+                Win32Exception exception = new(lastError);
                 bool accessDenied = exception.NativeErrorCode == NativeMethods.ERROR_ACCESS_DENIED;
                 WriteNonTerminatingError(
                     service,
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
             /// Select services by Service name.
             /// </summary>
             ServiceName = 3
-        };
+        }
         /// <summary>
         /// Holds the selection mode setting.
         /// </summary>
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private List<ServiceController> MatchingServicesByServiceName()
         {
-            List<ServiceController> matchingServices = new List<ServiceController>();
+            List<ServiceController> matchingServices = new();
 
             if (serviceNames == null)
             {
@@ -443,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<ServiceController> MatchingServicesByDisplayName()
         {
-            List<ServiceController> matchingServices = new List<ServiceController>();
+            List<ServiceController> matchingServices = new();
             if (DisplayName == null)
             {
                 Diagnostics.Assert(false, "null DisplayName");
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<ServiceController> MatchingServicesByInput()
         {
-            List<ServiceController> matchingServices = new List<ServiceController>();
+            List<ServiceController> matchingServices = new();
             if (InputObject == null)
             {
                 Diagnostics.Assert(false, "null InputObject");
@@ -666,10 +666,10 @@ namespace Microsoft.PowerShell.Commands
                     lpDatabaseName: null,
                     dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT
                 );
-                if (IntPtr.Zero == hScManager)
+                if (hScManager == IntPtr.Zero)
                 {
                     lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
+                    Win32Exception exception = new(lastError);
                     WriteNonTerminatingError(
                         service,
                         exception,
@@ -683,10 +683,10 @@ namespace Microsoft.PowerShell.Commands
                     service.ServiceName,
                     NativeMethods.SERVICE_QUERY_CONFIG
                 );
-                if (IntPtr.Zero == hService)
+                if (hService == IntPtr.Zero)
                 {
                     lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
+                    Win32Exception exception = new(lastError);
                     WriteNonTerminatingError(
                         service,
                         exception,
@@ -695,13 +695,13 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                 }
 
-                NativeMethods.SERVICE_DESCRIPTIONW description = new NativeMethods.SERVICE_DESCRIPTIONW();
+                NativeMethods.SERVICE_DESCRIPTIONW description = new();
                 bool querySuccessful = NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DESCRIPTIONW>(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out description);
 
-                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
+                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = new();
                 querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DELAYED_AUTO_START_INFO>(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out autostartInfo);
 
-                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = new NativeMethods.QUERY_SERVICE_CONFIG();
+                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = new();
                 querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceInfo);
 
                 if (!querySuccessful)
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
                         );
                 }
 
-                PSProperty noteProperty = new PSProperty("UserName", serviceInfo.lpServiceStartName);
+                PSProperty noteProperty = new("UserName", serviceInfo.lpServiceStartName);
                 serviceAsPSObj.Properties.Add(noteProperty, true);
                 serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
 
@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (IntPtr.Zero != hService)
+                if (hService != IntPtr.Zero)
                 {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
                     if (!succeeded)
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (IntPtr.Zero != hScManager)
+                if (hScManager != IntPtr.Zero)
                 {
                     bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
                     if (!succeeded)
@@ -907,14 +907,14 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception e)
             {
-                if (NativeMethods.ERROR_SERVICE_ALREADY_RUNNING != e.NativeErrorCode)
+                if (e.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
                     exception = e;
             }
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
                 if (eInner == null
-                    || NativeMethods.ERROR_SERVICE_ALREADY_RUNNING != eInner.NativeErrorCode)
+                    || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
                 {
                     exception = e;
                 }
@@ -960,7 +960,7 @@ namespace Microsoft.PowerShell.Commands
             // Ignore ServiceController.CanStop.  CanStop will be set false
             // if the service is not running, but this is not an error.
 
-            List<ServiceController> stoppedServices = new List<ServiceController>();
+            List<ServiceController> stoppedServices = new();
             ServiceController[] dependentServices = null;
 
             try
@@ -1024,7 +1024,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception e)
             {
-                if (NativeMethods.ERROR_SERVICE_NOT_ACTIVE != e.NativeErrorCode)
+                if (e.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                     exception = e;
             }
             catch (InvalidOperationException e)
@@ -1032,7 +1032,7 @@ namespace Microsoft.PowerShell.Commands
                 Win32Exception eInner =
                     e.InnerException as Win32Exception;
                 if (eInner == null
-                    || NativeMethods.ERROR_SERVICE_NOT_ACTIVE != eInner.NativeErrorCode)
+                    || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     exception = e;
                 }
@@ -1085,7 +1085,7 @@ namespace Microsoft.PowerShell.Commands
         /// True if all dependent services are stopped
         /// False if not all dependent services are stopped
         /// </returns>
-        private bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
+        private static bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
             return Array.TrueForAll(dependentServices, service => service.Status == ServiceControllerStatus.Stopped);
         }
@@ -1117,7 +1117,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception e)
             {
-                if (NativeMethods.ERROR_SERVICE_NOT_ACTIVE == e.NativeErrorCode)
+                if (e.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
                 }
@@ -1128,7 +1128,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
                 if (eInner != null
-                    && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
+                    && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
                 }
@@ -1198,7 +1198,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception e)
             {
-                if (NativeMethods.ERROR_SERVICE_NOT_ACTIVE == e.NativeErrorCode)
+                if (e.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
                 }
@@ -1209,7 +1209,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
                 if (eInner != null
-                    && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
+                    && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
                 }
@@ -1495,7 +1495,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ServiceName", "SN")]
         public new string Name
         {
-            get { return serviceName; }
+            get
+            {
+                return serviceName;
+            }
 
             set
             {
@@ -1523,7 +1526,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("DN")]
         public new string DisplayName
         {
-            get { return displayName; }
+            get
+            {
+                return displayName;
+            }
 
             set
             {
@@ -1552,7 +1558,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Description
         {
-            get { return description; }
+            get
+            {
+                return description;
+            }
 
             set
             {
@@ -1575,7 +1584,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public ServiceStartupType StartupType
         {
-            get { return startupType; }
+            get
+            {
+                return startupType;
+            }
 
             set
             {
@@ -1611,7 +1623,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateSetAttribute(new string[] { "Running", "Stopped", "Paused" })]
         public string Status
         {
-            get { return serviceStatus; }
+            get
+            {
+                return serviceStatus;
+            }
 
             set
             {
@@ -1705,14 +1720,14 @@ namespace Microsoft.PowerShell.Commands
             catch (ArgumentException ex)
             {
                 // cannot use WriteNonterminatingError as service is null
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
+                ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
             catch (InvalidOperationException ex)
             {
                 // cannot use WriteNonterminatingError as service is null
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
+                ErrorRecord er = new(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
@@ -1737,10 +1752,10 @@ namespace Microsoft.PowerShell.Commands
                         NativeMethods.SC_MANAGER_CONNECT
                         );
 
-                    if (IntPtr.Zero == hScManager)
+                    if (hScManager == IntPtr.Zero)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             service,
                             exception,
@@ -1756,10 +1771,10 @@ namespace Microsoft.PowerShell.Commands
                         NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER
                         );
 
-                    if (IntPtr.Zero == hService)
+                    if (hService == IntPtr.Zero)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             service,
                             exception,
@@ -1770,7 +1785,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // Modify startup type or display name or credential
                     if (!string.IsNullOrEmpty(DisplayName)
-                        || ServiceStartupType.InvalidValue != StartupType || Credential != null)
+                        || StartupType != ServiceStartupType.InvalidValue || Credential != null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                         if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
@@ -1805,7 +1820,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!succeeded)
                         {
                             int lastError = Marshal.GetLastWin32Error();
-                            Win32Exception exception = new Win32Exception(lastError);
+                            Win32Exception exception = new(lastError);
                             WriteNonTerminatingError(
                                 service,
                                 exception,
@@ -1816,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
+                    NativeMethods.SERVICE_DESCRIPTIONW sd = new();
                     sd.lpDescription = Description;
                     int size = Marshal.SizeOf(sd);
                     IntPtr buffer = Marshal.AllocCoTaskMem(size);
@@ -1830,7 +1845,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!status)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             service,
                             exception,
@@ -1840,7 +1855,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Set the delayed auto start
-                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
+                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new();
                     ds.fDelayedAutostart = StartupType == ServiceStartupType.AutomaticDelayedStart;
                     size = Marshal.SizeOf(ds);
                     delayedAutoStartInfoBuffer = Marshal.AllocCoTaskMem(size);
@@ -1854,7 +1869,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!status)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             Name,
                             DisplayName,
@@ -1914,24 +1929,24 @@ namespace Microsoft.PowerShell.Commands
                     if (PassThru.IsPresent)
                     {
                         // To display the service, refreshing the service would not show the display name after updating
-                        ServiceController displayservice = new ServiceController(Name);
+                        ServiceController displayservice = new(Name);
                         WriteObject(displayservice);
                     }
                 }
                 finally
                 {
-                    if (IntPtr.Zero != delayedAutoStartInfoBuffer)
+                    if (delayedAutoStartInfoBuffer != IntPtr.Zero)
                     {
                         Marshal.FreeCoTaskMem(delayedAutoStartInfoBuffer);
                     }
 
-                    if (IntPtr.Zero != hService)
+                    if (hService != IntPtr.Zero)
                     {
                         bool succeeded = NativeMethods.CloseServiceHandle(hService);
                         if (!succeeded)
                         {
                             int lastError = Marshal.GetLastWin32Error();
-                            Win32Exception exception = new Win32Exception(lastError);
+                            Win32Exception exception = new(lastError);
                             WriteNonTerminatingError(
                                 service,
                                 exception,
@@ -1941,13 +1956,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (IntPtr.Zero != hScManager)
+                    if (hScManager != IntPtr.Zero)
                     {
                         bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
                         if (!succeeded)
                         {
                             int lastError = Marshal.GetLastWin32Error();
-                            Win32Exception exception = new Win32Exception(lastError);
+                            Win32Exception exception = new(lastError);
                             WriteNonTerminatingError(
                                 service,
                                 exception,
@@ -1960,7 +1975,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (IntPtr.Zero != password)
+                if (password != IntPtr.Zero)
                 {
                     Marshal.ZeroFreeCoTaskMemUnicode(password);
                 }
@@ -2133,10 +2148,10 @@ namespace Microsoft.PowerShell.Commands
                     null,
                     NativeMethods.SC_MANAGER_CONNECT | NativeMethods.SC_MANAGER_CREATE_SERVICE
                     );
-                if (IntPtr.Zero == hScManager)
+                if (hScManager == IntPtr.Zero)
                 {
                     int lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
+                    Win32Exception exception = new(lastError);
                     WriteNonTerminatingError(
                         Name,
                         DisplayName,
@@ -2210,10 +2225,10 @@ namespace Microsoft.PowerShell.Commands
                     username,
                     password
                     );
-                if (IntPtr.Zero == hService)
+                if (hService == IntPtr.Zero)
                 {
                     int lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
+                    Win32Exception exception = new(lastError);
                     WriteNonTerminatingError(
                         Name,
                         DisplayName,
@@ -2226,7 +2241,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Set the service description
-                NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
+                NativeMethods.SERVICE_DESCRIPTIONW sd = new();
                 sd.lpDescription = Description;
                 int size = Marshal.SizeOf(sd);
                 IntPtr buffer = Marshal.AllocCoTaskMem(size);
@@ -2240,7 +2255,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!succeeded)
                 {
                     int lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
+                    Win32Exception exception = new(lastError);
                     WriteNonTerminatingError(
                         Name,
                         DisplayName,
@@ -2254,7 +2269,7 @@ namespace Microsoft.PowerShell.Commands
                 // Set the delayed auto start
                 if (StartupType == ServiceStartupType.AutomaticDelayedStart)
                 {
-                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
+                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new();
                     ds.fDelayedAutostart = true;
                     size = Marshal.SizeOf(ds);
                     delayedAutoStartInfoBuffer = Marshal.AllocCoTaskMem(size);
@@ -2268,7 +2283,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!succeeded)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             Name,
                             DisplayName,
@@ -2292,23 +2307,23 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (IntPtr.Zero != delayedAutoStartInfoBuffer)
+                if (delayedAutoStartInfoBuffer != IntPtr.Zero)
                 {
                     Marshal.FreeCoTaskMem(delayedAutoStartInfoBuffer);
                 }
 
-                if (IntPtr.Zero != password)
+                if (password != IntPtr.Zero)
                 {
                     Marshal.ZeroFreeCoTaskMemUnicode(password);
                 }
 
-                if (IntPtr.Zero != hService)
+                if (hService != IntPtr.Zero)
                 {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
                     if (!succeeded)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             Name,
                             DisplayName,
@@ -2320,13 +2335,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (IntPtr.Zero != hScManager)
+                if (hScManager != IntPtr.Zero)
                 {
                     bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
                     if (!succeeded)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             Name,
                             DisplayName,
@@ -2402,14 +2417,14 @@ namespace Microsoft.PowerShell.Commands
             catch (ArgumentException ex)
             {
                 // Cannot use WriteNonterminatingError as service is null
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
+                ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
             catch (InvalidOperationException ex)
             {
                 // Cannot use WriteNonterminatingError as service is null
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
+                ErrorRecord er = new(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
@@ -2432,10 +2447,10 @@ namespace Microsoft.PowerShell.Commands
                         lpDatabaseName: null,
                         dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
                         );
-                    if (IntPtr.Zero == hScManager)
+                    if (hScManager == IntPtr.Zero)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteObject(exception);
                         WriteNonTerminatingError(
                             service,
@@ -2451,10 +2466,10 @@ namespace Microsoft.PowerShell.Commands
                         Name,
                         NativeMethods.SERVICE_DELETE
                         );
-                    if (IntPtr.Zero == hService)
+                    if (hService == IntPtr.Zero)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             service,
                             exception,
@@ -2469,7 +2484,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!status)
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        Win32Exception exception = new Win32Exception(lastError);
+                        Win32Exception exception = new(lastError);
                         WriteNonTerminatingError(
                             service,
                             exception,
@@ -2480,7 +2495,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (IntPtr.Zero != hService)
+                    if (hService != IntPtr.Zero)
                     {
                         bool succeeded = NativeMethods.CloseServiceHandle(hService);
                         if (!succeeded)
@@ -2490,7 +2505,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (IntPtr.Zero != hScManager)
+                    if (hScManager != IntPtr.Zero)
                     {
                         bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
                         if (!succeeded)
@@ -2706,7 +2721,7 @@ namespace Microsoft.PowerShell.Commands
         {
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string lpDescription;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct QUERY_SERVICE_CONFIG
@@ -2720,13 +2735,13 @@ namespace Microsoft.PowerShell.Commands
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpDependencies;
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpServiceStartName;
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpDisplayName;
-        };
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct SERVICE_DELAYED_AUTO_START_INFO
         {
             internal bool fDelayedAutostart;
-        };
+        }
 
         [DllImport(PinvokeDllNames.CreateServiceWDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern

@@ -164,20 +164,21 @@ namespace System.Management.Automation
             return retValue;
         }
 
-        internal static PSMemberInfoInternalCollection<U> TransformMemberInfoCollection<T, U>(PSMemberInfoCollection<T> source) where T : PSMemberInfo where U : PSMemberInfo
+        internal static PSMemberInfoInternalCollection<TResult> TransformMemberInfoCollection<TSource, TResult>(PSMemberInfoCollection<TSource> source)
+            where TSource : PSMemberInfo where TResult : PSMemberInfo
         {
-            if (typeof(T) == typeof(U))
+            if (typeof(TSource) == typeof(TResult))
             {
                 // If the types are the same, don't make a copy, return the cached collection.
-                return source as PSMemberInfoInternalCollection<U>;
+                return source as PSMemberInfoInternalCollection<TResult>;
             }
 
-            PSMemberInfoInternalCollection<U> returnValue = new PSMemberInfoInternalCollection<U>();
-            foreach (T member in source)
+            PSMemberInfoInternalCollection<TResult> returnValue = new PSMemberInfoInternalCollection<TResult>();
+            foreach (TSource member in source)
             {
-                if (member is U tAsU)
+                if (member is TResult result)
                 {
-                    returnValue.Add(tAsU);
+                    returnValue.Add(result);
                 }
             }
 
@@ -651,6 +652,7 @@ namespace System.Management.Automation
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.DotNetInstanceAdapter);
+
 #if !UNIX
         private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
         private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
@@ -946,6 +948,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -954,6 +957,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -962,6 +966,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -970,6 +975,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>

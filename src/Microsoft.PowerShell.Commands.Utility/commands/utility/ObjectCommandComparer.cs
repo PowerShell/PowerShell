@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ObjectCommandPropertyValue constructor.
+        /// Initializes a new instance of the <see cref="ObjectCommandPropertyValue"/> class.
         /// </summary>
         /// <param name="propVal">Property Value.</param>
         /// <param name="isCaseSensitive">Indicates if the Property value comparison has to be case sensitive or not.</param>
@@ -65,8 +65,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static readonly ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
-        internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
+        internal static readonly ObjectCommandPropertyValue NonExistingProperty = new();
+        internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new(null);
         private readonly bool _caseSensitive;
         internal CultureInfo cultureInfo = null;
 
@@ -139,6 +139,7 @@ namespace Microsoft.PowerShell.Commands
     internal class ObjectCommandComparer : IComparer
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectCommandComparer"/> class.
         /// Constructor that doesn't set any private field.
         /// Necessary because compareTo can compare two objects by calling
         /// ((ICompare)obj1).CompareTo(obj2) without using a key.
@@ -209,19 +210,19 @@ namespace Microsoft.PowerShell.Commands
                 second = secondMsh.BaseObject;
             }
 
-            if (LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
+            if (!LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
             {
-                return result * (_ascendingOrder ? 1 : -1);
+                // Note that this will occur if the objects do not support
+                // IComparable.  We fall back to comparing as strings.
+
+                // being here means the first object doesn't support ICompare
+                string firstString = PSObject.AsPSObject(first).ToString();
+                string secondString = PSObject.AsPSObject(second).ToString();
+
+                result = _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
             }
 
-            // Note that this will occur if the objects do not support
-            // IComparable.  We fall back to comparing as strings.
-
-            // being here means the first object doesn't support ICompare
-            string firstString = PSObject.AsPSObject(first).ToString();
-            string secondString = PSObject.AsPSObject(second).ToString();
-
-            return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
+            return _ascendingOrder ? result : -result;
         }
 
         private readonly CultureInfo _cultureInfo = null;

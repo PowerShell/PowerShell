@@ -456,6 +456,7 @@ namespace System.Management.Automation.Remoting.Client
             new Dictionary<long, WSManClientSessionTransportManager>();
 
         private static long s_sessionTMSeed;
+
         // generate unique session id
         private static long GetNextSessionTMHandleId()
         {
@@ -557,9 +558,12 @@ namespace System.Management.Automation.Remoting.Client
         /// <exception cref="PSInvalidOperationException">
         /// 1. Create Session failed with a non-zero error code.
         /// </exception>
-        internal WSManClientSessionTransportManager(Guid runspacePoolInstanceId,
+        internal WSManClientSessionTransportManager(
+            Guid runspacePoolInstanceId,
             WSManConnectionInfo connectionInfo,
-            PSRemotingCryptoHelper cryptoHelper, string sessionName) : base(runspacePoolInstanceId, cryptoHelper)
+            PSRemotingCryptoHelper cryptoHelper,
+            string sessionName)
+            : base(runspacePoolInstanceId, cryptoHelper)
         {
             // Initialize WSMan instance
             WSManAPIData = new WSManAPIDataCommon();
@@ -1203,7 +1207,7 @@ namespace System.Management.Automation.Remoting.Client
                 else if (_startMode == WSManTransportManagerUtils.tmStartModes.Create ||
                     _startMode == WSManTransportManagerUtils.tmStartModes.Connect)
                 {
-                    if (IntPtr.Zero == _wsManShellOperationHandle)
+                    if (_wsManShellOperationHandle == IntPtr.Zero)
                     {
                         shouldRaiseCloseCompleted = true;
                     }
@@ -1472,7 +1476,7 @@ namespace System.Management.Automation.Remoting.Client
                 proxyAuthCredentials = new WSManNativeApi.WSManUserNameAuthenticationCredentials(userName, password, authMechanism);
             }
 
-            WSManNativeApi.WSManProxyInfo proxyInfo = (ProxyAccessType.None == connectionInfo.ProxyAccessType) ?
+            WSManNativeApi.WSManProxyInfo proxyInfo = (connectionInfo.ProxyAccessType == ProxyAccessType.None) ?
                 null :
                 new WSManNativeApi.WSManProxyInfo(connectionInfo.ProxyAccessType, proxyAuthCredentials);
 
@@ -1695,7 +1699,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
 
                 // For send..clear always
-                if (IntPtr.Zero != _wsManSendOperationHandle)
+                if (_wsManSendOperationHandle != IntPtr.Zero)
                 {
                     WSManNativeApi.WSManCloseOperation(_wsManSendOperationHandle, 0);
                     _wsManSendOperationHandle = IntPtr.Zero;
@@ -1706,7 +1710,7 @@ namespace System.Management.Automation.Remoting.Client
                 // clearing for receive..Clear only when the end of operation is reached.
                 if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_END_OF_OPERATION)
                 {
-                    if (IntPtr.Zero != _wsManReceiveOperationHandle)
+                    if (_wsManReceiveOperationHandle != IntPtr.Zero)
                     {
                         WSManNativeApi.WSManCloseOperation(_wsManReceiveOperationHandle, 0);
                         _wsManReceiveOperationHandle = IntPtr.Zero;
@@ -1894,7 +1898,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -1924,7 +1928,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // check if the session supports disconnect
-            sessionTM.SupportsDisconnect = ((flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0) ? true : false;
+            sessionTM.SupportsDisconnect = (flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0;
 
             // openContent is used by redirection ie., while redirecting to
             // a new machine.. this is not needed anymore as the connection
@@ -1995,7 +1999,7 @@ namespace System.Management.Automation.Remoting.Client
                 sessionTM.RunspacePoolInstanceId.ToString(),
                 "OnCloseSessionCompleted");
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -2054,7 +2058,7 @@ namespace System.Management.Automation.Remoting.Client
                 sessionTM._disconnectSessionCompleted = null;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -2136,7 +2140,7 @@ namespace System.Management.Automation.Remoting.Client
                 sessionTM._reconnectSessionCompleted = null;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -2246,7 +2250,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -2353,7 +2357,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -2423,7 +2427,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
@@ -2730,7 +2734,7 @@ namespace System.Management.Automation.Remoting.Client
                 _inputStreamSet.Dispose();
                 _outputStreamSet.Dispose();
 
-                if (IntPtr.Zero != _handle)
+                if (_handle != IntPtr.Zero)
                 {
                     int result = 0;
 
@@ -2911,14 +2915,15 @@ namespace System.Management.Automation.Remoting.Client
         /// Session transport manager creating this command transport manager instance.
         /// Used by Command TM to apply session specific properties
         /// </param>
-        internal WSManClientCommandTransportManager(WSManConnectionInfo connectionInfo,
+        internal WSManClientCommandTransportManager(
+            WSManConnectionInfo connectionInfo,
             IntPtr wsManShellOperationHandle,
             ClientRemotePowerShell shell,
             bool noInput,
-            WSManClientSessionTransportManager sessnTM) :
-            base(shell, sessnTM.CryptoHelper, sessnTM)
+            WSManClientSessionTransportManager sessnTM)
+            : base(shell, sessnTM.CryptoHelper, sessnTM)
         {
-            Dbg.Assert(IntPtr.Zero != wsManShellOperationHandle, "Shell operation handle cannot be IntPtr.Zero.");
+            Dbg.Assert(wsManShellOperationHandle != IntPtr.Zero, "Shell operation handle cannot be IntPtr.Zero.");
             Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");
 
             _wsManShellOperationHandle = wsManShellOperationHandle;
@@ -3160,7 +3165,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 // There is no valid cmd operation handle..so just
                 // raise close completed.
-                if (IntPtr.Zero == _wsManCmdOperationHandle)
+                if (_wsManCmdOperationHandle == IntPtr.Zero)
                 {
                     shouldRaiseCloseCompleted = true;
                 }
@@ -3286,7 +3291,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
 
                 // For send..clear always
-                if (IntPtr.Zero != _wsManSendOperationHandle)
+                if (_wsManSendOperationHandle != IntPtr.Zero)
                 {
                     WSManNativeApi.WSManCloseOperation(_wsManSendOperationHandle, 0);
                     _wsManSendOperationHandle = IntPtr.Zero;
@@ -3297,7 +3302,7 @@ namespace System.Management.Automation.Remoting.Client
                 // clearing for receive..Clear only when the end of operation is reached.
                 if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_END_OF_OPERATION)
                 {
-                    if (IntPtr.Zero != _wsManReceiveOperationHandle)
+                    if (_wsManReceiveOperationHandle != IntPtr.Zero)
                     {
                         WSManNativeApi.WSManCloseOperation(_wsManReceiveOperationHandle, 0);
                         _wsManReceiveOperationHandle = IntPtr.Zero;
@@ -3386,7 +3391,7 @@ namespace System.Management.Automation.Remoting.Client
             // Remove this once WSMan fixes its code.
             cmdTM._wsManCmdOperationHandle = commandOperationHandle;
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
@@ -3484,7 +3489,7 @@ namespace System.Management.Automation.Remoting.Client
 
             cmdTM._wsManCmdOperationHandle = commandOperationHandle;
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
@@ -3655,7 +3660,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 // Ignore Command aborted error. Command aborted is raised by WSMan to
@@ -3732,7 +3737,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
@@ -3812,7 +3817,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
@@ -3885,7 +3890,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // release the resources related to signal
-            if (IntPtr.Zero != cmdTM._cmdSignalOperationHandle)
+            if (cmdTM._cmdSignalOperationHandle != IntPtr.Zero)
             {
                 WSManNativeApi.WSManCloseOperation(cmdTM._cmdSignalOperationHandle, 0);
                 cmdTM._cmdSignalOperationHandle = IntPtr.Zero;
@@ -3904,7 +3909,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (IntPtr.Zero != error)
+            if (error != IntPtr.Zero)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)

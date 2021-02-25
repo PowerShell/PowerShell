@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                 e is SecurityException
             )
             {
-                Exception exception = new Exception(
+                Exception exception = new(
                     string.Format(
                         CultureInfo.CurrentUICulture,
                         TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, e);
+                Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
                 ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedpath));
             }
         }
@@ -149,11 +149,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = false;
 
-                        Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
 
                         foreach (var message in errorMessages)
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
                             errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
                             WriteError(errorRecord);
                         }
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = false;
 
-                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJson, exc);
+                Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
                 WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, Json));
             }
 

@@ -16,7 +16,7 @@ namespace System.Management.Automation.Internal
         Error,
         Warning,
         Information
-    };
+    }
 
     /// <summary>
     /// Pipe provides a way to stitch two commands.
@@ -40,7 +40,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal CommandProcessorBase DownstreamCmdlet
         {
-            get { return _downstreamCmdlet; }
+            get
+            {
+                return _downstreamCmdlet;
+            }
 
             set
             {
@@ -76,7 +79,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal PipelineWriter ExternalWriter
         {
-            get { return _externalWriter; }
+            get
+            {
+                return _externalWriter;
+            }
 
             set
             {
@@ -108,7 +114,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal bool NullPipe
         {
-            get { return _nullPipe; }
+            get
+            {
+                return _nullPipe;
+            }
 
             set
             {
@@ -299,7 +308,7 @@ namespace System.Management.Automation.Internal
             CopyVariableToTempPipe(VariableStreamKind.Information, _informationVariableList, tempPipe);
         }
 
-        private void CopyVariableToTempPipe(VariableStreamKind streamKind, List<IList> variableList, Pipe tempPipe)
+        private static void CopyVariableToTempPipe(VariableStreamKind streamKind, List<IList> variableList, Pipe tempPipe)
         {
             if (variableList != null && variableList.Count > 0)
             {

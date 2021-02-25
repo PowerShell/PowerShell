@@ -57,7 +57,10 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("GoldMan", "#pw17903:UseOfLCID", Justification = "The CultureNumber is only used if the property has been set with a hex string starting with 0x")]
         public string Culture
         {
-            get { return _cultureInfo != null ? _cultureInfo.ToString() : null; }
+            get
+            {
+                return _cultureInfo?.ToString();
+            }
 
             set
             {
@@ -182,9 +185,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A logical matrix where each row is an input object and its property values specified by Properties.
         /// </summary>
-        internal List<OrderByPropertyEntry> OrderMatrix { get; } = null;
+        internal List<OrderByPropertyEntry> OrderMatrix { get; }
 
-        internal OrderByPropertyComparer Comparer { get; } = null;
+        internal OrderByPropertyComparer Comparer { get; }
 
         internal List<MshParameter> MshParameterList
         {
@@ -211,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
             out List<MshParameter> mshParameterList)
         {
             mshParameterList = null;
-            TerminatingErrorContext invocationContext = new TerminatingErrorContext(cmdlet);
+            TerminatingErrorContext invocationContext = new(cmdlet);
             // compare-object and group-object use the same definition here
             ParameterProcessor processor = cmdlet is SortObjectCommand ?
                 new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
@@ -235,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
             PSCmdlet cmdlet,
             object[] expr)
         {
-            TerminatingErrorContext invocationContext = new TerminatingErrorContext(cmdlet);
+            TerminatingErrorContext invocationContext = new(cmdlet);
             // compare-object and group-object use the same definition here
             ParameterProcessor processor = cmdlet is SortObjectCommand ?
                 new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
@@ -272,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
         // match property names on the incoming objects.
         private static List<MshParameter> ExpandExpressions(List<PSObject> inputObjects, List<MshParameter> unexpandedParameterList)
         {
-            List<MshParameter> expandedParameterList = new List<MshParameter>();
+            List<MshParameter> expandedParameterList = new();
 
             if (unexpandedParameterList != null)
             {
@@ -285,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new SortedDictionary<string, PSPropertyExpression>(StringComparer.OrdinalIgnoreCase);
+                        SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new(StringComparer.OrdinalIgnoreCase);
                         if (inputObjects != null)
                         {
                             foreach (object inputObject in inputObjects)
@@ -304,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (PSPropertyExpression expandedExpression in expandedPropertyNames.Values)
                         {
-                            MshParameter expandedParameter = new MshParameter();
+                            MshParameter expandedParameter = new();
                             expandedParameter.hash = (Hashtable)unexpandedParameter.hash.Clone();
                             expandedParameter.hash[FormatParameterDefinitionKeys.ExpressionEntryKey] = expandedExpression;
 
@@ -327,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSPropertyExpression ex = (PSPropertyExpression)unexpandedParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey);
 
-                    SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new SortedDictionary<string, PSPropertyExpression>(StringComparer.OrdinalIgnoreCase);
+                    SortedDictionary<string, PSPropertyExpression> expandedPropertyNames = new(StringComparer.OrdinalIgnoreCase);
                     if (inputObject == null)
                     {
                         continue;
@@ -340,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (PSPropertyExpression expandedExpression in expandedPropertyNames.Values)
                     {
-                        MshParameter expandedParameter = new MshParameter();
+                        MshParameter expandedParameter = new();
                         expandedParameter.hash = (Hashtable)unexpandedParameter.hash.Clone();
                         expandedParameter.hash[FormatParameterDefinitionKeys.ExpressionEntryKey] = expandedExpression;
 
@@ -376,14 +379,14 @@ namespace Microsoft.PowerShell.Commands
             List<MshParameter> mshParameterList
             )
         {
-            List<OrderByPropertyEntry> orderMatrixToCreate = new List<OrderByPropertyEntry>();
+            List<OrderByPropertyEntry> orderMatrixToCreate = new();
             for (int index = 0; index < inputObjects.Count; index++)
             {
                 PSObject so = inputObjects[index];
                 if (so == null || so == AutomationNull.Value)
                     continue;
-                List<ErrorRecord> evaluationErrors = new List<ErrorRecord>();
-                List<string> propertyNotFoundMsgs = new List<string>();
+                List<ErrorRecord> evaluationErrors = new();
+                List<string> propertyNotFoundMsgs = new();
                 OrderByPropertyEntry result =
                     OrderByPropertyEntryEvaluationHelper.ProcessObject(so, mshParameterList, evaluationErrors, propertyNotFoundMsgs, originalIndex: index);
                 foreach (ErrorRecord err in evaluationErrors)
@@ -478,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// OrderByProperty constructor.
+        /// Initializes a new instance of the <see cref="OrderByProperty"/> class.
         /// </summary>
         internal OrderByProperty()
         {
@@ -507,8 +510,8 @@ namespace Microsoft.PowerShell.Commands
                 ExpandExpressions(inputObject, _unExpandedParametersWithWildCardPattern, _mshParameterList);
             }
 
-            List<ErrorRecord> evaluationErrors = new List<ErrorRecord>();
-            List<string> propertyNotFoundMsgs = new List<string>();
+            List<ErrorRecord> evaluationErrors = new();
+            List<string> propertyNotFoundMsgs = new();
             OrderByPropertyEntry result =
                 OrderByPropertyEntryEvaluationHelper.ProcessObject(inputObject, _mshParameterList, evaluationErrors, propertyNotFoundMsgs, isCaseSensitive, cultureInfo);
             foreach (ErrorRecord err in evaluationErrors)
@@ -543,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(errors != null, "errors cannot be null!");
             Diagnostics.Assert(propertyNotFoundMsgs != null, "propertyNotFoundMsgs cannot be null!");
-            OrderByPropertyEntry entry = new OrderByPropertyEntry();
+            OrderByPropertyEntry entry = new();
             entry.inputObject = inputObject;
             entry.originalIndex = originalIndex;
 
@@ -602,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         r.Exception,
                         "ExpressionEvaluation",
                         ErrorCategory.InvalidResult,
@@ -622,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class OrderByPropertyEntry
     {
         internal PSObject inputObject = null;
-        internal List<ObjectCommandPropertyValue> orderValues = new List<ObjectCommandPropertyValue>();
+        internal List<ObjectCommandPropertyValue> orderValues = new();
         // The originalIndex field was added to enable stable heap-sorts (Top N/Bottom N)
         internal int originalIndex = -1;
 

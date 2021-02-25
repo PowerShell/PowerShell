@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -161,7 +162,7 @@ namespace System.Management.Automation
         IncludeHidden = 1,
 
         /// <summary>
-        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <c>true</c>
+        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <see langword="true"/>
         /// </summary>
         OnlySerializable = 2
     }
@@ -875,6 +876,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="GetValueException">When getting and there is no getter or when the getter throws an exception.</exception>
         /// <exception cref="SetValueException">When setting and there is no setter or when the setter throws an exception.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -964,6 +966,7 @@ namespace System.Management.Automation
         /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="GetValueException">If there is no property getter.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override string TypeNameOfValue
         {
             get
@@ -1786,6 +1789,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="SetValueException">When setting and there is no setter,
         /// when the setter throws an exception or when there is no Runspace to run the script.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -1911,12 +1915,12 @@ namespace System.Management.Automation
         }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public Type MethodTargetType { get; }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
@@ -3666,7 +3670,7 @@ namespace System.Management.Automation
     /// <summary>
     /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection.
     /// </summary>
-    internal class MemberMatch
+    internal static class MemberMatch
     {
         internal static WildcardPattern GetNamePattern(string name)
         {
@@ -3728,7 +3732,7 @@ namespace System.Management.Automation
     /// A Predicate that determine if a member name matches a criterion.
     /// </summary>
     /// <param name="memberName"></param>
-    /// <returns><c>true</c> if the <paramref name="memberName"/> matches the predicate, otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the <paramref name="memberName"/> matches the predicate, otherwise <see langword="false"/>.</returns>
     public delegate bool MemberNamePredicate(string memberName);
 
     /// <summary>
@@ -4970,7 +4974,7 @@ namespace System.Management.Automation
         /// <returns>The enumerator for this collection.</returns>
         public override IEnumerator<T> GetEnumerator()
         {
-            return new Enumerator<T>(this);
+            return new Enumerator(this);
         }
 
         internal override T FirstOrDefault(MemberNamePredicate predicate)
@@ -5024,17 +5028,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Enumerable for this class.
         /// </summary>
-        internal struct Enumerator<S> : IEnumerator<S> where S : PSMemberInfo
+        internal struct Enumerator : IEnumerator<T>
         {
-            private S _current;
+            private T _current;
             private int _currentIndex;
-            private readonly PSMemberInfoInternalCollection<S> _allMembers;
+            private readonly PSMemberInfoInternalCollection<T> _allMembers;
 
             /// <summary>
             /// Constructs this instance to enumerate over members.
             /// </summary>
             /// <param name="integratingCollection">Members we are enumerating.</param>
-            internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
+            internal Enumerator(PSMemberInfoIntegratingCollection<T> integratingCollection)
             {
                 using (PSObject.MemberResolution.TraceScope("Enumeration Start"))
                 {
@@ -5066,7 +5070,7 @@ namespace System.Management.Automation
             {
                 _currentIndex++;
 
-                S member = null;
+                T member = null;
                 while (_currentIndex < _allMembers.Count)
                 {
                     member = _allMembers[_currentIndex];
@@ -5092,7 +5096,7 @@ namespace System.Management.Automation
             /// Current PSMemberInfo in the enumeration.
             /// </summary>
             /// <exception cref="ArgumentException">For invalid arguments.</exception>
-            S IEnumerator<S>.Current
+            T IEnumerator<T>.Current
             {
                 get
                 {
@@ -5105,7 +5109,7 @@ namespace System.Management.Automation
                 }
             }
 
-            object IEnumerator.Current => ((IEnumerator<S>)this).Current;
+            object IEnumerator.Current => ((IEnumerator<T>)this).Current;
 
             void IEnumerator.Reset()
             {

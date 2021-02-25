@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
                 // and if we are not in a loopback configuration mode, in which case we always force remote script commands
                 // to be parsed and evaluated on the remote session (not in the current local session).
                 RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-                bool isConfiguredLoopback = (remoteRunspace != null) ? remoteRunspace.IsConfiguredLoopBack : false;
+                bool isConfiguredLoopback = remoteRunspace != null && remoteRunspace.IsConfiguredLoopBack;
                 bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
 
                 // Create PowerShell from ScriptBlock.
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates the PSCommand when the runspace is not overridden.
         /// </summary>
-        private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
+        private static PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
             PSCommand command = new PSCommand();
 
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        private void StopProgressBar(
+        private static void StopProgressBar(
             long sourceId)
         {
             s_RCProgress.StopProgress(sourceId);

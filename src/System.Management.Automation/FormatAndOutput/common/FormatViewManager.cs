@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string msg = null;
             bool foundValidViews = false;
             string formatTypeName = null;
-            string separator = ", ";
+            const string separator = ", ";
             StringBuilder validViewFormats = new StringBuilder();
 
             if (so != null && so.BaseObject != null &&
