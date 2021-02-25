@@ -3101,6 +3101,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Diagnostics.Assert(directory != null, "Caller should always check directory");
 
+            if (InternalTestHooks.OneDriveTestOn && !InternalTestHooks.OneDriveTestRecuseOn && directory.Name == InternalTestHooks.OneDriveTestSymlinkName)
+            {
+                return;
+            }
+
             bool continueRemoval = true;
 
             // We only want to confirm the removal if this is the root of the
@@ -8254,9 +8259,9 @@ namespace Microsoft.PowerShell.Commands
             // Reparse point on Unix is a symlink.
             return IsReparsePoint(fileInfo);
 #else
-            if (InternalTestHooks.EmulateOneDrive)
+            if (InternalTestHooks.OneDriveTestOn && fileInfo.Name == InternalTestHooks.OneDriveTestSymlinkName)
             {
-                return fileInfo.Name != "link-Beta";
+                return !InternalTestHooks.OneDriveTestRecuseOn;
             }
 
             WIN32_FIND_DATA data = default;
