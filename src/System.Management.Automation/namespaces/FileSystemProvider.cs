@@ -3101,10 +3101,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Diagnostics.Assert(directory != null, "Caller should always check directory");
 
-            if (InternalTestHooks.OneDriveTestOn && !InternalTestHooks.OneDriveTestRecuseOn && directory.Name == InternalTestHooks.OneDriveTestSymlinkName)
-            {
-                return;
-            }
+            //if (InternalTestHooks.OneDriveTestOn && !InternalTestHooks.OneDriveTestRecuseOn && directory.Name == InternalTestHooks.OneDriveTestSymlinkName)
+            //{
+            //    WriteError(new ErrorRecord(exception: null, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+            //    return;
+            //}
 
             bool continueRemoval = true;
 
@@ -3121,8 +3122,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    // Name surrogates should just be detached.
-                    directory.Delete();
+                    if (InternalTestHooks.OneDriveTestOn)
+                    {
+                        WriteError(new ErrorRecord(new IOException(), errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                        return;
+                    }
+                    else
+                    {
+                        // Name surrogates should just be detached.
+                        directory.Delete();
+                    }
                 }
                 catch (Exception e)
                 {
