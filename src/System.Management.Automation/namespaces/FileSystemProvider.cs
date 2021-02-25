@@ -8269,7 +8269,7 @@ namespace Microsoft.PowerShell.Commands
 #else
             if (InternalTestHooks.OneDriveTestOn && fileInfo.Name == InternalTestHooks.OneDriveTestSymlinkName)
             {
-                return !InternalTestHooks.OneDriveTestRecuseOn;
+                return !InternalTestHooks.OneDriveTestRecurseOn;
             }
 
             WIN32_FIND_DATA data = default;
@@ -8277,7 +8277,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (handle.IsInvalid)
                 {
-                    // It is our convention - if we can not open the file object we process it like a symlink.
+                    // If we can not open the file object we assume it's a symlink.
                     return true;
                 }
 
