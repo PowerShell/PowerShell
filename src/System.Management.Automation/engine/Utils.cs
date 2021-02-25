@@ -1863,7 +1863,7 @@ namespace System.Management.Automation
 
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
-                PSStyle psstyle = PSStyle.Instance;                
+                PSStyle psstyle = PSStyle.Instance;
                 switch (formatStyle)
                 {
                     case FormatStyle.Reset:
@@ -2098,6 +2098,8 @@ namespace System.Management.Automation.Internal
         internal static bool ShowMarkdownOutputBypass;
 
         internal static bool ThrowExdevErrorOnMoveDirectory;
+
+        internal static bool EmulateOneDrive;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)

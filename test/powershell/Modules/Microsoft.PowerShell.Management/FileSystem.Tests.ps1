@@ -616,6 +616,26 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $ci = Get-ChildItem $alphaLink -Recurse -Name
             $ci.Count | Should -BeExactly 7 # returns 10 - unexpectly recurce in link-alpha\link-Beta. See https://github.com/PowerShell/PowerShell/issues/11614
         }
+        It "Get-ChildItem will recurse into emulated OneDrive directory" -Skip:(-not $IsWindows) {
+            # The test depends on the files created in previous test:
+            #New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
+            #New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
+            try
+            {
+                # '$betaDir' is a symlink - we don't follow symlinks
+                $ci = Get-ChildItem -Path $alphaDir -Recurse
+                $ci.Count | Should -BeExactly 7
+
+                # Now we follow the symlink like on OneDrive
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('EmulateOneDrive', $true)
+                $ci = Get-ChildItem -Path $alphaDir -Recurse
+                $ci.Count | Should -BeExactly 10
+            }
+            finally
+            {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('EmulateOneDrive', $false)
+            }
+        }
         It "Get-ChildItem will recurse into symlinks given -FollowSymlink, avoiding link loops" {
             New-Item -ItemType Directory -Path $gammaDir
             New-Item -ItemType SymbolicLink -Path $uponeLink -Value $betaDir

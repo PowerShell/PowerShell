@@ -8254,6 +8254,11 @@ namespace Microsoft.PowerShell.Commands
             // Reparse point on Unix is a symlink.
             return IsReparsePoint(fileInfo);
 #else
+            if (InternalTestHooks.EmulateOneDrive)
+            {
+                return fileInfo.Name != "link-Beta";
+            }
+
             WIN32_FIND_DATA data = default;
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
