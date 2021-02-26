@@ -12,13 +12,16 @@ param (
     [string] $destination = "$env:WORKSPACE",
 
     [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent", "fxdependent-win-desktop")]
-    [string]$Runtime = 'win7-x64',
+    [string] $Runtime = 'win7-x64',
+
+    [ValidateSet("min-size")]
+    [string] $Configuration = '',
 
     [switch] $Wait,
 
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
-    [string]$ReleaseTag,
+    [string] $ReleaseTag,
 
     [Parameter(Mandatory,ParameterSetName='IncludeSymbols')]
     [switch] $Symbols,
@@ -63,7 +66,8 @@ if ($memoryMB -lt $requiredMemoryMB)
 }
 Write-Verbose "Running with $memoryMB MB memory." -Verbose
 
-try{
+try
+{
     Set-Location $location
 
     Import-Module "$location\build.psm1" -Force
@@ -104,37 +108,83 @@ try{
             $buildParams['PSModuleRestore'] = $true
         }
 
+        if ($Configuration -eq 'min-size')
+        {
+            $buildParams['ForMinimalSize'] = $true
+        }
+
         Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
     }
 
-    if ($Runtime -eq 'fxdependent')
+    if ($ComponentRegistration.IsPresent)
     {
-        $pspackageParams = @{'Type'='fxdependent'}
+        Write-Verbose "Exporting project.assets files ..." -Verbose
+
+        $projectAssetsCounter = 1
+        $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
+        $projectAssetsZip = Join-Path -Path $destination -ChildPath 'windowsProjectAssetssymbols.zip'
+        Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
+            $subfolder = $_.FullName.Replace($location,'')
+            $subfolder.Replace('project.assets.json','')
+            $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
+                    New-Item -Path $itemDestination -ItemType Directory -Force
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $itemDestination" -Verbose
+            Copy-Item -Path $file -Destination "$itemDestination\" -Force
+            $projectAssetsCounter++
+        }
+
+        Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
+        Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
+
+        return
     }
-    elseif ($Runtime -eq 'fxdependent-win-desktop')
+
+    if ($Runtime -like 'fxdependent*')
     {
-        $pspackageParams = @{'Type'='fxdependent-win-desktop'}
+        ## Set to the proper package type.
+        ## No need to specify 'WindowsRuntime' because it's fx-dependent.
+        $pspackageParams = @{'Type' = $Runtime }
     }
     else
     {
-        $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
+        ## Set the default package type.
+        $pspackageParams = @{'Type' = 'msi'; 'WindowsRuntime' = $Runtime}
+        if ($Configuration -eq 'min-size')
+        {
+            ## Special case for the minimal size self-contained package.
+            $pspackageParams['Type'] = $Configuration
+        }
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -notlike 'fxdependent*')
+    if (!$Symbols.IsPresent -and $Runtime -notlike 'fxdependent*' -and !$Configuration)
     {
-        Write-Verbose "Starting powershell packaging(msi)..." -Verbose
-        Start-PSPackage @pspackageParams @releaseTagParam
-    }
+        if ($Runtime -notmatch 'arm')
+        {
+            Write-Verbose "Starting powershell packaging(msi)..." -Verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'fxdependent', 'fxdependent-win-desktop')
-    {
         $pspackageParams['Type']='msix'
         $pspackageParams['WindowsRuntime']=$Runtime
         Write-Verbose "Starting powershell packaging(msix)..." -Verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and $Runtime -notlike 'fxdependent*')
+    if ($Runtime -like 'fxdependent*' -or $Configuration -eq 'min-size')
+    {
+        ## Add symbols for just like zip package.
+        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+        Start-PSPackage @pspackageParams @releaseTagParam
+
+        ## Copy the fxdependent Zip package to destination.
+        Get-ChildItem $location\PowerShell-*.zip | ForEach-Object {
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $destination" -Verbose
+            Copy-Item -Path $file -Destination "$destination\" -Force
+        }
+    }
+    else
     {
         if (!$Symbols.IsPresent) {
             $pspackageParams['Type'] = 'zip-pdb'
@@ -155,41 +205,6 @@ try{
             Copy-Item -Path $file -Destination "$destination\" -Force
         }
     }
-    elseif (!$ComponentRegistration.IsPresent -and $Runtime -like 'fxdependent*')
-    {
-        ## Add symbols for just like zip package.
-        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
-        Start-PSPackage @pspackageParams @releaseTagParam
-
-        ## Copy the fxdependent Zip package to destination.
-        Get-ChildItem $location\PowerShell-*.zip | ForEach-Object {
-            $file = $_.FullName
-            Write-Verbose "Copying $file to $destination" -Verbose
-            Copy-Item -Path $file -Destination "$destination\" -Force
-        }
-    }
-    else
-    {
-        Write-Verbose "Exporting project.assets files ..." -Verbose
-
-        $projectAssetsCounter = 1
-        $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
-        $projectAssetsZip = Join-Path -Path $destination -ChildPath 'windowsProjectAssetssymbols.zip'
-        Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
-            $subfolder = $_.FullName.Replace($location,'')
-            $subfolder.Replace('project.assets.json','')
-            $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
-                    New-Item -Path $itemDestination -ItemType Directory -Force
-            $file = $_.FullName
-            Write-Verbose "Copying $file to $itemDestination" -Verbose
-            Copy-Item -Path $file -Destination "$itemDestination\" -Force
-            $projectAssetsCounter++
-        }
-
-        Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
-        Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
-    }
-
 }
 finally
 {

@@ -271,7 +271,7 @@ function Start-PSBuild {
         [Parameter(ParameterSetName="Default")]
         [switch]$NoPSModuleRestore,
         [switch]$CI,
-        [switch]$ForGuestConfigService,
+        [switch]$ForMinimalSize,
 
         # Skips the step where the pwsh that's been built is used to create a configuration
         # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
@@ -322,12 +322,12 @@ function Start-PSBuild {
         throw "Cross compiling for win-arm or win-arm64 is only supported on Windows environment"
     }
 
-    if ($ForGuestConfigService -and $Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
-        throw "Special build for the Guest Config service is done only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
+    if ($ForMinimalSize -and $Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+        throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
     }
 
-    if ($ForGuestConfigService -and $CrossGen) {
-        throw "Special build for the Guest Config service requires the minimal disk footprint, so `CrossGen` is not allowed"
+    if ($ForMinimalSize -and $CrossGen) {
+        throw "Build for the minimal size requires the minimal disk footprint, so `CrossGen` is not allowed"
     }
 
     function Stop-DevPowerShell {
@@ -399,7 +399,7 @@ Fix steps:
         Verbose=$true
         SMAOnly=[bool]$SMAOnly
         PSModuleRestore=$PSModuleRestore
-        ForGuestConfigService=$ForGuestConfigService
+        ForMinimalSize=$ForMinimalSize
     }
     $script:Options = New-PSOptions @OptionsArguments
 
@@ -424,7 +424,7 @@ Fix steps:
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -like 'fxdependent*' -or $ForGuestConfigService) {
+    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
@@ -478,7 +478,7 @@ Fix steps:
 
         if ($Options.Runtime -notlike 'fxdependent*') {
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$ForGuestConfigService) {
+            if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
 
@@ -488,11 +488,7 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
 
-            if ($ForGuestConfigService) {
-                # Remove symbol files, xml document files.
-                Remove-Item "$publishPath\*.pdb", "$publishPath\*.xml" -Force
-            }
-            elseif ($CrossGen) {
+            if ($CrossGen) {
                 # fxdependent package cannot be CrossGen'ed
                 Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
                 Write-Log -message "pwsh.exe with ngen binaries is available at: $($Options.Output)"
@@ -671,7 +667,7 @@ function Restore-PSPackage
         }
         else {
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$ForGuestConfigService) {
+            if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
         }
@@ -800,7 +796,7 @@ function New-PSOptions {
 
         [switch]$PSModuleRestore,
 
-        [switch]$ForGuestConfigService
+        [switch]$ForMinimalSize
     )
 
     # Add .NET CLI tools to PATH
@@ -895,7 +891,7 @@ function New-PSOptions {
                 -PSModuleRestore $PSModuleRestore.IsPresent `
                 -Framework $Framework `
                 -Output $Output `
-                -ForGuestConfigService $ForGuestConfigService
+                -ForMinimalSize $ForMinimalSize
 }
 
 # Get the Options of the last build
@@ -3029,7 +3025,7 @@ function Restore-PSOptions {
                     -PSModuleRestore $options.PSModuleRestore `
                     -Framework $options.Framework `
                     -Output $options.Output `
-                    -ForGuestConfigService $options.ForGuestConfigService
+                    -ForMinimalSize $options.ForMinimalSize
 
     Set-PSOptions -Options $newOptions
 }
@@ -3070,7 +3066,7 @@ function New-PSOptionsObject
 
         [Parameter(Mandatory)]
         [Bool]
-        $ForGuestConfigService
+        $ForMinimalSize
     )
 
     return @{
@@ -3082,7 +3078,7 @@ function New-PSOptionsObject
         Output = $Output
         CrossGen = $CrossGen
         PSModuleRestore = $PSModuleRestore
-        ForGuestConfigService = $ForGuestConfigService
+        ForMinimalSize = $ForMinimalSize
     }
 }
 

@@ -9,8 +9,8 @@ parameters:
     default: ''
 
 jobs:
-- job: sign_windows_${{ parameters.Architecture }}
-  displayName: Package Windows - ${{ parameters.Architecture }}
+- job: sign_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Package Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
@@ -252,7 +252,7 @@ jobs:
 
       Write-Verbose -Verbose -Message "signedPkg = $signedPkg"
 
-      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)'
+      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -Configuration '$(BuildConfiguration)' -ReleaseTag '$(ReleaseTagVar)'
     displayName: 'Build Windows Universal - $(Architecture) Package'
 
   - powershell: |
