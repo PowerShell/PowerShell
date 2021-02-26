@@ -304,7 +304,7 @@ function Start-PSPackage {
                 # Remove symbol files, xml document files.
                 Remove-Item "$Source\*.pdb", "$Source\*.xml" -Force
 
-                if ($IsWindows) {
+                if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = "$NameSuffix-gc"
                         PackageSourcePath = $Source
