@@ -47,7 +47,7 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ("zip" -eq $Type -or "fxdependent" -eq $Type -or "fxdependent-win-desktop" -eq $Type) {
+        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
