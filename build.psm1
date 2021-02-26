@@ -667,7 +667,7 @@ function Restore-PSPackage
         }
         else {
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
+            if ($Options.Runtime -like 'win7-*' -and !$Options.ForMinimalSize) {
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
         }
