@@ -249,10 +249,14 @@ jobs:
         }
 
       $signedPkg = "$(BuildPackagePath)"
-
       Write-Verbose -Verbose -Message "signedPkg = $signedPkg"
 
-      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -Configuration '$(BuildConfiguration)' -ReleaseTag '$(ReleaseTagVar)'
+      $configuration = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $configuration['Configuration'] = 'min-size'
+      }
+
+      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @configuration
     displayName: 'Build Windows Universal - $(Architecture) Package'
 
   - powershell: |

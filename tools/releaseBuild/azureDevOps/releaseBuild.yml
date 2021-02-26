@@ -79,7 +79,7 @@ stages:
       - template: templates/windows-hosted-build.yml
         parameters:
           Architecture: x64
-          BuildConfiguration: min-size
+          BuildConfiguration: minSize
 
       - template: templates/windows-hosted-build.yml
         parameters:
@@ -109,8 +109,8 @@ stages:
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: x64
-          BuildConfiguration: min-size
-          parentJob: build_windows_x64_min-size
+          BuildConfiguration: minSize
+          parentJob: build_windows_x64_minSize
 
       - template: templates/windows-packaging.yml
         parameters:
@@ -141,7 +141,7 @@ stages:
         parameters:
           parentJobs:
             - sign_windows_x64_release
-            - sign_windows_x64_min-size
+            - sign_windows_x64_minSize
             - sign_windows_x86_release
             - sign_windows_arm_release
             - sign_windows_arm64_release
