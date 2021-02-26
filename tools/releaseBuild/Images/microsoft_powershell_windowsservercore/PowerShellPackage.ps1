@@ -97,7 +97,7 @@ try
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -Verbose
-        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*" -and !$Configuration }
+        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*" -and !$Configuration}
 
         if($Symbols.IsPresent)
         {
@@ -142,9 +142,7 @@ try
 
     if ($Runtime -like 'fxdependent*')
     {
-        ## Set to the proper package type.
-        ## No need to specify 'WindowsRuntime' because it's fx-dependent.
-        $pspackageParams = @{'Type' = $Runtime }
+        $pspackageParams = @{'Type' = $Runtime}
     }
     else
     {
@@ -166,7 +164,6 @@ try
         }
 
         $pspackageParams['Type']='msix'
-        $pspackageParams['WindowsRuntime']=$Runtime
         Write-Verbose "Starting powershell packaging(msix)..." -Verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
