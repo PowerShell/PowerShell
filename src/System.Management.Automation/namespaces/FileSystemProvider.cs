@@ -6143,6 +6143,15 @@ namespace Microsoft.PowerShell.Commands
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
 
+            // DFS shares will have same root name, but are actually different volumes
+            // Since we cannot determine a path is a DFS share or a SMB share, we
+            // treat all UNC paths as being on different volumes which results
+            // in a copy-delete operation instead of a move which will fail across volumes
+            if (Utils.PathIsUnc(source) || Utils.PathIsUnc(destination))
+            {
+                return false;
+            }
+
             return (src.Directory.Root.Name == dest.Directory.Root.Name);
         }
 #endif
