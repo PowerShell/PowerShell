@@ -40,12 +40,8 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
-      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) {
-        "arm32"
-      }
-      else {
-        '$(Architecture)'
-      }
+      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) { "arm32" } else { '$(Architecture)' }
+      if ($env:BuildConfiguration -eq 'minSize') { $pkgFilter += '-*' }
 
       $vstsCommandString = "vso[task.setvariable variable=PkgFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)
