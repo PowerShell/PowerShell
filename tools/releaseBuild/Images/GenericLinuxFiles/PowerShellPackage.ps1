@@ -75,7 +75,10 @@ function BuildPackages {
             Start-PSPackage @releaseTagParam -LTS:$LTS
         }
 
-        if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS }
+        if ($TarX64) {
+            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
+            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
+        }
 
         if ($TarArm) {
             ## Build 'linux-arm' and create 'tar.gz' package for it.
