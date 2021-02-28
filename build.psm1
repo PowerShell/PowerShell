@@ -289,6 +289,7 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "osx-arm64",
                      "osx-x64",
                      "win-arm",
                      "win-arm64",
@@ -765,6 +766,7 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "osx-arm64",
                      "osx-x64",
                      "win-arm",
                      "win-arm64",
@@ -799,7 +801,12 @@ function New-PSOptions {
         if ($environment.IsLinux) {
             $Runtime = "linux-x64"
         } elseif ($environment.IsMacOS) {
-            $Runtime = "osx-x64"
+            if ($PSVersionTable.OS.Contains('ARM64')) {
+                $Runtime = "osx-arm64"
+            }
+            else {
+                $Runtime = "osx-x64"
+            }
         } else {
             $RID = dotnet --info | ForEach-Object {
                 if ($_ -match "RID") {
@@ -2263,6 +2270,7 @@ function Start-CrossGen {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "osx-arm64",
                      "osx-x64",
                      "win-arm",
                      "win-arm64",
@@ -2386,6 +2394,7 @@ function Start-CrossGen {
     $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
                         Where-Object { $_.FullName -match $crossGenRuntime } | `
                         Where-Object { $_.FullName -match $dotnetRuntimeVersion } | `
+                        Where-Object { (Split-Path $_.FullName -Parent).EndsWith('tools') } | `
                         Sort-Object -Property FullName -Descending | `
                         Select-Object -First 1 | `
                         ForEach-Object { $_.FullName }
