@@ -292,8 +292,7 @@ namespace System.Management.Automation
             public ProgressView View { get; set; } = ProgressView.Minimal;
 
             /// <summary>
-            /// Enable use of OSC 9 4 to show indicator in terminal.
-            /// Ensure terminal supports this sequence before enabling.
+            /// Gets or sets a value indicating whether to use OSC 9 4 to show indicator in terminal.
             /// </summary>
             public bool UseOSCIndicator { get; set; } = false;
         }
