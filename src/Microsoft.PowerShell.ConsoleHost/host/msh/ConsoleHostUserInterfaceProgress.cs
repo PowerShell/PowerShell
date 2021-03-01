@@ -101,8 +101,6 @@ namespace Microsoft.PowerShell
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
                 if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.UseOSCIndicator)
                 {
-                    // OSC sequence to turn off progress indicator
-                    // https://github.com/microsoft/terminal/issues/6700
                     int percentComplete = record.PercentComplete;
                     if (percentComplete < 0)
                     {
@@ -111,6 +109,8 @@ namespace Microsoft.PowerShell
                         percentComplete = 0;
                     }
 
+                    // OSC sequence to turn on progress indicator
+                    // https://github.com/microsoft/terminal/issues/6700
                     Console.Write($"\x1b]9;4;1;{percentComplete}\x1b\\");
                 }
 
