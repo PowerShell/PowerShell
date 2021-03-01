@@ -290,6 +290,12 @@ namespace System.Management.Automation
             /// Gets or sets the view for progress bar.
             /// </summary>
             public ProgressView View { get; set; } = ProgressView.Minimal;
+
+            /// <summary>
+            /// Enable use of OSC 9 4 to show indicator in terminal.
+            /// Ensure terminal supports this sequence before enabling.
+            /// </summary>
+            public bool UseOSCIndicator { get; set; } = false;
         }
 
         /// <summary>
