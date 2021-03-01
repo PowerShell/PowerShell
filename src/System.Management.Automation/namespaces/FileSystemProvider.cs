@@ -55,6 +55,10 @@ namespace Microsoft.PowerShell.Commands
         // This is the errno returned by the rename() syscall
         // when an item is attempted to be renamed across filesystem mount boundaries.
         private const int UNIX_ERRNO_EXDEV = 18;
+#else
+        // This is the HRESULT returned by move if it is
+        // attempted across disk volumes on Windows such as DFS shares.
+        private const int ERROR_ACCESS_DENIED = -2146232800;
 #endif
 
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
@@ -6093,7 +6097,15 @@ namespace Microsoft.PowerShell.Commands
             // is just a question of the drive
             if (IsSameWindowsVolume(directory.FullName, destinationPath))
             {
-                directory.MoveTo(destinationPath);
+                try
+                {
+                    directory.MoveTo(destinationPath);
+                }
+                catch (IOException e) when (e.HResult == ERROR_ACCESS_DENIED)
+                {
+                    // If move doesn't work because the source and destination are on different volumes (like DFS), fall back to CopyAndDelete
+                    CopyAndDelete(directory, destinationPath, force);
+                }
             }
             else
             {
@@ -6142,15 +6154,6 @@ namespace Microsoft.PowerShell.Commands
         {
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
-
-            // DFS shares will have same root name, but are actually different volumes
-            // Since we cannot determine a path is a DFS share or a SMB share, we
-            // treat all UNC paths as being on different volumes which results
-            // in a copy-delete operation instead of a move which will fail across volumes
-            if (Utils.PathIsUnc(source) || Utils.PathIsUnc(destination))
-            {
-                return false;
-            }
 
             return (src.Directory.Root.Name == dest.Directory.Root.Name);
         }
