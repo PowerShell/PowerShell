@@ -2370,10 +2370,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Use Unicode encoding
             bytes = Encoding.Unicode.GetBytes(builder.ToString());
-            if (bytes.Length > 0xffff)
-            {
-                throw new InvalidOperationException("EnvironmentBlockTooLong");
-            }
 
             return bytes;
         }
