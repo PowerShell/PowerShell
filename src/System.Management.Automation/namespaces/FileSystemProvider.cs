@@ -6093,22 +6093,13 @@ namespace Microsoft.PowerShell.Commands
                 CopyAndDelete(directory, destinationPath, force);
             }
 #else
-            // On Windows, being able to rename vs copy/delete a file
-            // is just a question of the drive
-            if (IsSameWindowsVolume(directory.FullName, destinationPath))
+            try
             {
-                try
-                {
-                    directory.MoveTo(destinationPath);
-                }
-                catch (IOException e) when (e.HResult == ERROR_ACCESS_DENIED)
-                {
-                    // If move doesn't work because the source and destination are on different volumes (like DFS), fall back to CopyAndDelete
-                    CopyAndDelete(directory, destinationPath, force);
-                }
+                directory.MoveTo(destinationPath);
             }
-            else
+            catch (IOException e) when (e.HResult == ERROR_ACCESS_DENIED)
             {
+                // If move doesn't work because the source and destination are on different volumes (like DFS), fall back to CopyAndDelete
                 CopyAndDelete(directory, destinationPath, force);
             }
 #endif
@@ -6148,16 +6139,6 @@ namespace Microsoft.PowerShell.Commands
                 RemoveItem(directory.FullName, false);
             }
         }
-
-#if !UNIX
-        private static bool IsSameWindowsVolume(string source, string destination)
-        {
-            FileInfo src = new FileInfo(source);
-            FileInfo dest = new FileInfo(destination);
-
-            return (src.Directory.Root.Name == dest.Directory.Root.Name);
-        }
-#endif
 
         #endregion MoveItem
 
