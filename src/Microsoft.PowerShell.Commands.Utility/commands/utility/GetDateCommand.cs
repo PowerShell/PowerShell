@@ -440,11 +440,12 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'G':
-                            sb.Append("{0:yyyy}");
+                            sb.Append(StringUtil.Format("{0:0000}", ISOWeek.GetYear(dateTime)));
                             break;
 
                         case 'g':
-                            sb.Append("{0:yy}");
+                            int isoYearWithoutCentury = ISOWeek.GetYear(dateTime) % 100;
+                            sb.Append(StringUtil.Format("{0:00}", isoYearWithoutCentury));
                             break;
 
                         case 'H':

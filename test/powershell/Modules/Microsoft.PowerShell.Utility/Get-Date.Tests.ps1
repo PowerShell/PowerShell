@@ -97,6 +97,96 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-Date -Date $date -UFormat %V | Should -BeExactly $week
     }
 
+    # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
+    It "using -uformat 'G' produces the correct output" -TestCases @(
+        @{date="0055-12-31"; year = "0055"},
+        @{date="0325-01-01"; year = "0325"},
+        @{date="0777-01-01"; year = "0776"},
+        @{date="1998-01-02"; year = "1998"},
+        @{date="1998-01-03"; year = "1998"},
+        @{date="2003-01-03"; year = "2003"},
+        @{date="2004-01-02"; year = "2004"},
+        @{date="2004-01-03"; year = "2004"},
+        @{date="2005-01-01"; year = "2004"},
+        @{date="2005-01-02"; year = "2004"},
+        @{date="2005-12-31"; year = "2005"},
+        @{date="2006-01-01"; year = "2005"},
+        @{date="2006-01-02"; year = "2006"},
+        @{date="2006-12-31"; year = "2006"},
+        @{date="2007-01-01"; year = "2007"},
+        @{date="2007-12-30"; year = "2007"},
+        @{date="2007-12-31"; year = "2008"},
+        @{date="2008-01-01"; year = "2008"},
+        @{date="2008-12-28"; year = "2008"},
+        @{date="2008-12-29"; year = "2009"},
+        @{date="2008-12-30"; year = "2009"},
+        @{date="2008-12-31"; year = "2009"},
+        @{date="2009-01-01"; year = "2009"},
+        @{date="2009-01-02"; year = "2009"},
+        @{date="2009-01-03"; year = "2009"},
+        @{date="2009-12-31"; year = "2009"},
+        @{date="2010-01-01"; year = "2009"},
+        @{date="2010-01-02"; year = "2009"},
+        @{date="2010-01-03"; year = "2009"},
+        @{date="2010-01-04"; year = "2010"},
+        @{date="2014-01-03"; year = "2014"},
+        @{date="2015-01-02"; year = "2015"},
+        @{date="2015-01-03"; year = "2015"},
+        @{date="2020-01-03"; year = "2020"},
+        @{date="2025-01-03"; year = "2025"},
+        @{date="2026-01-02"; year = "2026"},
+        @{date="2026-01-03"; year = "2026"},
+        @{date="2031-01-03"; year = "2031"}
+    ) {
+        param($date, $year)
+        Get-Date -Date $date -UFormat %G | Should -BeExactly $year
+    }
+
+    # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
+    It "using -uformat 'g' produces the correct output" -TestCases @(
+        @{date="0055-12-31"; yy = "55"},
+        @{date="0325-01-01"; yy = "25"},
+        @{date="0777-01-01"; yy = "76"},
+        @{date="1998-01-02"; yy = "98"},
+        @{date="1998-01-03"; yy = "98"},
+        @{date="2003-01-03"; yy = "03"},
+        @{date="2004-01-02"; yy = "04"},
+        @{date="2004-01-03"; yy = "04"},
+        @{date="2005-01-01"; yy = "04"},
+        @{date="2005-01-02"; yy = "04"},
+        @{date="2005-12-31"; yy = "05"},
+        @{date="2006-01-01"; yy = "05"},
+        @{date="2006-01-02"; yy = "06"},
+        @{date="2006-12-31"; yy = "06"},
+        @{date="2007-01-01"; yy = "07"},
+        @{date="2007-12-30"; yy = "07"},
+        @{date="2007-12-31"; yy = "08"},
+        @{date="2008-01-01"; yy = "08"},
+        @{date="2008-12-28"; yy = "08"},
+        @{date="2008-12-29"; yy = "09"},
+        @{date="2008-12-30"; yy = "09"},
+        @{date="2008-12-31"; yy = "09"},
+        @{date="2009-01-01"; yy = "09"},
+        @{date="2009-01-02"; yy = "09"},
+        @{date="2009-01-03"; yy = "09"},
+        @{date="2009-12-31"; yy = "09"},
+        @{date="2010-01-01"; yy = "09"},
+        @{date="2010-01-02"; yy = "09"},
+        @{date="2010-01-03"; yy = "09"},
+        @{date="2010-01-04"; yy = "10"},
+        @{date="2014-01-03"; yy = "14"},
+        @{date="2015-01-02"; yy = "15"},
+        @{date="2015-01-03"; yy = "15"},
+        @{date="2020-01-03"; yy = "20"},
+        @{date="2025-01-03"; yy = "25"},
+        @{date="2026-01-02"; yy = "26"},
+        @{date="2026-01-03"; yy = "26"},
+        @{date="2031-01-03"; yy = "31"}
+    ) {
+        param($date, $yy)
+        Get-Date -Date $date -UFormat %g | Should -BeExactly $yy
+    }
+
     # Using the same test cases as V for ISO week date component parity
     It "using -uformat 'u' produces the correct output" -TestCases @(
         @{date="1998-01-02"; dayOfWeek = "5"},
@@ -138,7 +228,6 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         param($date, $dayOfWeek)
         Get-Date -Date $date -UFormat %u | Should -BeExactly $dayOfWeek
     }
-
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
         @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
         @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
