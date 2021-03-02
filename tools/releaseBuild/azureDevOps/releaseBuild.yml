@@ -23,6 +23,8 @@ variables:
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
 
 stages:
   - stage: prep

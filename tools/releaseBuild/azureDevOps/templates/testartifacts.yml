@@ -1,7 +1,10 @@
 jobs:
 - job: build_testartifacts
   variables:
-    runCodesignValidationInjection: false
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   displayName: Build test artifacts
   condition: succeeded()
   pool: 'Hosted Ubuntu 1604'

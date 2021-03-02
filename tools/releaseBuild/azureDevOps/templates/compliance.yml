@@ -4,7 +4,10 @@ parameters:
 jobs:
 - job: compliance
   variables:
-    runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}

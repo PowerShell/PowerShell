@@ -14,6 +14,8 @@ jobs:
   variables:
     - name: runCodesignValidationInjection
       value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
     - name: build
       value: ${{ parameters.buildName }}
     - group: ESRP
