@@ -12,6 +12,8 @@ jobs:
       - group: ESRP
       - name: runCodesignValidationInjection
         value: false
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
 
     steps:
     - checkout: self
