@@ -16,10 +16,18 @@ jobs:
   pool:
     vmImage: windows-latest
   variables:
-    BuildConfiguration: ${{ parameters.BuildConfiguration }}
-    BuildPlatform: ${{ parameters.BuildPlatform }}
-    Architecture: ${{ parameters.Architecture }}
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: BuildConfiguration
+      value: ${{ parameters.BuildConfiguration }}
+    - name: BuildPlatform
+      value: ${{ parameters.BuildPlatform }}
+    - name: Architecture
+      value: ${{ parameters.Architecture }}
+    - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+      value: 1
 
   steps:
 

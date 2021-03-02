@@ -1,6 +1,11 @@
 
 jobs:
 - job: ComponentRegistrationJob
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   displayName: Component Registration
   condition: succeeded()
 
