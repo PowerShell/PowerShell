@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 int offset = 0; // offset into the line we are splitting
 
-                while (currentLine.Length > offset)
+                while (offset < currentLine.Length)
                 {
                     // acquire the current active display line length (it can very from call to call)
                     int currentDisplayLen = accumulator.ActiveLen;
