@@ -23,16 +23,25 @@ resources:
     name: PowerShell/compliance
     ref: dailyBuildComp
 
+variables:
+  - name: repoFolder
+    value: PowerShell
+
 jobs:
 - job: CI_Compliance
   displayName: CI Compliance
 
   pool:
     vmImage: windows-latest
+
+  variables:
+    - name: repoPath
+      value: $(Agent.BuildDirectory)\$(repoFolder)
+
   steps:
   - checkout: self
     clean: true
-    path: PowerShell
+    path: $(repoFolder)
 
   - checkout: ComplianceRepo
 
@@ -43,10 +52,15 @@ jobs:
 
   pool:
     vmImage: ubuntu-16.04
+
+  variables:
+    - name: repoPath
+      value: $(Agent.BuildDirectory)/$(repoFolder)
+
   steps:
   - checkout: self
     clean: true
-    path: PowerShell
+    path: $(repoFolder)
 
   - checkout: ComplianceRepo
 
@@ -78,7 +92,7 @@ jobs:
       mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     displayName: Test Spelling in Markdown
     condition: succeededOrFailed()
-    workingDirectory: '$(Build.SourcesDirectory)\PowerShell'
+    workingDirectory: '$(repoPath)'
 
   - pwsh: |
       Import-module ./build.psm1
@@ -91,9 +105,8 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
-    workingDirectory: '$(Build.SourcesDirectory)/PowerShell'
+    workingDirectory: '$(repoPath)'
 
   - template: dailyBuildCompliance.yml@ComplianceRepo
     parameters:
-      sourceScanPath: '$(Build.SourcesDirectory)/PowerShell'
-
+      sourceScanPath: '$(repoPath)'
