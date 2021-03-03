@@ -71,11 +71,13 @@ jobs:
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - bash: |
+      cd PowerShell
       mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     displayName: Test Spelling in Markdown
     condition: succeededOrFailed()
 
   - powershell: |
+      cd PowerShell
       Import-module ./build.psm1
       $path = Join-Path -Path $pwd -ChildPath './commonTestResults.xml'
       $results = invoke-pester -Script ./test/common -OutputFile $path -OutputFormat NUnitXml -PassThru
@@ -86,6 +88,7 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
