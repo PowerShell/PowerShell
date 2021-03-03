@@ -32,7 +32,10 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    path: '$(Build.SourcesDirectory)\PowerShell'
+
   - checkout: ComplianceRepo
+
   - template: ci-compliance.yml@ComplianceRepo
 
 - job: Linux_CI
@@ -43,8 +46,8 @@ jobs:
   steps:
   - checkout: self
     clean: true
+
   - checkout: ComplianceRepo
-  - template: dailyBuildCompliance.yml@ComplianceRepo
 
   - powershell: |
       Get-ChildItem -Path env:
@@ -71,13 +74,12 @@ jobs:
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
   - bash: |
-      cd PowerShell
       mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     displayName: Test Spelling in Markdown
     condition: succeededOrFailed()
+    workingDirectory: '$(Build.SourcesDirectory)\PowerShell'
 
-  - powershell: |
-      cd PowerShell
+  - pwsh: |
       Import-module ./build.psm1
       $path = Join-Path -Path $pwd -ChildPath './commonTestResults.xml'
       $results = invoke-pester -Script ./test/common -OutputFile $path -OutputFormat NUnitXml -PassThru
@@ -88,9 +90,9 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
+    workingDirectory: '$(Build.SourcesDirectory)\PowerShell'
 
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'Component Detection'
-    inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
-      snapshotForceEnabled: true
+  - template: dailyBuildCompliance.yml@ComplianceRepo
+    parameters:
+      sourceScanPath: '$(Build.SourcesDirectory)\PowerShell'
+
