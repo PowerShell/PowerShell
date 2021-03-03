@@ -19,6 +19,7 @@ resources:
   repositories:
   - repository: ComplianceRepo
     type: github
+    endpoint: PowerShell
     name: PowerShell/compliance
     ref: dailyBuildComp
 
