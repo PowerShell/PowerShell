@@ -55,10 +55,6 @@ namespace Microsoft.PowerShell.Commands
         // This is the errno returned by the rename() syscall
         // when an item is attempted to be renamed across filesystem mount boundaries.
         private const int UNIX_ERRNO_EXDEV = 18;
-#else
-        // This is the HRESULT returned by move if it is
-        // attempted across disk volumes on Windows such as DFS shares.
-        private const int ERROR_ACCESS_DENIED = -2146232800;
 #endif
 
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
@@ -6095,9 +6091,14 @@ namespace Microsoft.PowerShell.Commands
 #else
             try
             {
+                if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
+                {
+                    throw new IOException("Invalid cross-device link");
+                }
+
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException e) when (e.HResult == ERROR_ACCESS_DENIED)
+            catch (IOException)
             {
                 // If move doesn't work because the source and destination are on different volumes (like DFS), fall back to CopyAndDelete
                 CopyAndDelete(directory, destinationPath, force);
