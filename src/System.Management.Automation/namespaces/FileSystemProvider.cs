@@ -6098,7 +6098,7 @@ namespace Microsoft.PowerShell.Commands
 
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException)
+            catch (IOException e) when (e is not FileNotFoundException && e is not DirectoryNotFoundException && e is not PathTooLongException)
             {
                 // If move doesn't work because the source and destination are on different volumes (like DFS), fall back to CopyAndDelete
                 CopyAndDelete(directory, destinationPath, force);
