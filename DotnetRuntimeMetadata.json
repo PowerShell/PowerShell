@@ -1,9 +1,9 @@
 {
   "sdk": {
-    "channel": "release/6.0.1xx-preview1",
-    "packageVersionPattern": "6.0.0-preview.1",
+    "channel": "release/6.0.1xx-preview2",
+    "packageVersionPattern": "6.0.0-preview.2",
     "sdkImageVersion": "6.0.100",
-    "nextChannel": "net6/preview1"
+    "nextChannel": "6.0.1xx-preview2/daily"
   },
   "internalfeed" : {
     "url": null
