@@ -25,7 +25,7 @@ resources:
 
 jobs:
 - job: CI_Compliance
-  displayName: Markdown and Common Tests
+  displayName: CI Compliance
 
   pool:
     vmImage: windows-latest
