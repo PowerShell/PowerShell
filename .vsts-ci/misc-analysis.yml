@@ -24,14 +24,23 @@ resources:
     ref: dailyBuildComp
 
 jobs:
-- template: ci-compliance.yml@ComplianceRepo
+- job: CI_Compliance
+  displayName: Markdown and Common Tests
+
+  pool:
+    vmImage: windows-latest
+  steps:
+  - checkout: self
+    clean: true
+  - checkout: ComplianceRepo
+  - template: ci-compliance.yml@ComplianceRepo
 
 - job: Linux_CI
 
   displayName: Markdown and Common Tests
 
   pool:
-    name: Hosted Ubuntu 1604
+    vmImage: ubuntu-16.04
   steps:
   - checkout: self
     clean: true
