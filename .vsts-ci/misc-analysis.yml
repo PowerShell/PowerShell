@@ -16,10 +16,14 @@ pr:
     - feature*
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    name: PowerShell/compliance
+    ref: dailyBuildComp
+
 jobs:
-- template: templates/credscan.yml
+- template: ci-compliance.yml@ComplianceRepo
 
 - job: Linux_CI
 
@@ -28,6 +32,11 @@ jobs:
   pool:
     name: Hosted Ubuntu 1604
   steps:
+  - checkout: self
+    clean: true
+  - checkout: ComplianceRepo
+  - template: dailyBuildCompliance.yml@ComplianceRepo
+
   - powershell: |
       Get-ChildItem -Path env:
     displayName: Capture Environment
