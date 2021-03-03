@@ -32,7 +32,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-    path: '$(Build.SourcesDirectory)\PowerShell'
+    path: PowerShell
 
   - checkout: ComplianceRepo
 
@@ -46,6 +46,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    path: PowerShell
 
   - checkout: ComplianceRepo
 
@@ -90,9 +91,9 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
-    workingDirectory: '$(Build.SourcesDirectory)\PowerShell'
+    workingDirectory: '$(Build.SourcesDirectory)/PowerShell'
 
   - template: dailyBuildCompliance.yml@ComplianceRepo
     parameters:
-      sourceScanPath: '$(Build.SourcesDirectory)\PowerShell'
+      sourceScanPath: '$(Build.SourcesDirectory)/PowerShell'
 
