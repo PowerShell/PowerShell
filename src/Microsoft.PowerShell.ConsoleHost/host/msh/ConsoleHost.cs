@@ -54,6 +54,10 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
         private const uint SPI_GETSCREENREADER = 0x0046;
+#if UNIX
+        internal const string DECCKM_ON = "\x1b[?1h";
+        internal const string DECCKM_OFF = "\x1b[?1l";
+#endif
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -260,7 +264,7 @@ namespace Microsoft.PowerShell
                     {
                         // https://github.com/dotnet/runtime/issues/27626 leaves terminal in application mode
                         // for now, we explicitly emit DECRST 1 sequence
-                        s_theConsoleHost.UI.Write("\x1b[?1l");
+                        s_theConsoleHost.UI.Write(DECCKM_OFF);
                     }
 #endif
                     s_theConsoleHost.Dispose();
@@ -2485,7 +2489,7 @@ namespace Microsoft.PowerShell
                         if (c.SupportsVirtualTerminal)
                         {
                             // enable DECCKM as .NET requires cursor keys to emit VT for Console class
-                            c.Write("\x1b[?1h");
+                            c.Write(DECCKM_ON);
                         }
 #endif
 
@@ -2596,7 +2600,7 @@ namespace Microsoft.PowerShell
                             if (c.SupportsVirtualTerminal)
                             {
                                 // disable DECCKM to standard mode as applications may not expect VT for cursor keys
-                                c.Write("\x1b[?1l");
+                                c.Write(DECCKM_OFF);
                             }
 #endif
 
