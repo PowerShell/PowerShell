@@ -256,9 +256,12 @@ namespace Microsoft.PowerShell
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
 #endif
 #if UNIX
-                    // https://github.com/dotnet/runtime/issues/27626 leaves terminal in application mode
-                    // for now, we explicitly emit DECRST 1 sequence
-                    s_theConsoleHost.UI.Write("\x1b[?1l");
+                    if (s_theConsoleHost.IsInteractive && s_theConsoleHost.UI.SupportsVirtualTerminal)
+                    {
+                        // https://github.com/dotnet/runtime/issues/27626 leaves terminal in application mode
+                        // for now, we explicitly emit DECRST 1 sequence
+                        s_theConsoleHost.UI.Write("\x1b[?1l");
+                    }
 #endif
                     s_theConsoleHost.Dispose();
                 }
@@ -2478,6 +2481,14 @@ namespace Microsoft.PowerShell
                             ui.Write(prompt);
                         }
 
+#if UNIX
+                        if (c.SupportsVirtualTerminal)
+                        {
+                            // enable DECCKM as .NET requires cursor keys to emit VT for Console class
+                            c.Write("\x1b[?1h");
+                        }
+#endif
+
                         previousResponseWasEmpty = false;
                         // There could be a profile. So there could be a user defined custom readline command
                         line = ui.ReadLineWithTabCompletion(_exec);
@@ -2581,6 +2592,14 @@ namespace Microsoft.PowerShell
                         }
                         else
                         {
+#if UNIX
+                            if (c.SupportsVirtualTerminal)
+                            {
+                                // disable DECCKM to standard mode as applications may not expect VT for cursor keys
+                                c.Write("\x1b[?1l");
+                            }
+#endif
+
                             if (_parent.IsRunningAsync && !_parent.IsNested)
                             {
                                 _exec.ExecuteCommandAsync(line, out e, Executor.ExecutionOptions.AddOutputter | Executor.ExecutionOptions.AddToHistory);
