@@ -255,6 +255,11 @@ namespace Microsoft.PowerShell
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
 #endif
+#if UNIX
+                    // https://github.com/dotnet/runtime/issues/27626 leaves terminal in application mode
+                    // for now, we explicitly emit DECRST 1 sequence
+                    s_theConsoleHost.UI.Write("\x1b[?1l");
+#endif
                     s_theConsoleHost.Dispose();
                 }
             }
