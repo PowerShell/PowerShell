@@ -99,10 +99,7 @@ namespace Microsoft.PowerShell
 
             if (!InternalTestHooks.NoPromptForPassword)
             {
-                //
-                // now, prompt for the password
-                //
-                WriteToConsole(passwordPrompt, transcribeResult:true);
+                WriteToConsole(passwordPrompt, transcribeResult: true);
                 password = ReadLineAsSecureString();
                 if (password == null)
                 {
