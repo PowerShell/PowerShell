@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell
                 //
                 // now, prompt for the password
                 //
-                WriteToConsole(passwordPrompt, true);
+                WriteToConsole(passwordPrompt, transcribeResult:true);
                 password = ReadLineAsSecureString();
                 if (password == null)
                 {
