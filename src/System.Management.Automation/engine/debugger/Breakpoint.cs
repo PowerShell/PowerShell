@@ -93,7 +93,7 @@ namespace System.Management.Automation
             Enabled = true;
             Script = string.IsNullOrEmpty(script) ? null : script;
             Id = id;
-            Action = string.IsNullOrWhiteSpace(action?.ToString()) ? ScriptBlock.EmptyScriptBlock : action;
+            Action = action;
             HitCount = 0;
         }
 
@@ -107,11 +107,6 @@ namespace System.Management.Automation
             if (Action == null)
             {
                 return BreakpointAction.Break;
-            }
-
-            if (Action == ScriptBlock.EmptyScriptBlock)
-            {
-                return BreakpointAction.Continue;
             }
 
             try
