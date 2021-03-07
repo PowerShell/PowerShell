@@ -1261,9 +1261,11 @@ namespace System.Management.Automation
 
         private void AddPendingBreakpoint(LineBreakpoint breakpoint)
         {
-            _pendingBreakpoints.AddOrUpdate(breakpoint.Script,
+            _pendingBreakpoints.AddOrUpdate(
+                breakpoint.Script,
                 new ConcurrentDictionary<int, LineBreakpoint> { [breakpoint.Id] = breakpoint },
-                (_, dictionary) => { dictionary.TryAdd(breakpoint.Id, breakpoint); return dictionary; });
+                (_, dictionary) => { dictionary.TryAdd(breakpoint.Id, breakpoint); return dictionary; }
+            );
         }
 
         private void AddNewBreakpoint(Breakpoint breakpoint)
@@ -2059,7 +2061,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        tuple.Item1.Add(breakpoint.SequencePointIndex , new List<LineBreakpoint> { breakpoint });
+                        tuple.Item1.Add(breakpoint.SequencePointIndex, new List<LineBreakpoint> { breakpoint });
                     } 
                     
                     // We need to keep track of any breakpoints that are bound in each script because they may
