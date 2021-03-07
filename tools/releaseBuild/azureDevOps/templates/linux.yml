@@ -104,6 +104,18 @@ jobs:
       itemPattern: '**/*.tar.gz'
       downloadPath: '$(System.ArtifactsDirectory)\finished'
 
+  - powershell: |
+      $minSizePkg = '$(System.ArtifactsDirectory)\finished\release\*-gc.tar.gz'
+      if (Test-Path -Path $minSizePkg) {
+          $minSizeDir = '$(System.ArtifactsDirectory)\finished\minSize'
+          New-Item -Path $minSizeDir -Type Directory -Force > $null
+          Move-Item -Path $minSizePkg -Destination $minSizeDir
+          ## Capture items in the target folder
+          Get-ChildItem -Path $minSizeDir
+      }
+    displayName: 'Move minSize package to separate folder'
+    condition: and(eq(variables['buildName'], 'DEB'),succeeded())
+
   - task: DownloadBuildArtifacts@0
     displayName: 'Download rpm Artifacts copy'
     inputs:
@@ -144,6 +156,22 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
+
+  # requires windows
+  - task: AzureFileCopy@4
+    displayName: 'Upload to Azure - min-size package'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\finished\minSize\*'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-gc'
+    condition: and(eq(variables['buildName'], 'DEB'),succeeded())
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\finished\minSize
+      condition: and(eq(variables['buildName'], 'DEB'),succeeded())
 
   # requires windows
   - task: AzureFileCopy@4
