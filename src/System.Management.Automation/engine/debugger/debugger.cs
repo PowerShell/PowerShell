@@ -1264,8 +1264,7 @@ namespace System.Management.Automation
             _pendingBreakpoints.AddOrUpdate(
                 breakpoint.Script,
                 new ConcurrentDictionary<int, LineBreakpoint> { [breakpoint.Id] = breakpoint },
-                (_, dictionary) => { dictionary.TryAdd(breakpoint.Id, breakpoint); return dictionary; }
-            );
+                (_, dictionary) => { dictionary.TryAdd(breakpoint.Id, breakpoint); return dictionary; });
         }
 
         private void AddNewBreakpoint(Breakpoint breakpoint)
