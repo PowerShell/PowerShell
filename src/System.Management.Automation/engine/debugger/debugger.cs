@@ -1320,7 +1320,7 @@ namespace System.Management.Automation
 
                 if (_pendingBreakpoints.TryGetValue(functionContext._file, out var dictionary))
                 {
-                    if (dictionary.Count > 0)
+                    if (!dictionary.IsEmpty)
                     {
                         SetPendingBreakpoints(functionContext);
                     }
@@ -2024,8 +2024,7 @@ namespace System.Management.Automation
             if (currentScriptFile == null)
                 return;
 
-
-            if (!_pendingBreakpoints.TryGetValue(currentScriptFile, out var breakpoints) || breakpoints.Count == 0)
+            if (!_pendingBreakpoints.TryGetValue(currentScriptFile, out var breakpoints) || breakpoints.IsEmpty)
                 return;
 
             // Normally we register a script file when the script is run or the module is imported,
@@ -2063,7 +2062,6 @@ namespace System.Management.Automation
                         tuple.Item1.Add(breakpoint.SequencePointIndex , new List<LineBreakpoint> { breakpoint });
                     } 
                     
-
                     // We need to keep track of any breakpoints that are bound in each script because they may
                     // need to be rebound if the script changes.
                     var boundBreakpoints = _boundBreakpoints[currentScriptFile].Item2;
