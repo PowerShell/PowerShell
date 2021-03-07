@@ -121,7 +121,7 @@ jobs:
               Write-Host "`nCapture the min-size package moved to the target folder."
               Get-ChildItem -Path $minSizeDir
           } else {
-              Write-Host '$(build): Remove the min-size package.'
+              Write-Host '$(build) -- Remove the min-size package.'
               Remove-Item -Path $minSizePkg -Force
           }
       } else {
