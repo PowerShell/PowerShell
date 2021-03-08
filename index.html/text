@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    displayAlign:"left",
+    displayIndent:"0em"
+
+});
+</script>
+<script type="text/x-mathjax-config">
+   MathJax.Hub.Config({
+      tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
+      "HTML-CSS": {
+        linebreaks: { automatic: true, width: "container" }          
+      }              
+   });
+</script>
+    
+    <script type="text/javascript" src="js/data1.js"></script>
+    
+    
+<style>
+div.w3-bar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background-color: black;
+  padding: 20px;
+  font-size: 20px;
+}
+    
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+}
+</style>
+    <script>
+
+  var English12TOC = {
+	Std: "12",
+	Subject: "English",
+	Chapters: [
+		    "UNIT - 1: Prose TOPIC: Two Gentlemen of Verona",
+        
+        
+       
+      ],
+    Mcqs: [
+      English12Chapter1MCQ,
+      
+      ],
+    Briefly: [
+      English12Chapter1_5M,
+      
+      ]
+    
+};  
+</script>
+   
+<script>   
+
+    
+$(document).ready(function(){
+var i=0;
+
+    // PrintTOC(Physics12TOC);
+    
+    //for(i=0; i< Physics12TOC.Mcqs.length; i++) {
+        gCurChapter=0;
+        PrintChapter(gCurChapter);
+       
+       
+    //}
+
+ $("#Next").click(function(){
+    if( gCurChapter < English12TOC.Chapters.length-1) { 
+       gCurChapter++;
+       PrintChapter(gCurChapter);
+        
+       MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+
+    }
+  });
+  $("#Prev").click(function(){
+    if(gCurChapter>0) {
+       gCurChapter--;
+       PrintChapter(gCurChapter);
+       MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+    }
+  });
+    
+});
+</script>
+    <script>
+    function PrintChapter( i) {
+         document.getElementById("mcq").innerHTML = "";
+       PrintMCQ(i, English12TOC.Mcqs[i]); 
+        document.getElementById("mcq").innerHTML += "";
+       Print2Marks(English12TOC.Briefly[i]);
+       document.getElementById("chap").innerHTML = English12TOC.Chapters[i];
+    }
+    function PrintTOC(toc) {
+        var i=0;
+        var x=0;
+        var str = "";
+        var obj = toc;
+        
+        document.getElementById("toc").innerHTML = "Class :" + obj.Std + ", " + obj.Subject +"<br>";
+        for (i = 0; i < obj.Chapters.length; i++) {
+            x=i+1;
+            str = "<a href =\"index"+x+".html\">" + obj.Chapters[i] + "</a>"
+            console.log(str);
+            document.getElementById("toc").innerHTML += str + "<br>";
+        }
+        
+    }
+    
+    </script>
+    <script>
+    function PrintMCQ( c, mcq) { 
+        var i=0;
+        var x="";
+        var id = "";
+        var str = "";
+        //var button1 = "<button onclick="getElementById(id).innerHTML='C'">Ans</button>"
+        
+        
+        for (i = 0; i < mcq.length; i++) {
+            str = "<br><br><b>"+mcq[i].question + "</b><br>";
+            if( typeof mcq[i].answers.figure != 'undefined')
+               str += mcq[i].answers.figure + "<br>";
+            str += "a. "+ mcq[i].answers.a + "<br>" + "b. "+ mcq[i].answers.b + "<br>" 
+                 + "c. "+mcq[i].answers.c + "<br>" +"d. "+ mcq[i].answers.d + "<br>";
+            id = "c"+c+"q"+i;
+           // str += "<br> Ans :" + mcq[i].correctAnswer + "<br>";
+           str += "<div id=" + "'" + id +"'> "+"</div>"; 
+
+            x= "<button onclick=\"getElementById(" + "'"+id +"'" + ").innerHTML=" + "' Ans = " + mcq[i].correctAnswer + "'" +'"'+ "> Ans </button><br>";
+            console.log(x);
+            document.getElementById("mcq").innerHTML += str + x;
+        }
+    }
+    function Print2Marks( qa ) {
+       var i=0;
+       var str = "";
+    
+       for(i=0; i< qa.length; i++) {
+           str = "<br><br><b>"+qa[i].question + "</b><br>";
+           str += qa[i].answer + "<br>";
+            
+            console.log(str);
+            document.getElementById("mcq").innerHTML += str ;
+       }
+    
+    }
+    
+    </script>
+</head>
+<body>
+<div class="w3-bar w3-black">
+  <button class="w3-bar-item w3-button" id="12th English" ><b>12th English</b></button>
+  <button class="w3-bar-item w3-button" id="Prev" >Previous</button>
+  <button class="w3-bar-item w3-button" id="Next" >Next</button>
+  
+  <button class="w3-bar-item w3-button" id="chap" >Chapter</button>
+
+</div>
+  
+
+
+
+
+<div id="toc"></div>
+<div id="mcq"></div>
+
+
+
+
+</body>
+</html>
