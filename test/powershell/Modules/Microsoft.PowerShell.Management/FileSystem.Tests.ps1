@@ -287,6 +287,13 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $newItemPath = Join-Path $protectedPath "foo"
                 $shouldSkip = -not (Test-Path $protectedPath)
             }
+
+            if ($IsWindows) {
+                $fqaccessdenied = "MoveDirectoryItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            }
+            else {
+                $fqaccessdenied = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            }
         }
 
         It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip) -TestCases @(
@@ -296,7 +303,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             # @{cmdline = "New-Item -Type File -Path $newItemPath -ErrorAction Stop"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
             @{cmdline = "Get-ChildItem $protectedPath -ErrorAction Stop"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
             @{cmdline = "Rename-Item -Path $protectedPath -NewName bar -ErrorAction Stop"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
-            @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"}
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = $fqaccessdenied}
         ) {
             param ($cmdline, $expectedError)
 
