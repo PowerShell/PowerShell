@@ -67,6 +67,7 @@ function BuildPackages {
         }
 
         Start-PSBuild @buildParams @releaseTagParam
+        $options = Get-PSOptions
 
         if ($FxDependent) {
             Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
@@ -79,9 +80,19 @@ function BuildPackages {
         if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS }
 
         if ($TarMinSize) {
+            Write-Host "---- Min-Size ----"
+            Write-Host "options.Output: " + $options.Output
+            Write-Host "options.Top " + $options.Top
+
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            Write-Host "Remove $binDir"
+            Remove-Item -Path $binDir -Recurse -Force
+
             ## Build 'min-size' and create 'tar.gz' package for it.
             $buildParams['Crossgen'] = $false
             $buildParams['ForMinimalSize'] = $true
+            Write-Host ($buildParams | Out-String)
+
             Start-PSBuild @buildParams @releaseTagParam
             Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
         }
