@@ -136,6 +136,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSAnsiProgressFeatureName,
                     description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
+                new ExperimentalFeature(
+                    name: "PSNativeCommandArgumentPassing",
+                    description: "Use ArgumentList when invoking a native command"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

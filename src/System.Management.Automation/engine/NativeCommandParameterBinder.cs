@@ -163,16 +163,29 @@ namespace System.Management.Automation
         private List<string> _argumentList = new List<string>();
 
         /// <summary>
-        /// If true, we will use the new ArgumentList variant for StartInfo
+        /// If the experimental feature is enabled and the value is not set to Legacy, we will use the new ArgumentList variant for StartInfo
         /// </summary>
         internal bool UseArgumentList
         {
             get
             {
-                string preference = LanguagePrimitives.ConvertTo<string>(
-                    Context.GetVariableValue(new VariablePath("PSNativeApplicationUsesArgumentList"))
-                    );
-                return (preference == "1");
+                if (ExperimentalFeature.IsEnabled("PSNativeCommandArgumentPassing"))
+                {
+                    try
+                    {
+                        // This will default to the new behavior if it is set to anything other than Legacy
+                        var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
+                            Context.GetVariableValue(new VariablePath(SpecialVariables.NativeArgumentPassing), NativeArgumentPassingStyle.Standard)
+                            );
+                        return (preference != NativeArgumentPassingStyle.Legacy);
+                    }
+                    catch
+                    {
+                        // The value is not convertable send back true
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 

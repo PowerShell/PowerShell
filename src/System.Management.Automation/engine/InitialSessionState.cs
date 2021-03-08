@@ -1308,6 +1308,32 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        #region VariableHelper
+        /// <summary>
+        /// A helper for adding variables to session state.
+        /// Experimental features can be handled here
+        /// </summary>
+        private void AddVariables(IEnumerable<SessionStateVariableEntry>variables)
+        {
+            Variables.Add(variables);
+
+            // If the PSNativeCommandArgumentPassing feature is enabled, create the variable which controls the behavior
+            // Since the BuiltInVariables list is static, and this should be done dynamically
+            // we need to do this here.
+            if (ExperimentalFeature.IsEnabled("PSNativeCommandArgumentPassing"))
+            {
+                Variables.Add(
+                    new SessionStateVariableEntry(
+                        SpecialVariables.NativeArgumentPassing,
+                        NativeArgumentPassingStyle.Standard,
+                        RunspaceInit.NativeCommandArgumentPassingDescription,
+                        ScopedItemOptions.None,
+                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))
+                    ));
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
@@ -1413,7 +1439,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Add built-in variables.
-            iss.Variables.Add(BuiltInVariables);
+            iss.AddVariables(BuiltInVariables);
 
             // wrap some commands in a proxy function to restrict their parameters
             foreach (KeyValuePair<string, CommandMetadata> proxyFunction in CommandMetadata.GetRestrictedCommands(SessionCapabilities.RemoteServer))
@@ -1477,7 +1503,7 @@ namespace System.Management.Automation.Runspaces
             // be causing test failures - i suspect due to lack test isolation - brucepay Mar 06/2008
 #if false
             // Add the default variables and make them private...
-            iss.Variables.Add(BuiltInVariables);
+            iss.AddVariables(BuiltInVariables);
             foreach (SessionStateVariableEntry v in iss.Variables)
             {
                 v.Visibility = SessionStateEntryVisibility.Private;
@@ -1500,7 +1526,7 @@ namespace System.Management.Automation.Runspaces
 
             InitialSessionState ss = new InitialSessionState();
 
-            ss.Variables.Add(BuiltInVariables);
+            ss.AddVariables(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
             ss.Commands.Add(new SessionStateScriptEntry("*"));
             ss.Commands.Add(BuiltInFunctions);
@@ -1567,7 +1593,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState ss = new InitialSessionState();
 
-            ss.Variables.Add(BuiltInVariables);
+            ss.AddVariables(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
             ss.Commands.Add(new SessionStateScriptEntry("*"));
             ss.Commands.Add(BuiltInFunctions);
@@ -1608,7 +1634,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState ss = new InitialSessionState();
 
-            ss.Variables.Add(this.Variables.Clone());
+            ss.AddVariables(this.Variables.Clone());
             ss.EnvironmentVariables.Add(this.EnvironmentVariables.Clone());
             ss.Commands.Add(this.Commands.Clone());
             ss.Assemblies.Add(this.Assemblies.Clone());
@@ -4550,6 +4576,14 @@ end {
                 RemotingErrorIdStrings.PSSessionAppName,
                 ScopedItemOptions.None),
             // End: Variables which control remoting behavior
+
+            new SessionStateVariableEntry(
+                SpecialVariables.PSSessionApplicationName,
+                "wsman",
+                RemotingErrorIdStrings.PSSessionAppName,
+                ScopedItemOptions.None),
+
+            // End: Variable which controls native command argument parsing
 
             #region Platform
             new SessionStateVariableEntry(
