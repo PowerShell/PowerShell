@@ -118,10 +118,8 @@ jobs:
               New-Item -Path $minSizeDir -Type Directory -Force > $null
               Move-Item -Path $minSizePkg -Destination $minSizeDir
 
-              Write-Host "`nCapture the min-size package moved to the target folder."
               Get-ChildItem -Path $minSizeDir
           } else {
-              Write-Host '$(build) -- Remove the min-size package.'
               Remove-Item -Path $minSizePkg -Force
           }
       } else {
