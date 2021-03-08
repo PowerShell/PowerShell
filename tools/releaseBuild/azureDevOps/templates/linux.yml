@@ -114,7 +114,7 @@ jobs:
       $minSizePkg = '$(System.ArtifactsDirectory)\finished\release\*-gc.tar.gz'
       if (Test-Path -Path $minSizePkg)
       {
-          if ('$(build)' -eq 'DEB')
+          if ('$(buildName)' -eq 'DEB')
           {
               $minSizeDir = '$(System.ArtifactsDirectory)\finished\minSize'
               New-Item -Path $minSizeDir -Type Directory -Force > $null
@@ -125,7 +125,7 @@ jobs:
           }
           else
           {
-              Write-Host '$(build): Remove the min-size package.'
+              Write-Host '$(buildName): Remove the min-size package.'
               Remove-Item -Path $minSizePkg -Force
           }
       }
