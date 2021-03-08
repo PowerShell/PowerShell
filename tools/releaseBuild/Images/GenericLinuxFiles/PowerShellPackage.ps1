@@ -18,6 +18,7 @@ param (
     [switch]$TarX64,
     [switch]$TarArm,
     [switch]$TarArm64,
+    [switch]$TarMinSize,
     [switch]$FxDependent,
     [switch]$Alpine
 )
@@ -75,8 +76,13 @@ function BuildPackages {
             Start-PSPackage @releaseTagParam -LTS:$LTS
         }
 
-        if ($TarX64) {
-            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
+        if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS }
+
+        if ($TarMinSize) {
+            ## Build 'min-size' and create 'tar.gz' package for it.
+            $buildParams['Crossgen'] = $false
+            $buildParams['ForMinimalSize'] = $true
+            Start-PSBuild @buildParams @releaseTagParam
             Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
         }
 
