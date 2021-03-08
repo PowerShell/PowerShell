@@ -81,18 +81,16 @@ function BuildPackages {
 
         if ($TarMinSize) {
             Write-Host "---- Min-Size ----"
-            Write-Host "options.Output: " + $options.Output
-            Write-Host "options.Top " + $options.Top
+            Write-Host "options.Output: $($options.Output)"
+            Write-Host "options.Top $($options.Top)"
 
             $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            Write-Host "Remove $binDir"
+            Write-Host "Remove $binDir, to get a clean build for min-size package"
             Remove-Item -Path $binDir -Recurse -Force
 
             ## Build 'min-size' and create 'tar.gz' package for it.
             $buildParams['Crossgen'] = $false
             $buildParams['ForMinimalSize'] = $true
-            Write-Host ($buildParams | Out-String)
-
             Start-PSBuild @buildParams @releaseTagParam
             Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
         }
