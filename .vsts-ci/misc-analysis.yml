@@ -90,7 +90,7 @@ jobs:
     condition: succeededOrFailed()
     workingDirectory: '$(repoPath)'
 
-  - ${{ if not(contains('SYSTEM_COLLECTIONURI','mscodehub')) }}
+  - ${{ if not(contains('SYSTEM_COLLECTIONURI','mscodehub')) }}:
     - pwsh: |
         Import-module ./build.psm1
         $path = Join-Path -Path $pwd -ChildPath './commonTestResults.xml'
