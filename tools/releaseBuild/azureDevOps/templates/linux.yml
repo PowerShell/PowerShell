@@ -106,23 +106,31 @@ jobs:
 
   - powershell: |
       Write-Host 'We handle the min-size package only when uploading for deb build.'
-      Write-Host 'For deb build, the min-size package is moved to a separate folder "finished\minSize",'
-      Write-Host 'so that the min-size package can be uploaded to a different Az Blob container.'
-      Write-Host 'For other builds, the min-size package is removed after being downloaded, so that it'
-      Write-Host 'doesn't get accidentally uploaded to the wrong Az Blob container.'
+      Write-Host '- For deb build, the min-size package is moved to a separate folder "finished\minSize",'
+      Write-Host '  so that the min-size package can be uploaded to a different Az Blob container.'
+      Write-Host '- For other builds, the min-size package is removed after being downloaded, so that it'
+      Write-Host '  does not get accidentally uploaded to the wrong Az Blob container.'
 
       $minSizePkg = '$(System.ArtifactsDirectory)\finished\release\*-gc.tar.gz'
-      if (Test-Path -Path $minSizePkg) {
-          if ('$(build)' -eq 'DEB') {
+      if (Test-Path -Path $minSizePkg)
+      {
+          if ('$(build)' -eq 'DEB')
+          {
               $minSizeDir = '$(System.ArtifactsDirectory)\finished\minSize'
               New-Item -Path $minSizeDir -Type Directory -Force > $null
               Move-Item -Path $minSizePkg -Destination $minSizeDir
 
+              Write-Host "`nCapture the min-size package moved to the target folder."
               Get-ChildItem -Path $minSizeDir
-          } else {
+          }
+          else
+          {
+              Write-Host '$(build): Remove the min-size package.'
               Remove-Item -Path $minSizePkg -Force
           }
-      } else {
+      }
+      else
+      {
           Write-Host 'min-size package not found, so skip this step.'
       }
     displayName: 'Move minSize package to separate folder'
