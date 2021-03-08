@@ -1105,7 +1105,8 @@ namespace System.Management.Automation.Runspaces
                                         $message = ''
                                         $prefix = ''
 
-                                        if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
+                                        # Don't show line information if script module
+                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') -and !($myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
                                             $useTargetObject = $false
 
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
