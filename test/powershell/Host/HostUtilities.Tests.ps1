@@ -59,7 +59,7 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
     }
 }
 
-Describe 'PromptForCredential' {
+Describe 'PromptForCredential' -Tags "CI" {
     BeforeAll {
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $true)
     }
