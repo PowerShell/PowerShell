@@ -1,19 +1,30 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-foreach ( $argumentListValue in 0,1 ) {
-    $PSNativeApplicationUsesArgumentList = $argumentListValue
-    Describe "Native Command Arguments" -tags "CI" {
+Describe "Will error correctly if an attempt to set variable to improper value" {
+    It "will error when setting variable incorrectly" {
+        if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled ) {
+            { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
+        }
+        else {
+            Set-Test -State skipped -Because "Experimental feature 'PSNativeCommandArgumentPassing' is not enabled"
+        }
+    }
+}
+
+foreach ( $argumentListValue in "Standard","Legacy" ) {
+    $PSNativeCommandArgumentPassing = $argumentListValue
+    Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {
         # When passing arguments to native commands, quoted segments that contain
         # spaces need to be quoted with '"' characters when they are passed to the
         # native command (or to bash or sh on Linux).
         #
         # This test checks that the proper quoting is occuring by passing arguments
         # to the testexe native command and looking at how it got the arguments.
-        It "Should handle quoted spaces correctly (ArgumentList=${PSNativeApplicationUsesArgumentList})" {
+        It "Should handle quoted spaces correctly (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $a = 'a"b c"d'
             $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
             $lines.Count | Should -Be 3
-            if ( $PSNativeApplicationUsesArgumentList -eq 1 ) {
+            if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled -and $PSNativeCommandArgumentPassing -ne "Legacy" ) {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
             }
@@ -35,10 +46,10 @@ foreach ( $argumentListValue in 0,1 ) {
         # This test checks that the proper quoting and escaping is occurring by
         # passing arguments with escaped quotes to the testexe native command and
         # looking at how it got the arguments.
-        It "Should handle spaces between escaped quotes (ArgumentList=${PSNativeApplicationUsesArgumentList})" {
+        It "Should handle spaces between escaped quotes (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
             $lines.Count | Should -Be 2
-            if ( $PSNativeApplicationUsesArgumentList -eq 1 ) {
+            if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled -and $PSNativeCommandArgumentPassing -ne "Legacy" ) {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a\"b c\"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a\"b c\"d>'
             }
@@ -48,7 +59,7 @@ foreach ( $argumentListValue in 0,1 ) {
             }
         }
 
-        It "Should correctly quote paths with spaces (ArgumentList=${PSNativeApplicationUsesArgumentList}): <arguments>" -TestCases @(
+        It "Should correctly quote paths with spaces (ArgumentList=${PSNativeCommandArgumentPassing}): <arguments>" -TestCases @(
             @{arguments = "'.\test 1\' `".\test 2\`""  ; expected = @(".\test 1\",".\test 2\")},
             @{arguments = "'.\test 1\\\' `".\test 2\\`""; expected = @(".\test 1\\\",".\test 2\\")}
         ) {
@@ -60,7 +71,7 @@ foreach ( $argumentListValue in 0,1 ) {
             }
         }
 
-        It "Should handle PowerShell arrays with or without spaces correctly (ArgumentList=${PSNativeApplicationUsesArgumentList}): <arguments>" -TestCases @(
+        It "Should handle PowerShell arrays with or without spaces correctly (ArgumentList=${PSNativeCommandArgumentPassing}): <arguments>" -TestCases @(
             @{arguments = "1,2"; expected = @("1,2")}
             @{arguments = "1,2,3"; expected = @("1,2,3")}
             @{arguments = "1, 2"; expected = "1,", "2"}
