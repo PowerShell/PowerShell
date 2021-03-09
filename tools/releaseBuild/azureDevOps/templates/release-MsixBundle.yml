@@ -1,12 +1,15 @@
 jobs:
-- job: ${{ parameters.jobName }}
-  displayName: ${{ parameters.displayName }}
+- job: CreateMSIXBundle
+  displayName: Create .msixbundle file
   pool:
-    vmImage: ${{ parameters.imageName }}
+    vmImage: windows-latest
   variables:
     - group: msixTools
+    - group: 'Azure Blob variable group'
 
   steps:
+    - template: release-SetReleaseTagAndContainerName.yml
+
     - task: DownloadPipelineArtifact@2
         inputs:
           source: specific
@@ -20,24 +23,23 @@ jobs:
           path: '$(Pipeline.Workspace)\releasePipeline\msix'
 
     - pwsh: |
-          $cmd = Get-Command makeappx.exe -ErrorAction Ignore
-          if ($cmd) {
-              Write-Verbose -Verbose 'makeappx available in PATH'
-              $exePath = $cmd.Source
-          } else {
-              Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile '$(Pipeline.Workspace)\releasePipeline\tools\makeappx.zip'
-              Expand-Archive '\makeappx.zip' -DestinationPath '$(Pipeline.Workspace)\releasePipeline\tools' -Force
-              $exePath = '$(Pipeline.Workspace)\releasePipeline\tools\makeappx\makeappx.exe'
+        $cmd = Get-Command makeappx.exe -ErrorAction Ignore
+        if ($cmd) {
+            Write-Verbose -Verbose 'makeappx available in PATH'
+            $exePath = $cmd.Source
+        } else {
+            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile '$(Pipeline.Workspace)\releasePipeline\tools\makeappx.zip'
+            Expand-Archive '\makeappx.zip' -DestinationPath '$(Pipeline.Workspace)\releasePipeline\tools' -Force
+            $exePath = '$(Pipeline.Workspace)\releasePipeline\tools\makeappx\makeappx.exe'
 
-              Write-Verbose -Verbose 'makeappx is installed:'
-              Get-ChildItem -Path '$(Pipeline.Workspace)\releasePipeline\tools' -Recurse
-          }
+            Write-Verbose -Verbose 'makeappx is installed:'
+            Get-ChildItem -Path '$(Pipeline.Workspace)\releasePipeline\tools' -Recurse
+        }
 
-          $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
-          Write-Host "sending " + $vstsCommandString
-          Write-Host "##$vstsCommandString"
-
-        displayName: Install makeappx tool
+        $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Install makeappx tool
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
@@ -47,9 +49,18 @@ jobs:
         Write-Verbose -Verbose "Creating $pkgName"
 
         $makeappxPath = '$(MakeAppxPath)'
-        $outputDir = '$(Pipeline.Workspace)\releasePipeline\msix\output'
+        $outputDir = '$sourceDir\output'
+        $bundlePath = "$outputDir\$pkgName"
         New-Item $outputDir -Type Directory -Force > $null
-        & $makeappxPath bundle /d $sourceDir /p "$outputDir\$pkgName"
+        & $makeappxPath bundle /d $sourceDir /p $bundlePath
 
         Get-ChildItem -Path $sourceDir -Recurse
-      displayName: Build MsixBundle
+        $vstsCommandString = "vso[task.setvariable variable=BundlePath]$bundlePath"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Create MsixBundle
+
+    - pwsh: |
+        $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+        & $azcopy /Source:$(BundlePath) /Dest:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)-private /DestKey:$(StorageAccountKey)
+      displayName: Upload MSIX Bundle package to Az Blob

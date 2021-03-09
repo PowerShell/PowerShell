@@ -19,6 +19,12 @@ variables:
     value: none
 
 stages:
+- stage: MSIXBundle
+  displayName: Create MSIX Bundle package
+  dependsOn: []
+  jobs:
+  - template: templates/release-MsixBundle.yml
+
 - stage: ValidateSDK
   displayName: Validate SDK
   dependsOn: []
@@ -242,7 +248,7 @@ stages:
   displayName: Publish MSIX to store
   jobs:
   - deployment: PublishMsix
-    displayName: Publish MSIX to store
+    displayName: Publish the MSIX Bundle package to store
     pool: server
     environment: PSReleasePublishMsix
 
