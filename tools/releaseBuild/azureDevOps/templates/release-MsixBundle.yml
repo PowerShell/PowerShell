@@ -31,7 +31,7 @@ jobs:
             $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
             New-Item $toolsDir -Type Directory -Force > $null
             Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile "$toolsDir\makeappx.zip"
-            Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath $toolsDir -Force
+            Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
             $exePath = "$toolsDir\makeappx\makeappx.exe"
 
             Write-Verbose -Verbose 'makeappx is installed:'
