@@ -1,0 +1,55 @@
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.imageName }}
+  variables:
+    - group: msixTools
+
+  steps:
+    - task: DownloadPipelineArtifact@2
+        inputs:
+          source: specific
+          project: PowerShellCore
+          pipeline: '696'
+          preferTriggeringPipeline: true
+          runVersion: latestFromBranch
+          runBranch: '$(Build.SourceBranch)'
+          artifact: finalResults
+          patterns: '**/*.msix'
+          path: '$(Pipeline.Workspace)\releasePipeline\msix'
+
+    - pwsh: |
+          $cmd = Get-Command makeappx.exe -ErrorAction Ignore
+          if ($cmd) {
+              Write-Verbose -Verbose 'makeappx available in PATH'
+              $exePath = $cmd.Source
+          } else {
+              Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile '$(Pipeline.Workspace)\releasePipeline\tools\makeappx.zip'
+              Expand-Archive '\makeappx.zip' -DestinationPath '$(Pipeline.Workspace)\releasePipeline\tools' -Force
+              $exePath = '$(Pipeline.Workspace)\releasePipeline\tools\makeappx\makeappx.exe'
+
+              Write-Verbose -Verbose 'makeappx is installed:'
+              Get-ChildItem -Path '$(Pipeline.Workspace)\releasePipeline\tools' -Recurse
+          }
+
+          $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+
+        displayName: Install makeappx tool
+
+    - pwsh: |
+        $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
+        $file = Get-ChildItem $sourceDir | Select-Object -First 1
+        $prefix = ($file.BaseName -split "-win")[0]
+        $pkgName = "$prefix.msixbundle"
+        Write-Verbose -Verbose "Creating $pkgName"
+
+        $makeappxPath = '$(MakeAppxPath)'
+        $outputDir = '$(Pipeline.Workspace)\releasePipeline\msix\output'
+        New-Item $outputDir -Type Directory -Force > $null
+        & $makeappxPath bundle /d $sourceDir /p "$outputDir\$pkgName"
+
+        Get-ChildItem -Path $sourceDir -Recurse
+      displayName: Build MsixBundle
