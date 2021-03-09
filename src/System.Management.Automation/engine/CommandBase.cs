@@ -278,10 +278,10 @@ namespace System.Management.Automation
     /// </summary>
     public enum NativeArgumentPassingStyle
     {
-        /// <summary>Use legacy argument parsing via ProcessStartInfo.Arguments</summary>
+        /// <summary>Use legacy argument parsing via ProcessStartInfo.Arguments.</summary>
         Legacy = 0,
 
-        /// <summary>Use new style argument parsing via ProcessStartInfo.ArgumentList
+        /// <summary>Use new style argument parsing via ProcessStartInfo.ArgumentList.</summary>
         Standard = 1
     }
     #endregion NativeArgumentPassingStyle

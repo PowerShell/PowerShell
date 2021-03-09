@@ -1314,7 +1314,6 @@ namespace System.Management.Automation.Runspaces
         /// Experimental features can be handled here.
         /// </summary>
         /// <param name="variables">The variables to add to session state.</param>
-        /// <returns></returns>
         private void AddVariables(IEnumerable<SessionStateVariableEntry> variables)
         {
             Variables.Add(variables);

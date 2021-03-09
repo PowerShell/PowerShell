@@ -39,7 +39,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the command arguments as an array of strings
+        /// Gets the value of the command arguments as an array of strings.
         /// </summary>
         internal string[] ArgumentList
         {
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get whether to use the new API for StartInfo
+        /// Get a value indicating whether to use the new API for StartInfo.
         /// </summary>
         internal bool UseArgumentList
         {
@@ -71,8 +71,7 @@ namespace System.Management.Automation
         /// Ignored.
         /// </param>
         /// <returns>
-        /// True if the parameter was successfully bound. Any error condition
-        /// produces an exception.
+        /// True if the parameter was successfully bound. Any error condition produces an exception.
         /// </returns>
         internal override bool BindParameter(
             CommandParameterInternal argument,
