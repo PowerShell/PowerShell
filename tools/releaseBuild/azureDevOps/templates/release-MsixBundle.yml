@@ -28,12 +28,14 @@ jobs:
             Write-Verbose -Verbose 'makeappx available in PATH'
             $exePath = $cmd.Source
         } else {
-            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile '$(Pipeline.Workspace)\releasePipeline\tools\makeappx.zip'
-            Expand-Archive '\makeappx.zip' -DestinationPath '$(Pipeline.Workspace)\releasePipeline\tools' -Force
-            $exePath = '$(Pipeline.Workspace)\releasePipeline\tools\makeappx\makeappx.exe'
+            $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
+            New-Item $toolsDir -Type Directory -Force > $null
+            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile "$toolsDir\makeappx.zip"
+            Expand-Archive '\makeappx.zip' -DestinationPath $toolsDir -Force
+            $exePath = "$toolsDir\makeappx\makeappx.exe"
 
             Write-Verbose -Verbose 'makeappx is installed:'
-            Get-ChildItem -Path '$(Pipeline.Workspace)\releasePipeline\tools' -Recurse
+            Get-ChildItem -Path $toolsDir -Recurse
         }
 
         $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
