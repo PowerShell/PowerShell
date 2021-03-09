@@ -178,7 +178,7 @@ jobs:
 
   # requires windows
   - task: AzureFileCopy@4
-    displayName: 'Upload to Azure - min-size package'
+    displayName: 'Upload to Azure - min-size package for Guest Config'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\finished\minSize\*'
       azureSubscription: '$(AzureFileCopySubscription)'

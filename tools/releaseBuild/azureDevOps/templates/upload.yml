@@ -40,7 +40,7 @@ steps:
   condition: succeeded()
 
 - task: AzureFileCopy@4
-  displayName: 'upload signed min-size package to Azure - ${{ parameters.architecture }}'
+  displayName: 'upload signed min-size package (for Guest Config) to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}-gc.zip'
     azureSubscription: '$(AzureFileCopySubscription)'

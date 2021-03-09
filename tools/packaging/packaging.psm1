@@ -304,6 +304,7 @@ function Start-PSPackage {
                 # Remove symbol files, xml document files.
                 Remove-Item "$Source\*.pdb", "$Source\*.xml" -Force
 
+                # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = "$NameSuffix-gc"
