@@ -17,7 +17,7 @@ jobs:
         pipeline: '696'
         preferTriggeringPipeline: true
         runVersion: latestFromBranch
-        runBranch: 'refs/heads/size'
+        runBranch: '$(Build.SourceBranch)'
         artifact: finalResults
         patterns: '**/*.msix'
         path: '$(Pipeline.Workspace)\releasePipeline\msix'
