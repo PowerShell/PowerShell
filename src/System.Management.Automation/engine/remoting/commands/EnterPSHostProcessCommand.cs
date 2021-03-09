@@ -811,7 +811,6 @@ namespace Microsoft.PowerShell.Commands
                 throw new PSArgumentNullException(nameof(appDomainName));
             }
 
-#if !CORECLR
             MainWindowTitle = string.Empty;
             try
             {
