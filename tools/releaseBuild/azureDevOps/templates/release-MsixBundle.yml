@@ -34,7 +34,7 @@ jobs:
             Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
             $exePath = "$toolsDir\makeappx\makeappx.exe"
 
-            Write-Verbose -Verbose 'makeappx is installed:'
+            Write-Verbose -Verbose 'makeappx was installed:'
             Get-ChildItem -Path $toolsDir -Recurse
         }
 
@@ -50,11 +50,11 @@ jobs:
         $pkgName = "$prefix.msixbundle"
         Write-Verbose -Verbose "Creating $pkgName"
 
-        $makeappxPath = '$(MakeAppxPath)'
-        $outputDir = '$sourceDir\output'
+        $makeappx = '$(MakeAppxPath)'
+        $outputDir = "$sourceDir\output"
         $bundlePath = "$outputDir\$pkgName"
         New-Item $outputDir -Type Directory -Force > $null
-        & $makeappxPath bundle /d $sourceDir /p $bundlePath
+        & $makeappx bundle /d $sourceDir /p $bundlePath
 
         Get-ChildItem -Path $sourceDir -Recurse
         $vstsCommandString = "vso[task.setvariable variable=BundlePath]$bundlePath"
