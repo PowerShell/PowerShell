@@ -43,12 +43,12 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
         }
 
         It 'Set-Clipboard accepts <value> string' -TestCases @(
-            @{ value = 'empty'; input = "" }
-            @{ value = 'null' ; input = $null }
+            @{ value = 'empty'; text = "" }
+            @{ value = 'null' ; text = $null }
         ){
-            param ($input)
+            param ($text)
 
-            $input | Set-Clipboard
+            $text | Set-Clipboard
             Get-Clipboard -Raw | Should -BeNullOrEmpty
         }
     }
