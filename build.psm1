@@ -322,12 +322,14 @@ function Start-PSBuild {
         throw "Cross compiling for win-arm or win-arm64 is only supported on Windows environment"
     }
 
-    if ($ForMinimalSize -and $Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
-        throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
-    }
+    if ($ForMinimalSize) {
+        if ($CrossGen) {
+            throw "Build for the minimal size requires the minimal disk footprint, so `CrossGen` is not allowed"
+        }
 
-    if ($ForMinimalSize -and $CrossGen) {
-        throw "Build for the minimal size requires the minimal disk footprint, so `CrossGen` is not allowed"
+        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
+        }
     }
 
     function Stop-DevPowerShell {
@@ -479,6 +481,8 @@ Fix steps:
         if ($Options.Runtime -notlike 'fxdependent*') {
             $sdkToUse = 'Microsoft.NET.Sdk'
             if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
+                ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
+                ## when 'Microsoft.NET.Sdk.WindowsDesktop' is used.
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
 

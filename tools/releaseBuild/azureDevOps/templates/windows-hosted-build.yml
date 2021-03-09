@@ -56,12 +56,12 @@ jobs:
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
         }
 
-      $configuration = @{}
+      $params = @{}
       if ($env:BuildConfiguration -eq 'minSize') {
-        $configuration['Configuration'] = 'min-size'
+        $params['ForMinimalSize'] = $true
       }
 
-      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @configuration
+      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
 
   - powershell: |

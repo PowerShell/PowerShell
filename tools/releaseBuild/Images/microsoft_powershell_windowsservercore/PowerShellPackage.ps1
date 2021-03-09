@@ -14,8 +14,7 @@ param (
     [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent", "fxdependent-win-desktop")]
     [string] $Runtime = 'win7-x64',
 
-    [ValidateSet("min-size")]
-    [string] $Configuration = '',
+    [switch] $ForMinimalSize,
 
     [switch] $Wait,
 
@@ -28,7 +27,7 @@ param (
 
     [Parameter(Mandatory,ParameterSetName='packageSigned')]
     [ValidatePattern("-signed.zip$")]
-    [string]$BuildZip,
+    [string] $BuildZip,
 
     [Parameter(Mandatory,ParameterSetName='ComponentRegistration')]
     [switch] $ComponentRegistration
@@ -97,9 +96,12 @@ try
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -Verbose
-        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*" -and !$Configuration}
+        $buildParams = @{
+            CrossGen = !$ForMinimalSize -and $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*"
+            ForMinimalSize = $ForMinimalSize
+        }
 
-        if($Symbols.IsPresent)
+        if($Symbols)
         {
             $buildParams['NoPSModuleRestore'] = $true
         }
@@ -108,15 +110,10 @@ try
             $buildParams['PSModuleRestore'] = $true
         }
 
-        if ($Configuration -eq 'min-size')
-        {
-            $buildParams['ForMinimalSize'] = $true
-        }
-
         Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
     }
 
-    if ($ComponentRegistration.IsPresent)
+    if ($ComponentRegistration)
     {
         Write-Verbose "Exporting project.assets files ..." -Verbose
 
@@ -127,7 +124,7 @@ try
             $subfolder = $_.FullName.Replace($location,'')
             $subfolder.Replace('project.assets.json','')
             $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
-                    New-Item -Path $itemDestination -ItemType Directory -Force
+            New-Item -Path $itemDestination -ItemType Directory -Force > $null
             $file = $_.FullName
             Write-Verbose "Copying $file to $itemDestination" -Verbose
             Copy-Item -Path $file -Destination "$itemDestination\" -Force
@@ -148,14 +145,14 @@ try
     {
         ## Set the default package type.
         $pspackageParams = @{'Type' = 'msi'; 'WindowsRuntime' = $Runtime}
-        if ($Configuration -eq 'min-size')
+        if ($ForMinimalSize)
         {
             ## Special case for the minimal size self-contained package.
-            $pspackageParams['Type'] = $Configuration
+            $pspackageParams['Type'] = 'min-size'
         }
     }
 
-    if (!$Symbols.IsPresent -and $Runtime -notlike 'fxdependent*' -and !$Configuration)
+    if (!$Symbols -and $Runtime -notlike 'fxdependent*' -and !$ForMinimalSize)
     {
         if ($Runtime -notmatch 'arm')
         {
@@ -168,10 +165,10 @@ try
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if ($Runtime -like 'fxdependent*' -or $Configuration -eq 'min-size')
+    if ($Runtime -like 'fxdependent*' -or $ForMinimalSize)
     {
         ## Add symbols for just like zip package.
-        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+        $pspackageParams['IncludeSymbols']=$Symbols
         Start-PSPackage @pspackageParams @releaseTagParam
 
         ## Copy the fxdependent Zip package to destination.
@@ -183,14 +180,14 @@ try
     }
     else
     {
-        if (!$Symbols.IsPresent) {
+        if (!$Symbols) {
             $pspackageParams['Type'] = 'zip-pdb'
             Write-Verbose "Starting powershell symbols packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam
         }
 
         $pspackageParams['Type']='zip'
-        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+        $pspackageParams['IncludeSymbols']=$Symbols
         Write-Verbose "Starting powershell packaging(zip)..." -Verbose
         Start-PSPackage @pspackageParams @releaseTagParam
 
@@ -206,7 +203,7 @@ try
 finally
 {
     Write-Verbose "Beginning build clean-up..." -Verbose
-    if ($Wait.IsPresent)
+    if ($Wait)
     {
         $path = Join-Path $PSScriptRoot -ChildPath 'delete-to-continue.txt'
         $null = New-Item -Path $path -ItemType File

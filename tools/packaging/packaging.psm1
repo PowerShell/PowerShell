@@ -316,7 +316,7 @@ function Start-PSPackage {
                         New-ZipPackage @Arguments
                     }
                 }
-                elseif ($IsLinux) {
+                elseif ($Environment.IsLinux) {
                     $Arguments = @{
                         PackageSourcePath = $Source
                         Name = $Name
@@ -347,7 +347,7 @@ function Start-PSPackage {
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
                         New-ZipPackage @Arguments
                     }
-                } elseif ($IsLinux) {
+                } elseif ($Environment.IsLinux) {
                     $Arguments = @{
                         PackageSourcePath = $Source
                         Name = $Name

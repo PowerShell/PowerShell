@@ -247,12 +247,12 @@ jobs:
       $signedPkg = "$(BuildPackagePath)"
       Write-Verbose -Verbose -Message "signedPkg = $signedPkg"
 
-      $configuration = @{}
+      $params = @{}
       if ($env:BuildConfiguration -eq 'minSize') {
-        $configuration['Configuration'] = 'min-size'
+        $params['ForMinimalSize'] = $true
       }
 
-      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @configuration
+      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @params
     displayName: 'Build Windows Universal - $(Architecture) Package'
 
   - powershell: |
