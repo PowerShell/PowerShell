@@ -1311,9 +1311,11 @@ namespace System.Management.Automation.Runspaces
         #region VariableHelper
         /// <summary>
         /// A helper for adding variables to session state.
-        /// Experimental features can be handled here
+        /// Experimental features can be handled here.
         /// </summary>
-        private void AddVariables(IEnumerable<SessionStateVariableEntry>variables)
+        /// <param name="variables">The variables to add to session state.</param>
+        /// <returns></returns>
+        private void AddVariables(IEnumerable<SessionStateVariableEntry> variables)
         {
             Variables.Add(variables);
 
@@ -1328,8 +1330,7 @@ namespace System.Management.Automation.Runspaces
                         NativeArgumentPassingStyle.Standard,
                         RunspaceInit.NativeCommandArgumentPassingDescription,
                         ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))
-                    ));
+                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
             }
         }
         #endregion
@@ -4582,8 +4583,6 @@ end {
                 "wsman",
                 RemotingErrorIdStrings.PSSessionAppName,
                 ScopedItemOptions.None),
-
-            // End: Variable which controls native command argument parsing
 
             #region Platform
             new SessionStateVariableEntry(

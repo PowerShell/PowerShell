@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -163,7 +163,7 @@ namespace System.Management.Automation
         private List<string> _argumentList = new List<string>();
 
         /// <summary>
-        /// If the experimental feature is enabled and the value is not set to Legacy, we will use the new ArgumentList variant for StartInfo
+        /// Gets a value indicating whether to use an ArgumentList or string for arguments when invoking a native executable.
         /// </summary>
         internal bool UseArgumentList
         {
@@ -175,9 +175,8 @@ namespace System.Management.Automation
                     {
                         // This will default to the new behavior if it is set to anything other than Legacy
                         var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
-                            Context.GetVariableValue(new VariablePath(SpecialVariables.NativeArgumentPassing), NativeArgumentPassingStyle.Standard)
-                            );
-                        return (preference != NativeArgumentPassingStyle.Legacy);
+                            Context.GetVariableValue(new VariablePath(SpecialVariables.NativeArgumentPassing), NativeArgumentPassingStyle.Standard));
+                        return preference != NativeArgumentPassingStyle.Legacy;
                     }
                     catch
                     {
@@ -185,6 +184,7 @@ namespace System.Management.Automation
                         return true;
                     }
                 }
+
                 return false;
             }
         }
@@ -239,14 +239,14 @@ namespace System.Management.Automation
 
                 if (!string.IsNullOrEmpty(arg))
                 {
+                    // Only add the separator to the argument string rather than adding a separator to the ArgumentList.
                     _arguments.Append(separator);
-                    // Don't add the separator to the argument list, it's
-                    // an artifact of constructing the string to be used.
 
                     if (sawVerbatimArgumentMarker)
                     {
                         arg = Environment.ExpandEnvironmentVariables(arg);
                         _arguments.Append(arg);
+
                         // we need to split the argument on spaces
                         _argumentList.AddRange(arg.Split(" ", StringSplitOptions.RemoveEmptyEntries));
                     }
@@ -293,14 +293,12 @@ namespace System.Management.Automation
                         {
                             if (argArrayAst != null && UseArgumentList)
                             {
-                                // Ok, we have a literal array, so take the extent, break it on spaces
-                                // and add them to the argument list
-                                // Question? Should the break be space or tab (bash says no)
-                                // _argumentList.AddRange(argArrayAst.Extent.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries));
+                                // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
                                 foreach (string element in argArrayAst.Extent.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries))
                                 {
                                     PossiblyGlobArg(element, stringConstantType);
                                 }
+
                                 break;
                             }
                             else
@@ -357,8 +355,6 @@ namespace System.Management.Automation
                         {
                             // Fallthrough will append the pattern unchanged.
                         }
-
-                        // TODO: we may need to add our own thing here
 
                         // Expand paths, but only from the file system.
                         if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))

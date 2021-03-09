@@ -1160,7 +1160,7 @@ namespace System.Management.Automation
             ExecutionContext context = this.Command.Context;
 
             // We provide the user a way to select the new behavior via a new preference variable
-            using (ParameterBinderBase.bindingTracer.TraceScope( "BIND NAMED native application line args [{0}]", this.Path))
+            using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
             {
                 if (!NativeParameterBinderController.UseArgumentList)
                 {
@@ -1173,9 +1173,11 @@ namespace System.Management.Automation
                 {
                     // Use new API for running native application
                     int position = 0;
-                    foreach (string nativeArgument in NativeParameterBinderController.ArgumentList) {
-                        if (nativeArgument != null) {
-                            using (ParameterBinderBase.bindingTracer.TraceScope( "BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
+                    foreach (string nativeArgument in NativeParameterBinderController.ArgumentList)
+                    {
+                        if (nativeArgument != null)
+                        {
+                            using (ParameterBinderBase.bindingTracer.TraceScope("BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
                             {
                                 startInfo.ArgumentList.Add(nativeArgument);
                             }
