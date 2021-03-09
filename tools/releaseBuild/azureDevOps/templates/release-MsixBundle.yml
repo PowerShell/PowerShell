@@ -11,16 +11,16 @@ jobs:
     - template: release-SetReleaseTagAndContainerName.yml
 
     - task: DownloadPipelineArtifact@2
-        inputs:
-          source: specific
-          project: PowerShellCore
-          pipeline: '696'
-          preferTriggeringPipeline: true
-          runVersion: latestFromBranch
-          runBranch: '$(Build.SourceBranch)'
-          artifact: finalResults
-          patterns: '**/*.msix'
-          path: '$(Pipeline.Workspace)\releasePipeline\msix'
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: finalResults
+        patterns: '**/*.msix'
+        path: '$(Pipeline.Workspace)\releasePipeline\msix'
 
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
