@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get a value indicating whether to use the new API for StartInfo.
+        /// Gets a value indicating whether to use the new API for StartInfo.
         /// </summary>
         internal bool UseArgumentList
         {

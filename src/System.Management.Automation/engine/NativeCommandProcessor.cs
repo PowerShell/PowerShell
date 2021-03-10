@@ -1164,7 +1164,7 @@ namespace System.Management.Automation
             {
                 if (!NativeParameterBinderController.UseArgumentList)
                 {
-                    using (ParameterBinderBase.bindingTracer.TraceScope( "BIND argument [{0}]", NativeParameterBinderController.Arguments))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
                         startInfo.Arguments = NativeParameterBinderController.Arguments;
                     }
