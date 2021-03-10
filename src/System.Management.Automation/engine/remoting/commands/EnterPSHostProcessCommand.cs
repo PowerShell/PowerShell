@@ -771,7 +771,6 @@ namespace Microsoft.PowerShell.Commands
             private set;
         }
 
-#if !CORECLR
         /// <summary>
         /// Main window title of the process.
         /// </summary>
@@ -780,7 +779,6 @@ namespace Microsoft.PowerShell.Commands
             get;
             private set;
         }
-#endif
 
         #endregion
 
