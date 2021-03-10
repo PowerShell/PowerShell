@@ -1602,9 +1602,6 @@
         <Component Id="cmpEA40E9164309426C88C4388FDCA9559D">
           <File Id="fil205C9BE7027A408B985D96F5EEF11594" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Threading.Channels.dll" />
         </Component>
-        <Component Id="cmp34649490F5B04041A08E73D7A86D5A5A">
-          <File Id="fil2DDAEABD470A475E950B94AC186DAB2E" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Text.Encodings.Web.dll" />
-        </Component>
         <Component Id="cmpB3116053008E492C9B36C89BF682B8F7">
           <File Id="fil0D09CC7B4B8A43369D0207AC861D8D21" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Runtime.CompilerServices.Unsafe.dll" />
         </Component>
@@ -3057,11 +3054,11 @@
       <Component Id="cmp1EBDE676D79B4B0DB859B3F601D78513">
         <File Id="fil589A10D0D26C4D7F8479F40D11824D63" KeyPath="yes" Source="$(var.ProductSourcePath)\api-ms-win-core-console-l1-2-0.dll" />
       </Component>
-      <Component Id="cmp350AE5AC0C2448B59A2C8405A392F0B4">
-        <File Id="fil664CD92644714AE381E158D952344378" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.321.7212.dll" />
-      </Component>
       <Component Id="cmp1BE6E4D5997742FF974440017C5502EE">
         <File Id="fil77AD293FB24E4B1893A18FBC186AC67F" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Diagnostics.EventLog.Messages.dll" />
+      </Component>
+      <Component Id="cmp340A7AAB36EA4610A1BBCB688CA4B329">
+        <File Id="filDED6D1E744684BFB92FC337FB2DB0224" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.421.11614.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3600,7 +3597,6 @@
       <ComponentRef Id="cmp1719A38F3C30484BBA189D718AF00D3C" />
       <ComponentRef Id="cmp770700CA06564FB187D1CD2A79AA3DA8" />
       <ComponentRef Id="cmpEA40E9164309426C88C4388FDCA9559D" />
-      <ComponentRef Id="cmp34649490F5B04041A08E73D7A86D5A5A" />
       <ComponentRef Id="cmpB3116053008E492C9B36C89BF682B8F7" />
       <ComponentRef Id="cmp859A3876902946E7B5B4965F90664C5D" />
       <ComponentRef Id="cmpF1B0E6DCC3BD4797B206C879EF270062" />
@@ -4048,8 +4044,8 @@
       <ComponentRef Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" />
       <ComponentRef Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D" />
       <ComponentRef Id="cmp1EBDE676D79B4B0DB859B3F601D78513" />
-      <ComponentRef Id="cmp350AE5AC0C2448B59A2C8405A392F0B4" />
       <ComponentRef Id="cmp1BE6E4D5997742FF974440017C5502EE" />
+      <ComponentRef Id="cmp340A7AAB36EA4610A1BBCB688CA4B329" />
     </ComponentGroup>
   </Fragment>
 </Wix>
