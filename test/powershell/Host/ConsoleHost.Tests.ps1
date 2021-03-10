@@ -235,8 +235,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -BeExactly "h-llo"
         }
 
-        It "Empty command should fail" {
-            & $powershell -noprofile -c ''
+        It "Missing command should fail" {
+            & $powershell -noprofile -c
             $LASTEXITCODE | Should -Be 64
         }
 

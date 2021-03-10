@@ -83,7 +83,7 @@ namespace System.Management.Automation
                 if (parameter.ParameterNameSpecified)
                 {
                     Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
-                    PossiblyGlobArg(parameter.ParameterText, StringConstantType.BareWord);
+                    PossiblyGlobArg(parameter.ParameterText, parameter, StringConstantType.BareWord);
 
                     if (parameter.SpaceAfterParameter)
                     {
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                             stringConstantType = StringConstantType.DoubleQuoted;
                         }
 
-                        AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
+                        AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
                     }
                 }
             }
@@ -158,6 +158,28 @@ namespace System.Management.Automation
             {
                 return _argumentList.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Add an argument to the ArgumentList.
+        /// We may need to construct the argument out of the parameter text and the argument
+        /// in the case that we have a parameter that appears as "-switch:value".
+        /// </summary>
+        internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
+        {
+
+            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
+            {
+                if (argument != parameter.ParameterText)
+                {
+                    _argumentList.Add(parameter.ParameterText + argument);
+                }
+            }
+            else
+            {
+                _argumentList.Add(argument);
+            }
+
         }
 
         private List<string> _argumentList = new List<string>();
@@ -199,11 +221,12 @@ namespace System.Management.Automation
         /// each of which will be stringized.
         /// </summary>
         /// <param name="context">Execution context instance.</param>
+        /// <param name="parameter">The parameter we're looking at</param>
         /// <param name="obj">The object to append.</param>
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
         /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
         /// <param name="stringConstantType">Bare, SingleQuoted, or DoubleQuoted.</param>
-        private void AppendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, StringConstantType stringConstantType)
+        private void AppendOneNativeArgument(ExecutionContext context, CommandParameterInternal parameter, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, StringConstantType stringConstantType)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
@@ -272,12 +295,12 @@ namespace System.Management.Automation
                             if (stringConstantType == StringConstantType.DoubleQuoted)
                             {
                                 _arguments.Append(ResolvePath(arg, Context));
-                                _argumentList.Add(ResolvePath(arg, Context));
+                                AddToArgumentList(parameter, ResolvePath(arg, Context));
                             }
                             else
                             {
                                 _arguments.Append(arg);
-                                _argumentList.Add(arg);
+                                AddToArgumentList(parameter, arg);
                             }
 
                             // need to escape all trailing backslashes so the native command receives it correctly
@@ -296,14 +319,14 @@ namespace System.Management.Automation
                                 // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
                                 foreach (string element in argArrayAst.Extent.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries))
                                 {
-                                    PossiblyGlobArg(element, stringConstantType);
+                                    PossiblyGlobArg(element, parameter, stringConstantType);
                                 }
 
                                 break;
                             }
                             else
                             {
-                                PossiblyGlobArg(arg, stringConstantType);
+                                PossiblyGlobArg(arg, parameter, stringConstantType);
                             }
                         }
                     }
@@ -311,7 +334,7 @@ namespace System.Management.Automation
                 else if (UseArgumentList && currentObj != null)
                 {
                     // add empty strings to arglist, but not nulls
-                    _argumentList.Add(arg);
+                    AddToArgumentList(parameter, arg);
                 }
             }
             while (list != null);
@@ -322,8 +345,9 @@ namespace System.Management.Automation
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
+        /// <param name="parameter">The parameter we're looking at</param>
         /// <param name="stringConstantType">Bare, SingleQuoted, or DoubleQuoted.</param>
-        private void PossiblyGlobArg(string arg, StringConstantType stringConstantType)
+        private void PossiblyGlobArg(string arg, CommandParameterInternal parameter, StringConstantType stringConstantType)
         {
             var argExpanded = false;
 
@@ -363,7 +387,6 @@ namespace System.Management.Automation
                             foreach (var path in paths)
                             {
                                 _arguments.Append(sep);
-                                // _argumentList.Add(sep);
                                 sep = " ";
                                 var expandedPath = (path.BaseObject as FileSystemInfo).FullName;
                                 if (normalizePath)
@@ -377,12 +400,12 @@ namespace System.Management.Automation
                                     _arguments.Append('"');
                                     _arguments.Append(expandedPath);
                                     _arguments.Append('"');
-                                    _argumentList.Add(expandedPath);
+                                    AddToArgumentList(parameter, expandedPath);
                                 }
                                 else
                                 {
                                     _arguments.Append(expandedPath);
-                                    _argumentList.Add(expandedPath);
+                                    AddToArgumentList(parameter, expandedPath);
                                 }
 
                                 argExpanded = true;
@@ -399,14 +422,14 @@ namespace System.Management.Automation
                     if (string.Equals(arg, "~"))
                     {
                         _arguments.Append(home);
-                        _argumentList.Add(home);
+                        AddToArgumentList(parameter, home);
                         argExpanded = true;
                     }
                     else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                     {
                         var replacementString = home + arg.Substring(1);
                         _arguments.Append(replacementString);
-                        _argumentList.Add(replacementString);
+                        AddToArgumentList(parameter, replacementString);
                         argExpanded = true;
                     }
                 }
@@ -421,7 +444,7 @@ namespace System.Management.Automation
             if (!argExpanded)
             {
                 _arguments.Append(arg);
-                _argumentList.Add(arg);
+                AddToArgumentList(parameter, arg);
             }
         }
 
