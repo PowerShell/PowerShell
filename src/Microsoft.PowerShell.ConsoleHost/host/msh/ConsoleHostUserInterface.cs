@@ -60,9 +60,14 @@ namespace Microsoft.PowerShell
 
             _parent = parent;
             _rawui = new ConsoleHostRawUserInterface(this);
+            SupportsVirtualTerminal = TryTurnOnVtMode();
+            _isInteractiveTestToolListening = false;
+        }
 
+        internal bool TryTurnOnVtMode()
+        {
 #if UNIX
-            SupportsVirtualTerminal = true;
+            return true;
 #else
             try
             {
@@ -76,15 +81,16 @@ namespace Microsoft.PowerShell
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
                     m = ConsoleControl.GetMode(handle);
-                    this.SupportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                    return (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
                 }
             }
             catch
             {
+                // Do nothing if failed
             }
-#endif
 
-            _isInteractiveTestToolListening = false;
+            return false;
+#endif
         }
 
         /// <summary>
