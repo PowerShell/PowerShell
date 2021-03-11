@@ -1148,4 +1148,6 @@ InstallLocation
 PkgES
 Microsoft.PowerShell.Native
 rtm.20526.5
+ini
+package.json
 jcotton42
