@@ -4298,7 +4298,7 @@ param(
         }
         else {
             $pagerCommand = 'less'
-            $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+            $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
         }
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
@@ -4340,8 +4340,8 @@ param(
             if ($pagerArgs) {
                 # Supply pager arguments to an application without any PowerShell parsing of the arguments.
                 # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                $env:__PSPAGER_ARGS = $pagerArgs
-                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
+                # $env:__PSPAGER_ARGS = $pagerArgs
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
             }
             else {
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
