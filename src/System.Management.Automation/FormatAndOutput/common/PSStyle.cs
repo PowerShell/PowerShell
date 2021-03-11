@@ -292,7 +292,7 @@ namespace System.Management.Automation
             public ProgressView View { get; set; } = ProgressView.Minimal;
 
             /// <summary>
-            /// Gets or sets a value indicating whether to use OSC 9 4 to show indicator in terminal.
+            /// Gets or sets a value indicating whether to use Operating System Command (OSC) control sequences 'ESC ]9;4;' to show indicator in terminal.
             /// </summary>
             public bool UseOSCIndicator { get; set; } = false;
         }
