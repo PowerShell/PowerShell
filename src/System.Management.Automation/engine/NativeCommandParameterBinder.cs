@@ -164,10 +164,11 @@ namespace System.Management.Automation
         /// Add an argument to the ArgumentList.
         /// We may need to construct the argument out of the parameter text and the argument
         /// in the case that we have a parameter that appears as "-switch:value".
+        /// <param name="parameter">The parameter associated with the operation.</param>
+        /// <param name="argument">The value used with parameter.</param>
         /// </summary>
         internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
         {
-
             if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
             {
                 if (argument != parameter.ParameterText)
@@ -179,7 +180,6 @@ namespace System.Management.Automation
             {
                 _argumentList.Add(argument);
             }
-
         }
 
         private List<string> _argumentList = new List<string>();
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// each of which will be stringized.
         /// </summary>
         /// <param name="context">Execution context instance.</param>
-        /// <param name="parameter">The parameter we're looking at</param>
+        /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="obj">The object to append.</param>
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
         /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
-            Diagnostics.Assert((argArrayAst == null) || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count, "array argument and ArrayLiteralAst differ in number of elements");
+            Diagnostics.Assert((argArrayAst == null) || (obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count), "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
             string separator = string.Empty;
@@ -345,7 +345,7 @@ namespace System.Management.Automation
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
-        /// <param name="parameter">The parameter we're looking at</param>
+        /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="stringConstantType">Bare, SingleQuoted, or DoubleQuoted.</param>
         private void PossiblyGlobArg(string arg, CommandParameterInternal parameter, StringConstantType stringConstantType)
         {
