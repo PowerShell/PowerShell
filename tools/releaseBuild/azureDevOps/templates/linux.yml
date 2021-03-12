@@ -95,7 +95,7 @@ jobs:
       downloadType: specific
       itemPattern: '**/*.deb'
       downloadPath: '$(System.ArtifactsDirectory)\finished'
-    condition: and(eq(variables['buildName'], 'DEB'),succeeded())
+    condition: and(eq(variables['buildName'], 'DEB'), succeeded())
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download tar.gz Artifacts copy'
@@ -104,13 +104,44 @@ jobs:
       itemPattern: '**/*.tar.gz'
       downloadPath: '$(System.ArtifactsDirectory)\finished'
 
+  - powershell: |
+      Write-Host 'We handle the min-size package only when uploading for deb build.'
+      Write-Host '- For deb build, the min-size package is moved to a separate folder "finished\minSize",'
+      Write-Host '  so that the min-size package can be uploaded to a different Az Blob container.'
+      Write-Host '- For other builds, the min-size package is removed after being downloaded, so that it'
+      Write-Host '  does not get accidentally uploaded to the wrong Az Blob container.'
+
+      $minSizePkg = '$(System.ArtifactsDirectory)\finished\release\*-gc.tar.gz'
+      if (Test-Path -Path $minSizePkg)
+      {
+          if ('$(buildName)' -eq 'DEB')
+          {
+              $minSizeDir = '$(System.ArtifactsDirectory)\finished\minSize'
+              New-Item -Path $minSizeDir -Type Directory -Force > $null
+              Move-Item -Path $minSizePkg -Destination $minSizeDir
+
+              Write-Host "`nCapture the min-size package moved to the target folder."
+              Get-ChildItem -Path $minSizeDir
+          }
+          else
+          {
+              Write-Host '$(buildName): Remove the min-size package.'
+              Remove-Item -Path $minSizePkg -Force
+          }
+      }
+      else
+      {
+          Write-Host 'min-size package not found, so skip this step.'
+      }
+    displayName: 'Move minSize package to separate folder'
+
   - task: DownloadBuildArtifacts@0
     displayName: 'Download rpm Artifacts copy'
     inputs:
       downloadType: specific
       itemPattern: '**/*.rpm'
       downloadPath: '$(System.ArtifactsDirectory)\rpm'
-    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
+    condition: and(eq(variables['buildName'], 'RPM'), succeeded())
 
   - template: EsrpScan.yml@ComplianceRepo
     parameters:
@@ -144,6 +175,22 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
+
+  # requires windows
+  - task: AzureFileCopy@4
+    displayName: 'Upload to Azure - min-size package for Guest Config'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\finished\minSize\*'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-gc'
+    condition: and(eq(variables['buildName'], 'DEB'), succeeded())
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\finished\minSize
+      condition: and(eq(variables['buildName'], 'DEB'), succeeded())
 
   # requires windows
   - task: AzureFileCopy@4

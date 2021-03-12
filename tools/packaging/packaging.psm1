@@ -29,7 +29,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -47,7 +47,7 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ("zip" -eq $Type -or "fxdependent" -eq $Type -or "fxdependent-win-desktop" -eq $Type) {
+        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -105,8 +105,9 @@ function Start-PSPackage {
         $actualParams = @()
 
         $crossGenCorrect = $false
-        if ($Runtime -match "arm") {
-            # crossgen doesn't support arm32/64
+        if ($Runtime -match "arm" -or $Type -eq 'min-size') {
+            ## crossgen doesn't support arm32/64;
+            ## For the min-size package, we intentionally avoid crossgen.
             $crossGenCorrect = $true
         }
         elseif ($Script:Options.CrossGen) {
@@ -299,7 +300,37 @@ function Start-PSPackage {
                     New-PdbZipPackage @Arguments
                 }
             }
+            "min-size" {
+                # Remove symbol files, xml document files.
+                Remove-Item "$Source\*.pdb", "$Source\*.xml" -Force
 
+                # Add suffix '-gc' because this package is for the Guest Config team.
+                if ($Environment.IsWindows) {
+                    $Arguments = @{
+                        PackageNameSuffix = "$NameSuffix-gc"
+                        PackageSourcePath = $Source
+                        PackageVersion = $Version
+                        Force = $Force
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                        New-ZipPackage @Arguments
+                    }
+                }
+                elseif ($Environment.IsLinux) {
+                    $Arguments = @{
+                        PackageSourcePath = $Source
+                        Name = $Name
+                        PackageNameSuffix = 'gc'
+                        Version = $Version
+                        Force = $Force
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                        New-TarballPackage @Arguments
+                    }
+                }
+            }
             { $_ -like "fxdependent*" } {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
@@ -317,7 +348,7 @@ function Start-PSPackage {
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
                         New-ZipPackage @Arguments
                     }
-                } elseif ($IsLinux) {
+                } elseif ($Environment.IsLinux) {
                     $Arguments = @{
                         PackageSourcePath = $Source
                         Name = $Name

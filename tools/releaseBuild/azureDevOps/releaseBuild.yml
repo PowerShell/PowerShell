@@ -78,6 +78,11 @@ stages:
 
       - template: templates/windows-hosted-build.yml
         parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+
+      - template: templates/windows-hosted-build.yml
+        parameters:
           Architecture: x86
 
       - template: templates/windows-hosted-build.yml
@@ -99,42 +104,49 @@ stages:
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: x64
-          parentJob: build_windows_x64
+          parentJob: build_windows_x64_release
+
+      - template: templates/windows-packaging.yml
+        parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+          parentJob: build_windows_x64_minSize
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: x86
-          parentJob: build_windows_x86
+          parentJob: build_windows_x86_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: arm
-          parentJob: build_windows_arm
+          parentJob: build_windows_arm_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: arm64
-          parentJob: build_windows_arm64
+          parentJob: build_windows_arm64_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: fxdependent
-          parentJob: build_windows_fxdependent
+          parentJob: build_windows_fxdependent_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: fxdependentWinDesktop
-          parentJob: build_windows_fxdependentWinDesktop
+          parentJob: build_windows_fxdependentWinDesktop_release
 
       - template: templates/windows-package-signing.yml
         parameters:
           parentJobs:
-            - sign_windows_x64
-            - sign_windows_x86
-            - sign_windows_arm
-            - sign_windows_arm64
-            - sign_windows_fxdependent
-            - sign_windows_fxdependentWinDesktop
+            - sign_windows_x64_release
+            - sign_windows_x64_minSize
+            - sign_windows_x86_release
+            - sign_windows_arm_release
+            - sign_windows_arm64_release
+            - sign_windows_fxdependent_release
+            - sign_windows_fxdependentWinDesktop_release
 
   - stage: compliance
     dependsOn: ['windows']

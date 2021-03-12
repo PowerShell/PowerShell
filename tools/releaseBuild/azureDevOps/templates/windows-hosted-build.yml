@@ -9,8 +9,8 @@ parameters:
     default: ''
 
 jobs:
-- job: build_windows_${{ parameters.Architecture }}
-  displayName: Build Windows - ${{ parameters.Architecture }}
+- job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Build Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
@@ -56,8 +56,13 @@ jobs:
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
         }
 
-      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols
-    displayName: 'Build Windows Universal - $(Architecture) Symbols zip'
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
+      }
+
+      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
+    displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
 
   - powershell: |
       $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName

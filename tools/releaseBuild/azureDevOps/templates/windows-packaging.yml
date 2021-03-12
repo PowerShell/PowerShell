@@ -9,8 +9,8 @@ parameters:
     default: ''
 
 jobs:
-- job: sign_windows_${{ parameters.Architecture }}
-  displayName: Package Windows - ${{ parameters.Architecture }}
+- job: sign_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Package Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
@@ -40,12 +40,8 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
-      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) {
-        "arm32"
-      }
-      else {
-        '$(Architecture)'
-      }
+      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) { "arm32" } else { '$(Architecture)' }
+      if ($env:BuildConfiguration -eq 'minSize') { $pkgFilter += '-*' }
 
       $vstsCommandString = "vso[task.setvariable variable=PkgFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)
@@ -249,10 +245,14 @@ jobs:
         }
 
       $signedPkg = "$(BuildPackagePath)"
-
       Write-Verbose -Verbose -Message "signedPkg = $signedPkg"
 
-      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)'
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
+      }
+
+      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @params
     displayName: 'Build Windows Universal - $(Architecture) Package'
 
   - powershell: |
