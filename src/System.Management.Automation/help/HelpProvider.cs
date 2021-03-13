@@ -226,8 +226,7 @@ namespace System.Management.Automation
             string shellID = this.HelpSystem.ExecutionContext.ShellID;
             // Beginning in PowerShell 6.0.0.12, the $pshome is no longer registry specified, we search the application base instead.
             // We use executing assemblies location in case registry entry not found
-            return Utils.GetApplicationBase(shellID)
-                ?? Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
+            return Utils.GetApplicationBase(shellID) ?? Path.GetDirectoryName(Environment.ProcessPath);
         }
 
         /// <summary>

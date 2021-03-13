@@ -3365,8 +3365,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             // If we can't access the Environment.CurrentDirectory, we may be in an AppContainer. Set the
                             // default drive to $pshome
-                            System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-                            string defaultPath = System.IO.Path.GetDirectoryName(PsUtils.GetMainModule(currentProcess).FileName);
+                            string defaultPath = System.IO.Path.GetDirectoryName(Environment.ProcessPath);
                             context.EngineSessionState.SetLocation(defaultPath, providerContext);
                         }
                     }

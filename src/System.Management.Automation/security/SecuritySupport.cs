@@ -1352,7 +1352,7 @@ namespace System.Management.Automation
                 try
                 {
                     var processModule = PsUtils.GetMainModule(currentProcess);
-                    hostname = string.Concat("PowerShell_", processModule.FileName, "_",
+                    hostname = string.Concat("PowerShell_", Environment.ProcessPath, "_",
                         processModule.FileVersionInfo.ProductVersion);
                 }
                 catch (ComponentModel.Win32Exception)
