@@ -248,7 +248,7 @@ namespace System.Management.Automation.Internal
                 while (currentProcess != null)
                 {
                     if (string.Equals(gpScriptPath,
-                            PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
+                            currentProcess.MainModule.FileName, StringComparison.OrdinalIgnoreCase))
                     {
                         foundGpScriptParent = true;
                         break;
@@ -1351,9 +1351,8 @@ namespace System.Management.Automation
                 string hostname;
                 try
                 {
-                    var processModule = PsUtils.GetMainModule(currentProcess);
                     hostname = string.Concat("PowerShell_", Environment.ProcessPath, "_",
-                        processModule.FileVersionInfo.ProductVersion);
+                        currentProcess.MainModule.FileVersionInfo.ProductVersion);
                 }
                 catch (ComponentModel.Win32Exception)
                 {
