@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (exception.HResult == 299)
                             {
-                                WriteObject(process.MainModule.FileVersionInfo, true);
+                                WriteObject(process.MainModule?.FileVersionInfo, true);
                             }
                             else
                             {
