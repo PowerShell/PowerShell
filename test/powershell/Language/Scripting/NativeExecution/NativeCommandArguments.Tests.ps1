@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
+param()
 Describe "Will error correctly if an attempt to set variable to improper value" {
     It "will error when setting variable incorrectly" {
         if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled ) {
