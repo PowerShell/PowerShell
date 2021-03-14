@@ -164,9 +164,9 @@ namespace System.Management.Automation
         /// Add an argument to the ArgumentList.
         /// We may need to construct the argument out of the parameter text and the argument
         /// in the case that we have a parameter that appears as "-switch:value".
+        /// </summary>
         /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="argument">The value used with parameter.</param>
-        /// </summary>
         internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
         {
             if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
