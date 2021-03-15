@@ -183,7 +183,9 @@ namespace Microsoft.PowerShell
             // WLDP and Applocker takes priority over powershell exeuction policy.
             // See if they want to bypass the authorization manager
             if (_executionPolicy == ExecutionPolicy.Bypass)
+            {
                 return true;
+            }
 
             if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
