@@ -3063,8 +3063,11 @@
       <Component Id="cmp2BB002B115C247FFB3353C80CAAC10B3">
         <File Id="filF1771BA6F8A140FFB77E7558D035A0F2" KeyPath="yes" Source="$(var.ProductSourcePath)\System.IO.Compression.Native.dll" />
       </Component>
-      <Component Id="cmpD9AA61B3F5F44A7B99E535A712E8310D">
-        <File Id="fil16547FB6A5EC4C6791FFFF5D561F2D31" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.10212.dll" />
+      <Component Id="cmp3547A55EA9D04784B4CF2FC717447E16">
+        <File Id="fil463DDA419769417A8D5A34C433E194F2" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Speech.dll" />
+      </Component>
+      <Component Id="cmp5FDF8631A090425A90B27344B4C2A62A">
+        <File Id="fil97828F3C973A46BDB0EF08D17F630D73" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.15406.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4053,7 +4056,8 @@
       <ComponentRef Id="cmp834F3E0C83664E92B0D115A39A8FAACB" />
       <ComponentRef Id="cmp2BB002B115C247FFB3353C80CAAC10B3" />
       <ComponentRef Id="cmp68158D010ECB439582D041355BFACCBB" />
-      <ComponentRef Id="cmpD9AA61B3F5F44A7B99E535A712E8310D" />
+      <ComponentRef Id="cmp3547A55EA9D04784B4CF2FC717447E16" />
+      <ComponentRef Id="cmp5FDF8631A090425A90B27344B4C2A62A" />
     </ComponentGroup>
   </Fragment>
 </Wix>

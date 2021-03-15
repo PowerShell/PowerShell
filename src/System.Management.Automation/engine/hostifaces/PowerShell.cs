@@ -5316,7 +5316,7 @@ namespace System.Management.Automation
         private RemoteRunspacePoolInternal GetRemoteRunspacePoolInternal()
         {
             RunspacePool runspacePool = _rsConnection as RunspacePool;
-            return (runspacePool != null) ? (runspacePool.RemoteRunspacePoolInternal) : null;
+            return runspacePool?.RemoteRunspacePoolInternal;
         }
 
         #endregion
