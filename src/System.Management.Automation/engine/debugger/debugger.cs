@@ -971,6 +971,7 @@ namespace System.Management.Automation
             _context = context;
             _inBreakpoint = false;
             _idToBreakpoint = new ConcurrentDictionary<int, Breakpoint>();
+            // The string key is function context file path. The int key is sequencePoint index.
             _pendingBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>>();
             _boundBreakpoints = new ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>>(StringComparer.OrdinalIgnoreCase);
             _commandBreakpoints = new ConcurrentDictionary<int, CommandBreakpoint>();
@@ -1319,12 +1320,9 @@ namespace System.Management.Automation
                     return;
                 }
 
-                if (_pendingBreakpoints.TryGetValue(functionContext._file, out var dictionary))
+                if (_pendingBreakpoints.TryGetValue(functionContext._file, out var dictionary) && !dictionary.IsEmpty)
                 {
-                    if (!dictionary.IsEmpty)
-                    {
-                        SetPendingBreakpoints(functionContext);
-                    }
+                    SetPendingBreakpoints(functionContext);
                 }
             }
         }
@@ -1562,19 +1560,23 @@ namespace System.Management.Automation
             {
                 if (functionContext._breakPoints[functionContext._currentSequencePointIndex])
                 {
-                    if (functionContext._boundBreakpoints.TryGetValue(functionContext._currentSequencePointIndex, out var bps))
+                    if (functionContext._boundBreakpoints.TryGetValue(functionContext._currentSequencePointIndex, out var sequencePointBreakpoints))
                     {
-                        var breakpoints = (from breakpoint in bps
-                                        where
-                                            breakpoint.Enabled
-                                        select breakpoint).ToList<Breakpoint>();
-
-                        if (breakpoints.Count > 0)
+                        var enabledBreakpoints = new List<Breakpoint>();
+                        foreach (Breakpoint breakpoint in sequencePointBreakpoints)
                         {
-                            breakpoints = TriggerBreakpoints(breakpoints);
-                            if (breakpoints.Count > 0)
+                            if (breakpoint.Enabled)
                             {
-                                StopOnSequencePoint(functionContext, breakpoints);
+                                enabledBreakpoints.Add(breakpoint);
+                            }
+                        }
+
+                        if (enabledBreakpoints.Count > 0)
+                        {
+                            enabledBreakpoints = TriggerBreakpoints(enabledBreakpoints);
+                            if (enabledBreakpoints.Count > 0)
+                            {
+                                StopOnSequencePoint(functionContext, enabledBreakpoints);
                             }
                         }
                     }
