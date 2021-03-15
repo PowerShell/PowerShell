@@ -140,10 +140,6 @@ namespace Microsoft.PowerShell
             // Get the execution policy
             _executionPolicy = SecuritySupport.GetExecutionPolicy(_shellId);
 
-            // See if they want to bypass the authorization manager
-            if (_executionPolicy == ExecutionPolicy.Bypass)
-                return true;
-
             // Always check the SAFER APIs if code integrity isn't being handled system-wide through
             // WLDP or AppLocker. In those cases, the scripts will be run in ConstrainedLanguage.
             // Otherwise, block.
@@ -183,6 +179,11 @@ namespace Microsoft.PowerShell
                     return false;
                 }
             }
+
+            // WLDP and Applocker takes priority over powershell exeuction policy.
+            // See if they want to bypass the authorization manager
+            if (executionPolicy == ExecutionPolicy.Bypass)
+                return true;
 
             if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
