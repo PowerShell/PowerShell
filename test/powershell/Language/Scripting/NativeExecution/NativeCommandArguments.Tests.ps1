@@ -24,8 +24,8 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
         # to the testexe native command and looking at how it got the arguments.
         It "Should handle quoted spaces correctly (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $a = 'a"b c"d'
-            $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
-            $lines.Count | Should -Be 3
+            $lines = testexe -echoargs $a 'a"b c"d' a"b c"d "a'b c'd"
+            $lines.Count | Should -Be 4
             if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled -and $PSNativeCommandArgumentPassing -ne "Legacy" ) {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
@@ -35,6 +35,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
                 $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
             }
             $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
+            $lines[3] | Should -BeExactly 'Arg 3 is <a''b c''d>'
         }
 
         # In order to pass '"' characters so they are actually part of command line

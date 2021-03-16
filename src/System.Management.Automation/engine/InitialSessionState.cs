@@ -4577,12 +4577,6 @@ end {
                 ScopedItemOptions.None),
             // End: Variables which control remoting behavior
 
-            new SessionStateVariableEntry(
-                SpecialVariables.PSSessionApplicationName,
-                "wsman",
-                RemotingErrorIdStrings.PSSessionAppName,
-                ScopedItemOptions.None),
-
             #region Platform
             new SessionStateVariableEntry(
                 SpecialVariables.IsLinux,
