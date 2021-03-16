@@ -14,6 +14,14 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.BuildLabel | Should -Be "BLD.a1-xxx.03"
             $v.ToString() | Should -Be "1.2.3-Alpha-super.3+BLD.a1-xxx.03"
 
+            $v = [SemanticVersion]::new("0.1.23+Branch.main.Sha.05f7624c8c48ef6fa1da9e11601dec4584333e56")
+            $v.Major | Should -Be 0
+            $v.Minor | Should -Be 1
+            $v.Patch | Should -Be 23
+            $v.PreReleaseLabel | Should -BeNullOrEmpty
+            $v.BuildLabel | Should -Be "Branch.main.Sha.05f7624c8c48ef6fa1da9e11601dec4584333e56"
+            $v.ToString() | Should -Be "0.1.23+Branch.main.Sha.05f7624c8c48ef6fa1da9e11601dec4584333e56"
+
             $v = [SemanticVersion]::new("1.0.0")
             $v.Major | Should -Be 1
             $v.Minor | Should -Be 0
@@ -188,7 +196,6 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.+alpha" }
             @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0-alpha+" }
             @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0-+" }
-            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0+-" }
             @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0+" }
             @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0-" }
             @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0." }

@@ -426,9 +426,13 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
-        private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
-        private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
-        private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*$";
+        // This is the offical semver 2.0 regex string with capture
+        // groups. The 'P' at the start of each capture group needed
+        // to be remove to work with the dotnet regex engine.
+        // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+        private const string SemVer2RegEx = @"^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
+        private const string SingleDigitRegEx = @"^\d+$";
+        private const string DoubleDigitRegEx = @"^\d+.\d+$";
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
@@ -467,18 +471,41 @@ namespace System.Management.Automation
         public SemanticVersion(int major, int minor, int patch, string preReleaseLabel, string buildLabel)
             : this(major, minor, patch)
         {
-            if (!string.IsNullOrEmpty(preReleaseLabel))
+            if (string.IsNullOrEmpty(preReleaseLabel) && string.IsNullOrEmpty(buildLabel))
             {
-                if (!Regex.IsMatch(preReleaseLabel, LabelUnitRegEx)) throw new FormatException(nameof(preReleaseLabel));
-
-                PreReleaseLabel = preReleaseLabel;
+                return;
             }
 
+            var sb = new StringBuilder();
+            sb.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
+
+            if (!string.IsNullOrEmpty(preReleaseLabel))
+            {
+                sb.Append('-').Append(preReleaseLabel);
+            }
             if (!string.IsNullOrEmpty(buildLabel))
             {
-                if (!Regex.IsMatch(buildLabel, LabelUnitRegEx)) throw new FormatException(nameof(buildLabel));
+                sb.Append('+').Append(buildLabel);
+            }
 
+            var r = Regex.Match(sb.ToString(), SemVer2RegEx);
+
+            if (r.Success)
+            {
+                PreReleaseLabel = preReleaseLabel;
                 BuildLabel = buildLabel;
+            }
+            else
+            {
+                if (!r.Groups["prerelease"].Success && !string.IsNullOrEmpty(preReleaseLabel))
+                {
+                    throw new FormatException(nameof(preReleaseLabel));
+                }
+
+                if (!r.Groups["buildmetadata"].Success && !string.IsNullOrEmpty(buildLabel))
+                {
+                    throw new FormatException(nameof(buildLabel));
+                }
             }
         }
 
@@ -501,11 +528,12 @@ namespace System.Management.Automation
             // 2) 'label' starts with letter or digit.
             if (!string.IsNullOrEmpty(label))
             {
-                var match = Regex.Match(label, LabelRegEx);
+                var testString = $"{major}.{minor}.{patch}-{label}";
+                var match = Regex.Match(testString, SemVer2RegEx);
                 if (!match.Success) throw new FormatException(nameof(label));
 
-                PreReleaseLabel = match.Groups["preLabel"].Value;
-                BuildLabel = match.Groups["buildLabel"].Value;
+                PreReleaseLabel = match.Groups["prerelease"].Value;
+                BuildLabel = match.Groups["buildmetadata"].Value;
             }
         }
 
@@ -656,7 +684,7 @@ namespace System.Management.Automation
             if (version == string.Empty) throw new FormatException(nameof(version));
 
             var r = new VersionResult();
-            r.Init(true);
+            r.Init(canThrow: true);
             TryParseVersion(version, ref r);
 
             return r._parsedVersion;
@@ -673,7 +701,7 @@ namespace System.Management.Automation
             if (version != null)
             {
                 var r = new VersionResult();
-                r.Init(false);
+                r.Init(canThrow: false);
 
                 if (TryParseVersion(version, ref r))
                 {
@@ -688,73 +716,28 @@ namespace System.Management.Automation
 
         private static bool TryParseVersion(string version, ref VersionResult result)
         {
-            if (version.EndsWith('-') || version.EndsWith('+') || version.EndsWith('.'))
-            {
-                result.SetFailure(ParseFailureKind.FormatException);
-                return false;
-            }
-
-            string versionSansLabel = null;
             var major = 0;
             var minor = 0;
             var patch = 0;
             string preLabel = null;
             string buildLabel = null;
 
-            // We parse the SymVer 'version' string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
-            var dashIndex = version.IndexOf('-');
-            var plusIndex = version.IndexOf('+');
-
-            if (dashIndex > plusIndex)
+            // This is to cover use cases like "1" or "1.0", which while not valid
+            // semver 2.0, are desirable for allowing such actions like the line below
+            // $psversiontable.psversion -gt "3.0"
+            // https://github.com/PowerShell/PowerShell/pull/3696
+            if (Regex.IsMatch(version, SingleDigitRegEx))
             {
-                // 'PreReleaseLabel' can contains dashes.
-                if (plusIndex == -1)
-                {
-                    // No buildLabel: buildLabel == null
-                    // Format is 'major.minor.patch-PreReleaseLabel'
-                    preLabel = version.Substring(dashIndex + 1);
-                    versionSansLabel = version.Substring(0, dashIndex);
-                }
-                else
-                {
-                    // No PreReleaseLabel: preLabel == null
-                    // Format is 'major.minor.patch+BuildLabel'
-                    buildLabel = version.Substring(plusIndex + 1);
-                    versionSansLabel = version.Substring(0, plusIndex);
-                    dashIndex = -1;
-                }
-            }
-            else
-            {
-                if (dashIndex == -1)
-                {
-                    // Here dashIndex == plusIndex == -1
-                    // No preLabel - preLabel == null;
-                    // No buildLabel - buildLabel == null;
-                    // Format is 'major.minor.patch'
-                    versionSansLabel = version;
-                }
-                else
-                {
-                    // Format is 'major.minor.patch-PreReleaseLabel+BuildLabel'
-                    preLabel = version.Substring(dashIndex + 1, plusIndex - dashIndex - 1);
-                    buildLabel = version.Substring(plusIndex + 1);
-                    versionSansLabel = version.Substring(0, dashIndex);
-                }
+                version = $"{version}.0.0";
             }
 
-            if ((dashIndex != -1 && string.IsNullOrEmpty(preLabel)) ||
-                (plusIndex != -1 && string.IsNullOrEmpty(buildLabel)) ||
-                string.IsNullOrEmpty(versionSansLabel))
+            if (Regex.IsMatch(version, DoubleDigitRegEx))
             {
-                // We have dash and no preReleaseLabel  or
-                // we have plus and no buildLabel or
-                // we have no main version part (versionSansLabel==null)
-                result.SetFailure(ParseFailureKind.FormatException);
-                return false;
+                version = $"{version}.0";
             }
 
-            var match = Regex.Match(versionSansLabel, VersionSansRegEx);
+            var match = Regex.Match(version, SemVer2RegEx);
+
             if (!match.Success)
             {
                 result.SetFailure(ParseFailureKind.FormatException);
@@ -779,11 +762,14 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (preLabel != null && !Regex.IsMatch(preLabel, LabelUnitRegEx) ||
-               (buildLabel != null && !Regex.IsMatch(buildLabel, LabelUnitRegEx)))
+            if (match.Groups["prerelease"].Success)
             {
-                result.SetFailure(ParseFailureKind.FormatException);
-                return false;
+                preLabel = match.Groups["prerelease"].Value;
+            }
+
+            if (match.Groups["buildmetadata"].Success)
+            {
+                buildLabel = match.Groups["buildmetadata"].Value;
             }
 
             result._parsedVersion = new SemanticVersion(major, minor, patch, preLabel, buildLabel);
