@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         internal Process[] AllProcesses => _allProcesses ??= Process.GetProcesses();
 
-        private Process[] _allProcesses = null;
+        private Process[] _allProcesses;
 
         /// <summary>
         /// Add <paramref name="process"/> to <see cref="_matchingProcesses"/>,
