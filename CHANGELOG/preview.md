@@ -1,5 +1,88 @@
 # Current preview release
 
+## [7.2.0-preview.4] - 2021-03-16
+
+### Breaking Changes
+
+- Fix `Get-Date -UFormat` `%G` and `%g` behavior (#14555) (Thanks @brianary!)
+
+### Engine Updates and Fixes
+
+- Update engine script signature validation to match `Get-AuthenticodeSignature` logic (#14849)
+- Avoid array allocations from `GetDirectories` and `GetFiles` (#14327) (Thanks @xtqqczze!)
+
+### General Cmdlet Updates and Fixes
+
+- Add `UseOSCIndicator` setting to enable progress indicator in terminal (#14927)
+- Re-enable VT mode on Windows after running command in `ConsoleHost` (#14413)
+- Fix `Move-Item` for `FileSystemProvider` to use copy-delete instead of move for DFS paths (#14913)
+- Fix `PromptForCredential()` to add `targetName` as domain (#14504)
+- Update `Concise` `ErrorView` to not show line information for errors from script module functions (#14912)
+- Remove the 32,767 character limit on the environment block for `Start-Process` (#14111) (Thanks @hbuckle!)
+- Don't write possible secrets to verbose stream for web cmdlets (#14788)
+
+### Tools
+
+- Update `dependabot` configuration to V2 format (#14882)
+- Add tooling issue slots in PR template (#14697)
+
+### Tests
+
+- Move misplaced test file to tests directory (#14908) (Thanks @MarianoAlipi!)
+- Refactor MSI CI (#14753)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+Update .NET to version <code>6.0.100-preview.2.21155.3</code>
+</summary>
+
+<ul>
+<li>Update .NET to version <code>6.0.100-preview.2.21155.3</code> (#15007)</li>
+<li>Bump <code>Microsoft.PowerShell.Native</code> to <code>7.2.0-preview.1</code> (#15030)</li>
+<li>Create MSIX Bundle package in release pipeline (#14982)</li>
+<li>Build self-contained minimal size package for Guest Config team (#14976)</li>
+<li>Bump XunitXml.TestLogger from 3.0.62 to 3.0.66 (#14993) (Thanks @dependabot[bot]!)</li>
+<li>Enable building PowerShell for Apple M1 runtime (#14923)</li>
+<li>Fix the variable name in the condition for miscellaneous analysis CI (#14975)</li>
+<li>Fix the variable usage in CI yaml (#14974)</li>
+<li>Disable running markdown link verification in release build CI (#14971)</li>
+<li>Bump Microsoft.CodeAnalysis.CSharp from 3.9.0-3.final to 3.9.0 (#14934) (Thanks @dependabot[bot]!)</li>
+<li>Declare which variable group is used for checking the blob in the release build (#14970)</li>
+<li>Update metadata and script to enable consuming .NET daily builds (#14940)</li>
+<li>Bump NJsonSchema from 10.3.9 to 10.3.10 (#14933) (Thanks @dependabot[bot]!)</li>
+<li>Use template that disables component governance for CI (#14938)</li>
+<li>Add suppress for nuget multi-feed warning (#14893)</li>
+<li>Bump NJsonSchema from 10.3.8 to 10.3.9 (#14926) (Thanks @dependabot[bot]!)</li>
+<li>Add exe wrapper to release (#14881)</li>
+<li>Bump Microsoft.ApplicationInsights from 2.16.0 to 2.17.0 (#14847)</li>
+<li>Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1 (#14895) (Thanks @dependabot[bot]!)</li>
+<li>Bump NJsonSchema from 10.3.7 to 10.3.8 (#14896) (Thanks @dependabot[bot]!)</li>
+<li>Disable codesign validation where the file type is not supported (#14885)</li>
+<li>Fixing broken Experimental Feature list in <code>powershell.config.json</code> (#14858)</li>
+<li>Bump NJsonSchema from 10.3.6 to 10.3.7 (#14855)</li>
+<li>Add exe wrapper for Microsoft Update scenarios (#14737)</li>
+<li>Install wget on <code>CentOS</code> 7 docker image (#14857)</li>
+<li>Fix install-dotnet download (#14856)</li>
+<li>Fix Bootstrap step in Windows daily test runs (#14820)</li>
+<li>Bump NJsonSchema from 10.3.5 to 10.3.6 (#14818)</li>
+<li>Bump <code>NJsonSchema</code> from <code>10.3.4</code> to <code>10.3.5</code> (#14807)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README.md` and `metadata.json` for upcoming releases (#14755)
+- Merge 7.1.3 and 7.0.6 Change log to master (#15009)
+- Update `README` and `metadata.json` for releases (#14997)
+- Update ChangeLog for `v7.1.2` release (#14783)
+- Update ChangeLog for `v7.0.5` release (#14782) (Internal 14479)
+
+[7.2.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.3...v7.2.0-preview.4
+
 ## [7.2.0-preview.3] - 2021-02-11
 
 ### Breaking Changes
