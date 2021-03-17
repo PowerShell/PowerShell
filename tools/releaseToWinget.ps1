@@ -109,7 +109,6 @@ Installers:
 # Get the path to this script in the PS repo so we can put a link in the PR body
 $scriptPath = $MyInvocation.MyCommand.Source
 
-
 Push-Location $wingetPath
 try
 {
