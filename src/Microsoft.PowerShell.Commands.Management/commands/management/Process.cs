@@ -274,13 +274,7 @@ namespace Microsoft.PowerShell.Commands
         /// but it is reasonable to expect that SecurityException is
         /// among them.  Errors here will terminate the cmdlet.
         /// </exception>
-        internal Process[] AllProcesses
-        {
-            get
-            {
-                return _allProcesses ??= Process.GetProcesses();
-            }
-        }
+        internal Process[] AllProcesses => _allProcesses ??= Process.GetProcesses();
 
         private Process[] _allProcesses = null;
 
