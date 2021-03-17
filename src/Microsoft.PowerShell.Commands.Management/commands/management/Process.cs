@@ -278,14 +278,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_allProcesses == null)
-                {
-                    List<Process> processes = new();
-                    processes.AddRange(Process.GetProcesses());
-                    _allProcesses = processes.ToArray();
-                }
-
-                return _allProcesses;
+                return _allProcesses ??= Process.GetProcesses();
             }
         }
 
