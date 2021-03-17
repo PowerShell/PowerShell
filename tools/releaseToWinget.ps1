@@ -68,8 +68,9 @@ $ErrorActionPreference = 'Stop'
 
 $wingetPath = (Resolve-Path $WingetRepoPath).Path
 
-# Ensure we have PowerShellForGitHub installed
+# Ensure we have git and PowerShellForGitHub installed
 Import-Module -Name PowerShellForGitHub
+$null = Get-Command git
 
 # Get the MSI hash from the release body
 $msiName = "PowerShell-$ReleaseVersion-win-x64.msi"
