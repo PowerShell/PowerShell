@@ -240,6 +240,11 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $LASTEXITCODE | Should -Be 64
         }
 
+        It "Empty space command should succeed" {
+            & $powershell -noprofile -c '' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
+        }
+
         It "Whitespace command should succeed" {
             & $powershell -noprofile -c ' ' | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0

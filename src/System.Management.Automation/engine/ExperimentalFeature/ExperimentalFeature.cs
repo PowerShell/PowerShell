@@ -22,6 +22,7 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
+        internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
 
         #endregion
 
@@ -137,7 +138,7 @@ namespace System.Management.Automation
                     name: PSAnsiProgressFeatureName,
                     description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
                 new ExperimentalFeature(
-                    name: "PSNativeCommandArgumentPassing",
+                    name: PSNativeCommandArgumentPassingFeatureName,
                     description: "Use ArgumentList when invoking a native command"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
