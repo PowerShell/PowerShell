@@ -802,54 +802,22 @@ namespace System.Management.Automation.Language
                               NamedBlockAst processBlock,
                               NamedBlockAst endBlock,
                               NamedBlockAst dynamicParamBlock)
-            : base(extent)
+            : this(
+                extent,
+                usingStatements,
+                attributes,
+                paramBlock,
+                beginBlock,
+                processBlock,
+                endBlock,
+                cleanupBlock: null,
+                dynamicParamBlock)
         {
-            SetUsingStatements(usingStatements);
-
-            if (attributes != null)
-            {
-                this.Attributes = new ReadOnlyCollection<AttributeAst>(attributes.ToArray());
-                SetParents(Attributes);
-            }
-            else
-            {
-                this.Attributes = s_emptyAttributeList;
-            }
-
-            if (paramBlock != null)
-            {
-                this.ParamBlock = paramBlock;
-                SetParent(paramBlock);
-            }
-
-            if (beginBlock != null)
-            {
-                this.BeginBlock = beginBlock;
-                SetParent(beginBlock);
-            }
-
-            if (processBlock != null)
-            {
-                this.ProcessBlock = processBlock;
-                SetParent(processBlock);
-            }
-
-            if (endBlock != null)
-            {
-                this.EndBlock = endBlock;
-                SetParent(endBlock);
-            }
-
-            if (dynamicParamBlock != null)
-            {
-                this.DynamicParamBlock = dynamicParamBlock;
-                SetParent(dynamicParamBlock);
-            }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
-        /// This construction uses explicitly named begin/process/end/dispose blocks.
+        /// This construction uses explicitly named begin/process/end/cleanup blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
         /// <param name="usingStatements">The list of using statments, may be null.</param>
@@ -1236,7 +1204,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Gets the ast representing the dispose block for a script block, or null if no dispose block was specified.
         /// </summary>
-        public NamedBlockAst CleanupBlock { get; private set; }
+        public NamedBlockAst CleanupBlock { get; }
 
         /// <summary>
         /// The ast representing the dynamicparam block for a script block, or null if no dynamicparam block was specified.
@@ -1497,37 +1465,53 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (!ShouldContinueAfterVisit(visitor, ParamBlock, ref action))
+            if (action == AstVisitAction.Continue)
             {
-                return visitor.CheckForPostAction(this, action);
+                VisitAll();
             }
 
-            if (!ShouldContinueAfterVisit(visitor, DynamicParamBlock, ref action))
-            {
-                return visitor.CheckForPostAction(this, action);
-            }
-
-            if (!ShouldContinueAfterVisit(visitor, BeginBlock, ref action))
-            {
-                return visitor.CheckForPostAction(this, action);
-            }
-
-            if (!ShouldContinueAfterVisit(visitor, ProcessBlock, ref action))
-            {
-                return visitor.CheckForPostAction(this, action);
-            }
-
-            if (!ShouldContinueAfterVisit(visitor, EndBlock, ref action))
-            {
-                return visitor.CheckForPostAction(this, action);
-            }
-
-            ShouldContinueAfterVisit(visitor, CleanupBlock, ref action);
             return visitor.CheckForPostAction(this, action);
-        }
 
-        internal static bool ShouldContinueAfterVisit(AstVisitor visitor, Ast ast, ref AstVisitAction action)
-            => ast == null || (action = ast.InternalVisit(visitor)) == AstVisitAction.Continue;
+            void VisitAll()
+            {
+                if (!VisitHelper(ParamBlock))
+                {
+                    return;
+                }
+
+                if (!VisitHelper(DynamicParamBlock))
+                {
+                    return;
+                }
+
+                if (!VisitHelper(BeginBlock))
+                {
+                    return;
+                }
+
+                if (!VisitHelper(ProcessBlock))
+                {
+                    return;
+                }
+
+                if (!VisitHelper(EndBlock))
+                {
+                    return;
+                }
+
+                VisitHelper(CleanupBlock);
+            }
+
+            bool VisitHelper(Ast ast)
+            {
+                if (ast != null)
+                {
+                    action = ast.InternalVisit(visitor);
+                }
+
+                return action == AstVisitAction.Continue;
+            }
+        }
 
         #endregion Visitors
 

@@ -739,11 +739,6 @@ namespace System.Management.Automation
                 res.AddRange(InferTypes(endBlock));
             }
 
-            if (cleanupBlock != null)
-            {
-                res.AddRange(InferTypes(cleanupBlock));
-            }
-
             return res;
         }
 
