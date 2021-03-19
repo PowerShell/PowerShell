@@ -2466,6 +2466,7 @@ namespace System.Management.Automation.Language
                 }
 
                 _endBlockLambda = CompileNamedBlock(scriptBlockAst.EndBlock, funcName, rootForDefiningTypesAndUsings);
+                rootForDefiningTypesAndUsings = null;
             }
 
             if (scriptBlockAst.CleanupBlock != null)
