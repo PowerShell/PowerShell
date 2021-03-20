@@ -59,7 +59,7 @@ steps:
 - task: AzureFileCopy@4
   displayName: 'upload signed exe to Azure - ${{ parameters.architecture }}'
   inputs:
-    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
+    SourcePath: '$(System.ArtifactsDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
     azureSubscription: '$(AzureFileCopySubscription)'
     Destination: AzureBlob
     storage: '$(StorageAccount)'
