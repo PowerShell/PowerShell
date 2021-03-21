@@ -153,6 +153,33 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             }
         }
 
+        It "Verify Move-Item for directory across drives on Windows" -Skip:(!$IsWindows) {
+            try {
+                # find first available drive letter, unfortunately need to use both function: and Win32_LogicalDisk to cover
+                # both subst drives and bitlocker drives
+                $drive = Get-ChildItem function:[d-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
+                if ($null -eq $drive) {
+                    throw "Test cannot continue as no drive letter available"
+                }
+
+                $dest = (Resolve-Path -Path $TestDrive).ProviderPath
+                $null = New-Item -ItemType Directory -Path $dest -Name test
+                subst $drive $dest
+                if ($LASTEXITCODE -ne 0) {
+                    throw "subst failed with exit code $LASTEXITCODE"
+                }
+
+                $testdir = New-Item -ItemType Directory -Path $drive -Name testmovedir -Force
+                1 > $testdir\test.txt
+                Move-Item $drive\testmovedir $dest\test
+                "$drive\testmovedir" | Should -Not -Exist
+                "$dest\test\testmovedir\test.txt" | Should -FileContentMatchExactly 1
+            }
+            finally {
+                subst $drive /d
+            }
+        }
+
         It "Verify Move-Item will not move to an existing file" {
             { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
             $error[0].Exception | Should -BeOfType System.IO.IOException
