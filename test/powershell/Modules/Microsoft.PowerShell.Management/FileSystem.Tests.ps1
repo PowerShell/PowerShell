@@ -157,7 +157,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             try {
                 # find first available drive letter, unfortunately need to use both function: and Win32_LogicalDisk to cover
                 # both subst drives and bitlocker drives
-                $drive = Get-ChildItem function:[f-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
+                $drive = Get-ChildItem function:[h-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
                 if ($null -eq $drive) {
                     throw "Test cannot continue as no drive letter available"
                 }
@@ -166,7 +166,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $null = New-Item -ItemType Directory -Path $dest -Name test
                 $out = subst $drive $dest 2>&1
                 if ($LASTEXITCODE -ne 0) {
-                    throw "subst failed with exit code ${LASTEXITCODE}: $out"
+                    throw "subst failed with exit code ${LASTEXITCODE} for drive '$drive': $out"
                 }
 
                 $testdir = New-Item -ItemType Directory -Path $drive -Name testmovedir -Force
