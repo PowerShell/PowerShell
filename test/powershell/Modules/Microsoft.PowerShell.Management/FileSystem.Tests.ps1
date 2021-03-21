@@ -164,9 +164,9 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
                 $dest = (Resolve-Path -Path $TestDrive).ProviderPath
                 $null = New-Item -ItemType Directory -Path $dest -Name test
-                subst $drive $dest
+                $out = subst $drive $dest 2>&1
                 if ($LASTEXITCODE -ne 0) {
-                    throw "subst failed with exit code $LASTEXITCODE"
+                    throw "subst failed with exit code ${LASTEXITCODE}: $out"
                 }
 
                 $testdir = New-Item -ItemType Directory -Path $drive -Name testmovedir -Force
