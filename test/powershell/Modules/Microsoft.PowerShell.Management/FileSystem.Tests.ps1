@@ -157,7 +157,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             try {
                 # find first available drive letter, unfortunately need to use both function: and Win32_LogicalDisk to cover
                 # both subst drives and bitlocker drives
-                $drive = Get-ChildItem function:[d-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
+                $drive = Get-ChildItem function:[f-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
                 if ($null -eq $drive) {
                     throw "Test cannot continue as no drive letter available"
                 }
