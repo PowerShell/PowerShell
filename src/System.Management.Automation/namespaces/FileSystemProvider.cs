@@ -6103,12 +6103,12 @@ namespace Microsoft.PowerShell.Commands
         {
 #if UNIX
             return true;
-#endif
-
+#else
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
 
-            return (src.Directory.Root.Name == dest.Directory.Root.Name);
+            return src.Directory.Root.Name == dest.Directory.Root.Name;
+#endif
         }
 
         private void CopyAndDelete(DirectoryInfo directory, string destination, bool force)
