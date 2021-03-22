@@ -431,6 +431,7 @@ namespace System.Management.Automation
         // to be remove to work with the dotnet regex engine.
         // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
         private const string SemVer2RegEx = @"^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
+        private const string SemVer2PreReleaseWithBuildMetadataRegEx = @"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
         private const string SingleDigitRegEx = @"^\d+$";
         private const string DoubleDigitRegEx = @"^\d+.\d+$";
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
@@ -476,36 +477,15 @@ namespace System.Management.Automation
                 return;
             }
 
-            var sb = new StringBuilder();
-            sb.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
-
-            if (!string.IsNullOrEmpty(preReleaseLabel))
+            var labelsCombined = preReleaseLabel + buildLabel;
+            var labelResults = Regex.Match(labelsCombined, SemVer2PreReleaseWithBuildMetadataRegEx);
+            if (labelResults.Groups["prerelease"].Success)
             {
-                sb.Append('-').Append(preReleaseLabel);
+                PreReleaseLabel = labelResults.Groups["prerelease"].Value;
             }
-            if (!string.IsNullOrEmpty(buildLabel))
+            if (labelResults.Groups["buildmetadata"].Success)
             {
-                sb.Append('+').Append(buildLabel);
-            }
-
-            var r = Regex.Match(sb.ToString(), SemVer2RegEx);
-
-            if (r.Success)
-            {
-                PreReleaseLabel = preReleaseLabel;
-                BuildLabel = buildLabel;
-            }
-            else
-            {
-                if (!r.Groups["prerelease"].Success && !string.IsNullOrEmpty(preReleaseLabel))
-                {
-                    throw new FormatException(nameof(preReleaseLabel));
-                }
-
-                if (!r.Groups["buildmetadata"].Success && !string.IsNullOrEmpty(buildLabel))
-                {
-                    throw new FormatException(nameof(buildLabel));
-                }
+                BuildLabel = labelResults.Groups["buildmetadata"].Value;
             }
         }
 
@@ -785,7 +765,11 @@ namespace System.Management.Automation
             {
                 StringBuilder result = new StringBuilder();
 
-                result.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
+                result.Append(Major)
+                    .Append(Utils.Separators.Dot)
+                    .Append(Minor)
+                    .Append(Utils.Separators.Dot)
+                    .Append(Patch);
 
                 if (!string.IsNullOrEmpty(PreReleaseLabel))
                 {
