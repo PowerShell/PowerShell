@@ -30,11 +30,11 @@
          __a__.__b____.c
 
         a = Version part and is group 1 of the regex
-        b = the Semantic version pre release name.  This is optional.
-        c = The semantic version pre release iteration.  This is optional and only allowed of the pre-release name is present.
+        b = the Semantic version prerelease name.  This is optional.
+        c = The semantic version prerelease iteration.  This is optional and only allowed of the prerelease name is present.
 
-        Our version will become the version part  with the pre-release iteration being the revision (the 4th part of the version).
-        For RCs, we will increment the iteration 100.
+        Our version will become the version part with the prerelease iteration being the revision (the 4th part of the version).
+        For RCs, we will increment the iteration from 100.
 
         Examples
         7.2.0 becomes 7.2.0
