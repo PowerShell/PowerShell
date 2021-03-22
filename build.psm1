@@ -310,6 +310,10 @@ function Start-PSBuild {
         [switch]$InteractiveAuth
     )
 
+    if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{2})?)?$") {
+        Write-Warning "Only preview or rc are supported for releasing pre-release version of PowerShell"
+    }
+
     if ($PSCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
     {
         $PSModuleRestore = $true
