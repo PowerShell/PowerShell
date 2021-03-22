@@ -431,7 +431,7 @@ namespace System.Management.Automation
         // to be remove to work with the dotnet regex engine.
         // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
         private const string SemVer2RegEx = @"^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
-        private const string SemVer2PreReleaseWithBuildMetadataRegEx = @"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
+        private const string SemVer2PreReleaseWithBuildMetadataRegEx = @"(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
         private const string SingleDigitRegEx = @"^\d+$";
         private const string DoubleDigitRegEx = @"^\d+.\d+$";
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
