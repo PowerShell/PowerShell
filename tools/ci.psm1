@@ -462,7 +462,7 @@ function Invoke-CIFinish
                 $previewLabel= "daily{0}" -f $previewLabel
             }
 
-            $prereleaseIteration = (Get-Random -Minimum 1 -Maximum 99)
+            $prereleaseIteration = (get-date).Day
             $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
             # Build clean before backing to remove files from testing
             Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
