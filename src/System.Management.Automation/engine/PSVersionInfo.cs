@@ -431,7 +431,8 @@ namespace System.Management.Automation
         // to be remove to work with the dotnet regex engine.
         // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
         private const string SemVer2RegEx = @"^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
-        private const string SemVer2PreReleaseWithBuildMetadataRegEx = @"(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
+        private const string SemVer2PreReleaseRegEx = @"(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)";
+        private const string SemVer2MetadataRegEx = @"(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)";
         private const string SingleDigitRegEx = @"^\d+$";
         private const string DoubleDigitRegEx = @"^\d+.\d+$";
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
@@ -472,20 +473,21 @@ namespace System.Management.Automation
         public SemanticVersion(int major, int minor, int patch, string preReleaseLabel, string buildLabel)
             : this(major, minor, patch)
         {
-            if (string.IsNullOrEmpty(preReleaseLabel) && string.IsNullOrEmpty(buildLabel))
+            if (!string.IsNullOrEmpty(preReleaseLabel))
             {
-                return;
+                var prereleaseResults = Regex.Match(preReleaseLabel, SemVer2PreReleaseRegEx);
+                if (prereleaseResults.Groups["prerelease"].Success)
+                {
+                    PreReleaseLabel = prereleaseResults.Groups["prerelease"].Value;
+                }
             }
-
-            var labelsCombined = preReleaseLabel + buildLabel;
-            var labelResults = Regex.Match(labelsCombined, SemVer2PreReleaseWithBuildMetadataRegEx);
-            if (labelResults.Groups["prerelease"].Success)
+            if (!string.IsNullOrEmpty(buildLabel))
             {
-                PreReleaseLabel = labelResults.Groups["prerelease"].Value;
-            }
-            if (labelResults.Groups["buildmetadata"].Success)
-            {
-                BuildLabel = labelResults.Groups["buildmetadata"].Value;
+                var metadataResults = Regex.Match(buildLabel, SemVer2MetadataRegEx);
+                if (metadataResults.Groups["buildmetadata"].Success)
+                {
+                    BuildLabel = metadataResults.Groups["buildmetadata"].Value;
+                }
             }
         }
 
