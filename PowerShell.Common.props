@@ -105,11 +105,11 @@
     <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);
-               PowerShellVersion=$(PowerShellVersion);
+               PowerShellVersion = $(PowerShellVersion);
                PSCoreBuildVersion = $(PSCoreBuildVersion);
                PSCoreFileVersion = $(PSCoreFileVersion);
-               ReleaseTagVersionPart=$(ReleaseTagVersionPart);
-               ReleaseTagSemVersionPart=$(ReleaseTagSemVersionPart);
+               ReleaseTagVersionPart = $(ReleaseTagVersionPart);
+               ReleaseTagSemVersionPart = $(ReleaseTagSemVersionPart);
                PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
                PSCoreCommitSHA = $(PSCoreCommitSHA);
                PSCoreMajorVersion = $(PSCoreMajorVersion);
