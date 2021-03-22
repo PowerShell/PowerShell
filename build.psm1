@@ -303,7 +303,7 @@ function Start-PSBuild {
 
         [switch]$CrossGen,
 
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{2})?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
         [switch]$Detailed,
