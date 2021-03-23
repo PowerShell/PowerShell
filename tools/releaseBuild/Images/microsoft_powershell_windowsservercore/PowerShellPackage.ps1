@@ -18,7 +18,7 @@ param (
 
     [switch] $Wait,
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [ValidateNotNullOrEmpty()]
     [string] $ReleaseTag,
 

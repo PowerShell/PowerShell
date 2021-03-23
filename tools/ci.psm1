@@ -462,7 +462,8 @@ function Invoke-CIFinish
                 $previewLabel= "daily{0}" -f $previewLabel
             }
 
-            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+            $prereleaseIteration = (get-date).Day
+            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
             # Build clean before backing to remove files from testing
             Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
         }
@@ -474,7 +475,7 @@ function Invoke-CIFinish
             Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
         }
 
-        # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+        # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
         $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
         $artifacts = New-Object System.Collections.ArrayList

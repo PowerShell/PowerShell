@@ -52,14 +52,14 @@ steps:
 
 - template: upload-final-results.yml
   parameters:
-    artifactPath: $(System.ArtifactsDirectory)\signed
+    artifactPath: $(System.ArtifactsDirectory)\signedPackages
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe
     condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - task: AzureFileCopy@4
   displayName: 'upload signed exe to Azure - ${{ parameters.architecture }}'
   inputs:
-    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
+    SourcePath: '$(System.ArtifactsDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
     azureSubscription: '$(AzureFileCopySubscription)'
     Destination: AzureBlob
     storage: '$(StorageAccount)'

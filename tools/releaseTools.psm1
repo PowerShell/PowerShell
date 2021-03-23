@@ -594,12 +594,12 @@ function Update-PsVersionInCode
 {
     param(
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NewReleaseTag,
 
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NextReleaseTag,
 

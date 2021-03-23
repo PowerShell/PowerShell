@@ -11,7 +11,7 @@ param (
     # Destination location of the package on docker host
     [string] $destination = '/mnt',
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 

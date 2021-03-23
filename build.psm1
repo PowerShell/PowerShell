@@ -303,12 +303,16 @@ function Start-PSBuild {
 
         [switch]$CrossGen,
 
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
         [switch]$Detailed,
         [switch]$InteractiveAuth
     )
+
+    if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
+        Write-Warning "Only preview or rc are supported for releasing pre-release version of PowerShell"
+    }
 
     if ($PSCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
     {

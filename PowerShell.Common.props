@@ -23,11 +23,44 @@
     </Exec>
 
     <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
+      <!--
+         DO NOT UPDATE without reviewing with the Microsoft update plan.
+
+         7.2.0-preview.1
+         __a__.__b____.c
+
+        a = Version part and is group 1 of the regex
+        b = the Semantic version prerelease name.  This is optional.
+        c = The semantic version prerelease iteration.  This is optional and only allowed of the prerelease name is present.
+
+        Our version will become the version part with the prerelease iteration being the revision (the 4th part of the version).
+        For RCs, we will increment the iteration from 100.
+
+        Examples
+        7.2.0 becomes 7.2.0
+        7.2.0-preview.1 becomes 7.2.0.1
+        7.2.0-rc.1 becomes 7.2.0.101
+      -->
+
+      <!-- parse the release tag into the parts we need -->
+      <RegexReleaseTag>^((\d+).(\d+).(\d+))(-(\w+)(.(\d+))?)?$</RegexReleaseTag>
+      <ReleaseTagVersionPart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[1].Value)</ReleaseTagVersionPart>
+      <ReleaseTagSemVersionPart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[8].Value)</ReleaseTagSemVersionPart>
+      <ReleaseTagSemVersionPrereleaseNamePart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[6].Value)</ReleaseTagSemVersionPrereleaseNamePart>
+      <!-- Increment revision 100 for rc releases -->
+      <RCIncrementValue>100</RCIncrementValue>
+      <ReleaseTagSemVersionPart Condition = "'$(ReleaseTagSemVersionPrereleaseNamePart)' == 'rc'">$([MSBuild]::Add($(ReleaseTagSemVersionPart), $(RCIncrementValue)))</ReleaseTagSemVersionPart>
+      <!-- Create the internal version -->
       <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
+      <!-- Create the version if we have a pre-release -->
+      <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
+      <!-- Create the version if we have a release build -->
+      <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart)</PSCoreFileVersion>
     </PropertyGroup>
 
     <PropertyGroup>
       <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
+      <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreFileVersion>
       <PSCoreBuildVersion Condition = "'$(PSCoreBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
       <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
       <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
@@ -52,7 +85,7 @@
             Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
             Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
       -->
-      <Version>$(PSCoreBuildVersion)</Version>
+      <Version>$(PSCoreFileVersion)</Version>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
       <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
 
@@ -72,8 +105,11 @@
     <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);
-               PowerShellVersion=$(PowerShellVersion);
+               PowerShellVersion = $(PowerShellVersion);
                PSCoreBuildVersion = $(PSCoreBuildVersion);
+               PSCoreFileVersion = $(PSCoreFileVersion);
+               ReleaseTagVersionPart = $(ReleaseTagVersionPart);
+               ReleaseTagSemVersionPart = $(ReleaseTagSemVersionPart);
                PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
                PSCoreCommitSHA = $(PSCoreCommitSHA);
                PSCoreMajorVersion = $(PSCoreMajorVersion);
