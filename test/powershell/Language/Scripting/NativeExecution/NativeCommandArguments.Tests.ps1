@@ -77,8 +77,15 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
         It "Should handle arguments that include commas without spaces (windbg example)" {
             $lines = testexe -echoargs -k com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect
             $lines.Count | Should -Be 2
-            $line[0] | Should -BeExactly "Arg 0 is <-k>"
-            $line[1] | Should -BeExactly "Arg 1 is <com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect>"
+            $lines[0] | Should -BeExactly "Arg 0 is <-k>"
+            $lines[1] | Should -BeExactly "Arg 1 is <com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect>"
+        }
+
+        It "Should handle DOS style arguments" {
+            $lines = testexe -echoargs /arg1 /c:"a string"
+            $lines.Count | Should -Be 2
+            $lines[0] | Should -BeExactly "Arg 0 is </arg1>"
+            $lines[1] | Should -BeExactly "Arg 1 is </c:a string>"
         }
 
         It "Should handle PowerShell arrays with or without spaces correctly (ArgumentList=${PSNativeCommandArgumentPassing}): <arguments>" -TestCases @(

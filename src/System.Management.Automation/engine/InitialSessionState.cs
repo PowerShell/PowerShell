@@ -4299,7 +4299,7 @@ param(
         else {
             $pagerCommand = 'less'
             # PSNativeCommandArgumentPassing arguments should be constructed differently.
-            if ((Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled) {
+            if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
                 $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
             }
             else {
@@ -4347,7 +4347,7 @@ param(
                 # Start the pager arguments directly if the PSNativeCommandArgumentPassing feature is enabled.
                 # Otherwise, supply pager arguments to an application without any PowerShell parsing of the arguments.
                 # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                if ((Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled) {
+                if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
                     $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
                 }
                 else {
