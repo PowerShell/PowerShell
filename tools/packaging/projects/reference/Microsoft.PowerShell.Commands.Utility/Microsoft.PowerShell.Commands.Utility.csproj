@@ -13,7 +13,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.0-preview.2.21154.6" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0-preview.2" />
   </ItemGroup>
