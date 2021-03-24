@@ -3046,8 +3046,15 @@ function New-MSIPackage
 
     $wixPaths = Get-WixPath
 
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
+    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
+    $ProductSemanticVersion = $windowsNames.ProductSemanticVersion
+    $packageName = $windowsNames.PackageName
+    $ProductVersion = $windowsNames.ProductVersion
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName" -Verbose
+    Write-Verbose "ProductSemanticVersion =  $productSemanticVersion" -Verbose
+    Write-Verbose "packageName =  $packageName" -Verbose
+    Write-Verbose "ProductVersion =  $ProductVersion" -Verbose
 
     $simpleProductVersion = [string]([Version]$ProductVersion).Major
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
@@ -3068,10 +3075,7 @@ function New-MSIPackage
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
 
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
 
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
@@ -3085,11 +3089,6 @@ function New-MSIPackage
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
 
     $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
     $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
@@ -3150,6 +3149,83 @@ function New-MSIPackage
         $errorMessage = "Failed to create $msiLocationPath"
         throw $errorMessage
     }
+}
+
+function Get-WindowsNames {
+    param(
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion
+    )
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+
+    return [PSCustomObject]@{
+        PackageName                    = $packageName
+        ProductVersionWithName         = $productVersionWithName
+        ProductSemanticVersion         = $ProductSemanticVersion
+        ProductSemanticVersionWithName = $productSemanticVersionWithName
+        ProductVersion                 = $ProductVersion
+    }
+}
+
+function New-ExePackage {
+    param(
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+
+        [string] $ProductVersion,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        [string]
+        $MsiLocationPath,
+
+        [string] $CurrentLocation = (Get-Location)
+    )
+
+
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
+    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
+    $packageName = $windowsNames.PackageName
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
+
+    Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
+    Write-Verbose "packageName =  $packageName" -Verbose
 
     $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
     $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
@@ -3157,20 +3233,9 @@ function New-MSIPackage
 
     Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
         IsPreview      = $isPreview
-        TargetPath     = $msiLocationPath
+        TargetPath     = $MsiLocationPath
         WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
-
-    if (Test-Path $exeLocationPath)
-    {
-        Write-Verbose "You can find the MSI @ $exeLocationPath" -Verbose
-        $exeLocationPath
-    }
-    else
-    {
-        $errorMessage = "Failed to create $exeLocationPath"
-        throw $errorMessage
-    }
 }
 
 function New-MsiArgsArray {
