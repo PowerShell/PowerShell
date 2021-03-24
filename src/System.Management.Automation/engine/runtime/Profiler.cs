@@ -33,22 +33,22 @@ namespace System.Management.Automation
                     eventPayload[0] = new EventData
                     {
                         Size = sizeof(Guid),
-                        DataPointer = ((IntPtr)(&scriptBlockId))
+                        DataPointer = (IntPtr)(&scriptBlockId)
                     };
                     eventPayload[1] = new EventData
                     {
                         Size = sizeof(Guid),
-                        DataPointer = ((IntPtr)(&runspaceInstanceId))
+                        DataPointer = (IntPtr)(&runspaceInstanceId)
                     };
                     eventPayload[2] = new EventData
                     {
                         Size = sizeof(Guid),
-                        DataPointer = ((IntPtr)(&parentScriptBlockId))
+                        DataPointer = (IntPtr)(&parentScriptBlockId)
                     };
                     eventPayload[3] = new EventData
                     {
                         Size = sizeof(int),
-                        DataPointer = ((IntPtr)(&sequencePointPosition))
+                        DataPointer = (IntPtr)(&sequencePointPosition)
                     };
 
                     WriteEventCore(eventId: 1, eventDataCount: 4, eventPayload);
@@ -91,32 +91,32 @@ namespace System.Management.Automation
 
         [Event(3)]
         public void SequencePointRundown(
-            Guid ScriptBlockId,
-            int SequencePointCount,
-            int SequencePoint,
-            string? File,
-            int StartLineNumber,
-            int StartColumnNumber,
-            int EndLineNumber,
-            int EndColumnNumber,
-            string Text,
-            int StartOffset,
-            int EndOffset)
+            Guid scriptBlockId,
+            int sequencePointCount,
+            int sequencePoint,
+            string? file,
+            int startLineNumber,
+            int startColumnNumber,
+            int endLineNumber,
+            int endColumnNumber,
+            string text,
+            int startOffset,
+            int endOffset)
         {
             // It is not performance critical so we use the standard method overload.
             WriteEvent(
                 eventId: 3,
-                ScriptBlockId,
-                SequencePointCount,
-                SequencePoint,
-                File,
-                StartLineNumber,
-                StartColumnNumber,
-                EndLineNumber,
-                EndColumnNumber,
-                Text,
-                StartOffset,
-                EndOffset);
+                scriptBlockId,
+                sequencePointCount,
+                sequencePoint,
+                file,
+                startLineNumber,
+                startColumnNumber,
+                endLineNumber,
+                endColumnNumber,
+                text,
+                startOffset,
+                endOffset);
         }
 
         [NonEvent]
@@ -345,6 +345,7 @@ namespace System.Management.Automation
 
                         CompiledScriptBlockMetaData.TryAdd(sbe.ScriptId, sbe);
                     }
+
                     break;
             }
         }
@@ -376,7 +377,7 @@ namespace System.Management.Automation
     public class MeasureScriptCommand : PSCmdlet
     {
         /// <summary>
-        /// A script block to profile.
+        /// Gets or sets a script block to profile.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public ScriptBlock ScriptBlock { get; set; } = null!;
@@ -423,7 +424,7 @@ namespace System.Management.Automation
                 //
                 // 3. Last event of every runspace we output as-is
                 // without evaluating a duration because we have not a stop event.
-                //
+                // ---------------------------------------------------------------
                 Dictionary<Guid, InternalProfiler.SequencePointProfileEventData> runspaceCurrentEvent = new();
 
                 for (var i = 0; i < events.Count; i++)
