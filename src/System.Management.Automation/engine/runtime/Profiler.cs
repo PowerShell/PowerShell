@@ -94,7 +94,7 @@ namespace System.Management.Automation
             Guid ScriptBlockId,
             int SequencePointCount,
             int SequencePoint,
-            string File,
+            string? File,
             int StartLineNumber,
             int StartColumnNumber,
             int EndLineNumber,
