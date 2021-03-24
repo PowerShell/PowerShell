@@ -4,7 +4,7 @@
 param()
 Describe "Will error correctly if an attempt to set variable to improper value" {
     It "will error when setting variable incorrectly" {
-        if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled ) {
+        if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
             { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
         }
         else {
@@ -26,7 +26,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
             $a = 'a"b c"d'
             $lines = testexe -echoargs $a 'a"b c"d' a"b c"d "a'b c'd"
             $lines.Count | Should -Be 4
-            if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled -and $PSNativeCommandArgumentPassing -ne "Legacy" ) {
+            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
             }
@@ -52,7 +52,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
         It "Should handle spaces between escaped quotes (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
             $lines.Count | Should -Be 2
-            if ( (Get-ExperimentalFeature PSNativeCommandArgumentPassing).Enabled -and $PSNativeCommandArgumentPassing -ne "Legacy" ) {
+            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a\"b c\"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a\"b c\"d>'
             }
