@@ -261,7 +261,53 @@ jobs:
         Write-Host "Uploading $packagePath"
         Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
       }
-    displayName: Upload packages
+    displayName: Upload unsigned packages
+
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), startsWith(variables['Architecture'], 'x')) }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-230012"
+          pattern: |
+            **\*.msi
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+
+    - powershell: |
+        Get-ChildItem '$(System.ArtifactsDirectory)\signedPackages' | ForEach-Object {
+          $packagePath = $_.FullName
+          Write-Host "Uploading $packagePath"
+          Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
+        }
+      displayName: Upload signed MSI to finalResults
+
+    - task: AzureFileCopy@4
+      displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
+      inputs:
+        SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
+        azureSubscription: '$(AzureFileCopySubscription)'
+        Destination: AzureBlob
+        storage: '$(StorageAccount)'
+        ContainerName: '$(AzureVersion)'
+        resourceGroup: '$(StorageResourceGroup)'
+
+    - powershell: |
+        Import-Module $(PowerShellRoot)/build.psm1 -Force
+        Import-Module $(PowerShellRoot)/tools/packaging -Force
+
+        $msiPath = '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
+
+        New-ExePackage -ProductVersion '$(version)' -MsiLocationPath $msiPath -ProductTargetArchitecture ${{ parameters.architecture }}
+      displayName: Create exe wrapper
+
+    - powershell: |
+        Get-ChildItem '.\PowerShell-*.exe' | ForEach-Object {
+          $packagePath = $_.FullName
+          Write-Host "Uploading $packagePath"
+          Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
+        }
+      displayName: Upload unsigned exe
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
