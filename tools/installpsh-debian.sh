@@ -19,7 +19,7 @@
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
-VERSION="1.2.0"
+VERSION="1.2.1"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=debian
