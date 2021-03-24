@@ -46,7 +46,6 @@ jobs:
         signOutputPath: $(Build.StagingDirectory)\signedPackages
         certificateId: "CP-230012"
         pattern: |
-          **\*.msi
           **\*.msix
           **\*.exe
         useMinimatch: true
