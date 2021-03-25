@@ -28,6 +28,11 @@ namespace System.Management.Automation.Subsystem
                     SubsystemKind.CommandPredictor,
                     allowUnregistration: true,
                     allowMultipleRegistration: true),
+
+                SubsystemInfo.Create<ICrossPlatformDsc>(
+                    SubsystemKind.CrossPlatformDsc,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: false),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);

@@ -12,6 +12,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Management.Automation.Subsystem;
 using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
@@ -2996,7 +2997,7 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            if (ExperimentalFeature.IsEnabled(Dsc.CrossPlatform.DscClassCache.DscExperimentalFeatureName))
+                            if (ExperimentalFeature.IsEnabled(ICrossPlatformDsc.DscExperimentalFeatureName))
                             {
                                 // In addition to checking if experimental feature is enabled
                                 // also check if PSDesiredStateConfiguration is already loaded
@@ -3022,7 +3023,8 @@ namespace System.Management.Automation.Language
 
                                 if (useCrossPlatformSchema)
                                 {
-                                    Dsc.CrossPlatform.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                                    dscSubsystem.LoadDefaultCimKeywords(CIMKeywordErrors);
                                 }
                                 else
                                 {
@@ -3276,7 +3278,10 @@ namespace System.Management.Automation.Language
                     //
                     if (useCrossPlatformSchema)
                     {
-                        Dsc.CrossPlatform.DscClassCache.ClearCache();
+                        //CrossPlatformDsc.RegisterSubsystemIfNotAlready();
+
+                        ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                        dscSubsystem.ClearCache();
                     }
                     else
                     {

@@ -17,6 +17,11 @@ namespace System.Management.Automation.Subsystem
         /// Component that provides predictive suggestions to commandline input.
         /// </summary>
         CommandPredictor = 1,
+
+        /// <summary>
+        /// Cross platform desired state configuration component.
+        /// </summary>
+        CrossPlatformDsc = 2,
     }
 
     /// <summary>
