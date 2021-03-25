@@ -303,7 +303,31 @@ jobs:
         $msiPath = '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
 
         New-ExePackage -ProductVersion '$(version)' -MsiLocationPath $msiPath -ProductTargetArchitecture ${{ parameters.architecture }}
+        $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
+        $engiePath = Join-Path -Path $PWD -ChildPath enigne.exe
+        Dismount-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
       displayName: Create exe wrapper
+
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-230012"
+          pattern: |
+            **\*.msi
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign Exe Wrapper Engine
+
+    - pwsh: |
+        cd $(PowerShellRoot)
+        Import-Module $(PowerShellRoot)/build.psm1 -Force
+        Import-Module $(PowerShellRoot)/tools/packaging -Force
+
+        $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
+        $engiePath = Join-Path -Path $PWD -ChildPath enigne.exe
+        Mount-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      displayName: Use signed engine in exe wrapper
 
     - powershell: |
         cd $(PowerShellRoot)

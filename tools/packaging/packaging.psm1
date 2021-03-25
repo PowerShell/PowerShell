@@ -2832,14 +2832,16 @@ function Get-WixPath
     $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+    $wixInsigniaExePath = Join-Path $wixToolsetBinPath "Insignia.exe"
 
     return [PSCustomObject] @{
-        WixHeatExePath = $wixHeatExePath
-        WixMeltExePath = $wixMeltExePath
-        WixTorchExePath = $wixTorchExePath
-        WixPyroExePath = $wixPyroExePath
-        WixCandleExePath = $wixCandleExePath
-        WixLightExePath = $wixLightExePath
+        WixHeatExePath     = $wixHeatExePath
+        WixMeltExePath     = $wixMeltExePath
+        WixTorchExePath    = $wixTorchExePath
+        WixPyroExePath     = $wixPyroExePath
+        WixCandleExePath   = $wixCandleExePath
+        WixLightExePath    = $wixLightExePath
+        WixInsigniaExePath = $wixInsigniaExePath
     }
 
 }
@@ -3239,6 +3241,60 @@ function New-ExePackage {
         WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
 }
+
+function Dismount-ExePackageEngine {
+    param(
+        # Location of the unsigned EXE
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExePath,
+
+        # Location to put the dismounted engine.
+        [Parameter(Mandatory = $true)]
+        [string]
+        $EnginePath
+    )
+
+    <#
+    2. detach the engine from TestInstaller.exe:
+    insignia -ib TestInstaller.exe -o engine.exe
+    #>
+
+    $wixPaths = Get-WixPath
+
+    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
+    $resolvedEnginePath = System.IO.Path]::GetFullPath($EnginePath)
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
+}
+
+function Mount-ExePackageEngine {
+    param(
+        # Location of the unsigned EXE
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExePath,
+
+        # Location of the signed engine
+        [Parameter(Mandatory = $true)]
+        [string]
+        $EnginePath
+    )
+
+
+    <#
+    4. re-attach the signed engine.exe to the bundle:
+    insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
+    #>
+
+    $wixPaths = Get-WixPath
+
+    $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
+    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
+}
+
 
 function New-MsiArgsArray {
     param(
