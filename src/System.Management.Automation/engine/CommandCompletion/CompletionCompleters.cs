@@ -4084,7 +4084,9 @@ namespace System.Management.Automation
         private sealed class ArgumentLocation
         {
             internal bool IsPositional { get; set; }
+
             internal int Position { get; set; }
+
             internal AstParameterArgumentPair Argument { get; set; }
         }
 
@@ -4997,6 +4999,7 @@ namespace System.Management.Automation
                     new Tuple<string, string>("Where", "Where({ expression } [, mode [, numberToReturn]])"),
                     new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])")
                 };
+
         // List of DSC collection-value variables
         private static readonly HashSet<string> s_dscCollectionVariables =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "SelectedNodes", "AllNodes" };
@@ -5438,6 +5441,7 @@ namespace System.Management.Automation
         private abstract class TypeCompletionBase
         {
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix);
+
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove);
 
             internal static string RemoveBackTick(string typeName)
@@ -6954,6 +6958,7 @@ namespace System.Management.Automation
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return false; }
 
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return false; }
+
         // REVIEW: we could relax this to allow specific commands
         public object VisitCommand(CommandAst commandAst) { return false; }
 
