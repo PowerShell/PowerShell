@@ -79,14 +79,14 @@ namespace System.Management.Automation
 
         [Event(2)]
         public void ScriptBlockRundown(
-            Guid ScriptBlockId,
-            string ScriptBlockText)
+            Guid scriptBlockId,
+            string scriptBlockText)
         {
             // It is not performance critical so we use the standard method overload.
             WriteEvent(
                 eventId: 2,
-                ScriptBlockId,
-                ScriptBlockText);
+                scriptBlockId,
+                scriptBlockText);
         }
 
         [Event(3)]
