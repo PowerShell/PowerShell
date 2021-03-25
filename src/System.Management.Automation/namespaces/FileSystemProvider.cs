@@ -51,15 +51,6 @@ namespace Microsoft.PowerShell.Commands
                                                      ISecurityDescriptorCmdletProvider,
                                                      ICmdletProviderSupportsHelp
     {
-#if UNIX
-        // This is the errno returned by the rename() syscall
-        // when an item is attempted to be renamed across filesystem mount boundaries.
-        private const int MOVE_FAILED_ERROR = 18;
-#else
-        // 0x80070005 ACCESS_DENIED is returned when trying to move files across volumes like DFS
-        private const int MOVE_FAILED_ERROR = -2147024891;
-#endif
-
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
@@ -6078,12 +6069,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
                 {
-                    throw new IOException("Invalid cross-device link", hresult: MOVE_FAILED_ERROR);
+                    throw new IOException("Invalid cross-device link");
                 }
 
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException e) when (e.HResult == MOVE_FAILED_ERROR)
+            catch (IOException)
             {
                 // Rather than try to ascertain whether we can rename a directory ahead of time,
                 // it's both faster and more correct to try to rename it and fall back to copy/deleting it
