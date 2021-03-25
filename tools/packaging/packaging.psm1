@@ -3212,6 +3212,8 @@ function New-ExePackage {
         [ValidateNotNullOrEmpty()]
         [string] $ProductTargetArchitecture,
 
+        # Location of the signed MSI
+        [Parameter(Mandatory = $true)]
         [string]
         $MsiLocationPath,
 
@@ -3222,7 +3224,7 @@ function New-ExePackage {
     $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
     $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
     $packageName = $windowsNames.PackageName
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
+    $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
 
     Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
     Write-Verbose "packageName =  $packageName" -Verbose
