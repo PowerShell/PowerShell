@@ -65,7 +65,7 @@ $isDaily = $false
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
     # Branch is named release-<semver>
-    $releaseBranchRegex = '^.*((release|rebuild)[-/])'
+    $releaseBranchRegex = '^.*((release/|rebuild/.*rebuild))'
     if($Branch -match $releaseBranchRegex)
     {
         $msixType = 'release'
