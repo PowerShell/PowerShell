@@ -3166,6 +3166,8 @@ function Get-WindowsNames {
         [string] $ProductVersion
     )
 
+    Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
+
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
@@ -3192,9 +3194,6 @@ function New-ExePackage {
         [ValidateNotNullOrEmpty()]
         [string] $ProductName = 'PowerShell',
 
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
         # Version of the Product
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -3220,8 +3219,9 @@ function New-ExePackage {
         [string] $CurrentLocation = (Get-Location)
     )
 
+    $productNameSuffix = "win-$ProductTargetArchitecture"
 
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $productNameSuffix -ProductVersion $ProductVersion
     $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
     $packageName = $windowsNames.PackageName
     $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
