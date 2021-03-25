@@ -155,6 +155,7 @@ jobs:
           **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign our binaries
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -198,6 +199,7 @@ jobs:
           **\*.dll
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign ThirdParty binaries
 
   - powershell: |
       Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartySigned\*'
@@ -273,6 +275,7 @@ jobs:
             **\*.msi
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
+          displayName: Sign MSI
 
     - powershell: |
         Get-ChildItem '$(System.ArtifactsDirectory)\signedPackages' | ForEach-Object {
