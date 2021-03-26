@@ -577,10 +577,6 @@ function New-TarballPackage {
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
 
-    if (-not $ExcludeSymbolicLinks.IsPresent) {
-        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
-    }
-
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
             $options = "-czf"
