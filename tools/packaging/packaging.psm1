@@ -1257,42 +1257,18 @@ function Get-FpmArguments
     return $Arguments
 }
 
-function Test-Distribution
-{
-    param(
-        [String]
-        $Distribution
-    )
-
-    if ( $Environment.IsDebianFamily -and !$Distribution )
-    {
-        throw "$Distribution is required for a Debian based distribution."
-    }
-
-    if ( $Environment.IsDebianFamily -and $Script:DebianDistributions -notcontains $Distribution)
-    {
-        throw "$Distribution should be one of the following: $Script:DebianDistributions"
-    }
-
-    if ( $Environment.IsRedHatFamily -and $Script:RedHatDistributions -notcontains $Distribution)
-    {
-        throw "$Distribution should be one of the following: $Script:RedHatDistributions"
-    }
-
-    return $true
-}
 function Get-PackageDependencies
 {
     param(
         [String]
-        [ValidateScript({Test-Distribution -Distribution $_})]
+        [ValidateSet('rh','deb')]
         $Distribution
     )
 
     End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
-        if ($Environment.IsDebianFamily) {
+        if ($Distribution -eq 'deb') {
             $Dependencies = @(
                 "libc6",
                 "libgcc1",
@@ -1303,17 +1279,18 @@ function Get-PackageDependencies
                 "libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
-        } elseif ($Environment.IsRedHatFamily) {
+        } elseif ($Distribution -eq 'rh') {
             $Dependencies = @(
                 "openssl-libs",
                 "libicu"
             )
-        } elseif ($Environment.IsSUSEFamily) {
-            $Dependencies = @(
-                "libopenssl1_0_0",
-                "libicu"
-            )
         }
+        # elseif ($Environment.IsSUSEFamily) {
+        #     $Dependencies = @(
+        #         "libopenssl1_0_0",
+        #         "libicu"
+        #     )
+        # }
 
         return $Dependencies
     }
