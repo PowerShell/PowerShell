@@ -89,6 +89,10 @@ stages:
     parameters:
       pool: ubuntu-16.04
 
+- stage: PackageLinux
+  displayName: Package Linux
+  dependsOn: ["BuildLinux"] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
   - template: linux/templates/packaging.yml
     parameters:
       pool: ubuntu-16.04
