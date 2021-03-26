@@ -1172,12 +1172,9 @@ namespace System.Management.Automation.Language
             // in EnterScriptFunction.
             // Except for while/do loops, in this case we want to check breakpoints on the first sequence point since it
             // will be executed multiple times.
-            //return (index == 0 && !_generatingWhileOrDoLoop)
-            //           ? ExpressionCache.Empty
-            //           : new UpdatePositionExpr(extent, index, _debugSymbolDocument, !_compilingSingleExpression);
-            return _generatingWhileOrDoLoop
-                ? new UpdatePositionExpr(extent, index, _debugSymbolDocument, !_compilingSingleExpression)
-                : new UpdatePositionExpr(extent, index, _debugSymbolDocument, !_compilingSingleExpression);
+            return (index == 0 && !_generatingWhileOrDoLoop)
+                       ? ExpressionCache.Empty
+                       : new UpdatePositionExpr(extent, index, _debugSymbolDocument, !_compilingSingleExpression);
         }
 
         private int _tempCounter;
