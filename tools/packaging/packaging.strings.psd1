@@ -11,6 +11,14 @@ if [ ! -f /etc/shells ] ; then
 else
     grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
 fi
+if [ -f /lib64/libssl.so.1.1 ] ; then
+    ln -s /lib64/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ls -s /lib64/libcrypto.so.1.1.1 {1}/libcrypto.so.1.0.0
+else
+    ln -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ls -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+fi
+
 '@
 
     RedHatAfterRemoveScript = @'
@@ -20,6 +28,8 @@ if [ "$1" = 0 ] ; then
         grep -v '^{0}$' /etc/shells > $TmpFile
         cp -f $TmpFile /etc/shells
         rm -f $TmpFile
+        rm -f {1}/libssl.so.1.0.0
+        rm -f {1}/libcrypto.so.1.0.0
     fi
 fi
 '@
@@ -38,14 +48,50 @@ case "$1" in
         exit 0
     ;;
 esac
-'@
 
+if [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.1 ] ; then
+    ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ls -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 {1}/libcrypto.so.1.0.0
+elif [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 ] ; then
+    ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 {1}/libssl.so.1.0.0
+    ls -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 {1}/libcrypto.so.1.0.0
+else
+    ln -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ls -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+fi
+
+'@
+<#endregion
+             'debian\.9' {
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
+            'debian\.(10|11)' {
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
+            default {
+                # Default to old behavior before this change
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+
+
+                            'centos\.8' {
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.1.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
+            }
+            default {
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+#>
     UbuntuAfterRemoveScript = @'
 #!/bin/sh
 set -e
 case "$1" in
         (remove)
         remove-shell "{0}"
+        rm -f {1}/libssl.so.1.0.0
+        rm -f {1}/libcrypto.so.1.0.0
         ;;
 esac
 '@
