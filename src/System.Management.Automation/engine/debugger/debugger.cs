@@ -1135,6 +1135,16 @@ namespace System.Management.Automation
             Diagnostics.Assert(functionContext._executionContext == _context, "Wrong debugger is being used.");
 
             var invocationInfo = (InvocationInfo)functionContext._localsTuple.GetAutomaticVariable(AutomaticVariable.MyInvocation);
+
+            if (ProfilerEventSource.LogInstance.IsEnabled())
+            {
+                ProfilerEventSource.LogInstance.SequencePoint(
+                    functionContext._scriptBlock?.Id ?? Guid.Empty,
+                    functionContext._executionContext.CurrentRunspace.InstanceId,
+                    _callStack.Last()?.FunctionContext._scriptBlock.Id ?? Guid.Empty,
+                    0);
+            }
+
             var newCallStackInfo = new CallStackInfo
             {
                 InvocationInfo = invocationInfo,
