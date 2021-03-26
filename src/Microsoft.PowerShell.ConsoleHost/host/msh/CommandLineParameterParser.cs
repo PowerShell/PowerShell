@@ -17,6 +17,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Security;
 using System.Text;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -477,7 +478,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    return true;
+                    return IsStaSupported();
                 }
             }
         }
@@ -649,6 +650,21 @@ namespace Microsoft.PowerShell
 
             return (switchKey.Length >= smallestUnambiguousMatch.Length
                     && match.StartsWith(switchKey, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsStaSupported()
+        {
+                Thread thread = new Thread(() => {});
+                thread.SetApartmentState(ApartmentState.STA);
+                try
+                {
+                    thread.Start();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
         }
 
         #endregion
@@ -928,7 +944,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    if (!Platform.IsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop || !IsStaSupported())
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
