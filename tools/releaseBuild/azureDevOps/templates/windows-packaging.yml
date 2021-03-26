@@ -326,6 +326,7 @@ jobs:
 
         $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
         $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\signedEngine' -ChildPath engine.exe
+        $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
         Mount-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
       displayName: Use signed engine in exe wrapper
 

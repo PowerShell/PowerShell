@@ -3295,7 +3295,6 @@ function Mount-ExePackageEngine {
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
 }
 
-
 function New-MsiArgsArray {
     param(
         [Parameter(Mandatory)]
