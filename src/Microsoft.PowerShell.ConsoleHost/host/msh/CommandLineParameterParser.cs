@@ -654,17 +654,21 @@ namespace Microsoft.PowerShell
 
         private static bool IsStaSupported()
         {
-                Thread thread = new Thread(() => { });
-                thread.SetApartmentState(ApartmentState.STA);
-                try
-                {
-                    thread.Start();
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
+#if UNIX
+            return false;
+#else
+            Thread thread = new Thread(() => { });
+            thread.SetApartmentState(ApartmentState.STA);
+            try
+            {
+                thread.Start();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+#endif
         }
 
         #endregion
