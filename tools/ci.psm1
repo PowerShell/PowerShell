@@ -713,7 +713,7 @@ function New-LinuxPackage
 
     # Only build packages for PowerShell/PowerShell repository
     # branches, not pull requests
-    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
+    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks -Type deb, rpm, tar)
     foreach($package in $packages)
     {
         if (Test-Path $package)
