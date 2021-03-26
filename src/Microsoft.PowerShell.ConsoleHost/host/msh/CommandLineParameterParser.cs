@@ -657,6 +657,8 @@ namespace Microsoft.PowerShell
 #if UNIX
             return false;
 #else
+            // On some variants of Windows, STA is not supported and pwsh will fail to start.
+            // The exception to determine if STA is supported only occurs on thread Start().
             Thread thread = new Thread(() => { });
             thread.SetApartmentState(ApartmentState.STA);
             try
