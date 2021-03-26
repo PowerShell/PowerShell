@@ -20,7 +20,8 @@ jobs:
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+  - ${{ if ne(variables['AzDevOpsFeed'], '') }}:
+    - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - pwsh: |
       if (Test-Path -Path $HOME/.dotnet) {
