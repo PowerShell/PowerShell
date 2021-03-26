@@ -32,8 +32,8 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      Import-Module .\tools\ci.psm1
-      Invoke-CIInstall -SkipUser
+      Import-Module .\build.psm1
+      Start-PSBootstrap -Package
     displayName: Bootstrap
 
   - pwsh: |
