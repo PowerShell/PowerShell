@@ -74,17 +74,17 @@ jobs:
     condition: succeeded()
 
   - pwsh: |
-      Get-ChildItem '${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.deb' -Recurse | ForEach-Object {
+      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.deb" -Recurse | ForEach-Object {
         $packagePath = $_.FullName
         Write-Host "Uploading $packagePath"
         Write-Host "##vso[artifact.upload containerfolder=deb;artifactname=deb]$packagePath"
       }
-      Get-ChildItem '${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.rpm' -Recurse | ForEach-Object {
+      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.rpm" -Recurse | ForEach-Object {
         $packagePath = $_.FullName
         Write-Host "Uploading $packagePath"
         Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
       }
-      Get-ChildItem '${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.tar.gz' -Recurse | ForEach-Object {
+      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.tar.gz" -Recurse | ForEach-Object {
         $packagePath = $_.FullName
         Write-Host "Uploading $packagePath"
         Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
