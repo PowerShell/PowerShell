@@ -725,21 +725,18 @@ function New-LinuxPackage
             Write-Error -Message "Package NOT found: $package"
         }
 
-        if($isFullBuild)
+        if ($package -isnot [System.IO.FileInfo])
         {
-            if ($package -isnot [System.IO.FileInfo])
-            {
-                $packageObj = Get-Item $package
-                Write-Error -Message "The PACKAGE is not a FileInfo object"
-            }
-            else
-            {
-                $packageObj = $package
-            }
-
-            Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-            Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+            $packageObj = Get-Item $package
+            Write-Error -Message "The PACKAGE is not a FileInfo object"
         }
+        else
+        {
+            $packageObj = $package
+        }
+
+        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
     }
 
     if ($IsLinux)
