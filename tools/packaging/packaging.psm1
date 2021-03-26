@@ -836,9 +836,6 @@ function New-UnixPackage {
                 }
 
                 $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
-                if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
-                    throw ($ErrorMessage -f "Redhat or SUSE Family")
-                }
             }
             "osxpkg" {
                 $packageVersion = $Version
