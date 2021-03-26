@@ -3263,7 +3263,7 @@ function Dismount-ExePackageEngine {
     $wixPaths = Get-WixPath
 
     $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-    $resolvedEnginePath = System.IO.Path]::GetFullPath($EnginePath)
+    $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
 
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
 }
