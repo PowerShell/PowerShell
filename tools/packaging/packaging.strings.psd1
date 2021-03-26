@@ -12,11 +12,11 @@ else
     grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
 fi
 if [ -f /lib64/libssl.so.1.1 ] ; then
-    ln -s /lib64/libssl.so.1.1 {1}/libssl.so.1.0.0
-    ls -s /lib64/libcrypto.so.1.1.1 {1}/libcrypto.so.1.0.0
+    ln -f -s /lib64/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.1.1.1 {1}/libcrypto.so.1.0.0
 else
-    ln -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
-    ls -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+    ln -f -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
 fi
 
 '@
@@ -50,14 +50,14 @@ case "$1" in
 esac
 
 if [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.1 ] ; then
-    ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.1 {1}/libssl.so.1.0.0
-    ls -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 {1}/libcrypto.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 {1}/libcrypto.so.1.0.0
 elif [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 ] ; then
-    ln -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 {1}/libssl.so.1.0.0
-    ls -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 {1}/libcrypto.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 {1}/libssl.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 {1}/libcrypto.so.1.0.0
 else
-    ln -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
-    ls -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+    ln -f -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
 fi
 
 '@

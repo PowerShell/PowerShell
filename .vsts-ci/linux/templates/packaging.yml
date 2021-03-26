@@ -1,7 +1,7 @@
 parameters:
   pool: 'ubuntu-18.04'
   parentJobs: []
-  name: 'Deb'
+  name: 'Linux'
 
 jobs:
 - job: ${{ parameters.name }}_packaging
