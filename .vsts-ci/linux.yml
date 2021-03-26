@@ -89,6 +89,10 @@ stages:
     parameters:
       pool: ubuntu-16.04
 
+  - template: linux/templates/packaging.yml
+    parameters:
+      pool: ubuntu-16.04
+
 - stage: CodeCovTestPackage
   displayName: CodeCoverage and Test Packages
   dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
