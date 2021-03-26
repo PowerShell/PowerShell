@@ -1185,7 +1185,15 @@ namespace PSTests.Parallel
             Assert.False(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.True(cpp.StaMode);
+            if (!Platform.IsWindows)
+            {
+                Assert.False(cpp.StaMode);
+            }
+            else
+            {
+                Assert.True(cpp.StaMode);
+            }
+
             Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
             Assert.Null(cpp.ErrorMessage);
         }
