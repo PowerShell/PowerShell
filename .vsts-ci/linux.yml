@@ -91,7 +91,7 @@ stages:
 
 - stage: PackageLinux
   displayName: Package Linux
-  dependsOn: ["BuildLinux"] # by specifying an empty array, this stage doesn't depend on the stage before it
+  dependsOn: ["BuildLinux"]
   jobs:
   - template: linux/templates/packaging.yml
     parameters:
