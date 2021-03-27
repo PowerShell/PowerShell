@@ -587,4 +587,28 @@ namespace System.Management.Automation
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }
     }
+
+    /// <summary>
+    /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
+    /// </summary>
+    public static class PowerShellUnsafeAssemblyLoad
+    {
+        /// <summary>
+        /// Load an assembly in memory from unmanaged code.
+        /// </summary>
+        /// <param name="data">
+        /// Unmanaged pointer to assembly data buffer.
+        /// </param>
+        /// <param name="size">
+        /// Size in bytes of the assembly data buffer.
+        /// </param>
+        [UnmanagedCallersOnly]
+        public static void LoadAssemblyFromMemory(IntPtr data, int size)
+        {
+            byte[] bytes = new byte[size];
+            Marshal.Copy(data, bytes, 0, size);
+            using var stream = new MemoryStream(bytes);
+            AssemblyLoadContext.Default.LoadFromStream(stream);
+        }
+    }
 }
