@@ -1285,12 +1285,6 @@ function Get-PackageDependencies
                 "libicu"
             )
         }
-        # elseif ($Environment.IsSUSEFamily) {
-        #     $Dependencies = @(
-        #         "libopenssl1_0_0",
-        #         "libicu"
-        #     )
-        # }
 
         return $Dependencies
     }
