@@ -3588,16 +3588,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            try
-                            {
-                                tempKey = currentKey.OpenSubKey(subKey, writeAccess);
-                            }
-                            catch (Exception e)
-                            {
-                                WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.InvalidOperation, subKey));
-                                continue; // Iterate to find in the next subkey
-                            }
-
+                            tempKey = currentKey.OpenSubKey(subKey, writeAccess);
                             currentKey.Close();
                             currentKey = tempKey;
 
