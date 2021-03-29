@@ -3554,7 +3554,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result = resultRoot.OpenSubKey(remainingPath, writeAccess);
                 }
-                catch (NotSupportedException e)
+                catch (Exception e)
                 {
                     WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.InvalidOperation, path));
                 }
@@ -3588,7 +3588,16 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            tempKey = currentKey.OpenSubKey(subKey, writeAccess);
+                            try
+                            {
+                                tempKey = currentKey.OpenSubKey(subKey, writeAccess);
+                            }
+                            catch (Exception e)
+                            {
+                                WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.InvalidOperation, subKey));
+                                continue; // Iterate to find in the next subkey
+                            }
+
                             currentKey.Close();
                             currentKey = tempKey;
 
