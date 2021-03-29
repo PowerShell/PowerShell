@@ -812,6 +812,11 @@ namespace System.Management.Automation.Language
         internal void UpdatePositionNoBreak(int pos)
         {
             _currentSequencePointIndex = pos;
+        }
+
+        internal void UpdatePosition(int pos)
+        {
+            UpdatePositionNoBreak(pos);
 
             if (ProfilerEventSource.LogInstance.IsEnabled())
             {
@@ -821,11 +826,7 @@ namespace System.Management.Automation.Language
                     _executionContext.Debugger.GetParentScriptBlockId(pos),
                     pos);
             }
-        }
 
-        internal void UpdatePosition(int pos)
-        {
-            UpdatePositionNoBreak(pos);
             if (_executionContext._debuggingMode > 0)
             {
                 _executionContext.Debugger.OnSequencePointHit(this);
