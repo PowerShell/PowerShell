@@ -3024,7 +3024,14 @@ namespace System.Management.Automation.Language
                                 if (useCrossPlatformSchema)
                                 {
                                     ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
-                                    dscSubsystem.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    if (dscSubsystem != null)
+                                    {
+                                        dscSubsystem.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                    }
+                                    else
+                                    {
+                                        ReportError(new ParseError(configurationToken.Extent, "CrossPlatformDscSubsystemMissing", string.Format(CultureInfo.CurrentCulture, ParserStrings.CrossPlatformDscSubsystemMissing)));
+                                    }
                                 }
                                 else
                                 {
@@ -3278,10 +3285,15 @@ namespace System.Management.Automation.Language
                     //
                     if (useCrossPlatformSchema)
                     {
-                        //CrossPlatformDsc.RegisterSubsystemIfNotAlready();
-
                         ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
-                        dscSubsystem.ClearCache();
+                        if (dscSubsystem != null)
+                        {
+                            dscSubsystem.ClearCache();
+                        }
+                        else
+                        {
+                            ReportError(new ParseError(configurationToken.Extent, "CrossPlatformDscSubsystemMissing", string.Format(CultureInfo.CurrentCulture, ParserStrings.CrossPlatformDscSubsystemMissing)));
+                        }
                     }
                     else
                     {

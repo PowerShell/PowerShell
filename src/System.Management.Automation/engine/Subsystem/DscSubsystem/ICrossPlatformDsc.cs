@@ -17,27 +17,27 @@ namespace System.Management.Automation.Subsystem
     public interface ICrossPlatformDsc : ISubsystem
     {
         /// <summary>
-        /// Default implementation for `ISubsystem.Kind`.
+        /// Subsystem kind.
         /// </summary>
         SubsystemKind ISubsystem.Kind => SubsystemKind.CrossPlatformDsc;
 
         /// <summary>
-        /// Default summary.
+        /// Dsc initializer function.
         /// </summary>
         void LoadDefaultCimKeywords(Collection<Exception> errors);
 
         /// <summary>
-        /// Default summary.
+        /// Clear internal class caches.
         /// </summary>
         void ClearCache();
 
         /// <summary>
-        /// Default summary.
+        /// Flag that shows whether v2 or v3 API was initialized.
         /// </summary>
         bool NewApiIsUsed { get; }
 
         /// <summary>
-        /// Default summary.
+        /// Returns resource usage string.
         /// </summary>
         string GetDSCResourceUsageString(DynamicKeyword keyword);
 
