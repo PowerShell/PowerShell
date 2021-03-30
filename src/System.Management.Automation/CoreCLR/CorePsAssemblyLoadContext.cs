@@ -591,7 +591,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
     /// </summary>
-    public static class PowerShellUnsafeAssemblyLoad
+    public static unsafe class PowerShellUnsafeAssemblyLoad
     {
         /// <summary>
         /// Load an assembly in memory from unmanaged code.
@@ -605,9 +605,8 @@ namespace System.Management.Automation
         [UnmanagedCallersOnly]
         public static void LoadAssemblyFromMemory(IntPtr data, int size)
         {
-            byte[] bytes = new byte[size];
-            Marshal.Copy(data, bytes, 0, size);
-            using var stream = new MemoryStream(bytes);
+            Byte* bytes = (Byte*)data.ToPointer();
+            using var stream = new UnmanagedMemoryStream(bytes, size);
             AssemblyLoadContext.Default.LoadFromStream(stream);
         }
     }
