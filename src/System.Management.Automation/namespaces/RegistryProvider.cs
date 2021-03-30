@@ -3554,9 +3554,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result = resultRoot.OpenSubKey(remainingPath, writeAccess);
                 }
-                catch (Exception e)
+                catch (SecurityException e)
                 {
-                    WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.InvalidOperation, path));
+                    WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.SecurityError, path));
                 }
 
                 // If we could not open the key, see if we can find the subkey that matches.
