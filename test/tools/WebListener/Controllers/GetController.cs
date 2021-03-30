@@ -32,12 +32,12 @@ namespace mvc.Controllers
 
             Hashtable output = new Hashtable
             {
-                {"args"   , args},
+                {"args", args},
                 {"headers", headers},
-                {"origin" , Request.HttpContext.Connection.RemoteIpAddress.ToString()},
-                {"url"    , UriHelper.GetDisplayUrl(Request)},
-                {"query"  , Request.QueryString.ToUriComponent()},
-                {"method" , Request.Method}
+                {"origin", Request.HttpContext.Connection.RemoteIpAddress.ToString()},
+                {"url", UriHelper.GetDisplayUrl(Request)},
+                {"query", Request.QueryString.ToUriComponent()},
+                {"method", Request.Method}
             };
 
             if (Request.HasFormContentType)
@@ -45,7 +45,7 @@ namespace mvc.Controllers
                 Hashtable form = new Hashtable();
                 foreach (var key in Request.Form.Keys)
                 {
-                    form.Add(key,Request.Form[key]);
+                    form.Add(key, Request.Form[key]);
                 }
 
                 output["form"] = form;

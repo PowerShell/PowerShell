@@ -1017,7 +1017,7 @@ dotnet_diagnostic.SA0002.severity = none
 dotnet_diagnostic.SA1000.severity = warning
 
 # SA1001: Commas should be spaced correctly
-dotnet_diagnostic.SA1001.severity = none
+dotnet_diagnostic.SA1001.severity = warning
 
 # SA1002: Semicolons should be spaced correctly
 dotnet_diagnostic.SA1002.severity = warning

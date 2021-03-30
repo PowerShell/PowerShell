@@ -4628,7 +4628,7 @@ end {
                     new SessionStateAliasEntry("gm", "Get-Member", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gmo", "Get-Module", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gp", "Get-ItemProperty", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("gpv", "Get-ItemPropertyValue", string.Empty,ReadOnly),
+                    new SessionStateAliasEntry("gpv", "Get-ItemPropertyValue", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gps", "Get-Process", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("group", "Group-Object", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gu", "Get-Unique", string.Empty, ReadOnly),
@@ -4787,7 +4787,7 @@ end {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
             // Win8: 320909. Retaining the original definition to ensure backward compatability.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
-                string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true, languageMode: systemLanguageMode),
+                string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true, languageMode: systemLanguageMode),
 
