@@ -3554,7 +3554,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result = resultRoot.OpenSubKey(remainingPath, writeAccess);
                 }
-                catch (SecurityException e)
+                catch (System.Security.SecurityException e)
                 {
                     WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.SecurityError, path));
                 }
