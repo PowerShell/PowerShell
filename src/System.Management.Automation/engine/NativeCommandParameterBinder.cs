@@ -317,7 +317,7 @@ namespace System.Management.Automation
                             if (argArrayAst != null && UseArgumentList)
                             {
                                 // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
-                                foreach (string element in argArrayAst.Extent.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries))
+                                foreach (string element in argArrayAst.Extent.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
                                 {
                                     PossiblyGlobArg(element, parameter, stringConstantType);
                                 }
