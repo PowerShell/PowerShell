@@ -271,7 +271,7 @@ namespace System.Management.Automation
                         _arguments.Append(arg);
 
                         // we need to split the argument on spaces
-                        _argumentList.AddRange(arg.Split(" ", StringSplitOptions.RemoveEmptyEntries));
+                        _argumentList.AddRange(arg.Split(' ', StringSplitOptions.RemoveEmptyEntries));
                     }
                     else
                     {
