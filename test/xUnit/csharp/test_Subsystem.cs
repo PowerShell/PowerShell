@@ -85,8 +85,7 @@ namespace PSTests.Sequential
 
                 // Now validate the all-subsystem-info collection.
                 ReadOnlyCollection<SubsystemInfo> ssInfos = SubsystemManager.GetAllSubsystemInfo();
-                Assert.Single(ssInfos);
-                Assert.Same(ssInfos[0], ssInfo);
+                Assert.Equal(2, ssInfos.Count);
 
                 // Now validate the subsystem implementation itself.
                 ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
