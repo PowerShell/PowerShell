@@ -605,8 +605,7 @@ namespace System.Management.Automation
         [UnmanagedCallersOnly]
         public static void LoadAssemblyFromMemory(IntPtr data, int size)
         {
-            Byte* bytes = (Byte*)data.ToPointer();
-            using var stream = new UnmanagedMemoryStream(bytes, size);
+            using var stream = new UnmanagedMemoryStream((Byte*)data, size);
             AssemblyLoadContext.Default.LoadFromStream(stream);
         }
     }
