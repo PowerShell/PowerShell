@@ -43,7 +43,7 @@ namespace PSTests.Sequential
             Assert.Same(ssInfo2, ssInfo);
 
             ReadOnlyCollection<SubsystemInfo> ssInfos = SubsystemManager.GetAllSubsystemInfo();
-            Assert.Equal(ssInfos.Count, 2); // ICommandPredictor, ICrossPlatformDsc
+            Assert.Equal(2, ssInfos.Count); // ICommandPredictor, ICrossPlatformDsc
 
             ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
             Assert.Null(impl);
