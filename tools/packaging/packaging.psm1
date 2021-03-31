@@ -1261,7 +1261,7 @@ function Get-PackageDependencies
 {
     param(
         [String]
-        [ValidateSet('rh','deb')]
+        [ValidateSet('rh','deb','macOS')]
         $Distribution
     )
 
