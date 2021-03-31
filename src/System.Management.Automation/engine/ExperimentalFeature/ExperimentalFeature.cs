@@ -22,6 +22,7 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
+        internal const string DscExperimentalFeatureName = "PS7DscSupport";
 
         #endregion
 

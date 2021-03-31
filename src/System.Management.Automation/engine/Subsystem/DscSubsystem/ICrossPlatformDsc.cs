@@ -40,10 +40,5 @@ namespace System.Management.Automation.Subsystem
         /// Returns resource usage string.
         /// </summary>
         string GetDSCResourceUsageString(DynamicKeyword keyword);
-
-        /// <summary>
-        /// Experimental feature name for DSC v3.
-        /// </summary>
-        const string DscExperimentalFeatureName = "PS7DscSupport";
     }
 }
