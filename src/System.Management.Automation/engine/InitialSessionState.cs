@@ -1308,6 +1308,32 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        #region VariableHelper
+        /// <summary>
+        /// A helper for adding variables to session state.
+        /// Experimental features can be handled here.
+        /// </summary>
+        /// <param name="variables">The variables to add to session state.</param>
+        private void AddVariables(IEnumerable<SessionStateVariableEntry> variables)
+        {
+            Variables.Add(variables);
+
+            // If the PSNativeCommandArgumentPassing feature is enabled, create the variable which controls the behavior
+            // Since the BuiltInVariables list is static, and this should be done dynamically
+            // we need to do this here.
+            if (ExperimentalFeature.IsEnabled("PSNativeCommandArgumentPassing"))
+            {
+                Variables.Add(
+                    new SessionStateVariableEntry(
+                        SpecialVariables.NativeArgumentPassing,
+                        NativeArgumentPassingStyle.Standard,
+                        RunspaceInit.NativeCommandArgumentPassingDescription,
+                        ScopedItemOptions.None,
+                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
@@ -1413,7 +1439,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Add built-in variables.
-            iss.Variables.Add(BuiltInVariables);
+            iss.AddVariables(BuiltInVariables);
 
             // wrap some commands in a proxy function to restrict their parameters
             foreach (KeyValuePair<string, CommandMetadata> proxyFunction in CommandMetadata.GetRestrictedCommands(SessionCapabilities.RemoteServer))
@@ -1477,7 +1503,7 @@ namespace System.Management.Automation.Runspaces
             // be causing test failures - i suspect due to lack test isolation - brucepay Mar 06/2008
 #if false
             // Add the default variables and make them private...
-            iss.Variables.Add(BuiltInVariables);
+            iss.AddVariables(BuiltInVariables);
             foreach (SessionStateVariableEntry v in iss.Variables)
             {
                 v.Visibility = SessionStateEntryVisibility.Private;
@@ -1500,7 +1526,7 @@ namespace System.Management.Automation.Runspaces
 
             InitialSessionState ss = new InitialSessionState();
 
-            ss.Variables.Add(BuiltInVariables);
+            ss.AddVariables(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
             ss.Commands.Add(new SessionStateScriptEntry("*"));
             ss.Commands.Add(BuiltInFunctions);
@@ -1567,7 +1593,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState ss = new InitialSessionState();
 
-            ss.Variables.Add(BuiltInVariables);
+            ss.AddVariables(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
             ss.Commands.Add(new SessionStateScriptEntry("*"));
             ss.Commands.Add(BuiltInFunctions);
@@ -1608,7 +1634,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState ss = new InitialSessionState();
 
-            ss.Variables.Add(this.Variables.Clone());
+            ss.AddVariables(this.Variables.Clone());
             ss.EnvironmentVariables.Add(this.EnvironmentVariables.Clone());
             ss.Commands.Add(this.Commands.Clone());
             ss.Assemblies.Add(this.Assemblies.Clone());
@@ -4272,7 +4298,13 @@ param(
         }
         else {
             $pagerCommand = 'less'
-            $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+            # PSNativeCommandArgumentPassing arguments should be constructed differently.
+            if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
+                $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
+            }
+            else {
+                $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+            }
         }
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
@@ -4312,10 +4344,16 @@ param(
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
-                # Supply pager arguments to an application without any PowerShell parsing of the arguments.
+                # Start the pager arguments directly if the PSNativeCommandArgumentPassing feature is enabled.
+                # Otherwise, supply pager arguments to an application without any PowerShell parsing of the arguments.
                 # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                $env:__PSPAGER_ARGS = $pagerArgs
-                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
+                if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
+                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
+                }
+                else {
+                    $env:__PSPAGER_ARGS = $pagerArgs
+                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
+                }
             }
             else {
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand

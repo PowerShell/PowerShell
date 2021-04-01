@@ -235,9 +235,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -BeExactly "h-llo"
         }
 
-        It "Empty command should fail" {
-            & $powershell -noprofile -c ''
+        It "Missing command should fail" {
+            & $powershell -noprofile -c
             $LASTEXITCODE | Should -Be 64
+        }
+
+        It "Empty space command should succeed" {
+            & $powershell -noprofile -c '' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
         }
 
         It "Whitespace command should succeed" {

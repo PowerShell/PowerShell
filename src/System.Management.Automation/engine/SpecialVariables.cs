@@ -257,6 +257,11 @@ namespace System.Management.Automation
 
         #endregion Preference Variables
 
+        // Native command argument passing style
+        internal const string NativeArgumentPassing = "PSNativeCommandArgumentPassing";
+
+        internal static readonly VariablePath NativeArgumentPassingVarPath = new VariablePath(NativeArgumentPassing);
+
         internal const string ErrorView = "ErrorView";
 
         internal static readonly VariablePath ErrorViewVarPath = new VariablePath(ErrorView);

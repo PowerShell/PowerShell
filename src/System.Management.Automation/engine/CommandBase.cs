@@ -272,6 +272,20 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region NativeArgumentPassingStyle
+    /// <summary>
+    /// Defines the different native command argument parsing options.
+    /// </summary>
+    public enum NativeArgumentPassingStyle
+    {
+        /// <summary>Use legacy argument parsing via ProcessStartInfo.Arguments.</summary>
+        Legacy = 0,
+
+        /// <summary>Use new style argument parsing via ProcessStartInfo.ArgumentList.</summary>
+        Standard = 1
+    }
+    #endregion NativeArgumentPassingStyle
+
     #region ErrorView
     /// <summary>
     /// Defines the potential ErrorView options.
