@@ -502,7 +502,11 @@ function Invoke-CIFinish
 
         # the packaging tests find the MSI package using env:PSMsiX64Path
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
-        $env:PSExePath = $artifacts | Where-Object { $_.EndsWith(".exe") }
+        $architechture = $Runtime.Split('-')[1]
+        $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
+        Write-Verbose "exe Path: $exePath" -Verbose
+        $artifacts.Add($exePath)
+        $env:PSExePath = $exePath
         $env:PSMsiChannel = $Channel
         $env:PSMsiRuntime = $Runtime
 

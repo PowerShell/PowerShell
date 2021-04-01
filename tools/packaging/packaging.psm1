@@ -3240,6 +3240,8 @@ function New-ExePackage {
         TargetPath     = $MsiLocationPath
         WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
+
+    return $exeLocationPath
 }
 
 function Dismount-ExePackageEngine {
