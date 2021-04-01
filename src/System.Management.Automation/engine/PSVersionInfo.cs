@@ -505,7 +505,7 @@ namespace System.Management.Automation
         public SemanticVersion(int major, int minor, int patch, string label)
             : this(major, minor, patch)
         {
-            // We presume the SymVer :
+            // We presume the SemVer :
             // 1) major.minor.patch-label
             // 2) 'label' starts with letter or digit.
             if (!string.IsNullOrEmpty(label))
@@ -643,12 +643,12 @@ namespace System.Management.Automation
         public int Patch { get; }
 
         /// <summary>
-        /// PreReleaseLabel position in the SymVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
+        /// PreReleaseLabel position in the SemVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
         /// </summary>
         public string PreReleaseLabel { get; }
 
         /// <summary>
-        /// BuildLabel position in the SymVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
+        /// BuildLabel position in the SemVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
         /// </summary>
         public string BuildLabel { get; }
 
@@ -827,7 +827,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implement <see cref="IComparable{T}.CompareTo"/>.
-        /// Meets SymVer 2.0 p.11 https://semver.org/
+        /// Meets SemVer 2.0 p.11 https://semver.org/
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
@@ -843,7 +843,7 @@ namespace System.Management.Automation
             if (Patch != value.Patch)
                 return Patch > value.Patch ? 1 : -1;
 
-            // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
+            // SemVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return ComparePreLabel(this.PreReleaseLabel, value.PreReleaseLabel);
         }
 
@@ -860,7 +860,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool Equals(SemanticVersion other)
         {
-            // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
+            // SemVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return other != null &&
                    (Major == other.Major) && (Minor == other.Minor) && (Patch == other.Patch) &&
                    string.Equals(PreReleaseLabel, other.PreReleaseLabel, StringComparison.Ordinal);
