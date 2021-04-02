@@ -608,7 +608,8 @@ namespace Microsoft.PowerShell
                 return (switchKey: string.Empty, shouldBreak: false);
             }
 
-            if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
+            char firstChar = switchKey[0];
+            if (!CharExtensions.IsDash(firstChar) && firstChar != '/')
             {
                 // then it's a file
                 --argIndex;
@@ -622,7 +623,7 @@ namespace Microsoft.PowerShell
             switchKey = switchKey.Substring(1);
 
             // chop off the second dash so we're agnostic wrt specifying - or --
-            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(switchKey[0]))
+            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(firstChar) && switchKey[0] == firstChar)
             {
                 switchKey = switchKey.Substring(1);
             }
