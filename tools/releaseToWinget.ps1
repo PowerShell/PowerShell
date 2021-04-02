@@ -89,21 +89,26 @@ else
 $manifestPath = Join-Path $wingetPath "manifests" "Microsoft" $productName "$ReleaseVersion.yaml"
 
 $manifestContent = @"
-Id: Microsoft.$productName
-Version: $ReleaseVersion
-Name: $productName
+PackageIdentifier: Microsoft.$productName
+PackageVersion: $ReleaseVersion
+PackageName: $productName
 Publisher: Microsoft
+PackageUrl: https://microsoft.com/PowerShell
 License: MIT
 LicenseUrl: https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt
-AppMoniker: $($productName.ToLower())
-Tags: powershell, pwsh
+Moniker: $($productName.ToLower())
+ShortDescription: Microsoft.$productName
 Description: PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models. It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
+Tags: powershell, pwsh
 Homepage: https://github.com/PowerShell/PowerShell
 Installers:
-  - Arch: x64
-    Url: https://github.com/PowerShell/PowerShell/releases/download/v$ReleaseVersion/$msiName
-    Sha256: $msiHash
+  - Architecture: x64
+    InstallerUrl: https://github.com/PowerShell/PowerShell/releases/download/v$ReleaseVersion/$msiName
+    InstallerSha256: $msiHash
     InstallerType: msi
+PackageLocale: en-US
+ManifestType: singleton
+ManifestVersion: 1.0.0
 
 "@
 
