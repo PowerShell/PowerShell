@@ -1972,7 +1972,7 @@ namespace System.Management.Automation.Language
                     }
                     else if ((token.TokenFlags & TokenFlags.Keyword) != 0)
                     {
-                        foreach (var attr in attributes.Where(attr => attr is not AttributeAst))
+                        foreach (var attr in attributes.Where(static attr => attr is not AttributeAst))
                         {
                             ReportError(attr.Extent,
                                 nameof(ParserStrings.TypeNotAllowedBeforeStatement),
@@ -3005,7 +3005,7 @@ namespace System.Management.Automation.Language
 
                                 p.AddCommand(new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand)));
                                 p.AddParameter("Name", "PSDesiredStateConfiguration");
-                                
+
                                 bool prev3IsLoaded = false;
                                 foreach (PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
                                 {
@@ -3017,7 +3017,7 @@ namespace System.Management.Automation.Language
                                 }
 
                                 p.Commands.Clear();
-                                
+
                                 useCrossPlatformSchema = !prev3IsLoaded;
 
                                 if (useCrossPlatformSchema)
@@ -6043,7 +6043,7 @@ namespace System.Management.Automation.Language
                     commandAst = new CommandExpressionAst(
                         exprExtent,
                         expr,
-                        redirections?.Where(r => r != null));
+                        redirections?.Where(static r => r != null));
                 }
                 else
                 {
@@ -6674,7 +6674,7 @@ namespace System.Management.Automation.Language
 
             return new CommandAst(ExtentOf(firstToken, endExtent), elements,
                                   dotSource || ampersand ? firstToken.Kind : TokenKind.Unknown,
-                                  redirections?.Where(r => r != null));
+                                  redirections?.Where(static r => r != null));
         }
 
         #endregion Pipelines

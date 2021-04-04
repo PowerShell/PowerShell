@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                 names.Add(result.Name);
             }
 
-            return names.OrderBy(name => name).Select(name => new CompletionResult(name, name, CompletionResultType.Text, name));
+            return names.OrderBy(static name => name).Select(static name => new CompletionResult(name, name, CompletionResultType.Text, name));
         }
     }
 }

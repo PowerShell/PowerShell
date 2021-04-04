@@ -704,7 +704,7 @@ namespace System.Management.Automation.Language
             // The hash we compute is intentionally dumb, we want collisions to catch similar strings,
             // so we just sum up the characters.
             const string beginSig = "sig#beginsignatureblock";
-            beginSig.Aggregate(0, (current, t) => current + t);
+            beginSig.Aggregate(0, static (current, t) => current + t);
 
             // Spot check to help make sure the arrays are in sync
             Diagnostics.Assert(s_keywordTable["using"] == TokenKind.Using, "Keyword table out of sync w/ enum");
@@ -1269,7 +1269,7 @@ namespace System.Management.Automation.Language
             }
             else if ((flags & TokenFlags.TokenInError) == 0)
             {
-                if (nestedTokens.Any(tok => tok.HasError))
+                if (nestedTokens.Any(static tok => tok.HasError))
                 {
                     flags |= TokenFlags.TokenInError;
                 }

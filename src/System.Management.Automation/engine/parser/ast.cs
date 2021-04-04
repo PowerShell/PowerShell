@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Language
             string script = this.ToString();
             var newScript = new StringBuilder();
 
-            foreach (var ast in astElements.OrderBy(ast => ast.Extent.StartOffset))
+            foreach (var ast in astElements.OrderBy(static ast => ast.Extent.StartOffset))
             {
                 int astStartOffset = ast.Extent.StartOffset - indexOffset;
                 int astEndOffset = ast.Extent.EndOffset - indexOffset;
@@ -1567,7 +1567,7 @@ namespace System.Management.Automation.Language
 
             if (ParamBlock != null)
             {
-                usesCmdletBinding = this.ParamBlock.Attributes.Any(attribute => typeof(CmdletBindingAttribute) == attribute.TypeName.GetReflectionAttributeType());
+                usesCmdletBinding = this.ParamBlock.Attributes.Any(static attribute => typeof(CmdletBindingAttribute) == attribute.TypeName.GetReflectionAttributeType());
                 if (!usesCmdletBinding)
                 {
                     usesCmdletBinding = ParamBlockAst.UsesCmdletBinding(ParamBlock.Parameters);
@@ -3754,7 +3754,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(
                     usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
                     "Caller makes sure the value passed in is not null or empty.");
-                orderedUsingVars = usingVariablesTuple.Item1.OrderBy(varAst => varAst.Extent.StartOffset).GetEnumerator();
+                orderedUsingVars = usingVariablesTuple.Item1.OrderBy(static varAst => varAst.Extent.StartOffset).GetEnumerator();
                 additionalNewUsingParams = usingVariablesTuple.Item2;
             }
 
@@ -4041,7 +4041,7 @@ namespace System.Management.Automation.Language
             {
                 this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(commandsAllowed.ToArray());
                 SetParents(CommandsAllowed);
-                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(ast => ast is not StringConstantExpressionAst);
+                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(static ast => ast is not StringConstantExpressionAst);
             }
             else
             {
@@ -6444,7 +6444,7 @@ namespace System.Management.Automation.Language
             {
                 LCurlyToken = this.LCurlyToken,
                 ConfigurationToken = this.ConfigurationToken,
-                CustomAttributes = this.CustomAttributes?.Select(e => (AttributeAst)e.Copy())
+                CustomAttributes = this.CustomAttributes?.Select(static e => (AttributeAst)e.Copy())
             };
         }
 
@@ -6545,7 +6545,7 @@ namespace System.Management.Automation.Language
             cea.Add(new CommandParameterAst(PositionUtilities.EmptyExtent, "ResourceModuleTuplesToImport", new ConstantExpressionAst(PositionUtilities.EmptyExtent, resourceModulePairsToImport), PositionUtilities.EmptyExtent));
 
             var scriptBlockBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes?.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes?.Select(static att => (AttributeAst)att.Copy()).ToList(),
                 null,
                 new StatementBlockAst(Body.Extent, resourceBody, null),
                 false, false);
@@ -6578,9 +6578,9 @@ namespace System.Management.Automation.Language
             //        )
             //
             var attribAsts =
-                ConfigurationBuildInParameterAttribAsts.Select(attribAst => (AttributeAst)attribAst.Copy()).ToList();
+                ConfigurationBuildInParameterAttribAsts.Select(static attribAst => (AttributeAst)attribAst.Copy()).ToList();
 
-            var paramAsts = ConfigurationBuildInParameters.Select(paramAst => (ParameterAst)paramAst.Copy()).ToList();
+            var paramAsts = ConfigurationBuildInParameters.Select(static paramAst => (ParameterAst)paramAst.Copy()).ToList();
 
             // the parameters defined in the configuration keyword will be combined with above parameters
             // it will be used to construct $ArgsToBody in the set-item created function boby using below statement
@@ -6591,7 +6591,7 @@ namespace System.Management.Automation.Language
             //         $Outputpath = $psboundparameters[""Outputpath""]
             if (Body.ScriptBlock.ParamBlock != null)
             {
-                paramAsts.AddRange(Body.ScriptBlock.ParamBlock.Parameters.Select(parameterAst => (ParameterAst)parameterAst.Copy()));
+                paramAsts.AddRange(Body.ScriptBlock.ParamBlock.Parameters.Select(static parameterAst => (ParameterAst)parameterAst.Copy()));
             }
 
             var paramBlockAst = new ParamBlockAst(this.Extent, attribAsts, paramAsts);
@@ -6599,12 +6599,12 @@ namespace System.Management.Automation.Language
             var cmdAst = new CommandAst(this.Extent, cea, TokenKind.Unknown, null);
 
             var pipeLineAst = new PipelineAst(this.Extent, cmdAst, background: false);
-            var funcStatements = ConfigurationExtraParameterStatements.Select(statement => (StatementAst)statement.Copy()).ToList();
+            var funcStatements = ConfigurationExtraParameterStatements.Select(static statement => (StatementAst)statement.Copy()).ToList();
             funcStatements.Add(pipeLineAst);
             var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
 
             var funcBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes?.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes?.Select(static att => (AttributeAst)att.Copy()).ToList(),
                 paramBlockAst, statmentBlockAst, false, true);
             var funcBodyExp = new ScriptBlockExpressionAst(this.Extent, funcBody);
 
