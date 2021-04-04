@@ -778,7 +778,7 @@ namespace System.Management.Automation
                 CachedReflectionInfo.ScriptBlock_InvokeAsDelegateHelper,
                 dollarUnderExpr,
                 dollarThisExpr,
-                Expression.NewArrayInit(typeof(object), parameterExprs.Select(p => p.Cast(typeof(object)))));
+                Expression.NewArrayInit(typeof(object), parameterExprs.Select(static p => p.Cast(typeof(object)))));
             if (returnsSomething)
             {
                 call = DynamicExpression.Dynamic(
