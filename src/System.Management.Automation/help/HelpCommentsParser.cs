@@ -482,7 +482,7 @@ namespace System.Management.Automation
                 CompiledCommandParameter parameter = mergedParameter.Parameter;
                 ParameterSetSpecificMetadata parameterSetData = parameter.GetParameterSetData(1u << i);
                 string description = GetParameterDescription(parameter.Name);
-                bool supportsWildcards = parameter.CompiledAttributes.Any(attribute => attribute is SupportsWildcardsAttribute);
+                bool supportsWildcards = parameter.CompiledAttributes.Any(static attribute => attribute is SupportsWildcardsAttribute);
                 XmlElement parameterElement = BuildXmlForParameter(parameter.Name,
                     parameterSetData.IsMandatory, parameterSetData.ValueFromPipeline,
                     parameterSetData.ValueFromPipelineByPropertyName,

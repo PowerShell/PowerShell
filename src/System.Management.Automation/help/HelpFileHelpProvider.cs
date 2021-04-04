@@ -370,7 +370,7 @@ namespace System.Management.Automation
                         // * and SearchOption.AllDirectories gets all the version directories.
                         string[] directories = Directory.GetDirectories(psModulePath, "*", SearchOption.AllDirectories);
 
-                        var possibleModuleDirectories = directories.Where(directory => !ModuleUtils.IsPossibleResourceDirectory(directory));
+                        var possibleModuleDirectories = directories.Where(static directory => !ModuleUtils.IsPossibleResourceDirectory(directory));
 
                         foreach (string directory in possibleModuleDirectories)
                         {

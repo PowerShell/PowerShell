@@ -784,7 +784,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.GetChildJobsSnapshot().Any(childJob => childJob.HasMoreData) || (this.Results.Count != 0);
+                return this.GetChildJobsSnapshot().Any(static childJob => childJob.HasMoreData) || (this.Results.Count != 0);
             }
         }
 

@@ -1781,7 +1781,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (IEnumerable<FileSystemInfo> childList in target)
                 {
                     // On some systems, this is already sorted.  For consistency, always sort again.
-                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase);
+                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(static c => c.Name, StringComparer.CurrentCultureIgnoreCase);
 
                     foreach (FileSystemInfo filesystemInfo in sortedChildList)
                     {
