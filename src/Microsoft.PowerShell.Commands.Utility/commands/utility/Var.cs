@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
                     GetMatchingVariables(varName, Scope, out wasFiltered, /*quiet*/ false);
 
                 matchingVariables.Sort(
-                    (PSVariable left, PSVariable right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name));
+                    static (PSVariable left, PSVariable right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name));
 
                 bool matchFound = false;
                 foreach (PSVariable matchingVariable in matchingVariables)

@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             var sources = GetMatchingTraceSource(_names, true);
-            var result = sources.OrderBy(source => source.Name);
+            var result = sources.OrderBy(static source => source.Name);
             WriteObject(result, true);
         }
 
