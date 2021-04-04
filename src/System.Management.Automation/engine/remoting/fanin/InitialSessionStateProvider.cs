@@ -1711,7 +1711,7 @@ namespace System.Management.Automation.Remoting
             _configFile = configFile;
             if (roleVerifier == null)
             {
-                roleVerifier = (role) => false;
+                roleVerifier = static (role) => false;
             }
 
             Runspace backupRunspace = Runspace.DefaultRunspace;

@@ -1944,7 +1944,7 @@ namespace Microsoft.PowerShell.Commands
 
             sb.Append("@{");
 
-            var keys = table.Keys.Cast<string>().OrderBy(x => x);
+            var keys = table.Keys.Cast<string>().OrderBy(static x => x);
             foreach (var key in keys)
             {
                 sb.Append(writer.NewLine);
