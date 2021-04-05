@@ -53,7 +53,7 @@
       <!-- Create the internal version -->
       <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
       <!-- Create the version if we have a pre-release -->
-      <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
+      <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart.Substring(3))</PSCoreFileVersion>
       <!-- Create the version if we have a release build -->
       <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart)</PSCoreFileVersion>
     </PropertyGroup>
