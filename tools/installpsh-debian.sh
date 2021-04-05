@@ -19,7 +19,7 @@
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
-VERSION="1.2.0"
+VERSION="1.2.1"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=debian
@@ -176,12 +176,12 @@ fi
 case $DISTRIB_ID in
     ubuntu|linuxmint)
         case $DISTRIB_RELEASE in
-            18.04|16.10|16.04|15.10|14.04)
+            20.04|18.04|16.10|16.04|15.10|14.04)
                 curl https://packages.microsoft.com/config/ubuntu/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
             ;;
             *)
                 echo "ERROR: unsupported Ubuntu version ($DISTRIB_RELEASE)." >&2
-                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 18.04." >&2
+                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 18.04, 20.04." >&2
                 echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
                 exit 1
             ;;
