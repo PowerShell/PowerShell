@@ -20,7 +20,7 @@ function Start-PSPackage {
         [string]$Version,
 
         [Parameter(ParameterSetName = "ReleaseTag")]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-(daily.\d{8}|\w+(\.\d{1,8})?))?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
 
