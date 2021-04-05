@@ -25,7 +25,8 @@ variables:
     value: 1
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-
+  - name: branchCounter
+    value: $[counter(variables['Build.SourceBranch'], 1)]
 stages:
   - stage: prep
     jobs:

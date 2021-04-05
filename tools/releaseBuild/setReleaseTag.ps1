@@ -92,7 +92,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
             $versionPart = $versionPart -replace '-.*$'
         }
 
-        $releaseTag = "$versionPart-daily.$((Get-Date).ToString('yyyyMMdd'))"
+        $releaseTag = "$versionPart-daily.$($env:BRANCHCOUNTER)"
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
