@@ -55,7 +55,12 @@ jobs:
   - powershell: |
       new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
-    displayName: 'Fake Signing'
+    displayName: 'Fake msi* Signing'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.exe" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+    displayName: 'Fake exe Signing'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml
