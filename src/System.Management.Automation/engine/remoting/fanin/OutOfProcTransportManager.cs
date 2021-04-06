@@ -635,30 +635,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
-
-                // Stop session processing thread.
-                try
-                {
-                    _sessionMessageQueue.CompleteAdding();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Object already disposed.
-                }
-
-                _sessionMessageQueue.Dispose();
-
-                // Stop command processing thread.
-                try
-                {
-                    _commandMessageQueue.CompleteAdding();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Object already disposed.
-                }
-
-                _commandMessageQueue.Dispose();
+                DisposeMessageQueue();
             }
         }
 
@@ -1052,6 +1029,37 @@ namespace System.Management.Automation.Remoting.Client
         {
             PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCCloseTimedOut, RemotingErrorIdStrings.IPCCloseTimedOut);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
+        }
+
+        #endregion
+    
+        #region Protected Methods
+
+        protected void DisposeMessageQueue()
+        {
+            // Stop session processing thread.
+            try
+            {
+                _sessionMessageQueue.CompleteAdding();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Object already disposed.
+            }
+
+            _sessionMessageQueue.Dispose();
+
+            // Stop command processing thread.
+            try
+            {
+                _commandMessageQueue.CompleteAdding();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Object already disposed.
+            }
+
+            _commandMessageQueue.Dispose();
         }
 
         #endregion
@@ -1584,6 +1592,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+        private Timer _sshProcessTimer;
 
         private const string _threadName = "SSHTransport Reader Thread";
 
@@ -1641,6 +1650,43 @@ namespace System.Management.Automation.Remoting.Client
 
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
+
+            // Monitor SSH process until connection is established.
+            _sshProcessTimer = new Timer(
+                callback: (_) =>
+                {
+                    if (_connectionEstablished)
+                    {
+                        // Monitor no longer needed.
+                        _sshProcessTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+                        return;
+                    }
+
+                    bool sshTerminated = false;
+                    try
+                    {
+                        // Detect if SSH client process terminates prematurely.
+                        using (var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId))
+                        {
+                            sshTerminated = sshProcess == null || sshProcess.Handle == IntPtr.Zero || sshProcess.HasExited;
+                        }
+                    }
+                    catch
+                    {
+                        sshTerminated = true;
+                    }
+
+                    if (sshTerminated)
+                    {
+                        _sshProcessTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+                        _sshProcessId = 0;
+                        HandleSSHError(
+                            new PSRemotingTransportException(RemotingErrorIdStrings.SSHClientCannotConnect));
+                    }
+                },
+                state: null,
+                dueTime: 100,   // 100 mSec
+                period: 100);   // Repeat indefinitely
         }
 
         internal override void CloseAsync()
@@ -1660,14 +1706,20 @@ namespace System.Management.Automation.Remoting.Client
 
         private void CloseConnection()
         {
+            // Ensure message queue is disposed.
+            base.DisposeMessageQueue();
+
+            var sshProcessTimer = Interlocked.Exchange(ref _sshProcessTimer, null);
+            sshProcessTimer?.Dispose();
+
             var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
-            if (stdInWriter != null) { stdInWriter.Dispose(); }
+            stdInWriter?.Dispose();
 
             var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
-            if (stdOutReader != null) { stdOutReader.Dispose(); }
+            stdOutReader?.Dispose();
 
             var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
-            if (stdErrReader != null) { stdErrReader.Dispose(); }
+            stdErrReader?.Dispose();
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
@@ -1677,10 +1729,12 @@ namespace System.Management.Automation.Remoting.Client
             {
                 try
                 {
-                    var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId);
-                    if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                    using (var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId))
                     {
-                        sshProcess.Kill();
+                        if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                        {
+                            sshProcess.Kill();
+                        }
                     }
                 }
                 catch (ArgumentException) { }
