@@ -7517,7 +7517,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter directory flag.
         /// </summary>
         [Parameter]
-        [Alias("ad", "d")]
+        [Alias("ad")]
         public SwitchParameter Directory
         {
             get { return _attributeDirectory; }
