@@ -321,8 +321,8 @@ jobs:
 
     - pwsh: |
         cd '$(PowerShellRoot)'
-        Import-Module $(PowerShellRoot)/build.psm1 -Force
-        Import-Module $(PowerShellRoot)/tools/packaging -Force
+        Import-Module '$(PowerShellRoot)/build.psm1' -Force
+        Import-Module '$(PowerShellRoot)/tools/packaging' -Force
 
         $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
         $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\signedEngine' -ChildPath engine.exe
