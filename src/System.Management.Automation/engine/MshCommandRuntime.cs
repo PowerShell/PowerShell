@@ -3762,7 +3762,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
-            if (_outVarList != null && !OutputPipe.NullPipe)
+            if (_outVarList != null && !OutputPipe.IgnoreOutVariableList)
             {
                 // A null pipe is used when executing the 'Clean' block of a PSScriptCmdlet.
                 // In such a case, we don't capture output to the out variable list.
@@ -3792,7 +3792,7 @@ namespace System.Management.Automation
 
         internal void RemoveVariableListsInPipe()
         {
-            if (_outVarList != null)
+            if (_outVarList != null && !OutputPipe.IgnoreOutVariableList)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Output, _outVarList);
             }

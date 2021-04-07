@@ -2319,9 +2319,15 @@ namespace System.Management.Automation
         {
             if (_scriptBlock.HasCleanupBlock && _anyClauseExecuted)
             {
-                // The 'Clean' block doesn't write to pipeline.
+                // The 'Clean' block doesn't write any output to pipeline, so we use a 'NullPipe' here and
+                // disallow the output to be collected by an 'out' variable. However, the error, warning,
+                // and information records should still be collectable by the corresponding variables.
                 Pipe oldOutputPipe = _commandRuntime.OutputPipe;
-                _functionContext._outputPipe = _commandRuntime.OutputPipe = new Pipe { NullPipe = true };
+                _functionContext._outputPipe = _commandRuntime.OutputPipe = new Pipe
+                {
+                    NullPipe = true,
+                    IgnoreOutVariableList = true,
+                };
 
                 try
                 {

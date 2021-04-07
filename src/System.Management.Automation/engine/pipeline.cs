@@ -7,7 +7,6 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
 using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
