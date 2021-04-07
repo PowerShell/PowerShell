@@ -305,6 +305,7 @@ jobs:
         New-ExePackage -ProductVersion '$(version)' -MsiLocationPath $msiPath -ProductTargetArchitecture ${{ parameters.architecture }}
         $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
         $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+        # Expand Burn Engine so we can sign it.
         Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
       displayName: Create exe wrapper
 
@@ -317,7 +318,7 @@ jobs:
             **\*.exe
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
-          displayName: Sign Exe Wrapper Engine
+          displayName: Sign Burn Engine
 
     - pwsh: |
         cd '$(PowerShellRoot)'
@@ -328,7 +329,7 @@ jobs:
         $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\signedEngine' -ChildPath engine.exe
         $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
         Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
-      displayName: Use signed engine in exe wrapper
+      displayName: Re-attach the signed Burn engine in exe wrapper
 
     - pwsh: |
         cd '$(PowerShellRoot)'
