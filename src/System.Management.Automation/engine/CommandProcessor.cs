@@ -324,7 +324,7 @@ namespace System.Management.Automation
                         Command.DoBeginProcessing();
                     }
                 }
-                catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+                catch (Exception e)
                 {
                     // This cmdlet threw an exception, so wrap it and bubble it up.
                     throw ManageInvocationException(e);
@@ -394,7 +394,13 @@ namespace System.Management.Automation
 
                     exceptionToThrow = rte;
                 }
-                catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+                catch (LoopFlowException)
+                {
+                    // Don't wrap LoopFlowException, we incorrectly raise a PipelineStoppedException
+                    // which gets caught by a script try/catch if we wrap here.
+                    throw;
+                }
+                catch (Exception e)
                 {
                     // Catch-all OK, 3rd party callout.
                     exceptionToThrow = e;

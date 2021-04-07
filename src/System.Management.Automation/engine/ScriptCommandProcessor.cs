@@ -607,12 +607,16 @@ namespace System.Management.Automation
                 if (exitCode != 0)
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
             }
+            catch (FlowControlException)
+            {
+                throw;
+            }
             catch (RuntimeException e)
             {
                 // This method always throws.
                 ManageScriptException(e);
             }
-            catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+            catch (Exception e)
             {
                 // This cmdlet threw an exception, so wrap it and bubble it up.
                 throw ManageInvocationException(e);

@@ -536,7 +536,7 @@ namespace System.Management.Automation
                         Command.DoBeginProcessing();
                     }
                 }
-                catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+                catch (Exception e)
                 {
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
@@ -580,12 +580,6 @@ namespace System.Management.Automation
             }
         }
 
-        protected bool ShallWrapBeforeBubbleUp(Exception e)
-        {
-            return e is not FlowControlException
-                && e is not HaltCommandException;
-        }
-
         /// <summary>
         /// Called once after ProcessRecord().
         /// Internally it calls EndProcessing() of the InternalCommand.
@@ -606,7 +600,7 @@ namespace System.Management.Automation
                     this.Command.DoEndProcessing();
                 }
             }
-            catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+            catch (Exception e)
             {
                 // This cmdlet threw an exception, wrap it as needed and bubble it up.
                 throw ManageInvocationException(e);
@@ -665,7 +659,15 @@ namespace System.Management.Automation
                     this.Command.DoCleanResource();
                 }
             }
-            catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+            catch (HaltCommandException)
+            {
+                throw;
+            }
+            catch (FlowControlException)
+            {
+                throw;
+            }
+            catch (Exception e)
             {
                 // This cmdlet threw an exception, so wrap it and bubble it up.
                 throw ManageInvocationException(e);
