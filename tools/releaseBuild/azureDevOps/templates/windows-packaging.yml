@@ -320,7 +320,7 @@ jobs:
           displayName: Sign Exe Wrapper Engine
 
     - pwsh: |
-        cd $(PowerShellRoot)
+        cd '$(PowerShellRoot)'
         Import-Module $(PowerShellRoot)/build.psm1 -Force
         Import-Module $(PowerShellRoot)/tools/packaging -Force
 
