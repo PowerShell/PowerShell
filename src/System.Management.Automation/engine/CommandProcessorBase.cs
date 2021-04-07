@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Runtime.InteropServices;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -46,6 +47,7 @@ namespace System.Management.Automation
                     string errorTemplate = expAttribute.ExperimentAction == ExperimentAction.Hide
                         ? DiscoveryExceptions.ScriptDisabledWhenFeatureOn
                         : DiscoveryExceptions.ScriptDisabledWhenFeatureOff;
+
                     string errorMsg = StringUtil.Format(errorTemplate, expAttribute.ExperimentName);
                     ErrorRecord errorRecord = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
@@ -54,6 +56,8 @@ namespace System.Management.Automation
                         commandInfo);
                     throw new CmdletInvocationException(errorRecord);
                 }
+
+                HasCleanBlock = scriptCommand.ScriptBlock.HasCleanupBlock;
             }
 
             CommandInfo = commandInfo;
@@ -86,6 +90,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <value></value>
         internal CommandInfo CommandInfo { get; set; }
+
+        /// <summary>
+        /// Gets whether the command has a 'Clean' block defined.
+        /// </summary>
+        internal bool HasCleanBlock { get; }
 
         /// <summary>
         /// This indicates whether this command processor is created from
@@ -369,18 +378,12 @@ namespace System.Management.Automation
         {
             OnRestorePreviousScope();
 
-            if (_previousCommandSessionState != null)
-            {
-                Context.EngineSessionState = _previousCommandSessionState;
-            }
+            Context.EngineSessionState = _previousCommandSessionState;
 
-            if (_previousScope != null)
-            {
-                // Restore the scope but use the same session state instance we
-                // got it from because the command may have changed the execution context
-                // session state...
-                CommandSessionState.CurrentScope = _previousScope;
-            }
+            // Restore the scope but use the same session state instance we
+            // got it from because the command may have changed the execution context
+            // session state...
+            CommandSessionState.CurrentScope = _previousScope;
         }
 
         private SessionStateScope _previousScope;
@@ -455,13 +458,16 @@ namespace System.Management.Automation
                     HandleObsoleteCommand(ObsoleteAttribute);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                if (_useLocalScope)
+                if (e is InvalidComObjectException)
                 {
-                    // If we had an exception during Prepare, we're done trying to execute the command
-                    // so the scope we created needs to release any resources it hold.s
-                    CommandSessionState.RemoveScope(CommandScope);
+                    // This type of exception could be thrown from parameter binding.
+                    string msg = StringUtil.Format(ParserStrings.InvalidComObjectException, e.Message);
+                    var newEx = new RuntimeException(msg, e);
+
+                    newEx.SetErrorId("InvalidComObjectException");
+                    throw newEx;
                 }
 
                 throw;
@@ -517,23 +523,20 @@ namespace System.Management.Automation
                     }
 
                     _context.CurrentCommandProcessor = this;
+                    SetCurrentScopeToExecutionScope();
+
                     using (commandRuntime.AllowThisCommandToWrite(true))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING BeginProcessing"))
                     {
-                        using (ParameterBinderBase.bindingTracer.TraceScope(
-                            "CALLING BeginProcessing"))
+                        if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                         {
-                            SetCurrentScopeToExecutionScope();
-
-                            if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
-                            {
-                                Context.Debugger.CheckCommand(this.Command.MyInvocation);
-                            }
-
-                            Command.DoBeginProcessing();
+                            Context.Debugger.CheckCommand(this.Command.MyInvocation);
                         }
+
+                        Command.DoBeginProcessing();
                     }
                 }
-                catch (Exception e)
+                catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
                 {
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
@@ -577,6 +580,12 @@ namespace System.Management.Automation
             }
         }
 
+        protected bool ShallWrapBeforeBubbleUp(Exception e)
+        {
+            return e is not FlowControlException
+                && e is not HaltCommandException;
+        }
+
         /// <summary>
         /// Called once after ProcessRecord().
         /// Internally it calls EndProcessing() of the InternalCommand.
@@ -592,20 +601,14 @@ namespace System.Management.Automation
             try
             {
                 using (commandRuntime.AllowThisCommandToWrite(true))
+                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING EndProcessing"))
                 {
-                    using (ParameterBinderBase.bindingTracer.TraceScope(
-                        "CALLING EndProcessing"))
-                    {
-                        this.Command.DoEndProcessing();
-                    }
+                    this.Command.DoEndProcessing();
                 }
             }
-            // 2004/03/18-JonN This is understood to be
-            // an FXCOP violation, cleared by KCwalina.
-            catch (Exception e)
+            catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
             {
-                // This cmdlet threw an exception, so
-                // wrap it and bubble it up.
+                // This cmdlet threw an exception, wrap it as needed and bubble it up.
                 throw ManageInvocationException(e);
             }
         }
@@ -640,94 +643,81 @@ namespace System.Management.Automation
                 }
 
                 _context.CurrentCommandProcessor = this;
-
                 SetCurrentScopeToExecutionScope();
                 Complete();
             }
             finally
             {
-                OnRestorePreviousScope();
-
                 _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
-
-                // Restore the previous scope...
-                if (_previousScope != null)
-                {
-                    // Restore the scope but use the same session state instance we
-                    // got it from because the command may have changed the execution context
-                    // session state...
-                    CommandSessionState.CurrentScope = _previousScope;
-                }
-
-                // Restore the previous session state
-                if (_previousCommandSessionState != null)
-                {
-                    Context.EngineSessionState = _previousCommandSessionState;
-                }
-            }
-        }
-
-        protected virtual void HandleScopedAction<T>(Action<T> action, T state, string traceMessage)
-        {
-            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
-            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
-
-            try
-            {
-                // On V1 the output pipe was redirected to the command's output pipe only when it
-                // was already redirected. This is the original comment explaining this behaviour:
-                //
-                //      NTRAID#Windows Out of Band Releases-926183-2005-12-15
-                //      MonadTestHarness has a bad dependency on an artifact of the current implementation
-                //      The following code only redirects the output pipe if it's already redirected
-                //      to preserve the artifact. The test suites need to be fixed and then this
-                //      the check can be removed and the assignment always done.
-                //
-                // However, this makes the hosting APIs behave differently than commands executed
-                // from the command-line host (for example, see bugs Win7:415915 and Win7:108670).
-                // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
-                // redirection.
-                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
-                {
-                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
-                }
-
-                Context.CurrentCommandProcessor = this;
-                using (CommandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
-                using (ParameterBinderBase.bindingTracer.TraceScope(traceMessage))
-                {
-                    SetCurrentScopeToExecutionScope();
-                    action(state);
-                }
-            }
-            catch (Exception e)
-            {
-                throw ManageInvocationException(e);
-            }
-            finally
-            {
-                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
-                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
-
-                // Destroy the local scope at this point if there is one...
-                if (_useLocalScope && CommandScope != null)
-                {
-                    CommandSessionState.RemoveScope(CommandScope);
-                }
 
                 RestorePreviousScope();
             }
         }
 
-        /// <summary>
-        /// Virtual method to be overridden by a command processor type that handles script functions, such as
-        /// <see cref="DlrScriptCommandProcessor"/>.
-        /// The base implementation does nothing.
-        /// </summary>
-        protected virtual void CleanupScriptCommand()
+        protected virtual void CleanResource()
         {
-            // Do nothing -- subclasses may use.
+            try
+            {
+                using (commandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
+                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING CleanResource"))
+                {
+                    this.Command.DoCleanResource();
+                }
+            }
+            catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
+            {
+                // This cmdlet threw an exception, so wrap it and bubble it up.
+                throw ManageInvocationException(e);
+            }
+        }
+
+        internal void DoCleanup()
+        {
+            // Do not propagate exception even if the command invocation is enclosed in a TryStatement,
+            // so that the exception
+            bool oldExceptionPropagationState = _context.PropagateExceptionsToEnclosingStatementBlock;
+            _context.PropagateExceptionsToEnclosingStatementBlock = false;
+
+            Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
+            CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
+
+            try
+            {
+                if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                {
+                    _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                }
+
+                _context.CurrentCommandProcessor = this;
+                SetCurrentScopeToExecutionScope();
+                CleanResource();
+            }
+            finally
+            {
+                _context.PropagateExceptionsToEnclosingStatementBlock = oldExceptionPropagationState;
+                _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
+                _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+
+                RestorePreviousScope();
+            }
+        }
+
+        internal void ReportCleanupError(Exception exception)
+        {
+            var error = exception is IContainsErrorRecord icer
+                ? icer.ErrorRecord
+                : new ErrorRecord(exception, "Clean.ReportException", ErrorCategory.NotSpecified, targetObject: null);
+
+            PSObject errorWrap = PSObject.AsPSObject(error);
+            errorWrap.WriteStream = WriteStreamType.Error;
+
+            var errorPipe = commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.Output
+                ? commandRuntime.OutputPipe
+                : commandRuntime.ErrorOutputPipe;
+
+            errorPipe.Add(errorWrap);
+            _context.QuestionMarkVariableValue = false;
         }
 
         /// <summary>
@@ -836,23 +826,16 @@ namespace System.Management.Automation
                 {
                     do // false loop
                     {
-                        ProviderInvocationException pie = e as ProviderInvocationException;
-                        if (pie != null)
+                        if (e is ProviderInvocationException pie)
                         {
-                            // If a ProviderInvocationException occurred,
-                            // discard the ProviderInvocationException and
-                            // re-wrap in CmdletProviderInvocationException
-                            e = new CmdletProviderInvocationException(
-                                pie,
-                                Command.MyInvocation);
+                            // If a ProviderInvocationException occurred, discard the ProviderInvocationException
+                            // and re-wrap it in CmdletProviderInvocationException.
+                            e = new CmdletProviderInvocationException(pie, Command.MyInvocation);
                             break;
                         }
 
-                        // 1021203-2005/05/09-JonN
-                        // HaltCommandException will cause the command
-                        // to stop, but not be reported as an error.
-                        // 906445-2005/05/16-JonN
-                        // FlowControlException should not be wrapped
+                        // HaltCommandException will cause the command to stop, but not be reported as an error.
+                        // FlowControlException should not be wrapped.
                         if (e is PipelineStoppedException
                             || e is CmdletInvocationException
                             || e is ActionPreferenceStopException
@@ -872,9 +855,7 @@ namespace System.Management.Automation
                         }
 
                         // wrap all other exceptions
-                        e = new CmdletInvocationException(
-                                    e,
-                                    Command.MyInvocation);
+                        e = new CmdletInvocationException(e, Command.MyInvocation);
                     } while (false);
 
                     // commandRuntime.ManageException will always throw PipelineStoppedException
@@ -996,7 +977,6 @@ namespace System.Management.Automation
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)
@@ -1006,46 +986,20 @@ namespace System.Management.Automation
                 return;
             }
 
-            try
+            if (disposing)
             {
-                if (disposing)
+                if (UseLocalScope)
                 {
-                    try
-                    {
-                        CommandRuntime.RemoveVariableListsInPipe();
+                    CommandSessionState.RemoveScope(CommandScope);
+                }
 
-                        // This method handles script commands' `cleanup {}` blocks.
-                        // It is a no-op for compiled cmdlets.
-                        CleanupScriptCommand();
-                    }
-                    finally
-                    {
-                        if (Command is PSScriptCmdlet scriptCmdlet)
-                        {
-                            bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
-                            try
-                            {
-                                HandleScopedAction(
-                                    (cmdlet) => cmdlet.Dispose(),
-                                    scriptCmdlet,
-                                    traceMessage: "CALLING Cleanup");
-                            }
-                            finally
-                            {
-                                ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
-                            }
-                        }
-                        else if (Command is IDisposable disposableCommand)
-                        {
-                            disposableCommand.Dispose();
-                        }
-                    }
+                if (Command is IDisposable id)
+                {
+                    id.Dispose();
                 }
             }
-            finally
-            {
-                _disposed = true;
-            }
+
+            _disposed = true;
         }
 
         #endregion IDispose

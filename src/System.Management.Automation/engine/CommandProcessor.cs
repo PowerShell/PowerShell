@@ -309,13 +309,11 @@ namespace System.Management.Automation
         internal override void ProcessRecord()
         {
             // Invoke the Command method with the request object
-
             if (!this.RanBeginAlready)
             {
                 RanBeginAlready = true;
                 try
                 {
-                    // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
                     {
                         if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
@@ -326,12 +324,9 @@ namespace System.Management.Automation
                         Command.DoBeginProcessing();
                     }
                 }
-                // 2004/03/18-JonN This is understood to be
-                // an FXCOP violation, cleared by KCwalina.
-                catch (Exception e)  // Catch-all OK, 3rd party callout.
+                catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
                 {
-                    // This cmdlet threw an exception, so
-                    // wrap it and bubble it up.
+                    // This cmdlet threw an exception, so wrap it and bubble it up.
                     throw ManageInvocationException(e);
                 }
             }
@@ -366,6 +361,7 @@ namespace System.Management.Automation
 
                     // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING ProcessRecord"))
                     {
                         if (CmdletParameterBinderController.ObsoleteParameterWarningList != null &&
                             CmdletParameterBinderController.ObsoleteParameterWarningList.Count > 0)
@@ -398,16 +394,9 @@ namespace System.Management.Automation
 
                     exceptionToThrow = rte;
                 }
-                catch (LoopFlowException)
+                catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
                 {
-                    // Win8:84066 - Don't wrap LoopFlowException, we incorrectly raise a PipelineStoppedException
-                    // which gets caught by a script try/catch if we wrap here.
-                    throw;
-                }
-                // 2004/03/18-JonN This is understood to be
-                // an FXCOP violation, cleared by KCwalina.
-                catch (Exception e) // Catch-all OK, 3rd party callout.
-                {
+                    // Catch-all OK, 3rd party callout.
                     exceptionToThrow = e;
                 }
                 finally

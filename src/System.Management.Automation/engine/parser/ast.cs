@@ -1484,48 +1484,20 @@ namespace System.Management.Automation.Language
 
             if (action == AstVisitAction.Continue)
             {
-                VisitAll();
+                _ = VisitAndShallContinue(ParamBlock) &&
+                    VisitAndShallContinue(DynamicParamBlock) &&
+                    VisitAndShallContinue(BeginBlock) &&
+                    VisitAndShallContinue(ProcessBlock) &&
+                    VisitAndShallContinue(EndBlock) &&
+                    VisitAndShallContinue(CleanupBlock);
             }
 
             return visitor.CheckForPostAction(this, action);
 
-            void VisitAll()
-            {
-                if (!VisitHelper(ParamBlock))
-                {
-                    return;
-                }
-
-                if (!VisitHelper(DynamicParamBlock))
-                {
-                    return;
-                }
-
-                if (!VisitHelper(BeginBlock))
-                {
-                    return;
-                }
-
-                if (!VisitHelper(ProcessBlock))
-                {
-                    return;
-                }
-
-                if (!VisitHelper(EndBlock))
-                {
-                    return;
-                }
-
-                VisitHelper(CleanupBlock);
-            }
-
-            bool VisitHelper(Ast ast)
+            bool VisitAndShallContinue(Ast ast)
             {
                 if (ast != null)
-                {
                     action = ast.InternalVisit(visitor);
-                }
-
                 return action == AstVisitAction.Continue;
             }
         }

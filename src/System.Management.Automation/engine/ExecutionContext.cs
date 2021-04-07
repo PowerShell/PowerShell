@@ -840,15 +840,14 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord == null && obj is not Exception)
+            if (objAsErrorRecord is null && obj is not Exception)
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
             }
 
-            object old = this.DollarErrorVariable;
-            ArrayList arraylist = old as ArrayList;
-            if (arraylist == null)
+            var arraylist = DollarErrorVariable as ArrayList;
+            if (arraylist is null)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;

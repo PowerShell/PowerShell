@@ -2219,10 +2219,12 @@ namespace System.Management.Automation
         private readonly bool _useLocalScope;
         private readonly bool _runOptimized;
         private readonly bool _rethrowExitException;
-        private MshCommandRuntime _commandRuntime;
         private readonly MutableTuple _localsTuple;
-        private bool _exitWasCalled;
         private readonly FunctionContext _functionContext;
+
+        private MshCommandRuntime _commandRuntime;
+        private bool _exitWasCalled;
+        private bool _anyClauseExecuted;
 
         public PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)
         {
@@ -2313,6 +2315,28 @@ namespace System.Management.Automation
             }
         }
 
+        internal override void DoCleanResource()
+        {
+            if (_scriptBlock.HasCleanupBlock && _anyClauseExecuted)
+            {
+                // The 'Clean' block doesn't write to pipeline.
+                Pipe oldOutputPipe = _commandRuntime.OutputPipe;
+                _functionContext._outputPipe = _commandRuntime.OutputPipe = new Pipe { NullPipe = true };
+
+                try
+                {
+                    RunClause(
+                        clause: _runOptimized ? _scriptBlock.CleanupBlock : _scriptBlock.UnoptimizedCleanupBlock,
+                        dollarUnderbar: AutomationNull.Value,
+                        inputToProcess: AutomationNull.Value);
+                }
+                finally
+                {
+                    _functionContext._outputPipe = _commandRuntime.OutputPipe = oldOutputPipe;
+                }
+            }
+        }
+
         private void EnterScope()
         {
             _commandRuntime.SetVariableListsInPipe();
@@ -2325,6 +2349,7 @@ namespace System.Management.Automation
 
         private void RunClause(Action<FunctionContext> clause, object dollarUnderbar, object inputToProcess)
         {
+            _anyClauseExecuted = true;
             Pipe oldErrorOutputPipe = this.Context.ShellFunctionErrorOutputPipe;
 
             // If the script block has a different language mode than the current,
@@ -2380,7 +2405,7 @@ namespace System.Management.Automation
                 {
                     this.Context.RestoreErrorPipe(oldErrorOutputPipe);
 
-                    // Set the language mode
+                    // Restore the language mode
                     if (oldLanguageMode.HasValue)
                     {
                         Context.LanguageMode = oldLanguageMode.Value;
@@ -2536,144 +2561,15 @@ namespace System.Management.Automation
                 return;
             }
 
-            try
-            {
-                if (_scriptBlock.HasCleanupBlock)
-                {
-                    InvokeCleanupBlock();
-                }
-            }
-            finally
-            {
-                this.DisposingEvent.SafeInvoke(this, EventArgs.Empty);
+            this.DisposingEvent.SafeInvoke(this, EventArgs.Empty);
+            commandRuntime = null;
+            currentObjectInPipeline = null;
+            _input.Clear();
 
-                commandRuntime = null;
-                currentObjectInPipeline = null;
-                _input.Clear();
-
-                base.InternalDispose(true);
-                _disposed = true;
-            }
-        }
-
-        private void InvokeCleanupBlock()
-        {
-            ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
-            if (Context != currentContext)
-            {
-                // Something went wrong; Cleanup {} is being called from the wrong thread.
-                // Create an event to call it from the correct thread.
-                InvokeCleanupInOriginalContext();
-                return;
-            }
-
-            Pipe oldOutputPipe = _functionContext?._outputPipe;
-            try
-            {
-                Action<FunctionContext> cleanupBlock = _runOptimized
-                    ? _scriptBlock.CleanupBlock
-                    : _scriptBlock.UnoptimizedCleanupBlock;
-
-                if (_functionContext != null)
-                {
-                    _functionContext._outputPipe = new Pipe
-                    {
-                        NullPipe = true
-                    };
-                }
-
-                // run with no pipeline input or $input enumerator
-                RunClause(cleanupBlock, AutomationNull.Value, AutomationNull.Value);
-            }
-            finally
-            {
-                if (_functionContext != null)
-                {
-                    _functionContext._outputPipe = oldOutputPipe;
-                }
-            }
+            base.InternalDispose(true);
+            _disposed = true;
         }
 
         #endregion IDispose
-
-        #region Eventing for Cleanup
-
-        private void InvokeCleanupInOriginalContext()
-        {
-            Context.Events.SubscribeEvent(
-                    source: null,
-                    eventName: PSEngineEvent.OnScriptCommandCleanup,
-                    sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
-                    data: null,
-                    handlerDelegate: new PSEventReceivedEventHandler(OnCleanupInvocationEventHandler),
-                    supportEvent: true,
-                    forwardEvent: false,
-                    shouldQueueAndProcessInExecutionThread: true,
-                    maxTriggerCount: 1);
-
-            var cleanupInvocationEventArgs = new CleanupInvocationEventArgs(this);
-
-            Context.Events.GenerateEvent(
-                sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
-                sender: null,
-                args: new object[] { cleanupInvocationEventArgs },
-                extraData: null,
-                processInCurrentThread: true,
-                waitForCompletionInCurrentThread: true);
-        }
-
-        /// <summary>
-        /// Handles OnDisposeInvoke event, this is called by the event manager.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="args">
-        /// Arguments to be passed to the event, which must be of type
-        /// <see cref="CleanupInvocationEventArgs"/>
-        /// </param>
-        private static void OnCleanupInvocationEventHandler(object sender, PSEventArgs args)
-        {
-            var eventArgs = (object)args.SourceEventArgs as CleanupInvocationEventArgs;
-            Diagnostics.Assert(
-                eventArgs?.ScriptCmdlet != null,
-                $"Event Arguments to {nameof(OnCleanupInvocationEventHandler)} should not be null");
-
-            bool wasAlreadyStopping = ExceptionHandlingOps.SuspendStoppingPipeline(eventArgs.ScriptCmdlet.Context);
-            try
-            {
-                eventArgs.ScriptCmdlet.Dispose();
-            }
-            finally
-            {
-                ExceptionHandlingOps.RestoreStoppingPipeline(eventArgs.ScriptCmdlet.Context, wasAlreadyStopping);
-            }
-        }
-
-        #endregion Eventing for Cleanup
-    }
-
-    /// <summary>
-    /// Defines Event arguments passed to OnDisposeInvocationEventHandler.
-    /// </summary>
-    internal sealed class CleanupInvocationEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CleanupInvocationEventArgs"/> class.
-        /// </summary>
-        /// <param name="cmdlet">The command processor to dispose.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="cmdlet"/> is null.</exception>
-        internal CleanupInvocationEventArgs(PSScriptCmdlet cmdlet)
-        {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
-
-            ScriptCmdlet = cmdlet;
-        }
-
-        /// <summary>
-        /// Gets the script cmdlet to be disposed.
-        /// </summary>
-        internal PSScriptCmdlet ScriptCmdlet { get; }
     }
 }

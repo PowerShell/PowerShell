@@ -1845,11 +1845,6 @@ namespace System.Management.Automation
         internal const string OnScriptBlockInvoke = "PowerShell.OnScriptBlockInvoke";
 
         /// <summary>
-        /// Called during invocation of cleanup{} for script commands.
-        /// </summary>
-        internal const string OnScriptCommandCleanup = "PowerShell.OnScriptCommandCleanup";
-
-        /// <summary>
         /// Called during scriptblock invocation.
         /// </summary>
         internal const string GetCommandInfoParameterMetadata = "PowerShell.GetCommandInfoParameterMetadata";

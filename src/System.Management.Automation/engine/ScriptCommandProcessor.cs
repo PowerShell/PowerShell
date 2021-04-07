@@ -238,6 +238,7 @@ namespace System.Management.Automation
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
         private bool _argsBound;
+        private bool _anyClauseExecuted;
         private FunctionContext _functionContext;
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)
@@ -328,8 +329,7 @@ namespace System.Management.Automation
 
                 ScriptBlock.LogScriptBlockStart(_scriptBlock, Context.CurrentRunspace.InstanceId);
 
-                // Even if there is no begin, we need to set up the execution scope for this
-                // script...
+                // Even if there is no begin, we need to set up the execution scope for this script...
                 SetCurrentScopeToExecutionScope();
                 CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
                 try
@@ -339,7 +339,7 @@ namespace System.Management.Automation
                     if (_scriptBlock.HasBeginBlock)
                     {
                         RunClause(_runOptimizedCode ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock,
-                                  AutomationNull.Value, _input);
+                            AutomationNull.Value, _input);
                     }
                 }
                 finally
@@ -395,40 +395,74 @@ namespace System.Management.Automation
 
         internal override void Complete()
         {
-            if (_exitWasCalled)
+            try
             {
-                return;
-            }
-
-            // process any items that may still be in the input pipeline
-            if (_scriptBlock.HasProcessBlock && IsPipelineInputExpected())
-            {
-                DoProcessRecordWithInput();
-            }
-
-            if (_scriptBlock.HasEndBlock)
-            {
-                Action<FunctionContext> endBlock = _runOptimizedCode
-                    ? _scriptBlock.EndBlock
-                    : _scriptBlock.UnoptimizedEndBlock;
-                if (this.CommandRuntime.InputPipe.ExternalReader == null)
+                if (_exitWasCalled)
                 {
-                    if (IsPipelineInputExpected())
-                    {
-                        // read any items that may still be in the input pipe
-                        while (Read())
-                        {
-                            _input.Add(Command.CurrentPipelineObject);
-                        }
-                    }
-
-                    // run with accumulated input
-                    RunClause(endBlock, AutomationNull.Value, _input);
+                    return;
                 }
-                else
+
+                // process any items that may still be in the input pipeline
+                if (_scriptBlock.HasProcessBlock && IsPipelineInputExpected())
                 {
-                    // run with asynchronously updated $input enumerator
-                    RunClause(endBlock, AutomationNull.Value, this.CommandRuntime.InputPipe.ExternalReader.GetReadEnumerator());
+                    DoProcessRecordWithInput();
+                }
+
+                if (_scriptBlock.HasEndBlock)
+                {
+                    Action<FunctionContext> endBlock = _runOptimizedCode
+                        ? _scriptBlock.EndBlock
+                        : _scriptBlock.UnoptimizedEndBlock;
+
+                    if (this.CommandRuntime.InputPipe.ExternalReader == null)
+                    {
+                        if (IsPipelineInputExpected())
+                        {
+                            // read any items that may still be in the input pipe
+                            while (Read())
+                            {
+                                _input.Add(Command.CurrentPipelineObject);
+                            }
+                        }
+
+                        // run with accumulated input
+                        RunClause(endBlock, AutomationNull.Value, _input);
+                    }
+                    else
+                    {
+                        // run with asynchronously updated $input enumerator
+                        RunClause(endBlock, AutomationNull.Value, this.CommandRuntime.InputPipe.ExternalReader.GetReadEnumerator());
+                    }
+                }
+            }
+            finally
+            {
+                if (!_scriptBlock.HasCleanupBlock)
+                {
+                    ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                }
+            }
+        }
+
+        protected override void CleanResource()
+        {
+            if (_scriptBlock.HasCleanupBlock && _anyClauseExecuted)
+            {
+                // The 'Clean' block doesn't write to pipeline.
+                Pipe oldOutputPipe = _functionContext._outputPipe;
+                _functionContext._outputPipe = new Pipe { NullPipe = true };
+
+                try
+                {
+                    RunClause(
+                        clause: _runOptimizedCode ? _scriptBlock.CleanupBlock : _scriptBlock.UnoptimizedCleanupBlock,
+                        dollarUnderbar: AutomationNull.Value,
+                        inputToProcess: AutomationNull.Value);
+                }
+                finally
+                {
+                    _functionContext._outputPipe = oldOutputPipe;
+                    ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
                 }
             }
         }
@@ -455,6 +489,7 @@ namespace System.Management.Automation
         {
             ExecutionContext.CheckStackDepth();
 
+            _anyClauseExecuted = true;
             Pipe oldErrorOutputPipe = this.Context.ShellFunctionErrorOutputPipe;
 
             // If the script block has a different language mode than the current,
@@ -574,21 +609,14 @@ namespace System.Management.Automation
                 if (exitCode != 0)
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
             }
-            catch (FlowControlException)
-            {
-                throw;
-            }
             catch (RuntimeException e)
             {
-                ManageScriptException(e); // always throws
-                // This quiets the compiler which wants to see a return value
-                // in all codepaths.
-                throw;
+                // This method always throws.
+                ManageScriptException(e);
             }
-            catch (Exception e)
+            catch (Exception e) when (ShallWrapBeforeBubbleUp(e))
             {
-                // This cmdlet threw an exception, so
-                // wrap it and bubble it up.
+                // This cmdlet threw an exception, so wrap it and bubble it up.
                 throw ManageInvocationException(e);
             }
         }
@@ -629,157 +657,5 @@ namespace System.Management.Automation
                 CommandSessionState.CurrentScope.DottedScopes.Pop();
             }
         }
-
-        private bool _cleanupCompleted;
-
-        protected override void CleanupScriptCommand()
-        {
-            bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
-            try
-            {
-                HandleScopedAction((processor) => processor.InvokeCleanupBlock(), this, traceMessage: "CALLING Cleanup");
-            }
-            finally
-            {
-                ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
-            }
-        }
-
-        internal void InvokeCleanupBlock()
-        {
-            if (_cleanupCompleted)
-            {
-                return;
-            }
-
-            if (!_scriptBlock.HasCleanupBlock)
-            {
-                ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
-                _cleanupCompleted = true;
-                return;
-            }
-
-            ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
-            if (Context != currentContext)
-            {
-                // Something went wrong; Cleanup {} is being called from the wrong thread.
-                // Create an event to call it from the correct thread.
-                InvokeCleanupInOriginalContext();
-                return;
-            }
-
-            Pipe oldOutputPipe = _functionContext?._outputPipe;
-            try
-            {
-                Action<FunctionContext> cleanupBlock = _runOptimizedCode
-                    ? _scriptBlock.CleanupBlock
-                    : _scriptBlock.UnoptimizedCleanupBlock;
-
-                if (_functionContext != null)
-                {
-                    _functionContext._outputPipe = new Pipe
-                    {
-                        NullPipe = true
-                    };
-                }
-
-                // run with no pipeline input or $input enumerator
-                RunClause(cleanupBlock, AutomationNull.Value, AutomationNull.Value);
-            }
-            finally
-            {
-                if (_functionContext != null)
-                {
-                    _functionContext._outputPipe = oldOutputPipe;
-                }
-
-                ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
-
-                _cleanupCompleted = true;
-            }
-        }
-
-        #region Eventing for Cleanup
-
-        private void InvokeCleanupInOriginalContext()
-        {
-            Context.Events.SubscribeEvent(
-                source: null,
-                eventName: PSEngineEvent.OnScriptCommandCleanup,
-                sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
-                data: null,
-                handlerDelegate: new PSEventReceivedEventHandler(OnCleanupInvocationEventHandler),
-                supportEvent: true,
-                forwardEvent: false,
-                shouldQueueAndProcessInExecutionThread: true,
-                maxTriggerCount: 1);
-
-            var cleanupInvocationEventArgs = new ScriptCommandCleanupInvocationEventArgs(this);
-
-            Context.Events.GenerateEvent(
-                sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
-                sender: null,
-                args: new object[] { cleanupInvocationEventArgs },
-                extraData: null,
-                processInCurrentThread: true,
-                waitForCompletionInCurrentThread: true);
-        }
-
-        /// <summary>
-        /// Handles OnCleanupInvoke event, this is called by the event manager.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="args">
-        /// Arguments to pass to the event, which must be of the type
-        /// <see cref="ScriptCommandCleanupInvocationEventArgs"/>
-        /// </param>
-        private static void OnCleanupInvocationEventHandler(object sender, PSEventArgs args)
-        {
-            var eventArgs = (object)args.SourceEventArgs as ScriptCommandCleanupInvocationEventArgs;
-            Diagnostics.Assert(
-                eventArgs?.ScriptCommandProcessor != null,
-                $"Event Arguments to {nameof(OnCleanupInvocationEventHandler)} should not be null");
-
-            bool wasAlreadyStopping = ExceptionHandlingOps.SuspendStoppingPipeline(
-                eventArgs.ScriptCommandProcessor.Context);
-            try
-            {
-                eventArgs.ScriptCommandProcessor.InvokeCleanupBlock();
-            }
-            finally
-            {
-                ExceptionHandlingOps.RestoreStoppingPipeline(
-                    eventArgs.ScriptCommandProcessor.Context,
-                    wasAlreadyStopping);
-            }
-        }
-
-        #endregion Eventing for Cleanup
-    }
-
-    /// <summary>
-    /// Defines Event arguments passed to OnDisposeInvocationEventHandler.
-    /// </summary>
-    internal sealed class ScriptCommandCleanupInvocationEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ScriptCommandCleanupInvocationEventArgs"/> class.
-        /// </summary>
-        /// <param name="commandProcessor">The command processor to invoke cleanup for.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="commandProcessor"/> is null.</exception>
-        internal ScriptCommandCleanupInvocationEventArgs(DlrScriptCommandProcessor commandProcessor)
-        {
-            if (commandProcessor == null)
-            {
-                throw new ArgumentNullException(nameof(commandProcessor));
-            }
-
-            ScriptCommandProcessor = commandProcessor;
-        }
-
-        /// <summary>
-        /// Gets the script command processor to be disposed.
-        /// </summary>
-        internal DlrScriptCommandProcessor ScriptCommandProcessor { get; }
     }
 }

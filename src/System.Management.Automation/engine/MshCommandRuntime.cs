@@ -942,10 +942,8 @@ namespace System.Management.Automation
 
             // Handle the creation of OutVariable in the case of Out-Default specially,
             // as it needs to handle much of its OutVariable support itself.
-            if (
-                (!string.IsNullOrEmpty(this.OutVariable)) &&
-                (!(this.OutVariable.StartsWith('+'))) &&
-                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+            if (!OutVariable.StartsWith('+') &&
+                string.Equals("Out-Default", _commandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);
@@ -2426,7 +2424,6 @@ namespace System.Management.Automation
                 }
 
                 // Log a command health event
-
                 MshLog.LogCommandHealthEvent(
                     Context,
                     e,
@@ -3765,8 +3762,10 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
-            if (_outVarList != null)
+            if (_outVarList != null && !OutputPipe.NullPipe)
             {
+                // A null pipe is used when executing the 'Clean' block of a PSScriptCmdlet.
+                // In such a case, we don't capture output to the out variable list.
                 this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
             }
 
