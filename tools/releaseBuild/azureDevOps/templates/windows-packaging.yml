@@ -331,7 +331,7 @@ jobs:
       displayName: Use signed engine in exe wrapper
 
     - powershell: |
-        cd $(PowerShellRoot)
+        cd '$(PowerShellRoot)'
         Get-ChildItem '.\PowerShell-*.exe' | ForEach-Object {
           $packagePath = $_.FullName
           Write-Host "Uploading $packagePath"
