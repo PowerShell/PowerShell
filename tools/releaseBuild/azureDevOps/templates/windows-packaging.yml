@@ -265,7 +265,7 @@ jobs:
       }
     displayName: Upload unsigned packages
 
-  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), startsWith(variables['Architecture'], 'x')) }}:
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
     - template: EsrpSign.yml@ComplianceRepo
       parameters:
           buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
