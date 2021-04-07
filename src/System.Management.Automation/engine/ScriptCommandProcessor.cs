@@ -339,7 +339,7 @@ namespace System.Management.Automation
                     if (_scriptBlock.HasBeginBlock)
                     {
                         RunClause(_runOptimizedCode ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock,
-                            AutomationNull.Value, _input);
+                                  AutomationNull.Value, _input);
                     }
                 }
                 finally
@@ -410,9 +410,7 @@ namespace System.Management.Automation
 
                 if (_scriptBlock.HasEndBlock)
                 {
-                    Action<FunctionContext> endBlock = _runOptimizedCode
-                        ? _scriptBlock.EndBlock
-                        : _scriptBlock.UnoptimizedEndBlock;
+                    var endBlock = _runOptimizedCode ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock;
 
                     if (this.CommandRuntime.InputPipe.ExternalReader == null)
                     {
