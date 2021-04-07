@@ -305,7 +305,7 @@ jobs:
         New-ExePackage -ProductVersion '$(version)' -MsiLocationPath $msiPath -ProductTargetArchitecture ${{ parameters.architecture }}
         $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
         $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
-        Dismount-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+        Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
       displayName: Create exe wrapper
 
     - template: EsrpSign.yml@ComplianceRepo
@@ -327,7 +327,7 @@ jobs:
         $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
         $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\signedEngine' -ChildPath engine.exe
         $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
-        Mount-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+        Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
       displayName: Use signed engine in exe wrapper
 
     - powershell: |

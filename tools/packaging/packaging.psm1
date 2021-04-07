@@ -3244,14 +3244,18 @@ function New-ExePackage {
     return $exeLocationPath
 }
 
-function Dismount-ExePackageEngine {
+<#
+Allows you to extract the engine of exe package, mainly for signing
+Any existing signature will be removed.
+ #>
+function Expand-ExePackageEngine {
     param(
         # Location of the unsigned EXE
         [Parameter(Mandatory = $true)]
         [string]
         $ExePath,
 
-        # Location to put the dismounted engine.
+        # Location to put the expanded engine.
         [Parameter(Mandatory = $true)]
         [string]
         $EnginePath
@@ -3270,7 +3274,11 @@ function Dismount-ExePackageEngine {
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
 }
 
-function Mount-ExePackageEngine {
+<#
+Allows you to replace the engine (installer) in the exe package.
+Used to replace the engine with a signed version
+#>
+function Compress-ExePackageEngine {
     param(
         # Location of the unsigned EXE
         [Parameter(Mandatory = $true)]

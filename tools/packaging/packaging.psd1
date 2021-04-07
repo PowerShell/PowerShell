@@ -7,9 +7,9 @@
     PowerShellVersion = "5.0"
     CmdletsToExport   = @()
     FunctionsToExport = @(
-        'Dismount-ExePackageEngine'
+        'Expand-ExePackageEngine'
         'Expand-PSSignedBuild'
-        'Mount-ExePackageEngine'
+        'Compress-ExePackageEngine'
         'New-DotnetSdkContainerFxdPackage'
         'New-ExePackage'
         'New-GlobalToolNupkg'
