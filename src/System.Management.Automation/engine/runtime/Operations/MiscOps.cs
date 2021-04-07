@@ -1447,10 +1447,7 @@ namespace System.Management.Automation
             int handler = FindMatchingHandlerByType(exception.GetType(), types);
 
             // If no handler was found, return without changing the current result.
-            if (handler == -1)
-            {
-                return;
-            }
+            if (handler == -1) { return; }
 
             // New handler was found.
             //  - If new-rank is less than current-rank -- meaning the new handler is more specific,
@@ -1581,13 +1578,11 @@ namespace System.Management.Automation
 
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
-            var pipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (pipeline != null)
+            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            if (lpl != null)
             {
-                bool oldIsStopping = pipeline.Stopper.IsStopping;
-                pipeline.Stopper.IsStopping = false;
-                pipeline.Stopper.EnterCriticalSection();
-
+                bool oldIsStopping = lpl.Stopper.IsStopping;
+                lpl.Stopper.IsStopping = false;
                 return oldIsStopping;
             }
 
@@ -1596,11 +1591,10 @@ namespace System.Management.Automation
 
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
-            var pipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (pipeline != null)
+            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            if (lpl != null)
             {
-                pipeline.Stopper.IsStopping = oldIsStopping;
-                pipeline.Stopper.ExitCriticalSection();
+                lpl.Stopper.IsStopping = oldIsStopping;
             }
         }
 

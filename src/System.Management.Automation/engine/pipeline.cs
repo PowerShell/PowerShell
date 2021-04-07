@@ -1108,7 +1108,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        private void ValidateCommandProcessorNotNull(CommandProcessorBase commandProcessor, string errorMessage)
+        private static void ValidateCommandProcessorNotNull(CommandProcessorBase commandProcessor, string errorMessage)
         {
             if (commandProcessor?.CommandRuntime is null)
             {
