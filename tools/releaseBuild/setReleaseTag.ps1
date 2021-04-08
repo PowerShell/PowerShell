@@ -70,7 +70,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     {
         $msixType = 'release'
         Write-Verbose "release branch:" -Verbose
-        $releaseTag = $Branch -replace $releaseBranchRegex
+        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
