@@ -277,7 +277,7 @@ jobs:
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign MSI
 
-    - powershell: |
+    - pwsh: |
         Get-ChildItem '$(System.ArtifactsDirectory)\signedPackages' | ForEach-Object {
           $packagePath = $_.FullName
           Write-Host "Uploading $packagePath"
@@ -330,7 +330,7 @@ jobs:
         Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
       displayName: Use signed engine in exe wrapper
 
-    - powershell: |
+    - pwsh: |
         cd '$(PowerShellRoot)'
         Get-ChildItem '.\PowerShell-*.exe' | ForEach-Object {
           $packagePath = $_.FullName
