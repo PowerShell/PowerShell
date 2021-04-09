@@ -1907,6 +1907,16 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     public sealed class SSHConnectionInfo : RunspaceConnectionInfo
     {
+        #region Constants
+
+        /// <summary>
+        /// Default value for subsystem.
+        /// </summary>
+        private const string DefaultSubsystem = "powershell";
+        private const int DefaultConnectingTimeoutTime = -1;    // Never time out
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -1945,6 +1955,16 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
+        /// Gets or sets a time in milliseconds after which a connection attempt is terminated.
+        /// Default value (-1) never times out and a connection attempt waits indefinitely.
+        /// </summary>
+        public int ConnectingTimeout
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -1968,11 +1988,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
 
-            this.UserName = userName;
-            this.ComputerName = computerName;
-            this.KeyFilePath = keyFilePath;
-            this.Port = 0;
-            this.Subsystem = DefaultSubsystem;
+            UserName = userName;
+            ComputerName = computerName;
+            KeyFilePath = keyFilePath;
+            Port = 0;
+            Subsystem = DefaultSubsystem;
+            ConnectingTimeout = DefaultConnectingTimeoutTime;
         }
 
         /// <summary>
@@ -1989,8 +2010,7 @@ namespace System.Management.Automation.Runspaces
             int port) : this(userName, computerName, keyFilePath)
         {
             ValidatePortInRange(port);
-
-            this.Port = port;
+            Port = port;
         }
 
         /// <summary>
@@ -2006,12 +2026,29 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath,
             int port,
-            string subsystem) : this(userName, computerName, keyFilePath)
+            string subsystem) : this(userName, computerName, keyFilePath, port)
         {
-            ValidatePortInRange(port);
+            Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+        }
 
-            this.Port = port;
-            this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="userName">User Name.</param>
+        /// <param name="computerName">Computer Name.</param>
+        /// <param name="keyFilePath">Key File Path.</param>
+        /// <param name="port">Port number for connection (default 22).</param>
+        /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
+        /// <param name="connectingTimeout">Timeout time for terminating connection attempt.</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port,
+            string subsystem,
+            int connectingTimeout) : this(userName, computerName, keyFilePath, port, subsystem)
+        {
+            ConnectingTimeout = connectingTimeout;
         }
 
         #endregion
@@ -2064,11 +2101,12 @@ namespace System.Management.Automation.Runspaces
         internal override RunspaceConnectionInfo InternalCopy()
         {
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
-            newCopy.ComputerName = this.ComputerName;
-            newCopy.UserName = this.UserName;
-            newCopy.KeyFilePath = this.KeyFilePath;
-            newCopy.Port = this.Port;
-            newCopy.Subsystem = this.Subsystem;
+            newCopy.ComputerName = ComputerName;
+            newCopy.UserName = UserName;
+            newCopy.KeyFilePath = KeyFilePath;
+            newCopy.Port = Port;
+            newCopy.Subsystem = Subsystem;
+            newCopy.ConnectingTimeout = ConnectingTimeout;
 
             return newCopy;
         }
@@ -2184,15 +2222,6 @@ namespace System.Management.Automation.Runspaces
 
             return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
         }
-
-        #endregion
-
-        #region Constants
-
-        /// <summary>
-        /// Default value for subsystem.
-        /// </summary>
-        private const string DefaultSubsystem = "powershell";
 
         #endregion
 

@@ -1592,7 +1592,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
-        private Timer _sshProcessTimer;
+        private Timer _connectionTimer;
 
         private const string _threadName = "SSHTransport Reader Thread";
 
@@ -1651,21 +1651,24 @@ namespace System.Management.Automation.Remoting.Client
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
 
-            // Monitor SSH process until connection is established.
-            _sshProcessTimer = new Timer(
-                callback: (_) =>
+            if (_connectionInfo.ConnectingTimeout < 0)
+            {
+                return;
+            }
+
+            // Start connection timeout timer if requested.
+            _connectionTimer = new Timer(
+                callback: (_) => 
                 {
                     if (_connectionEstablished)
                     {
-                        // Monitor no longer needed.
-                        _sshProcessTimer?.Change(Timeout.Infinite, Timeout.Infinite);
                         return;
                     }
 
+                    // Detect if SSH client process terminates prematurely.
                     bool sshTerminated = false;
                     try
                     {
-                        // Detect if SSH client process terminates prematurely.
                         using (var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId))
                         {
                             sshTerminated = sshProcess == null || sshProcess.Handle == IntPtr.Zero || sshProcess.HasExited;
@@ -1676,17 +1679,18 @@ namespace System.Management.Automation.Remoting.Client
                         sshTerminated = true;
                     }
 
+                    var errorMessage = StringUtil.Format(RemotingErrorIdStrings.SSHClientConnectTimeout, _connectionInfo.ConnectingTimeout / 1000);
                     if (sshTerminated)
                     {
-                        _sshProcessTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-                        _sshProcessId = 0;
-                        HandleSSHError(
-                            new PSRemotingTransportException(RemotingErrorIdStrings.SSHClientCannotConnect));
+                        errorMessage += "\n" + RemotingErrorIdStrings.SSHClientConnectProcessTerminated;
                     }
+
+                    HandleSSHError(
+                        new PSRemotingTransportException(errorMessage));
                 },
                 state: null,
-                dueTime: 100,   // 100 mSec
-                period: 100);   // Repeat indefinitely
+                dueTime: _connectionInfo.ConnectingTimeout,
+                period: Timeout.Infinite);
         }
 
         internal override void CloseAsync()
@@ -1709,8 +1713,8 @@ namespace System.Management.Automation.Remoting.Client
             // Ensure message queue is disposed.
             base.DisposeMessageQueue();
 
-            var sshProcessTimer = Interlocked.Exchange(ref _sshProcessTimer, null);
-            sshProcessTimer?.Dispose();
+            var connectionTimer = Interlocked.Exchange(ref _connectionTimer, null);
+            connectionTimer?.Dispose();
 
             var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
             stdInWriter?.Dispose();
