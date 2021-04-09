@@ -320,6 +320,7 @@ jobs:
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign Burn Engine
+          alwaysCopy: true
 
     - pwsh: |
         cd '$(PowerShellRoot)'
