@@ -112,13 +112,18 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             [System.Management.Automation.Runspaces.PSSession] $session
         )
 
+        Write-Verbose -Verbose "VerifySession called for session: $($session.Id)"
+
         $session.State | Should -BeExactly 'Opened'
         $session.ComputerName | Should -BeExactly 'localhost'
         $session.Transport | Should -BeExactly 'SSH'
+        Write-Verbose -Verbose "Invoking whoami"
         Invoke-Command -Session $session -ScriptBlock { whoami } | Should -BeExactly $(whoami)
+        Write-Verbose -Verbose "Invoking PSSenderInfo"
         $psRemoteVersion = Invoke-Command -Session $session -ScriptBlock { $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion }
         $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
         $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
+        Write-Verbose -Verbose "VerifySession complete"
     }
 
     Context "New-PSSession Tests" {
@@ -257,6 +262,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $ps.Commands.Clear()
             Write-Verbose -Verbose "VerifyRunspace: Invoking whoami"
             $ps.AddScript('whoami').Invoke() | Should -BeExactly $(whoami)
+            Write-Verbose -Verbose "VerifyRunspace complete"
         }
         finally
         {
