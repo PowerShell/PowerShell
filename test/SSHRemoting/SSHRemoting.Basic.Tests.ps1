@@ -36,6 +36,8 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             [string] $Subsystem
         )
 
+        Write-Verbose -Verbose "Starting TryNewPSSession ..."
+
         # Try creating a new SSH connection
         $timeout = $script:TestConnectingTimeout
         $connectionError = $null
@@ -72,6 +74,8 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             [hashtable[]] $SSHConnection,
             [string[]] $Name
         )
+
+        Write-Verbose -Verbose "Starting TryNewPSSessionHash ..."
 
         foreach ($connect in $SSHConnection)
         {
@@ -129,49 +133,64 @@ Describe "SSHRemoting Basic Tests" -tags CI {
     Context "New-PSSession Tests" {
 
         AfterEach {
+            Write-Verbose -Verbose "Starting New-PSSession AfterEach"
             if ($script:session -ne $null) { Remove-PSSession -Session $script:session }
             if ($script:sessions -ne $null) { Remove-PSSession -Session $script:sessions }
+            Write-Verbose -Verbose "AfterEach complete"
         }
 
         It "Verifies new connection with implicit current User" {
+            Write-Verbose -Verbose "It Starting: Verifies new connection with implicit current User"
             $script:session = TryNewPSSession -HostName localhost
             VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
         }
 
         It "Verifies new connection with explicit User parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies new connection with explicit User parameter"
             $script:session = TryNewPSSession -HostName localhost -UserName (whoami)
             VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
         }
 
         It "Verifies explicit Name parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies explicit Name parameter"
             $sessionName = 'TestSessionNameA'
             $script:session = TryNewPSSession -HostName localhost -Name $sessionName
             VerifySession $script:session
             $script:session.Name | Should -BeExactly $sessionName
+            Write-Verbose -Verbose "It Complete"
         }
 
         It "Verifies explicit Port parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies explicit Port parameter"
             $portNum = 22
             $script:session = TryNewPSSession -HostName localhost -Port $portNum
             VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
         }
 
         It "Verifies explicit Subsystem parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies explicit Subsystem parameter"
             $portNum = 22
             $subSystem = 'powershell'
             $script:session = TryNewPSSession -HostName localhost -Port $portNum -SubSystem $subSystem
             VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
         }
 
         It "Verifies explicit KeyFilePath parameter" {
+            Write-Verbose -Verbose "It Starting: Verifies explicit KeyFilePath parameter"
             $keyFilePath = "$HOME/.ssh/id_rsa"
             $portNum = 22
             $subSystem = 'powershell'
             $script:session = TryNewPSSession -HostName localhost -Port $portNum -SubSystem $subSystem -KeyFilePath $keyFilePath
             VerifySession $script:session
+            Write-Verbose -Verbose "It Complete"
         }
 
         It "Verifies SSHConnection hash table parameters" {
+            Write-Verbose -Verbose "It Starting: Verifies SSHConnection hash table parameters"
             $sshConnection = @(
             @{
                 HostName = 'localhost'
@@ -191,6 +210,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $script:sessions[1].Name | Should -BeLike 'Connection*'
             VerifySession $script:sessions[0]
             VerifySession $script:sessions[1]
+            Write-Verbose -Verbose "It Complete"
         }
     }
 
@@ -203,6 +223,8 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             [int] $Port,
             [string] $Subsystem
         )
+
+        Write-Verbose -Verbose "Starting TryCreateRunspace ..."
 
         $timeout = $script:TestConnectingTimeout
         $connectionError = $null
@@ -325,11 +347,14 @@ Describe "SSHRemoting Basic Tests" -tags CI {
                 $ComputerName,
                 $KeyFilePath,
                 $Port,
-                $SubSystem
+                $SubSystem,
+                $TestName
             )
 
+            Write-Verbose -Verbose "It Starting: $TestName"
             $script:rs = TryCreateRunspace -UserName $UserName -ComputerName $ComputerName -KeyFilePath $KeyFilePath -Port $Port -Subsystem $Subsystem
             VerifyRunspace $script:rs
+            Write-Verbose -Verbose "It Complete"
         }
     }
 }
