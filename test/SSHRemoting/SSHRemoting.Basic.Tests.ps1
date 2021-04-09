@@ -240,18 +240,22 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             [runspace] $rs
         )
 
+        Write-Verbose -Verbose "VerifyRunspace called for runspace: $($rs.Id)"
+
         $rs.RunspaceStateInfo.State | Should -BeExactly 'Opened'
         $rs.RunspaceAvailability | Should -BeExactly 'Available'
         $rs.RunspaceIsRemote | Should -BeTrue
         $ps = [powershell]::Create()
         try
         {
+            Write-Verbose -Verbose "VerifyRunspace: Invoking PSSenderInfo"
             $ps.Runspace = $rs
             $psRemoteVersion = $ps.AddScript('$PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion').Invoke()
             $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
             $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
 
             $ps.Commands.Clear()
+            Write-Verbose -Verbose "VerifyRunspace: Invoking whoami"
             $ps.AddScript('whoami').Invoke() | Should -BeExactly $(whoami)
         }
         finally
