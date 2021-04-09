@@ -763,14 +763,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets and sets a value for the SSH subsystem to use for the remote connection.
+        /// Gets or sets a value for the SSH subsystem to use for the remote connection.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         public virtual string Subsystem { get; set; }
 
         /// <summary>
-        /// Gets and sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
+        /// Gets or sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         public virtual int ConnectingTimeout { get; set; } = -1;    // No timeout by default

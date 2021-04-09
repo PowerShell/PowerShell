@@ -1711,7 +1711,7 @@ namespace System.Management.Automation.Remoting.Client
         private void CloseConnection()
         {
             // Ensure message queue is disposed.
-            base.DisposeMessageQueue();
+            DisposeMessageQueue();
 
             var connectionTimer = Interlocked.Exchange(ref _connectionTimer, null);
             connectionTimer?.Dispose();

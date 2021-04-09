@@ -2032,11 +2032,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of SSHConnectionInfo.
         /// </summary>
-        /// <param name="userName">User Name.</param>
-        /// <param name="computerName">Computer Name.</param>
-        /// <param name="keyFilePath">Key File Path.</param>
+        /// <param name="userName">Name of user.</param>
+        /// <param name="computerName">Name of computer.</param>
+        /// <param name="keyFilePath">Path of key file.</param>
         /// <param name="port">Port number for connection (default 22).</param>
         /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
         /// <param name="connectingTimeout">Timeout time for terminating connection attempt.</param>
