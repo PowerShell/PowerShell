@@ -161,6 +161,7 @@ jobs:
             **\*.rpm
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
+          displayName: Sign RPM
 
   # requires windows
   - task: AzureFileCopy@4

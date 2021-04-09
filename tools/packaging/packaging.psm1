@@ -2832,14 +2832,16 @@ function Get-WixPath
     $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+    $wixInsigniaExePath = Join-Path $wixToolsetBinPath "Insignia.exe"
 
     return [PSCustomObject] @{
-        WixHeatExePath = $wixHeatExePath
-        WixMeltExePath = $wixMeltExePath
-        WixTorchExePath = $wixTorchExePath
-        WixPyroExePath = $wixPyroExePath
-        WixCandleExePath = $wixCandleExePath
-        WixLightExePath = $wixLightExePath
+        WixHeatExePath     = $wixHeatExePath
+        WixMeltExePath     = $wixMeltExePath
+        WixTorchExePath    = $wixTorchExePath
+        WixPyroExePath     = $wixPyroExePath
+        WixCandleExePath   = $wixCandleExePath
+        WixLightExePath    = $wixLightExePath
+        WixInsigniaExePath = $wixInsigniaExePath
     }
 
 }
@@ -3046,8 +3048,15 @@ function New-MSIPackage
 
     $wixPaths = Get-WixPath
 
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
+    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
+    $ProductSemanticVersion = $windowsNames.ProductSemanticVersion
+    $packageName = $windowsNames.PackageName
+    $ProductVersion = $windowsNames.ProductVersion
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName" -Verbose
+    Write-Verbose "ProductSemanticVersion =  $productSemanticVersion" -Verbose
+    Write-Verbose "packageName =  $packageName" -Verbose
+    Write-Verbose "ProductVersion =  $ProductVersion" -Verbose
 
     $simpleProductVersion = [string]([Version]$ProductVersion).Major
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
@@ -3068,10 +3077,7 @@ function New-MSIPackage
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
 
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
 
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
@@ -3085,11 +3091,6 @@ function New-MSIPackage
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
 
     $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
     $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
@@ -3150,6 +3151,85 @@ function New-MSIPackage
         $errorMessage = "Failed to create $msiLocationPath"
         throw $errorMessage
     }
+}
+
+function Get-WindowsNames {
+    param(
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion
+    )
+
+    Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+
+    return [PSCustomObject]@{
+        PackageName                    = $packageName
+        ProductVersionWithName         = $productVersionWithName
+        ProductSemanticVersion         = $ProductSemanticVersion
+        ProductSemanticVersionWithName = $productSemanticVersionWithName
+        ProductVersion                 = $ProductVersion
+    }
+}
+
+function New-ExePackage {
+    param(
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+
+        [string] $ProductVersion,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        # Location of the signed MSI
+        [Parameter(Mandatory = $true)]
+        [string]
+        $MsiLocationPath,
+
+        [string] $CurrentLocation = (Get-Location)
+    )
+
+    $productNameSuffix = "win-$ProductTargetArchitecture"
+
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $productNameSuffix -ProductVersion $ProductVersion
+    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
+    $packageName = $windowsNames.PackageName
+    $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
+
+    Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
+    Write-Verbose "packageName =  $packageName" -Verbose
 
     $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
     $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
@@ -3157,20 +3237,72 @@ function New-MSIPackage
 
     Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
         IsPreview      = $isPreview
-        TargetPath     = $msiLocationPath
+        TargetPath     = $MsiLocationPath
         WindowsVersion = $windowsVersion
     }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
 
-    if (Test-Path $exeLocationPath)
-    {
-        Write-Verbose "You can find the MSI @ $exeLocationPath" -Verbose
-        $exeLocationPath
-    }
-    else
-    {
-        $errorMessage = "Failed to create $exeLocationPath"
-        throw $errorMessage
-    }
+    return $exeLocationPath
+}
+
+<#
+Allows you to extract the engine of exe package, mainly for signing
+Any existing signature will be removed.
+ #>
+function Expand-ExePackageEngine {
+    param(
+        # Location of the unsigned EXE
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExePath,
+
+        # Location to put the expanded engine.
+        [Parameter(Mandatory = $true)]
+        [string]
+        $EnginePath
+    )
+
+    <#
+    2. detach the engine from TestInstaller.exe:
+    insignia -ib TestInstaller.exe -o engine.exe
+    #>
+
+    $wixPaths = Get-WixPath
+
+    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
+    $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
+}
+
+<#
+Allows you to replace the engine (installer) in the exe package.
+Used to replace the engine with a signed version
+#>
+function Compress-ExePackageEngine {
+    param(
+        # Location of the unsigned EXE
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExePath,
+
+        # Location of the signed engine
+        [Parameter(Mandatory = $true)]
+        [string]
+        $EnginePath
+    )
+
+
+    <#
+    4. re-attach the signed engine.exe to the bundle:
+    insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
+    #>
+
+    $wixPaths = Get-WixPath
+
+    $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
+    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
 }
 
 function New-MsiArgsArray {
