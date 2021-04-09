@@ -276,6 +276,7 @@ jobs:
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign MSI
+          alwaysCopy: true
 
     - pwsh: |
         Get-ChildItem '$(System.ArtifactsDirectory)\signedPackages' | ForEach-Object {
