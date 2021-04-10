@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string machine in _computerName)
                     {
-                        string slashBeforePath = path.Length > 0 && path[0] == '\\' ? "" : "\\";
+                        string slashBeforePath = path.Length > 0 && path[0] == '\\' ? string.Empty : "\\";
                         if (machine.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase))
                         {
                             retColl.Add(machine + slashBeforePath + path);
