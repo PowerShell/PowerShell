@@ -4944,13 +4944,13 @@ namespace System.Management.Automation
             }
 
             // Regex to find parameter like " -Parameter1" or " -"
-            MatchCollection parameterMatches = Regex.Matches(lineToCursor, @"\s+-([A-Za-z]+|$)");
-            if (parameterMatches.Count == 0)
+            MatchCollection parameterValueMatches = Regex.Matches(lineToCursor, @"\s+-([A-Za-z]+|$)");
+            if (parameterValueMatches.Count == 0)
             {
                 return results;
             }
 
-            Group currentParameterMatch = parameterMatches[^1].Groups[1];
+            Group currentParameterMatch = parameterValueMatches[^1].Groups[1];
 
             // Complete the parameter if the cursor is at a parameter
             if (currentParameterMatch.Index + currentParameterMatch.Length == cursorIndex)
@@ -4975,20 +4975,21 @@ namespace System.Management.Automation
             }
 
             // Regex to find parameter values (any text that appears after various delimiters)
-            parameterMatches = Regex.Matches(lineToCursor, @"(\s+|,|;|{|\""|'|=)(\w+|$)");
+            parameterValueMatches = Regex.Matches(lineToCursor, @"(\s+|,|;|{|\""|'|=)(\w+|$)");
             string currentValue;
-            if (parameterMatches.Count == 0)
+            if (parameterValueMatches.Count == 0)
             {
                 currentValue = string.Empty;
             }
             else
             {
-                currentValue = parameterMatches[^1].Groups[^1].Value;
+                currentValue = parameterValueMatches[^1].Groups[1].Value;
             }
 
             replacementIndex = context.CursorPosition.Offset - currentValue.Length;
             replacementLength = currentValue.Length;
 
+            // Complete PSEdition parameter values
             if (currentParameterMatch.Value.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
             {
                 foreach (KeyValuePair<string, string> psEditionEntry in s_requiresPSEditions)
@@ -4998,6 +4999,8 @@ namespace System.Management.Automation
                         results.Add(new CompletionResult(psEditionEntry.Key, psEditionEntry.Key, CompletionResultType.ParameterValue, psEditionEntry.Value));
                     }
                 }
+
+                return results;
             }
 
             if (currentParameterMatch.Value.Equals("Modules", StringComparison.OrdinalIgnoreCase))
@@ -5011,14 +5014,14 @@ namespace System.Management.Automation
                     string hashtableString = lineToCursor.Substring(hashtableStart);
 
                     // Regex to find hashtable keys with or without quotes
-                    parameterMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
-                    var hashtableKeys = new string[parameterMatches.Count];
+                    parameterValueMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
+                    var hashtableKeys = new string[parameterValueMatches.Count];
                     for (int i = 0; i < hashtableKeys.Length; i++)
                     {
-                        hashtableKeys[i] = parameterMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
+                        hashtableKeys[i] = parameterValueMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
                     }
 
-                    var lastCaptureGroup = parameterMatches[^1].Groups[0];
+                    var lastCaptureGroup = parameterValueMatches[^1].Groups[0];
 
                     // Are we completing a key for the hashtable?
                     if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
