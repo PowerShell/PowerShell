@@ -591,8 +591,9 @@ namespace System.Management.Automation.Remoting.Client
                 // start the timer..so client can fail deterministically
                 _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
             }
-            catch
+            catch (Exception ex) when (ex is IOException || ex is ObjectDisposedException)
             {
+
                 // Cannot communicate with server.  Allow client to complete close operation.
                 shouldRaiseCloseCompleted = true;
             }
