@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell
         {
             Debug.Assert(plainTextString is not null);
 
-            if (string.IsNullOrEmpty(plainTextString))
+            if (plainTextString.Length == 0)
             {
                 return new SecureString();
             }
