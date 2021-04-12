@@ -8,7 +8,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
     $script:TestConnectingTimeout = 5000    # Milliseconds
 
-    function CheckSSHDService
+    function RestartSSHDService
     {
         if ($IsWindows)
         {
@@ -48,12 +48,12 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $session = New-PSSession @PSBoundParameters -ConnectingTimeout $timeout -ErrorVariable connectionError -ErrorAction SilentlyContinue
             if ($null -eq $session)
             {
-                Write-Verbose -Verbose "SSH New-PSSession remoting connect failed after $($timeout/1000) second wait."
+                Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
 
                 if ($count -eq 1)
                 {
                     # Try restarting sshd service
-                    CheckSSHDService
+                    RestartSSHDService
                 }
             }
         }
@@ -91,12 +91,12 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $session = New-PSSession @PSBoundParameters -ErrorVariable connectionError -ErrorAction SilentlyContinue
             if ($null -eq $session)
             {
-                Write-Verbose -Verbose "SSH New-PSSession remoting connect failed after $($timeout/1000) second wait."
+                Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
 
                 if ($count -eq 1)
                 {
                     # Try restarting sshd service
-                    CheckSSHDService
+                    RestartSSHDService
                 }
             }
         }
@@ -216,7 +216,6 @@ Describe "SSHRemoting Basic Tests" -tags CI {
                 Subsystem = 'powershell'
             })
             $script:sessions = TryNewPSSessionHash -SSHConnection $sshConnection -Name 'Connection1','Connection2'
-            $script:session | Should -Not -BeNullOrEmpty
             $script:sessions | Should -HaveCount 2
             $script:sessions[0].Name | Should -BeLike 'Connection*'
             $script:sessions[1].Name | Should -BeLike 'Connection*'
@@ -254,19 +253,19 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             {
                 $connectionError = $_
                 $rs = $null
-                Write-Verbose -Verbose "SSH Runspace Open remoting connect failed after $($timeout/1000) second wait."
+                Write-Verbose -Verbose "SSH Runspace Open remoting connect failed."
 
                 if ($count -eq 1)
                 {
                     # Try restarting sshd service
-                    CheckSSHDService
+                    RestartSSHDService
                 }
             }
         }
 
         if ($null -eq $rs)
         {
-            $message = "Runspace open unable to connect to SSH remoting endpoint after three attempts. Error: $($connectionError.Message)"
+            $message = "Runspace open unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Message)"
             throw [System.Management.Automation.PSInvalidOperationException]::new($message)
         }
 
