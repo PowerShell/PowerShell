@@ -388,6 +388,9 @@ namespace Microsoft.PowerShell
         }
 
 #nullable enable
+        /// <summary>Creates a new <see cref="SecureString"/> from a <see cref="string"/>.</summary>
+        /// <param name="plainTextString">Plain text string. Must not be null.</param>
+        /// <returns>A new SecureString.</returns>
         internal static unsafe SecureString FromPlainTextString(string plainTextString)
         {
             Debug.Assert(plainTextString is not null);
