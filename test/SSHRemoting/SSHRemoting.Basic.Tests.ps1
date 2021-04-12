@@ -132,12 +132,14 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
     Context "New-PSSession Tests" {
 
+        <#
         AfterEach {
             Write-Verbose -Verbose "Starting New-PSSession AfterEach"
             if ($script:session -ne $null) { Remove-PSSession -Session $script:session }
             if ($script:sessions -ne $null) { Remove-PSSession -Session $script:sessions }
             Write-Verbose -Verbose "AfterEach complete"
         }
+        #>
 
         It "Verifies new connection with implicit current User" {
             Write-Verbose -Verbose "It Starting: Verifies new connection with implicit current User"
@@ -301,9 +303,13 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
     Context "SSH Remoting API Tests" {
 
+        <#
         AfterEach {
+            Write-Verbose -Verbose "Starting Runspace close AfterEach"
             if ($script:rs -ne $null) { $script:rs.Dispose() }
+            Write-Verbose -Verbose "AfterEach complete"
         }
+        #>
 
         $testCases = @(
             @{
