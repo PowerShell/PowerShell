@@ -570,12 +570,6 @@ namespace System.Management.Automation.Internal
 
         private void ThrowFirstErrorIfExisting(bool logException)
         {
-            // The main purpose of this method is to check if the pipeline is being stopped asynchronously,
-            // by 'Ctrl+c' manually or 'PowerShell.Stop' programatically.
-            // When the pipeline is being stopped, a 'PipelineStoppedException' object will be assigned to
-            // '_firstTerminatingError' (see 'PipelineProcessor.Stop' for details), and thus the pipeline
-            // execution needs to check if '_firstTerminatingError' has been set in various places, so as
-            // to throw out this 'PipelineStoppedException' to terminate the pipeline execution.
             if (_firstTerminatingError != null)
             {
                 if (logException)
@@ -670,13 +664,13 @@ namespace System.Management.Automation.Internal
             }
 
             // If a terminating error occurred, report it now.
-            // This pipeline could have been stopped asynchronously and we need to check and
-            // see if that's the case.
+            // This pipeline could have been stopped asynchronously, by 'Ctrl+c' manually or
+            // 'PowerShell.Stop' programatically. We need to check and see if that's the case.
             // An example:
             // - 'Start-Sleep' is running in this pipeline, and 'pipelineProcessor.Stop' gets
             //   called on a different thread, which sets a 'PipelineStoppedException' object
             //   to '_firstTerminatingError' and runs 'StopProcessing' on 'Start-Sleep'.
-            //   The 'StopProcessing' will cause 'Start-Sleep' to return from 'ProcessRecord'
+            // - The 'StopProcessing' will cause 'Start-Sleep' to return from 'ProcessRecord'
             //   call, and thus the pipeline execution will move forward to run 'DoComplete'
             //   for the 'Start-Sleep' command and thus the code flow will reach here.
             // For this given example, we need to check '_firstTerminatingError' and throw out
@@ -804,7 +798,7 @@ namespace System.Management.Automation.Internal
             {
                 Start(expectInput);
 
-                // If a terminating error occurred, report it now.
+                // Check if this pipeline is being stopped asynchronously.
                 ThrowFirstErrorIfExisting(logException: false);
             }
             catch (PipelineStoppedException)
@@ -909,7 +903,7 @@ namespace System.Management.Automation.Internal
                 Start(true);
                 Inject(input, enumerate: false);
 
-                // If a terminating error occurred, report it now.
+                // Check if this pipeline is being stopped asynchronously.
                 ThrowFirstErrorIfExisting(logException: false);
 
                 return RetrieveResults();
