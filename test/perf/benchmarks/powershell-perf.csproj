@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../../Test.Common.props" />
+
+  <PropertyGroup>
+    <Description>PowerShell Performance Tests</Description>
+    <AssemblyName>powershell-perf</AssemblyName>
+    <NoWarn>$(NoWarn);CS8002</NoWarn>
+    <OutputType>Exe</OutputType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
+    <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
+    <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+    <ProjectReference Include="../../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
+    <ProjectReference Include="../../../src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
+  </ItemGroup>
+
+</Project>

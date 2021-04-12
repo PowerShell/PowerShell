@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1.1521" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.12.1.1521" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reporting\Reporting.csproj" />
+  </ItemGroup>
+
+</Project>
