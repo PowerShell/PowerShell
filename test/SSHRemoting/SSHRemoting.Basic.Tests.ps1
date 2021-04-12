@@ -142,6 +142,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         It "Verifies new connection with implicit current User" {
             Write-Verbose -Verbose "It Starting: Verifies new connection with implicit current User"
             $script:session = TryNewPSSession -HostName localhost
+            $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
             Write-Verbose -Verbose "It Complete"
         }
@@ -149,6 +150,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         It "Verifies new connection with explicit User parameter" {
             Write-Verbose -Verbose "It Starting: Verifies new connection with explicit User parameter"
             $script:session = TryNewPSSession -HostName localhost -UserName (whoami)
+            $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
             Write-Verbose -Verbose "It Complete"
         }
@@ -157,6 +159,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Starting: Verifies explicit Name parameter"
             $sessionName = 'TestSessionNameA'
             $script:session = TryNewPSSession -HostName localhost -Name $sessionName
+            $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
             $script:session.Name | Should -BeExactly $sessionName
             Write-Verbose -Verbose "It Complete"
@@ -166,6 +169,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Starting: Verifies explicit Port parameter"
             $portNum = 22
             $script:session = TryNewPSSession -HostName localhost -Port $portNum
+            $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
             Write-Verbose -Verbose "It Complete"
         }
@@ -175,6 +179,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $portNum = 22
             $subSystem = 'powershell'
             $script:session = TryNewPSSession -HostName localhost -Port $portNum -SubSystem $subSystem
+            $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
             Write-Verbose -Verbose "It Complete"
         }
@@ -185,6 +190,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $portNum = 22
             $subSystem = 'powershell'
             $script:session = TryNewPSSession -HostName localhost -Port $portNum -SubSystem $subSystem -KeyFilePath $keyFilePath
+            $script:session | Should -Not -BeNullOrEmpty
             VerifySession $script:session
             Write-Verbose -Verbose "It Complete"
         }
@@ -205,6 +211,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
                 Subsystem = 'powershell'
             })
             $script:sessions = TryNewPSSessionHash -SSHConnection $sshConnection -Name 'Connection1','Connection2'
+            $script:session | Should -Not -BeNullOrEmpty
             $script:sessions | Should -HaveCount 2
             $script:sessions[0].Name | Should -BeLike 'Connection*'
             $script:sessions[1].Name | Should -BeLike 'Connection*'
@@ -353,6 +360,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
             Write-Verbose -Verbose "It Starting: $TestName"
             $script:rs = TryCreateRunspace -UserName $UserName -ComputerName $ComputerName -KeyFilePath $KeyFilePath -Port $Port -Subsystem $Subsystem
+            $script:rs | Should -Not -BeNullOrEmpty
             VerifyRunspace $script:rs
             Write-Verbose -Verbose "It Complete"
         }
