@@ -4923,164 +4923,173 @@ namespace System.Management.Automation
 
         #region Comments
 
-        internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        private static List<CompletionResult> CompleteRequires(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
-            List<CompletionResult> results = new List<CompletionResult>();
+            var results = new List<CompletionResult>();
 
-            // Complete #requires statements
-            if (context.WordToComplete.StartsWith("#requires ", StringComparison.OrdinalIgnoreCase))
+            int cursorIndex = context.CursorPosition.ColumnNumber - 1;
+
+            // cursor is within the "#requires " statement.
+            if (cursorIndex < 10)
             {
-                int cursorIndex = context.CursorPosition.ColumnNumber - 1;
+                return results;
+            }
 
-                // cursor is within the "#requires " statement.
-                if (cursorIndex < 10)
+            string lineToCursor = context.CursorPosition.Line.Substring(0, cursorIndex);
+
+            // RunAsAdministrator must be the last parameter in a Requires statement so no completion if the cursor is after the parameter.
+            if (lineToCursor.Contains(" -RunAsAdministrator", StringComparison.OrdinalIgnoreCase))
+            {
+                return results;
+            }
+
+            // Regex to find parameter like " -Parameter1" or " -"
+            MatchCollection foundMatches = Regex.Matches(lineToCursor, @"\s-([A-Za-z]+|$)");
+            if (foundMatches.Count == 0)
+            {
+                return results;
+            }
+
+            string currentParameter = foundMatches[^1].Groups[1].Value;
+
+            // Complete the parameter if the cursor is at a parameter
+            if (lineToCursor.LastIndexOf($"-{currentParameter}") + currentParameter.Length + 1 == cursorIndex)
+            {
+                replacementIndex = context.CursorPosition.Offset - currentParameter.Length;
+                replacementLength = currentParameter.Length;
+
+                foreach (KeyValuePair<string, string> parameter in s_requiresParameters)
                 {
-                    return results;
+                    if (context.CursorPosition.Line.Contains($" -{parameter.Key}", StringComparison.OrdinalIgnoreCase) == false &&
+                        parameter.Key.StartsWith(currentParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new CompletionResult(parameter.Key, parameter.Key, CompletionResultType.ParameterName, parameter.Key));
+                    }
                 }
-
-                string lineToCursor = context.CursorPosition.Line.Substring(0, cursorIndex);
-
-                // RunAsAdministrator must be the last parameter in a Requires statement so no completion if the cursor is after the parameter.
-                if (lineToCursor.Contains(" -RunAsAdministrator", StringComparison.OrdinalIgnoreCase))
-                {
-                    return results;
-                }
-
-                // Regex to find parameter like " -Parameter1" or " -"
-                MatchCollection foundMatches = Regex.Matches(lineToCursor, @"\s-([A-Za-z]+|$)");
+            }
+            else
+            {
+                // Regex to find parameter values (any text that appears after various delimiters)
+                foundMatches = Regex.Matches(lineToCursor, @"(\s|,|;|{|\""|'|=)(\w+|$)");
+                string currentValue;
                 if (foundMatches.Count == 0)
                 {
-                    return results;
-                }
-
-                string currentParameter = foundMatches[^1].Groups[1].Value;
-
-                // Complete the parameter if the cursor is at a parameter
-                if (lineToCursor.LastIndexOf($"-{currentParameter}") + currentParameter.Length + 1 == cursorIndex)
-                {
-                    replacementIndex = context.CursorPosition.Offset - currentParameter.Length;
-                    replacementLength = currentParameter.Length;
-
-                    var requiresParameters = new Tuple<string, string>[4]
-                    {
-                        new Tuple<string, string>("Modules", "Specifies PowerShell modules that the script requires."),
-                        new Tuple<string, string>("PSEdition", "Specifies a PowerShell edition that the script requires."),
-                        new Tuple<string, string>("RunAsAdministrator", "Specifies that PowerShell must be running as administrator on Windows."),
-                        new Tuple<string, string>("Version", "Specifies the minimum version of PowerShell that the script requires.")
-                    };
-                    foreach (var parameter in requiresParameters)
-                    {
-                        if (context.CursorPosition.Line.Contains($" -{parameter.Item1}", StringComparison.OrdinalIgnoreCase) == false &&
-                            parameter.Item1.StartsWith(currentParameter, StringComparison.OrdinalIgnoreCase))
-                        {
-                            results.Add(new CompletionResult(parameter.Item1, parameter.Item1, CompletionResultType.ParameterName, parameter.Item2));
-                        }
-                    }
+                    currentValue = string.Empty;
                 }
                 else
                 {
-                    // Regex to find parameter values (any text that appears after various delimiters)
-                    foundMatches = Regex.Matches(lineToCursor, @"(\s|,|;|{|\""|'|=)(\w+|$)");
-                    string currentValue;
-                    if (foundMatches.Count == 0)
-                    {
-                        currentValue = string.Empty;
-                    }
-                    else
-                    {
-                        currentValue = foundMatches[^1].Groups[^1].Value;
-                    }
+                    currentValue = foundMatches[^1].Groups[^1].Value;
+                }
 
-                    replacementIndex = context.CursorPosition.Offset - currentValue.Length;
-                    replacementLength = currentValue.Length;
+                replacementIndex = context.CursorPosition.Offset - currentValue.Length;
+                replacementLength = currentValue.Length;
 
-                    if (currentParameter.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
+                if (currentParameter.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (KeyValuePair<string, string> psEditionEntry in s_requiresPSEditions)
                     {
-                        var psEditionValues = new Tuple<string, string>[2]
+                        if (psEditionEntry.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
                         {
-                            new Tuple<string, string>("Core", "Specifies that the script requires PowerShell Core to run."),
-                            new Tuple<string, string>("Desktop", "Specifies that the script requires Windows PowerShell to run.")
-                        };
-                        foreach (var value in psEditionValues)
-                        {
-                            if (value.Item1.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
-                            {
-                                results.Add(new CompletionResult(value.Item1, value.Item1, CompletionResultType.ParameterValue, value.Item2));
-                            }
+                            results.Add(new CompletionResult(psEditionEntry.Key, psEditionEntry.Key, CompletionResultType.ParameterValue, psEditionEntry.Value));
                         }
                     }
+                }
 
-                    if (currentParameter.Equals("Modules", StringComparison.OrdinalIgnoreCase))
+                if (currentParameter.Equals("Modules", StringComparison.OrdinalIgnoreCase))
+                {
+                    int hashtableStart = lineToCursor.LastIndexOf("@{");
+                    int hashtableEnd = lineToCursor.LastIndexOf('}');
+
+                    // Cursor is inside a hashtable
+                    if (hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart))
                     {
-                        int hashtableStart = lineToCursor.LastIndexOf("@{");
-                        int hashtableEnd = lineToCursor.LastIndexOf('}');
+                        string hashtableString = lineToCursor.Substring(hashtableStart);
 
-                        // Cursor is inside a hashtable
-                        if (hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart))
+                        // Regex to find hashtable keys with or without quotes
+                        foundMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
+                        var hashtableKeys = new string[foundMatches.Count];
+                        for (int i = 0; i < hashtableKeys.Length; i++)
                         {
-                            string hashtableString = lineToCursor.Substring(hashtableStart);
+                            hashtableKeys[i] = foundMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
+                        }
 
-                            // Regex to find hashtable keys with or without quotes
-                            foundMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
-                            var hashtableKeys = new string[foundMatches.Count];
-                            for (int i = 0; i < hashtableKeys.Length; i++)
+                        var lastCaptureGroup = foundMatches[^1].Groups[0];
+
+                        // Are we completing a key for the hashtable?
+                        if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
+                        {
+                            foreach (KeyValuePair<string, string> modSpecKey in s_requiresModuleSpecSharedKeys)
                             {
-                                hashtableKeys[i] = foundMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
-                            }
-
-                            var lastCaptureGroup = foundMatches[^1].Groups[0];
-
-                            // Are we completing a key for the hashtable?
-                            if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
-                            {
-                                var moduleKeys = new Tuple<string, string>[2]
+                                if (modSpecKey.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && hashtableKeys.Contains(modSpecKey.Key) == false)
                                 {
-                                    new Tuple<string, string>("ModuleName", "Required. Specifies the module name."),
-                                    new Tuple<string, string>("GUID", "Optional. Specifies the GUID of the module.")
-                                };
-
-                                // The following keys cannot be used together so they get their own table for lookup.
-                                var moduleVersionKeys = new Dictionary<string, string>(3, StringComparer.OrdinalIgnoreCase)
-                                {
-                                    { "ModuleVersion", "Specifies a minimum acceptable version of the module." },
-                                    { "RequiredVersion", "Specifies an exact, required version of the module." },
-                                    { "MaximumVersion", "Specifies the maximum acceptable version of the module." },
-                                };
-                                foreach (var value in moduleKeys)
-                                {
-                                    if (value.Item1.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && hashtableKeys.Contains(value.Item1) == false)
-                                    {
-                                        results.Add(new CompletionResult(value.Item1, value.Item1, CompletionResultType.ParameterValue, value.Item2));
-                                    }
-                                }
-
-                                foreach (string value in moduleVersionKeys.Keys)
-                                {
-                                    if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && moduleVersionKeys.Keys.Intersect(hashtableKeys).Any() == false)
-                                    {
-                                        results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, moduleVersionKeys[value]));
-                                    }
+                                    results.Add(new CompletionResult(modSpecKey.Key, modSpecKey.Key, CompletionResultType.ParameterValue, modSpecKey.Value));
                                 }
                             }
-                            else
+
+                            foreach (string value in s_requiresModuleSpecExclusiveKeys.Keys)
                             {
-                                if (hashtableKeys[^1].Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                                if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any() == false)
                                 {
-                                    context.WordToComplete = currentValue;
-                                    return CompleteModuleName(context, true);
+                                    results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, s_requiresModuleSpecExclusiveKeys[value]));
                                 }
                             }
                         }
                         else
                         {
-                            context.WordToComplete = currentValue;
-                            return CompleteModuleName(context, true);
+                            if (hashtableKeys[^1].Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                            {
+                                context.WordToComplete = currentValue;
+                                return CompleteModuleName(context, true);
+                            }
                         }
                     }
+                    else
+                    {
+                        context.WordToComplete = currentValue;
+                        return CompleteModuleName(context, true);
+                    }
                 }
-
-                return results;
             }
+
+            return results;
+        }
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresParameters = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Modules", "Specifies PowerShell modules that the script requires." },
+            { "PSEdition", "Specifies a PowerShell edition that the script requires." },
+            { "RunAsAdministrator", "Specifies that PowerShell must be running as administrator on Windows." },
+            { "Version", "Specifies the minimum version of PowerShell that the script requires." },
+        };
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresPSEditions = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Core", "Specifies that the script requires PowerShell Core to run." },
+            { "Desktop", "Specifies that the script requires Windows PowerShell to run." },
+        };
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresModuleSpecSharedKeys = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "ModuleName", "Required. Specifies the module name." },
+            { "GUID", "Optional. Specifies the GUID of the module." },
+        };
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresModuleSpecExclusiveKeys = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "ModuleVersion", "Specifies a minimum acceptable version of the module." },
+            { "RequiredVersion", "Specifies an exact, required version of the module." },
+            { "MaximumVersion", "Specifies the maximum acceptable version of the module." },
+        };
+
+        internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        {
+            // Complete #requires statements
+            if (context.WordToComplete.StartsWith("#requires ", StringComparison.OrdinalIgnoreCase))
+            {
+                return CompleteRequires(context, ref replacementIndex, ref replacementLength);
+            }
+
+            var results = new List<CompletionResult>();
 
             // Complete the history entries
             Match matchResult = Regex.Match(context.WordToComplete, @"^#([\w\-]*)$");
