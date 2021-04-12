@@ -5045,6 +5045,7 @@ namespace System.Management.Automation
 
                 // Now try to complete hashtable keys
 
+                // First add any common keys that match the current one that haven't already been used
                 foreach (KeyValuePair<string, string> modSpecKey in s_requiresModuleSpecSharedKeys)
                 {
                     if (modSpecKey.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase)
@@ -5054,12 +5055,21 @@ namespace System.Management.Automation
                     }
                 }
 
-                foreach (string value in s_requiresModuleSpecExclusiveKeys.Keys)
+                // Then, if the mutually-exclusive module version keys haven't been used, suggest those
+                bool alreadyHasExclusiveKeys = s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any();
+                if (!alreadyHasExclusiveKeys)
                 {
-                    if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase)
-                        && s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any())
+                    foreach (KeyValuePair<string, string> exclusiveKeyEntry in s_requiresModuleSpecExclusiveKeys)
                     {
-                        results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, s_requiresModuleSpecExclusiveKeys[value]));
+                        if (exclusiveKeyEntry.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
+                        {
+                            results.Add(
+                                new CompletionResult(
+                                    exclusiveKeyEntry.Key,
+                                    exclusiveKeyEntry.Key,
+                                    CompletionResultType.ParameterValue,
+                                    exclusiveKeyEntry.Value));
+                        }
                     }
                 }
             }
