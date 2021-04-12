@@ -5003,58 +5003,64 @@ namespace System.Management.Automation
                 return results;
             }
 
+            // Complete Modules module specification values
             if (currentParameterMatch.Value.Equals("Modules", StringComparison.OrdinalIgnoreCase))
             {
                 int hashtableStart = lineToCursor.LastIndexOf("@{");
                 int hashtableEnd = lineToCursor.LastIndexOf('}');
 
-                // Cursor is inside a hashtable
-                if (hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart))
-                {
-                    string hashtableString = lineToCursor.Substring(hashtableStart);
+                bool insideHashtable = hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart);
 
-                    // Regex to find hashtable keys with or without quotes
-                    parameterValueMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
-                    var hashtableKeys = new string[parameterValueMatches.Count];
-                    for (int i = 0; i < hashtableKeys.Length; i++)
-                    {
-                        hashtableKeys[i] = parameterValueMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
-                    }
-
-                    var lastCaptureGroup = parameterValueMatches[^1].Groups[0];
-
-                    // Are we completing a key for the hashtable?
-                    if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
-                    {
-                        foreach (KeyValuePair<string, string> modSpecKey in s_requiresModuleSpecSharedKeys)
-                        {
-                            if (modSpecKey.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && hashtableKeys.Contains(modSpecKey.Key) == false)
-                            {
-                                results.Add(new CompletionResult(modSpecKey.Key, modSpecKey.Key, CompletionResultType.ParameterValue, modSpecKey.Value));
-                            }
-                        }
-
-                        foreach (string value in s_requiresModuleSpecExclusiveKeys.Keys)
-                        {
-                            if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any() == false)
-                            {
-                                results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, s_requiresModuleSpecExclusiveKeys[value]));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (hashtableKeys[^1].Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
-                        {
-                            context.WordToComplete = currentValue;
-                            return CompleteModuleName(context, true);
-                        }
-                    }
-                }
-                else
+                // If not inside a hashtable, try to complete a module simple name
+                if (!insideHashtable)
                 {
                     context.WordToComplete = currentValue;
                     return CompleteModuleName(context, true);
+                }
+
+                string hashtableString = lineToCursor.Substring(hashtableStart);
+
+                // Regex to find hashtable keys with or without quotes
+                parameterValueMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
+                var hashtableKeys = new string[parameterValueMatches.Count];
+                for (int i = 0; i < hashtableKeys.Length; i++)
+                {
+                    hashtableKeys[i] = parameterValueMatches[i].Value.TrimStart(s_hashtableKeyPrefixes);
+                }
+
+                Group lastHashtableKeyPrefixGroup = parameterValueMatches[^1].Groups[0];
+
+                // If we're not completing a key for the hashtable, try to complete module names, but nothing else
+                bool completingHashtableKey = lastHashtableKeyPrefixGroup.Index + lastHashtableKeyPrefixGroup.Length == hashtableString.Length;
+                if (!completingHashtableKey)
+                {
+                    if (hashtableKeys[^1].Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        context.WordToComplete = currentValue;
+                        return CompleteModuleName(context, true);
+                    }
+
+                    return results;
+                }
+
+                // Now try to complete hashtable keys
+
+                foreach (KeyValuePair<string, string> modSpecKey in s_requiresModuleSpecSharedKeys)
+                {
+                    if (modSpecKey.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase)
+                        && !hashtableKeys.Contains(modSpecKey.Key))
+                    {
+                        results.Add(new CompletionResult(modSpecKey.Key, modSpecKey.Key, CompletionResultType.ParameterValue, modSpecKey.Value));
+                    }
+                }
+
+                foreach (string value in s_requiresModuleSpecExclusiveKeys.Keys)
+                {
+                    if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase)
+                        && s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any())
+                    {
+                        results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, s_requiresModuleSpecExclusiveKeys[value]));
+                    }
                 }
             }
 
@@ -5086,6 +5092,15 @@ namespace System.Management.Automation
             { "ModuleVersion", "Specifies a minimum acceptable version of the module." },
             { "RequiredVersion", "Specifies an exact, required version of the module." },
             { "MaximumVersion", "Specifies the maximum acceptable version of the module." },
+        };
+
+        private static readonly char[] s_hashtableKeyPrefixes = new[]
+        {
+            '@',
+            '{',
+            ';',
+            '"',
+            '\'',
         };
 
         internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
