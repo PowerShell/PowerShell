@@ -403,7 +403,7 @@ namespace System.Management.Automation
             if (Directory.Exists(tempAssemblyDirPath))
             {
                 // Enumerate all directories, sort by name and select the last. This selects the latest version.
-                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
+                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).OrderBy(static d => d).LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {

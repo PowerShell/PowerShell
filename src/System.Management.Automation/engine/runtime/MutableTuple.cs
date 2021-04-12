@@ -504,7 +504,7 @@ namespace System.Management.Automation
         /// </summary>
         public static Expression Create(params Expression[] values)
         {
-            return CreateNew(MakeTupleType(values.Select(x => x.Type).ToArray()), 0, values.Length, values);
+            return CreateNew(MakeTupleType(values.Select(static x => x.Type).ToArray()), 0, values.Length, values);
         }
 
         private static int PowerOfTwoRound(int value)
@@ -564,7 +564,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return Expression.New(tupleType.GetConstructor(newValues.Select(x => x.Type).ToArray()), newValues);
+            return Expression.New(tupleType.GetConstructor(newValues.Select(static x => x.Type).ToArray()), newValues);
         }
     }
 

@@ -3495,13 +3495,13 @@ namespace System.Management.Automation.Runspaces
                 List<string> formatFilesToRemove = new List<string>();
                 if (this.Formats != null)
                 {
-                    formatFilesToRemove.AddRange(this.Formats.Select(f => f.FileName));
+                    formatFilesToRemove.AddRange(this.Formats.Select(static f => f.FileName));
                 }
 
                 List<string> typeFilesToRemove = new List<string>();
                 if (this.Types != null)
                 {
-                    typeFilesToRemove.AddRange(this.Types.Select(t => t.FileName));
+                    typeFilesToRemove.AddRange(this.Types.Select(static t => t.FileName));
                 }
 
                 RemoveTypesAndFormats(context, formatFilesToRemove, typeFilesToRemove);
@@ -5481,7 +5481,7 @@ end {
             try
             {
                 // Return types that are public, non-abstract, non-interface and non-valueType.
-                return assembly.ExportedTypes.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsValueType);
+                return assembly.ExportedTypes.Where(static t => !t.IsAbstract && !t.IsInterface && !t.IsValueType);
             }
             catch (ReflectionTypeLoadException e)
             {

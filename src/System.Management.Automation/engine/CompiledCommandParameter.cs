@@ -649,7 +649,7 @@ namespace System.Management.Automation
             // to an ICollection<T> is via reflected calls to Add(T),
             // but the advantage over plain IList is that we can typecast the elements.
             Type interfaceICollection =
-                Array.Find(interfaces, i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
+                Array.Find(interfaces, static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
             if (interfaceICollection != null)
             {
                 // We only deal with the first type for which ICollection<T> is implemented

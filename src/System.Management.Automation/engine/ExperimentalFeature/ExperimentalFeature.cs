@@ -144,7 +144,7 @@ namespace System.Management.Automation
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
             // Initialize the readonly dictionary 'EngineExperimentalFeatureMap'.
-            var engineExpFeatureMap = engineFeatures.ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
+            var engineExpFeatureMap = engineFeatures.ToDictionary(static f => f.Name, StringComparer.OrdinalIgnoreCase);
             EngineExperimentalFeatureMap = new ReadOnlyDictionary<string, ExperimentalFeature>(engineExpFeatureMap);
 
             // Initialize the readonly hashset 'EnabledExperimentalFeatureNames'.

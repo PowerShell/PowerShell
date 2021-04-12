@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
                     });
 
                 if (moduleInfos.Count > 0)
-                { 
+                {
                     // to be consistent with Import-Module behavior, we use the first occurrence that we find in PSModulePath
                     var moduleDirectory = Path.GetDirectoryName(moduleInfos[0].Path);
                     dscConfigurationDirectory = Path.Join(moduleDirectory, "Configuration");
@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
                 errors.Add(exception);
                 return;
             }
-            
+
             NewApiIsUsed = true;
             DynamicKeyword.Reset();
             Initialize(errors, modulePathList);
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
 
             return result;
         }
-        
+
         private static void AddEmbeddedInstanceTypesToCaches(IEnumerable<PSObject> classes, PSModuleInfo module, DSCResourceRunAsCredential runAsBehavior)
         {
             foreach (dynamic c in classes)
@@ -1540,7 +1540,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
                     {
                         errorMessages.Add(error.ToString());
                     }
-                    
+
                     PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(ParserStrings.FailToParseModuleScriptFile, fileName, string.Join(Environment.NewLine, errorMessages));
                     e.SetErrorId("FailToParseModuleScriptFile");
                     errorList.Add(e);

@@ -381,7 +381,7 @@ namespace System.Management.Automation
                         }
 
                         // Expand paths, but only from the file system.
-                        if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
+                        if (paths?.Count > 0 && paths.All(static p => p.BaseObject is FileSystemInfo))
                         {
                             var sep = string.Empty;
                             foreach (var path in paths)

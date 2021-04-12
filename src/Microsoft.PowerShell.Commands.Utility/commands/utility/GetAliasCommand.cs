@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             results.Sort(
-                (AliasInfo left, AliasInfo right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name));
+                static (AliasInfo left, AliasInfo right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name));
             foreach (AliasInfo alias in results)
             {
                 this.WriteObject(alias);

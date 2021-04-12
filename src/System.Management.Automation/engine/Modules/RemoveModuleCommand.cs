@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                         hasWildcards = false;
                 }
 
-                if (FullyQualifiedName != null && (FullyQualifiedName.Any(moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
+                if (FullyQualifiedName != null && (FullyQualifiedName.Any(static moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
                 {
                     isEngineModule = false;
                 }

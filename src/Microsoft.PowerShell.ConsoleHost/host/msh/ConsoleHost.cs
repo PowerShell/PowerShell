@@ -2953,7 +2953,7 @@ namespace Microsoft.PowerShell
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
 
-        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
+        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(static () => Console.In);
 
         private string _savedWindowTitle = string.Empty;
         private readonly Version _ver = PSVersionInfo.PSVersion;

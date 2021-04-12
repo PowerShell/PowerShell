@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Language
                         }
 
                         // The expression may have multiple member expressions, e.g. [E]::e1 + [E]::e2
-                        foreach (var memberExpr in initExpr.FindAll(ast => ast is MemberExpressionAst, false))
+                        foreach (var memberExpr in initExpr.FindAll(static ast => ast is MemberExpressionAst, false))
                         {
                             var typeExpr = ((MemberExpressionAst)memberExpr).Expression as TypeExpressionAst;
                             if (typeExpr != null)

@@ -440,11 +440,11 @@ namespace System.Management.Automation
             if (extent != null)
             {
                 extent.ToPSObjectForRemoting(psObject);
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => true);
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", static () => true);
             }
             else
             {
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => false);
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", static () => false);
             }
 
             RemoteCommandInfo.ToPSObjectForRemoting(this.MyCommand, psObject);
