@@ -4944,110 +4944,114 @@ namespace System.Management.Automation
             }
 
             // Regex to find parameter like " -Parameter1" or " -"
-            MatchCollection foundMatches = Regex.Matches(lineToCursor, @"\s-([A-Za-z]+|$)");
-            if (foundMatches.Count == 0)
+            MatchCollection parameterMatches = Regex.Matches(lineToCursor, @"\s+-([A-Za-z]+|$)");
+            if (parameterMatches.Count == 0)
             {
                 return results;
             }
 
-            string currentParameter = foundMatches[^1].Groups[1].Value;
+            Group currentParameterMatch = parameterMatches[^1].Groups[1];
 
             // Complete the parameter if the cursor is at a parameter
-            if (lineToCursor.LastIndexOf($"-{currentParameter}") + currentParameter.Length + 1 == cursorIndex)
+            if (currentParameterMatch.Index + currentParameterMatch.Length == cursorIndex)
             {
-                replacementIndex = context.CursorPosition.Offset - currentParameter.Length;
-                replacementLength = currentParameter.Length;
+                string currentParameterPrefix = currentParameterMatch.Value;
 
+                replacementIndex = context.CursorPosition.Offset - currentParameterPrefix.Length;
+                replacementLength = currentParameterPrefix.Length;
+
+                // Produce completions for all parameters that begin with the prefix we've found,
+                // but which haven't already been specified in the line we need to complete
                 foreach (KeyValuePair<string, string> parameter in s_requiresParameters)
                 {
-                    if (context.CursorPosition.Line.Contains($" -{parameter.Key}", StringComparison.OrdinalIgnoreCase) == false &&
-                        parameter.Key.StartsWith(currentParameter, StringComparison.OrdinalIgnoreCase))
+                    if (parameter.Key.StartsWith(currentParameterPrefix, StringComparison.OrdinalIgnoreCase)
+                        && !context.CursorPosition.Line.Contains($" -{parameter.Key}", StringComparison.OrdinalIgnoreCase))
                     {
                         results.Add(new CompletionResult(parameter.Key, parameter.Key, CompletionResultType.ParameterName, parameter.Key));
                     }
                 }
+
+                return results;
+            }
+
+            // Regex to find parameter values (any text that appears after various delimiters)
+            parameterMatches = Regex.Matches(lineToCursor, @"(\s+|,|;|{|\""|'|=)(\w+|$)");
+            string currentValue;
+            if (parameterMatches.Count == 0)
+            {
+                currentValue = string.Empty;
             }
             else
             {
-                // Regex to find parameter values (any text that appears after various delimiters)
-                foundMatches = Regex.Matches(lineToCursor, @"(\s|,|;|{|\""|'|=)(\w+|$)");
-                string currentValue;
-                if (foundMatches.Count == 0)
-                {
-                    currentValue = string.Empty;
-                }
-                else
-                {
-                    currentValue = foundMatches[^1].Groups[^1].Value;
-                }
+                currentValue = parameterMatches[^1].Groups[^1].Value;
+            }
 
-                replacementIndex = context.CursorPosition.Offset - currentValue.Length;
-                replacementLength = currentValue.Length;
+            replacementIndex = context.CursorPosition.Offset - currentValue.Length;
+            replacementLength = currentValue.Length;
 
-                if (currentParameter.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
+            if (currentParameterMatch.Value.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (KeyValuePair<string, string> psEditionEntry in s_requiresPSEditions)
                 {
-                    foreach (KeyValuePair<string, string> psEditionEntry in s_requiresPSEditions)
+                    if (psEditionEntry.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (psEditionEntry.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
-                        {
-                            results.Add(new CompletionResult(psEditionEntry.Key, psEditionEntry.Key, CompletionResultType.ParameterValue, psEditionEntry.Value));
-                        }
+                        results.Add(new CompletionResult(psEditionEntry.Key, psEditionEntry.Key, CompletionResultType.ParameterValue, psEditionEntry.Value));
                     }
                 }
+            }
 
-                if (currentParameter.Equals("Modules", StringComparison.OrdinalIgnoreCase))
+            if (currentParameterMatch.Value.Equals("Modules", StringComparison.OrdinalIgnoreCase))
+            {
+                int hashtableStart = lineToCursor.LastIndexOf("@{");
+                int hashtableEnd = lineToCursor.LastIndexOf('}');
+
+                // Cursor is inside a hashtable
+                if (hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart))
                 {
-                    int hashtableStart = lineToCursor.LastIndexOf("@{");
-                    int hashtableEnd = lineToCursor.LastIndexOf('}');
+                    string hashtableString = lineToCursor.Substring(hashtableStart);
 
-                    // Cursor is inside a hashtable
-                    if (hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart))
+                    // Regex to find hashtable keys with or without quotes
+                    parameterMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
+                    var hashtableKeys = new string[parameterMatches.Count];
+                    for (int i = 0; i < hashtableKeys.Length; i++)
                     {
-                        string hashtableString = lineToCursor.Substring(hashtableStart);
+                        hashtableKeys[i] = parameterMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
+                    }
 
-                        // Regex to find hashtable keys with or without quotes
-                        foundMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
-                        var hashtableKeys = new string[foundMatches.Count];
-                        for (int i = 0; i < hashtableKeys.Length; i++)
+                    var lastCaptureGroup = parameterMatches[^1].Groups[0];
+
+                    // Are we completing a key for the hashtable?
+                    if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
+                    {
+                        foreach (KeyValuePair<string, string> modSpecKey in s_requiresModuleSpecSharedKeys)
                         {
-                            hashtableKeys[i] = foundMatches[i].Value.TrimStart('@', '{', ';', '"', '\'');
-                        }
-
-                        var lastCaptureGroup = foundMatches[^1].Groups[0];
-
-                        // Are we completing a key for the hashtable?
-                        if (lastCaptureGroup.Index + lastCaptureGroup.Length == hashtableString.Length)
-                        {
-                            foreach (KeyValuePair<string, string> modSpecKey in s_requiresModuleSpecSharedKeys)
+                            if (modSpecKey.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && hashtableKeys.Contains(modSpecKey.Key) == false)
                             {
-                                if (modSpecKey.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && hashtableKeys.Contains(modSpecKey.Key) == false)
-                                {
-                                    results.Add(new CompletionResult(modSpecKey.Key, modSpecKey.Key, CompletionResultType.ParameterValue, modSpecKey.Value));
-                                }
-                            }
-
-                            foreach (string value in s_requiresModuleSpecExclusiveKeys.Keys)
-                            {
-                                if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any() == false)
-                                {
-                                    results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, s_requiresModuleSpecExclusiveKeys[value]));
-                                }
+                                results.Add(new CompletionResult(modSpecKey.Key, modSpecKey.Key, CompletionResultType.ParameterValue, modSpecKey.Value));
                             }
                         }
-                        else
+
+                        foreach (string value in s_requiresModuleSpecExclusiveKeys.Keys)
                         {
-                            if (hashtableKeys[^1].Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                            if (value.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase) && s_requiresModuleSpecExclusiveKeys.Keys.Intersect(hashtableKeys).Any() == false)
                             {
-                                context.WordToComplete = currentValue;
-                                return CompleteModuleName(context, true);
+                                results.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, s_requiresModuleSpecExclusiveKeys[value]));
                             }
                         }
                     }
                     else
                     {
-                        context.WordToComplete = currentValue;
-                        return CompleteModuleName(context, true);
+                        if (hashtableKeys[^1].Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                        {
+                            context.WordToComplete = currentValue;
+                            return CompleteModuleName(context, true);
+                        }
                     }
+                }
+                else
+                {
+                    context.WordToComplete = currentValue;
+                    return CompleteModuleName(context, true);
                 }
             }
 
