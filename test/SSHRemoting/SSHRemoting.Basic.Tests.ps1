@@ -373,7 +373,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Starting: $TestName"
             $script:rs = TryCreateRunspace -UserName $UserName -ComputerName $ComputerName -KeyFilePath $KeyFilePath -Port $Port -Subsystem $Subsystem
             $script:rs | Should -Not -BeNullOrEmpty
-            #VerifyRunspace $script:rs
+            VerifyRunspace $script:rs
             Write-Verbose -Verbose "It Complete"
         }
     }

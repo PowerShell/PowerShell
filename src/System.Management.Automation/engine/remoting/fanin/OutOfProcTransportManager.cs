@@ -585,11 +585,11 @@ namespace System.Management.Automation.Remoting.Client
 
             try
             {
-                // start the timer..so client can fail deterministically
-                _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
-
                 // send Close signal to the server and let it die gracefully.
                 stdInWriter.WriteLine(OutOfProcessUtils.CreateClosePacket(Guid.Empty));
+
+                // start the timer..so client can fail deterministically
+                _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
             }
             catch
             {
