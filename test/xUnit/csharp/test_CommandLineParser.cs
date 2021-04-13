@@ -145,6 +145,47 @@ namespace PSTests.Parallel
 
         [Theory]
         [InlineData("-Version")]
+        [InlineData("--Version")]
+        [InlineData("/Version")]
+        public static void TestParameter_Dash_Or_Slash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.True(cpp.NonInteractive);
+            Assert.False(cpp.ShowBanner);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.NoPrompt);
+            Assert.True(cpp.ShowVersion);
+            Assert.True(cpp.SkipProfiles);
+            Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("/-Version")]
+        [InlineData("-/Version")]
+        public static void TestParameter_Wrong_Dash_And_Slash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.True(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.False(cpp.NonInteractive);
+            Assert.False(cpp.ShowBanner);
+            Assert.True(cpp.ShowShortHelp);
+            Assert.False(cpp.NoPrompt);
+            Assert.False(cpp.ShowVersion);
+            Assert.False(cpp.SkipProfiles);
+            Assert.Contains(commandLine[0], cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-Version")]
         [InlineData("-V")]
         [InlineData("-Version", "abbra")] // Ignore all after the parameter
         public static void TestParameter_Version(params string[] commandLine)
