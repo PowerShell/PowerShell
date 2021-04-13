@@ -18,7 +18,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         }
         else
         {
-            Write-Verbose -Verbose "Restarting Linux SSHD service..."
+            Write-Verbose -Verbose "Restarting Unix SSHD service..."
             sudo service ssh restart
             $status = sudo service ssh status
             Write-Verbose -Verbose "SSHD service status: $status"
