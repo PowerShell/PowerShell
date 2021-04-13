@@ -3439,9 +3439,11 @@ namespace System.Management.Automation
             }
             else
             {
+                #pragma warning disable SYSLIB0015
                 // Check for 'DisablePrivateReflectionAttribute'. It's applied at the assembly level, and allow an assembly to opt-out of private/internal reflection.
                 var disablePrivateReflectionAttribute = assembly.GetCustomAttribute<System.Runtime.CompilerServices.DisablePrivateReflectionAttribute>();
                 disallowReflection = disablePrivateReflectionAttribute != null;
+                #pragma warning restore SYSLIB0015
             }
 
             s_disallowReflectionCache.TryAdd(assembly.FullName, disallowReflection);
