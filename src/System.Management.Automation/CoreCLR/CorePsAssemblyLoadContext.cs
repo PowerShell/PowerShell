@@ -603,9 +603,9 @@ namespace System.Management.Automation
         /// Size in bytes of the assembly data buffer.
         /// </param>
         [UnmanagedCallersOnly]
-        public static void LoadAssemblyFromMemory(IntPtr data, int size)
+        public static void LoadAssemblyFromNativeMemory(IntPtr data, int size)
         {
-            using var stream = new UnmanagedMemoryStream((Byte*)data, size);
+            using var stream = new UnmanagedMemoryStream((byte*)data, size);
             AssemblyLoadContext.Default.LoadFromStream(stream);
         }
     }
