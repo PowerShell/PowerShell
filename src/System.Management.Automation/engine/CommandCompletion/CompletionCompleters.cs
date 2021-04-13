@@ -4935,7 +4935,10 @@ namespace System.Management.Automation
 
             // Complete the history entries
             Match matchResult = Regex.Match(context.WordToComplete, @"^#([\w\-]*)$");
-            if (!matchResult.Success) { return results; }
+            if (!matchResult.Success)
+            {
+                return results;
+            }
 
             string wordToComplete = matchResult.Groups[1].Value;
             Collection<PSObject> psobjs;
@@ -5001,13 +5004,6 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
 
             int cursorIndex = context.CursorPosition.ColumnNumber - 1;
-
-            // cursor is within the "#requires " statement.
-            if (cursorIndex < 10)
-            {
-                return results;
-            }
-
             string lineToCursor = context.CursorPosition.Line.Substring(0, cursorIndex);
 
             // RunAsAdministrator must be the last parameter in a Requires statement so no completion if the cursor is after the parameter.
@@ -5040,7 +5036,7 @@ namespace System.Management.Automation
                     if (parameter.Key.StartsWith(currentParameterPrefix, StringComparison.OrdinalIgnoreCase)
                         && !context.CursorPosition.Line.Contains($" -{parameter.Key}", StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new CompletionResult(parameter.Key, parameter.Key, CompletionResultType.ParameterName, parameter.Key));
+                        results.Add(new CompletionResult(parameter.Key, parameter.Key, CompletionResultType.ParameterName, parameter.Value));
                     }
                 }
 
@@ -5118,7 +5114,6 @@ namespace System.Management.Automation
                     }
 
                     // "RequiredVersion" is mutually exclusive with "ModuleVersion" and "MaximumVersion"
-
                     if (existingHashtableKey.Equals("ModuleVersion", StringComparison.OrdinalIgnoreCase)
                         || existingHashtableKey.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
                     {
