@@ -3866,7 +3866,7 @@ namespace System.Management.Automation
 
             if (prevType is not null)
             {
-                var inferTypeNames = prevType.Select(t => t.Name).ToArray();
+                string[] inferTypeNames = prevType.Select(t => t.Name).ToArray();
                 CompleteFormatViewByInferredType(context.TypeInferenceContext, inferTypeNames, result, commandName);
             }
 
