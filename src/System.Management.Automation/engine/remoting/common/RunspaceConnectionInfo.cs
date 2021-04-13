@@ -1913,7 +1913,11 @@ namespace System.Management.Automation.Runspaces
         /// Default value for subsystem.
         /// </summary>
         private const string DefaultSubsystem = "powershell";
-        private const int DefaultConnectingTimeoutTime = -1;    // Never time out
+        
+        /// <summary>
+        /// Default value is infinite timeout.
+        /// </summary>
+        private const int DefaultConnectingTimeoutTime = -1;
 
         #endregion
 
@@ -2028,7 +2032,7 @@ namespace System.Management.Automation.Runspaces
             int port,
             string subsystem) : this(userName, computerName, keyFilePath, port)
         {
-            Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+            Subsystem = string.IsNullOrEmpty(subsystem) ? DefaultSubsystem : subsystem;
         }
 
         /// <summary>

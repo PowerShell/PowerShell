@@ -593,7 +593,6 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception ex) when (ex is IOException || ex is ObjectDisposedException)
             {
-
                 // Cannot communicate with server.  Allow client to complete close operation.
                 shouldRaiseCloseCompleted = true;
             }
@@ -1683,7 +1682,7 @@ namespace System.Management.Automation.Remoting.Client
                     var errorMessage = StringUtil.Format(RemotingErrorIdStrings.SSHClientConnectTimeout, _connectionInfo.ConnectingTimeout / 1000);
                     if (sshTerminated)
                     {
-                        errorMessage += "\n" + RemotingErrorIdStrings.SSHClientConnectProcessTerminated;
+                        errorMessage += RemotingErrorIdStrings.SSHClientConnectProcessTerminated;
                     }
 
                     HandleSSHError(

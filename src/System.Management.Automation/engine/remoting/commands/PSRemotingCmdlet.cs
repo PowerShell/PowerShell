@@ -771,9 +771,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
+        /// Default timeout value is infinite.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        public virtual int ConnectingTimeout { get; set; } = -1;    // No timeout by default
+        public virtual int ConnectingTimeout { get; set; } = -1;
 
         /// <summary>
         /// This parameter specifies that SSH is used to establish the remote
@@ -910,7 +911,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Array of SSHConnection objects.</returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
-            var connections = new List<SSHConnection>();
+            List<SSHConnection> connections = new();
             foreach (var item in this.SSHConnection)
             {
                 if (item.ContainsKey(ComputerNameParameter) && item.ContainsKey(HostNameAlias))
@@ -923,7 +924,7 @@ namespace Microsoft.PowerShell.Commands
                     throw new PSArgumentException(RemotingErrorIdStrings.SSHConnectionDuplicateKeyPath);
                 }
 
-                var connectionInfo = new SSHConnection();
+                SSHConnection connectionInfo = new();
                 foreach (var key in item.Keys)
                 {
                     string paramName = key as string;
