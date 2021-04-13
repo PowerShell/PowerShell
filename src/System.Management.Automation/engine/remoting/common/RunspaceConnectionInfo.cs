@@ -1917,7 +1917,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default value is infinite timeout.
         /// </summary>
-        private const int DefaultConnectingTimeoutTime = -1;
+        private const int DefaultConnectingTimeoutTime = Timeout.Infinite;
 
         #endregion
 

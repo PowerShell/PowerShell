@@ -15,6 +15,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -774,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
         /// Default timeout value is infinite.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        public virtual int ConnectingTimeout { get; set; } = -1;
+        public virtual int ConnectingTimeout { get; set; } = Timeout.Infinite;
 
         /// <summary>
         /// This parameter specifies that SSH is used to establish the remote

@@ -1657,6 +1657,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Start connection timeout timer if requested.
+            // Timer callback occurs only once after timeout time.
             _connectionTimer = new Timer(
                 callback: (_) => 
                 {
@@ -1685,6 +1686,7 @@ namespace System.Management.Automation.Remoting.Client
                         errorMessage += RemotingErrorIdStrings.SSHClientConnectProcessTerminated;
                     }
 
+                    // Report error and terminate connection attempt.
                     HandleSSHError(
                         new PSRemotingTransportException(errorMessage));
                 },
