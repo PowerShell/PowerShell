@@ -1,5 +1,106 @@
 # Current preview release
 
+## [7.2.0-preview.5] - 2021-04-14
+
+### Breaking Changes
+
+- Make PowerShell Linux deb and RPM packages universal (#15109)
+- Enforce AppLocker Deny configuration before Execution Policy Bypass configuration (#15035)
+- Disallow mixed dash and slash in command line parameter prefix (#15142) (Thanks @davidBar-On!)
+
+### Experimental Features
+
+- `PSNativeCommandArgumentPassing`: Use `ArgumentList` for native executable invocation (breaking change) (#14692)
+
+### Engine Updates and Fixes
+
+- Add `IArgumentCompleterFactory` for parameterized `ArgumentCompleters` (#12605) (Thanks @powercode!)
+
+### General Cmdlet Updates and Fixes
+
+- Fix SSH remoting connection never finishing with misconfigured endpoint (#15175)
+- Respect `TERM` and `NO_COLOR` environment variables for `$PSStyle` rendering (#14969)
+- Use `ProgressView.Classic` when Virtual Terminal is not supported (#15048)
+- Fix `Get-Counter` issue with `-Computer` parameter (#15166) (Thanks @krishnayalavarthi!)
+- Fix redundant iteration while splitting lines (#14851) (Thanks @hez2010!)
+- Enhance `Remove-Item -Recurse` to work with OneDrive (#14902) (Thanks @iSazonov!)
+- Change minimum depth to 0 for `ConvertTo-Json` (#14830) (Thanks @kvprasoon!)
+- Allow `Set-Clipboard` to accept empty string (#14579)
+- Turn on and off `DECCKM` to modify keyboard mode for Unix native commands to work correctly (#14943)
+- Fall back to `CopyAndDelete()` when `MoveTo()` fails due to an `IOException` (#15077)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @iSazonov, @ZhiZe-ZG</p>
+
+</summary>
+
+<ul>
+<li>Update .NET to <code>6.0.0-preview.3</code> (#15221)</li>
+<li>Add space before comma to hosting test to fix error reported by <code>SA1001</code> (#15224)</li>
+<li>Add <code>SecureStringHelper.FromPlainTextString</code> helper method for efficient secure string creation (#14124) (Thanks @xtqqczze!)</li>
+<li>Use static lambda keyword (#15154) (Thanks @iSazonov!)</li>
+<li>Remove unnecessary <code>Array</code> -&gt; <code>List</code> -&gt; <code>Array</code> conversion in <code>ProcessBaseCommand.AllProcesses</code> (#15052) (Thanks @xtqqczze!)</li>
+<li>Standardize grammar comments in Parser.cs (#15114) (Thanks @ZhiZe-ZG!)</li>
+<li>Enable <code>SA1001</code>: Commas should be spaced correctly (#14171) (Thanks @xtqqczze!)</li>
+<li>Refactor <code>MultipleServiceCommandBase.AllServices</code> (#15053) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Use Unix line endings for shell scripts (#15180) (Thanks @xtqqczze!)
+
+### Tests
+
+- Add the missing tag in Host Utilities tests (#14983)
+- Update `copy-props` version in `package.json` (#15124)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@JustinGrote</p>
+
+</summary>
+
+<ul>
+<li>Fix <code>yarn-lock</code> for <code>copy-props</code> (#15225)</li>
+<li>Make package validation regex accept universal Linux packages (#15226)</li>
+<li>Bump NJsonSchema from 10.4.0 to 10.4.1 (#15190)</li>
+<li>Make MSI and EXE signing always copy to fix daily build (#15191)</li>
+<li>Sign internals of EXE package so that it works correctly when signed (#15132)</li>
+<li>Bump Microsoft.NET.Test.Sdk from 16.9.1 to 16.9.4 (#15141)</li>
+<li>Update daily release tag format to  work with new Microsoft Update work (#15164)</li>
+<li>Feature: Add Ubuntu 20.04 Support to install-powershell.sh (#15095) (Thanks @JustinGrote!)</li>
+<li>Treat rebuild branches like release branches (#15099)</li>
+<li>Update WiX to 3.11.2 (#15097)</li>
+<li>Bump NJsonSchema from 10.3.11 to 10.4.0 (#15092)</li>
+<li>Allow patching of preview releases (#15074)</li>
+<li>Bump Newtonsoft.Json from 12.0.3 to 13.0.1 (#15084, #15085)</li>
+<li>Update the <code>minSize</code> build package filter to be explicit (#15055)</li>
+<li>Bump NJsonSchema from 10.3.10 to 10.3.11 (#14965)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Merge `7.2.0-preview.4` changes to master (#15056)
+- Update `README` and `metadata.json` (#15046)
+- Fix broken links for `dotnet` CLI (#14937)
+
+[7.2.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.4...v7.2.0-preview.5
+
 ## [7.2.0-preview.4] - 2021-03-16
 
 ### Breaking Changes
