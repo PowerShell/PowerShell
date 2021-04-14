@@ -473,7 +473,7 @@ namespace System.Management.Automation
                             break;
 
                         completionContext.WordToComplete = tokenAtCursor.Text;
-                        result = CompletionCompleters.CompleteComment(completionContext);
+                        result = CompletionCompleters.CompleteComment(completionContext, ref replacementIndex, ref replacementLength);
                         break;
 
                     case TokenKind.StringExpandable:
