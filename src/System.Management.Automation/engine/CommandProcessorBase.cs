@@ -676,8 +676,32 @@ namespace System.Management.Automation
 
         internal void DoCleanup()
         {
-            // Do not propagate exception even if the command invocation is enclosed in a TryStatement,
-            // so that the exception
+            // The property 'PropagateExceptionsToEnclosingStatementBlock' controls whether a general exception
+            // (an exception thrown from a .NET method invocation, or an expression like '1/0') will be turned
+            // into a terminating error, which will be propagated up and thus stop the rest of the running script.
+            // It is usually used by TryStatement and TrapStatement, which makes the general exception catch-able.
+            //
+            // For the 'Clean' block, we don't want to bubble up the general exception when the command is enclosed
+            // in a TryStatement or has TrapStatement accompanying, because no exception can escape from 'Clean' and
+            // thus it's pointless to bubble up the general exception in this case.
+            //
+            // Therefore we set this property to 'false' here to mask off the previous setting that could be from a
+            // TryStatement or TrapStatement. Example:
+            //   PS:1> function b { end {} cleanup { 1/0; Write-Host 'clean' } }
+            //   PS:2> b
+            //   RuntimeException: Attempted to divide by zero.
+            //   clean
+            //   ## Note that, outer 'try/trap' doesn't affect the general exception happens in 'Clean' block.
+            //   ## so its behavior is consistent regardless of whether the command is enclosed by 'try/catch' or not.
+            //   PS:3> try { b } catch { 'outer catch' }
+            //   RuntimeException: Attempted to divide by zero.
+            //   clean
+            //
+            // Be noted that, this doesn't affect the TryStatement/TrapStatement within the 'Clean' block. Example:
+            //   ## 'try/trap' within 'Clean' block makes the general exception catch-able.
+            //   PS:3> function a { end {} cleanup { try { 1/0; Write-Host 'clean' } catch { Write-Host "caught: $_" } } }
+            //   PS:4> a
+            //   caught: Attempted to divide by zero.
             bool oldExceptionPropagationState = _context.PropagateExceptionsToEnclosingStatementBlock;
             _context.PropagateExceptionsToEnclosingStatementBlock = false;
 
