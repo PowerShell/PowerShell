@@ -45,3 +45,8 @@ dotnet run -c Release -f net6.0 --filter *parser* --profiler ETW
 
 We use the tool [`ResultsComparer`](../tools/ResultsComparer) to compare the provided benchmark results.
 See the [README.md](../tools/ResultsComparer/README.md) for `ResultsComparer` for more details.
+
+## References
+
+- [benchmarkdotnet.org -- Getting started](https://benchmarkdotnet.org/articles/guides/getting-started.html)
+- [Adam SITNIK: Powerful benchmarking in .NET](https://www.youtube.com/watch?v=pdcrSG4tOLI&t=351s)
