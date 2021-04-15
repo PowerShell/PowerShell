@@ -22,12 +22,12 @@ namespace MicroBenchmarks
             List<string> categoryExclusionFilterValue;
             bool getDiffableDisasm;
 
-            // Parse and remove any additional parameters that we need that aren't part of BDN
+            // Parse and remove any additional parameters that we need that aren't part of BDN (BenchmarkDotnet)
             try {
-                argsList = CommandLineOptions.ParseAndRemoveIntParameter(argsList, "--partition-count", out partitionCount);
-                argsList = CommandLineOptions.ParseAndRemoveIntParameter(argsList, "--partition-index", out partitionIndex);
-                argsList = CommandLineOptions.ParseAndRemoveStringsParameter(argsList, "--exclusion-filter", out exclusionFilterValue);
-                argsList = CommandLineOptions.ParseAndRemoveStringsParameter(argsList, "--category-exclusion-filter", out categoryExclusionFilterValue);
+                CommandLineOptions.ParseAndRemoveIntParameter(argsList, "--partition-count", out partitionCount);
+                CommandLineOptions.ParseAndRemoveIntParameter(argsList, "--partition-index", out partitionIndex);
+                CommandLineOptions.ParseAndRemoveStringsParameter(argsList, "--exclusion-filter", out exclusionFilterValue);
+                CommandLineOptions.ParseAndRemoveStringsParameter(argsList, "--category-exclusion-filter", out categoryExclusionFilterValue);
                 CommandLineOptions.ParseAndRemoveBooleanParameter(argsList, "--disasm-diff", out getDiffableDisasm);
 
                 CommandLineOptions.ValidatePartitionParameters(partitionCount, partitionIndex);
@@ -42,7 +42,7 @@ namespace MicroBenchmarks
                 .FromAssembly(typeof(Program).Assembly)
                 .Run(argsList.ToArray(), RecommendedConfig.Create(
                     artifactsPath: new DirectoryInfo(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "BenchmarkDotNet.Artifacts")),
-                    mandatoryCategories: ImmutableHashSet.Create(Categories.Parser, Categories.Runtime),
+                    mandatoryCategories: ImmutableHashSet.Create(Categories.Components, Categories.Engine),
                     partitionCount: partitionCount,
                     partitionIndex: partitionIndex,
                     exclusionFilterValue: exclusionFilterValue,

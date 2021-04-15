@@ -5,17 +5,25 @@
 namespace MicroBenchmarks
 {
     public static class Categories
-    {        
+    {
         /// <summary>
-        /// benchmarks belonging to this category are executed for CI jobs
+        /// Benchmarks belonging to this category are executed for CI jobs.
         /// </summary>
-        public const string Parser = "Parser";
+        public const string Components = "Components";
 
         /// <summary>
-        /// benchmarks belonging to this category are executed for CI jobs
+        /// Benchmarks belonging to this category are executed for CI jobs.
         /// </summary>
-        public const string Runtime = "Runtime";
+        public const string Engine = "Engine";
 
-        public const string Libraries = "Libraries";
+        /// <summary>
+        /// Benchmarks belonging to this category are targeting internal APIs.
+        /// </summary>
+        public const string Internal = "Internal";
+
+        /// <summary>
+        /// Benchmarks belonging to this category are targeting public APIs.
+        /// </summary>
+        public const string Public = "Public";
     }
 }

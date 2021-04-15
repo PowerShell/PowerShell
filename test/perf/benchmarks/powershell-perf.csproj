@@ -5,8 +5,11 @@
   <PropertyGroup>
     <Description>PowerShell Performance Tests</Description>
     <AssemblyName>powershell-perf</AssemblyName>
-    <NoWarn>$(NoWarn);CS8002</NoWarn>
     <OutputType>Exe</OutputType>
+
+    <NoWarn>$(NoWarn);CS8002</NoWarn>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
@@ -22,8 +25,6 @@
     <ProjectReference Include="../tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
     <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
     <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
-    <ProjectReference Include="../../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
-    <ProjectReference Include="../../../src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
   </ItemGroup>
 
 </Project>

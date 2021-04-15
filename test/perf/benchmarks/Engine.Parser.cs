@@ -5,17 +5,11 @@ using System.Management.Automation.Language;
 using BenchmarkDotNet.Attributes;
 using MicroBenchmarks;
 
-namespace Sma.Language
+namespace Engine.Scripting
 {
-    [BenchmarkCategory(Categories.Parser)]
-    public class Perf_Parser
-    {   
-        [Benchmark]
-        public Ast Parse_Empty_NamedBlocks()
-        {
-            return Parser.ParseInput("begin {} process {} end {}", out _, out _);
-        }
-
+    [BenchmarkCategory(Categories.Engine, Categories.Public)]
+    public class Parser_Public
+    {
         [Benchmark]
         public Ast Parse_UsingStatement()
         {
