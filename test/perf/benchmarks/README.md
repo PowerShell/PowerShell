@@ -48,5 +48,5 @@ See the [README.md](../tools/ResultsComparer/README.md) for `ResultsComparer` fo
 
 ## References
 
-- [benchmarkdotnet.org -- Getting started](https://benchmarkdotnet.org/articles/guides/getting-started.html)
+- [Getting started with BenchmarkDotnet](https://benchmarkdotnet.org/articles/guides/getting-started.html)
 - [Adam SITNIK: Powerful benchmarking in .NET](https://www.youtube.com/watch?v=pdcrSG4tOLI&t=351s)
