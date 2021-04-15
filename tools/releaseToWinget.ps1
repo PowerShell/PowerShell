@@ -120,17 +120,14 @@ Tags:
 Homepage: https://github.com/PowerShell/PowerShell
 Installers:
 - Architecture: x64
-InstallerUrl: https://github.com/PowerShell/PowerShell/releases/download/v$ReleaseVersion/$msiName
-InstallerSha256: $msiHash
-InstallerType: msi
+  InstallerUrl: https://github.com/PowerShell/PowerShell/releases/download/v$ReleaseVersion/$msiName
+  InstallerSha256: $msiHash
+  InstallerType: msi
 PackageLocale: en-US
 ManifestType: singleton
 ManifestVersion: 1.0.0
 
 "@
-
-# Get the path to this script in the PS repo so we can put a link in the PR body
-$scriptPath = $MyInvocation.MyCommand.Source
 
 Push-Location $wingetPath
 try
