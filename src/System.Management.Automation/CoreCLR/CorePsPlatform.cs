@@ -141,7 +141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if underlying system supports single-threaded apartment.
+        /// Gets a value indicating whether the underlying system supports single-threaded apartment.
         /// </summary>
         public static bool IsStaSupported
         {
@@ -600,11 +600,10 @@ namespace System.Management.Automation
                 private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
 
                 [DllImport(ole32Lib)]
-                internal extern static int CoInitializeEx(IntPtr reserve, int coinit);
+                internal static extern int CoInitializeEx(IntPtr reserve, int coinit);
 
                 [DllImport(ole32Lib)]
-                internal extern static void CoUninitialize();
-
+                internal static extern void CoUninitialize();
             }
         }
 
