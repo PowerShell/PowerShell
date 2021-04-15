@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    return IsStaSupported();
+                    return Platform.IsStaSupported;
                 }
             }
         }
@@ -650,27 +650,6 @@ namespace Microsoft.PowerShell
 
             return (switchKey.Length >= smallestUnambiguousMatch.Length
                     && match.StartsWith(switchKey, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private static bool IsStaSupported()
-        {
-#if UNIX
-            return false;
-#else
-            // On some variants of Windows, STA is not supported and pwsh will fail to start.
-            // The exception to determine if STA is supported only occurs on thread Start().
-            Thread thread = new Thread(() => { });
-            thread.SetApartmentState(ApartmentState.STA);
-            try
-            {
-                thread.Start();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-#endif
         }
 
         #endregion
@@ -950,7 +929,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    if (!Platform.IsWindowsDesktop || !IsStaSupported())
+                    if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);

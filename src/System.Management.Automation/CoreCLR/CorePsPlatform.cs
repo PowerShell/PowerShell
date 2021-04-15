@@ -140,6 +140,40 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// True if underlying system supports single-threaded apartment.
+        /// </summary>
+        public static bool IsStaSupported
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                if (_isStaSupported.HasValue)
+                {
+                    return _isStaSupported.Value;
+                }
+
+                // See objbase.h
+                const int COINIT_APARTMENTTHREADED = 0x2;
+                const int E_NOTIMPL = unchecked((int)0X80004001);
+                int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+
+                // If 0 is returned the thread has been initialized for the first time
+                // as an STA and therefore must remain that way.
+                _isStaSupported = result != E_NOTIMPL;
+
+                if (result > 0)
+                {
+                    Windows.NativeMethods.CoUninitialize();
+                }
+
+                return _isStaSupported.Value;
+#endif
+            }
+        }
+
 #if UNIX
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
@@ -152,6 +186,7 @@ namespace System.Management.Automation
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
+        private static bool? _isStaSupported = null;
 #endif
 
         // format files
@@ -555,6 +590,22 @@ namespace System.Management.Automation
         internal static int NonWindowsGetProcessParentPid(int pid)
         {
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+        }
+
+        internal static class Windows
+        {
+            /// <summary>The native methods class.</summary>
+            internal static class NativeMethods
+            {
+                private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
+
+                [DllImport(ole32Lib)]
+                internal extern static int CoInitializeEx(IntPtr reserve, int coinit);
+
+                [DllImport(ole32Lib)]
+                internal extern static void CoUninitialize();
+
+            }
         }
 
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
