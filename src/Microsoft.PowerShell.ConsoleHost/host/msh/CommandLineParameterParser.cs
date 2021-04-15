@@ -17,7 +17,6 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Security;
 using System.Text;
-using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
