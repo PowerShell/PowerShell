@@ -86,7 +86,7 @@ else
     "PowerShell"
 }
 
-$manifestPath = Join-Path $wingetPath "manifests" "Microsoft" $productName "$ReleaseVersion.yaml"
+$manifestPath = Join-Path $wingetPath "manifests" "m" "Microsoft" $productName "$ReleaseVersion.yaml"
 
 $manifestContent = @"
 PackageIdentifier: Microsoft.$productName
