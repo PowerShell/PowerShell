@@ -64,6 +64,18 @@ function GetThisScriptRepoUrl
     return "https://github.com/PowerShell/PowerShell/blob/master/$stem"
 }
 
+function Exec
+{
+    param([scriptblock]$sb)
+
+    & $sb
+
+    if ($LASTEXITCODE -ne 0)
+    {
+        throw "Invocation failed for '$sb'. See above errors for details"
+    }
+}
+
 $ErrorActionPreference = 'Stop'
 
 $wingetPath = (Resolve-Path $WingetRepoPath).Path
@@ -88,7 +100,8 @@ else
     'PowerShell'
 }
 
-$manifestPath = Join-Path $wingetPath 'manifests' 'm' $publisherName $productName $ReleaseVersion "$publisherName.$productName.yaml"
+$manifestDir = Join-Path $wingetPath 'manifests' 'm' $publisherName $productName $ReleaseVersion
+$manifestPath = Join-Path $manifestDir "$publisherName.$productName.yaml"
 
 $manifestContent = @"
 PackageIdentifier: $publisherName.$productName
@@ -124,14 +137,15 @@ try
 {
     $branch = "pwsh-$ReleaseVersion"
 
-    git checkout master
-    git checkout -b $branch
+    Exec { git checkout master }
+    Exec { git checkout -b $branch }
 
+    New-Item -Path $manifestDir -ItemType Directory
     Set-Content -Path $manifestPath -Value $manifestContent -Encoding utf8NoBOM
 
-    git add $manifestPath
-    git commit -m "Add $productName $ReleaseVersion"
-    git push origin $branch
+    Exec { git add $manifestPath }
+    Exec { git commit -m "Add $productName $ReleaseVersion" }
+    Exec { git push origin $branch }
 
     $prParams = @{
         Title = "Add $productName $ReleaseVersion"
