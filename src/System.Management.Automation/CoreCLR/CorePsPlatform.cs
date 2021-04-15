@@ -150,25 +150,6 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isStaSupported.HasValue)
-                {
-                    return _isStaSupported.Value;
-                }
-
-                // See objbase.h
-                const int COINIT_APARTMENTTHREADED = 0x2;
-                const int E_NOTIMPL = unchecked((int)0X80004001);
-                int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
-
-                // If 0 is returned the thread has been initialized for the first time
-                // as an STA and therefore must remain that way.
-                _isStaSupported = result != E_NOTIMPL;
-
-                if (result > 0)
-                {
-                    Windows.NativeMethods.CoUninitialize();
-                }
-
                 return _isStaSupported.Value;
 #endif
             }
@@ -186,7 +167,23 @@ namespace System.Management.Automation
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
-        private static bool? _isStaSupported = null;
+
+        private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
+        {
+            // See objbase.h
+            const int COINIT_APARTMENTTHREADED = 0x2;
+            const int E_NOTIMPL = unchecked((int)0X80004001);
+            int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+
+            // If 0 is returned the thread has been initialized for the first time
+            // as an STA and thus supported and needs to be uninitialized.
+            if (result > 0)
+            {
+                Windows.NativeMethods.CoUninitialize();
+            }
+
+            return result != E_NOTIMPL;
+        });
 #endif
 
         // format files
