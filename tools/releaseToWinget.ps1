@@ -76,28 +76,30 @@ $null = Get-Command git
 $msiName = "PowerShell-$ReleaseVersion-win-x64.msi"
 $msiHash = GetMsiHash -ReleaseVersion $ReleaseVersion -MsiName $msiName
 
+$publisherName = 'Microsoft'
+
 # Create the manifest
 $productName = if ($ReleaseVersion.PreReleaseLabel)
 {
-    "PowerShell-Preview"
+    'PowerShell-Preview'
 }
 else
 {
-    "PowerShell"
+    'PowerShell'
 }
 
-$manifestPath = Join-Path $wingetPath "manifests" "m" "Microsoft" $productName "$ReleaseVersion.yaml"
+$manifestPath = Join-Path $wingetPath 'manifests' 'm' $publisherName $productName $ReleaseVersion "$publisherName.$productName.yaml"
 
 $manifestContent = @"
-PackageIdentifier: Microsoft.$productName
+PackageIdentifier: $publisherName.$productName
 PackageVersion: $ReleaseVersion
 PackageName: $productName
-Publisher: Microsoft
+Publisher: $publisherName
 PackageUrl: https://microsoft.com/PowerShell
 License: MIT
 LicenseUrl: https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt
 Moniker: $($productName.ToLower())
-ShortDescription: Microsoft.$productName
+ShortDescription: $publisherName.$productName
 Description: PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models. It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 Tags: powershell, pwsh
 Homepage: https://github.com/PowerShell/PowerShell
