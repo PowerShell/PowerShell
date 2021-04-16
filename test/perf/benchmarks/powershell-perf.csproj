@@ -22,9 +22,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
+    <ProjectReference Include="../dotnet-tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PERFLAB_TARGET_VERSION)' == ''">
     <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
     <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PERFLAB_TARGET_VERSION)' != ''">
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="$(PERFLAB_TARGET_VERSION)" />
   </ItemGroup>
 
 </Project>
