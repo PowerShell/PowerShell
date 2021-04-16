@@ -43,8 +43,8 @@ dotnet run -c Release -f net6.0 --filter *parser* --profiler ETW
 
 ### Regression Detection
 
-We use the tool [`ResultsComparer`](../tools/ResultsComparer) to compare the provided benchmark results.
-See the [README.md](../tools/ResultsComparer/README.md) for `ResultsComparer` for more details.
+We use the tool [`ResultsComparer`](../dotnet-tools/ResultsComparer) to compare the provided benchmark results.
+See the [README.md](../dotnet-tools/ResultsComparer/README.md) for `ResultsComparer` for more details.
 
 ## References
 
