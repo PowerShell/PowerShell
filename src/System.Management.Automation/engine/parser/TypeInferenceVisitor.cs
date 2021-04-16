@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
                             properties = new[] { stringConstant.Value };
                             break;
                         case ArrayLiteralAst arrayLiteral:
-                            properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => c.Value).ToArray();
+                            properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(static c => c.Value).ToArray();
                             scriptBlockProperty = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Any();
                             break;
                         case CommandElementAst _:
@@ -1292,7 +1292,7 @@ namespace System.Management.Automation
             {
                 if (astParameterArgumentPair is AstPair astPair)
                 {
-                    object ToWildCardOrString(string value) => WildcardPattern.ContainsWildcardCharacters(value) ? (object)new WildcardPattern(value) : value;
+                    static object ToWildCardOrString(string value) => WildcardPattern.ContainsWildcardCharacters(value) ? (object)new WildcardPattern(value) : value;
                     object[] properties = null;
                     switch (astPair.Argument)
                     {
@@ -1300,7 +1300,7 @@ namespace System.Management.Automation
                             properties = new[] { ToWildCardOrString(stringConstant.Value) };
                             break;
                         case ArrayLiteralAst arrayLiteral:
-                            properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => ToWildCardOrString(c.Value)).ToArray();
+                            properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(static c => ToWildCardOrString(c.Value)).ToArray();
                             break;
                     }
 

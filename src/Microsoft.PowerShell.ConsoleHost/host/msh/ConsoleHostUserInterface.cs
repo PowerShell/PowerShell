@@ -60,8 +60,38 @@ namespace Microsoft.PowerShell
 
             _parent = parent;
             _rawui = new ConsoleHostRawUserInterface(this);
-            SupportsVirtualTerminal = TryTurnOnVtMode();
+            SupportsVirtualTerminal = true;
             _isInteractiveTestToolListening = false;
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                // check if TERM env var is set
+                // `dumb` means explicitly don't use VT
+                // `xterm-mono` and `xtermm` means support VT, but emit plaintext
+                switch (Environment.GetEnvironmentVariable("TERM"))
+                {
+                    case "dumb":
+                        SupportsVirtualTerminal = false;
+                        break;
+                    case "xterm-mono":
+                    case "xtermm":
+                        PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
+                        break;
+                    default:
+                        break;
+                }
+
+                // widely supported by CLI tools via https://no-color.org/
+                if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
+                {
+                    PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
+                }   
+            }
+
+            if (SupportsVirtualTerminal)
+            {
+                SupportsVirtualTerminal = TryTurnOnVtMode();
+            }
         }
 
         internal bool TryTurnOnVtMode()

@@ -1781,7 +1781,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (IEnumerable<FileSystemInfo> childList in target)
                 {
                     // On some systems, this is already sorted.  For consistency, always sort again.
-                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase);
+                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(static c => c.Name, StringComparer.CurrentCultureIgnoreCase);
 
                     foreach (FileSystemInfo filesystemInfo in sortedChildList)
                     {
@@ -1890,9 +1890,17 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             bool hidden = false;
+                            bool checkReparsePoint = true;
                             if (!Force)
                             {
                                 hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+
+                                // Performance optimization.
+                                // Since we have already checked Attributes for Hidden we have already did a p/invoke
+                                // and initialized Attributes property.
+                                // So here we can check for ReparsePoint without new p/invoke.
+                                // If it is not a reparse point we skip one p/invoke in IsReparsePointLikeSymlink() below.
+                                checkReparsePoint = (recursiveDirectory.Attributes & FileAttributes.ReparsePoint) != 0;
                             }
 
                             // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
@@ -1906,7 +1914,7 @@ namespace Microsoft.PowerShell.Commands
                                 //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
+                                    if (checkReparsePoint && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(recursiveDirectory))
                                     {
                                         continue;
                                     }
@@ -2058,7 +2066,7 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;
@@ -3098,22 +3106,31 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
             {
+                void WriteErrorHelper(Exception exception)
+                {
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                }
+
                 try
                 {
-                    // TODO:
-                    // Different symlinks seem to vary by behavior.
-                    // In particular, OneDrive symlinks won't remove without recurse,
-                    // but the .NET API here does not allow us to distinguish them.
-                    // We may need to revisit using p/Invokes here to get the right behavior
-                    directory.Delete();
+                    if (InternalTestHooks.OneDriveTestOn)
+                    {
+                        WriteErrorHelper(new IOException());
+                        return;
+                    }
+                    else
+                    {
+                        // Name surrogates should just be detached.
+                        directory.Delete();
+                    }
                 }
                 catch (Exception e)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
                     var exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    WriteErrorHelper(exception);
                 }
 
                 return;
@@ -8215,28 +8232,47 @@ namespace Microsoft.PowerShell.Commands
             return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
-        internal static bool IsReparsePointWithTarget(FileSystemInfo fileInfo)
+        internal static bool IsReparsePointLikeSymlink(FileSystemInfo fileInfo)
         {
-            if (!IsReparsePoint(fileInfo))
+#if UNIX
+            // Reparse point on Unix is a symlink.
+            return IsReparsePoint(fileInfo);
+#else
+            if (InternalTestHooks.OneDriveTestOn && fileInfo.Name == InternalTestHooks.OneDriveTestSymlinkName)
             {
-                return false;
+                return !InternalTestHooks.OneDriveTestRecurseOn;
             }
-#if !UNIX
-            // It is a reparse point and we should check some reparse point tags.
-            var data = new WIN32_FIND_DATA();
+
+            WIN32_FIND_DATA data = default;
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
+                if (handle.IsInvalid)
+                {
+                    // If we can not open the file object we assume it's a symlink.
+                    return true;
+                }
+
+                // To exclude one extra p/invoke in some scenarios
+                // we don't check fileInfo.FileAttributes
+                const int FILE_ATTRIBUTE_REPARSE_POINT = 0x0400;
+                if ((data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
+                {
+                    // Not a reparse point.
+                    return false;
+                }
+
                 // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
+                if ((data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
             }
-#endif
+
             return true;
+#endif
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)

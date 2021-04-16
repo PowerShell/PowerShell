@@ -65,11 +65,12 @@ $isDaily = $false
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
     # Branch is named release-<semver>
-    if($Branch -match '^.*(release[-/])')
+    $releaseBranchRegex = '^.*((release/|rebuild/.*rebuild))'
+    if($Branch -match $releaseBranchRegex)
     {
         $msixType = 'release'
         Write-Verbose "release branch:" -Verbose
-        $releaseTag = $Branch -replace '^.*(release[-/])'
+        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
@@ -91,7 +92,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
             $versionPart = $versionPart -replace '-.*$'
         }
 
-        $releaseTag = "$versionPart-daily.$((Get-Date).ToString('yyyyMMdd'))"
+        $releaseTag = "$versionPart-daily$((Get-Date).ToString('yyyyMMdd')).$($env:BRANCHCOUNTER)"
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"

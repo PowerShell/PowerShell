@@ -964,7 +964,7 @@ namespace System.Management.Automation
                         {
                             IEnumerable<SessionStateCommandEntry> publicGetCommandEntries = iss
                                 .Commands["Get-Command"]
-                                .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
+                                .Where(static entry => entry.Visibility == SessionStateEntryVisibility.Public);
                             SessionStateFunctionEntry getCommandProxy = publicGetCommandEntries.OfType<SessionStateFunctionEntry>().FirstOrDefault();
                             if (getCommandProxy != null)
                             {

@@ -15,6 +15,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -285,6 +286,7 @@ namespace Microsoft.PowerShell.Commands
         public string KeyFilePath;
         public int Port;
         public string Subsystem;
+        public int ConnectingTimeout;
     }
 
     /// <summary>
@@ -762,6 +764,20 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets a value for the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        public virtual string Subsystem { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
+        /// Default timeout value is infinite.
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        public virtual int ConnectingTimeout { get; set; } = Timeout.Infinite;
+
+        /// <summary>
         /// This parameter specifies that SSH is used to establish the remote
         /// connection and act as the remoting transport.  By default WinRM is used
         /// as the remoting transport.  Using the SSH transport requires that SSH is
@@ -788,13 +804,6 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-
-        /// <summary>
-        /// This parameter specifies the SSH subsystem to use for the remote connection.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        public virtual string Subsystem { get; set; }
 
         #endregion
 
@@ -856,6 +865,7 @@ namespace Microsoft.PowerShell.Commands
         private const string IdentityFilePathAlias = "IdentityFilePath";
         private const string PortParameter = "Port";
         private const string SubsystemParameter = "Subsystem";
+        private const string ConnectingTimeoutParameter = "ConnectingTimeout";
 
         #endregion
 
@@ -902,7 +912,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Array of SSHConnection objects.</returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
-            List<SSHConnection> connections = new List<SSHConnection>();
+            List<SSHConnection> connections = new();
             foreach (var item in this.SSHConnection)
             {
                 if (item.ContainsKey(ComputerNameParameter) && item.ContainsKey(HostNameAlias))
@@ -915,7 +925,7 @@ namespace Microsoft.PowerShell.Commands
                     throw new PSArgumentException(RemotingErrorIdStrings.SSHConnectionDuplicateKeyPath);
                 }
 
-                SSHConnection connectionInfo = new SSHConnection();
+                SSHConnection connectionInfo = new();
                 foreach (var key in item.Keys)
                 {
                     string paramName = key as string;
@@ -954,6 +964,10 @@ namespace Microsoft.PowerShell.Commands
                     else if (paramName.Equals(SubsystemParameter, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.Subsystem = GetSSHConnectionStringParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(ConnectingTimeoutParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.ConnectingTimeout = GetSSHConnectionIntParameter(item[paramName]);
                     }
                     else
                     {
@@ -1448,9 +1462,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 ParseSshHostName(computerName, out string host, out string userName, out int port);
 
-                var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.Subsystem);
+                var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
+                var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
 
                 var operation = new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
@@ -1471,7 +1485,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
                     sshConnection.Port,
-                    sshConnection.Subsystem);
+                    sshConnection.Subsystem,
+                    sshConnection.ConnectingTimeout);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -2441,7 +2456,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressions(localScriptBlock.Ast);
-            return allUsingExprs.Select(usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
+            return allUsingExprs.Select(static usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();
         }
 
         #endregion "UsingExpression Utilities"

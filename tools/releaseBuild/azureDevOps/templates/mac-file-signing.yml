@@ -78,6 +78,7 @@ jobs:
             **\*.zip
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
+          displayName: Sign macOS Binaries
 
     - pwsh: |
         $destination = "$(System.ArtifactsDirectory)\azureMacOs"

@@ -3962,7 +3962,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
 function Test-WinRMQuickConfigNeeded
 {{
-    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated: 
+    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated:
     # 1) currently this function always returns $True
     # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting; maybe change to Get-CimInstance -ClassName MSFT_NetFirewallRule
     return $True
@@ -5233,7 +5233,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             }
 
             // The validator that will be applied to the role lookup
-            Func<string, bool> validator = (role) => true;
+            Func<string, bool> validator = static (role) => true;
 
             if (!string.IsNullOrEmpty(this.Username))
             {

@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 // first type group will take effect. So we skip the rest groups that have the same name.
                 if (!typeGroupMap.ContainsKey(typeGroup.name))
                 {
-                    var typesInGroup = typeGroup.typeReferenceList.ConvertAll(typeReference => typeReference.name);
+                    var typesInGroup = typeGroup.typeReferenceList.ConvertAll(static typeReference => typeReference.name);
                     typeGroupMap.Add(typeGroup.name, typesInGroup);
                 }
             }
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Remoting detection: 
+            // Remoting detection:
             //   * Automatic variable $PSSenderInfo is defined in true remoting contexts as well as in background jobs.
             //   * $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion contains the client version, as a [version] instance.
             //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] here,

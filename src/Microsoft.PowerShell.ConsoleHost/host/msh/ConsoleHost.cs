@@ -54,6 +54,10 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
         private const uint SPI_GETSCREENREADER = 0x0046;
+#if UNIX
+        internal const string DECCKM_ON = "\x1b[?1h";
+        internal const string DECCKM_OFF = "\x1b[?1l";
+#endif
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -254,6 +258,14 @@ namespace Microsoft.PowerShell
                 {
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
+#endif
+#if UNIX
+                    if (s_theConsoleHost.IsInteractive && s_theConsoleHost.UI.SupportsVirtualTerminal)
+                    {
+                        // https://github.com/dotnet/runtime/issues/27626 leaves terminal in application mode
+                        // for now, we explicitly emit DECRST 1 sequence
+                        s_theConsoleHost.UI.Write(DECCKM_OFF);
+                    }
 #endif
                     s_theConsoleHost.Dispose();
                 }
@@ -2481,6 +2493,14 @@ namespace Microsoft.PowerShell
                             ui.Write(prompt);
                         }
 
+#if UNIX
+                        if (c.SupportsVirtualTerminal)
+                        {
+                            // enable DECCKM as .NET requires cursor keys to emit VT for Console class
+                            c.Write(DECCKM_ON);
+                        }
+#endif
+
                         previousResponseWasEmpty = false;
                         // There could be a profile. So there could be a user defined custom readline command
                         line = ui.ReadLineWithTabCompletion(_exec);
@@ -2584,6 +2604,14 @@ namespace Microsoft.PowerShell
                         }
                         else
                         {
+#if UNIX
+                            if (c.SupportsVirtualTerminal)
+                            {
+                                // disable DECCKM to standard mode as applications may not expect VT for cursor keys
+                                c.Write(DECCKM_OFF);
+                            }
+#endif
+
                             if (_parent.IsRunningAsync && !_parent.IsNested)
                             {
                                 _exec.ExecuteCommandAsync(line, out e, Executor.ExecutionOptions.AddOutputter | Executor.ExecutionOptions.AddToHistory);
@@ -2925,7 +2953,7 @@ namespace Microsoft.PowerShell
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
 
-        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
+        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(static () => Console.In);
 
         private string _savedWindowTitle = string.Empty;
         private readonly Version _ver = PSVersionInfo.PSVersion;

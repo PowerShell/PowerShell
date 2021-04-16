@@ -155,6 +155,7 @@ jobs:
           **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign our binaries
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -198,10 +199,11 @@ jobs:
           **\*.dll
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign ThirdParty binaries
 
   - powershell: |
       Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartySigned\*'
-    displayName: Captrue ThirdParty Signed files
+    displayName: Capture ThirdParty Signed files
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
@@ -261,7 +263,84 @@ jobs:
         Write-Host "Uploading $packagePath"
         Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
       }
-    displayName: Upload packages
+    displayName: Upload unsigned packages
+
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-230012"
+          pattern: |
+            **\*.msi
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign MSI
+          alwaysCopy: true
+
+    - pwsh: |
+        Get-ChildItem '$(System.ArtifactsDirectory)\signedPackages' | ForEach-Object {
+          $packagePath = $_.FullName
+          Write-Host "Uploading $packagePath"
+          Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
+        }
+      displayName: Upload signed MSI to finalResults
+
+    - task: AzureFileCopy@4
+      displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
+      inputs:
+        SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
+        azureSubscription: '$(AzureFileCopySubscription)'
+        Destination: AzureBlob
+        storage: '$(StorageAccount)'
+        ContainerName: '$(AzureVersion)'
+        resourceGroup: '$(StorageResourceGroup)'
+
+    - pwsh: |
+        cd $(PowerShellRoot)
+        Import-Module $(PowerShellRoot)/build.psm1 -Force
+        Import-Module $(PowerShellRoot)/tools/packaging -Force
+
+        $msiPath = '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
+
+        New-ExePackage -ProductVersion '$(version)' -MsiLocationPath $msiPath -ProductTargetArchitecture ${{ parameters.architecture }}
+        $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
+        $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+        # Expand Burn Engine so we can sign it.
+        Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      displayName: Create exe wrapper
+
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\unsignedEngine
+          signOutputPath: $(System.ArtifactsDirectory)\signedEngine
+          certificateId: "CP-230012"
+          pattern: |
+            **\*.exe
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign Burn Engine
+          alwaysCopy: true
+
+    - pwsh: |
+        cd '$(PowerShellRoot)'
+        Import-Module '$(PowerShellRoot)/build.psm1' -Force
+        Import-Module '$(PowerShellRoot)/tools/packaging' -Force
+
+        $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
+        $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\signedEngine' -ChildPath engine.exe
+        $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
+        Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      displayName: Re-attach the signed Burn engine in exe wrapper
+
+    - pwsh: |
+        cd '$(PowerShellRoot)'
+        Get-ChildItem '.\PowerShell-*.exe' | ForEach-Object {
+          $packagePath = $_.FullName
+          Write-Host "Uploading $packagePath"
+          Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
+        }
+      displayName: Upload unsigned exe
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

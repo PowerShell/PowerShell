@@ -161,8 +161,8 @@ namespace System.Management.Automation
 
                 // Report at most the first 10 errors
                 var errorsToReport = (_errors.Length > 10)
-                    ? _errors.Take(10).Select(e => e.ToString()).Append(ParserStrings.TooManyErrors)
-                    : _errors.Select(e => e.ToString());
+                    ? _errors.Take(10).Select(static e => e.ToString()).Append(ParserStrings.TooManyErrors)
+                    : _errors.Select(static e => e.ToString());
 
                 return string.Join(Environment.NewLine + Environment.NewLine, errorsToReport);
             }

@@ -360,7 +360,7 @@ namespace System.Management.Automation
                 if (commandName.IndexOfAny(InvalidCommandNameCharacters) < 0)
                 {
                     result.AddOrUpdate(commandName, CommandTypes.Alias,
-                        (_, existingCommandType) => existingCommandType | CommandTypes.Alias);
+                        static (_, existingCommandType) => existingCommandType | CommandTypes.Alias);
                 }
             }
 
@@ -375,7 +375,7 @@ namespace System.Management.Automation
                     {
                         var command = Path.GetFileNameWithoutExtension(item);
                         result.AddOrUpdate(command, CommandTypes.ExternalScript,
-                            (_, existingCommandType) => existingCommandType | CommandTypes.ExternalScript);
+                            static (_, existingCommandType) => existingCommandType | CommandTypes.ExternalScript);
                     }
                 }
                 catch (UnauthorizedAccessException)

@@ -1078,7 +1078,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
-            return Array.TrueForAll(dependentServices, service => service.Status == ServiceControllerStatus.Stopped);
+            return Array.TrueForAll(dependentServices, static service => service.Status == ServiceControllerStatus.Stopped);
         }
 
         /// <summary>

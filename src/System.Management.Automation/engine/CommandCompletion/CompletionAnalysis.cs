@@ -473,7 +473,7 @@ namespace System.Management.Automation
                             break;
 
                         completionContext.WordToComplete = tokenAtCursor.Text;
-                        result = CompletionCompleters.CompleteComment(completionContext);
+                        result = CompletionCompleters.CompleteComment(completionContext, ref replacementIndex, ref replacementLength);
                         break;
 
                     case TokenKind.StringExpandable:
@@ -836,7 +836,7 @@ namespace System.Management.Automation
                                                 break;
                                             }
                                         }
-                                        
+
                                         if (lastAst is AttributeAst)
                                         {
                                             completionContext.ReplacementLength = replacementLength = 0;
@@ -1441,7 +1441,7 @@ namespace System.Management.Automation
                                 Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
                                 if (property.ValueMap != null && property.ValueMap.Count > 0)
                                 {
-                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
+                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(static x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
                                     var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
                                     if (matchedResults == null || !matchedResults.Any())
                                     {
@@ -2101,7 +2101,7 @@ namespace System.Management.Automation
             // Attribute member arguments
             Type attributeType = null;
             string argName = string.Empty;
-            Ast argAst = completionContext.RelatedAsts.Find(ast => ast is NamedAttributeArgumentAst);
+            Ast argAst = completionContext.RelatedAsts.Find(static ast => ast is NamedAttributeArgumentAst);
             NamedAttributeArgumentAst namedArgAst = argAst as NamedAttributeArgumentAst;
             if (argAst != null && namedArgAst != null)
             {
@@ -2112,7 +2112,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Ast astAtt = completionContext.RelatedAsts.Find(ast => ast is AttributeAst);
+                Ast astAtt = completionContext.RelatedAsts.Find(static ast => ast is AttributeAst);
                 AttributeAst attAst = astAtt as AttributeAst;
                 if (astAtt != null && attAst != null)
                 {

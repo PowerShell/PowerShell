@@ -352,7 +352,7 @@ namespace System.Management.Automation.Internal
 
             if (versionFolders.Count > 1)
             {
-                versionFolders.Sort((x, y) => y.CompareTo(x));
+                versionFolders.Sort(static (x, y) => y.CompareTo(x));
             }
         }
 
@@ -437,7 +437,7 @@ namespace System.Management.Automation.Internal
                         // 1. We continue to the next module path if we don't want to re-discover those imported modules
                         // 2. If we want to re-discover the imported modules, but one or more commands from the module were made private,
                         //    then we don't do re-discovery
-                        if (!rediscoverImportedModules || modules.Exists(module => module.ModuleHasPrivateMembers))
+                        if (!rediscoverImportedModules || modules.Exists(static module => module.ModuleHasPrivateMembers))
                         {
                             continue;
                         }

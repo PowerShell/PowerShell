@@ -189,6 +189,9 @@
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
     <value>If true, WhatIf is considered to be enabled for all commands.</value>
   </data>
+  <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
+    <value>Dictates how arguments are passed to native executables.</value>
+  </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
     <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>
   </data>

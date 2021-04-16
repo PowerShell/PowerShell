@@ -357,7 +357,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicate if we have called 'NotifyBeginApplication()' on the host, so that
-        /// we can call the counterpart 'NotifyEndApplication' as approriate.
+        /// we can call the counterpart 'NotifyEndApplication' as appropriate.
         /// </summary>
         private bool _hasNotifiedBeginApplication;
 
@@ -1157,9 +1157,34 @@ namespace System.Management.Automation
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
-            startInfo.Arguments = NativeParameterBinderController.Arguments;
-
             ExecutionContext context = this.Command.Context;
+
+            // We provide the user a way to select the new behavior via a new preference variable
+            using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
+            {
+                if (!NativeParameterBinderController.UseArgumentList)
+                {
+                    using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
+                    {
+                        startInfo.Arguments = NativeParameterBinderController.Arguments;
+                    }
+                }
+                else
+                {
+                    // Use new API for running native application
+                    int position = 0;
+                    foreach (string nativeArgument in NativeParameterBinderController.ArgumentList)
+                    {
+                        if (nativeArgument != null)
+                        {
+                            using (ParameterBinderBase.bindingTracer.TraceScope("BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
+                            {
+                                startInfo.ArgumentList.Add(nativeArgument);
+                            }
+                        }
+                    }
+                }
+            }
 
             // Start command in the current filesystem directory
             string rawPath =

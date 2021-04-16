@@ -51,7 +51,7 @@ namespace PowerShell.Hosting.SDK.Tests
 
                 foreach (dynamic item in results)
                 {
-                    Assert.Equal(6,item);
+                    Assert.Equal(6, item);
                 }
             }
         }
