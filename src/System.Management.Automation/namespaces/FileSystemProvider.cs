@@ -8041,7 +8041,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
         internal enum FINDEX_INFO_LEVELS : uint
@@ -8244,12 +8244,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WIN32_FIND_DATA data = default;
-            using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
+            using (var handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
                 if (handle.IsInvalid)
                 {
-                    // If we can not open the file object we assume it's a symlink.
-                    return true;
+                    // We should never be here.
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new Win32Exception(lastError);
                 }
 
                 // To exclude one extra p/invoke in some scenarios
