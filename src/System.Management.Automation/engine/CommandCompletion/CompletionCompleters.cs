@@ -1656,9 +1656,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
-        ///   1. The matching parameter is of type Enum
-        ///   2. The matching parameter is of type SwitchParameter
-        ///   3. The matching parameter is declared with ValidateSetAttribute
+        ///   1. The matching parameter is declared with ValidateSetAttribute
+        ///   2. The matching parameter is of type Enum
+        ///   3. The matching parameter is of type SwitchParameter
         ///   4. Falls into the native command argument completion
         /// a null instance of CompletionResult is added to the end of the
         /// "result" list, to indicate that this particular argument completion
@@ -1679,6 +1679,72 @@ namespace System.Management.Automation
             if (parameterType.IsArray)
             {
                 parameterType = parameterType.GetElementType();
+            }
+
+            foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
+            {
+                if (att is ValidateSetAttribute setAtt)
+                {
+                    RemoveLastNullCompletionResult(result);
+
+                    string wordToComplete = context.WordToComplete;
+                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+
+                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+                    var setList = new List<string>();
+
+                    foreach (string value in setAtt.ValidValues)
+                    {
+                        if (value == string.Empty)
+                        { continue; }
+
+                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string completionText = quote == string.Empty ? value : quote + value + quote;
+                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
+                            continue;
+                        }
+
+                        if (pattern.IsMatch(value))
+                        {
+                            setList.Add(value);
+                        }
+                    }
+
+                    if (fullMatch != null)
+                    {
+                        result.Add(fullMatch);
+                    }
+
+                    setList.Sort();
+                    foreach (string entry in setList)
+                    {
+                        string realEntry = entry;
+                        string completionText = entry;
+                        if (quote == string.Empty)
+                        {
+                            if (CompletionRequiresQuotes(entry, false))
+                            {
+                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
+                                completionText = "'" + realEntry + "'";
+                            }
+                        }
+                        else
+                        {
+                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
+                            {
+                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
+                            }
+
+                            completionText = quote + realEntry + quote;
+                        }
+
+                        result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
+                    }
+
+                    result.Add(CompletionResult.Null);
+                    return;
+                }
             }
 
             if (parameterType.IsEnum)
@@ -1736,71 +1802,6 @@ namespace System.Management.Automation
 
                 result.Add(CompletionResult.Null);
                 return;
-            }
-
-            foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
-            {
-                if (att is ValidateSetAttribute setAtt)
-                {
-                    RemoveLastNullCompletionResult(result);
-
-                    string wordToComplete = context.WordToComplete;
-                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-
-                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-                    var setList = new List<string>();
-
-                    foreach (string value in setAtt.ValidValues)
-                    {
-                        if (value == string.Empty) { continue; }
-
-                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string completionText = quote == string.Empty ? value : quote + value + quote;
-                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
-                            continue;
-                        }
-
-                        if (pattern.IsMatch(value))
-                        {
-                            setList.Add(value);
-                        }
-                    }
-
-                    if (fullMatch != null)
-                    {
-                        result.Add(fullMatch);
-                    }
-
-                    setList.Sort();
-                    foreach (string entry in setList)
-                    {
-                        string realEntry = entry;
-                        string completionText = entry;
-                        if (quote == string.Empty)
-                        {
-                            if (CompletionRequiresQuotes(entry, false))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                                completionText = "'" + realEntry + "'";
-                            }
-                        }
-                        else
-                        {
-                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                            }
-
-                            completionText = quote + realEntry + quote;
-                        }
-
-                        result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
-                    }
-
-                    result.Add(CompletionResult.Null);
-                    return;
-                }
             }
 
             NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments);

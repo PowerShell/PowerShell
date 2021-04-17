@@ -836,6 +836,15 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for validateSet attribute takes precedence over enums" {
+            function foo { param([ValidateSet('DarkBlue','DarkCyan')][ConsoleColor]$p) }
+            $inputStr = "foo "
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'DarkBlue'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'DarkCyan'
+        }
+
         It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
             $scriptBl = {
                 function Test-Completion {
