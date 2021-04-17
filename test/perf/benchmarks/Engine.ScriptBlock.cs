@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
 using MicroBenchmarks;
 
-namespace Engine.Scripting
+namespace Engine
 {
     [BenchmarkCategory(Categories.Engine, Categories.Public)]
-    public class ScriptBlock_Public
+    public class Scripting
     {
         [ParamsSource(nameof(ValuesForScript))]
         public string Script { get; set; }
@@ -19,11 +20,18 @@ namespace Engine.Scripting
         private Runspace runspace;
         private ScriptBlock scriptBlock;
 
-        public IEnumerable<string> ValuesForScript => new[]
+        public IEnumerable<string> ValuesForScript()
         {
-            "'string'.Trim()",
-            "[System.IO.Path]::HasExtension('')",
-        };
+            yield return @"'String'.GetType()";
+            yield return @"[System.IO.Path]::HasExtension('')";
+
+            // Test on COM method invocation.
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                yield return @"$sh=New-Object -ComObject Shell.Application; $sh.Namespace('c:\')";
+                yield return @"$fs=New-Object -ComObject scripting.filesystemobject; $fs.Drives";
+            }
+        }
 
         [GlobalSetup]
         public void GlobalSetup()
@@ -34,17 +42,17 @@ namespace Engine.Scripting
             scriptBlock = ScriptBlock.Create(Script);
         }
 
-        [Benchmark(Description = "Simple method invocation")]
-        public Collection<PSObject> ScriptBlock_Invoke()
-        {
-            return scriptBlock.Invoke();
-        }
-
         [GlobalCleanup]
         public void GlobalCleanup()
         {
             runspace.Dispose();
             Runspace.DefaultRunspace = null;
+        }
+
+        [Benchmark()]
+        public Collection<PSObject> Invoke_Method()
+        {
+            return scriptBlock.Invoke();
         }
     }
 }

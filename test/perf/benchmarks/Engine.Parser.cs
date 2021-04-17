@@ -5,10 +5,10 @@ using System.Management.Automation.Language;
 using BenchmarkDotNet.Attributes;
 using MicroBenchmarks;
 
-namespace Engine.Scripting
+namespace Engine
 {
     [BenchmarkCategory(Categories.Engine, Categories.Public)]
-    public class Parser_Public
+    public class Parsing
     {
         [Benchmark]
         public Ast Parse_UsingStatement()
