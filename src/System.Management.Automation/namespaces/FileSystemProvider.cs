@@ -8024,7 +8024,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
         internal enum FINDEX_INFO_LEVELS : uint
@@ -8224,13 +8224,21 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // It is a reparse point and we should check some reparse point tags.
             var data = new WIN32_FIND_DATA();
+            string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
+                if (handle.IsInvalid)
+                {
+                    // We should never be here.
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new Win32Exception(lastError);
+                }
+
                 // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
+                if ((data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
