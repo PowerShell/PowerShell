@@ -126,7 +126,7 @@ Describe "Remove-Item" -Tags "CI" {
         }
 
         It "Should be able to remove a directory" {
-            { Remove-Item $testdirectory } | Should -Not -Throw
+            { Remove-Item $testdirectory -ErrorAction Stop } | Should -Not -Throw
 
             Test-Path $testdirectory | Should -BeFalse
         }
@@ -138,8 +138,24 @@ Describe "Remove-Item" -Tags "CI" {
             $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
             Test-Path $complexDirectory | Should -BeTrue
 
-            { Remove-Item $testdirectory -Recurse } | Should -Not -Throw
+            { Remove-Item $testdirectory -Recurse -ErrorAction Stop } | Should -Not -Throw
 
+            Test-Path $testdirectory | Should -BeFalse
+        }
+
+        It "Should be able to recursively delete a directory with a trailing backslash" {
+            New-Item -Name "subd" -Path $testdirectory -ItemType "directory"
+            New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
+
+            $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
+            Test-Path $complexDirectory | Should -BeTrue
+
+            $testdirectoryWithBackSlash = Join-Path -Path $testdirectory -ChildPath ([IO.Path]::DirectorySeparatorChar)
+            Test-Path $testdirectoryWithBackSlash | Should -BeTrue
+
+            { Remove-Item $testdirectoryWithBackSlash -Recurse -ErrorAction Stop } | Should -Not -Throw
+
+            Test-Path $testdirectoryWithBackSlash | Should -BeFalse
             Test-Path $testdirectory | Should -BeFalse
         }
     }
@@ -147,7 +163,7 @@ Describe "Remove-Item" -Tags "CI" {
     Context "Alternate Data Streams should be supported on Windows" {
         BeforeAll {
             if (!$IsWindows) {
-            return
+                return
             }
             $fileName = "ADStest.txt"
             $streamName = "teststream"
