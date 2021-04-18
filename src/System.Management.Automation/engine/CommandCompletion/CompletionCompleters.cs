@@ -6277,10 +6277,10 @@ namespace System.Management.Automation
             //search for help files for the current culture + en-US as fallback
             var searchPaths = new string[4]
             { 
-                Path.Combine(userHelpDir,currentCulture),
-                Path.Combine(userHelpDir,"en-US"),
-                Path.Combine(appHelpDir,currentCulture),
-                Path.Combine(appHelpDir,"en-US")
+                Path.Combine(userHelpDir, currentCulture),
+                Path.Combine(userHelpDir, "en-US"),
+                Path.Combine(appHelpDir, currentCulture),
+                Path.Combine(appHelpDir, "en-US")
             }.Distinct();
 
             string wordToComplete = context.WordToComplete + "*";
