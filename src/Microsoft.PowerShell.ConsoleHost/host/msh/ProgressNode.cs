@@ -387,6 +387,12 @@ namespace Microsoft.PowerShell
                 maxWidth = PSStyle.Instance.Progress.MaxWidth;
             }
 
+            // if the activity is really long, only use up to half the width
+            if (Activity.Length > maxWidth / 2)
+            {
+                Activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+            }
+
             // 4 is for the extra space and square brackets below and one extra space
             int barWidth = maxWidth - Activity.Length - indentation - 4;
 

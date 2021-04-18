@@ -22,4 +22,8 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
     It "all params works" -Pending {
         { Write-Progress -Activity 'myactivity' -Status 'mystatus' -Id 1 -ParentId 2 -Completed:$false -current 'current' -sec 1 -percent 1 } | Should -Not -Throw
     }
+
+    It 'Activity longer than console width works' {
+        { Write-Progress -Activity ('a' * ([console]::WindowWidth + 1)) -Status ('b' * ([console]::WindowWidth + 1)) -Id 1 } | Should -Not -Throw
+    }
 }
