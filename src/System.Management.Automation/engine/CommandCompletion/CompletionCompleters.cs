@@ -6292,9 +6292,9 @@ namespace System.Management.Automation
 
                 foreach (var dir in searchPaths)
                 {
-                    if (Directory.Exists(dir))
+                    var currentDir = new DirectoryInfo(dir);
+                    if (currentDir.Exists)
                     {
-                        var currentDir = new DirectoryInfo(dir);
                         foreach (var file in currentDir.EnumerateFiles("about_*.help.txt"))
                         {
                             if (wildcardPattern.IsMatch(file.Name))
