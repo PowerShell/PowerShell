@@ -6299,7 +6299,12 @@ namespace System.Management.Automation
                         {
                             if (wildcardPattern.IsMatch(file.Name))
                             {
-                                foundTopics.Add(file.Name.Substring(0, file.Name.LastIndexOf(".help.txt")));
+                                string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
+                                bool notDuplicate = foundTopics.Add(topicName);
+                                if (notDuplicate)
+                                {
+                                    results.Add(new CompletionResult(topicName));
+                                }
                             }
                         }
                     }
@@ -6308,12 +6313,6 @@ namespace System.Management.Automation
             catch (Exception)
             {
             }
-
-            foreach (string topic in foundTopics)
-            {
-                results.Add(new CompletionResult(topic));
-            }
-
             return results;
         }
 
