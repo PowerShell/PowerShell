@@ -84,7 +84,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     {
         $isDaily = $true
         Write-Verbose "daily build" -Verbose
-        $jsonPath = "$(System.ArtifactsDirectory)\BuildInfoJson\daily.json"
+        $jsonPath = "${env:SYSTEM_ARTIFACTSDIRECTORY}\BuildInfoJson\daily.json"
         if (test-path -Path $jsonPath) {
             Write-Verbose "restoring from buildinfo json..." -Verbose
             $buildInfo = Get-Content -Path $jsonPath | ConvertFrom-Json
