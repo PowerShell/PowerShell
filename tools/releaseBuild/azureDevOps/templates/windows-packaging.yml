@@ -76,8 +76,16 @@ jobs:
     displayName: Install packaging tools
 
   - powershell: |
-      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\results\*$(PkgFilter).zip'
-      Write-Verbose -Verbose "Zip Path: $zipPath"
+      $zipPathString = '$(System.ArtifactsDirectory)\Symbols\results\*$(PkgFilter).zip'
+      Write-Verbose -Verbose "Zip Path: $zipPathString"
+      $zipPath = Get-Item $zipPathString
+      if(@($zipPath).Count -eq 0) {
+        throw "No files found at '$zipPathString'"
+      }
+      elseif(@($zipPath).Count -ne 1) {
+        $names = $zipPath.Name -join "', '"
+        throw "multiple files '${names}' found with '${zipPathString}'"
+      }
 
       $expandedFolder = $zipPath.BaseName
       Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
