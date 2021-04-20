@@ -388,13 +388,18 @@ namespace Microsoft.PowerShell
             }
 
             // if the activity is really long, only use up to half the width
+            string activity;
             if (Activity.Length > maxWidth / 2)
             {
-                Activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+                activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+            }
+            else
+            {
+                activity = Activity;
             }
 
             // 4 is for the extra space and square brackets below and one extra space
-            int barWidth = maxWidth - Activity.Length - indentation - 4;
+            int barWidth = maxWidth - activity.Length - indentation - 4;
 
             var sb = new StringBuilder();
             int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
@@ -442,7 +447,7 @@ namespace Microsoft.PowerShell
                     "{0}{1}{2} [{3}]{4}",
                     indent,
                     PSStyle.Instance.Progress.Style,
-                    Activity,
+                    activity,
                     sb.ToString(),
                     PSStyle.Instance.Reset)
                 .PadRight(padding));
