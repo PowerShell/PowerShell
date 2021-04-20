@@ -416,6 +416,7 @@ namespace Microsoft.PowerShell
             {
                 sb.Append(string.Empty.PadRight(emptyPadLength));
             }
+
             sb.Append(secRemain);
 
             if (PercentComplete > 0 && PercentComplete < 100 && barWidth > 0)
