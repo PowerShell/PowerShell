@@ -86,8 +86,14 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Make sure the added/updated comments are meaningful, accurate and easy to understand.
 
-* Public members must use [doc comments](https://docs.microsoft.com/dotnet/csharp/programming-guide/xmldoc/).
+### Documentation comments
+
+* Create documentation using [XML documentation comments](https://docs.microsoft.com/dotnet/csharp/codedoc) so that Visual Studio and other IDEs can use IntelliSense to show quick information about types or members.
+
+* Publicly visible types and their members must be documented.
   Internal and private members may use doc comments but it is not required.
+
+* Documentation text should be written using complete sentences ending with full stops.
 
 ## Performance Considerations
 
