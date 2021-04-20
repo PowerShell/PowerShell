@@ -4,6 +4,12 @@ parameters:
   CreateJson: 'no'
 
 steps:
+- task: DownloadBuildArtifacts@0
+  inputs:
+    artifactName: 'BuildInfoJson'
+    itemPattern: '**/daily.json'
+    downloadPath: '$(System.ArtifactsDirectory)\BuildInfoJson'
+
 - powershell: |
     $path = "./build.psm1"
 
