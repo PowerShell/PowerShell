@@ -17,6 +17,7 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
+      UseJson: no
 
   - task: AzurePowerShell@4
     inputs:

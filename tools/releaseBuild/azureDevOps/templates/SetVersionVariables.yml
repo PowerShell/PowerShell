@@ -2,13 +2,16 @@ parameters:
   ReleaseTagVar: v6.2.0
   ReleaseTagVarName: ReleaseTagVar
   CreateJson: 'no'
+  UseJson: 'yes'
 
 steps:
-- task: DownloadBuildArtifacts@0
-  inputs:
-    artifactName: 'BuildInfoJson'
-    itemPattern: '**/daily.json'
-    downloadPath: '$(System.ArtifactsDirectory)\BuildInfoJson'
+- ${{ if eq(parameters['UseJson'],'yes') }}:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: 'BuildInfoJson'
+      itemPattern: '**/*.json'
+      downloadPath: '$(System.ArtifactsDirectory)\BuildInfoJson'
+    displayName: Download Build Info Json
 
 - powershell: |
     $path = "./build.psm1"
