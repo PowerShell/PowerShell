@@ -6275,17 +6275,15 @@ namespace System.Management.Automation
             string currentCulture = CultureInfo.CurrentCulture.Name;
 
             //search for help files for the current culture + en-US as fallback
-            var searchPaths = new string[4]
+            var searchPaths = new string[]
             { 
                 Path.Combine(userHelpDir, currentCulture),
-                Path.Combine(userHelpDir, "en-US"),
                 Path.Combine(appHelpDir, currentCulture),
+                Path.Combine(userHelpDir, "en-US"),
                 Path.Combine(appHelpDir, "en-US")
             }.Distinct();
 
             string wordToComplete = context.WordToComplete + "*";
-            var foundTopics = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
-
             try
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
@@ -6300,11 +6298,7 @@ namespace System.Management.Automation
                             if (wildcardPattern.IsMatch(file.Name))
                             {
                                 string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
-                                bool notDuplicate = foundTopics.Add(topicName);
-                                if (notDuplicate)
-                                {
-                                    results.Add(new CompletionResult(topicName));
-                                }
+                                results.Add(new CompletionResult(topicName));
                             }
                         }
                     }
