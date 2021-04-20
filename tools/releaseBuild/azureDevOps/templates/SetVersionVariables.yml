@@ -34,7 +34,7 @@ steps:
   displayName: 'Set repo Root'
 
 - powershell: |
-    $createJson = ("${{ parameters.ReleaseTagVarName }}" -ne "no")
+    $createJson = ("${{ parameters.CreateJson }}" -ne "no")
     $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"
