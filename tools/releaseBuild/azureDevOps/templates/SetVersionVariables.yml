@@ -10,7 +10,7 @@ steps:
     inputs:
       artifactName: 'BuildInfoJson'
       itemPattern: '**/*.json'
-      downloadPath: '$(System.ArtifactsDirectory)\BuildInfoJson'
+      downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
 
 - powershell: |
