@@ -1018,10 +1018,12 @@ namespace System.Management.Automation
 
             try
             {
-                // Dispose the process if it's already created
+                // Kill the process if it's already created
+                // Dispose is not sufficient as it just closes redirection handles
+                // but the process can continue
                 if (_nativeProcess != null)
                 {
-                    _nativeProcess.Dispose();
+                    _nativeProcess.Kill();
                 }
             }
             catch (Exception)
