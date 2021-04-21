@@ -1280,7 +1280,32 @@ namespace System.Management.Automation
             {
                 // then pop this pipeline and dispose it...
                 _context.PopPipelineProcessor(true);
-                _pipeline.Dispose();
+                Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Clean resources for script commands of this steppable pipeline.
+        /// </summary>
+        public void Clean()
+        {
+            if (_pipeline.Commands is null)
+            {
+                // The pipeline commands have been disposed. In this case,
+                // 'Clean' should have already been called.
+                return;
+            }
+
+            try
+            {
+                _context.PushPipelineProcessor(_pipeline);
+                _pipeline.Clean();
+            }
+            finally
+            {
+                // then pop this pipeline and dispose it...
+                _context.PopPipelineProcessor(true);
+                Dispose();
             }
         }
 
@@ -1294,22 +1319,12 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
-            {
-                _pipeline.Dispose();
-            }
-
+            _pipeline.Dispose();
             _disposed = true;
         }
 

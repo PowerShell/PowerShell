@@ -1067,6 +1067,11 @@ cleanup
 
         internal string GetProcessBlock()
         {
+            // The reason we wrap scripts in 'try { } catch { throw }' (here and elsewhere) is to turn
+            // an exception that could be thrown from .NET method invocation into a terminating error
+            // that can be propagated up.
+            // By default, an exception thrown from .NET method is not terminating, but when enclosed
+            // in try/catch, it will be turned into a terminating error.
             return @"
     try {
         $steppablePipeline.Process($_)
@@ -1119,12 +1124,11 @@ cleanup
 
         internal string GetCleanupBlock()
         {
+            // Here we don't need to enclose the script in a 'try/catch' like elsewhere, because
+            //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
+            //  2. only one expression in the script, so nothing else needs to be stopped when invoking the method fails.
             return @"
-    try {
-        $steppablePipeline.Dispose()
-    } catch {
-        throw
-    }
+    $steppablePipeline.Clean()
 ";
         }
 

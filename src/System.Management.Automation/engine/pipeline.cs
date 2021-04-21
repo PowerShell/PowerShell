@@ -66,7 +66,6 @@ namespace System.Management.Automation.Internal
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)
@@ -681,9 +680,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Clean up resources for script commands in this pipeline processor.
         /// </summary>
-        private void Clean()
+        internal void Clean()
         {
-            if (_commands is null)
+            if (!_executionStarted || _commands is null)
             {
                 return;
             }
@@ -744,17 +743,17 @@ namespace System.Management.Automation.Internal
         /// <returns>The results of the execution.</returns>
         internal Array DoComplete()
         {
+            if (!_executionStarted)
+            {
+                throw PSTraceSource.NewInvalidOperationException(
+                    PipelineStrings.PipelineNotStarted);
+            }
+
             try
             {
                 if (Stopping)
                 {
                     throw new PipelineStoppedException();
-                }
-
-                if (!_executionStarted)
-                {
-                    throw PSTraceSource.NewInvalidOperationException(
-                        PipelineStrings.PipelineNotStarted);
                 }
 
                 ExceptionDispatchInfo toRethrowInfo;
@@ -771,7 +770,7 @@ namespace System.Management.Automation.Internal
                 // By rethrowing the exception outside of the handler, we allow the CLR on X64/IA64 to free from the stack
                 // the exception records related to this exception.
 
-                // The only reason we should get here is if an exception should be rethrown.
+                // The only reason we should get here is an exception should be rethrown.
                 Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
                 toRethrowInfo.Throw();
 
@@ -780,36 +779,42 @@ namespace System.Management.Automation.Internal
             }
             finally
             {
+                Clean();
                 DisposeCommands();
             }
         }
 
         /// <summary>
-        /// This routine starts the stepping process. It is optional to
-        /// call this but can be useful if you want the begin clauses
-        /// of the pipeline to be run even when there may not be any input
-        /// to process as is the case for I/O redirection into a file. We
-        /// still want the file opened, even if there was nothing to write to it.
+        /// This routine starts the stepping process. It is optional to call this but can be useful
+        /// if you want the begin clauses of the pipeline to be run even when there may not be any
+        /// input to process as is the case for I/O redirection into a file. We still want the file
+        /// opened, even if there was nothing to write to it.
         /// </summary>
         /// <param name="expectInput">True if you want to write to this pipeline.</param>
         internal void StartStepping(bool expectInput)
         {
+            bool startSucceeded = false;
             try
             {
                 Start(expectInput);
+                startSucceeded = true;
 
                 // Check if this pipeline is being stopped asynchronously.
                 ThrowFirstErrorIfExisting(logException: false);
             }
-            catch (PipelineStoppedException)
+            catch (Exception e)
             {
+                Clean();
                 DisposeCommands();
 
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                ThrowFirstErrorIfExisting(logException: false);
+                if (!startSucceeded && e is PipelineStoppedException)
+                {
+                    // We want to report the first terminating error which occurred during pipeline execution,
+                    // regardless of whether other errors occurred afterward.
+                    ThrowFirstErrorIfExisting(logException: false);
+                }
 
+                // If we haven't recorded the first terminating error, then re-throw this exception.
                 throw;
             }
         }
@@ -824,23 +829,26 @@ namespace System.Management.Automation.Internal
             // Only call StopProcessing if the pipeline is being stopped
             // for the first time
 
-            if (!RecordFailure(new PipelineStoppedException(), null))
+            if (!RecordFailure(new PipelineStoppedException(), command: null))
+            {
                 return;
+            }
 
             // Retain copy of _commands in case Dispose() is called
             List<CommandProcessorBase> commands = _commands;
-            if (commands == null)
+            if (commands is null)
+            {
                 return;
+            }
 
             // Call StopProcessing() for all the commands.
-            for (int i = 0; i < commands.Count; i++)
+            foreach (CommandProcessorBase commandProcessor in commands)
             {
-                CommandProcessorBase commandProcessor = commands[i];
-
                 if (commandProcessor == null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
+
                 try
                 {
                     commandProcessor.Command.DoStopProcessing();
@@ -892,36 +900,30 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal Array Step(object input)
         {
-            if (Stopping)
-            {
-                DisposeCommands();
-                throw new PipelineStoppedException();
-            }
-
+            bool injectSucceeded = false;
             try
             {
                 Start(true);
                 Inject(input, enumerate: false);
+                injectSucceeded = true;
 
                 // Check if this pipeline is being stopped asynchronously.
                 ThrowFirstErrorIfExisting(logException: false);
-
                 return RetrieveResults();
             }
-            catch (PipelineStoppedException)
+            catch (Exception e)
             {
+                Clean();
                 DisposeCommands();
 
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                ThrowFirstErrorIfExisting(logException: false);
+                if (!injectSucceeded && e is PipelineStoppedException)
+                {
+                    // We want to report the first terminating error which occurred during pipeline execution,
+                    // regardless of whether other errors occurred afterward.
+                    ThrowFirstErrorIfExisting(logException: false);
+                }
 
-                throw;
-            }
-            catch (Exception)
-            {
-                DisposeCommands();
+                // If we haven't recorded the first terminating error, then re-throw this exception.
                 throw;
             }
         }
@@ -1288,55 +1290,54 @@ namespace System.Management.Automation.Internal
 
             LogToEventLog();
 
-            if (_commands != null)
+            if (_commands is not null)
             {
-                for (int i = 0; i < _commands.Count; i++)
+                foreach (CommandProcessorBase commandProcessor in _commands)
                 {
-                    CommandProcessorBase commandProcessor = _commands[i];
-                    if (commandProcessor != null)
+                    if (commandProcessor is null)
                     {
-                        // If Dispose throws an exception, record it as a pipeline failure and continue disposing cmdlets.
-                        try
-                        {
-                            // Only cmdlets can have variables defined via the common parameters.
-                            // We handle the cleanup of those variables only if we need to.
-                            if (commandProcessor is CommandProcessor)
-                            {
-                                if (commandProcessor.Command is not PSScriptCmdlet)
-                                {
-                                    // For script cmdlets, the variable lists were already removed when exiting a scope.
-                                    // So we only need to take care of binary cmdlets here.
-                                    commandProcessor.CommandRuntime.RemoveVariableListsInPipe();
-                                }
+                        continue;
+                    }
 
-                                // Remove the pipeline variable if we need to.
-                                commandProcessor.CommandRuntime.RemovePipelineVariable();
+                    // If Dispose throws an exception, record it as a pipeline failure and continue disposing cmdlets.
+                    try
+                    {
+                        // Only cmdlets can have variables defined via the common parameters.
+                        // We handle the cleanup of those variables only if we need to.
+                        if (commandProcessor is CommandProcessor)
+                        {
+                            if (commandProcessor.Command is not PSScriptCmdlet)
+                            {
+                                // For script cmdlets, the variable lists were already removed when exiting a scope.
+                                // So we only need to take care of binary cmdlets here.
+                                commandProcessor.CommandRuntime.RemoveVariableListsInPipe();
                             }
 
-                            commandProcessor.Dispose();
+                            // Remove the pipeline variable if we need to.
+                            commandProcessor.CommandRuntime.RemovePipelineVariable();
                         }
-                        // The only vaguely plausible reason for a failure here is an exception in Command.Dispose.
+
+                        commandProcessor.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        // The only vaguely plausible reason for a failure here is an exception in 'Command.Dispose'.
                         // As such, this should be covered by the overall exemption.
-                        catch (Exception e)
+                        InvocationInfo myInvocation = commandProcessor.Command?.MyInvocation;
+
+                        if (e is ProviderInvocationException pie)
                         {
-                            InvocationInfo myInvocation = null;
-                            if (commandProcessor.Command != null)
-                                myInvocation = commandProcessor.Command.MyInvocation;
-
-                            if (e is ProviderInvocationException pie)
-                            {
-                                e = new CmdletProviderInvocationException(pie, myInvocation);
-                            }
-                            else
-                            {
-                                e = new CmdletInvocationException(e, myInvocation);
-
-                                // Log a command health event
-                                MshLog.LogCommandHealthEvent(commandProcessor.Command.Context, e, Severity.Warning);
-                            }
-
-                            RecordFailure(e, commandProcessor.Command);
+                            e = new CmdletProviderInvocationException(pie, myInvocation);
                         }
+                        else
+                        {
+                            e = new CmdletInvocationException(e, myInvocation);
+
+                            // Log a command health event
+                            MshLog.LogCommandHealthEvent(commandProcessor.Command.Context, e, Severity.Warning);
+                        }
+
+                        RecordFailure(e, commandProcessor.Command);
                     }
                 }
             }
@@ -1354,7 +1355,9 @@ namespace System.Management.Automation.Internal
                     }
 
                     // Clean resources for script commands.
-                    // This method catches and handles all exceptions inside, so it will never throw.
+                    // It is possible (though very unlikely) that the call to 'Step' on the redirection pipeline failed.
+                    // In such a case, 'Clean' would have run and the 'pipelineProcessor' would have been disposed.
+                    // Therefore, calling 'Clean' again will simply return, because '_commands' was already set to null.
                     redirPipe.Clean();
 
                     // The complicated logic of disposing the commands is taken care
