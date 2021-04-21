@@ -90,7 +90,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
             $buildInfo = Get-Content -Path $jsonPath | ConvertFrom-Json
             $releaseTag = $buildInfo.ReleaseTag
         } else {
-            Write-Verbose "creating from branch counter and metadat.json..." -Verbose
+            Write-Verbose "creating from branch counter and metadata.json..." -Verbose
             $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
             $metadata = Get-Content $metaDataJsonPath | ConvertFrom-Json
             $versionPart = $metadata.PreviewReleaseTag
