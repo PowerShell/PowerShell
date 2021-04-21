@@ -1018,12 +1018,16 @@ namespace System.Management.Automation
 
             try
             {
-                // Kill the process if it's already created
-                // Dispose is not sufficient as it just closes redirection handles
-                // but the process can continue
                 if (_nativeProcess != null)
                 {
+                    // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
+                    // closes the redirected streams and the processs does not exit on macOS.  However,
+                    // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+#if UNIX
                     _nativeProcess.Kill();
+#else
+                    _nativeProcess.Dispose();
+#endif
                 }
             }
             catch (Exception)
