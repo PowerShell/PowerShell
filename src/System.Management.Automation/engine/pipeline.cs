@@ -680,10 +680,17 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Clean up resources for script commands in this pipeline processor.
         /// </summary>
-        internal void Clean()
+        /// <remarks>
+        /// Exception from a 'Clean' block is not allowed to propagate up and terminate the pipeline
+        /// so that other 'Clean' blocks can run without being affected. Therefore, this method will
+        /// catch and handle all exceptions inside, and it will never throw.
+        /// </remarks>
+        private void Clean()
         {
             if (!_executionStarted || _commands is null)
             {
+                // Simply return if the pipeline execution wasn't even started, or the commands of
+                // the pipeline have already been disposed.
                 return;
             }
 
@@ -713,14 +720,13 @@ namespace System.Management.Automation.Internal
                     }
                     catch (RuntimeException e)
                     {
-                        // Exception from a 'Clean' block is not allowed to terminate the pipeline
-                        // so that other 'Clean' blocks can run without being affected.
+                        // Retrieve and report the terminating error that was thrown in the 'Clean' block.
                         ExceptionDispatchInfo firstError = GetFirstError(e);
                         commandProcessor.ReportCleanupError(firstError.SourceException);
                     }
                     catch (Exception ex)
                     {
-                        // Theoretically, only RuntimeException could be thrown out, but we catch
+                        // Theoretically, only 'RuntimeException' could be thrown out, but we catch
                         // all and log them here just to be safe.
                         // Skip special flow control exceptions and log others.
                         if (ex is not FlowControlException && ex is not HaltCommandException)
@@ -734,6 +740,25 @@ namespace System.Management.Automation.Internal
             {
                 _firstTerminatingError = oldFirstTerminatingError;
             }
+        }
+
+        /// <summary>
+        /// Clean up resources for the script commands of a steppable pipeline.
+        /// </summary>
+        /// <remarks>
+        /// The way we handle 'Clean' blocks in 'StartStepping', 'Step', and 'DoComplete' makes sure that:
+        ///  1. The 'Clean' blocks get to run if any exception is thrown from the pipeline execution.
+        ///  2. The 'Clean' blocks get to run if the pipeline runs to the end successfully.
+        /// However, this is not enough for a steppable pipeline, because the function, where the steppable
+        /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
+        /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
+        /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
+        /// pipeline. This method is how we will expose this functionality to 'SteppablePipeline'.
+        /// </remarks>
+        internal void DoCleanup()
+        {
+            Clean();
+            DisposeCommands();
         }
 
         /// <summary>
@@ -1287,6 +1312,12 @@ namespace System.Management.Automation.Internal
             // Note that this is not in a lock.
             // We do not make Dispose() wait until StopProcessing() has completed.
             _stopping = true;
+
+            if (_commands is null && _redirectionPipes is null)
+            {
+                // Commands were already disposed.
+                return;
+            }
 
             LogToEventLog();
 
