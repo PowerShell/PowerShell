@@ -477,7 +477,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    return true;
+                    return Platform.IsStaSupported;
                 }
             }
         }
@@ -929,7 +929,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    if (!Platform.IsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
