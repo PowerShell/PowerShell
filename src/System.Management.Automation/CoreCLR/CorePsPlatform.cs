@@ -16,8 +16,6 @@ namespace System.Management.Automation
     /// </summary>
     public static class Platform
     {
-        private static string _tempDirectory = null;
-
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -163,11 +161,6 @@ namespace System.Management.Automation
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
         internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
-
-        private static bool? _isNanoServer = null;
-        private static bool? _isIoT = null;
-        private static bool? _isWindowsDesktop = null;
-
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
             // See objbase.h
@@ -184,6 +177,10 @@ namespace System.Management.Automation
 
             return result != E_NOTIMPL;
         });
+
+        private static bool? _isNanoServer = null;
+        private static bool? _isIoT = null;
+        private static bool? _isWindowsDesktop = null;
 #endif
 
         // format files
@@ -201,6 +198,8 @@ namespace System.Management.Automation
             "Registry.format.ps1xml",
             "WSMan.format.ps1xml"
         };
+
+        private static string _tempDirectory = null;
 
         /// <summary>
         /// Some common environment variables used in PS have different
