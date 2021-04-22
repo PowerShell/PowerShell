@@ -12,9 +12,12 @@ jobs:
   steps:
   - checkout: self
     clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
 
   - task: AzurePowerShell@4
     inputs:
