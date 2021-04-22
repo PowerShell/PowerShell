@@ -1024,10 +1024,16 @@ namespace System.Management.Automation
                     // closes the redirected streams and the processs does not exit on macOS.  However,
                     // on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                    _nativeProcess.Kill();
-#else
-                    _nativeProcess.Dispose();
+                    try
+                    {
+                        _nativeProcess.Kill();
+                    }
+                    catch
+                    {
+                        // Ignore all exception since it is cleanup.
+                    }
 #endif
+                    _nativeProcess.Dispose();
                 }
             }
             catch (Exception)
