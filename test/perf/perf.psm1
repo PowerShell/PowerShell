@@ -4,7 +4,7 @@
 $repoRoot = git rev-parse --show-toplevel
 Import-Module "$repoRoot/build.psm1"
 
-function Start-BenchmarkRun
+function Start-Benchmarking
 {
     <#
     .SYNOPSIS
@@ -90,6 +90,12 @@ function Compare-BenchmarkResult
     <#
     .SYNOPSIS
     Compare two benchmark run results to find possible regressions.
+
+    When running benchmarks with 'Start-Benchmarking', you can define the result folder
+    where to save the artifacts by specifying '-Artifacts'.
+
+    To compare two benchmark run results, you need to specify the result folder paths
+    for both runs, one as the base and one as the diff.
 
     .PARAMETER BaseResultPath
     Path to the benchmark result used as baseline.
