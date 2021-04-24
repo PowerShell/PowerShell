@@ -108,7 +108,7 @@ namespace ResultsComparer
                 Console.WriteLine($"worse: {worseCount}, geomean: {worseGeoMean:F3}");
             }
 
-            Console.WriteLine($"total diff: {notSame.Count()}");
+            Console.WriteLine($"total diff: {notSame.Length}");
             Console.WriteLine();
         }
 
