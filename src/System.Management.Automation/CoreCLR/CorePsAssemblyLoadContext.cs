@@ -598,7 +598,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Unmanaged pointer to assembly data buffer.</param>
         /// <param name="size">Size in bytes of the assembly data buffer.</param>
-        /// <returns>Returns zero on success and non-zero on failure</returns>
+        /// <returns>Returns zero on success and non-zero on failure.</returns>
         [UnmanagedCallersOnly]
         public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
         {
