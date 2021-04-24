@@ -29,9 +29,9 @@ namespace PSTests.Parallel
         [InlineData(1, "1 Byte")]
         [InlineData(1024, "1.0 KB")]
         [InlineData(3000, "2.9 KB")]
-        [InlineData(1024 * 1024, "1.00 MB")]
+        [InlineData(1024 * 1024, "1.0 MB")]
         [InlineData(1024 * 1024 * 1024, "1.000 GB")]
-        [InlineData(long.MaxValue, "8.000000 EB")]
+        [InlineData(long.MaxValue, "8.000000000 EB")]
         public static void DisplayHumanReadableFileSize(long bytes, string expected)
         {
             Assert.Equal(expected, Utils.DisplayHumanReadableFileSize(bytes));

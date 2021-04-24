@@ -1886,24 +1886,20 @@ namespace System.Management.Automation
         }
 
         #endregion
-        
-        private enum FileSizeUnit
-        {
-            Byte, KB, MB, GB, TB, PB, EB
-        }
-        
+                
         internal static string DisplayHumanReadableFileSize(long bytes)
         {
-            if (bytes <= 0)
+            return bytes switch
             {
-                return $"0 {FileSizeUnit.Byte}";
-            }
-
-            var fileSizeUnit = (FileSizeUnit)(Math.Log10(bytes) / 3);
-            double value = bytes / (double)Math.Pow(1024, (long)fileSizeUnit);
-            var significantDigits = (int)fileSizeUnit;
-            var format = "0." + new string('0', significantDigits);
-            return value.ToString(format) + $" {fileSizeUnit}";
+                >= 1152921504606847000 => $"{(bytes / 1152921504606847000.0).ToString("0.000000000")} EB",
+                < 1152921504606847000 and >= 1125899906842624 => $"{(bytes / 1125899906842624.0).ToString("0.0000000")} PB",
+                < 1125899906842624 and >= 1099511627776 => $"{(bytes / 1099511627776.0).ToString("0.00000")} TB",
+                < 1125899906842624 and >= 1073741824 => $"{(bytes / 1073741824.0).ToString("0.000")} GB",
+                < 1073741824 and >= 1048576 => $"{(bytes / 1048576.0).ToString("0.0")} MB",
+                < 1048576 and >= 1024 => $"{(bytes / 1024.0).ToString("0.0")} KB",
+                < 1024 and >= 0 => $"{bytes} Byte",
+                _ => $"0 Byte"
+            };
         }
     }
 
