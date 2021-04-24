@@ -596,17 +596,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Load an assembly in memory from unmanaged code.
         /// </summary>
-        /// <param name="data">
-        /// Unmanaged pointer to assembly data buffer.
-        /// </param>
-        /// <param name="size">
-        /// Size in bytes of the assembly data buffer.
-        /// </param>
+        /// <param name="data">Unmanaged pointer to assembly data buffer.</param>
+        /// <param name="size">Size in bytes of the assembly data buffer.</param>
+        /// <returns>Returns zero on success and non-zero on failure</returns>
         [UnmanagedCallersOnly]
-        public static void LoadAssemblyFromNativeMemory(IntPtr data, int size)
+        public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
         {
-            using var stream = new UnmanagedMemoryStream((byte*)data, size);
-            AssemblyLoadContext.Default.LoadFromStream(stream);
+            try
+            {
+                using var stream = new UnmanagedMemoryStream((byte*)data, size);
+                AssemblyLoadContext.Default.LoadFromStream(stream);
+                return 0;
+            }
+            catch
+            {
+                return -1;
+            }
         }
     }
 }

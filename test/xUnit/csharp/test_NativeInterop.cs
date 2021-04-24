@@ -35,17 +35,21 @@ namespace PSTests.Sequential
             string asmFullName = SearchAssembly(asmName.Name);
             Assert.Null(asmFullName);
 
-            unsafe { LoadAssemblyTest(testDll); }
+            unsafe
+            {
+                int ret = LoadAssemblyTest(testDll);
+                Assert.Equal(0, ret);
+            }
 
             asmFullName = SearchAssembly(asmName.Name);
             Assert.Equal(asmName.FullName, asmFullName);
         }
 
-        private static unsafe void LoadAssemblyTest(string assemblyPath)
+        private static unsafe int LoadAssemblyTest(string assemblyPath)
         {
             // The 'LoadAssemblyFromNativeMemory' method is annotated with 'UnmanagedCallersOnly' attribute,
             // so we have to use the 'unmanaged' function pointer to invoke it.
-            delegate* unmanaged<IntPtr, int, void> funcPtr = &PowerShellUnsafeAssemblyLoad.LoadAssemblyFromNativeMemory;
+            delegate* unmanaged<IntPtr, int, int> funcPtr = &PowerShellUnsafeAssemblyLoad.LoadAssemblyFromNativeMemory;
 
             int length = 0;
             IntPtr nativeMem = IntPtr.Zero;
@@ -62,7 +66,7 @@ namespace PSTests.Sequential
                 }
 
                 // Call the function pointer.
-                funcPtr(nativeMem, length);
+                return funcPtr(nativeMem, length);
             }
             finally
             {
