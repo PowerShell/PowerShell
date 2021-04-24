@@ -4,18 +4,17 @@
 #if !UNIX
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Host;
 using System.ComponentModel;
 using System.Globalization;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
 using WORD = System.UInt16;
-using DWORD = System.UInt32;
 
 namespace Microsoft.PowerShell
 {
@@ -549,7 +548,7 @@ namespace Microsoft.PowerShell
         /// Helper method to create and trace PipelineStoppedException.
         /// </summary>
         /// <returns></returns>
-        private PipelineStoppedException NewPipelineStoppedException()
+        private static PipelineStoppedException NewPipelineStoppedException()
         {
             PipelineStoppedException e = new PipelineStoppedException();
             return e;
@@ -1299,17 +1298,16 @@ namespace Microsoft.PowerShell
 
         #endregion helpers
 
-        private ConsoleColor defaultForeground = ConsoleColor.Gray;
+        private readonly ConsoleColor defaultForeground = ConsoleColor.Gray;
 
-        private ConsoleColor defaultBackground = ConsoleColor.Black;
+        private readonly ConsoleColor defaultBackground = ConsoleColor.Black;
 
-        private ConsoleHostUserInterface parent = null;
+        private readonly ConsoleHostUserInterface parent = null;
 
         private ConsoleControl.KEY_EVENT_RECORD cachedKeyEvent;
 
         [TraceSourceAttribute("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole")]
-        private static
-        PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
+        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
     }
 }   // namespace
 
@@ -1336,7 +1334,7 @@ namespace Microsoft.PowerShell
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
 
-        private ConsoleHostUserInterface _parent = null;
+        private readonly ConsoleHostUserInterface _parent = null;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
@@ -1371,7 +1369,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
 
-            set { Console.SetBufferSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetBufferSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>
@@ -1379,7 +1380,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override Coordinates CursorPosition
         {
-            get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+            get
+            {
+                return new Coordinates(Console.CursorLeft, Console.CursorTop);
+            }
 
             set
             {
@@ -1477,7 +1481,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
 
-            set { Console.SetWindowSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetWindowSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>

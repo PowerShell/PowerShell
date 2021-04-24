@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PSRunspaceDebug"/> class.
         /// </summary>
         /// <param name="enabled">Enable debugger option.</param>
         /// <param name="breakAll">BreakAll option.</param>
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception ex)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                 new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.PersistDebugPreferenceFailure, processName), ex),
                 fullyQualifiedErrorId,
                 ErrorCategory.InvalidOperation,

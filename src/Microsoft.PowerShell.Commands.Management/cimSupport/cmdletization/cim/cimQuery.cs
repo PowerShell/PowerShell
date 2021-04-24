@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private string _resultRole;
         private string _sourceRole;
 
-        internal readonly Dictionary<string, object> queryOptions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, object> queryOptions = new(StringComparer.OrdinalIgnoreCase);
 
         internal ClientSideQuery ClientSideQuery { get; }
 
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 .Select(propertyValue => wildcardsEnabled
                                              ? GetMatchConditionForLikeOperator(propertyName, propertyValue)
                                              : GetMatchConditionForEqualityOperator(propertyName, propertyValue))
-                .Where(individualCondition => !string.IsNullOrWhiteSpace(individualCondition))
+                .Where(static individualCondition => !string.IsNullOrWhiteSpace(individualCondition))
                 .ToList();
             if (individualConditions.Count == 0)
             {
@@ -196,8 +196,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="allowedPropertyValues">Property values to accept in the query.</param>
         /// <param name="wildcardsEnabled">
-        ///   <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
-        ///   <c>false otherwise</c>
+        ///   <see langword="true"/> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
+        ///   <see langword="false"/> otherwise.
         /// </param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects
@@ -219,8 +219,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="excludedPropertyValues">Property values to reject in the query.</param>
         /// <param name="wildcardsEnabled">
-        /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
-        /// <c>false otherwise</c>
+        /// <see langword="true"/> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
+        /// <see langword="false"/> otherwise.
         /// </param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects

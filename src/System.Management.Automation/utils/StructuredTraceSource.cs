@@ -542,16 +542,14 @@ namespace System.Management.Automation
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the method tracer object
-                    return
-                        (IDisposable)
-                            new ScopeTracer(
-                                this,
-                                PSTraceSourceOptions.Method,
-                                methodOutputFormatter,
-                                methodLeavingFormatter,
-                                methodName,
-                                format,
-                                args);
+                    return (IDisposable)new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Method,
+                        methodOutputFormatter,
+                        methodLeavingFormatter,
+                        methodName,
+                        format,
+                        args);
                 }
                 catch
                 {
@@ -591,15 +589,13 @@ namespace System.Management.Automation
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the scope tracer object
-                    return
-                        (IDisposable)
-                            new ScopeTracer(
-                                this,
-                                PSTraceSourceOptions.Events,
-                                eventHandlerOutputFormatter,
-                                eventHandlerLeavingFormatter,
-                                methodName,
-                                string.Empty);
+                    return (IDisposable)new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Events,
+                        eventHandlerOutputFormatter,
+                        eventHandlerLeavingFormatter,
+                        methodName,
+                        string.Empty);
                 }
                 catch
                 {
@@ -643,16 +639,14 @@ namespace System.Management.Automation
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the scope tracer object
-                    return
-                        (IDisposable)
-                            new ScopeTracer(
-                                this,
-                                PSTraceSourceOptions.Events,
-                                eventHandlerOutputFormatter,
-                                eventHandlerLeavingFormatter,
-                                methodName,
-                                format,
-                                args);
+                    return (IDisposable)new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Events,
+                        eventHandlerOutputFormatter,
+                        eventHandlerLeavingFormatter,
+                        methodName,
+                        format,
+                        args);
                 }
                 catch
                 {
@@ -707,14 +701,12 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return
-                        (IDisposable)
-                            new ScopeTracer(
-                                this,
-                                PSTraceSourceOptions.Lock,
-                                lockEnterFormatter,
-                                lockLeavingFormatter,
-                                lockName);
+                    return (IDisposable)new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Lock,
+                        lockEnterFormatter,
+                        lockLeavingFormatter,
+                        lockName);
                 }
                 catch
                 {
@@ -1189,7 +1181,7 @@ namespace System.Management.Automation
                     declaringType.Name,
                     callingMethod.Name);
 
-                methodAndParameters.Append(")");
+                methodAndParameters.Append(')');
             }
             catch
             {
@@ -1436,14 +1428,14 @@ namespace System.Management.Automation
         /// </summary>
         internal string FullName { get; } = string.Empty;
 
-        private string _name;
+        private readonly string _name;
 
         /// <summary>
         /// Creates an instance of the TraceSource on demand.
         /// </summary>
         internal TraceSource TraceSource
         {
-            get { return _traceSource ?? (_traceSource = new MonadTraceSource(_name)); }
+            get { return _traceSource ??= new MonadTraceSource(_name); }
         }
 
         private TraceSource _traceSource;
@@ -1457,7 +1449,10 @@ namespace System.Management.Automation
         /// </summary>
         public PSTraceSourceOptions Options
         {
-            get { return _flags; }
+            get
+            {
+                return _flags;
+            }
 
             set
             {
@@ -1765,7 +1760,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The trace object that is used for any output.
         /// </summary>
-        private PSTraceSource _tracer;
+        private readonly PSTraceSource _tracer;
 
         /// <summary>
         /// The flag which caused this scope object to be created.
@@ -1869,4 +1864,3 @@ namespace System.Management.Automation
     }
     #endregion MonadTraceSource
 }
-

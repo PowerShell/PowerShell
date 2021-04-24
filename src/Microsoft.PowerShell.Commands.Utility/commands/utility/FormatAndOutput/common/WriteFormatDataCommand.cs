@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -75,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isLiteralPath = false;
 
-        private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
+        private readonly List<ExtendedTypeDefinition> _typeDefinitions = new();
 
         private bool _force;
 

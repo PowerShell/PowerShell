@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell
         {
             bool result = NativeMethods.SetConsoleCtrlHandler(handlerDelegate, true);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell
         {
             bool result = NativeMethods.SetConsoleCtrlHandler(null, false);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -551,8 +551,7 @@ namespace Microsoft.PowerShell
             {
                 var handle = NativeMethods.CreateFile(
                     "CONIN$",
-                    (UInt32)
-                    (NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
+                    (UInt32)(NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
                     (UInt32)NativeMethods.ShareModes.ShareRead,
                     (IntPtr)0,
                     (UInt32)NativeMethods.CreationDisposition.OpenExisting,
@@ -661,7 +660,7 @@ namespace Microsoft.PowerShell
             UInt32 m = 0;
             bool result = NativeMethods.GetConsoleMode(consoleHandle.DangerousGetHandle(), out m);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -692,7 +691,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.SetConsoleMode(consoleHandle.DangerousGetHandle(), (DWORD)mode);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -770,7 +769,7 @@ namespace Microsoft.PowerShell
                     out charsReaded,
                     ref control);
             keyState = control.dwControlKeyState;
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -818,7 +817,7 @@ namespace Microsoft.PowerShell
                     buffer,
                     (DWORD)buffer.Length,
                     out recordsRead);
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -862,7 +861,7 @@ namespace Microsoft.PowerShell
                     (DWORD)buffer.Length,
                     out recordsRead);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -894,7 +893,7 @@ namespace Microsoft.PowerShell
             DWORD numEvents;
             bool result = NativeMethods.GetNumberOfConsoleInputEvents(consoleHandle.DangerousGetHandle(), out numEvents);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -924,7 +923,7 @@ namespace Microsoft.PowerShell
             NakedWin32Handle h = consoleHandle.DangerousGetHandle();
             result = NativeMethods.FlushConsoleInputBuffer(h);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -959,7 +958,7 @@ namespace Microsoft.PowerShell
             CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
             bool result = NativeMethods.GetConsoleScreenBufferInfo(consoleHandle.DangerousGetHandle(), out bufferInfo);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -991,7 +990,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.SetConsoleScreenBufferSize(consoleHandle.DangerousGetHandle(), s);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -1503,7 +1502,7 @@ namespace Microsoft.PowerShell
                             ref writeRegion);
                     }
 
-                    if (result == false)
+                    if (!result)
                     {
                         // When WriteConsoleOutput fails, half bufferLimit
                         if (bufferLimit < 2)
@@ -1631,7 +1630,7 @@ namespace Microsoft.PowerShell
                             bufferCoord,
                             ref writeRegion);
 
-                    if (result == false)
+                    if (!result)
                     {
                         // When WriteConsoleOutput fails, half bufferLimit
                         if (bufferLimit < 2)
@@ -1959,7 +1958,7 @@ namespace Microsoft.PowerShell
                             new Coordinates(readRegion.Left, readRegion.Top),
                             atContents,
                             ref contents);
-                    if (result == false)
+                    if (!result)
                     {
                         // When WriteConsoleOutput fails, half bufferLimit
                         if (bufferLimit < 2)
@@ -2131,7 +2130,7 @@ namespace Microsoft.PowerShell
                                         bufferCoord,
                                         ref readRegion);
 
-                    if (result == false)
+                    if (!result)
                     {
                         // When WriteConsoleOutput fails, half bufferLimit
                         if (bufferLimit < 2)
@@ -2171,8 +2170,7 @@ namespace Microsoft.PowerShell
                     {
                         for (int c = atContentsCol; c < bufferSize.X + atContentsCol; c++, characterBufferIndex++)
                         {
-                            contents[r, c].Character = (char)
-                                characterBuffer[characterBufferIndex].UnicodeChar;
+                            contents[r, c].Character = (char)characterBuffer[characterBufferIndex].UnicodeChar;
                             ConsoleColor fgColor, bgColor;
                             WORDToColor(characterBuffer[characterBufferIndex].Attributes,
                                 out fgColor,
@@ -2280,7 +2278,7 @@ namespace Microsoft.PowerShell
                     (DWORD)numberToWrite,
                     c,
                     out unused);
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2335,7 +2333,7 @@ namespace Microsoft.PowerShell
                     c,
                     out unused);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2385,7 +2383,7 @@ namespace Microsoft.PowerShell
                     destOrigin,
                     ref fill);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2423,7 +2421,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.SetConsoleWindowInfo(consoleHandle.DangerousGetHandle(), absolute, ref windowInfo);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2477,7 +2475,7 @@ namespace Microsoft.PowerShell
         internal static string GetConsoleWindowTitle()
         {
             const int MaxWindowTitleLength = 1024;
-            DWORD bufferSize = MaxWindowTitleLength;
+            const DWORD bufferSize = MaxWindowTitleLength;
             DWORD result;
             StringBuilder consoleTitle = new StringBuilder((int)bufferSize);
 
@@ -2509,7 +2507,7 @@ namespace Microsoft.PowerShell
         {
             bool result = NativeMethods.SetConsoleTitle(consoleTitle);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2602,7 +2600,7 @@ namespace Microsoft.PowerShell
                     out charsWritten,
                     IntPtr.Zero);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2634,7 +2632,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.SetConsoleTextAttribute(consoleHandle.DangerousGetHandle(), attribute);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2844,7 +2842,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.SetConsoleCursorPosition(consoleHandle.DangerousGetHandle(), c);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2875,7 +2873,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.GetConsoleCursorInfo(consoleHandle.DangerousGetHandle(), out cursorInfo);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2896,7 +2894,7 @@ namespace Microsoft.PowerShell
             fontInfo.cbSize = Marshal.SizeOf(fontInfo);
             bool result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -2927,7 +2925,7 @@ namespace Microsoft.PowerShell
 
             bool result = NativeMethods.SetConsoleCursorInfo(consoleHandle.DangerousGetHandle(), ref cursorInfo);
 
-            if (result == false)
+            if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
 
@@ -3248,7 +3246,7 @@ namespace Microsoft.PowerShell
         }
 
         [TraceSourceAttribute("ConsoleControl", "Console control methods")]
-        private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
+        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
 #endif
     }
 }

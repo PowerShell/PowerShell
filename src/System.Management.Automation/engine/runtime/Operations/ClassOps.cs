@@ -284,7 +284,7 @@ namespace System.Management.Automation.Internal
         {
             var validateAttributes = type.GetProperty(propertyName).GetCustomAttributes<ValidateArgumentsAttribute>();
             var executionContext = LocalPipeline.GetExecutionContextFromTLS();
-            var engineIntrinsics = executionContext == null ? null : executionContext.EngineIntrinsics;
+            var engineIntrinsics = executionContext?.EngineIntrinsics;
             foreach (var validateAttribute in validateAttributes)
             {
                 validateAttribute.InternalValidate(value, engineIntrinsics);
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Internal
         {
             // Pass in the declaring type because instance method has a hidden parameter 'this' as the first parameter.
             var paramTypes = new List<Type> { mi.DeclaringType };
-            paramTypes.AddRange(mi.GetParameters().Select(x => x.ParameterType));
+            paramTypes.AddRange(mi.GetParameters().Select(static x => x.ParameterType));
 
             var dm = new DynamicMethod("PSNonVirtualCall_" + mi.Name, mi.ReturnType, paramTypes.ToArray(), mi.DeclaringType);
             ILGenerator il = dm.GetILGenerator();

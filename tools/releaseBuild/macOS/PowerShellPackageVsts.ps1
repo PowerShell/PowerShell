@@ -18,7 +18,7 @@ param (
     [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
     [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'Build')]
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 

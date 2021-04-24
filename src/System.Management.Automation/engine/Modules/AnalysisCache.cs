@@ -27,13 +27,13 @@ namespace System.Management.Automation
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
     /// </summary>
-    internal class AnalysisCache
+    internal static class AnalysisCache
     {
-        private static AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
+        private static readonly AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
         // This dictionary shouldn't see much use, so low concurrency and capacity
-        private static ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
-            new ConcurrentDictionary<string, string>( /*concurrency*/1, /*capacity*/2, StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
+            new(concurrencyLevel: 1, capacity: 2, StringComparer.OrdinalIgnoreCase);
 
         internal static readonly char[] InvalidCommandNameCharacters = new[]
         {
@@ -194,8 +194,7 @@ namespace System.Management.Automation
 
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)
         {
-            var modulePath = modulePathObj as string;
-            if (modulePath == null)
+            if (!(modulePathObj is string modulePath))
                 return true;
 
             if (modulePath.EndsWith(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
@@ -257,8 +256,7 @@ namespace System.Management.Automation
                     return ModuleAnalysisViaGetModuleRequired(nestedModule, hadCmdlets, hadFunctions, hadAliases);
                 }
 
-                var nestedModuleArray = nestedModules as object[];
-                if (nestedModuleArray == null)
+                if (!(nestedModules is object[] nestedModuleArray))
                     return true;
 
                 foreach (var element in nestedModuleArray)
@@ -362,7 +360,7 @@ namespace System.Management.Automation
                 if (commandName.IndexOfAny(InvalidCommandNameCharacters) < 0)
                 {
                     result.AddOrUpdate(commandName, CommandTypes.Alias,
-                        (_, existingCommandType) => existingCommandType | CommandTypes.Alias);
+                        static (_, existingCommandType) => existingCommandType | CommandTypes.Alias);
                 }
             }
 
@@ -373,11 +371,11 @@ namespace System.Management.Automation
 
                 try
                 {
-                    foreach (string item in Directory.GetFiles(baseDirectory, "*.ps1"))
+                    foreach (string item in Directory.EnumerateFiles(baseDirectory, "*.ps1"))
                     {
                         var command = Path.GetFileNameWithoutExtension(item);
                         result.AddOrUpdate(command, CommandTypes.ExternalScript,
-                            (_, existingCommandType) => existingCommandType | CommandTypes.ExternalScript);
+                            static (_, existingCommandType) => existingCommandType | CommandTypes.ExternalScript);
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -386,8 +384,10 @@ namespace System.Management.Automation
                 }
             }
 
-            var exportedClasses = new ConcurrentDictionary<string, TypeAttributes>( /*concurrency*/
-                1, scriptAnalysis.DiscoveredClasses.Count, StringComparer.OrdinalIgnoreCase);
+            ConcurrentDictionary<string, TypeAttributes> exportedClasses = new(
+                concurrencyLevel: 1,
+                capacity: scriptAnalysis.DiscoveredClasses.Count,
+                StringComparer.OrdinalIgnoreCase);
             foreach (var exportedClass in scriptAnalysis.DiscoveredClasses)
             {
                 exportedClasses[exportedClass.Name] = exportedClass.TypeAttributes;

@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (
                     var e in
-                        parentJob.ExecutionError.Where(e => e.FullyQualifiedErrorId == "ContainerParentJobSuspendAsyncError")
+                        parentJob.ExecutionError.Where(static e => e.FullyQualifiedErrorId == "ContainerParentJobSuspendAsyncError")
                     )
                 {
                     if (e.Exception is InvalidJobStateException)

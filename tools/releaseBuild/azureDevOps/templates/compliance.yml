@@ -4,7 +4,10 @@ parameters:
 jobs:
 - job: compliance
   variables:
-    runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -15,6 +18,9 @@ jobs:
   timeoutInMinutes: 180
 
   steps:
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

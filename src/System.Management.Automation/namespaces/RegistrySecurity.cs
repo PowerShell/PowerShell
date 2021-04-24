@@ -3,7 +3,6 @@
 
 #if !UNIX
 
-using System;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Security.AccessControl;
@@ -165,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the parts of a security descriptor to create.
         /// </param>
         /// <returns>
-        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
+        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity"/> object.
         /// </returns>
         /// <remarks><paramref name="path"/> and <paramref name="sections"/> are not used by this method.</remarks>
         public ObjectSecurity NewSecurityDescriptorFromPath(
@@ -192,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the parts of a security descriptor to create.
         /// </param>
         /// <returns>
-        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
+        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity"/> object.
         /// </returns>
         public ObjectSecurity NewSecurityDescriptorOfType(
             string type,

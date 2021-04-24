@@ -105,10 +105,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Invoke action outside lock.
-            if (endProcessingAction != null)
-            {
-                endProcessingAction();
-            }
+            endProcessingAction?.Invoke();
         }
 
         private void CleanUpEndProcessing()
@@ -247,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_jobTrackingLock)
             {
-                return _jobsToWaitFor.Find(j => j.JobStateInfo.State == JobState.Blocked);
+                return _jobsToWaitFor.Find(static j => j.JobStateInfo.State == JobState.Blocked);
             }
         }
 

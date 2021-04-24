@@ -29,10 +29,14 @@ namespace System.Management.Automation.Language
     using System.Runtime.CompilerServices;
     using System.Reflection.Emit;
 
+#nullable enable
+
     internal interface ISupportsAssignment
     {
         IAssignableValue GetAssignableValue();
     }
+
+#nullable restore
 
     internal interface IAssignableValue
     {
@@ -53,8 +57,11 @@ namespace System.Management.Automation.Language
     internal interface IParameterMetadataProvider
     {
         bool HasAnyScriptBlockAttributes();
+
         RuntimeDefinedParameterDictionary GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding);
+
         IEnumerable<Attribute> GetScriptBlockAttributes();
+
         IEnumerable<ExperimentalAttribute> GetExperimentalAttributes();
 
         bool UsesCmdletBinding();
@@ -196,6 +203,19 @@ namespace System.Management.Automation.Language
         /// </exception>
         public object SafeGetValue()
         {
+            return SafeGetValue(skipHashtableSizeCheck: false);
+        }
+
+        /// <summary>
+        /// Constructs the resultant object from the AST and returns it if it is safe.
+        /// </summary>
+        /// <param name="skipHashtableSizeCheck">Set to skip hashtable limit validation.</param>
+        /// <returns>The object represented by the AST as a safe object.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// If <paramref name="extent"/> is deemed unsafe.
+        /// </exception>
+        public object SafeGetValue(bool skipHashtableSizeCheck)
+        {
             try
             {
                 ExecutionContext context = null;
@@ -204,7 +224,7 @@ namespace System.Management.Automation.Language
                     context = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
                 }
 
-                return GetSafeValueVisitor.GetSafeValue(this, context, GetSafeValueVisitor.SafeValueContext.Default);
+                return GetSafeValueVisitor.GetSafeValue(this, context, skipHashtableSizeCheck ? GetSafeValueVisitor.SafeValueContext.SkipHashtableSizeCheck : GetSafeValueVisitor.SafeValueContext.Default);
             }
             catch
             {
@@ -286,6 +306,7 @@ namespace System.Management.Automation.Language
         }
 
         internal abstract object Accept(ICustomAstVisitor visitor);
+
         internal abstract AstVisitAction InternalVisit(AstVisitor visitor);
 
         internal static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
@@ -369,7 +390,7 @@ namespace System.Management.Automation.Language
                 // Nested function isn't really a member of the type so stop looking
                 // Anonymous script blocks are though
                 var functionDefinitionAst = ast as FunctionDefinitionAst;
-                if (functionDefinitionAst != null && !(functionDefinitionAst.Parent is FunctionMemberAst))
+                if (functionDefinitionAst != null && functionDefinitionAst.Parent is not FunctionMemberAst)
                     break;
                 ast = ast.Parent;
             }
@@ -770,6 +791,7 @@ namespace System.Management.Automation.Language
             Utils.EmptyReadOnlyCollection<UsingStatementAst>();
 
         internal bool HadErrors { get; set; }
+
         internal bool IsConfiguration { get; private set; }
 
         internal bool PostParseChecksPerformed { get; set; }
@@ -1227,7 +1249,7 @@ namespace System.Management.Automation.Language
             string script = this.ToString();
             var newScript = new StringBuilder();
 
-            foreach (var ast in astElements.OrderBy(ast => ast.Extent.StartOffset))
+            foreach (var ast in astElements.OrderBy(static ast => ast.Extent.StartOffset))
             {
                 int astStartOffset = ast.Extent.StartOffset - indexOffset;
                 int astEndOffset = ast.Extent.EndOffset - indexOffset;
@@ -1414,7 +1436,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            ExperimentalAttribute GetExpAttributeHelper(AttributeAst attributeAst)
+            static ExperimentalAttribute GetExpAttributeHelper(AttributeAst attributeAst)
             {
                 AttributeAst potentialExpAttr = null;
                 string expAttrTypeName = typeof(ExperimentalAttribute).FullName;
@@ -1545,7 +1567,7 @@ namespace System.Management.Automation.Language
 
             if (ParamBlock != null)
             {
-                usesCmdletBinding = this.ParamBlock.Attributes.Any(attribute => typeof(CmdletBindingAttribute) == attribute.TypeName.GetReflectionAttributeType());
+                usesCmdletBinding = this.ParamBlock.Attributes.Any(static attribute => typeof(CmdletBindingAttribute) == attribute.TypeName.GetReflectionAttributeType());
                 if (!usesCmdletBinding)
                 {
                     usesCmdletBinding = ParamBlockAst.UsesCmdletBinding(ParamBlock.Parameters);
@@ -1581,7 +1603,7 @@ namespace System.Management.Automation.Language
             }
 
             // Make sure all statements are pipelines.
-            if (EndBlock.Statements.Any(ast => !(ast is PipelineAst)))
+            if (EndBlock.Statements.Any(ast => ast is not PipelineAst))
             {
                 errorId = "CanOnlyConvertOnePipeline";
                 errorMsg = AutomationExceptions.CanOnlyConvertOnePipeline;
@@ -1749,7 +1771,7 @@ namespace System.Management.Automation.Language
         /// </exception>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="blockName"/> is not one of the valid kinds for a named block,
-        /// or if <paramref name="unnamed"/> is <c>true</c> and <paramref name="blockName"/> is neither
+        /// or if <paramref name="unnamed"/> is <see langword="true"/> and <paramref name="blockName"/> is neither
         /// <see cref="TokenKind.Process"/> nor <see cref="TokenKind.End"/>.
         /// </exception>
         public NamedBlockAst(IScriptExtent extent, TokenKind blockName, StatementBlockAst statementBlock, bool unnamed)
@@ -2375,7 +2397,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class StatementBlockAst : Ast
     {
-        private static ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
+        private static readonly ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
 
         /// <summary>
         /// Construct a statement block.
@@ -2656,7 +2678,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitTypeDefinition(this) : null;
+            return visitor2?.VisitTypeDefinition(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -2904,7 +2926,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitUsingStatement(this) : null;
+            return visitor2?.VisitUsingStatement(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -3132,7 +3154,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitPropertyMember(this) : null;
+            return visitor2?.VisitPropertyMember(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -3352,7 +3374,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitFunctionMember(this) : null;
+            return visitor2?.VisitFunctionMember(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -3444,7 +3466,7 @@ namespace System.Management.Automation.Language
             if (ReturnType == null)
                 return true;
             var typeName = ReturnType.TypeName as TypeName;
-            return typeName == null ? false : typeName.IsType(typeof(void));
+            return typeName != null && typeName.IsType(typeof(void));
         }
 
         internal Type GetReturnType()
@@ -3732,7 +3754,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(
                     usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
                     "Caller makes sure the value passed in is not null or empty.");
-                orderedUsingVars = usingVariablesTuple.Item1.OrderBy(varAst => varAst.Extent.StartOffset).GetEnumerator();
+                orderedUsingVars = usingVariablesTuple.Item1.OrderBy(static varAst => varAst.Extent.StartOffset).GetEnumerator();
                 additionalNewUsingParams = usingVariablesTuple.Item2;
             }
 
@@ -3756,7 +3778,7 @@ namespace System.Management.Automation.Language
                 separator = ", ";
             }
 
-            sb.Append(")");
+            sb.Append(')');
             sb.Append(Environment.NewLine);
 
             return sb.ToString();
@@ -3829,7 +3851,7 @@ namespace System.Management.Automation.Language
 
         ReadOnlyCollection<ParameterAst> IParameterMetadataProvider.Parameters
         {
-            get { return Parameters ?? (Body.ParamBlock != null ? Body.ParamBlock.Parameters : null); }
+            get { return Parameters ?? (Body.ParamBlock?.Parameters); }
         }
 
         PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
@@ -4019,7 +4041,7 @@ namespace System.Management.Automation.Language
             {
                 this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(commandsAllowed.ToArray());
                 SetParents(CommandsAllowed);
-                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(ast => !(ast is StringConstantExpressionAst));
+                this.HasNonConstantAllowedCommand = CommandsAllowed.Any(static ast => ast is not StringConstantExpressionAst);
             }
             else
             {
@@ -5879,7 +5901,7 @@ namespace System.Management.Automation.Language
         public string GetCommandName()
         {
             var name = CommandElements[0] as StringConstantExpressionAst;
-            return name != null ? name.Value : null;
+            return name?.Value;
         }
 
         /// <summary>
@@ -6422,7 +6444,7 @@ namespace System.Management.Automation.Language
             {
                 LCurlyToken = this.LCurlyToken,
                 ConfigurationToken = this.ConfigurationToken,
-                CustomAttributes = this.CustomAttributes == null ? null : this.CustomAttributes.Select(e => (AttributeAst)e.Copy())
+                CustomAttributes = this.CustomAttributes?.Select(static e => (AttributeAst)e.Copy())
             };
         }
 
@@ -6431,7 +6453,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitConfigurationDefinition(this) : null;
+            return visitor2?.VisitConfigurationDefinition(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -6463,7 +6485,9 @@ namespace System.Management.Automation.Language
         #region Internal methods/properties
 
         internal Token LCurlyToken { get; set; }
+
         internal Token ConfigurationToken { get; set; }
+
         internal IEnumerable<AttributeAst> CustomAttributes { get; set; }
 
         /// <summary>
@@ -6521,7 +6545,7 @@ namespace System.Management.Automation.Language
             cea.Add(new CommandParameterAst(PositionUtilities.EmptyExtent, "ResourceModuleTuplesToImport", new ConstantExpressionAst(PositionUtilities.EmptyExtent, resourceModulePairsToImport), PositionUtilities.EmptyExtent));
 
             var scriptBlockBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes?.Select(static att => (AttributeAst)att.Copy()).ToList(),
                 null,
                 new StatementBlockAst(Body.Extent, resourceBody, null),
                 false, false);
@@ -6554,9 +6578,9 @@ namespace System.Management.Automation.Language
             //        )
             //
             var attribAsts =
-                ConfigurationBuildInParameterAttribAsts.Select(attribAst => (AttributeAst)attribAst.Copy()).ToList();
+                ConfigurationBuildInParameterAttribAsts.Select(static attribAst => (AttributeAst)attribAst.Copy()).ToList();
 
-            var paramAsts = ConfigurationBuildInParameters.Select(paramAst => (ParameterAst)paramAst.Copy()).ToList();
+            var paramAsts = ConfigurationBuildInParameters.Select(static paramAst => (ParameterAst)paramAst.Copy()).ToList();
 
             // the parameters defined in the configuration keyword will be combined with above parameters
             // it will be used to construct $ArgsToBody in the set-item created function boby using below statement
@@ -6567,7 +6591,7 @@ namespace System.Management.Automation.Language
             //         $Outputpath = $psboundparameters[""Outputpath""]
             if (Body.ScriptBlock.ParamBlock != null)
             {
-                paramAsts.AddRange(Body.ScriptBlock.ParamBlock.Parameters.Select(parameterAst => (ParameterAst)parameterAst.Copy()));
+                paramAsts.AddRange(Body.ScriptBlock.ParamBlock.Parameters.Select(static parameterAst => (ParameterAst)parameterAst.Copy()));
             }
 
             var paramBlockAst = new ParamBlockAst(this.Extent, attribAsts, paramAsts);
@@ -6575,12 +6599,12 @@ namespace System.Management.Automation.Language
             var cmdAst = new CommandAst(this.Extent, cea, TokenKind.Unknown, null);
 
             var pipeLineAst = new PipelineAst(this.Extent, cmdAst, background: false);
-            var funcStatements = ConfigurationExtraParameterStatements.Select(statement => (StatementAst)statement.Copy()).ToList();
+            var funcStatements = ConfigurationExtraParameterStatements.Select(static statement => (StatementAst)statement.Copy()).ToList();
             funcStatements.Add(pipeLineAst);
             var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
 
             var funcBody = new ScriptBlockAst(Body.Extent,
-                CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
+                CustomAttributes?.Select(static att => (AttributeAst)att.Copy()).ToList(),
                 paramBlockAst, statmentBlockAst, false, true);
             var funcBodyExp = new ScriptBlockExpressionAst(this.Extent, funcBody);
 
@@ -6898,7 +6922,7 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitDynamicKeywordStatement(this) : null;
+            return visitor2?.VisitDynamicKeywordStatement(this);
         }
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
@@ -6945,10 +6969,15 @@ namespace System.Management.Automation.Language
         private DynamicKeyword _keyword;
 
         internal Token LCurly { get; set; }
+
         internal Token FunctionName { get; set; }
+
         internal ExpressionAst InstanceName { get; set; }
+
         internal ExpressionAst OriginalInstanceName { get; set; }
+
         internal ExpressionAst BodyExpression { get; set; }
+
         internal string ElementName { get; set; }
 
         private PipelineAst _commandCallPipelineAst;
@@ -7213,8 +7242,7 @@ namespace System.Management.Automation.Language
                 PSTraceSource.NewInvalidOperationException();
             }
 
-            var commandExpr = this.Parent as CommandExpressionAst;
-            if (commandExpr == null)
+            if (!(this.Parent is CommandExpressionAst commandExpr))
             {
                 return false;
             }
@@ -7726,8 +7754,7 @@ namespace System.Management.Automation.Language
             var attributes = GetAttributes();
             var assignableValue = GetActualAssignableAst().GetAssignableValue();
 
-            var variableExpr = assignableValue as VariableExpressionAst;
-            if (variableExpr == null)
+            if (!(assignableValue is VariableExpressionAst variableExpr))
             {
                 return assignableValue.SetValue(compiler, Compiler.ConvertValue(rhs, attributes));
             }
@@ -8105,13 +8132,14 @@ namespace System.Management.Automation.Language
         internal override object Accept(ICustomAstVisitor visitor)
         {
             var visitor2 = visitor as ICustomAstVisitor2;
-            return visitor2 != null ? visitor2.VisitBaseCtorInvokeMemberExpression(this) : null;
+            return visitor2?.VisitBaseCtorInvokeMemberExpression(this);
         }
     }
 
     /// <summary>
     /// The name and attributes of a type.
     /// </summary>
+#nullable enable
     public interface ITypeName
     {
         /// <summary>
@@ -8127,7 +8155,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly, if specified, otherwise null.
         /// </summary>
-        string AssemblyName { get; }
+        string? AssemblyName { get; }
 
         /// <summary>
         /// Returns true if the type names an array, false otherwise.
@@ -8142,25 +8170,28 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
         /// </summary>
-        Type GetReflectionType();
+        Type? GetReflectionType();
 
         /// <summary>
         /// Assuming the typename is an attribute, returns the <see cref="System.Type"/> that this typename represents.
         /// By convention, the typename may omit the suffix "Attribute".  Lookup will attempt to resolve the type as is,
         /// and if that fails, the suffix "Attribute" will be appended.
         /// </summary>
-        Type GetReflectionAttributeType();
+        Type? GetReflectionAttributeType();
 
         /// <summary>
         /// The extent of the typename.
         /// </summary>
         IScriptExtent Extent { get; }
     }
+#nullable restore
 
+#nullable enable
     internal interface ISupportsTypeCaching
     {
-        Type CachedType { get; set; }
+        Type? CachedType { get; set; }
     }
+#nullable restore
 
     /// <summary>
     /// A simple type that is not an array or does not have generic arguments.
@@ -8371,8 +8402,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as TypeName;
-            if (other == null)
+            if (!(obj is TypeName other))
                 return false;
 
             if (!_name.Equals(other._name, StringComparison.OrdinalIgnoreCase))
@@ -8690,8 +8720,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as GenericTypeName;
-            if (other == null)
+            if (!(obj is GenericTypeName other))
                 return false;
 
             if (!TypeName.Equals(other.TypeName))
@@ -8916,8 +8945,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ArrayTypeName;
-            if (other == null)
+            if (!(obj is ArrayTypeName other))
                 return false;
 
             return ElementType.Equals(other.ElementType) && Rank == other.Rank;
@@ -9018,8 +9046,7 @@ namespace System.Management.Automation.Language
         /// <summary/>
         public override bool Equals(object obj)
         {
-            var other = obj as ReflectionTypeName;
-            if (other == null)
+            if (!(obj is ReflectionTypeName other))
                 return false;
             return _type == other._type;
         }
@@ -9239,6 +9266,7 @@ namespace System.Management.Automation.Language
         internal int TupleIndex { get; set; } = VariableAnalysis.Unanalyzed;
 
         internal bool Automatic { get; set; }
+
         internal bool Assigned { get; set; }
 
         IAssignableValue ISupportsAssignment.GetAssignableValue()

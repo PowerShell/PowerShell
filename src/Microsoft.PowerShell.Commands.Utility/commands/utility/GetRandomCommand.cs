@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("max");
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new ArgumentException(string.Format(
                     CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, minValue, maxValue)),
                 "MinGreaterThanOrEqualMax",
@@ -109,10 +109,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Random generator state
 
-        private static ReaderWriterLockSlim s_runspaceGeneratorMapLock = new ReaderWriterLockSlim();
+        private static readonly ReaderWriterLockSlim s_runspaceGeneratorMapLock = new();
 
         // 1-to-1 mapping of runspaces and random number generators
-        private static Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new Dictionary<Guid, PolymorphicRandomNumberGenerator>();
+        private static readonly Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new();
 
         private static void CurrentRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
         {
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = RandomNumberParameterSet)]
         public object Minimum { get; set; }
 
-        private bool IsInt(object o)
+        private static bool IsInt(object o)
         {
             if (o == null || o is int)
             {
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private bool IsInt64(object o)
+        private static bool IsInt64(object o)
         {
             if (o == null || o is Int64)
             {
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private object ProcessOperand(object o)
+        private static object ProcessOperand(object o)
         {
             if (o == null)
             {
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
             return baseObject;
         }
 
-        private double ConvertToDouble(object o, double defaultIfNull)
+        private static double ConvertToDouble(object o, double defaultIfNull)
         {
             if (o == null)
             {
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     double r = Generator.NextDouble();
                     randomNumber = minValue + r * diff;
-                    diff = diff * r;
+                    diff *= r;
                 }
                 while (randomNumber >= maxValue);
             }
@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
     internal class PolymorphicRandomNumberGenerator
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PolymorphicRandomNumberGenerator"/> class.
         /// </summary>
         public PolymorphicRandomNumberGenerator()
         {
@@ -597,8 +597,8 @@ namespace Microsoft.PowerShell.Commands
             _pseudoGenerator = new Random(seed);
         }
 
-        private Random _pseudoGenerator = null;
-        private RandomNumberGenerator _cryptographicGenerator = null;
+        private readonly Random _pseudoGenerator = null;
+        private readonly RandomNumberGenerator _cryptographicGenerator = null;
 
         /// <summary>
         /// Generates a random floating-point number that is greater than or equal to 0.0, and less than 1.0.

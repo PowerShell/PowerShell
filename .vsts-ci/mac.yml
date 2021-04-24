@@ -25,10 +25,13 @@ pr:
     include:
     - '*'
     exclude:
-    - test/common/markdown/*
-    - .vsts-ci/misc-analysis.yml
-    - .github/ISSUE_TEMPLATE/*
     - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - /.vsts-ci/windows.yml
+    - /.vsts-ci/windows/*
+    - test/common/markdown/*
+    - tools/packaging/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 
@@ -92,6 +95,10 @@ stages:
       vmImage: macOS-latest
     steps:
     - pwsh: |
+        # Remove old .NET SDKs
+        if (Test-Path -Path $HOME/.dotnet) {
+            Remove-Item $HOME/.dotnet -Recurse -Force
+        }
         Import-Module .\tools\ci.psm1
         New-CodeCoverageAndTestPackage
       displayName: CodeCoverage and Test Package

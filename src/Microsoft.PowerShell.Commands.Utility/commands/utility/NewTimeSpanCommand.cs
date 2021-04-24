@@ -68,25 +68,25 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the day.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Days { get; set; } = 0;
+        public int Days { get; set; }
 
         /// <summary>
         /// Allows the user to override the hour.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Hours { get; set; } = 0;
+        public int Hours { get; set; }
 
         /// <summary>
         /// Allows the user to override the minute.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Minutes { get; set; } = 0;
+        public int Minutes { get; set; }
 
         /// <summary>
         /// Allows the user to override the second.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Seconds { get; set; } = 0;
+        public int Seconds { get; set; }
 
         #endregion
 

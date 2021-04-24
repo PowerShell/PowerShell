@@ -53,9 +53,9 @@
     <!-- Set properties for add/remove programs -->
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
     <!-- custom images -->
-    <WixVariable Id="WixUIBannerBmp" Value="assets\WixUIBannerBmp.png" />
-    <WixVariable Id="WixUIDialogBmp" Value="assets\WixUIDialogBmp.png" />
-    <WixVariable Id="WixUIExclamationIco" Value="assets\WixUIInfoIco.png" />
+    <WixVariable Id="WixUIBannerBmp" Value="assets\wix\WixUIBannerBmp.png" />
+    <WixVariable Id="WixUIDialogBmp" Value="assets\wix\WixUIDialogBmp.png" />
+    <WixVariable Id="WixUIExclamationIco" Value="assets\wix\WixUIInfoIco.png" />
     <WixVariable Id="WixUIInfoIco" Value="assets\ps_black_32x32.ico" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(var.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->

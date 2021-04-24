@@ -53,6 +53,8 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         $msiX64Path = $env:PsMsiX64Path
+        $channel = $env:PSMsiChannel
+        $runtime = $env:PSMsiRuntime
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -82,12 +84,29 @@ Describe -Name "Windows MSI" -Fixture {
 
     Context "Upgrade code" {
         BeforeAll {
-            $previewUpgladeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+            Write-Verbose "cr-$channel-$runtime" -Verbose
+            switch ("$channel-$runtime") {
+                "preview-win7-x64" {
+                    $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+                }
+                "stable-win7-x64" {
+                    $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
+                }
+                "preview-win7-x86" {
+                    $msiUpgradeCode = '86abcfbd-1ccc-4a88-b8b2-0facfde29094'
+                }
+                "stable-win7-x86" {
+                    $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
+                }
+                default {
+                    throw "'$_' not a valid channel runtime combination"
+                }
+            }
         }
 
-        It "Preview MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
-            $result.Count | Should -Be 0 -Because 'Query should return nothing if preview x64 is not installed'
+        It "$Channel MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
+            $result.Count | Should -Be 0 -Because "Query should return nothing if $channel $runtime is not installed"
         }
 
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
@@ -97,8 +116,8 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
-            $result.Count | Should -Be 1 -Because 'Query should return 1 result if Upgrade code is for x64 preview'
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
+            $result.Count | Should -Be 1 -Because "Query should return 1 result if Upgrade code is for $runtime $channel"
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
@@ -117,7 +136,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "MSI should have not be updated path" -Skip:(!(Test-Elevated)) {
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
+                Where-Object { $_ -like '*files\powershell*' -and $_ -notin $beforePath }
 
             $psPath | Should -BeNullOrEmpty
         }
@@ -137,8 +156,20 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "MSI should have updated path" -Skip:(!(Test-Elevated)) {
+            if ($channel -eq 'preview') {
+                $pattern = '*files*\powershell*\preview*'
+            } else {
+                $pattern = '*files*\powershell*'
+            }
+
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -like '*files\powershell*\preview*' -and $_ -notin $beforePath}
+            Where-Object { $_ -like $pattern -and $_ -notin $beforePath }
+
+            if (!$psPath) {
+                ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
+                Where-Object { $_ -notin $beforePath } |
+                ForEach-Object { Write-Verbose -Verbose $_ }
+            }
 
             $psPath | Should -Not -BeNullOrEmpty
         }

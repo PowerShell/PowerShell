@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -19,7 +18,7 @@ namespace Microsoft.PowerShell
         /// string fields at all, nothing is lost.
         /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct StartUpInfo
+        internal readonly struct StartUpInfo
         {
             public readonly UInt32 cb;
             private readonly IntPtr lpReserved;
@@ -58,6 +57,7 @@ namespace Microsoft.PowerShell
                 uint fFlags);
 
             void GetIDList(out IntPtr ppidl);
+
             void SetIDList(IntPtr pidl);
 
             void GetDescription(
@@ -83,8 +83,11 @@ namespace Microsoft.PowerShell
                 [MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
 
             void GetHotKey(out short wHotKey);
+
             void SetHotKey(short wHotKey);
+
             void GetShowCmd(out uint iShowCmd);
+
             void SetShowCmd(uint iShowCmd);
 
             void GetIconLocation(
@@ -138,7 +141,7 @@ namespace Microsoft.PowerShell
             /// <param name="pv"></param>
             /// <returns></returns>
             [PreserveSig]
-            HResult GetValue([In] ref PropertyKey key, [Out] PropVariant pv);
+            HResult GetValue([In] in PropertyKey key, [Out] PropVariant pv);
 
             /// <summary>
             /// Sets the value of a property in the store.
@@ -147,7 +150,7 @@ namespace Microsoft.PowerShell
             /// <param name="pv"></param>
             /// <returns></returns>
             [PreserveSig]
-            HResult SetValue([In] ref PropertyKey key, [In] PropVariant pv);
+            HResult SetValue([In] in PropertyKey key, [In] PropVariant pv);
 
             /// <summary>
             /// Commits the changes.
@@ -235,6 +238,7 @@ namespace Microsoft.PowerShell
                 [MarshalAs(UnmanagedType.Interface)] IObjectArray poaSource);
 
             void RemoveObject(uint uiIndex);
+
             void Clear();
         }
 
@@ -253,6 +257,7 @@ namespace Microsoft.PowerShell
             Int32 RemoveDataBlock(UInt32 dwSig);
 
             void GetFlags(out uint pdwFlags);
+
             void SetFlags(uint dwFlags);
         }
 

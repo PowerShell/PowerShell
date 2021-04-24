@@ -83,7 +83,10 @@ namespace System.Management.Automation
                 return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
 
-            set { _debugTraceLevel = value; }
+            set
+            {
+                _debugTraceLevel = value;
+            }
         }
 
         private int _debugTraceLevel;
@@ -100,7 +103,10 @@ namespace System.Management.Automation
                 return !IgnoreScriptDebug && _debugTraceStep;
             }
 
-            set { _debugTraceStep = value; }
+            set
+            {
+                _debugTraceStep = value;
+            }
         }
 
         private bool _debugTraceStep;
@@ -113,9 +119,7 @@ namespace System.Management.Automation
                 context = LocalPipeline.GetExecutionContextFromTLS();
             }
 
-            return (context != null)
-                       ? context.IsStrictVersion(majorVersion)
-                       : false;
+            return (context != null) && context.IsStrictVersion(majorVersion);
         }
         /// <summary>
         /// Check to see a specific version of strict mode is enabled.  The check is always scoped,
@@ -172,7 +176,7 @@ namespace System.Management.Automation
         /// trace flag.
         /// </summary>
         /// <value>The current state of the IgnoreScriptDebug flag.</value>
-        internal bool IgnoreScriptDebug { set; get; } = true;
+        internal bool IgnoreScriptDebug { get; set; } = true;
 
         /// <summary>
         /// Gets the automation engine instance.
@@ -426,7 +430,7 @@ namespace System.Management.Automation
             if (baseValue != null && baseValue != NullString.Value)
             {
                 // It's actually setting a key value pair when the key doesn't exist
-                UntrustedObjects.GetValue(baseValue, key => null);
+                UntrustedObjects.GetValue(baseValue, static key => null);
 
                 try
                 {
@@ -488,7 +492,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return InitialSessionState != null ? InitialSessionState.UseFullLanguageModeInDebugger : false;
+                return InitialSessionState != null && InitialSessionState.UseFullLanguageModeInDebugger;
             }
         }
 
@@ -666,7 +670,7 @@ namespace System.Management.Automation
         /// <value></value>
         internal HelpSystem HelpSystem
         {
-            get { return _helpSystem ?? (_helpSystem = new HelpSystem(this)); }
+            get { return _helpSystem ??= new HelpSystem(this); }
         }
 
         private HelpSystem _helpSystem;
@@ -679,6 +683,7 @@ namespace System.Management.Automation
         #endregion
 
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
         /// <summary>
@@ -744,7 +749,7 @@ namespace System.Management.Automation
         /// </summary>
         internal EngineIntrinsics EngineIntrinsics
         {
-            get { return _engineIntrinsics ?? (_engineIntrinsics = new EngineIntrinsics(this)); }
+            get { return _engineIntrinsics ??= new EngineIntrinsics(this); }
         }
 
         private EngineIntrinsics _engineIntrinsics;
@@ -772,11 +777,11 @@ namespace System.Management.Automation
 
         internal class SavedContextData
         {
-            private bool _stepScript;
-            private bool _ignoreScriptDebug;
-            private int _PSDebug;
+            private readonly bool _stepScript;
+            private readonly bool _ignoreScriptDebug;
+            private readonly int _PSDebug;
 
-            private Pipe _shellFunctionErrorOutputPipe;
+            private readonly Pipe _shellFunctionErrorOutputPipe;
 
             public SavedContextData(ExecutionContext context)
             {
@@ -875,7 +880,7 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord == null && !(obj is Exception))
+            if (objAsErrorRecord == null && obj is not Exception)
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
@@ -906,7 +911,7 @@ namespace System.Management.Automation
             const int maxErrorCount = 256;
 
             int numToErase = arraylist.Count - (maxErrorCount - 1);
-            if (0 < numToErase)
+            if (numToErase > 0)
             {
                 arraylist.RemoveRange(
                     maxErrorCount - 1,
@@ -1637,7 +1642,7 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
-        private static object lockObject = new object();
+        private static readonly object lockObject = new object();
 
 #if !CORECLR // System.AppDomain is not in CoreCLR
         private static bool _assemblyEventHandlerSet = false;
@@ -1698,5 +1703,5 @@ namespace System.Management.Automation
         /// Engine is stopped.
         /// </summary>
         Stopped = 4
-    };
+    }
 }

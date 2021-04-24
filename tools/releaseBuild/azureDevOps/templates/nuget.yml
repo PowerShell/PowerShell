@@ -12,17 +12,37 @@ jobs:
   timeoutInMinutes: 90
 
   variables:
-    runCodesignValidationInjection: false
-    GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
-    PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
-    winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
-    winFxdWinDesktopPath: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
-    linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: build
+      value: ${{ parameters.buildName }}
+    - group: ESRP
+    - name: GenAPIToolPath
+      value: '$(System.ArtifactsDirectory)/GenAPI'
+    - name: PackagePath
+      value: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
+    - name: winFxdPath
+      value: '$(System.ArtifactsDirectory)/winFxd'
+    - name: winFxdWinDesktopPath
+      value: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
+    - name: linuxFxdPath
+      value: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
+  - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
+    clean: true
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
-      $content = Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json
+      $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
       $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
       Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
@@ -88,8 +108,9 @@ jobs:
     displayName: 'Install NuGet.exe'
 
   - powershell: |
-      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
-      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
+      Import-Module $env:REPOROOT\build.psm1
+      Import-Module $env:REPOROOT\tools\packaging
+      Find-Dotnet
       New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
 
@@ -100,9 +121,9 @@ jobs:
     displayName: Capture fxd folders
 
   - powershell: |
-      Import-Module $env:BUILD_SOURCESDIRECTORY\build.psm1
-      Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
-
+      Import-Module $env:REPOROOT\build.psm1
+      Import-Module $env:REPOROOT\tools\packaging
+      Find-Dotnet
       # Create unified package first
       New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
 
@@ -114,28 +135,16 @@ jobs:
       Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
-  - powershell: |
-      $packages = Get-ChildItem "$(PackagePath)\*.nupkg", "$(PackagePath)\globaltool\*.nupkg" | Select-Object -ExpandProperty FullName
-
-      if($packages.Count -lt 1)
-      {
-          throw "No packages created"
-      }
-
-      $(Build.SourcesDirectory)\tools\releaseBuild\generatePackgeSigning.ps1 -Path $(PackagePath)\NugetSigning.xml -NuPkgFiles $packages
-    displayName: Create signing file
-
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign Nuget Packages'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(PackagePath)\NugetSigning.xml'
-      inPathRoot: '$(PackagePath)'
-      outPathRoot: '$(System.ArtifactsDirectory)\signed'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(PackagePath)
+        signOutputPath: $(System.ArtifactsDirectory)\signed
+        certificateId: "CP-401405"
+        pattern: |
+          **\*.nupkg
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign NuPkg
 
   - pwsh: |
       if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
@@ -145,7 +154,7 @@ jobs:
     condition: eq(variables['SHOULD_SIGN'], 'false')
 
   - powershell: |
-      Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
+      Import-Module "${env:REPOROOT}\build.psm1" -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
     condition: eq(variables['SHOULD_SIGN'], 'true')

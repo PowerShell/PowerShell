@@ -2,11 +2,40 @@ parameters:
   ReleaseTagVar: v6.2.0
   ReleaseTagVarName: ReleaseTagVar
   CreateJson: 'no'
+  UseJson: 'yes'
 
 steps:
+- ${{ if eq(parameters['UseJson'],'yes') }}:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: 'BuildInfoJson'
+      itemPattern: '**/*.json'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: Download Build Info Json
+
 - powershell: |
-    $createJson = ("${{ parameters.ReleaseTagVarName }}" -ne "no")
-    $releaseTag = tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
+    $path = "./build.psm1"
+
+    if(Test-Path -Path $path)
+    {
+      $vstsCommandString = "vso[task.setvariable variable=repoRoot]."
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    }
+    else{
+      $path = "./PowerShell/build.psm1"
+      if(Test-Path -Path $path)
+      {
+        $vstsCommandString = "vso[task.setvariable variable=repoRoot]./PowerShell"
+        Write-Host ("sending " + $vstsCommandString)
+        Write-Host "##$vstsCommandString"
+      }
+    }
+  displayName: 'Set repo Root'
+
+- powershell: |
+    $createJson = ("${{ parameters.CreateJson }}" -ne "no")
+    $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"
     Write-Host ("sending " + $vstsCommandString)

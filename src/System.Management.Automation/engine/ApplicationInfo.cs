@@ -52,7 +52,7 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
         #endregion ctor
 
         /// <summary>
@@ -113,7 +113,10 @@ namespace System.Management.Automation
                 return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>

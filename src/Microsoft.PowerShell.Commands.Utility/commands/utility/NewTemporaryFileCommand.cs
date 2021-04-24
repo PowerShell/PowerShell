@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.IO;
 using System.Management.Automation;
 
@@ -41,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    FileInfo file = new FileInfo(filePath);
+                    FileInfo file = new(filePath);
                     WriteObject(file);
                 }
             }

@@ -25,12 +25,19 @@ namespace System.Management.Automation.Language
         }
 
         public int BitIndex { get; set; }
+
         public int LocalTupleIndex { get; set; }
+
         public Type Type { get; set; }
+
         public string Name { get; set; }
+
         public bool Automatic { get; set; }
+
         public bool PreferenceVariable { get; set; }
+
         public bool Assigned { get; set; }
+
         public List<Ast> AssociatedAsts { get; }
     }
 
@@ -103,7 +110,7 @@ namespace System.Management.Automation.Language
                 visitor.VisitParameters(ast.Parameters);
             }
 
-            localsAllocated = visitor._variables.Count(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
+            localsAllocated = visitor._variables.Count(static details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
             return visitor._variables;
         }
 
@@ -495,7 +502,7 @@ namespace System.Management.Automation.Language
 
         internal static bool AnyVariablesCouldBeAllScope(Dictionary<string, int> variableNames)
         {
-            return variableNames.Any(keyValuePair => s_allScopeVariables.ContainsKey(keyValuePair.Key));
+            return variableNames.Any(static keyValuePair => s_allScopeVariables.ContainsKey(keyValuePair.Key));
         }
 
         private Dictionary<string, VariableAnalysisDetails> _variables;
@@ -574,7 +581,7 @@ namespace System.Management.Automation.Language
         {
             VariableAnalysis va = (new VariableAnalysis());
             va.AnalyzeImpl(ast, false, false);
-            return va._exitBlock._predecessors.All(b => b._returns || b._throws || b._unreachable);
+            return va._exitBlock._predecessors.All(static b => b._returns || b._throws || b._unreachable);
         }
 
         private Tuple<Type, Dictionary<string, int>> AnalyzeImpl(IParameterMetadataProvider ast, bool disableOptimizations, bool scriptCmdlet)
@@ -626,7 +633,7 @@ namespace System.Management.Automation.Language
                         var varName = GetUnaliasedVariableName(variablePath);
                         var details = _variables[varName];
                         details.Assigned = true;
-                        type = type ?? details.Type ?? typeof(object);
+                        type ??= details.Type ?? typeof(object);
 
                         // automatic and preference variables are pre-allocated, so they can't be unallocated
                         // and forced to be dynamic.
@@ -1449,13 +1456,13 @@ namespace System.Management.Automation.Language
 
         public object VisitBreakStatement(BreakStatementAst breakStatementAst)
         {
-            BreakOrContinue(breakStatementAst.Label, t => t.BreakTarget);
+            BreakOrContinue(breakStatementAst.Label, static t => t.BreakTarget);
             return null;
         }
 
         public object VisitContinueStatement(ContinueStatementAst continueStatementAst)
         {
-            BreakOrContinue(continueStatementAst.Label, t => t.ContinueTarget);
+            BreakOrContinue(continueStatementAst.Label, static t => t.ContinueTarget);
             return null;
         }
 

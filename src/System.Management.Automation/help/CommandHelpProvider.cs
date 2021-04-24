@@ -48,7 +48,7 @@ namespace System.Management.Automation
             s_engineModuleHelpFileCache.Add("Microsoft.WSMan.Management", "Microsoft.Wsman.Management.dll-Help.xml");
         }
 
-        private static Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
 
         private readonly ExecutionContext _context;
 
@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
         #region Help Provider Interface
 
-        private void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
+        private static void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -132,7 +132,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string GetHelpName(CommandInfo commandInfo)
+        private static string GetHelpName(CommandInfo commandInfo)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -765,9 +765,7 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
-
-            if (commandHelpInfo == null)
+            if (!(helpInfo is MamlCommandHelpInfo commandHelpInfo))
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);
@@ -1024,7 +1022,7 @@ namespace System.Management.Automation
             {
                 if (decoratedSearch)
                 {
-                    if (target.IndexOf(StringLiterals.CommandVerbNounSeparator) >= 0)
+                    if (target.Contains(StringLiterals.CommandVerbNounSeparator))
                     {
                         patternList.Add(target + "*");
                     }
@@ -1173,7 +1171,7 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & commandInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & commandInfo.HelpCategory) == 0)
             {
                 return false;
             }
@@ -1252,7 +1250,7 @@ namespace System.Management.Automation
         /// <returns>The result helpInfo objects after processing.</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            HelpCategory categoriesHandled = (HelpCategory.Alias
+            const HelpCategory categoriesHandled = (HelpCategory.Alias
                 | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand);
 
             if ((helpInfo.HelpCategory & categoriesHandled) != 0)

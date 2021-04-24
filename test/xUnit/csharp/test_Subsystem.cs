@@ -95,10 +95,12 @@ namespace PSTests.Sequential
                 Assert.Null(impl.FunctionsToDefine);
                 Assert.Equal(SubsystemKind.CommandPredictor, impl.Kind);
 
-                var predCxt = PredictionContext.Create("Hello world");
-                var results = impl.GetSuggestion(predCxt, CancellationToken.None);
-                Assert.Equal($"Hello world TEST-1 from {impl.Name}", results[0].SuggestionText);
-                Assert.Equal($"Hello world TeSt-2 from {impl.Name}", results[1].SuggestionText);
+                const string Client = "SubsystemTest";
+                const string Input = "Hello world";
+                var predCxt = PredictionContext.Create(Input);
+                var results = impl.GetSuggestion(Client, predCxt, CancellationToken.None);
+                Assert.Equal($"'{Input}' from '{Client}' - TEST-1 from {impl.Name}", results.SuggestionEntries[0].SuggestionText);
+                Assert.Equal($"'{Input}' from '{Client}' - TeSt-2 from {impl.Name}", results.SuggestionEntries[1].SuggestionText);
 
                 // Now validate the all-subsystem-implementation collection.
                 ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();

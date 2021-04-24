@@ -20,18 +20,18 @@ namespace System.Management.Automation
         #region Private Members
 
         private PowerShell _powershell;
-        private bool _addToHistory;
+        private readonly bool _addToHistory;
         private bool _isNested;
         private bool _isSteppable;
-        private Runspace _runspace;
-        private object _syncRoot = new object();
+        private readonly Runspace _runspace;
+        private readonly object _syncRoot = new object();
         private bool _disposed = false;
         private string _historyString;
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
-        private CommandCollection _commands = new CommandCollection();
-        private string _computerName;
-        private Guid _runspaceId;
-        private ConnectCommandInfo _connectCmdInfo = null;
+        private readonly CommandCollection _commands = new CommandCollection();
+        private readonly string _computerName;
+        private readonly Guid _runspaceId;
+        private readonly ConnectCommandInfo _connectCmdInfo = null;
 
         /// <summary>
         /// This is queue of all the state change event which have occured for
@@ -56,7 +56,7 @@ namespace System.Management.Automation
             public RunspaceAvailability NewRunspaceAvailability;
         }
 
-        private bool _performNestedCheck = true;
+        private readonly bool _performNestedCheck = true;
 
         #endregion Private Members
 
@@ -161,8 +161,12 @@ namespace System.Management.Automation
         /// <param name="pipeline">Pipeline to clone from.</param>
         /// <remarks>This constructor is private because this will
         /// only be called from the copy method</remarks>
-        private RemotePipeline(RemotePipeline pipeline) :
-            this((RemoteRunspace)pipeline.Runspace, null, false, pipeline.IsNested)
+        private RemotePipeline(RemotePipeline pipeline)
+            : this(
+                (RemoteRunspace)pipeline.Runspace,
+                command: null,
+                addToHistory: false,
+                pipeline.IsNested)
         {
             _isSteppable = pipeline._isSteppable;
 
@@ -360,12 +364,12 @@ namespace System.Management.Automation
         // Stream and Collection go together...a stream wraps
         // a corresponding collection to support
         // streaming behavior of the pipeline.
-        private PSDataCollection<PSObject> _outputCollection;
-        private PSDataCollectionStream<PSObject> _outputStream;
-        private PSDataCollection<ErrorRecord> _errorCollection;
-        private PSDataCollectionStream<ErrorRecord> _errorStream;
-        private PSDataCollection<object> _inputCollection;
-        private PSDataCollectionStream<object> _inputStream;
+        private readonly PSDataCollection<PSObject> _outputCollection;
+        private readonly PSDataCollectionStream<PSObject> _outputStream;
+        private readonly PSDataCollection<ErrorRecord> _errorCollection;
+        private readonly PSDataCollectionStream<ErrorRecord> _errorStream;
+        private readonly PSDataCollection<object> _inputCollection;
+        private readonly PSDataCollectionStream<object> _inputStream;
 
         /// <summary>
         /// Stream for providing input to PipelineProcessor. Host will write on
@@ -1048,7 +1052,7 @@ namespace System.Management.Automation
             RemotePipeline currentPipeline =
                 (RemotePipeline)((RemoteRunspace)_runspace).GetCurrentlyRunningPipeline();
 
-            if (_isNested == false)
+            if (!_isNested)
             {
                 if (currentPipeline == null &&
                     ((RemoteRunspace)_runspace).RunspaceAvailability != RunspaceAvailability.Busy &&
@@ -1093,7 +1097,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (syncCall == false)
+                    if (!syncCall)
                     {
                         throw PSTraceSource.NewInvalidOperationException(
                                 RunspaceStrings.NestedPipelineInvokeAsync);

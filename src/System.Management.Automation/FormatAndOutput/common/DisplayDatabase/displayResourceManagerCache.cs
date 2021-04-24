@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal enum LoadingResult { NoError, AssemblyNotFound, ResourceNotFound, StringNotFound }
 
-        internal enum AssemblyBindingStatus { NotFound, FoundInGac, FoundInPath };
+        internal enum AssemblyBindingStatus { NotFound, FoundInGac, FoundInPath }
 
         internal string GetTextTokenString(TextToken tt)
         {
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return retVal;
             }
 
-            private Assembly ResolveAssemblyNameInLoadedAssemblies(string assemblyName, bool fullName)
+            private static Assembly ResolveAssemblyNameInLoadedAssemblies(string assemblyName, bool fullName)
             {
                 Assembly result = null;
 
@@ -216,11 +216,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return result;
             }
 
-            private Hashtable _assemblyReferences = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            private readonly Hashtable _assemblyReferences = new Hashtable(StringComparer.OrdinalIgnoreCase);
         }
 
-        private AssemblyNameResolver _assemblyNameResolver = new AssemblyNameResolver();
-        private Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
+        private readonly AssemblyNameResolver _assemblyNameResolver = new AssemblyNameResolver();
+        private readonly Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
     }
 }
-

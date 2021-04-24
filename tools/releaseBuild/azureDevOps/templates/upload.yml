@@ -8,25 +8,8 @@ parameters:
 steps:
 - template: upload-final-results.yml
   parameters:
-    artifactPath: $(Build.StagingDirectory)\signedPackages
-    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
-    condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
-
-- task: AzureFileCopy@4
-  displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
-  inputs:
-    SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi'
-    azureSubscription: '$(AzureFileCopySubscription)'
-    Destination: AzureBlob
-    storage: '$(StorageAccount)'
-    ContainerName: '$(AzureVersion)'
-    resourceGroup: '$(StorageResourceGroup)'
-  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
-
-- template: upload-final-results.yml
-  parameters:
     artifactPath: $(System.ArtifactsDirectory)\signed
-    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}*.zip
 
 - task: AzureFileCopy@4
   displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
@@ -38,6 +21,34 @@ steps:
     ContainerName: '$(AzureVersion)'
     resourceGroup: '$(StorageResourceGroup)'
   condition: succeeded()
+
+- task: AzureFileCopy@4
+  displayName: 'upload signed min-size package (for Guest Config) to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}-gc.zip'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)-gc'
+    resourceGroup: '$(StorageResourceGroup)'
+  condition: and(eq('${{ parameters.architecture }}', 'x64'), succeeded())
+
+- template: upload-final-results.yml
+  parameters:
+    artifactPath: $(System.ArtifactsDirectory)\signedPackages
+    artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe
+    condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
+
+- task: AzureFileCopy@4
+  displayName: 'upload signed exe to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(System.ArtifactsDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)-private'
+    resourceGroup: '$(StorageResourceGroup)'
+  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 # Disable upload task as the symbols package is not currently used and we want to avoid publishing this in releases
 #- task: AzureFileCopy@4

@@ -1,16 +1,18 @@
 parameters:
   pool: 'Hosted VS2017'
   jobName: 'win_packaging'
+  architecture: 'x64'
+  channel: 'preview'
   parentJobs: []
 
 jobs:
-- job: ${{ parameters.jobName }}
+- job: ${{ parameters.jobName }}_${{ parameters.channel }}_${{ parameters.architecture }}
   dependsOn:
       ${{ parameters.parentJobs }}
   pool:
     name: ${{ parameters.pool }}
 
-  displayName: Windows Packaging
+  displayName: Windows Packaging - ${{ parameters.architecture }} - ${{ parameters.channel }}
 
   steps:
   - powershell: |
@@ -20,15 +22,14 @@ jobs:
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
-  - powershell: |
-      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+  - pwsh: |
       Import-Module .\tools\ci.psm1
-      Invoke-CIInstall
+      Invoke-CIInstall -SkipUser
     displayName: Bootstrap
-    condition: succeededOrFailed()
+    condition: succeeded()
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
-      Invoke-CIFinish -NuGetKey $(NUGET_KEY)
+      Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
     displayName: Build and Test Package

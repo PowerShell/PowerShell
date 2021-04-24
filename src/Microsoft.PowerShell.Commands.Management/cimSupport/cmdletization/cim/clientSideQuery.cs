@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private abstract class CimInstancePropertyBasedFilter : CimInstanceFilterBase
         {
-            private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
+            private readonly List<PropertyValueFilter> _propertyValueFilters = new();
 
             protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
 
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     case BehaviorOnNoMatch.Default:
                     default:
                         return this.PropertyValueFilters
-                                   .Any(f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
+                                   .Any(static f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
                 }
             }
 
@@ -572,8 +572,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var expectedComparable = expectedPropertyValue as IComparable;
-                    if (expectedComparable == null)
+                    if (!(expectedPropertyValue is IComparable expectedComparable))
                     {
                         return false;
                     }
@@ -608,8 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var actualComparable = actualPropertyValue as IComparable;
-                    if (actualComparable == null)
+                    if (!(actualPropertyValue is IComparable actualComparable))
                     {
                         return false;
                     }
@@ -626,8 +624,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private int _numberOfResultsFromMi;
         private int _numberOfMatchingResults;
 
-        private readonly List<CimInstanceFilterBase> _filters = new List<CimInstanceFilterBase>();
-        private readonly object _myLock = new object();
+        private readonly List<CimInstanceFilterBase> _filters = new();
+        private readonly object _myLock = new();
 
         #region "Public" interface for client-side filtering
 
@@ -658,7 +656,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return Enumerable.Empty<NotFoundError>();
                 }
 
-                if (_filters.All(f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
+                if (_filters.All(static f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
                 {
                     return Enumerable.Empty<NotFoundError>();
                 }
