@@ -596,6 +596,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Load an assembly in memory from unmanaged code.
         /// </summary>
+        /// <remarks>
+        /// This API is covered by the experimental feature 'PSLoadAssemblyFromNativeCode',
+        /// and it may be deprecated and removed in future.
+        /// </remarks>
         /// <param name="data">Unmanaged pointer to assembly data buffer.</param>
         /// <param name="size">Size in bytes of the assembly data buffer.</param>
         /// <returns>Returns zero on success and non-zero on failure.</returns>
