@@ -525,27 +525,16 @@ namespace System.Management.Automation.Remoting.Server
 
         private SSHProcessMediator() : base(true)
         {
-#if !UNIX
-            var inputHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Input);
-            originalStdIn = new StreamReader(
-                new FileStream(new SafeFileHandle(inputHandle, false), FileAccess.Read));
-
-            var outputHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Output);
-            originalStdOut = new OutOfProcessTextWriter(
-                new StreamWriter(
-                    new FileStream(new SafeFileHandle(outputHandle, false), FileAccess.Write)));
-
-            var errorHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Error);
-            originalStdErr = new OutOfProcessTextWriter(
-                new StreamWriter(
-                    new FileStream(new SafeFileHandle(errorHandle, false), FileAccess.Write)));
-#else
             originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
             originalStdOut = new OutOfProcessTextWriter(
                 new StreamWriter(Console.OpenStandardOutput()));
             originalStdErr = new OutOfProcessTextWriter(
                 new StreamWriter(Console.OpenStandardError()));
-#endif
+
+            // Disable console from writing to the PSRP streams.
+            Console.SetIn(TextReader.Null);
+            Console.SetOut(TextWriter.Null);
+            Console.SetError(TextWriter.Null);
         }
 
         #endregion
