@@ -21,30 +21,49 @@ This folder contains micro benchmarks that test the performance of PowerShell En
 
 ### Quick Start
 
-To run the benchmarks in Interactive Mode, where you will be asked which benchmark(s) to run:
-```
-dotnet run -c release
-```
+You can run the benchmarks directly using `dotnet run` in this directory:
+1. To run the benchmarks in Interactive Mode, where you will be asked which benchmark(s) to run:
+   ```
+   dotnet run -c release
+   ```
 
-To list all available benchmarks ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Listing-the-Benchmarks)):
-```
-dotnet run -c release --list [flat/tree]
-```
+2. To list all available benchmarks ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Listing-the-Benchmarks)):
+   ```
+   dotnet run -c release --list [flat/tree]
+   ```
 
-To filter the benchmarks using a glob pattern applied to `namespace.typeName.methodName` ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Filtering-the-Benchmarks)]):
-```
-dotnet run -c Release -f net6.0 --filter *parser* --list flat
-```
+3. To filter the benchmarks using a glob pattern applied to `namespace.typeName.methodName` ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Filtering-the-Benchmarks)]):
+   ```
+   dotnet run -c Release -f net6.0 --filter *script* --list flat
+   ```
 
-To profile the benchmarked code and produce an ETW Trace file ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Profiling))
+4. To profile the benchmarked code and produce an ETW Trace file ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Profiling))
+   ```
+   dotnet run -c Release -f net6.0 --filter *script* --profiler ETW
+   ```
+
+You can also use the function `Start-Benchmarking` from the module [`perf.psm1`](../perf.psm1) to run the benchmarks:
+```powershell
+Start-Benchmarking [[-TargetPSVersion] <string>] [[-List] <string>] [[-Filter] <string[]>] [[-Artifacts] <string>] [-KeepFiles] [<CommonParameters>]
 ```
-dotnet run -c Release -f net6.0 --filter *parser* --profiler ETW
-```
+Run `Get-Help Start-Benchmarking -Full` to see the description of each parameter.
 
 ### Regression Detection
 
 We use the tool [`ResultsComparer`](../dotnet-tools/ResultsComparer) to compare the provided benchmark results.
 See the [README.md](../dotnet-tools/ResultsComparer/README.md) for `ResultsComparer` for more details.
+
+The module `perf.psm1` also provides `Compare-BenchmarkResult` that wraps `ResultsComparer`.
+Here is an example of using it:
+
+```powershell
+## Run benchmarks targeting the current code base
+PS:1> Start-Benchmarking -Filter *script* -Artifacts C:\arena\tmp\BenchmarkDotNet.Artifacts\current\
+## Run benchmarks targeting the 7.1.3 version of PS package
+PS:2> Start-Benchmarking -Filter *script* -Artifacts C:\arena\tmp\BenchmarkDotNet.Artifacts\7.1.3 -TargetPSVersion 7.1.3
+## Compare the results using 5% threshold
+PS:3> Compare-BenchmarkResult -BaseResultPath C:\arena\tmp\BenchmarkDotNet.Artifacts\7.1.3\ -DiffResultPath C:\arena\tmp\BenchmarkDotNet.Artifacts\current\ -Threshold 5%
+```
 
 ## References
 
