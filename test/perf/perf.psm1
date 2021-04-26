@@ -61,10 +61,10 @@ function Start-Benchmarking
             $savedOFS = $OFS; $OFS = $null
 
             if ($TargetPSVersion) {
-                Write-Log -message "Run benchmarks targeting the 'Microsoft.PowerShell.SDK' version $TargetPSVersion"
+                Write-Log -message "Run benchmarks targeting the 'Microsoft.PowerShell.SDK' version $TargetPSVersion..."
                 $env:PERF_TARGET_VERSION = $TargetPSVersion
             } else {
-                Write-Log -message "Run benchmarks targeting the current PowerShell code base"
+                Write-Log -message "Run benchmarks targeting the current PowerShell code base..."
             }
 
             $runArgs = @()

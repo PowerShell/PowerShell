@@ -11,9 +11,9 @@ namespace Engine
     public class Parsing
     {
         [Benchmark]
-        public Ast Parse_UsingStatement()
+        public Ast UsingStatement()
         {
-            string script = @"
+            const string script = @"
                 using module moduleA
                 using Assembly assemblyA
                 using namespace System.IO";

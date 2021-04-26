@@ -50,7 +50,7 @@ namespace Engine
         }
 
         [Benchmark()]
-        public Collection<PSObject> Invoke_Method()
+        public Collection<PSObject> InvokeMethod()
         {
             return scriptBlock.Invoke();
         }

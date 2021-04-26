@@ -48,5 +48,6 @@ See the [README.md](../dotnet-tools/ResultsComparer/README.md) for `ResultsCompa
 
 ## References
 
-- [Getting started with BenchmarkDotnet](https://benchmarkdotnet.org/articles/guides/getting-started.html)
+- [Getting started with BenchmarkDotNet](https://benchmarkdotnet.org/articles/guides/getting-started.html)
+- [Micro-benchmark Design Guidelines](https://github.com/dotnet/performance/blob/main/docs/microbenchmark-design-guidelines.md)
 - [Adam SITNIK: Powerful benchmarking in .NET](https://www.youtube.com/watch?v=pdcrSG4tOLI&t=351s)

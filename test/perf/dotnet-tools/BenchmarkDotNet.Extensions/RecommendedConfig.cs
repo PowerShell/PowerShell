@@ -49,7 +49,6 @@ namespace BenchmarkDotNet.Extensions
                 .AddJob(job.AsDefault()) // tell BDN that this are our default settings
                 .WithArtifactsPath(artifactsPath.FullName)
                 .AddDiagnoser(MemoryDiagnoser.Default) // MemoryDiagnoser is enabled by default
-                .AddFilter(new OperatingSystemFilter())
                 .AddFilter(new PartitionFilter(partitionCount, partitionIndex))
                 .AddFilter(new ExclusionFilter(exclusionFilterValue))
                 .AddFilter(new CategoryExclusionFilter(categoryExclusionFilterValue))
