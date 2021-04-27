@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -85,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 // first type group will take effect. So we skip the rest groups that have the same name.
                 if (!typeGroupMap.ContainsKey(typeGroup.name))
                 {
-                    var typesInGroup = typeGroup.typeReferenceList.Select(static typeReference => typeReference.name).ToList();
+                    var typesInGroup = typeGroup.typeReferenceList.ConvertAll(static typeReference => typeReference.name);
                     typeGroupMap.Add(typeGroup.name, typesInGroup);
                 }
             }
