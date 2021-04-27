@@ -8254,8 +8254,8 @@ namespace Microsoft.PowerShell.Commands
                     throw new Win32Exception(lastError);
                 }
 
-                // To exclude one extra p/invoke in some scenarios
-                // we don't check fileInfo.FileAttributes
+                // We already have the file attribute information from our Win32 call,
+                // so no need to take the expense of the FileInfo.FileAttributes call
                 const int FILE_ATTRIBUTE_REPARSE_POINT = 0x0400;
                 if ((data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
                 {
