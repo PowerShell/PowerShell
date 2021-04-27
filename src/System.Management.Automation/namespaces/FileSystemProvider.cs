@@ -1895,11 +1895,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
 
-                                // Performance optimization.
-                                // Since we have already checked Attributes for Hidden we have already did a p/invoke
-                                // and initialized Attributes property.
-                                // So here we can check for ReparsePoint without new p/invoke.
-                                // If it is not a reparse point we skip one p/invoke in IsReparsePointLikeSymlink() below.
+                                // We've already taken the expense of initializing the Attributes property here,
+                                // so we can use that to avoid needing to call IsReparsePointLikeSymlink() later.
                                 checkReparsePoint = (recursiveDirectory.Attributes & FileAttributes.ReparsePoint) != 0;
                             }
 
