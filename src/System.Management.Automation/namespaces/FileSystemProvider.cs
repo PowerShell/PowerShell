@@ -8246,7 +8246,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (handle.IsInvalid)
                 {
-                    // We should never be here.
+                    // Our handle could be invalidated by something else touching the filesystem,
+                    // so ensure we deal with that possibility here
                     int lastError = Marshal.GetLastWin32Error();
                     throw new Win32Exception(lastError);
                 }
