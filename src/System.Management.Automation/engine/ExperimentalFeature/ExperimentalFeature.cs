@@ -140,7 +140,11 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSNativeCommandArgumentPassingFeatureName,
                     description: "Use ArgumentList when invoking a native command"),
+                new ExperimentalFeature(
+                    name: "PSLoadAssemblyFromNativeCode",
+                    description: "Expose an API to allow assembly loading from native code"),
             };
+
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
             // Initialize the readonly dictionary 'EngineExperimentalFeatureMap'.
