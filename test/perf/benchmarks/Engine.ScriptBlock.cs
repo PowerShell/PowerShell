@@ -14,11 +14,18 @@ namespace Engine
     [BenchmarkCategory(Categories.Engine, Categories.Public)]
     public class Scripting
     {
-        [ParamsSource(nameof(ValuesForScript))]
-        public string Script { get; set; }
-
         private Runspace runspace;
         private ScriptBlock scriptBlock;
+
+        private void SetupRunspace()
+        {
+            runspace = RunspaceFactory.CreateRunspace(InitialSessionState.CreateDefault2());
+            runspace.Open();
+            Runspace.DefaultRunspace = runspace;
+        }
+
+        [ParamsSource(nameof(ValuesForScript))]
+        public string Script { get; set; }
 
         public IEnumerable<string> ValuesForScript()
         {
@@ -33,13 +40,26 @@ namespace Engine
             }
         }
 
-        [GlobalSetup]
+        [GlobalSetup(Target = nameof(InvokeMethod))]
         public void GlobalSetup()
         {
-            runspace = RunspaceFactory.CreateRunspace(InitialSessionState.CreateDefault2());
-            runspace.Open();
-            Runspace.DefaultRunspace = runspace;
+            SetupRunspace();
             scriptBlock = ScriptBlock.Create(Script);
+
+            // Run it once to get the C# code jitted and the script compiled.
+            // The first call to this takes relatively too long, which makes the BDN's heuristic incorrectly
+            // believe that there is no need to run many ops in each interation. However, the subsequent runs
+            // of this method is much faster than the first run, and this causes 'MinIterationTime' warnings
+            // to our benchmarks and make the benchmark results not reliable.
+            // Calling this method once in 'GlobalSetup' is a workaround. 
+            // See https://github.com/dotnet/BenchmarkDotNet/issues/837#issuecomment-828600157
+            scriptBlock.Invoke();
+        }
+
+        [Benchmark()]
+        public Collection<PSObject> InvokeMethod()
+        {
+            return scriptBlock.Invoke();
         }
 
         [GlobalCleanup]
@@ -47,12 +67,6 @@ namespace Engine
         {
             runspace.Dispose();
             Runspace.DefaultRunspace = null;
-        }
-
-        [Benchmark()]
-        public Collection<PSObject> InvokeMethod()
-        {
-            return scriptBlock.Invoke();
         }
     }
 }

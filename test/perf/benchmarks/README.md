@@ -56,13 +56,29 @@ See the [README.md](../dotnet-tools/ResultsComparer/README.md) for `ResultsCompa
 The module `perf.psm1` also provides `Compare-BenchmarkResult` that wraps `ResultsComparer`.
 Here is an example of using it:
 
-```powershell
+```
 ## Run benchmarks targeting the current code base
 PS:1> Start-Benchmarking -Filter *script* -Artifacts C:\arena\tmp\BenchmarkDotNet.Artifacts\current\
+
 ## Run benchmarks targeting the 7.1.3 version of PS package
 PS:2> Start-Benchmarking -Filter *script* -Artifacts C:\arena\tmp\BenchmarkDotNet.Artifacts\7.1.3 -TargetPSVersion 7.1.3
+
 ## Compare the results using 5% threshold
-PS:3> Compare-BenchmarkResult -BaseResultPath C:\arena\tmp\BenchmarkDotNet.Artifacts\7.1.3\ -DiffResultPath C:\arena\tmp\BenchmarkDotNet.Artifacts\current\ -Threshold 5%
+PS:3> Compare-BenchmarkResult -BaseResultPath C:\arena\tmp\BenchmarkDotNet.Artifacts\7.1.3\ -DiffResultPath C:\arena\tmp\BenchmarkDotNet.Artifacts\current\ -Threshold 1%
+summary:
+better: 4, geomean: 1.057
+total diff: 4
+
+No Slower results for the provided threshold = 1% and noise filter = 0.3ns.
+
+| Faster                                                                           | base/diff | Base Median (ns) | Diff Median (ns) | Modality|
+| -------------------------------------------------------------------------------- | ---------:| ----------------:| ----------------:| --------:|
+| Engine.Scripting.InvokeMethod(Script: "$fs=New-Object -ComObject scripting.files |      1.07 |         50635.77 |         47116.42 |         |
+| Engine.Scripting.InvokeMethod(Script: "$sh=New-Object -ComObject Shell.Applicati |      1.07 |       1063085.23 |        991602.08 |         |
+| Engine.Scripting.InvokeMethod(Script: "'String'.GetType()")                      |      1.06 |          1329.93 |          1252.51 |         |
+| Engine.Scripting.InvokeMethod(Script: "[System.IO.Path]::HasExtension('')")      |      1.02 |          1322.04 |          1297.72 |         |
+
+No file given
 ```
 
 ## References
