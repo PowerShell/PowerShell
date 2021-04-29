@@ -71,7 +71,7 @@ function Start-Benchmarking
             if ($List) { $runArgs += '--list', $List }
             if ($KeepFiles) { $runArgs += "--keepFiles" }
 
-            dotnet run -c release --filter $Filter --artifacts $Artifacts $runArgs
+            dotnet run -c release --filter $Filter --artifacts $Artifacts --envVars POWERSHELL_TELEMETRY_OPTOUT:1 $runArgs
 
             if (Test-Path $Artifacts) {
                 Write-Log -message "`nBenchmark artifacts can be found at $Artifacts"

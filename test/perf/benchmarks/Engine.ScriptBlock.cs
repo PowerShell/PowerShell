@@ -19,6 +19,7 @@ namespace Engine
 
         private void SetupRunspace()
         {
+            // Unless you want to run commands from any built-in modules, using 'CreateDefault2' is enough.
             runspace = RunspaceFactory.CreateRunspace(InitialSessionState.CreateDefault2());
             runspace.Open();
             Runspace.DefaultRunspace = runspace;
@@ -58,7 +59,7 @@ namespace Engine
             scriptBlock.Invoke();
         }
 
-        [Benchmark()]
+        [Benchmark]
         public Collection<PSObject> InvokeMethod()
         {
             return scriptBlock.Invoke();
