@@ -24,8 +24,10 @@ namespace Engine
             Runspace.DefaultRunspace = runspace;
         }
 
+        #region Invoke-Method
+
         [ParamsSource(nameof(ValuesForScript))]
-        public string Script { get; set; }
+        public string InvokeMethodScript { get; set; }
 
         public IEnumerable<string> ValuesForScript()
         {
@@ -44,7 +46,7 @@ namespace Engine
         public void GlobalSetup()
         {
             SetupRunspace();
-            scriptBlock = ScriptBlock.Create(Script);
+            scriptBlock = ScriptBlock.Create(InvokeMethodScript);
 
             // Run it once to get the C# code jitted and the script compiled.
             // The first call to this takes relatively too long, which makes the BDN's heuristic incorrectly
@@ -61,6 +63,8 @@ namespace Engine
         {
             return scriptBlock.Invoke();
         }
+
+        #endregion
 
         [GlobalCleanup]
         public void GlobalCleanup()
