@@ -3742,6 +3742,10 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
+        /// <remarks>
+        /// When used with <see cref="PowerShell.Invoke()"/>, that call will return a partial result.
+        /// When used with <see cref="PowerShell.InvokeAsync"/>, that call will throw a <see cref="System.Management.Automation.PipelineStoppedException"/>. 
+        /// </remarks>
         public void Stop()
         {
             try
@@ -3798,6 +3802,10 @@ namespace System.Management.Automation
         /// asyncResult object was not created by calling BeginStop
         /// on this PowerShell instance.
         /// </exception>
+        /// <remarks>
+        /// When used with <see cref="PowerShell.Invoke()"/>, that call will return a partial result.
+        /// When used with <see cref="PowerShell.InvokeAsync"/>, that call will throw a <see cref="System.Management.Automation.PipelineStoppedException"/>. 
+        /// </remarks>
         public void EndStop(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
@@ -3848,6 +3856,10 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
+        /// <remarks>
+        /// When used with <see cref="PowerShell.Invoke()"/>, that call will return a partial result.
+        /// When used with <see cref="PowerShell.InvokeAsync"/>, that call will throw a <see cref="System.Management.Automation.PipelineStoppedException"/>. 
+        /// </remarks>
         public Task StopAsync(AsyncCallback callback, object state)
             => Task.Factory.FromAsync(BeginStop(callback, state), _endStopMethod);
 
