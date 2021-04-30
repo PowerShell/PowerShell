@@ -32,6 +32,7 @@ pr:
     - /.vsts-ci/windows/*
     - test/common/markdown/*
     - tools/packaging/*
+    - tools/perf/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 

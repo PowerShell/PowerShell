@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using BenchmarkDotNet.Running;
 using System.IO;
+using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Extensions;
 
 namespace MicroBenchmarks
@@ -22,7 +22,8 @@ namespace MicroBenchmarks
             bool getDiffableDisasm;
 
             // Parse and remove any additional parameters that we need that aren't part of BDN (BenchmarkDotnet)
-            try {
+            try
+            {
                 CommandLineOptions.ParseAndRemoveIntParameter(argsList, "--partition-count", out partitionCount);
                 CommandLineOptions.ParseAndRemoveIntParameter(argsList, "--partition-index", out partitionIndex);
                 CommandLineOptions.ParseAndRemoveStringsParameter(argsList, "--exclusion-filter", out exclusionFilterValue);
@@ -39,14 +40,16 @@ namespace MicroBenchmarks
 
             return BenchmarkSwitcher
                 .FromAssembly(typeof(Program).Assembly)
-                .Run(argsList.ToArray(), RecommendedConfig.Create(
-                    artifactsPath: new DirectoryInfo(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "BenchmarkDotNet.Artifacts")),
-                    mandatoryCategories: ImmutableHashSet.Create(Categories.Components, Categories.Engine),
-                    partitionCount: partitionCount,
-                    partitionIndex: partitionIndex,
-                    exclusionFilterValue: exclusionFilterValue,
-                    categoryExclusionFilterValue: categoryExclusionFilterValue,
-                    getDiffableDisasm: getDiffableDisasm))
+                .Run(
+                    argsList.ToArray(),
+                    RecommendedConfig.Create(
+                        artifactsPath: new DirectoryInfo(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "BenchmarkDotNet.Artifacts")),
+                        mandatoryCategories: ImmutableHashSet.Create(Categories.Components, Categories.Engine),
+                        partitionCount: partitionCount,
+                        partitionIndex: partitionIndex,
+                        exclusionFilterValue: exclusionFilterValue,
+                        categoryExclusionFilterValue: categoryExclusionFilterValue,
+                        getDiffableDisasm: getDiffableDisasm))
                 .ToExitCode();
         }
     }

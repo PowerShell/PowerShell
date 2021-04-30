@@ -13,11 +13,11 @@ namespace Engine
         [Benchmark]
         public Ast UsingStatement()
         {
-            const string script = @"
+            const string Script = @"
                 using module moduleA
                 using Assembly assemblyA
                 using namespace System.IO";
-            return Parser.ParseInput(script, out _, out _);
+            return Parser.ParseInput(Script, out _, out _);
         }
     }
 }
